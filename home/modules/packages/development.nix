@@ -23,6 +23,7 @@
     # gemini-cli
     nix-index
     comma
+    gh
 
     bacon
     cargo-nextest
