@@ -49,10 +49,7 @@
 
       merge.conflictStyle = "zdiff3";
 
-      credential = {
-        helper = "manager";
-        helperselector.selected = "manager";
-      };
+      credential.helper = "!gh auth git-credential";
 
       "url \"http://github.com/\"".insteadOf = "gh:";
     };
