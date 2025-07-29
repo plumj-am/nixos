@@ -1,0 +1,26 @@
+{
+    "script": {
+        "prefix": "script",
+        "body": [
+            "<script lang=\"ts\">",
+            "   $1",
+            "</script>"
+        ],
+        "description": "opening script tags"
+
+    },
+    "sveltebp": {
+        "prefix": "sveltebp",
+        "body": [
+            "<script lang=\"ts\">",
+            "   $1",
+            "</script>",
+            "",
+            "<div>",
+            "     ",
+            "</div>"
+        ],
+        "description": "script + divs"
+    }
+        
+}

@@ -1,0 +1,26 @@
+{
+	"name": "james-snippets",
+	"contributes": {
+		"snippets": [
+			{
+				"language": [
+					"all"
+				],
+				"path": "./snippets/all.json"
+			},
+			{
+				"language": [
+					"javascript",
+                    "typescript"
+				],
+				"path": "./snippets/javascript.json"
+			},
+			{
+				"language": [
+					"svelte"
+				],
+				"path": "./snippets/svelte.json"
+            }
+		]
+	}
+}

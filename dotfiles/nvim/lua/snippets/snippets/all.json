@@ -1,0 +1,12 @@
+{
+   "tag": {
+        "prefix": "tag",
+        "body": [
+            "<${1}>",
+            "   $0",
+            "</${1}>"
+        ],
+        "description": "HTML tag"
+    }	
+}
+
