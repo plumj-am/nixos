@@ -2,11 +2,13 @@
   pkgs,
   fenix,
   system,
+  nvf,
   ...
 }:
 
 {
   imports = [
+    nvf.homeManagerModules.default
     ./modules/common.nix
     ./modules/packages/development.nix
     ./modules/packages/system.nix
@@ -21,6 +23,7 @@
       pkgs
       system
       fenix
+      nvf
       ;
   };
 

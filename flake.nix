@@ -9,6 +9,7 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     fenix.url = "github:nix-community/fenix";
     fenix.inputs.nixpkgs.follows = "nixpkgs";
+    nvf.url = "github:notashelf/nvf";
   };
 
   outputs =
@@ -18,6 +19,7 @@
       nixos-wsl,
       home-manager,
       fenix,
+      nvf,
       ...
     }:
     let
@@ -39,6 +41,7 @@
                 pkgs
                 system
                 fenix
+                nvf
                 ;
             };
           })
