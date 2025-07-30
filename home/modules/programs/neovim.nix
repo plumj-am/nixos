@@ -6,7 +6,7 @@
   ];
 
   programs.neovim = {
-    enable = false;
+    enable = true;
     defaultEditor = true;
     viAlias = true;
     vimAlias = true;
@@ -17,8 +17,6 @@
     settings = {
       vim.viAlias = true;
       vim.vimAlias = true;
-      vim.defaultEditor = true;
     };
   };
 }
-
