@@ -8,11 +8,13 @@
     svelte-language-server
     tailwindcss-language-server
     nodePackages."@astrojs/language-server"
+    nixd
 
     stylua
     nodePackages.prettier
     prettierd
     nixfmt-rfc-style
+    nufmt
 
     nodejs
     python3
@@ -34,4 +36,3 @@
     sqlx-cli
   ];
 }
-

@@ -20,6 +20,7 @@ lsp.enable({
 	"gopls",
 	"json_ls",
 	"lua_ls",
+	"nixd",
 	"nushell",
 	"rust_analyzer",
 	"svelteserver",
