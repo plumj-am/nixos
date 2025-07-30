@@ -1,15 +1,14 @@
 {
-  # programs.nvf.settings.vim = {
-  #   theme = {
-  #     enable = false;
-  #     name = "gruvbox";
-  #     style = "dark";
-  #   };
+  programs.nvf.settings.vim = {
+    theme = {
+      enable = true;
+      name = "gruvbox";
+      style = "dark";
+    };
 
-  # colorscheme settings can be configured here
-  # luaConfigRC.theme = /* lua */ ''
-  #   -- custom theme configuration
-  # '';
-  # };
+    luaConfigRC.theme = # lua
+      ''
+        -- custom theme configuration
+      '';
+  };
 }
-

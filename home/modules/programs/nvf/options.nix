@@ -8,13 +8,26 @@ in
     extraLuaFiles = [
       (builtins.path {
         path = ./globals.lua;
-        name = "globals.lua";
+      })
+      (builtins.path {
+        path = ./helpers.lua;
+      })
+      (builtins.path {
+        path = ./lsp.lua;
+      })
+      (builtins.path {
+        path = ./lsp/bacon_ls.lua;
+      })
+      (builtins.path {
+        path = ./lsp/json_ls.lua;
       })
     ];
+
     clipboard = {
       enable = true;
       registers = "unnamedplus";
     };
+
     globals = {
       mapleader = " "; # space as leader key
       editorconfig = true;
@@ -23,7 +36,6 @@ in
     };
 
     options = {
-
       number = true;
       relativenumber = true;
       ignorecase = true;

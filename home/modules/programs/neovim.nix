@@ -3,6 +3,7 @@
     ./nvf/themes.nix
     ./nvf/plugins.nix
     ./nvf/options.nix
+    ./nvf/lsp.nix
   ];
 
   programs.neovim = {
@@ -13,7 +14,7 @@
   };
 
   programs.nvf = {
-    enable = true; # disabled initially for gradual migration
+    enable = true;
     settings = {
       vim.viAlias = true;
       vim.vimAlias = true;

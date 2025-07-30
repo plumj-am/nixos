@@ -16,7 +16,7 @@ in
 
     settings = {
       # Theme and appearance
-      theme = light_theme;
+      theme = dark_theme;
 
       # Shell and editor
       default_shell = "nu";

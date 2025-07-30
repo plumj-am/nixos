@@ -4,11 +4,14 @@
   home.packages = with pkgs; [
     # language servers
     lua-language-server
-    nodePackages.typescript-language-server
+    typescript-language-server
     svelte-language-server
     tailwindcss-language-server
-    nodePackages."@astrojs/language-server"
+    astro-language-server
     nixd
+    gopls
+    vscode-json-languageserver
+    yaml-language-server
 
     stylua
     nodePackages.prettier
@@ -22,7 +25,7 @@
     gnumake
 
     claude-code
-    # gemini-cli
+    gemini-cli
     nix-index
     comma
     gh

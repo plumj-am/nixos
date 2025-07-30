@@ -10,14 +10,7 @@ SET_HL = vim.api.nvim_set_hl
 function ColorMyPencils(color, theme, transparent)
 	vim.o.background = theme or "light"
 	CMD.colorscheme(color or "default")
-	require("fidget").notify(
-		"background: "
-			.. vim.o.background
-			.. "\n theme: "
-			.. theme
-			.. "\n colorscheme: "
-			.. color
-	)
+	require("fidget").notify("background: " .. vim.o.background .. "\n theme: " .. theme .. "\n colorscheme: " .. color)
 
 	-- general tweaks
 	if transparent then
@@ -35,8 +28,12 @@ function ColorMyPencils(color, theme, transparent)
 	SET_HL(0, "LspInlayHint", { fg = "#808080" })
 
 	-- fixes for colorschemes
-	if color == "rusticated" then FixRusticated() end
-	if color == "rasmus" then FixRasmus() end
+	if color == "rusticated" then
+		FixRusticated()
+	end
+	if color == "rasmus" then
+		FixRasmus()
+	end
 end
 
 function DisableItalic()
