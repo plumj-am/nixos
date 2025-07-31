@@ -10,6 +10,8 @@
     fenix.url = "github:nix-community/fenix";
     fenix.inputs.nixpkgs.follows = "nixpkgs";
     nvf.url = "github:notashelf/nvf";
+    bacon-ls.url = "github:crisidev/bacon-ls";
+    bacon-ls.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -20,6 +22,7 @@
       home-manager,
       fenix,
       nvf,
+      bacon-ls,
       ...
     }:
     let
@@ -42,6 +45,7 @@
                 system
                 fenix
                 nvf
+                bacon-ls
                 ;
             };
           })

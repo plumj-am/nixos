@@ -27,16 +27,29 @@
     settings = {
       buffer_editor = "nvim";
       show_banner = false;
-      
+
       ls = {
         use_ls_colors = true;
         clickable_links = true;
       };
-      
+
       rm = {
         always_trash = false;
       };
-      
+
+      keybindings = [
+        {
+          name = "quit_shell";
+          modifier = "control";
+          keycode = "char_d";
+          mode = [
+            "emacs"
+            "vi_insert"
+            "vi_normal"
+          ];
+          event = null;
+        }
+      ];
       table = {
         mode = "compact";
         index_mode = "always";
@@ -47,15 +60,18 @@
           truncating_suffix = "...";
         };
       };
-      
+
       explore = {
         help_banner = true;
         exit_esc = true;
         command_bar_text = "#C4C9C6";
-        status_bar_background = {};
-        highlight = { bg = "yellow"; fg = "black"; };
-        status = {};
-        try = {};
+        status_bar_background = { };
+        highlight = {
+          bg = "yellow";
+          fg = "black";
+        };
+        status = { };
+        try = { };
         table = {
           split_line = "#404040";
           cursor = true;
@@ -67,26 +83,29 @@
           show_index = true;
         };
         config = {
-          cursor_color = { bg = "yellow"; fg = "black"; };
+          cursor_color = {
+            bg = "yellow";
+            fg = "black";
+          };
         };
       };
-      
+
       history = {
         max_size = 10000;
         sync_on_enter = true;
       };
-      
-      filesize = {};
-      
+
+      filesize = { };
+
       cursor_shape = {
         emacs = "block";
         vi_insert = "block";
         vi_normal = "block";
       };
-      
+
       float_precision = 2;
       use_ansi_coloring = true;
-      
+
       hooks = {
         display_output = "if (term size).columns >= 100 { table -e } else { table }";
         pre_prompt = [
@@ -99,9 +118,9 @@
           ''
         ];
       };
-      
+
     };
-    
+
     extraConfig = ''
       ${builtins.readFile ./menus.nu}
       ${builtins.readFile ./functions.nu}

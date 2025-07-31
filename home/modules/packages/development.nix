@@ -1,4 +1,7 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  ...
+}:
 
 {
   home.packages = with pkgs; [
@@ -23,19 +26,12 @@
     python3
     gcc
     gnumake
+    vscode-extensions.vadimcn.vscode-lldb.adapter
 
     claude-code
     gemini-cli
     nix-index
     comma
     gh
-
-    bacon
-    cargo-nextest
-    cargo-deny
-    jj
-    kondo
-    mprocs
-    sqlx-cli
   ];
 }

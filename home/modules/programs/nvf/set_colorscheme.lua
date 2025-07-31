@@ -4,9 +4,7 @@ local current_theme = dark_theme
 
 local bg = current_theme == dark_theme and "dark" or "light"
 
-vim.defer_fn(function()
-	ColorMyPencils(current_theme, bg, true)
-	DisableBold()
-	DisableItalic()
-	DisableUndercurl()
-end, 100)
+ColorMyPencils(current_theme, bg, true)
+DisableBold()
+DisableItalic()
+DisableUndercurl()

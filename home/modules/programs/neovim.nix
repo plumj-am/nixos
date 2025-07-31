@@ -4,6 +4,7 @@
     ./nvf/plugins.nix
     ./nvf/options.nix
     ./nvf/lsp.nix
+    ./nvf/highlights.nix
   ];
 
   programs.neovim = {

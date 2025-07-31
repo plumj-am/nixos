@@ -1,11 +1,39 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   programs.nvf.settings.vim = {
 
-    assistant = {
-      supermaven-nvim = {
-        enable = true;
+    globals = {
+      vimwiki_option_diary_path = "./diary/";
+      vimwiki_global_ext = 0;
+      vimwiki_option_nested_syntaxes = {
+        svelte = "svelte";
+        typescript = "ts";
       };
+      vimwiki_list = [
+        {
+          path = "~/vimwiki/james/";
+          syntax = "markdown";
+          ext = ".md";
+        }
+        {
+          path = "~/vimwiki/healgorithms/";
+          syntax = "markdown";
+          ext = ".md";
+        }
+      ];
+      assistant = {
+        supermaven-nvim = {
+          enable = true;
+          setupOpts = {
+            keymaps = {
+              accept_suggestion = "<TAB>";
+            };
+          };
+        };
+      };
+    };
+
+    statusline = {
     };
 
     lsp = {
@@ -46,6 +74,7 @@
         vimdoc
         go
         http
+        nu
         rust
       ];
       fold = true;
@@ -63,10 +92,10 @@
     };
 
     languages = {
-      rust = {
-        crates.enable = true;
-        dap.enable = true;
-      };
+      # rust = {
+      #   crates.enable = true;
+      #   dap.enable = true;
+      # };
 
       markdown.extensions.render-markdown-nvim = {
         enable = true;
@@ -90,55 +119,64 @@
       };
     };
 
-    autocomplete = {
-      blink-cmp = {
-        enable = true;
-        setupOpts = {
-          keymap = {
-            preset = "enter";
-          };
-          completion = {
-            documentation = {
-              auto_show = true;
-              auto_show_delay_ms = 250;
-            };
-            # menu = {
-            # draw = {
-            # columns = {
-            # { "kind" };
-            # { "label", gap = 1 };
-            # };
-            # };
-            # };
-          };
-          cmdline = {
-            enabled = false;
-          };
-          signature = {
-            enabled = true;
-          };
-          sources = {
-            default = [
-              "lsp"
-              "path"
-              "snippets"
-              "buffer"
-            ];
-            providers = {
-              buffer = {
-                opts = {
-                  # get_bufnrs = function()
-                  # 	return vim.tbl_filter(function(bufnr)
-                  # 		return vim.bo[bufnr].buftype == ""
-                  # 	end, vim.api.nvim_list_bufs())
-                  # end,
-                };
-              };
-            };
-          };
-        };
-      };
-    };
+    # autocomplete = {
+    # blink-cmp = {
+    #   enable = false;
+    #   setupOpts = {
+    #     keymap = {
+    #       preset = "enter";
+    #     };
+    #     completion = {
+    #       list = {
+    #         selection = {
+    #           preselect = false;
+    #         };
+    #       };
+    #       documentation = {
+    #         auto_show = true;
+    #         auto_show_delay_ms = 250;
+    #       };
+    #       menu = {
+    #         draw = {
+    #           columns = lib.generators.mkLuaInline ''
+    #             {
+    #               { "kind" },
+    #               { "label", gap = 1 }
+    #             }
+    #           '';
+    #         };
+    #       };
+    #     };
+    #     cmdline = {
+    #       enabled = false;
+    #     };
+    #     signature = {
+    #       enabled = true;
+    #     };
+    #     sources = {
+    #       default = [
+    #         "lsp"
+    #         "path"
+    #         "snippets"
+    #         "buffer"
+    #       ];
+    #       providers = {
+    #         buffer = {
+    #           opts = lib.generators.mkLuaInline ''
+    #             								{
+    #                                get_bufnrs = function()
+    #                                	return vim.tbl_filter(function(bufnr)
+    #                                		return vim.bo[bufnr].buftype == ""
+    #                                	end, vim.api.nvim_list_bufs())
+    #                                end,
+    #                             }
+    #             								'';
+    #         };
+    #       };
+    #     };
+    #   };
+    # };
+    # };
 
     mini = {
       ai.enable = true;
@@ -340,19 +378,46 @@
       };
     };
 
-    # git integration
-    # git = {
-    # enable = false; # disabled initially
-    # gitsigns.enable = true;
-    # };
-
-    # statusline
-    # statusline = {
-    # enable = false; # disabled initially
-    # lualine.enable = true;
-    # };
-
     lazy.plugins = {
+      # TODO: FIX LUALINE
+      "lualine.nvim" = {
+        package = pkgs.vimPlugins.lualine-nvim;
+        enabled = true;
+        lazy = true;
+        priority = 1000;
+        setupOpts = lib.generators.mkLuaInline ''
+          					{
+          						options = {
+          							theme = "auto",
+          							disabled_filetypes = { "no-neck-pain" },
+          							section_separators = "",
+          							component_separators = "",
+          							icons_enabled = true,
+          						},
+          						sections = {
+          							lualine_a = { "mode" },
+          							lualine_b = { "branch", LualineDiagnostics },
+          							lualine_c = { LualineFilename, "diff" },
+          							lualine_x = { LualinePomoTimer },
+          							lualine_y = { LualineFileInfo, "filetype" },
+          							lualine_z = { "location" },
+          						},
+          						inactive_sections = {
+          							lualine_a = { "mode" },
+          							lualine_b = { "branch", LualineDiagnostics },
+          							lualine_c = { LualineFilename, "diff" },
+          							lualine_x = { LualinePomoTimer },
+          							lualine_y = { LualineFileInfo, "filetype" },
+          							lualine_z = { "location" },
+          						}
+          					}
+          				'';
+      };
+
+      "rustaceanvim" = {
+        package = pkgs.vimPlugins.rustaceanvim;
+        lazy = false;
+      };
 
       "SchemaStore.nvim" = {
         package = pkgs.vimPlugins.SchemaStore-nvim;
@@ -469,23 +534,16 @@
             sha256 = "sha256-hHoS5WgIsbuVEOUbUBpDRxIwdNoR/cAfD+hlBWzaxug=";
           };
         };
-        event = [ "WinScrolled" ];
+        lazy = true;
         setupModule = "scrollEOF";
         setupOpts = { };
       };
 
-      "vimplugin-tiny-inline-diagnostic.nvim" = {
-        package = pkgs.vimUtils.buildVimPlugin {
-          name = "tiny-inline-diagnostic.nvim";
-          src = pkgs.fetchFromGitHub {
-            owner = "rachartier";
-            repo = "tiny-inline-diagnostic.nvim";
-            rev = "7dcf8542059fb15c978de845fc8665428ae13a04";
-            sha256 = "sha256-BGmGYYNweelepgFQ58X2PhafAHNyb0N+nNqncHU0Kbc=";
-          };
-        };
-        event = [ "BufReadPost" ];
+      "tiny-inline-diagnostic.nvim" = {
+        package = pkgs.vimPlugins.tiny-inline-diagnostic-nvim;
         setupModule = "tiny-inline-diagnostic";
+        priority = 1000;
+        lazy = false;
         setupOpts = {
           preset = "minimal";
           transparent_bg = true;
@@ -507,18 +565,9 @@
         };
       };
 
-      "vimplugin-package-info.nvim" = {
-        package = pkgs.vimUtils.buildVimPlugin {
-          name = "package-info.nvim";
-          src = pkgs.fetchFromGitHub {
-            owner = "vuki656";
-            repo = "package-info.nvim";
-            rev = "4f1b8287dde221153ec9f2acd46e8237d2d0881e";
-            sha256 = "sha256-vrRcWSPfWTDs0r7LvqJVMIPFSZTlLJQG1/dU5or6xLs=";
-          };
-          doCheck = false;
-        };
-        event = [ "BufRead package.json" ];
+      "package-info.nvim" = {
+        package = pkgs.vimPlugins.package-info-nvim;
+        lazy = true;
         setupModule = "package-info";
         setupOpts = {
           autostart = true;
@@ -546,31 +595,14 @@
         lazy = true;
       };
 
-      "vimplugin-ts-context-commentstring.nvim" = {
-        package = pkgs.vimUtils.buildVimPlugin {
-          name = "ts-context-commentstring.nvim";
-          src = pkgs.fetchFromGitHub {
-            owner = "JoosepAlviste";
-            repo = "nvim-ts-context-commentstring";
-            rev = "1b212c2eee76d787bbea6aa5e92a2b534e7b4f8f";
-            sha256 = "sha256-AjDM3+n4+lNBQi8P2Yrh0Ab06uYCndBQT9TX36rDbOM=";
-          };
-        };
-        event = [ "BufRead" ];
-        setupModule = "ts_context_commentstring";
-        setupOpts = { };
+      "ts-comments.nvim" = {
+        package = pkgs.vimPlugins.ts-comments-nvim;
+        lazy = true;
       };
 
-      "vimplugin-vimwiki" = {
-        package = pkgs.vimUtils.buildVimPlugin {
-          name = "vimwiki";
-          src = pkgs.fetchFromGitHub {
-            owner = "vimwiki";
-            repo = "vimwiki";
-            rev = "72792615e739d0eb54a9c8f7e0a46a6e2407c9e8";
-            sha256 = "sha256-O85nZUWxIKm0gFILAkWH9WqfVcEbnbxR56grqMmum3A=";
-          };
-        };
+      "vimwiki" = {
+        package = pkgs.vimPlugins.vimwiki;
+        lazy = true;
         keys = [
           {
             mode = "n";
@@ -585,15 +617,6 @@
             desc = "Open vimwiki diary";
           }
         ];
-        beforeAll = ''
-          vim.g.vimwiki_option_diary_path = "./diary/"
-          vim.g.vimwiki_global_ext = 0
-          vim.g.vimwiki_option_nested_syntaxes = { svelte = "svelte", typescript = "ts" }
-          vim.g.vimwiki_list = {
-            { path = "~/vimwiki/james/", syntax = "markdown", ext = ".md" },
-            { path = "~/vimwiki/healgorithms/", syntax = "markdown", ext = ".md" }
-          }
-        '';
       };
 
       "vimplugin-workspaces.nvim" = {
@@ -624,16 +647,8 @@
         '';
       };
 
-      "vimplugin-zen-mode.nvim" = {
-        package = pkgs.vimUtils.buildVimPlugin {
-          name = "zen-mode.nvim";
-          src = pkgs.fetchFromGitHub {
-            owner = "folke";
-            repo = "zen-mode.nvim";
-            rev = "main";
-            sha256 = "sha256-TofQ1o5+LH3/1aoLr90oLbBaXFFtu62SXifH5oyj2/k=";
-          };
-        };
+      "zen-mode.nvim" = {
+        package = pkgs.vimPlugins.zen-mode-nvim;
         cmd = [ "ZenMode" ];
         setupModule = "zen-mode";
         setupOpts = {
@@ -669,16 +684,8 @@
         };
       };
 
-      "vimplugin-twilight.nvim" = {
-        package = pkgs.vimUtils.buildVimPlugin {
-          name = "twilight.nvim";
-          src = pkgs.fetchFromGitHub {
-            owner = "folke";
-            repo = "twilight.nvim";
-            rev = "main";
-            sha256 = "sha256-sC9DSgkQw+jHvi+xUP+iWSSLV0kIWWmrom2Mq5q+RJo=";
-          };
-        };
+      "twilight.nvim" = {
+        package = pkgs.vimPlugins.twilight-nvim;
         cmd = [ "Twilight" ];
         setupModule = "twilight";
         setupOpts = {
@@ -688,17 +695,8 @@
         };
       };
 
-      "vimplugin-typr" = {
-        package = pkgs.vimUtils.buildVimPlugin {
-          name = "typr";
-          src = pkgs.fetchFromGitHub {
-            owner = "nvzone";
-            repo = "typr";
-            rev = "main";
-            sha256 = "sha256-ULjrPOYaWCk8G5B37p+aYD0jI2vngc0LxQIxQduaEWo=";
-          };
-          doCheck = false;
-        };
+      "nvzone-typr" = {
+        package = pkgs.vimPlugins.nvzone-typr;
         cmd = [
           "Typr"
           "TyprStats"
@@ -832,10 +830,11 @@
             sha256 = "sha256-OkF1COC3FykTYd3P/WpRAS0n0nxAPPazOytr698+6TI=";
           };
         };
-        event = [ "InsertEnter" ];
+        lazy = true;
       };
 
       "vimplugin-ferris.nvim" = {
+        enabled = true;
         package = pkgs.vimUtils.buildVimPlugin {
           name = "ferris.nvim";
           src = pkgs.fetchFromGitHub {
@@ -845,8 +844,7 @@
             sha256 = "sha256-spi5Fk7HghMyhi+TqcgxRj9ME6HyJnVGyFkP+mPM010=";
           };
         };
-        ft = [ "rust" ];
-        setupModule = "ferris";
+        lazy = true;
         setupOpts = {
           create_commands = true;
           url_handler = "start";
@@ -863,8 +861,7 @@
             sha256 = "sha256-/MdGhcZ0kQsAzDl02lJK4zMf/5fC5Md0iuvWrz0ZR6Q=";
           };
         };
-        lazy = false;
-        priority = 1000;
+        lazy = true;
         setupModule = "darklight";
         setupOpts = {
           mode = "custom";
@@ -913,30 +910,85 @@
         lazy = true;
       };
 
-      "vimplugin-baleia.nvim" = {
-        package = pkgs.vimUtils.buildVimPlugin {
-          name = "baleia.nvim";
-          src = pkgs.fetchFromGitHub {
-            owner = "m00qek";
-            repo = "baleia.nvim";
-            rev = "v1.3.0";
-            sha256 = "sha256-8wG9Oh5Ff7XXOjZ3rPvThCF5QYOyCXxiIcJjgT89RDU=";
-          };
-        };
+      "baleia.nvim" = {
+        package = pkgs.vimPlugins.baleia-nvim;
         lazy = true;
       };
 
-      "vimplugin-volt" = {
-        package = pkgs.vimUtils.buildVimPlugin {
-          name = "volt";
-          src = pkgs.fetchFromGitHub {
-            owner = "nvzone";
-            repo = "volt";
-            rev = "main";
-            sha256 = "sha256-szq/QBI2Y6DKeqBuJ8qA4LlGYnarLT6D/fvwepIgSVc=";
+      "nvzone-volt" = {
+        package = pkgs.vimPlugins.nvzone-volt;
+        lazy = true;
+      };
+
+      "blink.cmp" = {
+        package = pkgs.vimPlugins.blink-cmp;
+        lazy = false;
+        setupModule = "blink-cmp";
+        setupOpts = {
+          keymap = {
+            preset = "enter";
+          };
+          completion = {
+            list = {
+              selection = {
+                preselect = false;
+              };
+            };
+            documentation = {
+              auto_show = true;
+              auto_show_delay_ms = 250;
+            };
+            menu = {
+              draw = {
+                columns = lib.generators.mkLuaInline ''
+                  {
+                    { "kind" },
+                    { "label", gap = 1 }
+                  }
+                '';
+              };
+            };
+          };
+          cmdline = {
+            enabled = false;
+          };
+          signature = {
+            enabled = true;
+          };
+          sources = {
+            default = [
+              "lsp"
+              "path"
+              "snippets"
+              "buffer"
+            ];
+            providers = {
+              buffer = {
+                opts = lib.generators.mkLuaInline ''
+                  {
+                    get_bufnrs = function()
+                      return vim.tbl_filter(function(bufnr)
+                        return vim.bo[bufnr].buftype == ""
+                      end, vim.api.nvim_list_bufs())
+                    end,
+                  }
+                '';
+              };
+            };
           };
         };
+      };
+
+      "nvim-dap" = {
+        package = pkgs.vimPlugins.nvim-dap;
         lazy = true;
+      };
+
+      "nvim-dap-ui" = {
+        package = pkgs.vimPlugins.nvim-dap-ui;
+        lazy = true;
+        setupModule = "dapui";
+        setupOpts = { };
       };
     };
   };

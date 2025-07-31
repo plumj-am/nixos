@@ -1,30 +1,24 @@
-{ pkgs, fenix, ... }:
+{
+  pkgs,
+  fenix,
+  bacon-ls,
+  system,
+  ...
+}:
 
 {
   home.packages = [
     fenix.packages.${pkgs.system}.complete.toolchain
     pkgs.cargo-binstall
+    pkgs.bacon
+    bacon-ls.defaultPackage.${system}
+    pkgs.cargo-careful
+    pkgs.cargo-deny
+    pkgs.cargo-fuzz
+    pkgs.cargo-nextest
+    pkgs.cargo-machete
+    pkgs.cargo-workspaces
+    pkgs.dioxus-cli
+    pkgs.kondo
   ];
-
-  home.file."install-cargo-extras.sh" = {
-    text = ''
-      #!/usr/bin/env bash
-      # script to install additional cargo packages not available in nixpkgs
-      
-      echo "Installing additional cargo packages with cargo-binstall..."
-      
-      cargo binstall -y \
-        cargo-machete \
-        bacon-ls \
-        dioxus-cli \
-        sleek \
-        cargo-workspaces \
-        cargo-fuzz \
-        cargo-careful
-      
-      echo "Additional cargo packages installed"
-    '';
-    executable = true;
-  };
 }
-

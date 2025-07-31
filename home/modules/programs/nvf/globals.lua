@@ -9,23 +9,23 @@ SET_HL = vim.api.nvim_set_hl
 -- Global functions
 function ColorMyPencils(color, theme, transparent)
 	vim.o.background = theme or "light"
-	CMD.colorscheme(color or "default")
+	vim.cmd.colorscheme(color or "default")
 	require("fidget").notify("background: " .. vim.o.background .. "\n theme: " .. theme .. "\n colorscheme: " .. color)
 
 	-- general tweaks
 	if transparent then
-		SET_HL(0, "Normal", { bg = "none" })
-		SET_HL(0, "NormalFloat", { bg = "none" })
-		SET_HL(0, "NormalNC", { bg = "none" })
+		vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+		vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+		vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
 	end
 
 	if theme == "dark" then
-		SET_HL(0, "LineNrAbove", { fg = "#BFBFBF", bold = false })
-		SET_HL(0, "LineNr", { fg = "white", bold = true })
-		SET_HL(0, "LineNrBelow", { fg = "#BFBFBF", bold = false })
+		vim.api.nvim_set_hl(0, "LineNrAbove", { fg = "#BFBFBF", bold = false })
+		vim.api.nvim_set_hl(0, "LineNr", { fg = "white", bold = true })
+		vim.api.nvim_set_hl(0, "LineNrBelow", { fg = "#BFBFBF", bold = false })
 	end
 
-	SET_HL(0, "LspInlayHint", { fg = "#808080" })
+	vim.api.nvim_set_hl(0, "LspInlayHint", { fg = "#808080" })
 
 	-- fixes for colorschemes
 	if color == "rusticated" then
@@ -41,7 +41,7 @@ function DisableItalic()
 
 	for key, hl_group in pairs(hl_groups) do
 		if hl_group.italic then
-			SET_HL(0, key, vim.tbl_extend("force", hl_group, { italic = false }))
+			vim.api.nvim_set_hl(0, key, vim.tbl_extend("force", hl_group, { italic = false }))
 		end
 	end
 end
@@ -51,7 +51,7 @@ function DisableBold()
 
 	for key, hl_group in pairs(hl_groups) do
 		if hl_group.bold then
-			SET_HL(0, key, vim.tbl_extend("force", hl_group, { bold = false }))
+			vim.api.nvim_set_hl(0, key, vim.tbl_extend("force", hl_group, { bold = false }))
 		end
 	end
 end
@@ -65,7 +65,7 @@ function DisableUndercurl()
 	}
 
 	for group, opts in pairs(highlights) do
-		SET_HL(0, group, opts)
+		vim.api.nvim_set_hl(0, group, opts)
 	end
 end
 
@@ -81,27 +81,27 @@ function FixRasmus()
 	}
 
 	for group, opts in pairs(highlights) do
-		SET_HL(0, group, opts)
+		vim.api.nvim_set_hl(0, group, opts)
 	end
 end
 
 function FixRusticated()
-	SET_HL(0, "DiffAdd", {
+	vim.api.nvim_set_hl(0, "DiffAdd", {
 		fg = "#1e1e1e",
 		bg = "#98c379",
 	})
 
-	SET_HL(0, "DiffAdded", {
+	vim.api.nvim_set_hl(0, "DiffAdded", {
 		fg = "#1e1e1e",
 		bg = "#98c379",
 	})
 
-	SET_HL(0, "DiffTextAdd", {
+	vim.api.nvim_set_hl(0, "DiffTextAdd", {
 		fg = "#1e1e1e",
 		bg = "#98c379",
 	})
 
-	SET_HL(0, "DiffText", {
+	vim.api.nvim_set_hl(0, "DiffText", {
 		fg = "#1e1e1e",
 		bg = "#98c379",
 	})

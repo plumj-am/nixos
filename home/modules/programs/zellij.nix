@@ -41,7 +41,7 @@ in
       copy_clipboard = "system";
 
       # Mode and navigation
-      default_mode = "normal";
+      default_mode = "locked";
 
       # Performance
       serialize_pane_viewport = true;
@@ -70,8 +70,30 @@ in
       keybinds = {
         _props.clear-defaults = true;
 
+        # Locked mode (minimal interference)
+        locked._children = [
+          {
+            bind = {
+              _args = [ "Ctrl g" ];
+              SwitchToMode._args = [ "normal" ];
+            };
+          }
+          {
+            bind = {
+              _args = [ "Ctrl q" ];
+              Quit = { };
+            };
+          }
+        ];
+
         # Normal mode
         normal._children = [
+          {
+            bind = {
+              _args = [ "Esc" ];
+              SwitchToMode._args = [ "locked" ];
+            };
+          }
           {
             bind = {
               _args = [ "Ctrl p" ];
@@ -106,12 +128,6 @@ in
             bind = {
               _args = [ "Ctrl q" ];
               Quit = { };
-            };
-          }
-          {
-            bind = {
-              _args = [ "Ctrl d" ];
-              Detach = { };
             };
           }
           {
@@ -168,6 +184,60 @@ in
               ToggleFocusFullscreen = { };
             };
           }
+          {
+            bind = {
+              _args = [ "q" ];
+              GoToTab._args = [ 1 ];
+            };
+          }
+          {
+            bind = {
+              _args = [ "w" ];
+              GoToTab._args = [ 2 ];
+            };
+          }
+          {
+            bind = {
+              _args = [ "e" ];
+              GoToTab._args = [ 3 ];
+            };
+          }
+          {
+            bind = {
+              _args = [ "r" ];
+              GoToTab._args = [ 4 ];
+            };
+          }
+          {
+            bind = {
+              _args = [ "t" ];
+              GoToTab._args = [ 5 ];
+            };
+          }
+          {
+            bind = {
+              _args = [ "y" ];
+              GoToTab._args = [ 6 ];
+            };
+          }
+          {
+            bind = {
+              _args = [ "u" ];
+              GoToTab._args = [ 7 ];
+            };
+          }
+          {
+            bind = {
+              _args = [ "i" ];
+              GoToTab._args = [ 8 ];
+            };
+          }
+          {
+            bind = {
+              _args = [ "o" ];
+              GoToTab._args = [ 9 ];
+            };
+          }
         ];
 
         # Pane mode
@@ -175,7 +245,7 @@ in
           {
             bind = {
               _args = [ "Esc" ];
-              SwitchToMode._args = [ "normal" ];
+              SwitchToMode._args = [ "locked" ];
             };
           }
           {
@@ -257,7 +327,7 @@ in
           {
             bind = {
               _args = [ "Esc" ];
-              SwitchToMode._args = [ "normal" ];
+              SwitchToMode._args = [ "locked" ];
             };
           }
           {
@@ -336,7 +406,7 @@ in
           {
             bind = {
               _args = [ "Esc" ];
-              SwitchToMode._args = [ "normal" ];
+              SwitchToMode._args = [ "locked" ];
             };
           }
           {
@@ -426,7 +496,7 @@ in
           {
             bind = {
               _args = [ "Esc" ];
-              SwitchToMode._args = [ "normal" ];
+              SwitchToMode._args = [ "locked" ];
             };
           }
           {
@@ -484,7 +554,7 @@ in
           {
             bind = {
               _args = [ "Esc" ];
-              SwitchToMode._args = [ "normal" ];
+              SwitchToMode._args = [ "locked" ];
             };
           }
           {
@@ -510,6 +580,24 @@ in
                     "true"
                   ];
                 }
+              ];
+            };
+          }
+        ];
+
+        # rename tab mode
+        RenameTab._children = [
+          {
+            bind = {
+              _args = [ "Esc" ];
+              SwitchToMode._args = [ "locked" ];
+            };
+          }
+          {
+            bind = {
+              _args = [ "Enter" ];
+              _children = [
+                { SwitchToMode._args = [ "locked" ]; }
               ];
             };
           }
@@ -551,8 +639,8 @@ in
               format_center "{tabs}"
               format_right  "{datetime}"
 
-              mode_normal        "#[bg=blue] "
-              mode_locked        "#[bg=red] LOCKED "
+              mode_normal        "#[bg=blue] NORMAL (Esc to lock) "
+              mode_locked        "#[bg=green] LOCKED "
 
               tab_normal         "#[fg=gray] {name} "
               tab_active         "#[fg=blue,bold] {name} "
@@ -575,8 +663,8 @@ in
               format_center "{tabs}"
               format_right  "{datetime}"
 
-              mode_normal        "#[bg=blue] "
-              mode_locked        "#[bg=red] LOCKED "
+              mode_normal        "#[bg=blue] NORMAL (Esc to lock) "
+              mode_locked        "#[bg=green] LOCKED "
 
               tab_normal         "#[fg=gray] {name} "
               tab_active         "#[fg=blue,bold] {name} "
@@ -602,8 +690,8 @@ in
               format_center "{tabs}"
               format_right  "{datetime}"
 
-              mode_normal        "#[bg=blue] "
-              mode_locked        "#[bg=red] LOCKED "
+              mode_normal        "#[bg=blue] NORMAL (Esc to lock) "
+              mode_locked        "#[bg=green] LOCKED "
 
               tab_normal         "#[fg=gray] {name} "
               tab_active         "#[fg=blue,bold] {name} "

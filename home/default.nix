@@ -3,6 +3,7 @@
   fenix,
   system,
   nvf,
+  bacon-ls,
   ...
 }:
 
@@ -15,7 +16,6 @@
     ./modules/packages/rust.nix
     ./modules/programs
     ./modules/shell
-    ./modules/dotfiles.nix
   ];
 
   _module.args = {
@@ -24,6 +24,7 @@
       system
       fenix
       nvf
+      bacon-ls
       ;
   };
 

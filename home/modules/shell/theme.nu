@@ -1,6 +1,7 @@
 def toggle-theme [theme?: string] {
-    let nvim_source_file = $"($env.HOME)/nixos-config/dotfiles/nvim/lua/set_colorscheme.lua"
-let zellij_config_file = $"($env.HOME)/nixos-config/home/modules/programs/zellij.nix"
+    let nvim_source_file = $"($env.HOME)/nixos-config/home/modules/programs/nvf/set_colorscheme.lua"
+	let zellij_config_file = $"($env.HOME)/nixos-config/home/modules/programs/zellij.nix"
+    let starship_config_file = $"($env.HOME)/nixos-config/home/modules/shell/starship.nix"
     let dark_mode_file = $"($env.HOME)/.config/dark-mode"
 
     # determine current theme from source file
@@ -54,6 +55,17 @@ let zellij_config_file = $"($env.HOME)/nixos-config/home/modules/programs/zellij
         print $"updated zellij source to ($new_theme)_theme"
     } catch { |e|
         print $"failed to update zellij theme: ($e.msg)"
+        return
+    }
+
+    # update starship theme
+    try {
+        let content = open $starship_config_file
+        let updated = $content | str replace --regex 'palette = "\w+_theme";' $'palette = "($new_theme)_theme";'
+        $updated | save $starship_config_file --force
+        print $"updated starship source to ($new_theme)_theme"
+    } catch { |e|
+        print $"failed to update starship theme: ($e.msg)"
         return
     }
 

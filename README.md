@@ -34,11 +34,6 @@ NixOS :]
 Some things have been directly copied from my Windows configs so there may be
 remnants of that, especially for nushell.
 
-I plan to configure Neovim with NixOS soon but for now I'm cloning it into
-`./dotfiles` and removing garbage files.
-
-My zellij config is brand new and needs work.
-
 ## License
 
 Copyright (c) James Plummer <jamesp2001@live.co.uk>
