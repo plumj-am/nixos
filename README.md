@@ -22,7 +22,7 @@ Things like Alacritty and other tools etc. are handled in my Windows configurati
 Generally I no longer even touch my Windows environment and instantly hop into
 WSL and zellij with...
 ```bash
-wsl -d nixos --exec /etc/profiles/per-user/james/bin/zellij
+wsl -d nixos --cd /home/james nu -e '/etc/profiles/per-user/james/bin/zellij -l welcome'
 ```
 ...which automatically launches when I start Alacritty.
 
