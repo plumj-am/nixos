@@ -16,7 +16,7 @@ in
 
     settings = {
       # Theme and appearance
-      theme = dark_theme;
+      theme = light_theme;
 
       # Shell and editor
       default_shell = "nu";
@@ -33,8 +33,8 @@ in
       show_startup_tips = false;
 
       # Mouse and interaction
-      mouse_mode = true;
-      scroll_buffer_size = 10000;
+      mouse_mode = false;
+      scroll_buffer_size = 5000;
 
       # Copy/paste
       copy_on_select = false;
@@ -44,8 +44,8 @@ in
       default_mode = "locked";
 
       # Performance
-      serialize_pane_viewport = true;
-      scrollback_lines_to_serialize = 10000;
+      pane_viewport_serialization = true;
+      scrollback_lines_to_serialize = 5000;
 
       # Plugin settings
       plugin_dir = "plugins";
@@ -63,12 +63,13 @@ in
 
       layout_dir = "layouts";
 
-      on_force_close = "quit";
+      on_force_close = "detach";
       simplified_ui_default_plugin = "compact-bar";
 
       # Custom keybinds
       keybinds = {
         _props.clear-defaults = true;
+
 
         # Locked mode (minimal interference)
         locked._children = [
@@ -76,12 +77,6 @@ in
             bind = {
               _args = [ "Ctrl g" ];
               SwitchToMode._args = [ "normal" ];
-            };
-          }
-          {
-            bind = {
-              _args = [ "Ctrl q" ];
-              Quit = { };
             };
           }
         ];
@@ -124,12 +119,12 @@ in
               SwitchToMode._args = [ "session" ];
             };
           }
-          {
-            bind = {
-              _args = [ "Ctrl q" ];
-              Quit = { };
-            };
-          }
+          # {
+          #   bind = {
+          #     _args = [ "Ctrl q" ];
+          #     Quit = { };
+          #   };
+          # }
           {
             bind = {
               _args = [ "Ctrl h" ];
@@ -156,12 +151,6 @@ in
           }
           {
             bind = {
-              _args = [ "Ctrl w" ];
-              NewPane = { };
-            };
-          }
-          {
-            bind = {
               _args = [ "Ctrl x" ];
               CloseFocus = { };
             };
@@ -181,7 +170,14 @@ in
           {
             bind = {
               _args = [ "Ctrl f" ];
-              ToggleFocusFullscreen = { };
+              _children = [
+                {
+                  LaunchOrFocusPlugin = {
+                    _args = [ "https://github.com/karimould/zellij-forgot/releases/latest/download/zellij_forgot.wasm" ];
+                    floating = true;
+                  };
+                }
+              ];
             };
           }
           {
@@ -531,18 +527,6 @@ in
           }
           {
             bind = {
-              _args = [ "PageDown" ];
-              PageScrollDown = { };
-            };
-          }
-          {
-            bind = {
-              _args = [ "PageUp" ];
-              PageScrollUp = { };
-            };
-          }
-          {
-            bind = {
               _args = [ "e" ];
               EditScrollback = { };
             };
@@ -620,11 +604,15 @@ in
         zjstatus = {
           path = "https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm";
         };
+        zellij_forgot = {
+          path = "https://github.com/karimould/zellij-forgot/releases/latest/download/zellij_forgot.wasm";
+        };
       };
 
       ui = {
         pane_frames = {
           hide_session_name = false;
+          rounded_corners = false;
         };
       };
     };
