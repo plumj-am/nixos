@@ -8,22 +8,26 @@
     ripgrep
     fzf
     tree
-    
+
     # benchmarking
     hyperfine
-    
+
     # file operations
     bat
-    
+
     vim
     bash
     nushell
-    
+
     # network tools
     curl
     wget
-    
+
+    # git
+    delta
+
     # system monitoring
     htop
   ];
 }
+
