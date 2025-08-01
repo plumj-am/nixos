@@ -8,7 +8,8 @@
 
 {
   home.packages = [
-    fenix.packages.${pkgs.system}.complete.toolchain
+    # fenix.packages.${pkgs.system}.complete.toolchain # nightly
+    fenix.packages.${pkgs.system}.stable.toolchain # stable
     pkgs.cargo-binstall
     pkgs.bacon
     bacon-ls.defaultPackage.${system}
