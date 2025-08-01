@@ -21,19 +21,67 @@
           ext = ".md";
         }
       ];
-      assistant = {
-        supermaven-nvim = {
-          enable = true;
-          setupOpts = {
-            keymaps = {
-              accept_suggestion = "<TAB>";
-            };
+    };
+
+    assistant = {
+      supermaven-nvim = {
+        enable = true;
+        setupOpts = {
+          keymaps = {
+            accept_suggestion = "<TAB>";
           };
         };
       };
     };
 
     statusline = {
+      lualine = {
+        enable = true;
+        componentSeparator.left = "";
+        componentSeparator.right = "";
+        sectionSeparator.left = "";
+        sectionSeparator.right = "";
+        disabledFiletypes = [ "no-neck-pain" ];
+        theme = "auto";
+        icons.enable = true;
+        activeSection = {
+          a = [ ''{ "mode" }'' ];
+          b = [
+            ''{ "branch" } ''
+            ''{ "diagnostics", symbols = { error = "", warn = "", info = "", hint = "" } }''
+          ];
+          c = [
+            ''{ "filename", show_filename_only = false, path = 1 }''
+            ''{ "diff" }''
+          ];
+          x = [ ''{ LualinePomoTimer }'' ];
+          y = [
+            # cant get LualineFileInfo to work :[
+            ''{ "encoding" }''
+            ''{ "fileformat" }''
+            ''{ "filetype" }''
+          ];
+          z = [ ''{ "location" }'' ];
+        };
+        inactiveSection = {
+          a = [ ''{ "mode" }'' ];
+          b = [
+            ''{ "branch" } ''
+            ''{ "diagnostics", symbols = { error = "", warn = "", info = "", hint = "" } }''
+          ];
+          c = [
+            ''{ "filename", show_filename_only = false, path = 1 }''
+            ''{ "diff" }''
+          ];
+          x = [ ''{ LualinePomoTimer }'' ];
+          y = [
+            ''{ "encoding" }''
+            ''{ "fileformat" }''
+            ''{ "filetype" }''
+          ];
+          z = [ ''{ "location" }'' ];
+        };
+      };
     };
 
     lsp = {
@@ -118,65 +166,6 @@
         };
       };
     };
-
-    # autocomplete = {
-    # blink-cmp = {
-    #   enable = false;
-    #   setupOpts = {
-    #     keymap = {
-    #       preset = "enter";
-    #     };
-    #     completion = {
-    #       list = {
-    #         selection = {
-    #           preselect = false;
-    #         };
-    #       };
-    #       documentation = {
-    #         auto_show = true;
-    #         auto_show_delay_ms = 250;
-    #       };
-    #       menu = {
-    #         draw = {
-    #           columns = lib.generators.mkLuaInline ''
-    #             {
-    #               { "kind" },
-    #               { "label", gap = 1 }
-    #             }
-    #           '';
-    #         };
-    #       };
-    #     };
-    #     cmdline = {
-    #       enabled = false;
-    #     };
-    #     signature = {
-    #       enabled = true;
-    #     };
-    #     sources = {
-    #       default = [
-    #         "lsp"
-    #         "path"
-    #         "snippets"
-    #         "buffer"
-    #       ];
-    #       providers = {
-    #         buffer = {
-    #           opts = lib.generators.mkLuaInline ''
-    #             								{
-    #                                get_bufnrs = function()
-    #                                	return vim.tbl_filter(function(bufnr)
-    #                                		return vim.bo[bufnr].buftype == ""
-    #                                	end, vim.api.nvim_list_bufs())
-    #                                end,
-    #                             }
-    #             								'';
-    #         };
-    #       };
-    #     };
-    #   };
-    # };
-    # };
 
     mini = {
       ai.enable = true;
@@ -379,40 +368,6 @@
     };
 
     lazy.plugins = {
-      # TODO: FIX LUALINE
-      "lualine.nvim" = {
-        package = pkgs.vimPlugins.lualine-nvim;
-        enabled = true;
-        lazy = true;
-        priority = 1000;
-        setupOpts = lib.generators.mkLuaInline ''
-          					{
-          						options = {
-          							theme = "auto",
-          							disabled_filetypes = { "no-neck-pain" },
-          							section_separators = "",
-          							component_separators = "",
-          							icons_enabled = true,
-          						},
-          						sections = {
-          							lualine_a = { "mode" },
-          							lualine_b = { "branch", LualineDiagnostics },
-          							lualine_c = { LualineFilename, "diff" },
-          							lualine_x = { LualinePomoTimer },
-          							lualine_y = { LualineFileInfo, "filetype" },
-          							lualine_z = { "location" },
-          						},
-          						inactive_sections = {
-          							lualine_a = { "mode" },
-          							lualine_b = { "branch", LualineDiagnostics },
-          							lualine_c = { LualineFilename, "diff" },
-          							lualine_x = { LualinePomoTimer },
-          							lualine_y = { LualineFileInfo, "filetype" },
-          							lualine_z = { "location" },
-          						}
-          					}
-          				'';
-      };
 
       "rustaceanvim" = {
         package = pkgs.vimPlugins.rustaceanvim;
@@ -617,34 +572,6 @@
             desc = "Open vimwiki diary";
           }
         ];
-      };
-
-      "vimplugin-workspaces.nvim" = {
-        package = pkgs.vimUtils.buildVimPlugin {
-          name = "workspaces.nvim";
-          src = pkgs.fetchFromGitHub {
-            owner = "natecraddock";
-            repo = "workspaces.nvim";
-            rev = "55a1eb6f5b72e07ee8333898254e113e927180ca";
-            sha256 = "sha256-a3f0NUYooMxrZEqLer+Duv6/ktq5MH2qUoFHD8z7fZA=";
-          };
-        };
-        cmd = [ "Telescope workspaces" ];
-        setupModule = "workspaces";
-        setupOpts = {
-          auto_open = true;
-        };
-        keys = [
-          {
-            mode = "n";
-            key = "<leader>fp";
-            action = ":Telescope workspaces<CR>";
-            desc = "Open workspaces";
-          }
-        ];
-        after = ''
-          require("telescope").load_extension("workspaces")
-        '';
       };
 
       "zen-mode.nvim" = {
