@@ -3,6 +3,8 @@
     ./nvim/themes.nix
     ./nvim/plugins.nix
     ./nvim/options.nix
+    ./nvim/keymaps.nix
+    ./nvim/autocmds.nix
     ./nvim/lsp.nix
     ./nvim/highlights.nix
   ];
