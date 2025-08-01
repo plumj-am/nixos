@@ -26,7 +26,8 @@
 
     # system
     rebuild = "sudo nixos-rebuild switch --flake /home/james/nixos-config#nixos";
-    
+    rollback = "sudo nixos-rebuild switch --rollback --flake /home/james/nixos-config#nixos";
+
     # theme
     tt = "toggle-theme";
   };
