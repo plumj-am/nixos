@@ -1,5 +1,5 @@
 {
-  description = "NixOS WSL Configuration";
+  description = "jamesukiyo's NixOS WSL Configuration";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -36,19 +36,22 @@
           nixos-wsl.nixosModules.wsl
           ./configuration.nix
           home-manager.nixosModules.home-manager
-          ({ pkgs, ... }: {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.james = import ./home/default.nix {
-              inherit
-                pkgs
-                system
-                fenix
-                nvf
-                bacon-ls
-                ;
-            };
-          })
+          (
+            { pkgs, ... }:
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.james = import ./home/default.nix {
+                inherit
+                  pkgs
+                  system
+                  fenix
+                  nvf
+                  bacon-ls
+                  ;
+              };
+            }
+          )
         ];
       };
     };

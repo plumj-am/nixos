@@ -1,5 +1,3 @@
-{ config, fenix, ... }:
-
 {
   home.sessionVariables = {
     EDITOR = "nvim";

@@ -1,10 +1,10 @@
 {
   imports = [
-    ./nvf/themes.nix
-    ./nvf/plugins.nix
-    ./nvf/options.nix
-    ./nvf/lsp.nix
-    ./nvf/highlights.nix
+    ./nvim/themes.nix
+    ./nvim/plugins.nix
+    ./nvim/options.nix
+    ./nvim/lsp.nix
+    ./nvim/highlights.nix
   ];
 
   programs.neovim = {

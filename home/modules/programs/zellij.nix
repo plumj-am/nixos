@@ -1,4 +1,3 @@
-{ lib, ... }:
 let
   dark_theme = "gruber-darker";
   light_theme = "gruvbox-light";
@@ -69,7 +68,6 @@ in
       # Custom keybinds
       keybinds = {
         _props.clear-defaults = true;
-
 
         # Locked mode (minimal interference)
         locked._children = [
@@ -173,7 +171,9 @@ in
               _children = [
                 {
                   LaunchOrFocusPlugin = {
-                    _args = [ "https://github.com/karimould/zellij-forgot/releases/latest/download/zellij_forgot.wasm" ];
+                    _args = [
+                      "https://github.com/karimould/zellij-forgot/releases/latest/download/zellij_forgot.wasm"
+                    ];
                     floating = true;
                   };
                 }
