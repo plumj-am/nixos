@@ -333,7 +333,7 @@
           md = [ "dprint" ];
           toml = [ "dprint" ];
           lua = [ "stylua" ];
-          sql = [ "sql_formatter" ];
+          sql = [ "sleek" ];
           python = [ "ruff_format" ];
           rust = [ "rustfmt" ];
           # nu = [ "nufmt" ];
@@ -347,4 +347,3 @@
     };
   };
 }
-

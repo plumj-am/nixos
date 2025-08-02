@@ -21,6 +21,9 @@
     prettierd
     nixfmt-rfc-style
     nufmt
+    dprint
+    ruff
+    sleek
 
     nodejs
     python3
