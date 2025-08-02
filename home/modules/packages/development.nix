@@ -2,7 +2,6 @@
   pkgs,
   ...
 }:
-
 {
   home.packages = with pkgs; [
     # language servers
@@ -26,10 +25,16 @@
     sleek
 
     nodejs
+    bun
     python3
     gcc
     gnumake
     vscode-extensions.vadimcn.vscode-lldb.adapter
+
+    steam-run
+    moon
+    proto
+    mprocs
 
     claude-code
     gemini-cli
