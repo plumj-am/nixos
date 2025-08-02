@@ -1,3 +1,15 @@
+def zellij-update-tabname [] {
+    if ("ZELLIJ" in $env) {
+        let tab_name = if ((pwd) == $env.HOME) {
+            "~"
+        } else {
+            (pwd | path parse | get stem)
+        };
+        
+        zellij action rename-tab $tab_name;
+    }
+}
+
 def "cargo search" [query: string, --limit=10] {
     ^cargo search $query --limit $limit
     | lines

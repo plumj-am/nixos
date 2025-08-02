@@ -106,6 +106,11 @@
       use_ansi_coloring = true;
 
       hooks = {
+        env_change = {
+          PWD = [
+            ''{ |before, after| zellij-update-tabname }''
+          ];
+        };
         display_output = "if (term size).columns >= 100 { table -e } else { table }";
         pre_prompt = [
           ''
