@@ -1,4 +1,7 @@
 { lib, ... }:
+let
+  mkLuaInline = lib.generators.mkLuaInline;
+in
 {
   programs.nvf.settings.vim = {
     diagnostics = {
@@ -22,7 +25,7 @@
           test_executor = "background";
         };
         server = {
-          default_settings = lib.generators.mkLuaInline ''
+          default_settings = mkLuaInline ''
             {
               ["rust-analyzer"] = {
                 assist = {
@@ -127,7 +130,7 @@
     lsp.servers = {
       "*" = {
         root_markers = [ ".git" ];
-        capabilities = lib.generators.mkLuaInline ''
+        capabilities = mkLuaInline ''
           					vim.tbl_deep_extend(
           						"force",
           						{},
@@ -200,7 +203,7 @@
         ];
         settings = {
           json = {
-            schema = lib.generators.mkLuaInline ''require("schemastore").json.schemas()'';
+            schema = mkLuaInline ''require("schemastore").json.schemas()'';
             validate = {
               enable = true;
             };
@@ -221,7 +224,7 @@
             };
             workspaces = {
               checkThirdParty = true;
-              library = lib.generators.mkLuaInline ''vim.api.nvim_get_runtime_file("", true)'';
+              library = mkLuaInline ''vim.api.nvim_get_runtime_file("", true)'';
             };
           };
         };
@@ -306,7 +309,7 @@
           "--stdio"
         ];
         init_options = {
-          plugins = lib.generators.mkLuaInline ''
+          plugins = mkLuaInline ''
             {
               {
                 name = "@vue/typescript-plugin",
@@ -329,7 +332,7 @@
               # Avoid TypeError: Cannot read properties of undefined (reading 'length')
               url = "";
             };
-            schemas = lib.generators.mkLuaInline ''require("schemastore").yaml.schemas()'';
+            schemas = mkLuaInline ''require("schemastore").yaml.schemas()'';
           };
         };
       };
