@@ -1,7 +1,8 @@
 {
   imports = [
     ./nvim/themes.nix
-    ./nvim/plugins.nix
+    ./nvim/plugins-nvf.nix
+    ./nvim/plugins-custom.nix
     ./nvim/options.nix
     ./nvim/keymaps.nix
     ./nvim/autocmds.nix
