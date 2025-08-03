@@ -27,15 +27,9 @@
     nodejs
     bun
     python3
-    # gcc # disabled for avr-gcc
+    gcc
     gnumake
     vscode-extensions.vadimcn.vscode-lldb.adapter
-
-    # embedded stuff for avr-hal
-    pkgsCross.avr.buildPackages.gcc
-    pkg-config
-    avrdude
-    ravedude
 
     steam-run
     moon
