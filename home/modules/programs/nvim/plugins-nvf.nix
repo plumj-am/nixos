@@ -247,6 +247,7 @@
       enable = true;
       setupOpts = {
         defaults = {
+          selection_caret = "";
           color_devicons = true;
           layout_config = {
             horizontal = {
