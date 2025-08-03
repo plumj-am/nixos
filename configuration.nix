@@ -1,10 +1,12 @@
 {
   pkgs,
+  lib,
   ...
 }:
 {
 
   nixpkgs.config.allowUnfree = true;
+  # nixpkgs.config.allowUnsupportedSystem = true;
 
   wsl = {
     enable = true;
@@ -17,8 +19,15 @@
     # usb passthrough
     usbip = {
       enable = true;
-      autoAttach = [ ]; # add device IDs like "4-1" to auto-attach USB devices
+      # autoAttach = [ "1-9" ]; # add device IDs like "4-1" to auto-attach USB devices
     };
+
+    # for usbip
+    extraBin = [
+      { src = "${lib.getExe' pkgs.coreutils-full "ls"}"; }
+      { src = "${lib.getExe pkgs.bash}"; }
+      { src = "${lib.getExe' pkgs.linuxPackages.usbip "usbip"}"; }
+    ];
 
     wslConf = {
       automount.root = "/mnt";
@@ -52,6 +61,7 @@
     extraGroups = [
       "wheel" # sudo access
       "docker" # if using Docker
+      "dialout"
     ];
   };
 
