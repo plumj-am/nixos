@@ -16,6 +16,7 @@
     statusline = {
       lualine = {
         enable = true;
+        globalStatus = false;
         componentSeparator.left = "";
         componentSeparator.right = "";
         sectionSeparator.left = "";
