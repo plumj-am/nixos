@@ -1,6 +1,6 @@
-vim.bo.tabstop = 8
-vim.bo.shiftwidth = 8
-vim.bo.softtabstop = 8
+vim.o.tabstop = 8
+vim.o.shiftwidth = 8
+vim.o.softtabstop = 8
 
 local bufnr = vim.api.nvim_get_current_buf()
 vim.keymap.set("n", "ga", function()
