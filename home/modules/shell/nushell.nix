@@ -22,6 +22,13 @@
       cdc = "cd ~/nixos-config";
       cdp = "cd ~/projects";
       cdu = "cd ~/nixos-config/home/modules/shell";
+
+      # steam-run for dynamically linked executables
+      moon = "steam-run moon";
+      proto = "steam-run proto";
+      bun = "steam-run bun";
+      bunx = "steam-run bunx";
+      npx = "steam-run npx";
     };
     settings = {
       buffer_editor = "nvim";
