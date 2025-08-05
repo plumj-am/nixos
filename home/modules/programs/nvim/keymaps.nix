@@ -5,6 +5,61 @@ in
 {
   programs.nvf.settings.vim = {
     keymaps = [
+      # debugging
+      {
+        key = "<leader>db";
+        mode = "n";
+        action = ":lua require('dap').toggle_breakpoint()<CR>";
+        desc = "toggle breakpoint";
+      }
+      {
+        key = "<leader>dB";
+        mode = "n";
+        action = ":lua require('dap').toggle_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>";
+        desc = "run last";
+      }
+      {
+        key = "<leader>dc";
+        mode = "n";
+        action = ":lua require('dap').continue()<CR>";
+        desc = "continue";
+      }
+      {
+        key = "<leader>du";
+        mode = "n";
+        action = ":lua require('dapui').toggle()<CR>";
+        desc = "open/close debugger ui";
+      }
+      {
+        key = "<leader>do";
+        mode = "n";
+        action = ":lua require('dap').step_over()<CR>";
+        desc = "step over";
+      }
+      {
+        key = "<leader>di";
+        mode = "n";
+        action = ":lua require('dap').step_into()<CR>";
+        desc = "step into";
+      }
+      {
+        key = "<leader>dO";
+        mode = "n";
+        action = ":lua require('dap').step_out()<CR>";
+        desc = "step out";
+      }
+      {
+        key = "<leader>dp";
+        mode = "n";
+        action = ":lua require('dap').step_back()<CR>";
+        desc = "step back";
+      }
+      {
+        key = "<leader>dr";
+        mode = "n";
+        action = ":lua require('dap').run_last()<CR>";
+        desc = "restart last session";
+      }
       # clipboard mappings (thanks primeagen)
       {
         key = "<leader>p";

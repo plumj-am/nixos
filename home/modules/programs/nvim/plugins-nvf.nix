@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   programs.nvf.settings.vim = {
 
@@ -21,7 +21,19 @@
         componentSeparator.right = "";
         sectionSeparator.left = "";
         sectionSeparator.right = "";
-        disabledFiletypes = [ "no-neck-pain" ];
+        setupOpts = {
+          options = {
+            disabled_filetypes = [
+              "no-neck-pain"
+              "dapui_watches"
+              "dapui_scopes"
+              "dapui_breakpoints"
+              "dapui_stacks"
+              "dap-repl"
+              "dapui_console"
+            ];
+          };
+        };
         theme = "auto";
         icons.enable = true;
         activeSection = {

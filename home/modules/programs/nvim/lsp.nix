@@ -152,7 +152,8 @@ in
         ];
         init_options = {
           typescript = {
-            tsdk = "node_modules/typescript/lib";
+            # should make this dynamic but now only care about 1 project
+            tsdk = "../node_modules/typescript/lib";
           };
         };
       };
@@ -308,17 +309,17 @@ in
           "typescript-language-server"
           "--stdio"
         ];
-        init_options = {
-          plugins = mkLuaInline ''
-            {
-              {
-                name = "@vue/typescript-plugin",
-                location = vim.fn.exepath("vue-language-server"),
-                languages = { "vue" },
-              }
-            }
-          '';
-        };
+        # init_options = {
+        # plugins = mkLuaInline ''
+        #   {
+        #     {
+        #       name = "@vue/typescript-plugin",
+        #       location = vim.fn.exepath("vue-language-server"),
+        #       languages = { "vue" },
+        #     }
+        #   }
+        # '';
+        # };
       };
 
       "yamlls" = {

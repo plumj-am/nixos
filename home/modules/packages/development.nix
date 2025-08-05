@@ -30,6 +30,7 @@
     gcc
     gnumake
     vscode-extensions.vadimcn.vscode-lldb.adapter
+    vscode-js-debug
 
     steam-run
     moon

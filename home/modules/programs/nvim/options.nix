@@ -53,7 +53,7 @@
       colorcolumn = "80";
       showmode = false;
       showtabline = 0;
-      signcolumn = "no";
+      signcolumn = "auto";
       undofile = true;
       swapfile = false;
       backup = false;
