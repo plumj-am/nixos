@@ -655,9 +655,27 @@ in
         lazy = true;
         setupModule = "dapui";
         setupOpts = {
-          controls = {
-            enabled = false;
-          };
+          controls.enabled = false;
+          layouts = [
+            {
+              elements = [
+                "scopes"
+                "breakpoints"
+                "stacks"
+                "watches"
+              ];
+              size = 70;
+              position = "right";
+            }
+            {
+              elements = [
+                "repl"
+                "console"
+              ];
+              size = 10;
+              position = "bottom";
+            }
+          ];
         };
         # fix statusline for dap-ui widgets
         after = ''
