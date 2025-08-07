@@ -337,6 +337,12 @@ in
           };
         };
       };
+
+      "asm_lsp" = {
+        filetypes = [ "asm" ];
+        cmd = [ "asm-lsp" ];
+        root_markers = [ ".git" ];
+      };
     };
 
     languages = {
