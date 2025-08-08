@@ -11,11 +11,11 @@
   imports = [
     nvf.homeManagerModules.default
     ./modules/common.nix
-    ./modules/packages/development.nix
-    ./modules/packages/system.nix
-    ./modules/packages/rust.nix
+    ./modules/packages.nix
+    ./modules/rust.nix
     ./modules/programs
     ./modules/shell
+    ./modules/editor
   ];
 
   _module.args = {

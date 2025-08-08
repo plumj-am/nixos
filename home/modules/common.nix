@@ -3,7 +3,7 @@
   home.sessionVariables = {
     EDITOR = "nvim";
     SHELL = "${pkgs.nushell}/bin/nu";
-    BROWSER = "wslview";  # use wslview for WSL
+    BROWSER = "wslview"; # use wslview for WSL
     TERMINAL = "zellij";
   };
 
@@ -12,3 +12,4 @@
     "$HOME/.cargo/bin"
   ];
 }
+

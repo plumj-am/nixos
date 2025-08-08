@@ -1,14 +1,9 @@
 {
   imports = [
-    ./nvim/themes.nix
-    ./nvim/plugins-nvf.nix
-    ./nvim/plugins-custom.nix
-    ./nvim/options.nix
-    ./nvim/keymaps.nix
-    ./nvim/autocmds.nix
-    ./nvim/lsp.nix
-    ./nvim/highlights.nix
+    ./nvim
   ];
+
+  programs.vim.enable = true;
 
   programs.neovim = {
     enable = true;

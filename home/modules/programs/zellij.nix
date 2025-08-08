@@ -22,7 +22,7 @@ in
       scrollback_editor = "nvim";
 
       # Layout and sessions
-      default_layout = "default";
+      default_layout = "james";
       session_serialization = true;
       auto_layout = true;
 
@@ -46,9 +46,6 @@ in
       pane_viewport_serialization = true;
       scrollback_lines_to_serialize = 5000;
 
-      # Plugin settings
-      plugin_dir = "plugins";
-
       # Environment
       env = {
         EDITOR = "nvim";
@@ -59,8 +56,6 @@ in
 
       # Advanced
       mirror_session = false;
-
-      layout_dir = "layouts";
 
       on_force_close = "detach";
       simplified_ui_default_plugin = "compact-bar";
@@ -588,6 +583,11 @@ in
         ];
       };
 
+      load_plugins = [
+        "https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm"
+        "https://github.com/karimould/zellij-forgot/releases/latest/download/zellij_forgot.wasm"
+
+      ];
       plugins = {
         tab-bar = {
           path = "tab-bar";
@@ -600,12 +600,6 @@ in
         };
         compact-bar = {
           path = "compact-bar";
-        };
-        zjstatus = {
-          path = "https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm";
-        };
-        zellij_forgot = {
-          path = "https://github.com/karimould/zellij-forgot/releases/latest/download/zellij_forgot.wasm";
         };
       };
 
@@ -622,7 +616,7 @@ in
         layout {
           pane
           pane size=1 borderless=true {
-            plugin location="zjstatus" {
+            plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
               format_left   "{mode} {session}"
               format_center "{tabs}"
               format_right  "{datetime}"
@@ -688,6 +682,42 @@ in
             }
           }
         }
+      '';
+
+      james = ''
+                        layout {
+                        	pane
+                        	pane size=1 borderless=true {
+                        		plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
+                        			hide_frame_for_single_pane "true"
+
+                        			format_left   "{mode} #[fg=gray]{session} {tabs}"
+                        			format_center "{command_cwd}"
+                        			format_right  "{command_git_branch} {datetime}"
+                        			format_space  ""
+
+                        			mode_normal        "#[fg=#FFFFFF,bg=green] NORMAL "
+                        			mode_locked        "#[fg=#FFFFFF,bg=red] LOCKED "
+
+                        			tab_normal         "#[fg=#FFFFFF,bg=#7F7F7F] {index} :: {name} "
+                        			tab_active         "#[fg=#FFFFFF,bg=blue,bold] {index} :: {name} "
+
+                        			datetime           "#[fg=gray,bold] {format}"
+                        			datetime_format		 "%H:%M"
+                        			datetime_timezone  "Europe/Warsaw"
+
+                        			command_git_branch_command		"git rev-parse --abbrev-ref HEAD"
+                        			command_git_branch_format			"#[fg=blue]{stdout}"
+                        			command_git_branch_interval		"10"
+                        			command_git_branch_rendermode "static"
+
+                							command_cwd_command						"pwd"
+                							command_cwd_format						"#[fg=green] {stdout}"
+        											command_cwd_interval					"5"
+                        			command_cwd_rendermode				"static"
+                        		}
+                        	}
+                        }
       '';
     };
   };

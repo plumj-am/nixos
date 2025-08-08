@@ -1,4 +1,12 @@
 {
+  programs.gh = {
+    enable = true;
+    settings = {
+      git_protocol = "ssh";
+      editor = "nvim";
+    };
+  };
+
   programs.git = {
     enable = true;
     userName = "James Plummer";
@@ -11,8 +19,17 @@
 
     lfs.enable = true;
 
+    difftastic.enable = true;
+
     extraConfig = {
       init.defaultBranch = "master";
+
+      log.date = "iso";
+      column.ui = "auto";
+
+      commit.verbose = true;
+      commit.gpgSign = true;
+      tag.gpgSign = true;
 
       status = {
         branch = true;
@@ -26,7 +43,13 @@
       rebase = {
         autoStash = true;
         missingCommitsCheck = "warn";
+        updateRefs = true;
       };
+      rerere.enabled = true;
+
+      fetch.fsckObjects = true;
+      receive.fsckObjects = true;
+      transfer.fsckObjects = true;
 
       branch.sort = "-committerdate";
       tag.sort = "-taggerdate";
@@ -39,6 +62,9 @@
         pager = "delta";
         excludesfile = "~/.global_gitignore";
       };
+
+      diff.algorithm = "histogram";
+      diff.colorMoved = "default";
 
       interactive.diffFilter = "delta --color-only";
 

@@ -1,5 +1,10 @@
+{ pkgs, ... }:
 {
+  home.packages = [
+    pkgs.jjui
+  ];
   programs.git.difftastic.enable = true;
+  programs.mergiraf.enable = true;
   programs.jujutsu = {
     enable = true;
     settings = {
@@ -14,8 +19,10 @@
       };
       ui = {
         editor = "nvim";
-        default-command = "ls";
+        default-command = "log --summary";
+        conflict-marker-style = "snapshot";
         diff-editor = ":builtin";
+        graph-style = "square";
         diff-formatter = [
           "difft"
           "--color"
@@ -27,6 +34,36 @@
       git = {
         sign-on-push = true; # sign in bulk on push
         auto-local-bookmark = true;
+      };
+      aliases = {
+        push = [
+          "git"
+          "push"
+        ];
+        P = [
+          "git"
+          "push"
+        ];
+        fetch = [
+          "git"
+          "fetch"
+        ];
+        f = [
+          "git"
+          "fetch"
+        ];
+        init = [
+          "git"
+          "init"
+          "--colocate"
+        ];
+        clone = [
+          "git"
+          "clone"
+          "--colocate"
+        ];
+        d = [ "diff" ];
+        ds = [ "diff --staged" ];
       };
     };
   };

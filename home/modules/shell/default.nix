@@ -6,5 +6,7 @@
     ./zoxide.nix
     ./carapace.nix
     ./starship.nix
+    ./eza.nix
   ];
 }
+

@@ -1,8 +1,19 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 let
   mkLuaInline = lib.generators.mkLuaInline;
 in
 {
+  home.packages = [
+    pkgs.lua-language-server
+    pkgs.typescript-language-server
+    pkgs.svelte-language-server
+    pkgs.tailwindcss-language-server
+    pkgs.astro-language-server
+    pkgs.nixd
+    pkgs.gopls
+    pkgs.vscode-json-languageserver
+    pkgs.yaml-language-server
+  ];
   programs.nvf.settings.vim = {
     diagnostics = {
       enable = true;

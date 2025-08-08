@@ -3,8 +3,10 @@
     ./git.nix
     ./gpg.nix
     ./zellij.nix
-    ./neovim.nix
     ./bacon.nix
     ./jujutsu.nix
+    ./fd.nix
+    ./fzf.nix
+    ./btop.nix
   ];
 }
