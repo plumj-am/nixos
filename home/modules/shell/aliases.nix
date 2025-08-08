@@ -24,10 +24,6 @@
     ko = "kondo";
     g = "git";
 
-    # system
-    rebuild = "~/nixos-config/rebuild.nu";
-    rollback = "~/nixos-config/rollback.nu";
-
     # theme
     tt = "toggle-theme";
   };

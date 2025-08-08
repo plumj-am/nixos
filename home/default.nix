@@ -28,20 +28,34 @@
       ;
   };
 
-  # generated scripts for cross-platform rebuilds
+  # generated scripts for rebuilds
   home.file."nixos-config/rebuild.nu" = {
     text = ''
       #!/usr/bin/env nu
 
-      def main [] {
+      def main [--remote] {
           let os = (sys host | get name)
           
-          if $os == "Darwin" {
-              print "Building Darwin configuration..."
-              sudo darwin-rebuild switch --flake ~/nixos-config#darwin
+          let flake = if $remote {
+              if $os == "Darwin" {
+                  "github:jamesukiyo/nixos#darwin"
+              } else {
+                  "github:jamesukiyo/nixos#nixos"
+              }
           } else {
-              print "Building NixOS configuration..."
-              sudo nixos-rebuild switch --flake ~/nixos-config#nixos
+              if $os == "Darwin" {
+                  "/Users/james/nixos-config#darwin"
+              } else {
+                  "/home/james/nixos-config#nixos"
+              }
+          }
+          
+          if $os == "Darwin" {
+              print $"Building Darwin configuration from ($flake)..."
+              sudo darwin-rebuild switch --flake $flake
+          } else {
+              print $"Building NixOS configuration from ($flake)..."
+              sudo nixos-rebuild switch --flake $flake
           }
       }
     '';
@@ -52,15 +66,29 @@
     text = ''
       #!/usr/bin/env nu
 
-      def main [] {
+      def main [--remote] {
           let os = (sys host | get name)
           
-          if $os == "Darwin" {
-              print "Rolling back Darwin configuration..."
-              sudo darwin-rebuild switch --rollback --flake ~/nixos-config#darwin
+          let flake = if $remote {
+              if $os == "Darwin" {
+                  "github:jamesukiyo/nixos#darwin"
+              } else {
+                  "github:jamesukiyo/nixos#nixos"
+              }
           } else {
-              print "Rolling back NixOS configuration..."
-              sudo nixos-rebuild switch --rollback --flake ~/nixos-config#nixos
+              if $os == "Darwin" {
+                  "/Users/james/nixos-config#darwin"
+              } else {
+                  "/home/james/nixos-config#nixos"
+              }
+          }
+          
+          if $os == "Darwin" {
+              print $"Rolling back Darwin configuration from ($flake)..."
+              sudo darwin-rebuild switch --rollback --flake $flake
+          } else {
+              print $"Rolling back NixOS configuration from ($flake)..."
+              sudo nixos-rebuild switch --rollback --flake $flake
           }
       }
     '';

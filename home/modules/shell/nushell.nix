@@ -15,7 +15,8 @@
       mp = "mprocs";
       ko = "kondo";
       g = "git";
-      rebuild = "sudo nixos-rebuild switch --flake /home/james/nixos-config#nixos";
+      rebuild = "~/nixos-config/rebuild.nu";
+      rollback = "~/nixos-config/rollback.nu";
       tt = "toggle-theme";
       cdr = "cd (git rev-parse --show-toplevel | str trim)";
       cdn = "cd ~/nixos-config/dotfiles/nvim";
