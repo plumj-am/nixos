@@ -86,7 +86,8 @@
       aa = "add .";
       ap = "add -p";
       lg = "log --all --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
-      st = "status";
+      st = "status -s";
+      sta = "status";
       sw = "switch";
       oneln = "log --oneline";
       sus = "!f() { git branch --set-upstream-to $1; }; f";
