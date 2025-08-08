@@ -13,6 +13,7 @@
     ./modules/common.nix
     ./modules/packages.nix
     ./modules/rust.nix
+    ./modules/fonts.nix
     ./modules/programs
     ./modules/shell
     ./modules/editor
