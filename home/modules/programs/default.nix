@@ -8,5 +8,6 @@
     ./fd.nix
     ./fzf.nix
     ./btop.nix
+    ./alacritty.nix
   ];
 }

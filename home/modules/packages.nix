@@ -1,5 +1,6 @@
 {
   pkgs,
+  lib,
   ...
 }:
 {
@@ -9,10 +10,7 @@
   home.packages = [
     pkgs.nodejs
     pkgs.python3
-    pkgs.gcc
-    pkgs.gnumake
 
-    pkgs.steam-run
     pkgs.moon
     pkgs.proto
     pkgs.mprocs
@@ -25,6 +23,16 @@
     pkgs.tree
     pkgs.hyperfine
     pkgs.curl
+  ]
+  ++ lib.optionals pkgs.stdenv.isLinux [
     pkgs.wget
+    pkgs.gcc
+    pkgs.gnumake
+    pkgs.steam-run
+  ]
+  ++ lib.optionals pkgs.stdenv.isDarwin [
+    pkgs.arc-browser
+    pkgs.alacritty
+    pkgs.karabiner-elements
   ];
 }

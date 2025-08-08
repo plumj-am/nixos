@@ -25,8 +25,8 @@
     g = "git";
 
     # system
-    rebuild = "sudo nixos-rebuild switch --flake /home/james/nixos-config#nixos";
-    rollback = "sudo nixos-rebuild switch --rollback --flake /home/james/nixos-config#nixos";
+    rebuild = "~/nixos-config/rebuild.nu";
+    rollback = "~/nixos-config/rollback.nu";
 
     # theme
     tt = "toggle-theme";

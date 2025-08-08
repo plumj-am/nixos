@@ -1,4 +1,10 @@
 {
+  pkgs,
+  lib,
+  ...
+}:
+
+{
   programs.nvf.settings.vim = {
     enableLuaLoader = true;
     additionalRuntimePaths = [
@@ -22,7 +28,7 @@
     clipboard = {
       enable = true;
       registers = "unnamedplus";
-      providers.wl-copy.enable = true;
+      providers.wl-copy.enable = lib.mkIf pkgs.stdenv.isLinux true;
     };
 
     globals = {
