@@ -59,19 +59,19 @@
         preloadindex = true;
         editor = "nvim";
         longpaths = true;
-        pager = "delta";
+        # pager = "delta";
         excludesfile = "~/.global_gitignore";
       };
 
       diff.algorithm = "histogram";
       diff.colorMoved = "default";
 
-      interactive.diffFilter = "delta --color-only";
-
-      delta = {
-        navigate = true;
-        dark = true;
-      };
+      # interactive.diffFilter = "delta --color-only";
+      #
+      # delta = {
+      #   navigate = true;
+      #   dark = true;
+      # };
 
       merge.conflictStyle = "zdiff3";
 
