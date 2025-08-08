@@ -34,5 +34,6 @@
     pkgs.arc-browser
     pkgs.alacritty
     pkgs.karabiner-elements
+    pkgs.raycast
   ];
 }
