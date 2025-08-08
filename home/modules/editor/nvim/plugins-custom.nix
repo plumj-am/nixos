@@ -144,7 +144,7 @@ in
           src = pkgs.fetchFromGitHub {
             owner = "Aasim-A";
             repo = "scrollEOF.nvim";
-            rev = "master";
+            rev = "2575109749b4bf3a0bf979a17947b3c1e8c5137e";
             sha256 = "sha256-hHoS5WgIsbuVEOUbUBpDRxIwdNoR/cAfD+hlBWzaxug=";
           };
         };
@@ -302,8 +302,8 @@ in
           src = pkgs.fetchFromGitHub {
             owner = "NStefan002";
             repo = "screenkey.nvim";
-            rev = "main";
-            sha256 = "sha256-94bafW0DP4Q9jfE4voiEvUy13JVTs6UP5qgLG2SbeZk=";
+            rev = "363730221a97bd4199beb878c54aa75facfe0dfe";
+            sha256 = "sha256-lu2LuBgBPSeJuQn2H63Sz2UhE7Nz6KEQS9N6aEg88tE=";
           };
         };
         cmd = [ "Screenkey" ];
@@ -429,7 +429,7 @@ in
           src = pkgs.fetchFromGitHub {
             owner = "eliseshaffer";
             repo = "darklight.nvim";
-            rev = "main";
+            rev = "5db97e2d132ebdf32c7e5edb5b0c68be9ae43038";
             sha256 = "sha256-/MdGhcZ0kQsAzDl02lJK4zMf/5fC5Md0iuvWrz0ZR6Q=";
           };
         };
@@ -448,7 +448,7 @@ in
           src = pkgs.fetchFromGitHub {
             owner = "ej-shafran";
             repo = "compile-mode.nvim";
-            rev = "main";
+            rev = "d436d8f11f156de619baba72cd1fbc4216586cd6";
             sha256 = "sha256-T2l/lEOiO+X5TfAT1mcsyg307nktT+YxxlpbCloNLp4=";
           };
           doCheck = false;
