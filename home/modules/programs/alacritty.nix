@@ -33,7 +33,8 @@ in
       };
 
       terminal.shell = {
-        program = "nu -e '/etc/profiles/per-user/james/bin/zellij attach james --create'";
+        program = "/etc/profiles/per-user/james/bin/zellij";
+        args = ["attach" "james" "--create"];
       };
     };
   };
