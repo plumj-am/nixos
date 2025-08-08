@@ -1,5 +1,5 @@
 def toggle-theme [theme?: string] {
-    let nvim_source_file = $"($env.HOME)/nixos-config/home/modules/programs/nvim/set_colorscheme.lua"
+    let nvim_source_file = $"($env.HOME)/nixos-config/home/modules/editor/nvim/set_colorscheme.lua"
 	let zellij_config_file = $"($env.HOME)/nixos-config/home/modules/programs/zellij.nix"
     let starship_config_file = $"($env.HOME)/nixos-config/home/modules/shell/starship.nix"
     let dark_mode_file = $"($env.HOME)/.config/dark-mode"
@@ -90,7 +90,7 @@ def toggle-theme [theme?: string] {
 
 # check current theme
 def current-theme [] {
-    let nvim_source_file = $"($env.HOME)/nixos-config/dotfiles/nvim/lua/set_colorscheme.lua"
+    let nvim_source_file = $"($env.HOME)/nixos-config/home/modules/editor/nvim/set_colorscheme.lua"
     try {
         let content = open $nvim_source_file
         if ($content | str contains "local current_theme = dark_theme") {
