@@ -1,13 +1,15 @@
 {
   imports = [
-    ./git.nix
-    ./gpg.nix
-    ./zellij.nix
+    ./alacritty.nix
     ./bacon.nix
-    ./jujutsu.nix
+    ./bat.nix
+    ./btop.nix
     ./fd.nix
     ./fzf.nix
-    ./btop.nix
-    ./alacritty.nix
+    ./git.nix
+    ./gpg.nix
+    ./jujutsu.nix
+    ./ripgrep.nix
+    ./zellij.nix
   ];
 }
