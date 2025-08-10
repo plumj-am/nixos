@@ -262,8 +262,10 @@
       enable = true;
       setupOpts = {
         defaults = {
-          selection_caret = "";
-          color_devicons = true;
+          prompt_prefix = " ";
+          selection_caret = " ";
+          entry_prefix = " ";
+          color_devicons = false;
           layout_config = {
             horizontal = {
               prompt_position = "top";
