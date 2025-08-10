@@ -13,7 +13,19 @@ in
         desc = "toggle breakpoint";
       }
       {
+        key = "<F1>";
+        mode = "n";
+        action = ":lua require('dap').toggle_breakpoint()<CR>";
+        desc = "toggle breakpoint";
+      }
+      {
         key = "<leader>dB";
+        mode = "n";
+        action = ":lua require('dap').toggle_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>";
+        desc = "run last";
+      }
+      {
+        key = "<F2>";
         mode = "n";
         action = ":lua require('dap').toggle_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>";
         desc = "run last";
@@ -25,7 +37,19 @@ in
         desc = "continue";
       }
       {
+        key = "<F3>";
+        mode = "n";
+        action = ":lua require('dap').continue()<CR>";
+        desc = "continue";
+      }
+      {
         key = "<leader>du";
+        mode = "n";
+        action = ":lua require('dapui').toggle()<CR>";
+        desc = "open/close debugger ui";
+      }
+      {
+        key = "<F4>";
         mode = "n";
         action = ":lua require('dapui').toggle()<CR>";
         desc = "open/close debugger ui";
@@ -37,7 +61,19 @@ in
         desc = "step over";
       }
       {
+        key = "<RIGHT>";
+        mode = "n";
+        action = ":lua require('dap').step_over()<CR>";
+        desc = "step over";
+      }
+      {
         key = "<leader>di";
+        mode = "n";
+        action = ":lua require('dap').step_into()<CR>";
+        desc = "step into";
+      }
+      {
+        key = "<DOWN>";
         mode = "n";
         action = ":lua require('dap').step_into()<CR>";
         desc = "step into";
@@ -49,13 +85,31 @@ in
         desc = "step out";
       }
       {
+        key = "<UP>";
+        mode = "n";
+        action = ":lua require('dap').step_out()<CR>";
+        desc = "step out";
+      }
+      {
         key = "<leader>dp";
         mode = "n";
         action = ":lua require('dap').step_back()<CR>";
         desc = "step back";
       }
       {
+        key = "<LEFT>";
+        mode = "n";
+        action = ":lua require('dap').step_back()<CR>";
+        desc = "step back";
+      }
+      {
         key = "<leader>dr";
+        mode = "n";
+        action = ":lua require('dap').run_last()<CR>";
+        desc = "restart last session";
+      }
+      {
+        key = "<F5>";
         mode = "n";
         action = ":lua require('dap').run_last()<CR>";
         desc = "restart last session";

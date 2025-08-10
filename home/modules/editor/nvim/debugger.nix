@@ -132,7 +132,57 @@
                 		end
                 end, { desc = 'Add default single LLDB formatted watch' })
 
+                vim.keymap.set('n', '<F8>', function()
+                		local word = vim.fn.expand('<cword>')
+                		if word and word ~= "" then
+                				local dapui = require('dapui')
+                				dapui.elements.watches.add(word)
+                		end
+                end, { desc = 'Add default single LLDB formatted watch' })
+
                 vim.keymap.set('n', '<leader>dA', function()
+                		local word = vim.fn.expand('<cword>')
+                		if word and word ~= "" then
+                				local dapui = require('dapui')
+                				
+                				-- Format options - key maps to suffix
+                				local formats = {
+                						d = ',d',  -- (d)ecimal
+                						c = ',c',  -- (c)haracter
+                						u = ',u',  -- (u)nsigned
+                						b = ',b',  -- (b)inary
+                						x = ',x',  -- he(x)
+                						o = ',o',  -- (o)ctal
+                						f = ',f',  -- (f)loat
+                						p = ',p',  -- (p)ointer
+                						s = ',s',  -- (s)tring
+                						y = ',y',  -- b(y)tes
+                						Y = ',Y',  -- b(Y)tes+ASCII
+                				}
+                				
+                				local help_text = '(d)ecimal (c)haracter (u)nsigned (b)inary he(x) (o)ctal (f)loat (p)ointer (s)tring b(y)tes b(Y)tes+ASCII'
+                				
+                				vim.ui.input({ 
+                						prompt = 'Format for "' .. word .. '" - ' .. help_text .. ': ',
+                						default = ""
+                				}, function(input)
+                						if input and input ~= "" then
+                								local char = input:sub(1, 1):lower()
+                								local suffix = formats[char]
+                								
+                								if suffix then
+                										dapui.elements.watches.add(word .. suffix)
+                										print('Added: ' .. word .. suffix)
+                								else
+                										print('Invalid format: ' .. char)
+                								end
+                						end
+                				end)
+                		else
+                				print('No word under cursor')
+                		end
+                end, { desc = 'Add specific single LLDB formatted watch' })
+                vim.keymap.set('n', '<F9>', function()
                 		local word = vim.fn.expand('<cword>')
                 		if word and word ~= "" then
                 				local dapui = require('dapui')
