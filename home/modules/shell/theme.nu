@@ -29,10 +29,10 @@ def toggle-theme [theme?: string] {
     }
 
     # skip if already the desired theme
-    if $current_theme == $new_theme {
-        print $"Already in ($current_theme) mode"
-        return
-    }
+    # if $current_theme == $new_theme {
+    #     print $"Already in ($current_theme) mode"
+    #     return
+    # }
 
     print $"Switching from ($current_theme) to ($new_theme) theme..."
 
