@@ -48,6 +48,37 @@ in
         command = "%s/\s\+$//e";
         desc = "remove trailing whitespace on save";
       }
+      {
+        event = [
+          "BufRead"
+          "BufNewFile"
+        ];
+        pattern = [
+          "*.asm"
+          "*.inc"
+        ];
+        callback = mkLuaInline ''
+                    function()
+                      local lines = vim.api.nvim_buf_get_lines(0, 0, 10, false)
+                      local content = table.concat(lines, "\n")
+                      
+                      if content:match("format ELF64 executable 3") then
+                        vim.bo.filetype = "fasm"
+          							vim.o.shiftwidth = 4
+          							vim.o.tabstop = 4
+          							vim.o.softtabstop = 4
+          							vim.o.expandtab = true -- for nicer indentation
+                      else
+                        vim.bo.filetype = "nasm"
+          							vim.o.shiftwidth = 4
+          							vim.o.tabstop = 4
+          							vim.o.softtabstop = 4
+          							vim.o.expandtab = true -- for nicer indentation
+                      end
+                    end
+        '';
+        desc = "detect fasm vs nasm by format directive";
+      }
     ];
 
     # TODO: fix not displaying red
@@ -58,4 +89,3 @@ in
     '';
   };
 }
-

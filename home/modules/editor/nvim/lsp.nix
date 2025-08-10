@@ -350,7 +350,11 @@ in
       };
 
       "asm_lsp" = {
-        filetypes = [ "asm" ];
+        filetypes = [
+          "asm"
+          "fasm"
+          "nasm"
+        ];
         cmd = [ "asm-lsp" ];
         root_markers = [ ".git" ];
       };

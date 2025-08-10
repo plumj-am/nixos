@@ -116,6 +116,8 @@
         http
         nu
         rust
+        nasm
+        asm
       ];
       fold = true;
       indent.enable = true;
