@@ -59,7 +59,7 @@ in
         ];
         callback = mkLuaInline ''
                     function()
-                      local lines = vim.api.nvim_buf_get_lines(0, 0, 10, false)
+                      local lines = vim.api.nvim_buf_get_lines(0, 0, 40, false)
                       local content = table.concat(lines, "\n")
                       
                       if content:match("format ELF64 executable 3") then
