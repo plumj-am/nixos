@@ -23,6 +23,7 @@
     pkgs.tree
     pkgs.hyperfine
     pkgs.curl
+    pkgs.tokei
   ]
   ++ lib.optionals pkgs.stdenv.isLinux [
     pkgs.wget
