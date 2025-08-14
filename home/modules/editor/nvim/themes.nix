@@ -36,6 +36,15 @@
           };
         };
       };
+
+      "vimplugin-zenbones.nvim" = {
+        package = pkgs.vimPlugins.zenbones-nvim;
+      };
+
+      # for zenbones
+      "vimplugin-lush.nvim" = {
+        package = pkgs.vimPlugins.lush-nvim;
+      };
     };
   };
 }
