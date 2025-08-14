@@ -83,7 +83,7 @@
     aliases = {
       diff-stat = "diff --stat --ignore-space-change -r";
       cm = "commit -m";
-      ca = "commit -a";
+      ca = "commit --amend";
       aa = "add .";
       ap = "add -p";
       lg = "log --all --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
