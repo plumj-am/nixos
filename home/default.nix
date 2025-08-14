@@ -41,13 +41,13 @@
               if $os == "Darwin" {
                   "github:jamesukiyo/nixos#darwin"
               } else {
-                  "github:jamesukiyo/nixos#nixos"
+                  "github:jamesukiyo/nixos#nixos-wsl"
               }
           } else {
               if $os == "Darwin" {
                   "/Users/james/nixos-config#darwin"
               } else {
-                  "/home/james/nixos-config#nixos"
+                  "/home/james/nixos-config#nixos-wsl"
               }
           }
           
@@ -74,13 +74,13 @@
               if $os == "Darwin" {
                   "github:jamesukiyo/nixos#darwin"
               } else {
-                  "github:jamesukiyo/nixos#nixos"
+                  "github:jamesukiyo/nixos#nixos-wsl"
               }
           } else {
               if $os == "Darwin" {
                   "/Users/james/nixos-config#darwin"
               } else {
-                  "/home/james/nixos-config#nixos"
+                  "/home/james/nixos-config#nixos-wsl"
               }
           }
           

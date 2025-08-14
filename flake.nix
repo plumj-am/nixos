@@ -33,7 +33,7 @@
         linux = "x86_64-linux";
         darwin = "aarch64-darwin";
       };
-      
+
       mkHomeConfig = system: {
         inherit
           system
@@ -41,14 +41,14 @@
           nvf
           bacon-ls
           ;
-        pkgs = import nixpkgs { 
-          inherit system; 
+        pkgs = import nixpkgs {
+          inherit system;
           config.allowUnfree = true;
         };
       };
     in
     {
-      nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+      nixosConfigurations."nixos-wsl" = nixpkgs.lib.nixosSystem {
         system = systems.linux;
         modules = [
           nixos-wsl.nixosModules.wsl
@@ -64,7 +64,7 @@
           )
         ];
       };
-      
+
       darwinConfigurations.darwin = nix-darwin.lib.darwinSystem {
         system = systems.darwin;
         modules = [
