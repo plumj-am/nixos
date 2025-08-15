@@ -275,16 +275,24 @@
           path_display = [ "truncate" ];
           sorting_strategy = "ascending";
           dynamic_preview_title = true;
+          vimgrep_arguments = [
+            "rg"
+            "--color=never"
+            "--no-heading"
+            "--with-filename"
+            "--line-number"
+            "--column"
+            "--smart-case"
+            "--hidden"
+            # "--no-ignore"
+          ];
         };
         extensions = {
           workspaces = { };
         };
       };
-      mappings = {
-        findFiles = "<leader>ff";
-        liveGrep = "<leader>fg";
-        buffers = "<leader>fb";
-      };
+      # handled in ./keymaps.nix
+      mappings = { };
     };
 
     notes = {

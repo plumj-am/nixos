@@ -285,7 +285,25 @@ in
         action = "<cmd>lua MiniBufremove.delete()<CR>";
         desc = "close buffer";
       }
-      # missing from builtin telescope
+      # telescope
+      {
+        key = "<leader>ff";
+        mode = "n";
+        action = "<cmd>lua require('telescope.builtin').find_files()<CR>";
+        desc = "Telescope find_files";
+      }
+      {
+        key = "<leader>fg";
+        mode = "n";
+        action = "<cmd>lua require('telescope.builtin').live_grep()<CR>";
+        desc = "Telescope live grep";
+      }
+      {
+        key = "<leader>fb";
+        mode = "n";
+        action = "<cmd>lua require('telescope.builtin').buffers()<CR>";
+        desc = "Telescope buffers";
+      }
       {
         key = "<leader>ft";
         mode = "n";
