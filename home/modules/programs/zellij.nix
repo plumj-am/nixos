@@ -702,7 +702,7 @@ in
                         			tab_normal         "#[fg=#FFFFFF,bg=#7F7F7F] {index} :: {name} "
                         			tab_active         "#[fg=#FFFFFF,bg=blue,bold] {index} :: {name} "
 
-                        			datetime           "#[fg=gray,bold] {format}"
+                        			datetime           "#[fg=blue,bold] {format}"
                         			datetime_format		 "%H:%M"
                         			datetime_timezone  "Europe/Warsaw"
 
