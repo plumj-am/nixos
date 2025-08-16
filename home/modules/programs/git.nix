@@ -82,6 +82,8 @@
 
     aliases = {
       diff-stat = "diff --stat --ignore-space-change -r";
+      p = "pull";
+      P = "push";
       cm = "commit -m";
       ca = "commit --amend";
       aa = "add .";
