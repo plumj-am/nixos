@@ -24,6 +24,10 @@ in
           ext = ".md";
         }
       ];
+      zenbones = {
+        lightness = "bright";
+        italic_strings = false;
+      };
     };
 
     lazy.plugins = {
@@ -58,6 +62,48 @@ in
             key = "<C-s>";
             action = ":lua ToggleDirbuf()<CR>";
             desc = "Open dirbuf";
+          }
+        ];
+      };
+
+      "trouble.nvim" = {
+        package = pkgs.vimPlugins.trouble-nvim;
+        lazy = true;
+        setupModule = "trouble";
+        setupOpts = {
+          auto_close = true;
+          modes = {
+            diagnostics = {
+              win = {
+                size = 0.3;
+              };
+            };
+          };
+        };
+        keys = [
+          {
+            mode = "n";
+            key = "<leader>tr";
+            action = "<cmd>Trouble diagnostics toggle focus=true filter.buf=0<cr>";
+            desc = "Open trouble for current file";
+          }
+          {
+            mode = "n";
+            key = "<leader>te";
+            action = "<cmd>Trouble diagnostics toggle focus=true<cr>";
+            desc = "Open trouble for workspace";
+          }
+          {
+            mode = "n";
+            key = "<leader>tq";
+            action = "<cmd>Trouble qflist toggle<cr>";
+            desc = "Open trouble quickfix list";
+          }
+          {
+            mode = "n";
+            key = "<leader>tdq";
+            action = "<cmd>TodoQuickFix<cr>";
+            desc = "Open trouble quickfix list";
           }
         ];
       };

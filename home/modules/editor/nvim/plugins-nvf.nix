@@ -76,27 +76,6 @@
       };
     };
 
-    lsp = {
-      trouble = {
-        enable = true;
-        mappings = {
-          quickfix = "<leader>tq";
-          documentDiagnostics = "<leader>tr";
-          workspaceDiagnostics = "<leader>te";
-        };
-        setupOpts = {
-          auto_close = true;
-          modes = {
-            diagnostics = {
-              win = {
-                size = 0.3;
-              };
-            };
-          };
-        };
-      };
-    };
-
     # treesitter
     treesitter = {
       enable = true;
