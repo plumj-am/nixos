@@ -164,7 +164,7 @@ in
         init_options = {
           typescript = {
             # should make this dynamic but now only care about 1 project
-            tsdk = ''vim.fn.getcwd() .. "/node_modules/typescript/lib")'';
+            tsdk = mkLuaInline ''vim.fn.getcwd() .. "/node_modules/typescript/lib"'';
           };
         };
       };
