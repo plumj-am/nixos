@@ -56,6 +56,7 @@ in
         pattern = [
           "*.asm"
           "*.inc"
+          "*.j"
         ];
         callback = mkLuaInline ''
                     function()
