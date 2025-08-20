@@ -100,10 +100,10 @@ in
                 -- checkOnSave and diagnostics must be disabled for bacon-ls
                 checkOnSave = {
                   command = "clippy",
-                  enable = false,
+                  enable = true,
                 },
                 diagnostics = {
-                  enable = false,
+                  enable = true,
                   experimental = {
                     enable = true,
                   },
@@ -168,24 +168,25 @@ in
           };
         };
       };
-      bacon-ls = {
-        root_markers = [
-          "Cargo.toml"
-          "Cargo.lock"
-          ".bacon-locations"
-        ];
-        filetypes = [ "rust" ];
-        cmd = [ "bacon-ls" ];
-        settings = {
-          init_options = {
-            locationsFile = ".bacon-locations";
-            updateOnSave = true;
-            updateOnSaveWaitMillis = 100;
-            runBaconInBackground = true;
-            synchronizeAllOpenFilesWaitMillis = 1000;
-          };
-        };
-      };
+      # too inconsistent right now
+      # bacon-ls = {
+      #   root_markers = [
+      #     "Cargo.toml"
+      #     "Cargo.lock"
+      #     ".bacon-locations"
+      #   ];
+      #   filetypes = [ "rust" ];
+      #   cmd = [ "bacon-ls" ];
+      #   settings = {
+      #     init_options = {
+      #       locationsFile = ".bacon-locations";
+      #       updateOnSave = true;
+      #       updateOnSaveWaitMillis = 100;
+      #       runBaconInBackground = true;
+      #       synchronizeAllOpenFilesWaitMillis = 1000;
+      #     };
+      #   };
+      # };
 
       gopls = {
         root_markers = [
