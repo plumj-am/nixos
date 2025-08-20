@@ -329,7 +329,7 @@ in
         };
       };
 
-      "nvzone-typr" = {
+      "typr" = {
         enabled = false;
         package = pkgs.vimPlugins.nvzone-typr;
         cmd = [
@@ -533,7 +533,7 @@ in
         lazy = true;
       };
 
-      "nvzone-volt" = {
+      "volt" = {
         package = pkgs.vimPlugins.nvzone-volt;
         lazy = true;
       };
