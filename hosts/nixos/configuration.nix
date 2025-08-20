@@ -47,6 +47,7 @@
         "pipe-operators"
       ];
       auto-optimise-store = true;
+      trusted-users = [ "james" ];
     };
     gc = {
       automatic = true;
