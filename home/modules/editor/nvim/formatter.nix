@@ -57,7 +57,7 @@
             "prettier"
           ];
           md = [ "dprint" ];
-          toml = [ "dprint" ];
+          toml = [ "taplo" ];
           lua = [ "stylua" ];
           sql = [ "sleek" ];
           python = [ "ruff_format" ];
