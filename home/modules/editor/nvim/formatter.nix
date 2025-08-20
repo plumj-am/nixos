@@ -9,12 +9,23 @@
     pkgs.dprint
     pkgs.ruff
     pkgs.sleek
+    pkgs.taplo
+    pkgs.mdformat
   ];
 
   programs.nvf.settings.vim.formatter = {
     conform-nvim = {
       enable = true;
       setupOpts = {
+        formatters = {
+          mdformat = {
+            append_args = [
+              "--number"
+              "--wrap"
+              "80"
+            ];
+          };
+        };
         formatters_by_ft = {
           astro = [
             "prettierd"
@@ -56,7 +67,7 @@
             "prettierd"
             "prettier"
           ];
-          md = [ "dprint" ];
+          markdown = [ "mdformat" ];
           toml = [ "taplo" ];
           lua = [ "stylua" ];
           sql = [ "sleek" ];

@@ -24,8 +24,6 @@
     pkgs.hyperfine
     pkgs.curl
     pkgs.tokei
-
-    pkgs.taplo
   ]
   ++ lib.optionals pkgs.stdenv.isLinux [
     pkgs.wget
