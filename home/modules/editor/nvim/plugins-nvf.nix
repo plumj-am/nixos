@@ -7,6 +7,7 @@
         enable = true;
         setupOpts = {
           keymaps = {
+            accept_word = "<RIGHT>";
             accept_suggestion = "<TAB>";
           };
         };
