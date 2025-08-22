@@ -5,6 +5,9 @@
 }:
 {
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.permittedInsecurePackages = [
+    "arc-browser-1.106.0-66192"
+  ];
 
   nix = {
     settings = {
