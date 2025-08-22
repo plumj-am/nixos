@@ -217,6 +217,7 @@
     };
 
     visuals = {
+      indent-blankline.enable = true;
       nvim-web-devicons.enable = true;
       fidget-nvim = {
         enable = true;

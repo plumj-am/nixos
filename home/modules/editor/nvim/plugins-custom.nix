@@ -523,6 +523,26 @@ in
         '';
       };
 
+      "smear-cursor.nvim" = {
+        package = pkgs.vimPlugins.smear-cursor-nvim;
+        lazy = false;
+        setupModule = "smear_cursor";
+        setupOpts = {
+          stiffness = 0.8;
+          trailing_stiffness = 0.7;
+          damping = 0.95;
+          distance_stop_animating = 0.5;
+          never_draw_over_target = false;
+          time_interval = 7;
+          smear_between_buffers = true;
+          smear_between_neighbor_lines = true;
+          scroll_buffer_space = true;
+          legacy_computing_symbols_support = false;
+          smear_insert_mode = false;
+          smear_to_cmd = false;
+        };
+      };
+
       "plenary.nvim" = {
         package = pkgs.vimPlugins.plenary-nvim;
         lazy = true;
