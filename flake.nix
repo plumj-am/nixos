@@ -44,6 +44,9 @@
         pkgs = import nixpkgs {
           inherit system;
           config.allowUnfree = true;
+          config.permittedInsecurePackages = [
+            "arc-browser-1.106.0-66192"
+          ];
         };
       };
     in
