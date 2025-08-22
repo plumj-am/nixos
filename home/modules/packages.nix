@@ -24,6 +24,12 @@
     pkgs.hyperfine
     pkgs.curl
     pkgs.tokei
+
+    # carapace
+    pkgs.carapace
+    pkgs.fish
+    pkgs.zsh
+    pkgs.inshellisense
   ]
   ++ lib.optionals pkgs.stdenv.isLinux [
     pkgs.wget
