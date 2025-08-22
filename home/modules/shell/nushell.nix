@@ -4,6 +4,7 @@
     shellAliases = {
       cat = "bat";
       ls = "eza";
+      sl = "eza";
       ll = "eza -la";
       la = "eza -a";
       lsa = "eza -a";
@@ -11,10 +12,14 @@
       v = "vim";
       vi = "vim";
       nv = "nvim";
+      nvi = "nvim";
       m = "moon";
       mp = "mprocs";
       ko = "kondo";
       g = "git";
+      gi = "git";
+      gti = "git";
+      gt = "git";
       rebuild = "~/nixos-config/rebuild.nu";
       rollback = "~/nixos-config/rollback.nu";
       # for some reason this doesn't work and is called every time I open a new shell
@@ -26,6 +31,13 @@
       cdp = "cd ~/projects";
       cdu = "cd ~/nixos-config/home/modules/shell";
 
+      rm = "rm --recursive --verbose";
+      cp = "cp --recursive --verbose --progress";
+      mv = "mv --verbose";
+      mk = "mkdir";
+
+      tree = "eza --tree --git-ignore --group-directories-first";
+
       # steam-run for dynamically linked executables
       moon = "steam-run moon";
       proto = "steam-run proto";
@@ -34,8 +46,21 @@
       npx = "steam-run npx";
     };
     settings = {
+      edit_mode = "vi";
       buffer_editor = "nvim";
       show_banner = false;
+
+      recursion_limit = 100;
+      error_style = "fancy";
+
+      completions = {
+        algorithm = "substring";
+        sort = "smart";
+        case_sensitive = false;
+        quick = true;
+        partial = true;
+        use_ls_colors = true;
+      };
 
       ls = {
         use_ls_colors = true;
@@ -100,7 +125,8 @@
       };
 
       history = {
-        max_size = 10000;
+        file_format = "sqlite";
+        max_size = 10000000;
         sync_on_enter = true;
       };
 
