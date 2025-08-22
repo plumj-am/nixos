@@ -1,5 +1,5 @@
 let
-  dark_theme = "gruber-darker";
+  dark_theme = "gruvbox-dark";
   light_theme = "gruvbox-light";
 in
 {
@@ -15,7 +15,7 @@ in
 
     settings = {
       # Theme and appearance
-      theme = light_theme;
+      theme = dark_theme;
 
       # Shell and editor
       default_shell = "nu";
