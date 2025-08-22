@@ -5,15 +5,26 @@ $env.config.menus = [
 	only_buffer_difference: false
 	marker: "| "
 	type: {
-		layout: columnar
-		columns: 4
-		col_width: 20
-		col_padding: 2
+		layout: ide
+		min_completion_width: 0
+		max_completion_width: 150
+		max_completion_height: 25
+		padding: 0
+		border: false
+		cursor_offset: 0
+		description_mode: "prefer_right"
+		min_description_width: 0
+		max_description_width: 50
+		max_description_height: 10
+		description_offset: 1
+		correct_cursor_pos: true
 	}
 	style: {
-		text: green
-		selected_text: green_reverse
+		text: white
+		selected_text: white_reverse
 		description_text: yellow
+		match_text: { attr: u }
+		selected_match_text: { attr: ur }
 	}
 }
 {
@@ -25,9 +36,8 @@ $env.config.menus = [
 		page_size: 10
 	}
 	style: {
-		text: green
-		selected_text: green_reverse
-		description_text: yellow
+		text: white
+		selected_text: white_reverse
 	}
 }
 {
