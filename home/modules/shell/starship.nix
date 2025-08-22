@@ -4,9 +4,9 @@
     enableBashIntegration = true;
     enableNushellIntegration = true;
     settings = {
-      palette = "light_theme";
+      palette = "dark_theme";
 
-      format = " $username$hostname$directory$git_branch$git_state$git_status$cmd_duration$line_break$character";
+      format = " $username$hostname$directory$git_branch$git_state$git_status$cmd_duration$line_break$line_break";
 
       palettes.light_theme = {
         username_color = "#2d2d2d";
