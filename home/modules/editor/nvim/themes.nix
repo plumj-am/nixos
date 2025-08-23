@@ -45,6 +45,12 @@
       "vimplugin-lush.nvim" = {
         package = pkgs.vimPlugins.lush-nvim;
       };
+
+      "gruvbox-material.nvim" = {
+        package = pkgs.vimPlugins.gruvbox-material-nvim;
+        setup = "require('gruvbox-material').setup({contrast='hard'})";
+
+      };
     };
   };
 }
