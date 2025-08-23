@@ -13,14 +13,20 @@
     ];
 
     experimental-features = [
+      "cgroups"
       "flakes"
       "nix-command"
       "pipe-operators"
     ];
 
     builders-use-substitutes = true;
-    show-trace = true;
-    warn-dirty = false;
+    flake-registry           = "";
+    http-connections         = 50;
+    lazy-trees               = true;
+    show-trace               = true;
+    trusted-users            = [ "root" "@wheel" ];
+    use-cgroups              = true;
+    warn-dirty               = false;
   };
 
   inputs = {
