@@ -16,27 +16,22 @@
     bacon-ls.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs =
-    {
-      self,
-      nixpkgs,
-      nixos-wsl,
-      nix-darwin,
-      home-manager,
-      fenix,
-      nvf,
-      bacon-ls,
-      ...
-    }:
-    let
-      systems = {
-        linux = "x86_64-linux";
-        darwin = "aarch64-darwin";
-      };
+  outputs = inputs @ { nixpkgs, nixos-wsl, nix-darwin, home-manager, fenix, nvf, bacon-ls, ... }: let
+    inherit (nixpkgs.lib) const extend;
+
+    # extend nixpkgs.lib with nix-darwin.lib, then our custom lib
+    lib' = nixpkgs.lib.extend (const <| const <| nix-darwin.lib);
+    lib  = lib'.extend <| import ./lib inputs;
+
+    systems = {
+      linux = "x86_64-linux";
+      darwin = "aarch64-darwin";
+    };
 
       mkHomeConfig = system: {
         inherit
           system
+          lib
           fenix
           nvf
           bacon-ls
@@ -49,39 +44,40 @@
           ];
         };
       };
-    in
-    {
-      nixosConfigurations."nixos-wsl" = nixpkgs.lib.nixosSystem {
-        system = systems.linux;
-        modules = [
-          nixos-wsl.nixosModules.wsl
-          ./hosts/nixos/configuration.nix
-          home-manager.nixosModules.home-manager
-          (
-            { pkgs, ... }:
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.james = import ./home/default.nix (mkHomeConfig systems.linux);
-            }
-          )
-        ];
-      };
+  in {
+    inherit inputs lib;
 
-      darwinConfigurations.darwin = nix-darwin.lib.darwinSystem {
-        system = systems.darwin;
-        modules = [
-          ./hosts/darwin/configuration.nix
-          home-manager.darwinModules.home-manager
-          (
-            { pkgs, ... }:
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.james = import ./home/default.nix (mkHomeConfig systems.darwin);
-            }
-          )
-        ];
-      };
+    nixosConfigurations."nixos-wsl" = lib.nixosSystem' {
+      system = systems.linux;
+      modules = [
+        nixos-wsl.nixosModules.wsl
+        ./hosts/nixos/configuration.nix
+        home-manager.nixosModules.home-manager
+        (
+          { pkgs, ... }:
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.james = import ./home/default.nix (mkHomeConfig systems.linux);
+          }
+        )
+      ];
     };
+
+    darwinConfigurations.darwin = lib.darwinSystem' {
+      system = systems.darwin;
+      modules = [
+        ./hosts/darwin/configuration.nix
+        home-manager.darwinModules.home-manager
+        (
+          { pkgs, ... }:
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.james = import ./home/default.nix (mkHomeConfig systems.darwin);
+          }
+        )
+      ];
+    };
+  };
 }

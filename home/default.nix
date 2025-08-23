@@ -1,5 +1,6 @@
 {
   pkgs,
+  lib,
   fenix,
   system,
   nvf,
@@ -10,14 +11,9 @@
 {
   imports = [
     nvf.homeManagerModules.default
-    ./modules/common.nix
-    ./modules/packages.nix
-    ./modules/rust.nix
-    ./modules/fonts.nix
-    ./modules/programs
-    ./modules/shell
-    ./modules/editor
-  ];
+  ] ++ (lib.collectNix ./modules
+    |> lib.remove ./modules/shell/aliases.nix  # data file, not a module
+  );
 
   _module.args = {
     inherit
