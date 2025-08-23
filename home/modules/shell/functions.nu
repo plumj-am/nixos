@@ -40,7 +40,7 @@ def pwd [] {
   $env.PWD | str replace $nu.home-path '~'
 }
 
-def gitsummary [
+def "git summary" [
     --count (-n): int = 999999
 ] {
     try {
@@ -50,6 +50,7 @@ def gitsummary [
         | histogram committer merger
         | sort-by merger
         | reverse
+		| table -i 1 # start index from 1
     } catch {
         print "Error: Make sure you're in a git repository"
     }
