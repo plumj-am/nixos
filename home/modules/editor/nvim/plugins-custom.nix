@@ -529,11 +529,12 @@ in
         setupModule = "smear_cursor";
         setupOpts = {
           stiffness = 0.8;
-          trailing_stiffness = 0.7;
+          trailing_stiffness = 0.6;
           damping = 0.95;
           distance_stop_animating = 0.5;
-          never_draw_over_target = false;
-          time_interval = 7;
+          # matrix_pixel_threshold = 0.5;
+          never_draw_over_target = true;
+          time_interval = 10;
           smear_between_buffers = true;
           smear_between_neighbor_lines = true;
           scroll_buffer_space = true;
