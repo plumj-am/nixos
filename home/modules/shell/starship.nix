@@ -1,12 +1,16 @@
+{ lib, ... }:
+let
+  inherit (lib) enabled;
+in
 {
-  programs.starship = {
-    enable = true;
+  programs.starship = enabled {
     enableBashIntegration = true;
     enableNushellIntegration = true;
     settings = {
-      palette = "dark_theme";
-
-      format = " $username$hostname$directory$git_branch$git_state$git_status$cmd_duration$line_break$line_break";
+      scan_timeout = 100;
+      command_timeout = 1000;
+      palette = "light_theme";
+      format = "[┏━](success_color)$status[━](success_color) $directory [━━](success_color) $git_branch$git_state$git_status$git_metrics $cmd_duration$line_break$character";
 
       palettes.light_theme = {
         username_color = "#2d2d2d";
@@ -37,36 +41,38 @@
       username = {
         disabled = false;
         show_always = true;
-        format = "[$user]($style) ";
+        format = "[$user]($style)";
         style_user = "username_color";
       };
 
       hostname = {
         ssh_symbol = "s";
-        style = "hostname_color";
-        format = "[\\[$hostname\\]]($style) ";
+        format = "[\\[$hostname\\]](hostname_color)";
+      };
+
+      status = {
+        disabled = false;
+        # success_symbol = " "; # to always show
+        format = "[┫$status┣]($style)";
+        failure_style = "error_color";
+        success_style = "success_color";
       };
 
       directory = {
-        format = "[$path]($style) ";
-        style = "directory_color";
+        format = "[$path](directory_color)";
         use_os_path_sep = false;
         read_only = "RO";
       };
 
       character = {
-        success_symbol = "[❯](success_color)";
-        error_symbol = "[❯](error_color)";
+        success_symbol = "[┃](success_color)";
+        error_symbol = "[┃](success_color)";
       };
 
-      git_branch = {
-        format = "[@$branch]($style)";
-        style = "branch_color";
-      };
+      git_branch.format = "[$branch](branch_color)";
 
       git_status = {
-        format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](status_highlight) ($ahead_behind$stashed)]($style)";
-        style = "status_color";
+        format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](status_highlight) ($ahead_behind$stashed)](status_color) ";
         conflicted = "​";
         untracked = "​";
         modified = "​";
@@ -76,14 +82,20 @@
         stashed = "≡";
       };
 
-      git_state = {
-        format = "\\([$state( $progress_current/$progress_total)]($style)\\) ";
-        style = "state_color";
+      git_state.format = "\\([$state( $progress_current/$progress_total)](state_color)\\)";
+
+      git_metrics = {
+        disabled = false;
+        format = "[$added](bold green) [$deleted](bold red)";
       };
 
-      cmd_duration = {
-        format = "[$duration]($style) ";
-        style = "duration_color";
+      cmd_duration.format = "[$duration](duration_color)";
+
+      nix_shell = {
+        symbol = "❄️";
+        format = "[$symbol](branch_color)";
+        impure_msg = "";
+        pure_msg = "";
       };
     };
   };
