@@ -77,7 +77,7 @@
 
       credential.helper = "!gh auth git-credential";
 
-      "url \"http://github.com/\"".insteadOf = "gh:";
+      "url \"https://github.com/\"".insteadOf = "gh:";
     };
 
     aliases = {
