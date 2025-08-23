@@ -50,6 +50,7 @@
       edit_mode = "vi";
       buffer_editor = "nvim";
       show_banner = false;
+      footer_mode = "auto";
 
       recursion_limit = 100;
       error_style = "fancy";
@@ -168,7 +169,8 @@
       ${builtins.readFile ./theme.nu}
     '';
     envFile.text = ''
-      $env.CARAPACE_BRIDGES = "zsh,fish,bash,inshellisense,clap"
+            $env.CARAPACE_BRIDGES = "zsh,fish,bash,inshellisense,clap"
+      			$env.LS_COLORS = (vivid generate gruvbox-dark-hard)
     '';
   };
 }

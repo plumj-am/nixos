@@ -25,6 +25,8 @@
     pkgs.curl
     pkgs.tokei
 
+    pkgs.vivid
+
     # carapace
     pkgs.carapace
     pkgs.fish
