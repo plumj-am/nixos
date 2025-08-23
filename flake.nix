@@ -1,6 +1,28 @@
 {
   description = "jamesukiyo's NixOS WSL Configuration";
 
+  nixConfig = {
+    extra-substituters = [
+      "https://nix-community.cachix.org/"
+      "https://cache.nixos.org/"
+    ];
+
+    extra-trusted-public-keys = [
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+    ];
+
+    experimental-features = [
+      "flakes"
+      "nix-command"
+      "pipe-operators"
+    ];
+
+    builders-use-substitutes = true;
+    show-trace = true;
+    warn-dirty = false;
+  };
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
@@ -12,6 +34,8 @@
     fenix.url = "github:nix-community/fenix";
     fenix.inputs.nixpkgs.follows = "nixpkgs";
     nvf.url = "github:notashelf/nvf";
+    nvf.inputs.nixpkgs.follows = "nixpkgs";
+    
     bacon-ls.url = "github:crisidev/bacon-ls";
     bacon-ls.inputs.nixpkgs.follows = "nixpkgs";
   };
