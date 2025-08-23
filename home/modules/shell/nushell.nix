@@ -13,6 +13,7 @@
       vi = "vim";
       nv = "nvim";
       nvi = "nvim";
+      claude = "claude --continue";
       m = "moon";
       mp = "mprocs";
       ko = "kondo";
