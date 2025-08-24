@@ -15,9 +15,6 @@
         path = ./globals.lua;
       })
       (builtins.path {
-        path = ./helpers.lua;
-      })
-      (builtins.path {
         path = ./set_colorscheme.lua;
       })
       (builtins.path {
