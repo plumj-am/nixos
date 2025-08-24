@@ -34,6 +34,11 @@ function ColorMyPencils(color, theme, transparent)
 	if color == "rasmus" then
 		FixRasmus()
 	end
+	if color == "gruvbox-material" and theme == "light" then
+		vim.api.nvim_set_hl(0, "LineNrAbove", { fg = "#7C6F64", bold = true })
+		vim.api.nvim_set_hl(0, "LineNrBelow", { fg = "#7C6F64", bold = true })
+		vim.api.nvim_set_hl(0, "LineNr", { fg = "#4f3829", bold = true })
+	end
 end
 
 function DisableItalic()
