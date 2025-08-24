@@ -37,14 +37,14 @@ in
           documentation = {
             window = {
               border = "single";
-              winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:CursorLine,Search:None";
+              winhighlight = "Normal:Normal,FloatBorder:None,CursorLine:CursorLine,Search:None";
             };
             auto_show = true;
             auto_show_delay_ms = 250;
           };
           menu = {
             border = "single";
-            winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:CursorLine,Search:None";
+            winhighlight = "Normal:Normal,FloatBorder:None,CursorLine:CursorLine,Search:None";
 
             draw = {
               columns = lib.generators.mkLuaInline ''
