@@ -7,7 +7,7 @@ def toggle-theme [theme?: string] {
     # determine current theme from source file
     let current_theme = try {
         let content = open $nvim_source_file
-        if ($content | str contains "local current_theme = dark_theme") {
+        if ($content | str contains "local use_light_theme = false") {
             "dark"
         } else {
             "light"
@@ -39,9 +39,10 @@ def toggle-theme [theme?: string] {
     # update neovim source file in dotfiles
     try {
         let content = open $nvim_source_file
-        let updated = $content | str replace --regex 'local current_theme = \w+_theme' $'local current_theme = ($new_theme)_theme'
+        let flag_value = if $new_theme == "light" { "true" } else { "false" }
+        let updated = $content | str replace --regex 'local use_light_theme = \w+' $'local use_light_theme = ($flag_value)'
         $updated | save $nvim_source_file --force
-        print $"updated nvim source to ($new_theme)_theme"
+        print $"updated nvim use_light_theme to ($flag_value)"
     } catch { |e|
         print $"failed to update nvim theme: ($e.msg)"
         return
@@ -93,7 +94,7 @@ def current-theme [] {
     let nvim_source_file = $"($env.HOME)/nixos-config/home/modules/editor/nvim/set_colorscheme.lua"
     try {
         let content = open $nvim_source_file
-        if ($content | str contains "local current_theme = dark_theme") {
+        if ($content | str contains "local use_light_theme = false") {
             "dark"
         } else {
             "light"
