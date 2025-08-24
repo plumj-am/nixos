@@ -1,4 +1,7 @@
 { pkgs, lib, ... }:
+let
+  inherit (lib) enabled;
+in
 {
   programs.nvf.settings.vim = {
 
@@ -9,6 +12,75 @@
           keymaps = {
             accept_word = "<RIGHT>";
             accept_suggestion = "<TAB>";
+          };
+        };
+      };
+    };
+
+    autocomplete.blink-cmp = enabled {
+      mappings = {
+        next = null;
+        previous = null;
+        scrollDocsDown = "<C-d>";
+        scrollDocsUp = "<C-u>";
+      };
+      setupOpts = {
+        keymap = {
+          preset = "enter";
+        };
+        completion = {
+          list = {
+            selection = {
+              preselect = false;
+            };
+          };
+          documentation = {
+            window = {
+              border = "single";
+              winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:CursorLine,Search:None";
+            };
+            auto_show = true;
+            auto_show_delay_ms = 250;
+          };
+          menu = {
+            border = "single";
+            winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:CursorLine,Search:None";
+
+            draw = {
+              columns = lib.generators.mkLuaInline ''
+                {
+                  { "kind" },
+                  { "label", gap = 1 }
+                }
+              '';
+            };
+          };
+        };
+        cmdline = {
+          enabled = false;
+        };
+        signature = {
+          enabled = true;
+        };
+        sources = {
+          default = [
+            "lsp"
+            "path"
+            "snippets"
+            "buffer"
+          ];
+          providers = {
+            buffer = {
+              opts = lib.generators.mkLuaInline ''
+                {
+                  get_bufnrs = function()
+                    return vim.tbl_filter(function(bufnr)
+                      return vim.bo[bufnr].buftype == ""
+                    end, vim.api.nvim_list_bufs())
+                  end,
+                }
+              '';
+            };
           };
         };
       };
@@ -35,7 +107,7 @@
             ];
           };
         };
-        theme = "auto";
+        theme = "gruvbox";
         icons.enable = true;
         activeSection = {
           a = [ ''{ "mode" }'' ];
@@ -73,61 +145,6 @@
             ''{ "filetype" }''
           ];
           z = [ ''{ "location" }'' ];
-        };
-      };
-    };
-
-    # treesitter
-    treesitter = {
-      enable = true;
-      grammars = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [
-        javascript
-        typescript
-        svelte
-        markdown
-        css
-        html
-        lua
-        vim
-        json
-        yaml
-        vimdoc
-        go
-        http
-        nu
-        rust
-        nasm
-        asm
-      ];
-      fold = true;
-      indent.enable = true;
-      highlight.enable = true;
-      textobjects.enable = true;
-      # autoTagHtml = true;
-      context = {
-        enable = true;
-        setupOpts = {
-          max_lines = 3;
-          separator = "-";
-        };
-      };
-    };
-
-    languages = {
-      # rust = {
-      #   crates.enable = true;
-      #   dap.enable = true;
-      # };
-
-      markdown.extensions.render-markdown-nvim = {
-        enable = true;
-        setupOpts = {
-          completions = {
-            blink = {
-              enabled = true;
-            };
-          };
-          file_types = [ "markdown" ];
         };
       };
     };

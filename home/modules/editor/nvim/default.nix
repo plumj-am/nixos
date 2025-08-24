@@ -6,8 +6,7 @@
     ./options.nix
     ./keymaps.nix
     ./autocmds.nix
-    ./lsp.nix
-    ./highlights.nix
+    ./langs.nix
     ./debugger.nix
     ./formatter.nix
   ];

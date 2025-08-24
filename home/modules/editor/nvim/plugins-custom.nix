@@ -1,7 +1,4 @@
-{ pkgs, lib, ... }:
-let
-  mkLuaInline = lib.generators.mkLuaInline;
-in
+{ pkgs, ... }:
 {
   programs.nvf.settings.vim = {
 
@@ -483,8 +480,8 @@ in
         setupModule = "darklight";
         setupOpts = {
           mode = "custom";
-          light = "function() ColorMyPencils('light') end";
-          dark = "function() ColorMyPencils('dark') end";
+          light = "function() ColorMyPencils('gruvbox-material', 'light', false) end";
+          dark = "function() ColorMyPencils('gruvbox-material', 'dark', false) end";
         };
       };
 
@@ -557,72 +554,6 @@ in
       "volt" = {
         package = pkgs.vimPlugins.nvzone-volt;
         lazy = true;
-      };
-
-      "blink.cmp" = {
-        package = pkgs.vimPlugins.blink-cmp;
-        lazy = false;
-        setupModule = "blink-cmp";
-        setupOpts = {
-          keymap = {
-            preset = "enter";
-          };
-          completion = {
-            list = {
-              selection = {
-                preselect = false;
-              };
-            };
-            documentation = {
-              window = {
-                border = "single";
-                winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:CursorLine,Search:None";
-              };
-              auto_show = true;
-              auto_show_delay_ms = 250;
-            };
-            menu = {
-              border = "single";
-              winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:CursorLine,Search:None";
-
-              draw = {
-                columns = lib.generators.mkLuaInline ''
-                  {
-                    { "kind" },
-                    { "label", gap = 1 }
-                  }
-                '';
-              };
-            };
-          };
-          cmdline = {
-            enabled = false;
-          };
-          signature = {
-            enabled = true;
-          };
-          sources = {
-            default = [
-              "lsp"
-              "path"
-              "snippets"
-              "buffer"
-            ];
-            providers = {
-              buffer = {
-                opts = lib.generators.mkLuaInline ''
-                  {
-                    get_bufnrs = function()
-                      return vim.tbl_filter(function(bufnr)
-                        return vim.bo[bufnr].buftype == ""
-                      end, vim.api.nvim_list_bufs())
-                    end,
-                  }
-                '';
-              };
-            };
-          };
-        };
       };
     };
   };

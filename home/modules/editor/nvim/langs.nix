@@ -1,16 +1,10 @@
 { lib, pkgs, ... }:
 let
   mkLuaInline = lib.generators.mkLuaInline;
+  inherit (lib) enabled;
 in
 {
   home.packages = [
-    pkgs.lua-language-server
-    pkgs.typescript-language-server
-    pkgs.svelte-language-server
-    pkgs.tailwindcss-language-server
-    pkgs.astro-language-server
-    pkgs.nixd
-    pkgs.gopls
     pkgs.vscode-json-languageserver
     pkgs.yaml-language-server
   ];
@@ -138,6 +132,149 @@ in
       };
     };
 
+    #==============#
+    # LANG SUPPORT #
+    #==============#
+    languages = {
+      html = enabled {
+        treesitter = enabled;
+      };
+
+      css = enabled {
+        treesitter = enabled;
+        lsp = enabled;
+        format = enabled {
+          type = "prettierd";
+        };
+      };
+
+      rust = enabled {
+        treesitter = enabled;
+        dap = enabled;
+        # lsp handled in ./langs.nix
+        crates = enabled;
+        format = enabled;
+      };
+
+      assembly = enabled {
+        treesitter = enabled;
+        lsp = enabled;
+      };
+
+      astro = enabled {
+        treesitter = enabled;
+        lsp = enabled;
+        format = enabled {
+          type = "prettierd";
+        };
+      };
+
+      ts = enabled {
+        treesitter = enabled;
+        lsp = enabled {
+          server = "denols";
+        };
+        format = enabled {
+          type = "prettierd";
+        };
+      };
+
+      lua = enabled {
+        treesitter = enabled;
+        lsp = enabled;
+        format = enabled;
+      };
+
+      nix = enabled {
+        treesitter = enabled;
+        lsp = enabled {
+          server = "nixd";
+        };
+        format = enabled {
+          type = "nixfmt";
+        };
+      };
+
+      nu = enabled {
+        treesitter = enabled;
+        lsp = enabled;
+      };
+
+      svelte = enabled {
+        treesitter = enabled;
+        lsp = enabled;
+        format = enabled {
+          type = "prettier";
+        };
+      };
+
+      tailwind = enabled {
+        lsp = enabled;
+      };
+
+      yaml = enabled {
+        treesitter = enabled;
+        # lsp handled in ./langs.nix
+      };
+
+      go = enabled {
+        treesitter = enabled;
+        lsp = enabled;
+        dap = enabled;
+        format = enabled {
+          type = "gofumpt";
+        };
+      };
+
+      markdown = enabled {
+        treesitter = enabled;
+        lsp = enabled;
+        extensions.render-markdown-nvim = enabled {
+          setupOpts = {
+            completions = {
+              blink = {
+                enabled = true;
+              };
+            };
+            file_types = [
+              "markdown"
+              "md"
+            ];
+          };
+        };
+      };
+    };
+
+    #============#
+    # TREESITTER #
+    #============#
+    treesitter = {
+      enable = true;
+      grammars = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [
+        vim
+        json
+        vimdoc
+        http
+        nasm
+        asm
+      ];
+      fold = true;
+      indent.enable = true;
+      highlight.enable = true;
+      textobjects.enable = true;
+      autotagHtml = true;
+      context = {
+        enable = true;
+        setupOpts = {
+          max_lines = 3;
+          separator = "▁";
+        };
+      };
+    };
+
+    #============#
+    # OTHER LSPs #
+    #============#
     lsp.servers = {
       "*" = {
         root_markers = [ ".git" ];
@@ -149,24 +286,6 @@ in
           						require("blink.cmp").get_lsp_capabilities()
           					)
           				'';
-      };
-      "astro" = {
-        cmd = [
-          "astro-ls"
-          "--stdio"
-        ];
-        filetypes = [ "astro" ];
-        root_markers = [
-          "package.json"
-          "bun.lock"
-          "tsconfig.json"
-        ];
-        init_options = {
-          typescript = {
-            # should make this dynamic but now only care about 1 project
-            tsdk = mkLuaInline ''vim.fn.getcwd() .. "/node_modules/typescript/lib"'';
-          };
-        };
       };
       # too inconsistent right now
       # bacon-ls = {
@@ -188,27 +307,6 @@ in
       #   };
       # };
 
-      gopls = {
-        root_markers = [
-          "go.mod"
-          "go.sum"
-        ];
-        filetypes = [ "go" ];
-        cmd = [ "gopls" ];
-        settings = {
-          experimentalPostfixCompletions = true;
-          gofumpt = true;
-          staticcheck = true;
-          completeUnimported = true;
-          usePlaceholders = true;
-          semanticTokens = true;
-          codelenses = {
-            run_govulncheck = true;
-          };
-          vulncheck = "Imports";
-        };
-      };
-
       json_ls = {
         filetypes = [
           "json"
@@ -223,115 +321,6 @@ in
           };
         };
 
-      };
-      lua_ls = {
-        filetypes = [ "lua" ];
-        cmd = [ "lua-language-server" ];
-        settings = {
-          Lua = {
-            diagnostics = {
-              globals = [
-                "vim"
-                "wezterm"
-              ];
-            };
-            workspaces = {
-              checkThirdParty = true;
-              library = mkLuaInline ''vim.api.nvim_get_runtime_file("", true)'';
-            };
-          };
-        };
-      };
-
-      "nixd" = {
-        root_markers = [
-          "flake.nix"
-          ".git"
-        ];
-        filetypes = [ "nix" ];
-        cmd = [ "nixd" ];
-
-      };
-      nushell = {
-        filetypes = [ "nu" ];
-        cmd = [
-          "nu"
-          "--lsp"
-        ];
-      };
-
-      # now handled by rustaceanvim
-      # "rust_analyzer" = {
-      #   root_markers = [
-      #     "Cargo.toml"
-      #     "Cargo.lock"
-      #   ];
-      #   filetypes = [ "rust" ];
-      #   cmd = [ "rust-analyzer" ];
-      # settings = {};
-      # };
-
-      "svelteserver" = {
-        root_markers = [
-          "package.json"
-          "bun.lock"
-        ];
-        filetypes = [ "svelte" ];
-        cmd = [
-          "svelteserver"
-          "--stdio"
-        ];
-      };
-
-      "tailwindcss" = {
-        root_markers = [
-          "package.json"
-          "bun.lock"
-        ];
-        filetypes = [
-          "astro"
-          "svelte"
-          "tsx"
-          "jsx"
-          "html"
-          "vue"
-        ];
-        cmd = [
-          "tailwindcss-language-server"
-          "--stdio"
-        ];
-      };
-
-      "ts_ls" = {
-        root_markers = [
-          "package.json"
-          "bun.lock"
-          "package-lock.json"
-        ];
-        filetypes = [
-          "typescript"
-          "javascript"
-          "javascriptreact"
-          "typescriptreact"
-          "vue"
-        ];
-        cmd = [
-          "bunx"
-          "--bun"
-          "typescript-language-server"
-          "--stdio"
-        ];
-        # init_options = {
-        # plugins = mkLuaInline ''
-        #   {
-        #     {
-        #       name = "@vue/typescript-plugin",
-        #       location = vim.fn.exepath("vue-language-server"),
-        #       languages = { "vue" },
-        #     }
-        #   }
-        # '';
-        # };
       };
 
       "yamlls" = {
@@ -349,20 +338,6 @@ in
           };
         };
       };
-
-      "asm_lsp" = {
-        filetypes = [
-          "asm"
-          "fasm"
-          "nasm"
-        ];
-        cmd = [ "asm-lsp" ];
-        root_markers = [ ".git" ];
-      };
-    };
-
-    languages = {
-      enableTreesitter = true;
     };
   };
 }
