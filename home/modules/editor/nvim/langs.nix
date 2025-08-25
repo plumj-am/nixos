@@ -252,6 +252,8 @@ in
     treesitter = {
       enable = true;
       grammars = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [
+        astro # needed manually for astro hl
+        typescript # needed manually for astro hl
         vim
         json
         vimdoc
