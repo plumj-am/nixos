@@ -15,7 +15,7 @@ in
 
     settings = {
       # Theme and appearance
-      theme = dark_theme;
+      theme = light_theme;
 
       # Shell and editor
       default_shell = "nu";
@@ -330,13 +330,13 @@ in
           {
             bind = {
               _args = [ "h" ];
-              GoToPreviousTab = { };
+              MoveTab._args = [ "Left" ];
             };
           }
           {
             bind = {
               _args = [ "l" ];
-              GoToNextTab = { };
+              MoveTab._args = [ "Right" ];
             };
           }
           {
@@ -692,8 +692,8 @@ in
                         			hide_frame_for_single_pane "true"
 
                         			format_left   "{mode} #[fg=gray]{session} {tabs}"
-                        			format_center "{command_cwd}"
-                        			format_right  "{command_git_branch} {datetime}"
+                        			format_center ""
+                        			format_right  "{datetime}"
                         			format_space  ""
 
                         			mode_normal        "#[fg=#FFFFFF,bg=green] NORMAL "
