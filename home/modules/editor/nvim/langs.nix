@@ -231,6 +231,7 @@ in
         lsp = enabled;
         extensions.render-markdown-nvim = enabled {
           setupOpts = {
+            sign.enabled = false;
             completions = {
               blink = {
                 enabled = true;
