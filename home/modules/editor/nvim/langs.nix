@@ -1,7 +1,6 @@
 { lib, pkgs, ... }:
 let
-  mkLuaInline = lib.generators.mkLuaInline;
-  inherit (lib) enabled;
+  inherit (lib) enabled disabled mkLuaInline;
 in
 {
   home.packages = [
@@ -9,8 +8,7 @@ in
     pkgs.yaml-language-server
   ];
   programs.nvf.settings.vim = {
-    diagnostics = {
-      enable = true;
+    diagnostics = enabled {
       config = {
         update_in_insert = false;
         virtual_text = false;
@@ -25,108 +23,104 @@ in
     };
     globals = {
       rustaceanvim = {
-        tools = {
-          test_executor = "background";
-        };
-        server = {
-          default_settings = mkLuaInline ''
-            {
-              ["rust-analyzer"] = {
-                assist = {
-                  preferSelf = true,
+        tools.test_executor = "background";
+        server.default_settings = mkLuaInline ''
+          {
+            ["rust-analyzer"] = {
+              assist = {
+                preferSelf = true,
+              },
+              lens = {
+                references = {
+                  adt = {
+                    enable = true,
+                  },
+                  enumVariant = {
+                    enable = true,
+                  },
+                  method = {
+                    enable = true,
+                  },
+                  trait = {
+                    enable = true,
+                    all = true,
+                  },
                 },
-                lens = {
+              },
+              inlayHints = {
+                bindingModeHints = {
+                  enable = true,
+                },
+                closureCaptureHints = {
+                  enable = true,
+                },
+                closureReturnTypeHints = {
+                  enable = true,
+                },
+                discriminantHints = {
+                  enable = true,
+                },
+                expressionAdjustmentHints = {
+                  enable = true,
+                },
+                genericParameterHints = {
+                  lifetime = {
+                    enable = true,
+                  },
+                  type = {
+                    enable = true,
+                  },
+                },
+                implicitDrops = {
+                  enable = true,
+                },
+                implicitSizedBoundHints = {
+                  enable = true,
+                },
+                lifetimeElisionHints = {
+                  useParameterNames = true,
+                  enable = true,
+                },
+                rangeExclusiveHints = {
+                  enable = true,
+                },
+              },
+              -- checkOnSave and diagnostics must be disabled for bacon-ls
+              checkOnSave = {
+                command = "clippy",
+                enable = true,
+              },
+              diagnostics = {
+                enable = true,
+                experimental = {
+                  enable = true,
+                },
+                styleLints = {
+                  enable = true,
+                },
+              },
+              hover = {
+                actions = {
                   references = {
-                    adt = {
-                      enable = true,
-                    },
-                    enumVariant = {
-                      enable = true,
-                    },
-                    method = {
-                      enable = true,
-                    },
-                    trait = {
-                      enable = true,
-                      all = true,
-                    },
-                  },
-                },
-                inlayHints = {
-                  bindingModeHints = {
-                    enable = true,
-                  },
-                  closureCaptureHints = {
-                    enable = true,
-                  },
-                  closureReturnTypeHints = {
-                    enable = true,
-                  },
-                  discriminantHints = {
-                    enable = true,
-                  },
-                  expressionAdjustmentHints = {
-                    enable = true,
-                  },
-                  genericParameterHints = {
-                    lifetime = {
-                      enable = true,
-                    },
-                    type = {
-                      enable = true,
-                    },
-                  },
-                  implicitDrops = {
-                    enable = true,
-                  },
-                  implicitSizedBoundHints = {
-                    enable = true,
-                  },
-                  lifetimeElisionHints = {
-                    useParameterNames = true,
-                    enable = true,
-                  },
-                  rangeExclusiveHints = {
-                    enable = true,
-                  },
-                },
-                -- checkOnSave and diagnostics must be disabled for bacon-ls
-                checkOnSave = {
-                  command = "clippy",
-                  enable = true,
-                },
-                diagnostics = {
-                  enable = true,
-                  experimental = {
-                    enable = true,
-                  },
-                  styleLints = {
-                    enable = true,
-                  },
-                },
-                hover = {
-                  actions = {
-                    references = {
-                      enable = true,
-                    },
-                  },
-                },
-                interpret = {
-                  tests = true,
-                },
-                cargo = {
-                  features = "all",
-                },
-                completion = {
-                  hideDeprecated = true,
-                  fullFunctionSignatures = {
                     enable = true,
                   },
                 },
               },
-            }
-          '';
-        };
+              interpret = {
+                tests = true,
+              },
+              cargo = {
+                features = "all",
+              },
+              completion = {
+                hideDeprecated = true,
+                fullFunctionSignatures = {
+                  enable = true,
+                },
+              },
+            },
+          }
+        '';
         dap = { };
       };
     };
@@ -254,8 +248,7 @@ in
     #============#
     # TREESITTER #
     #============#
-    treesitter = {
-      enable = true;
+    treesitter = enabled {
       grammars = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [
         astro # needed manually for astro hl
         typescript # needed manually for astro hl
@@ -267,12 +260,11 @@ in
         asm
       ];
       fold = true;
-      indent.enable = true;
-      highlight.enable = true;
-      textobjects.enable = true;
+      indent = enabled;
+      highlight = enabled;
+      textobjects = enabled;
       autotagHtml = true;
-      context = {
-        enable = true;
+      context = enabled {
         setupOpts = {
           max_lines = 3;
           separator = "▁";
@@ -320,30 +312,23 @@ in
           "json"
           "jsonc"
         ];
-        settings = {
-          json = {
-            schema = mkLuaInline ''require("schemastore").json.schemas()'';
-            validate = {
-              enable = true;
-            };
-          };
+        settings.json = {
+          schema = mkLuaInline ''require("schemastore").json.schemas()'';
+          validate = enabled;
         };
 
       };
 
       "yamlls" = {
         filetypes = [ "yaml" ];
-        settings = {
-          yaml = {
-            schemaStore = {
-              # You must disable built-in schemaStore support if you want to use
-              # this plugin and its advanced options like `ignore`.
-              enable = false;
-              # Avoid TypeError: Cannot read properties of undefined (reading 'length')
-              url = "";
-            };
-            schemas = mkLuaInline ''require("schemastore").yaml.schemas()'';
+        settings.yaml = {
+          # You must disable built-in schemaStore support if you want to use
+          # this plugin and its advanced options like `ignore`.
+          schemaStore = disabled {
+            # Avoid TypeError: Cannot read properties of undefined (reading 'length')
+            url = "";
           };
+          schemas = mkLuaInline ''require("schemastore").yaml.schemas()'';
         };
       };
     };

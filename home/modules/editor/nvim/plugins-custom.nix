@@ -1,4 +1,7 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
+let
+  inherit (lib) enabled;
+in
 {
   programs.nvf.settings.vim = {
 
@@ -69,13 +72,7 @@
         setupModule = "trouble";
         setupOpts = {
           auto_close = true;
-          modes = {
-            diagnostics = {
-              win = {
-                size = 0.3;
-              };
-            };
-          };
+          modes.diagnostics.win.size = 0.3;
         };
         keys = [
           {
@@ -116,11 +113,7 @@
             enableOnVimEnter = true;
             skipEnteringNoNeckPainBuffer = true;
           };
-          buffers = {
-            wo = {
-              fillchars = "eob: ";
-            };
-          };
+          buffers.wo.fillchars = "eob: ";
         };
       };
 
@@ -173,9 +166,7 @@
           notifiers = [
             {
               name = "Default";
-              opts = {
-                sticky = false;
-              };
+              opts.sticky = false;
             }
           ];
         };
@@ -210,9 +201,7 @@
             up_arrow = "";
           };
           options = {
-            show_source = {
-              enabled = true;
-            };
+            show_source.enabled = true;
             multilines = {
               enabled = true;
               always_show = true;
@@ -230,8 +219,7 @@
           autostart = true;
           hide_unstable_versions = true;
           notifications = false;
-          icons = {
-            enable = true;
+          icons = enabled {
             style = {
               up_to_date = "   ";
               outdated = "   ";
@@ -303,12 +291,8 @@
               showcmd = true;
               laststatus = 0;
             };
-            twilight = {
-              enabled = true;
-            };
-            gitsigns = {
-              enabled = false;
-            };
+            twilight.enabled = true;
+            gitsigns.enabled = false;
           };
           on_open = "function() vim.opt.colorcolumn = '' end";
         };
@@ -319,11 +303,7 @@
         package = pkgs.vimPlugins.twilight-nvim;
         cmd = [ "Twilight" ];
         setupModule = "twilight";
-        setupOpts = {
-          dimming = {
-            alpha = 0.4;
-          };
-        };
+        setupOpts.dimming.alpha = 0.4;
       };
 
       "typr" = {
@@ -334,9 +314,7 @@
           "TyprStats"
         ];
         setupModule = "typr";
-        setupOpts = {
-          on_attach = "function() vim.opt_local.wrap = false; vim.opt_local.complete = '' end";
-        };
+        setupOpts.on_attach = "function() vim.opt_local.wrap = false; vim.opt_local.complete = '' end";
       };
 
       "vimplugin-screenkey.nvim" = {

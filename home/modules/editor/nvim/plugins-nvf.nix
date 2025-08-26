@@ -1,17 +1,14 @@
 { pkgs, lib, ... }:
 let
-  inherit (lib) enabled;
+  inherit (lib) enabled disabled mkLuaInline;
 in
 {
   programs.nvf.settings.vim = {
 
-    assistant = {
-      supermaven-nvim = {
-        enable = true;
-        setupOpts.keymaps = {
-          accept_word = "<RIGHT>";
-          accept_suggestion = "<TAB>";
-        };
+    assistant.supermaven-nvim = enabled {
+      setupOpts.keymaps = {
+        accept_word = "<RIGHT>";
+        accept_suggestion = "<TAB>";
       };
     };
 
@@ -25,11 +22,7 @@ in
       setupOpts = {
         keymap.preset = "enter";
         completion = {
-          list = {
-            selection = {
-              preselect = false;
-            };
-          };
+          list.selection.preselect = false;
           documentation = {
             window.winhighlight = "FloatBorder:None,Search:None";
             auto_show = true;
@@ -38,7 +31,7 @@ in
           menu = {
             winhighlight = "FloatBorder:None,Search:None";
 
-            draw.columns = lib.generators.mkLuaInline ''
+            draw.columns = mkLuaInline ''
               {
                 { "kind" },
                 { "label", gap = 1 }
@@ -55,7 +48,7 @@ in
             "snippets"
             "buffer"
           ];
-          providers.buffer.opts = lib.generators.mkLuaInline ''
+          providers.buffer.opts = mkLuaInline ''
             {
               get_bufnrs = function()
                 return vim.tbl_filter(function(bufnr)
@@ -68,86 +61,71 @@ in
       };
     };
 
-    statusline = {
-      lualine = {
-        enable = true;
-        globalStatus = false;
-        componentSeparator.left = "";
-        componentSeparator.right = "";
-        sectionSeparator.left = "";
-        sectionSeparator.right = "";
-        setupOpts = {
-          options = {
-            disabled_filetypes = [
-              "no-neck-pain"
-              "dapui_watches"
-              "dapui_scopes"
-              "dapui_breakpoints"
-              "dapui_stacks"
-              "dap-repl"
-              "dapui_console"
-            ];
-          };
-        };
-        theme = "gruvbox";
-        icons.enable = true;
-        activeSection = {
-          a = [ ''{ "mode" }'' ];
-          b = [
-            ''{ "branch" } ''
-            ''{ "diagnostics", symbols = { error = "", warn = "", info = "", hint = "" } }''
-          ];
-          c = [
-            ''{ "filename", show_filename_only = false, path = 1 }''
-            ''{ "diff" }''
-          ];
-          x = [ ''{ LualinePomoTimer }'' ];
-          y = [
-            # cant get LualineFileInfo to work :[
-            ''{ "encoding" }''
-            ''{ "fileformat" }''
-            ''{ "filetype" }''
-          ];
-          z = [ ''{ "location" }'' ];
-        };
-        inactiveSection = {
-          a = [ ''{ "mode" }'' ];
-          b = [
-            ''{ "branch" } ''
-            ''{ "diagnostics", symbols = { error = "", warn = "", info = "", hint = "" } }''
-          ];
-          c = [
-            ''{ "filename", show_filename_only = false, path = 1 }''
-            ''{ "diff" }''
-          ];
-          x = [ ''{ LualinePomoTimer }'' ];
-          y = [
-            ''{ "encoding" }''
-            ''{ "fileformat" }''
-            ''{ "filetype" }''
-          ];
-          z = [ ''{ "location" }'' ];
-        };
+    statusline.lualine = enabled {
+      globalStatus = false;
+      componentSeparator.left = "";
+      componentSeparator.right = "";
+      sectionSeparator.left = "";
+      sectionSeparator.right = "";
+      setupOpts.options.disabled_filetypes = [
+        "no-neck-pain"
+        "dapui_watches"
+        "dapui_scopes"
+        "dapui_breakpoints"
+        "dapui_stacks"
+        "dap-repl"
+        "dapui_console"
+      ];
+      theme = "gruvbox";
+      icons.enable = true;
+      activeSection = {
+        a = [ ''{ "mode" }'' ];
+        b = [
+          ''{ "branch" } ''
+          ''{ "diagnostics", symbols = { error = "", warn = "", info = "", hint = "" } }''
+        ];
+        c = [
+          ''{ "filename", show_filename_only = false, path = 1 }''
+          ''{ "diff" }''
+        ];
+        x = [ ''{ LualinePomoTimer }'' ];
+        y = [
+          # cant get LualineFileInfo to work :[
+          ''{ "encoding" }''
+          ''{ "fileformat" }''
+          ''{ "filetype" }''
+        ];
+        z = [ ''{ "location" }'' ];
+      };
+      inactiveSection = {
+        a = [ ''{ "mode" }'' ];
+        b = [
+          ''{ "branch" } ''
+          ''{ "diagnostics", symbols = { error = "", warn = "", info = "", hint = "" } }''
+        ];
+        c = [
+          ''{ "filename", show_filename_only = false, path = 1 }''
+          ''{ "diff" }''
+        ];
+        x = [ ''{ LualinePomoTimer }'' ];
+        y = [
+          ''{ "encoding" }''
+          ''{ "fileformat" }''
+          ''{ "filetype" }''
+        ];
+        z = [ ''{ "location" }'' ];
       };
     };
 
-    autopairs = {
-      nvim-autopairs = {
-        enable = true;
-        setupOpts = {
-          disable_filetype = [ "typr" ];
-        };
-      };
+    autopairs.nvim-autopairs = enabled {
+      setupOpts.disable_filetype = [ "typr" ];
     };
 
     mini = {
-      ai.enable = true;
-      diff = {
-        enable = true;
+      ai = enabled;
+      diff = enabled {
         setupOpts = {
-          view = {
-            style = "number";
-          };
+          view.style = "number";
           mappings = {
             apply = "";
             reset = "";
@@ -159,53 +137,42 @@ in
           };
         };
       };
-      surround.enable = true;
-      bufremove.enable = true;
+      surround = enabled;
+      bufremove = enabled;
     };
 
-    git = {
-      neogit = {
-        enable = true;
-        mappings.open = "<leader>g";
-        setupOpts = {
-          integrations = {
-            telescope = true;
-            diffview = true;
-          };
-          commit_editor = {
-            staged_diff_split_kind = "vsplit";
-          };
-          commit_select_view = {
-            kind = "vsplit";
-          };
+    git.neogit = enabled {
+      mappings.open = "<leader>g";
+      setupOpts = {
+        integrations = {
+          telescope = true;
+          diffview = true;
         };
+        commit_editor.staged_diff_split_kind = "vsplit";
+        commit_select_view.kind = "vsplit";
       };
     };
 
     navigation = {
-      harpoon = {
-        enable = false;
+      harpoon = disabled {
         mappings = {
           file1 = "<leader>h";
           file2 = "<leader>j";
           file3 = "<leader>k";
           file4 = "<leader>l";
         };
-        setupOpts = {
-          defaults = {
-            save_on_toggle = true;
-            save_on_ui_close = true;
-          };
+        setupOpts.defaults = {
+          save_on_toggle = true;
+          save_on_ui_close = true;
         };
       };
     };
 
     utility = {
-      ccc.enable = true;
-      diffview-nvim.enable = true; # for neogit
-      undotree.enable = true;
-      nvim-biscuits = {
-        enable = true;
+      ccc = enabled;
+      diffview-nvim = enabled; # for neogit
+      undotree = enabled;
+      nvim-biscuits = enabled {
         setupOpts = {
           cursor_line_only = true;
           prefix_string = " ";
@@ -216,16 +183,11 @@ in
     };
 
     visuals = {
-      indent-blankline.enable = true;
-      nvim-web-devicons.enable = true;
-      fidget-nvim = {
-        enable = true;
+      indent-blankline = enabled;
+      nvim-web-devicons = enabled;
+      fidget-nvim = enabled {
         setupOpts = {
-          progress = {
-            display = {
-              done_ttl = 10;
-            };
-          };
+          progress.display.done_ttl = 10;
           notification = {
             override_vim_notify = true;
             window = {
@@ -238,19 +200,16 @@ in
       };
     };
 
-    telescope = {
-      enable = true;
+    telescope = enabled {
       setupOpts = {
         defaults = {
           prompt_prefix = " ";
           selection_caret = " ";
           entry_prefix = " ";
           color_devicons = false;
-          layout_config = {
-            horizontal = {
-              prompt_position = "top";
-              preview_width = 0.6;
-            };
+          layout_config.horizontal = {
+            prompt_position = "top";
+            preview_width = 0.6;
           };
           path_display = [ "truncate" ];
           sorting_strategy = "ascending";
@@ -275,21 +234,16 @@ in
       mappings = { };
     };
 
-    notes = {
-      todo-comments = {
-        enable = true;
-        setupOpts = {
-          signs = false;
-          highlight = {
-            before = "";
-            keyword = "wide";
-            after = "";
-          };
-        };
-        mappings = {
-          telescope = "<leader>td";
+    notes.todo-comments = enabled {
+      setupOpts = {
+        signs = false;
+        highlight = {
+          before = "";
+          keyword = "wide";
+          after = "";
         };
       };
+      mappings.telescope = "<leader>td";
     };
   };
 }

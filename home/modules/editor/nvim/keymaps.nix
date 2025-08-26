@@ -1,6 +1,6 @@
 { lib, ... }:
 let
-  mkLuaInline = lib.generators.mkLuaInline;
+  inherit (lib) mkLuaInline;
 in
 {
   programs.nvf.settings.vim = {

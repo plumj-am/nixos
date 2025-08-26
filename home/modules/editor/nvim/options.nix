@@ -3,7 +3,9 @@
   lib,
   ...
 }:
-
+let
+  inherit (lib) enabled;
+in
 {
   programs.nvf.settings.vim = {
     enableLuaLoader = true;
@@ -22,8 +24,7 @@
       })
     ];
 
-    clipboard = {
-      enable = true;
+    clipboard = enabled {
       registers = "unnamedplus";
       providers.wl-copy.enable = lib.mkIf pkgs.stdenv.isLinux true;
     };
@@ -78,7 +79,8 @@
       foldlevelstart = 99;
       foldmethod = "indent";
       autochdir = false;
-      fillchars = "eob:~,fold: ,foldopen:,foldsep: ,foldclose:,vert:▏,lastline:▏";
+      # fillchars = "eob:~,fold: ,foldopen:,foldsep: ,foldclose:,vert:▏,lastline:▏";
+      fillchars = "eob:~,fold: ,foldopen:,foldsep: ,foldclose:,vert:┃,lastline:┃";
       smoothscroll = true;
       winborder = "single";
     };
