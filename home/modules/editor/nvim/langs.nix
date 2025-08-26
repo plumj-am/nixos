@@ -231,15 +231,21 @@ in
         extensions.render-markdown-nvim = enabled {
           setupOpts = {
             sign.enabled = false;
-            completions = {
-              blink = {
-                enabled = true;
-              };
-            };
+            completions.blink.enabled = true;
             file_types = [
               "markdown"
               "md"
             ];
+            overrides.buftype.nofile = {
+              render_modes = true;
+              link.enabled = false;
+              heading.enabled = false;
+              code = {
+                language_icon = false;
+                language_name = false;
+                language_info = false;
+              };
+            };
           };
         };
       };
