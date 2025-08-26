@@ -5,7 +5,6 @@ lsp.set_log_level("off")
 local orig_util_open_floating_preview = lsp.util.open_floating_preview
 function lsp.util.open_floating_preview(contents, syntax, opts, ...)
 	opts = opts or {}
-	opts.border = opts.border or "single"
 	opts.max_width = opts.max_width or 60
 	opts.focusable = opts.focusable or false
 	return orig_util_open_floating_preview(contents, syntax, opts, ...)

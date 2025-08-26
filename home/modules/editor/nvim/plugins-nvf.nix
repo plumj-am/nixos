@@ -8,11 +8,9 @@ in
     assistant = {
       supermaven-nvim = {
         enable = true;
-        setupOpts = {
-          keymaps = {
-            accept_word = "<RIGHT>";
-            accept_suggestion = "<TAB>";
-          };
+        setupOpts.keymaps = {
+          accept_word = "<RIGHT>";
+          accept_suggestion = "<TAB>";
         };
       };
     };
@@ -25,9 +23,7 @@ in
         scrollDocsUp = "<C-u>";
       };
       setupOpts = {
-        keymap = {
-          preset = "enter";
-        };
+        keymap.preset = "enter";
         completion = {
           list = {
             selection = {
@@ -35,33 +31,23 @@ in
             };
           };
           documentation = {
-            window = {
-              border = "single";
-              winhighlight = "Normal:Normal,FloatBorder:None,CursorLine:CursorLine,Search:None";
-            };
+            window.winhighlight = "FloatBorder:None,Search:None";
             auto_show = true;
             auto_show_delay_ms = 250;
           };
           menu = {
-            border = "single";
-            winhighlight = "Normal:Normal,FloatBorder:None,CursorLine:CursorLine,Search:None";
+            winhighlight = "FloatBorder:None,Search:None";
 
-            draw = {
-              columns = lib.generators.mkLuaInline ''
-                {
-                  { "kind" },
-                  { "label", gap = 1 }
-                }
-              '';
-            };
+            draw.columns = lib.generators.mkLuaInline ''
+              {
+                { "kind" },
+                { "label", gap = 1 }
+              }
+            '';
           };
         };
-        cmdline = {
-          enabled = false;
-        };
-        signature = {
-          enabled = true;
-        };
+        cmdline.enabled = false;
+        signature.enabled = true;
         sources = {
           default = [
             "lsp"
@@ -69,19 +55,15 @@ in
             "snippets"
             "buffer"
           ];
-          providers = {
-            buffer = {
-              opts = lib.generators.mkLuaInline ''
-                {
-                  get_bufnrs = function()
-                    return vim.tbl_filter(function(bufnr)
-                      return vim.bo[bufnr].buftype == ""
-                    end, vim.api.nvim_list_bufs())
-                  end,
-                }
-              '';
-            };
-          };
+          providers.buffer.opts = lib.generators.mkLuaInline ''
+            {
+              get_bufnrs = function()
+                return vim.tbl_filter(function(bufnr)
+                  return vim.bo[bufnr].buftype == ""
+                end, vim.api.nvim_list_bufs())
+              end,
+            }
+          '';
         };
       };
     };

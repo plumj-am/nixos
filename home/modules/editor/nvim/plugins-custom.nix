@@ -360,7 +360,6 @@
             anchor = "SE";
             width = 25;
             height = 1;
-            border = "single";
             title = "Key";
             title_pos = "center";
             style = "minimal";

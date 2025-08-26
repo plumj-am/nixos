@@ -16,7 +16,6 @@ in
         virtual_text = false;
         float = {
           focusable = false;
-          border = "rounded";
           source = "always";
           header = "";
           prefix = "";

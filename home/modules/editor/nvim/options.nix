@@ -80,7 +80,7 @@
       autochdir = false;
       fillchars = "eob:~,fold: ,foldopen:,foldsep: ,foldclose:,vert:▏,lastline:▏";
       smoothscroll = true;
-      winborder = "rounded";
+      winborder = "single";
     };
   };
 }
