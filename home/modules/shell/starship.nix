@@ -9,8 +9,8 @@ in
     settings = {
       scan_timeout = 100;
       command_timeout = 1000;
+      format = "[┏━](success_color)$status[━](success_color) $directory [━┫](success_color) $git_branch$git_state$git_status$git_metrics [┣━┫](success_color) \${custom.jj} [┣━](success_color) $cmd_duration$line_break$character";
       palette = "light_theme";
-      format = "[┏━](success_color)$status[━](success_color) $directory [━━](success_color) $git_branch$git_state$git_status$git_metrics $cmd_duration$line_break$character";
 
       palettes.light_theme = {
         username_color = "#2d2d2d";
@@ -86,7 +86,7 @@ in
 
       git_metrics = {
         disabled = false;
-        format = "[$added](bold green) [$deleted](bold red)";
+        format = "[\\[](purple)[+$added](green)[-$deleted](red)[\\]](purple)";
       };
 
       cmd_duration.format = "[$duration](duration_color)";
@@ -97,6 +97,15 @@ in
         impure_msg = "";
         pure_msg = "";
       };
+
+			custom.jj = {
+				command        = "prompt";
+				format         = "$output";
+				ignore_timeout = true;
+				shell          = ["starship-jj" "--ignore-working-copy" "starship"];
+				use_stdin      = false;
+				when           = true;
+			};
     };
   };
 }
