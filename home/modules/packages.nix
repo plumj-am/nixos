@@ -9,6 +9,7 @@
 
   home.packages = [
     pkgs.nodejs
+    pkgs.pnpm
     pkgs.python3
 
     pkgs.moon
@@ -24,6 +25,7 @@
     pkgs.hyperfine
     pkgs.curl
     pkgs.tokei
+    pkgs.jq
 
     pkgs.vivid
 
