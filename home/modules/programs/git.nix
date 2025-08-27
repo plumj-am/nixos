@@ -108,12 +108,8 @@
                     else \
                         echo "multiple matches for \"$pattern\":"; \
                         echo "$matches"; \
-                        printf "add all? (y/n): "; \
-                        read response; \
-                        if echo "$response" | grep -q "^[Yy]"; then \
-                            echo "$matches" | xargs git add; \
-                            echo "added all matches"; \
-                        fi; \
+                        echo "$matches" | xargs git add; \
+                        echo "added all matches"; \
                     fi; \
                 done; \
             }; f'';
@@ -190,11 +186,7 @@
                     else \
                         echo "multiple matches for \"$pattern\":"; \
                         echo "$matches"; \
-                        printf "diff all? (y/n): "; \
-                        read response; \
-                        if echo "$response" | grep -q "^[Yy]"; then \
-                            echo "$matches" | xargs git diff; \
-                        fi; \
+                        echo "$matches" | xargs git diff; \
                     fi; \
                 done; \
             }; f'';
@@ -215,11 +207,7 @@
                     else \
                         echo "multiple matches for \"$pattern\":"; \
                         echo "$matches"; \
-                        printf "diff staged all? (y/n): "; \
-                        read response; \
-                        if echo "$response" | grep -q "^[Yy]"; then \
-                            echo "$matches" | xargs git diff --staged; \
-                        fi; \
+                        echo "$matches" | xargs git diff --staged; \
                     fi; \
                 done; \
             }; f'';
