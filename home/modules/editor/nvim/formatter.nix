@@ -1,8 +1,11 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  ...
+}: 
 let
   inherit (lib) enabled;
-in
-{
+in {
   home.packages = [
     pkgs.nodePackages.prettier
     pkgs.prettierd
@@ -10,15 +13,12 @@ in
     pkgs.sleek
     pkgs.taplo
     pkgs.mdformat
+    pkgs.alejandra
   ];
 
   programs.nvf.settings.vim.formatter.conform-nvim = enabled {
     setupOpts = {
-      formatters.mdformat.append_args = [
-        "--number"
-        "--wrap"
-        "80"
-      ];
+      formatters.mdformat.append_args = ["--number" "--wrap" "80"];
       formatters_by_ft = {
         json = [
           "prettierd"
@@ -32,10 +32,10 @@ in
           "prettierd"
           "prettier"
         ];
-        markdown = [ "mdformat" ];
-        toml = [ "taplo" ];
-        sql = [ "sleek" ];
-        python = [ "ruff_format" ];
+        markdown = ["mdformat"];
+        toml = ["taplo"];
+        sql = ["sleek"];
+        python = ["ruff_format"];
       };
       format_after_save.async = true;
     };

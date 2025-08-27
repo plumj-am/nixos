@@ -183,8 +183,9 @@ in
         lsp = enabled {
           server = "nixd";
         };
-        format = enabled {
-          type = "nixfmt";
+        format = disabled {
+          # prefer to manually format for configs
+          type = "alejandra";
         };
       };
 
