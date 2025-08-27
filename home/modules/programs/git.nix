@@ -1,77 +1,67 @@
+{ lib, ... }:
+let
+  inherit (lib) enabled;
+in 
 {
-  programs.gh = {
-    enable = true;
+  programs.gh = enabled {
     settings = {
       git_protocol = "ssh";
-      editor = "nvim";
+      editor       = "nvim";
     };
   };
 
-  programs.git = {
-    enable = true;
-    userName = "James Plummer";
+  programs.git = enabled {
+    userName  = "James Plummer";
     userEmail = "jamesp2001@live.co.uk";
 
-    signing = {
-      key = "58805BF7676222B4";
-      signByDefault = true;
-    };
+    signing.key           = "58805BF7676222B4";
+    signing.signByDefault = true;
 
-    lfs.enable = true;
+    lfs = enabled;
 
-    difftastic.enable = true;
+    difftastic = enabled {
+			background = "auto";
+		};
 
     extraConfig = {
       init.defaultBranch = "master";
 
-      log.date = "iso";
+      log.date  = "iso";
       column.ui = "auto";
 
       commit.verbose = true;
-      commit.gpgSign = true;
-      tag.gpgSign = true;
 
-      status = {
-        branch = true;
-        showStash = true;
-        showUntrackedFiles = "all";
-      };
+      commit.gpgSign = true;
+      tag.gpgSign    = true;
+
+      status.branch             = true;
+			status.showStash          = true;
+			status.showUntrackedFiles = "all";
 
       pull.rebase = true;
+
       push.autoSetupRemote = true;
 
-      rebase = {
-        autoStash = true;
-        missingCommitsCheck = "warn";
-        updateRefs = true;
-      };
-      rerere.enabled = true;
+      rebase.autoStash           = true;
+			rebase.missingCommitsCheck = "warn";
+			rebase.updateRefs          = true;
+      rerere.enabled             = true;
 
-      fetch.fsckObjects = true;
-      receive.fsckObjects = true;
+      fetch.fsckObjects    = true;
+      receive.fsckObjects  = true;
       transfer.fsckObjects = true;
 
       branch.sort = "-committerdate";
-      tag.sort = "-taggerdate";
+      tag.sort    = "-taggerdate";
 
-      core = {
-        compression = 9;
-        preloadindex = true;
-        editor = "nvim";
-        longpaths = true;
-        # pager = "delta";
-        excludesfile = "~/.global_gitignore";
-      };
+      core.compression  = 9;
+      core.preloadindex = true;
+      core.editor       = "nvim";
+      core.longpaths    = true;
+      core.excludesfile = "~/.global_gitignore";
 
-      diff.algorithm = "histogram";
+      diff.algorithm  = "histogram";
       diff.colorMoved = "default";
-
-      # interactive.diffFilter = "delta --color-only";
-      #
-      # delta = {
-      #   navigate = true;
-      #   dark = true;
-      # };
 
       merge.conflictStyle = "zdiff3";
 
@@ -82,18 +72,23 @@
 
     aliases = {
       diff-stat = "diff --stat --ignore-space-change -r";
+
       p = "pull";
       P = "push";
+
       cm = "commit -m";
       ca = "commit --amend";
       aa = "add .";
       ap = "add -p";
       lg = "log --all --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
-      st = "status -s";
+
+      st  = "status -s";
       sta = "status";
-      sw = "switch";
+      sw  = "switch";
+
       oneln = "log --oneline";
       sus = "!f() { git branch --set-upstream-to $1; }; f";
+
       a = ''
         !f() { \
                 for pattern in "$@"; do \
