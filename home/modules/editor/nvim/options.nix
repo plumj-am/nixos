@@ -43,9 +43,9 @@ in
       smartcase = true;
       incsearch = true;
       hlsearch = true;
-      tabstop = 8;
-      shiftwidth = 8;
-      softtabstop = 8;
+      tabstop = 4;
+      shiftwidth = 4;
+      softtabstop = 4;
       expandtab = false;
       autoindent = true;
       smartindent = true;
