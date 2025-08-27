@@ -19,9 +19,7 @@ in
 
     lfs = enabled;
 
-    difftastic = enabled {
-			background = "auto";
-		};
+    difftastic = enabled;
 
     extraConfig = {
       init.defaultBranch = "master";
