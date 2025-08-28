@@ -21,7 +21,7 @@ in {
       signing.behavior = "own";
 
 			ui.conflict-marker-style = "snapshot";
-			ui.default-command       = "ls";
+			ui.default-command       = "lg";
 			ui.diff-editor           = ":builtin";
 			ui.diff-formatter        = [ "difft" "--color" "always" "$left" "$right" ];
       ui.editor                = "nvim";
@@ -76,6 +76,9 @@ in {
       aliases.lsa = [ "log" "--summary" "--revisions" "::" ];
       aliases.lp  = [ "log" "--patch" ];
 			aliases.lpa = [ "log" "--patch" "--revisions" "::" ];
+			aliases.lg  = [ "log" "--summary" "--no-pager" "--limit=6" ];
+			aliases.el  = [ "evolog" ];
+			aliases.ol  = [ "op" "log" ];
 
 			revset-aliases."closest(to)"          = "heads(::to & bookmarks())";
       revset-aliases."closest_pushable(to)" = "heads(::to & ~description(exact:\"\") & (~empty() | merges()))";
