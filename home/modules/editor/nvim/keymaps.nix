@@ -7,339 +7,333 @@ in
     keymaps = [
       # debugging
       {
-        key = "<leader>db";
-        mode = "n";
+				desc   = "toggle breakpoint";
+        key    = "<leader>db";
+        mode   = "n";
         action = ":lua require('dap').toggle_breakpoint()<CR>";
-        desc = "toggle breakpoint";
       }
       {
-        key = "<F1>";
-        mode = "n";
+				desc   = "toggle breakpoint";
+        key    = "<F1>";
+        mode   = "n";
         action = ":lua require('dap').toggle_breakpoint()<CR>";
-        desc = "toggle breakpoint";
       }
       {
-        key = "<leader>dB";
-        mode = "n";
+				desc   = "run last";
+        key    = "<leader>dB";
+        mode   = "n";
         action = ":lua require('dap').toggle_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>";
-        desc = "run last";
       }
       {
-        key = "<F2>";
-        mode = "n";
+				desc   = "run last";
+        key    = "<F2>";
+        mode   = "n";
         action = ":lua require('dap').toggle_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>";
-        desc = "run last";
       }
       {
-        key = "<leader>dc";
-        mode = "n";
+				desc   = "continue";
+        key    = "<leader>dc";
+        mode   = "n";
         action = ":lua require('dap').continue()<CR>";
-        desc = "continue";
       }
       {
-        key = "<F3>";
-        mode = "n";
+				desc   = "continue";
+        key    = "<F3>";
+        mode   = "n";
         action = ":lua require('dap').continue()<CR>";
-        desc = "continue";
       }
       {
-        key = "<leader>du";
-        mode = "n";
+				desc   = "open/close debugger ui";
+        key    = "<leader>du";
+        mode   = "n";
         action = ":lua require('dapui').toggle()<CR>";
-        desc = "open/close debugger ui";
       }
       {
-        key = "<F4>";
-        mode = "n";
+				desc   = "open/close debugger ui";
+        key    = "<F4>";
+        mode   = "n";
         action = ":lua require('dapui').toggle()<CR>";
-        desc = "open/close debugger ui";
       }
       {
-        key = "<leader>do";
-        mode = "n";
+				desc   = "step over";
+        key    = "<leader>do";
+        mode   = "n";
         action = ":lua require('dap').step_over()<CR>";
-        desc = "step over";
       }
       {
-        key = "<RIGHT>";
-        mode = "n";
+				desc   = "step over";
+        key    = "<RIGHT>";
+        mode   = "n";
         action = ":lua require('dap').step_over()<CR>";
-        desc = "step over";
       }
       {
-        key = "<leader>di";
-        mode = "n";
+				desc   = "step into";
+        key    = "<leader>di";
+        mode   = "n";
         action = ":lua require('dap').step_into()<CR>";
-        desc = "step into";
       }
       {
-        key = "<DOWN>";
-        mode = "n";
+				desc   = "step into";
+        key    = "<DOWN>";
+        mode   = "n";
         action = ":lua require('dap').step_into()<CR>";
-        desc = "step into";
       }
       {
-        key = "<leader>dO";
-        mode = "n";
+				desc   = "step out";
+        key    = "<leader>dO";
+        mode   = "n";
         action = ":lua require('dap').step_out()<CR>";
-        desc = "step out";
       }
       {
-        key = "<UP>";
-        mode = "n";
+				desc   = "step out";
+        key    = "<UP>";
+        mode   = "n";
         action = ":lua require('dap').step_out()<CR>";
-        desc = "step out";
       }
       {
-        key = "<leader>dp";
-        mode = "n";
+				desc   = "step back";
+        key    = "<leader>dp";
+        mode   = "n";
         action = ":lua require('dap').step_back()<CR>";
-        desc = "step back";
       }
       {
-        key = "<LEFT>";
-        mode = "n";
+				desc   = "step back";
+        key    = "<LEFT>";
+        mode   = "n";
         action = ":lua require('dap').step_back()<CR>";
-        desc = "step back";
       }
       {
-        key = "<leader>dr";
-        mode = "n";
+				desc   = "restart last session";
+        key    = "<leader>dr";
+        mode   = "n";
         action = ":lua require('dap').run_last()<CR>";
-        desc = "restart last session";
       }
       {
-        key = "<F5>";
-        mode = "n";
+				desc   = "restart last session";
+        key    = "<F5>";
+        mode   = "n";
         action = ":lua require('dap').run_last()<CR>";
-        desc = "restart last session";
       }
       # clipboard mappings (thanks primeagen)
       {
-        key = "<leader>p";
-        mode = "x";
+				desc   = "paste over text but keep clipboard";
+        key    = "<leader>p";
+        mode   = "x";
         action = ''"_dP'';
-        desc = "paste over text but keep clipboard";
       }
       {
-        key = "<leader>y";
-        mode = [
-          "n"
-          "v"
-        ];
+				desc   = "yank selection to system clipboard";
+        key    = "<leader>y";
+        mode   = [ "n" "v" ];
         action = ''"+y'';
-        desc = "yank selection to system clipboard";
       }
       {
-        key = "<leader>Y";
-        mode = "n";
+				desc   = "yank line to system clipboard";
+        key    = "<leader>Y";
+        mode   = "n";
         action = ''"+Y'';
-        desc = "yank line to system clipboard";
       }
       {
-        key = "<leader>d";
-        mode = [
-          "n"
-          "v"
-        ];
+				desc   = "delete without yank";
+        key    = "<leader>d";
+        mode   = [ "n" "v" ];
         action = ''"_d'';
-        desc = "delete without yank";
       }
       {
-        key = "J";
-        mode = "n";
+				desc   = "better line joins";
+        key    = "J";
+        mode   = "n";
         action = "mzJ`z";
-        desc = "better line joins";
       }
       {
-        key = "J";
-        mode = "v";
+				desc   = "move line down";
+        key    = "J";
+        mode   = "v";
         action = ":m '>+1<CR>gv=gv";
-        desc = "move line down";
       }
       {
-        key = "K";
-        mode = "v";
+				desc   = "move line up";
+        key    = "K";
+        mode   = "v";
         action = ":m '<-2<CR>gv=gv";
-        desc = "move line up";
       }
       {
-        key = "<leader>sr";
-        mode = "n";
+				desc   = "instant search and replace current word";
+        key    = "<leader>sr";
+        mode   = "n";
         action = '':%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>'';
-        desc = "instant search and replace current word";
       }
       {
-        key = "<C-d>";
-        mode = "n";
+				desc   = "1/2 page down + center cursor";
+        key    = "<C-d>";
+        mode   = "n";
         action = "<C-d>zz";
-        desc = "1/2 page down + center cursor";
       }
       {
-        key = "<C-u>";
-        mode = "n";
+				desc   = "1/2 page up + center cursor";
+        key    = "<C-u>";
+        mode   = "n";
         action = "<C-u>zz";
-        desc = "1/2 page up + center cursor";
       }
       {
-        key = "n";
-        mode = "n";
+				desc   = "center cursor on next search result";
+        key    = "n";
+        mode   = "n";
         action = "nzz";
-        desc = "center cursor on next search result";
       }
       {
-        key = "N";
-        mode = "n";
+				desc   = "center cursor on previous search result";
+        key    = "N";
+        mode   = "n";
         action = "Nzz";
-        desc = "center cursor on previous search result";
       }
       {
-        key = "<C-d>";
-        mode = "v";
+				desc   = "1/2 page down + center cursor";
+        key    = "<C-d>";
+        mode   = "v";
         action = "<C-d>zz";
-        desc = "1/2 page down + center cursor";
       }
       {
-        key = "<C-u>";
-        mode = "v";
+				desc   = "1/2 page up + center cursor";
+        key    = "<C-u>";
+        mode   = "v";
         action = "<C-u>zz";
-        desc = "1/2 page up + center cursor";
       }
       {
-        key = "n";
-        mode = "v";
+				desc   = "center cursor on next search result";
+        key    = "n";
+        mode   = "v";
         action = "nzz";
-        desc = "center cursor on next search result";
       }
       {
-        key = "N";
-        mode = "v";
+				desc   = "center cursor on previous search result";
+        key    = "N";
+        mode   = "v";
         action = "Nzz";
-        desc = "center cursor on previous search result";
       }
       {
-        key = "H";
-        mode = "n";
+				desc   = "move to first non-blank character of line";
+        key    = "H";
+        mode   = "n";
         action = "^";
-        desc = "move to first non-blank character of line";
       }
       {
-        key = "L";
-        mode = "n";
+				desc   = "move to last character of line";
+        key    = "L";
+        mode   = "n";
         action = "$";
-        desc = "move to last character of line";
       }
       {
-        key = "<C-h>";
-        mode = "n";
+				desc   = "switch to left pane";
+        key    = "<C-h>";
+        mode   = "n";
         action = "<C-w>h";
-        desc = "switch to left pane";
       }
       {
-        key = "<C-j>";
-        mode = "n";
+				desc   = "switch to below pane";
+        key    = "<C-j>";
+        mode   = "n";
         action = "<C-w>j";
-        desc = "switch to below pane";
       }
       {
-        key = "<C-k>";
-        mode = "n";
+				desc   = "switch to above pane";
+        key    = "<C-k>";
+        mode   = "n";
         action = "<C-w>k";
-        desc = "switch to above pane";
       }
       {
-        key = "<C-l>";
-        mode = "n";
+				desc   = "switch to right pane";
+        key    = "<C-l>";
+        mode   = "n";
         action = "<C-w>l";
-        desc = "switch to right pane";
       }
       {
-        key = "<leader>tt";
-        mode = "n";
+				desc   = "open a terminal in a vertical split";
+        key    = "<leader>tt";
+        mode   = "n";
         action = "<cmd>vs<cr><cmd>term<cr>";
-        desc = "open a terminal in a vertical split";
       }
       {
-        key = "<leader>qq";
-        mode = "n";
+				desc   = "close window";
+        key    = "<leader>qq";
+        mode   = "n";
         action = "<cmd>clo<cr>";
-        desc = "close window";
       }
       {
-        key = "<leader><esc><esc>";
-        mode = "n";
+				desc   = "disable search highlight";
+        key    = "<leader><esc><esc>";
+        mode   = "n";
         action = "<cmd>silent nohl<cr>";
-        desc = "disable search highlight";
       }
       # missing from builtin ccc
       {
-        key = "<leader>ccc";
-        mode = "n";
+				desc   = "Toggle ccc";
+        key    = "<leader>ccc";
+        mode   = "n";
         action = "<cmd>CccHighlighterToggle<CR>";
-        desc = "Toggle ccc";
       }
       # missing from builtin mini.bufremove
       {
-        key = "<leader>qb";
-        mode = "n";
+				desc   = "close buffer";
+        key    = "<leader>qb";
+        mode   = "n";
         action = "<cmd>lua MiniBufremove.delete()<CR>";
-        desc = "close buffer";
       }
       # telescope
       # {
-      #   key = "<leader>ff";
-      #   mode = "n";
+			#   desc   = "Telescope find_files";
+      #   key    = "<leader>ff";
+      #   mode   = "n";
       #   action = "<cmd>lua require('telescope.builtin').find_files()<CR>"; # now using fff
-      #   desc = "Telescope find_files";
       # }
       {
-        key = "<leader>fg";
-        mode = "n";
+				desc   = "Telescope live grep";
+        key    = "<leader>fg";
+        mode   = "n";
         action = "<cmd>lua require('telescope.builtin').live_grep()<CR>";
-        desc = "Telescope live grep";
       }
       {
-        key = "<leader>fb";
-        mode = "n";
+				desc   = "Telescope buffers";
+        key    = "<leader>fb";
+        mode   = "n";
         action = "<cmd>lua require('telescope.builtin').buffers()<CR>";
-        desc = "Telescope buffers";
       }
       {
-        key = "<leader>ft";
-        mode = "n";
+				desc   = "Telescope treesitter";
+        key    = "<leader>ft";
+        mode   = "n";
         action = "<cmd>Telescope treesitter<CR>";
-        desc = "Telescope treesitter";
       }
       {
-        key = "<leader>fw";
-        mode = "n";
+				desc   = "Telescope word";
+        key    = "<leader>fw";
+        mode   = "n";
         action = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.expand('<cword>') })<CR>";
-        desc = "Telescope word";
       }
       {
-        key = "<leader>fW";
-        mode = "n";
+				desc   = "Telescope WORD";
+        key    = "<leader>fW";
+        mode   = "n";
         action = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.expand('<cWORD>') })<CR>";
-        desc = "Telescope WORD";
       }
       {
-        key = "<leader>fs";
-        mode = "n";
+				desc   = "Telescope search for input word";
+        key    = "<leader>fs";
+        mode   = "n";
         action = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.input('Grep > ') })<CR>";
-        desc = "Telescope search for input word";
       }
       {
-        key = "<leader>fc";
-        mode = "n";
+				desc   = "Telescope resume last picker";
+        key    = "<leader>fc";
+        mode   = "n";
         action = "<cmd>lua require('telescope.builtin').resume()<CR>";
-        desc = "Telescope resume last picker";
       }
       # missing from builtin undotree
       {
-        key = "<leader>u";
-        mode = "n";
+				desc   = "Toggle undotree";
+        key    = "<leader>u";
+        mode   = "n";
         action = "<cmd>UndotreeToggle<CR>";
-        desc = "Toggle undotree";
       }
     ];
 
