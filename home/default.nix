@@ -5,6 +5,7 @@
   system,
   nvf,
   bacon-ls,
+  fff-nvim,
   ...
 }:
 
@@ -22,6 +23,7 @@
       fenix
       nvf
       bacon-ls
+      fff-nvim
       ;
   };
 

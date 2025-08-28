@@ -286,12 +286,12 @@ in
         desc = "close buffer";
       }
       # telescope
-      {
-        key = "<leader>ff";
-        mode = "n";
-        action = "<cmd>lua require('telescope.builtin').find_files()<CR>";
-        desc = "Telescope find_files";
-      }
+      # {
+      #   key = "<leader>ff";
+      #   mode = "n";
+      #   action = "<cmd>lua require('telescope.builtin').find_files()<CR>"; # now using fff
+      #   desc = "Telescope find_files";
+      # }
       {
         key = "<leader>fg";
         mode = "n";

@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, fenix, fff-nvim, ... }:
 let
   inherit (lib) enabled;
 in
@@ -516,6 +516,42 @@ in
           smear_insert_mode = false;
           smear_to_cmd = false;
         };
+      };
+
+      "fff.nvim" = {
+        package = fff-nvim.packages.${pkgs.system}.fff-nvim;
+				lazy = true;
+				setupModule = "fff";
+				setupOpts = {
+					debug.enabled     = false;
+					debug.show_scores = false;
+
+					title  = "fff";
+					prompt = " ";
+
+					max_results = 1000;
+					max_threads = 10;
+
+					layout.prompt_position = "top";
+					layout.preview_size    = 0.6;
+
+					preview.show_file_info = false;
+
+					hl.normal      = "Normal";
+					hl.title       = "Normal";
+					hl.border      = "Grey";
+					hl.active_file = "TelescopeSelection";
+					hl.cursor      = "Cursor";
+
+				};
+        keys = [
+          {
+            mode = "n";
+            key = "<leader>ff";
+            action = "<CMD>lua require('fff').find_files()<CR>";
+            desc = "fff find_files";
+          }
+        ];
       };
 
       "plenary.nvim" = {

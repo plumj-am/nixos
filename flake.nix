@@ -44,9 +44,12 @@
     
     bacon-ls.url = "github:crisidev/bacon-ls";
     bacon-ls.inputs.nixpkgs.follows = "nixpkgs";
+
+    fff-nvim.url = "github:dmtrKovalenko/fff.nvim";
+    fff-nvim.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs @ { nixpkgs, nixos-wsl, nix-darwin, home-manager, fenix, nvf, bacon-ls, ... }: let
+  outputs = inputs @ { nixpkgs, nixos-wsl, nix-darwin, home-manager, fenix, nvf, bacon-ls, fff-nvim, ... }: let
     inherit (nixpkgs.lib) const extend;
 
     # extend nixpkgs.lib with nix-darwin.lib, then our custom lib
@@ -65,6 +68,7 @@
           fenix
           nvf
           bacon-ls
+          fff-nvim
           ;
         pkgs = import nixpkgs {
           inherit system;
