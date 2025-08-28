@@ -26,6 +26,8 @@ in {
 			ui.diff-formatter        = [ "difft" "--color" "always" "$left" "$right" ];
       ui.editor                = "nvim";
       ui.graph-style           = "square";
+			ui.movement.edit         = true;
+			ui.pager                 = ":builtin";
 
       git.sign-on-push        = true; # sign in bulk on push
       git.auto-local-bookmark = true;
@@ -93,7 +95,7 @@ in {
         '';
 
       templates.git_push_bookmark = /* python */ ''
-        "change-jamesukiyo-" ++ change_id.short()
+        "change/jamesukiyo-" ++ change_id.short()
       '';
 
     };
