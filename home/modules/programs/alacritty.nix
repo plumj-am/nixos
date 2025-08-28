@@ -4,15 +4,11 @@
   pkgs,
   ...
 }:
-let
-  dark_theme = "gruber_darker";
-  light_theme = "gruvbox_material_medium_light";
-in
 
 {
   programs.alacritty = lib.mkIf pkgs.stdenv.isDarwin {
     enable = true;
-    theme = light_theme;
+    theme = config.theme.alacritty;
     package = pkgs.alacritty;
     settings = {
       window = {

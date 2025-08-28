@@ -1,10 +1,12 @@
-{ pkgs, ... }:
+{ pkgs, config, lib, ... }:
+let 
+	inherit (lib) disabled;
+in
 {
   programs.nvf.settings.vim = {
-    theme = {
-      enable = false;
+    theme = disabled {
       name = "gruvbox";
-      style = "dark";
+      style = config.theme.variant;
     };
 
     luaConfigRC.theme = # lua

@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  config,
   ...
 }:
 let
@@ -34,6 +35,10 @@ in
       editorconfig = true;
       loaded_netrw = 1;
       loaded_netrwPlugin = 1;
+      # theme configuration for lua
+      theme_name = config.theme.nvim;
+      theme_variant = config.theme.variant;
+      is_dark = config.theme.is_dark;
     };
 
     options = {

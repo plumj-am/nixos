@@ -1,7 +1,4 @@
-let
-  dark_theme = "gruvbox-dark";
-  light_theme = "gruvbox-light";
-in
+{ config, ... }:
 {
   programs.zellij = {
     enable = true;
@@ -15,7 +12,7 @@ in
 
     settings = {
       # Theme and appearance
-      theme = light_theme;
+      theme = config.theme.zellij;
 
       # Shell and editor
       default_shell = "nu";

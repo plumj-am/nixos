@@ -20,8 +20,8 @@ $env.config.menus = [
 		correct_cursor_pos: true
 	}
 	style: {
-		text: white
-		selected_text: white_reverse
+		text: green
+		selected_text: green_reverse
 		description_text: yellow
 		match_text: { attr: u }
 		selected_match_text: { attr: ur }
@@ -36,8 +36,8 @@ $env.config.menus = [
 		page_size: 10
 	}
 	style: {
-		text: white
-		selected_text: white_reverse
+		text: green
+		selected_text: green_reverse
 	}
 }
 {

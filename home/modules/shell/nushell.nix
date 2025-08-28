@@ -1,6 +1,9 @@
+{ config, lib, ... }:
+let
+	inherit (lib) enabled;
+in
 {
-  programs.nushell = {
-    enable = true;
+  programs.nushell = enabled {
     shellAliases = {
       cat = "bat";
       ls = "eza";
@@ -141,7 +144,7 @@
       };
 
       float_precision = 2;
-      use_ansi_coloring = true;
+      use_ansi_coloring = "auto";
 
       hooks = {
         env_change = {
@@ -168,9 +171,13 @@
       ${builtins.readFile ./functions.nu}
       ${builtins.readFile ./theme.nu}
     '';
+
     envFile.text = ''
-            $env.CARAPACE_BRIDGES = "zsh,fish,bash,inshellisense,clap"
-      			$env.LS_COLORS = (vivid generate gruvbox-dark-hard)
+			use std/config ${config.theme.nushell}
+			$env.config.color_config = (${config.theme.nushell})
+
+			$env.CARAPACE_BRIDGES = "zsh,fish,bash,inshellisense,clap"
+			$env.LS_COLORS = (vivid generate ${config.theme.vivid})
     '';
   };
 }
