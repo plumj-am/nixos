@@ -20,9 +20,9 @@ in
       (builtins.path {
         path = ./set_colorscheme.lua;
       })
-      (builtins.path {
-        path = ./lsp.lua;
-      })
+      # (builtins.path {
+      #   path = ./lsp.lua;
+      # })
     ];
 
     clipboard = enabled {
