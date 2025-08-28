@@ -9,7 +9,7 @@ in
     settings = {
       scan_timeout = 100;
       command_timeout = 1000;
-      format = "[┏━](success_color)$status[━](success_color) $directory [━┫](success_color) $git_branch$git_state$git_status$git_metrics [┣━┫](success_color) \${custom.jj} [┣━](success_color) $cmd_duration$line_break$character";
+      format = "[┏━](success_color)$status[━](success_color) $directory [━┫](success_color) $git_branch$git_state$git_status$git_metrics [┣━━┫](success_color) \${custom.jj} [┣━](success_color) $cmd_duration$line_break$character";
       palette = "light_theme";
 
       palettes.light_theme = {
@@ -69,7 +69,7 @@ in
         error_symbol = "[┃](success_color)";
       };
 
-      git_branch.format = "[$branch](branch_color)";
+      git_branch.format = "[\"$branch\"](purple)";
 
       git_status = {
         format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](status_highlight) ($ahead_behind$stashed)](status_color) ";
