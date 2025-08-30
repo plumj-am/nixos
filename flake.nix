@@ -13,7 +13,7 @@
     ];
 
     experimental-features = [
-      "cgroups"
+      # "cgroups"
       "flakes"
       "nix-command"
       "pipe-operators"
@@ -24,8 +24,8 @@
     http-connections         = 50;
     lazy-trees               = true;
     show-trace               = true;
-    trusted-users            = [ "root" "@wheel" ];
-    use-cgroups              = true;
+    trusted-users            = [ "root" "@wheel" "james" ];
+    # use-cgroups              = true;
     warn-dirty               = false;
   };
 
@@ -47,9 +47,12 @@
 
     fff-nvim.url = "github:dmtrKovalenko/fff.nvim";
     fff-nvim.inputs.nixpkgs.follows = "nixpkgs";
+
+		disko.url = "github:nix-community/disko";
+		disko.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs @ { nixpkgs, nixos-wsl, nix-darwin, home-manager, fenix, nvf, bacon-ls, fff-nvim, ... }: let
+  outputs = inputs @ { nixpkgs, nixos-wsl, nix-darwin, home-manager, fenix, nvf, bacon-ls, fff-nvim, disko, ... }: let
     inherit (nixpkgs.lib) const extend;
 
     # extend nixpkgs.lib with nix-darwin.lib, then our custom lib
@@ -113,5 +116,21 @@
         )
       ];
     };
+		nixosConfigurations."plum" = lib.nixosSystem' {
+      system = systems.linux;
+      modules = [
+				disko.nixosModules.disko
+        ./hosts/plum/configuration.nix
+        home-manager.nixosModules.home-manager
+        (
+          { pkgs, ... }:
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.james = import ./home/default.nix (mkHomeConfig systems.linux);
+          }
+        )
+      ];
+		};
   };
 }
