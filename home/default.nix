@@ -34,26 +34,21 @@
 
       def main [--remote] {
           let os = (sys host | get name)
+          let hostname = (hostname | str trim)
+          
+          let config_path = if $os == "Darwin" { "/Users/james/nixos-config" } else { "/home/james/nixos-config" }
           
           let flake = if $remote {
-              if $os == "Darwin" {
-                  "github:jamesukiyo/nixos#darwin"
-              } else {
-                  "github:jamesukiyo/nixos#nixos-wsl"
-              }
+              $"github:jamesukiyo/nixos#($hostname)"
           } else {
-              if $os == "Darwin" {
-                  "/Users/james/nixos-config#darwin"
-              } else {
-                  "/home/james/nixos-config#nixos-wsl"
-              }
+              $"($config_path)#($hostname)"
           }
           
           if $os == "Darwin" {
-              print $"Building Darwin configuration from ($flake)..."
+              print $"Building Darwin configuration for ($hostname) from ($flake)..."
               sudo darwin-rebuild switch --flake $flake
           } else {
-              print $"Building NixOS configuration from ($flake)..."
+              print $"Building NixOS configuration for ($hostname) from ($flake)..."
               sudo nixos-rebuild switch --flake $flake
           }
       }
@@ -67,26 +62,21 @@
 
       def main [--remote] {
           let os = (sys host | get name)
+          let hostname = (hostname | str trim)
+          
+          let config_path = if $os == "Darwin" { "/Users/james/nixos-config" } else { "/home/james/nixos-config" }
           
           let flake = if $remote {
-              if $os == "Darwin" {
-                  "github:jamesukiyo/nixos#darwin"
-              } else {
-                  "github:jamesukiyo/nixos#nixos-wsl"
-              }
+              $"github:jamesukiyo/nixos#($hostname)"
           } else {
-              if $os == "Darwin" {
-                  "/Users/james/nixos-config#darwin"
-              } else {
-                  "/home/james/nixos-config#nixos-wsl"
-              }
+              $"($config_path)#($hostname)"
           }
           
           if $os == "Darwin" {
-              print $"Rolling back Darwin configuration from ($flake)..."
+              print $"Rolling back Darwin configuration for ($hostname) from ($flake)..."
               sudo darwin-rebuild switch --rollback --flake $flake
           } else {
-              print $"Rolling back NixOS configuration from ($flake)..."
+              print $"Rolling back NixOS configuration for ($hostname) from ($flake)..."
               sudo nixos-rebuild switch --rollback --flake $flake
           }
       }
