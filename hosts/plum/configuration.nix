@@ -1,4 +1,4 @@
-{ pkgs, lib, modulesPath, ... }:
+{ pkgs, lib, modulesPath, config, ... }:
 {
 	imports = [
 		(modulesPath + "/installer/scan/not-detected.nix")
@@ -11,28 +11,31 @@
 		efiInstallAsRemovable = true;
 	};
 
+	age.secrets.password.file = ./password.age;
+
   # user configuration
   users.users.james = {
     isNormalUser = true;
     shell = pkgs.nushell; # nushell as default shell
-    extraGroups = [
-      "wheel" # sudo access
-      "docker" # if using Docker
-      "dialout"
-    ];
+		hashedPasswordFile = config.age.secrets.password.path;
+    extraGroups = [ "wheel" ];
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA7WV4+7uhIWQVHEN/2K0jJPTaZ/HbG3W8OKSpzmPBI4"
     ];
   };
 
 	users.users.root.openssh.authorizedKeys.keys = [
-		"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE0LRmns5YhIUkmr4DCJPUeLKs6aDFNTeXBhrQoTxpme"
+		"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA7WV4+7uhIWQVHEN/2K0jJPTaZ/HbG3W8OKSpzmPBI4"
 	];
+
+	home-manager.users = {
+		james = {};
+	};
 
   services.openssh = {
     enable = true;
     settings = {
-      PasswordAuthentication = false;
+      PasswordAuthentication = true;
       PermitRootLogin = "yes";
       PubkeyAuthentication = true;
     };
@@ -45,6 +48,8 @@
       enable = true;
       allowedTCPPorts = [ 22 ];
     };
+    useDHCP = lib.mkDefault true;
+    interfaces = {};
   };
 
   time.timeZone = "Europe/Warsaw";

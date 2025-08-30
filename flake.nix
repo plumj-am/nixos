@@ -24,21 +24,26 @@
     http-connections         = 50;
     lazy-trees               = true;
     show-trace               = true;
-    trusted-users            = [ "root" "@wheel" "james" ];
+    trusted-users            = [ "root" "@wheel" ];
     # use-cgroups              = true;
     warn-dirty               = false;
   };
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
     nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
     nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
+
     nix-darwin.url = "github:nix-darwin/nix-darwin/master";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+
     home-manager.url = "github:nix-community/home-manager/master";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
     fenix.url = "github:nix-community/fenix";
     fenix.inputs.nixpkgs.follows = "nixpkgs";
+
     nvf.url = "github:notashelf/nvf";
     nvf.inputs.nixpkgs.follows = "nixpkgs";
     
@@ -50,9 +55,12 @@
 
 		disko.url = "github:nix-community/disko";
 		disko.inputs.nixpkgs.follows = "nixpkgs";
+
+		agenix.url = "github:ryantm/agenix";
+		agenix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs @ { nixpkgs, nixos-wsl, nix-darwin, home-manager, fenix, nvf, bacon-ls, fff-nvim, disko, ... }: let
+  outputs = inputs @ { nixpkgs, nixos-wsl, nix-darwin, home-manager, fenix, nvf, bacon-ls, fff-nvim, disko, agenix, ... }: let
     inherit (nixpkgs.lib) const extend;
 
     # extend nixpkgs.lib with nix-darwin.lib, then our custom lib
@@ -72,6 +80,7 @@
           nvf
           bacon-ls
           fff-nvim
+					agenix
           ;
         pkgs = import nixpkgs {
           inherit system;
@@ -122,6 +131,7 @@
 				disko.nixosModules.disko
         ./hosts/plum/configuration.nix
         home-manager.nixosModules.home-manager
+				agenix.nixosModules.default
         (
           { pkgs, ... }:
           {
