@@ -1,4 +1,7 @@
 { pkgs, lib, modulesPath, config, ... }:
+let
+	inherit (lib) enabled;
+in
 {
 	imports = [
 		(modulesPath + "/installer/scan/not-detected.nix")
@@ -6,14 +9,23 @@
 		./disk.nix
 	];
 
+	nix.settings.experimental-features = [ "nix-command" "flakes" "pipe-operators" ];
+
+	security.sudo = enabled {
+		execWheelOnly = true;
+	};
+
 	boot.loader.grub = {
 		efiSupport = true;
 		efiInstallAsRemovable = true;
 	};
 
+	age.identityPaths = [ "/root/.ssh/id" ];
 	age.secrets.password.file = ./password.age;
+	age.secrets.id.file = ./id.age;
 
   # user configuration
+  users.mutableUsers = false;
   users.users.james = {
     isNormalUser = true;
     shell = pkgs.nushell; # nushell as default shell
@@ -24,9 +36,12 @@
     ];
   };
 
-	users.users.root.openssh.authorizedKeys.keys = [
-		"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA7WV4+7uhIWQVHEN/2K0jJPTaZ/HbG3W8OKSpzmPBI4"
-	];
+	users.users.root = {
+		openssh.authorizedKeys.keys = [
+			"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA7WV4+7uhIWQVHEN/2K0jJPTaZ/HbG3W8OKSpzmPBI4"
+		];
+		hashedPasswordFile = config.age.secrets.password.path;
+	};
 
 	home-manager.users = {
 		james = {};
@@ -40,6 +55,10 @@
       PubkeyAuthentication = true;
     };
     openFirewall = true;
+    hostKeys = [{
+      type = "ed25519";
+      path = config.age.secrets.id.path;
+    }];
   };
 
   networking = {
