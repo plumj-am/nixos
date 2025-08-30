@@ -111,10 +111,10 @@
       ];
     };
 
-    darwinConfigurations.darwin = lib.darwinSystem' {
+    darwinConfigurations.lime = lib.darwinSystem' {
       system = systems.darwin;
       modules = [
-        ./hosts/darwin/configuration.nix
+        ./hosts/lime/configuration.nix
         home-manager.darwinModules.home-manager
         (
           { pkgs, ... }:
