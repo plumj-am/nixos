@@ -1,12 +1,20 @@
 {
   pkgs,
   lib,
+  config,
   ...
 }:
+let
+  inherit (lib) enabled;
+in
 {
 
   nixpkgs.config.allowUnfree = true;
   # nixpkgs.config.allowUnsupportedSystem = true;
+
+  # agenix configuration
+  age.identityPaths = [ "/root/.ssh/id" ];
+  age.secrets.id.file = ./id.age;
 
   wsl = {
     enable = true;
@@ -72,11 +80,17 @@
   };
 
   services = {
-    openssh.enable = true;
+    openssh = {
+      enable = true;
+      hostKeys = [{
+        type = "ed25519";
+        path = config.age.secrets.id.path;
+      }];
+    };
   };
 
   networking = {
-    hostName = "nixos-wsl";
+    hostName = "pear";
     firewall.enable = true;
   };
 

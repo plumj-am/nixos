@@ -93,12 +93,13 @@
   in {
     inherit inputs lib;
 
-    nixosConfigurations."nixos-wsl" = lib.nixosSystem' {
+    nixosConfigurations."pear" = lib.nixosSystem' {
       system = systems.linux;
       modules = [
         nixos-wsl.nixosModules.wsl
-        ./hosts/nixos/configuration.nix
+        ./hosts/pear/configuration.nix
         home-manager.nixosModules.home-manager
+        agenix.nixosModules.default
         (
           { pkgs, ... }:
           {
