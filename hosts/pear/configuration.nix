@@ -6,6 +6,8 @@
 }:
 let
   inherit (lib) enabled;
+
+	interface = "ts0";
 in
 {
 
@@ -88,6 +90,13 @@ in
       }];
     };
   };
+
+	services.tailscale = enabled {
+		useRoutingFeatures = "both";
+		interfaceName = interface;
+	};
+
+	networking.trustedInterfaces = [ interface ];
 
   networking = {
     hostName = "pear";

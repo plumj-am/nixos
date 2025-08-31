@@ -1,6 +1,8 @@
 { pkgs, lib, modulesPath, config, ... }:
 let
 	inherit (lib) enabled;
+
+	interface = "ts0";
 in
 {
 	imports = [
@@ -60,6 +62,13 @@ in
       path = config.age.secrets.id.path;
     }];
   };
+
+	services.tailscale = enabled {
+		useRoutingFeatures = "both";
+		interfaceName = interface;
+	};
+
+	networking.trustedInterfaces = [ interface ];
 
   networking = {
     hostName = "kiwi";

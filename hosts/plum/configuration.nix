@@ -1,6 +1,8 @@
 { pkgs, lib, modulesPath, config, ... }:
 let
 	inherit (lib) enabled;
+
+	interface = "ts0";
 in
 {
 	imports = [
@@ -61,9 +63,15 @@ in
     }];
   };
 
+	services.tailscale = enabled {
+		useRoutingFeatures = "both";
+		interfaceName = interface;
+	};
+
   networking = {
     hostName = "plum";
     firewall = {
+			trustedInterfaces = [ interface ];
       enable = true;
       allowedTCPPorts = [ 22 ];
     };
