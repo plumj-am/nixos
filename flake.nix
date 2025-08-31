@@ -143,5 +143,23 @@
         )
       ];
 		};
+
+		nixosConfigurations."kiwi" = lib.nixosSystem' {
+      system = systems.linux;
+      modules = [
+				disko.nixosModules.disko
+        ./hosts/kiwi/configuration.nix
+        home-manager.nixosModules.home-manager
+				agenix.nixosModules.default
+        (
+          { pkgs, ... }:
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.james = import ./home/default.nix (mkHomeConfig systems.linux);
+          }
+        )
+      ];
+		};
   };
 }
