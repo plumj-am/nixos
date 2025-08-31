@@ -47,8 +47,7 @@ in
 		james = {};
 	};
 
-  services.openssh = {
-    enable = true;
+  services.openssh = enabled {
     settings = {
       PasswordAuthentication = true;
       PermitRootLogin = "yes";
@@ -61,6 +60,7 @@ in
     }];
   };
 
+	services.resolved.domains = ["taild29fec.ts.net"];
 	services.tailscale = enabled {
 		useRoutingFeatures = "both";
 		interfaceName = interface;

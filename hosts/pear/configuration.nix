@@ -87,16 +87,14 @@ in
   programs = {
   };
 
-  services = {
-    openssh = {
-      enable = true;
-      hostKeys = [{
-        type = "ed25519";
-        path = config.age.secrets.id.path;
-      }];
-    };
+  services.openssh = enabled {
+    hostKeys = [{
+      type = "ed25519";
+      path = config.age.secrets.id.path;
+    }];
   };
 
+	services.resolved.domains = ["taild29fec.ts.net"];
 	services.tailscale = enabled {
 		useRoutingFeatures = "both";
 		interfaceName = interface;
@@ -106,6 +104,7 @@ in
     hostName = "pear";
     firewall = enabled {
 			trustedInterfaces = [ interface ];
+			allowedTCPPorts = [ 22 ];
 		};
   };
 
