@@ -1,7 +1,6 @@
-{ pkgs, lib, modulesPath, config, ... }:
+{ pkgs, lib, modulesPath, config, keys, ... }:
 let
 	inherit (lib) enabled;
-	inherit (import ../../keys.nix) james;
 
 	interface = "ts0";
 in
@@ -36,11 +35,11 @@ in
     shell = pkgs.nushell; # nushell as default shell
 		hashedPasswordFile = config.age.secrets.password.path;
     extraGroups = [ "wheel" ];
-    openssh.authorizedKeys.keys = [ james ];
+    openssh.authorizedKeys.keys = [ keys.james ];
   };
 
 	users.users.root = {
-		openssh.authorizedKeys.keys = [ james ];
+		openssh.authorizedKeys.keys = [ keys.james ];
 		hashedPasswordFile = config.age.secrets.password.path;
 	};
 
