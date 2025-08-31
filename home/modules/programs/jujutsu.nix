@@ -63,7 +63,7 @@ in {
 			aliases.t   = [ "tug" ];
 
       aliases.push = [ "git" "push" ];
-      aliases.P    = [ "git" "push" ];
+      aliases.p    = [ "git" "push" ];
 
       aliases.init  = [ "git" "init" "--colocate" ];
 			aliases.i     = [ "git" "init" "--colocate" ];
