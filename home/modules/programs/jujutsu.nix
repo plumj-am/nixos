@@ -3,7 +3,8 @@ let
   inherit (lib) enabled;
 in {
   home.packages = [ 
-		pkgs.jjui 
+		# pkgs.jjui 
+		pkgs.lazyjj
 	];
 
   programs.git.difftastic = enabled;
@@ -28,6 +29,8 @@ in {
       ui.graph-style           = "square";
 			ui.movement.edit         = true;
 			ui.pager                 = ":builtin";
+
+			lazyjj.highlight-color = "#f2e5bc";
 
       git.sign-on-push        = true; # sign in bulk on push
       git.auto-local-bookmark = true;

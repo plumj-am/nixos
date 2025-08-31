@@ -554,6 +554,19 @@ in
         ];
       };
 
+			"lazyjj.nvim" = {
+				package = pkgs.vimPlugins.lazyjj-nvim;
+				lazy = true;
+				setupModule = "lazyjj";
+				keys = [
+					{
+						mode = "n";
+						key = "<leader>jj";
+						action = "<CMD>LazyJJ<CR>";
+					}
+				];
+			};
+
       "plenary.nvim" = {
         package = pkgs.vimPlugins.plenary-nvim;
         lazy = true;
