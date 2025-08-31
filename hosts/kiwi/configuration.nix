@@ -68,11 +68,10 @@ in
 		interfaceName = interface;
 	};
 
-	networking.trustedInterfaces = [ interface ];
-
   networking = {
     hostName = "kiwi";
     firewall = {
+			trustedInterfaces = [ interface ];
       enable = true;
       allowedTCPPorts = [ 22 ];
     };

@@ -96,11 +96,11 @@ in
 		interfaceName = interface;
 	};
 
-	networking.trustedInterfaces = [ interface ];
-
   networking = {
     hostName = "pear";
-    firewall.enable = true;
+    firewall = enabled {
+			trustedInterfaces = [ interface ];
+		};
   };
 
   time.timeZone = "Europe/Warsaw";
