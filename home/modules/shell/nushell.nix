@@ -30,6 +30,8 @@ in
       gti = "git";
       gt  = "git";
 			j   = "jj";
+
+			mosh = "mosh --no-init";
 			
       rebuild  = "~/nixos-config/rebuild.nu";
       rollback = "~/nixos-config/rollback.nu";

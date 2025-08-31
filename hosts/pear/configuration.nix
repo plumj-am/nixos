@@ -84,10 +84,17 @@ in
     openssh.authorizedKeys.keys = [ keys.james ];
   };
 
-  programs = {
+  programs.mosh = enabled {
+    openFirewall = true;
   };
 
   services.openssh = enabled {
+		settings = {
+			PasswordAuthentication       = false;
+			KbdInteractiveAuthentication = false;
+
+			AcceptEnv = "SHELLS COLORTERM";
+		};
     hostKeys = [{
       type = "ed25519";
       path = config.age.secrets.id.path;

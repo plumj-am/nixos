@@ -47,13 +47,17 @@ in
 		james = {};
 	};
 
+	programs.mosh = enabled {
+		openFirewall = true;
+	};
+
   services.openssh = enabled {
     settings = {
-      PasswordAuthentication = true;
-      PermitRootLogin = "yes";
-      PubkeyAuthentication = true;
+      PasswordAuthentication       = false;
+			KbdInteractiveAuthentication = false;
+
+			AcceptEnv = "SHELLS COLORTERM";
     };
-    openFirewall = true;
     hostKeys = [{
       type = "ed25519";
       path = config.age.secrets.id.path;
