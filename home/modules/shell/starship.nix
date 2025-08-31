@@ -10,7 +10,7 @@ in
       scan_timeout    = 100;
       command_timeout = 1000;
 
-      format  = "[┏━](success_color)$status[━](success_color) $directory [━┫](success_color) $git_branch$git_state$git_status$git_metrics [┣━━┫](success_color) \${custom.jj} [┣━](success_color) $cmd_duration$line_break$character";
+      format  = "[┏━](success_color)$status[━](success_color) $hostname $directory [━┫](success_color) $git_branch$git_state$git_status$git_metrics [┣━━┫](success_color) \${custom.jj} [┣━](success_color) $cmd_duration$line_break$character";
       palette = config.theme.starship;
 
       palettes.light_theme = {
@@ -45,6 +45,7 @@ in
 			username.style_user  = "username_color";
 
       hostname.ssh_symbol = "s";
+			hostname.ssh_only   = true;
 			hostname.format     = "[\\[$hostname\\]](hostname_color)";
 
       status.disabled      = false;
