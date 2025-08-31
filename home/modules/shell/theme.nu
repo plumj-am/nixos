@@ -59,7 +59,7 @@ def toggle-theme [theme?: string] {
     }
         # rebuild nixos config to apply nvim theme
         print "Rebuilding nixos config to apply nvim theme... (this may take a moment)"
-        sudo nixos-rebuild switch --flake /home/james/nixos-config#nixos-wsl
+        nu $"($env.HOME)/nixos-config/rebuild.nu"
 
     print "Theme switch completed!"
 }
