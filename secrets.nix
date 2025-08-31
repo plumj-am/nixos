@@ -7,7 +7,7 @@ let
 in
 {
   "hosts/plum/password.age".publicKeys = [ james plum ];
-  "hosts/kiwi/password.age".publicKeys = [ james plum ];
+  "hosts/kiwi/password.age".publicKeys = [ james kiwi ];
   "hosts/plum/id.age".publicKeys       = [ james plum ];
   "hosts/pear/id.age".publicKeys       = [ james pear ];
 	"hosts/kiwi/id.age".publicKeys       = [ james kiwi ];
