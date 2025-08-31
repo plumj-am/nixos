@@ -15,14 +15,8 @@ in
     ];
     extraLuaFiles = [
       (builtins.path {
-        path = ./globals.lua;
-      })
-      (builtins.path {
         path = ./set_colorscheme.lua;
       })
-      # (builtins.path {
-      #   path = ./lsp.lua;
-      # })
     ];
 
     clipboard = enabled {

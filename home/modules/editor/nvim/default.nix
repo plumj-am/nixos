@@ -8,6 +8,7 @@
     ./autocmds.nix
     ./langs.nix
 		./lsp.nix
+		./globals.nix
     ./debugger.nix
     ./formatter.nix
   ];
