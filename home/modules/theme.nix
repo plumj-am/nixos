@@ -3,7 +3,7 @@ let
   inherit (lib) mkOption types;
   
   # global theme configuration - use `tt dark` or `tt light` to switch
-  is_dark = false;
+  is_dark = true;
   
   themes = {
     nvim.dark	      = "gruvbox-material";

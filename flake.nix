@@ -61,105 +61,30 @@
   };
 
   outputs = inputs @ { nixpkgs, nixos-wsl, nix-darwin, home-manager, fenix, nvf, bacon-ls, fff-nvim, disko, agenix, ... }: let
-    inherit (nixpkgs.lib) const extend;
+    inherit (builtins) readDir;
+    inherit (nixpkgs.lib) attrsToList const extend groupBy listToAttrs mapAttrs nameValuePair;
 
     # extend nixpkgs.lib with nix-darwin.lib, then our custom lib
     lib' = nixpkgs.lib.extend (const <| const <| nix-darwin.lib);
     lib  = lib'.extend <| import ./lib inputs;
 
-    systems = {
-      linux = "x86_64-linux";
-      darwin = "aarch64-darwin";
-    };
+    rawHosts = readDir ./hosts
+      |> mapAttrs (name: const <| import ./hosts/${name} lib);
+    
+    hostsByType = rawHosts
+      |> attrsToList
+      |> groupBy ({ value, ... }:
+        if value ? class && value.class == "nixos" then
+          "nixosConfigurations"
+        else
+          "darwinConfigurations")
+      |> mapAttrs (const (hosts: 
+          hosts 
+          |> map ({ name, value }: nameValuePair name value.config)
+          |> listToAttrs));
 
-      mkHomeConfig = system: {
-        inherit
-          system
-          lib
-          fenix
-          nvf
-          bacon-ls
-          fff-nvim
-					agenix
-          ;
-        pkgs = import nixpkgs {
-          inherit system;
-          config.allowUnfree = true;
-          config.permittedInsecurePackages = [
-            "arc-browser-1.106.0-66192"
-          ];
-        };
-      };
-  in {
+  in hostsByType // {
     inherit inputs lib;
 
-    nixosConfigurations."pear" = lib.nixosSystem' {
-      system = systems.linux;
-      modules = [
-        nixos-wsl.nixosModules.wsl
-        ./hosts/pear/configuration.nix
-        home-manager.nixosModules.home-manager
-        agenix.nixosModules.default
-        (
-          { pkgs, ... }:
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.james = import ./home/default.nix (mkHomeConfig systems.linux);
-          }
-        )
-      ];
-    };
-
-    darwinConfigurations.lime = lib.darwinSystem' {
-      system = systems.darwin;
-      modules = [
-        ./hosts/lime/configuration.nix
-        home-manager.darwinModules.home-manager
-        (
-          { pkgs, ... }:
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.james = import ./home/default.nix (mkHomeConfig systems.darwin);
-          }
-        )
-      ];
-    };
-		nixosConfigurations."plum" = lib.nixosSystem' {
-      system = systems.linux;
-      modules = [
-				disko.nixosModules.disko
-        ./hosts/plum/configuration.nix
-        home-manager.nixosModules.home-manager
-				agenix.nixosModules.default
-        (
-          { pkgs, ... }:
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.james = import ./home/default.nix (mkHomeConfig systems.linux);
-          }
-        )
-      ];
-		};
-
-		nixosConfigurations."kiwi" = lib.nixosSystem' {
-      system = systems.linux;
-      modules = [
-				disko.nixosModules.disko
-        ./hosts/kiwi/configuration.nix
-        home-manager.nixosModules.home-manager
-				agenix.nixosModules.default
-        (
-          { pkgs, ... }:
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.james = import ./home/default.nix (mkHomeConfig systems.linux);
-          }
-        )
-      ];
-		};
   };
 }

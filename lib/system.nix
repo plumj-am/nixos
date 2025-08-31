@@ -13,8 +13,13 @@ inputs: self: super: let
     |> map (getAttrFromPath path);
 
   inputHomeModules   = collectInputs [ "homeModules"   "default" ];
-  inputModulesLinux  = collectInputs [ "nixosModules"  "default" ];
-  inputModulesDarwin = collectInputs [ "darwinModules" "default" ];
+  inputModulesLinux  = collectInputs [ "nixosModules"  "default" ] ++ [
+    inputs.home-manager.nixosModules.home-manager 
+    inputs.agenix.nixosModules.default
+  ];
+  inputModulesDarwin = collectInputs [ "darwinModules" "default" ] ++ [
+    inputs.home-manager.darwinModules.home-manager
+  ];
 
   inputOverlays = collectInputs [ "overlays" "default" ];
   overlayModule = { nixpkgs.overlays = inputOverlays; };
@@ -23,6 +28,7 @@ inputs: self: super: let
   specialArgs = inputs // {
     inherit inputs;
     lib = self;
+    keys = import ../keys.nix;
   };
 in {
   # wrapper for nixosSystem that automatically applies common modules
@@ -34,7 +40,23 @@ in {
       overlayModule
 
       {
-        home-manager.sharedModules = inputHomeModules;
+        home-manager = {
+          useGlobalPkgs = true;
+          useUserPackages = true;
+          sharedModules = inputHomeModules;
+          users.james = import ../home/default.nix {
+            inherit (config) system;
+            lib = self;
+            inherit (inputs) fenix nvf bacon-ls fff-nvim agenix;
+            pkgs = import inputs.nixpkgs {
+              inherit (config) system;
+              config.allowUnfree = true;
+              config.permittedInsecurePackages = [
+                "arc-browser-1.106.0-66192"
+              ];
+            };
+          };
+        };
       }
     ] ++ modulesCommon
       ++ inputModulesLinux;

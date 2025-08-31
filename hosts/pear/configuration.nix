@@ -2,11 +2,11 @@
   pkgs,
   lib,
   config,
+  keys,
   ...
 }:
 let
   inherit (lib) enabled;
-  inherit (import ../../keys.nix) james;
 
 	interface = "ts0";
 in
@@ -77,11 +77,11 @@ in
       "docker" # if using Docker
       "dialout"
     ];
-    openssh.authorizedKeys.keys = [ james ];
+    openssh.authorizedKeys.keys = [ keys.james ];
   };
 
   users.users.root = {
-    openssh.authorizedKeys.keys = [ james ];
+    openssh.authorizedKeys.keys = [ keys.james ];
   };
 
   programs = {
