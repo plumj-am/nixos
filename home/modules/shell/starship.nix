@@ -10,7 +10,9 @@ in
       scan_timeout    = 100;
       command_timeout = 1000;
 
-      format  = "[┏━](success_color)$status[━](success_color) $hostname $directory [━┫](success_color) $git_branch$git_state$git_status$git_metrics [┣━━┫](success_color) \${custom.jj} [┣━](success_color) $cmd_duration$line_break$character";
+      format  = "[┏━](success_color)$status[━](success_color) $hostname$directory [━┫](success_color) \${custom.jj} [┣━](success_color) $cmd_duration$line_break$character";
+			# old for reference
+      # format  = "[┏━](success_color)$status[━](success_color) $hostname $directory [━┫](success_color) $git_branch$git_state$git_status$git_metrics [┣━━┫](success_color) \${custom.jj} [┣━](success_color) $cmd_duration$line_break$character";
       palette = config.theme.starship;
 
       palettes.light_theme = {
@@ -46,7 +48,7 @@ in
 
       hostname.ssh_symbol = "s";
 			hostname.ssh_only   = true;
-			hostname.format     = "[\\[$hostname\\]](hostname_color)";
+			hostname.format     = "[\\[$hostname\\]](hostname_color) ";
 
       status.disabled      = false;
 			# success_symbol     = " "; # uncomment to always show
@@ -61,8 +63,10 @@ in
       character.success_symbol = "[┃](success_color)";
 			character.error_symbol   = "[┃](success_color)";
 
-      git_branch.format = "[\"$branch\"](purple)";
+			git_branch.disabled = true;
+      git_branch.format   = "[\"$branch\"](purple)";
 
+			git_status.disabled   = true;
       git_status.format     = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](status_highlight) ($ahead_behind$stashed)](status_color) ";
 			git_status.conflicted = "​";
 			git_status.untracked  = "​";
@@ -72,9 +76,10 @@ in
 			git_status.deleted    = "​";
 			git_status.stashed    = "≡";
 
-      git_state.format = "\\([$state( $progress_current/$progress_total)](state_color)\\)";
+			git_state.disabled = true;
+      git_state.format   = "\\([$state( $progress_current/$progress_total)](state_color)\\)";
 
-      git_metrics.disabled = false;
+      git_metrics.disabled = true;
 			git_metrics.format   = "[\\[](purple)[+$added](green)[-$deleted](red)[\\]](purple)";
 
       cmd_duration.format = "[$duration](duration_color)";
@@ -84,14 +89,12 @@ in
 			nix_shell.impure_msg = "";
 			nix_shell.pure_msg   = "";
 
-			custom.jj = {
-				command        = "prompt";
-				format         = "$output";
-				ignore_timeout = true;
-				shell          = ["starship-jj" "--ignore-working-copy" "starship"];
-				use_stdin      = false;
-				when           = true;
-			};
+			custom.jj.command        = "prompt";
+			custom.jj.format         = "$output";
+			custom.jj.ignore_timeout = true;
+			custom.jj.shell          = ["starship-jj" "--ignore-working-copy" "starship"];
+			custom.jj.use_stdin      = false;
+			custom.jj.when           = true;
     };
   };
 }
