@@ -25,14 +25,18 @@ in
       mp = "mprocs";
       ko = "kondo";
 
+			# git
       g   = "git";
       gi  = "git";
       gti = "git";
       gt  = "git";
+
+			# jujutsu
 			j   = "jj";
+			lj  = "lazyjj";
 
 			mosh = "mosh --no-init";
-			
+
       rebuild  = "~/nixos-config/rebuild.nu";
       rollback = "~/nixos-config/rollback.nu";
       # for some reason this doesn't work and is called every time I open a new shell
@@ -59,6 +63,7 @@ in
       bun   = "steam-run bun";
       bunx  = "steam-run bunx";
       npx   = "steam-run npx";
+
     };
     settings = {
       edit_mode     = "vi";
@@ -103,7 +108,7 @@ in
 			explore.exit_esc              = true;
 			explore.command_bar_text      = "#C4C9C6";
 			explore.status_bar_background = {};
-			explore.highlight.bg          = "yellow"; 
+			explore.highlight.bg          = "yellow";
 			explore.highlight.fg          = "black";
 			explore.status                = {};
 			explore.try                   = {};

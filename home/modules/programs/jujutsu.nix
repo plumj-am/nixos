@@ -1,9 +1,9 @@
-{ pkgs, lib, ... }: 
+{ pkgs, lib, ... }:
 let
   inherit (lib) enabled;
 in {
-  home.packages = [ 
-		# pkgs.jjui 
+  home.packages = [
+		# pkgs.jjui
 		pkgs.lazyjj
 	];
 
@@ -54,8 +54,13 @@ in {
 			aliases.resolve-ast = [ "resolve" "--tool" "mergiraf" ];
 			aliases.resa        = [ "resolve-ast" ];
 
-			aliases.s  = [ "squash" ];
-			aliases.si = [ "squash" "--interactive" ];
+			aliases.s = [ "split" ];
+			aliases.sm = [ "split" "--message" ];
+
+			aliases.sq   = [ "squash" ];
+			aliases.sqi  = [ "squash" "--interactive" ];
+			aliases.sqm  = [ "squash" "--message" ];
+			aliases.sqmi = [ "squash" "--interactive" "--message" ];
 
 			aliases.sh = [ "show" ];
 
@@ -71,7 +76,7 @@ in {
       aliases.clone = [ "git" "clone" "--colocate" ];
 			aliases.cl    = [ "git" "clone" "--colocate" ];
 
-      aliases.d  = [ "diff" ];
+      aliases.d = [ "diff" ];
 
       aliases.l   = [ "log" ];
       aliases.la  = [ "log" "--revisions" "::" ];
@@ -86,7 +91,7 @@ in {
 			revset-aliases."closest(to)"          = "heads(::to & bookmarks())";
       revset-aliases."closest_pushable(to)" = "heads(::to & ~description(exact:\"\") & (~empty() | merges()))";
 
-      revsets.log = "present(@) | present(trunk()) | ancestors(remote_bookmarks().. | @.., 8)";     
+      revsets.log = "present(@) | present(trunk()) | ancestors(remote_bookmarks().. | @.., 8)";
 
 			templates.draft_commit_description = /* python */ ''
           concat(
