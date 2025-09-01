@@ -1,6 +1,8 @@
 { pkgs, lib, ... }:
 let
   inherit (lib) enabled disabled mkLuaInline;
+
+	telescopeMappings = [ "buffers" "diagnostics" "findFiles" "findProjects" "gitBranches" "gitBufferCommits" "gitCommits" "gitStash" "gitStatus" "helpTags" "liveGrep" "lspDefinitions" "lspDocumentSymbols" "lspImplementations" "lspReferences" "lspTypeDefinitions" "lspWorkspaceSymbols" "open" "resume" "treesitter" ];
 in
 {
   programs.nvf.settings.vim = {
@@ -230,8 +232,8 @@ in
           workspaces = { };
         };
       };
-      # handled in ./keymaps.nix
-      mappings = { };
+      # handled in ./keymaps.nix (set all to null)
+			mappings = builtins.listToAttrs (builtins.map (name: { name = name; value = null; }) telescopeMappings);
     };
 
     notes.todo-comments = enabled {
