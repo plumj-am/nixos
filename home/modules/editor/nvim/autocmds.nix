@@ -19,7 +19,7 @@ in
         event    = [ "InsertLeave" ];
         callback = mkLuaInline ''
           function()
-            vim.fn.matchadd("ws", [[\s\+$]])
+            vim.fn.matchadd("ws", [[\(\s\|\r\)\+$]])
           end
         '';
       }
@@ -43,10 +43,16 @@ in
         '';
       }
       {
-				desc    = "remove trailing whitespace on save";
-        event   = [ "BufWritePre" ];
-        pattern = [ "*" ];
-        command = "%s/\s\+$//e";
+				desc     = "remove trailing whitespace on save";
+        event    = [ "BufWritePre" ];
+        pattern  = [ "*" ];
+        callback = mkLuaInline ''
+          function()
+            local cursor_pos = vim.api.nvim_win_get_cursor(0)
+            vim.cmd("%s/\\(\\s\\|\\r\\)\\+$//e")
+            vim.api.nvim_win_set_cursor(0, cursor_pos)
+          end
+        '';
       }
       {
         desc     = "detect fasm vs nasm by format directive";
@@ -75,11 +81,16 @@ in
       }
     ];
 
-    # TODO: fix not displaying red
     # initial lua config for whitespace highlighting
     luaConfigRC.whitespace = "
+      vim.api.nvim_create_autocmd('ColorScheme', {
+        pattern = '*',
+        callback = function()
+          vim.api.nvim_set_hl(0, 'ws', { bg = 'red' })
+        end
+      })
       vim.api.nvim_set_hl(0, 'ws', { bg = 'red' })
-      vim.fn.matchadd('ws', [[\s\+$]])
+      vim.fn.matchadd('ws', [[\(\s\|\r\)\+$]])
     ";
   };
 }
