@@ -26,6 +26,7 @@
     pkgs.curl
     pkgs.tokei
     pkgs.jq
+		pkgs.ast-grep
 
     pkgs.vivid
 
