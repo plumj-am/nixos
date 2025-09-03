@@ -1,0 +1,86 @@
+{ self, config, lib, ... }: let
+  inherit (config.networking) domain;
+  inherit (lib) enabled;
+
+  fqdn = "git.${domain}";
+  port = 8001;
+in {
+  imports = [
+    (self + /modules/caddy.nix)
+  ];
+
+  services.forgejo = enabled {
+    lfs = enabled;
+
+    database = {
+      type = "sqlite3";
+    };
+
+    settings = let
+      description = "James's Git Forge";
+    in {
+      default.APP_NAME = description;
+
+      attachment.ALLOWED_TYPES = "*/*";
+
+      cache.ENABLED = true;
+
+      # archive cleanup cron job
+      "cron.archive_cleanup" = let
+        interval = "4h";
+      in {
+        SCHEDULE   = "@every ${interval}";
+        OLDER_THAN =           interval;
+      };
+
+      other = {
+        SHOW_FOOTER_TEMPLATE_LOAD_TIME = false;
+        SHOW_FOOTER_VERSION            = false;
+      };
+
+      packages.ENABLED = false;
+
+      repository = {
+        DEFAULT_BRANCH      = "master";
+        DEFAULT_MERGE_STYLE = "rebase-merge";
+        DEFAULT_REPO_UNITS  = "repo.code, repo.issues, repo.pulls";
+
+        DEFAULT_PUSH_CREATE_PRIVATE = false;
+        ENABLE_PUSH_CREATE_ORG      = true;
+        ENABLE_PUSH_CREATE_USER     = true;
+
+        DISABLE_STARS = true;
+      };
+
+      "repository.upload" = {
+        FILE_MAX_SIZE = 100;
+        MAX_FILES     = 10;
+      };
+
+      server = {
+        DOMAIN       = domain;
+        ROOT_URL     = "https://${fqdn}/";
+        LANDING_PAGE = "/explore";
+
+        HTTP_ADDR = "::1";
+        HTTP_PORT = port;
+
+        SSH_PORT = 22;
+
+        DISABLE_ROUTER_LOG = true;
+      };
+
+      service.DISABLE_REGISTRATION = true;
+
+      session = {
+        COOKIE_SECURE = true;
+        SAME_SITE     = "strict";
+      };
+
+      "ui.meta" = {
+        AUTHOR      = description;
+        DESCRIPTION = description;
+      };
+    };
+  };
+}
