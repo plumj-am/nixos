@@ -2,10 +2,7 @@
 let
   inherit (lib) enabled;
 in {
-  home.packages = [
-		# pkgs.jjui
-		pkgs.lazyjj
-	];
+  home.packages = [ pkgs.lazyjj ];
 
   programs.git.difftastic = enabled;
 

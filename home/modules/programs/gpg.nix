@@ -1,13 +1,17 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
+let
+	inherit (lib) enabled;
+in
 {
-  programs.gpg.enable = true;
+  programs.gpg = enabled;
 
-  services.gpg-agent = {
-    enable = true;
+  services.gpg-agent = enabled {
     # pinentry.package = pkgs.pinentry-curses; # nicer but doesn't work with neogit
     pinentry.package = pkgs.pinentry-tty;
+
     enableNushellIntegration = true;
-    enableBashIntegration = true;
+    enableBashIntegration    = true;
+
     defaultCacheTtl = 3600;
   };
 }

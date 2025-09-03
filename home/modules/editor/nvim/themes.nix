@@ -1,5 +1,5 @@
 { pkgs, config, lib, ... }:
-let 
+let
 	inherit (lib) disabled;
 in
 {

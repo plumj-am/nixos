@@ -1,6 +1,9 @@
+{ lib, ... }:
+let
+	inherit (lib) enabled;
+in
 {
-  programs.bacon = {
-    enable = true;
+  programs.bacon = enabled {
     settings = {
       jobs.bacon-ls = {
         command = [
@@ -12,14 +15,15 @@
           "--message-format"
           "json-diagnostic-rendered-ansi"
         ];
-        analyzer = "cargo_json";
+
+        analyzer    = "cargo_json";
         need_stdout = true;
       };
       exports.cargo-json-spans = {
-        auto = true;
-        exporter = "analyzer";
+        auto        = true;
+        exporter    = "analyzer";
         line_format = ''{diagnostic.level}|:|{span.file_name}|:|{span.line_start}|:|{span.line_end}|:|{span.column_start}|:|{span.column_end}|:|{diagnostic.message}|:|{diagnostic.rendered}|:|{span.suggested_replacement}'';
-        path = ".bacon-locations";
+        path        = ".bacon-locations";
       };
     };
   };

@@ -12,9 +12,7 @@
 {
   imports = [
     nvf.homeManagerModules.default
-  ] ++ (lib.collectNix ./modules
-    |> lib.remove ./modules/shell/aliases.nix  # data file, not a module
-  );
+  ] ++ (lib.collectNix ./modules);
 
   _module.args = {
     inherit
@@ -35,15 +33,15 @@
       def main [--remote] {
           let os = (sys host | get name)
           let hostname = (hostname | str trim)
-          
+
           let config_path = if $os == "Darwin" { "/Users/james/nixos-config" } else { "/home/james/nixos-config" }
-          
+
           let flake = if $remote {
               $"github:jamesukiyo/nixos#($hostname)"
           } else {
               $"($config_path)#($hostname)"
           }
-          
+
           if $os == "Darwin" {
               print $"Building Darwin configuration for ($hostname) from ($flake)..."
               sudo darwin-rebuild switch --flake $flake
@@ -63,15 +61,15 @@
       def main [--remote] {
           let os = (sys host | get name)
           let hostname = (hostname | str trim)
-          
+
           let config_path = if $os == "Darwin" { "/Users/james/nixos-config" } else { "/home/james/nixos-config" }
-          
+
           let flake = if $remote {
               $"github:jamesukiyo/nixos#($hostname)"
           } else {
               $"($config_path)#($hostname)"
           }
-          
+
           if $os == "Darwin" {
               print $"Rolling back Darwin configuration for ($hostname) from ($flake)..."
               sudo darwin-rebuild switch --rollback --flake $flake

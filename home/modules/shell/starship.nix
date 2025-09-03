@@ -4,7 +4,7 @@ let
 in
 {
   programs.starship = enabled {
-    enableBashIntegration = true;
+    enableBashIntegration    = true;
     enableNushellIntegration = true;
     settings = {
       scan_timeout    = 100;

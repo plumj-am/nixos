@@ -1,19 +1,13 @@
+{ lib, ... }:
+let
+	inherit (lib) enabled;
+in
 {
-  imports = [
-    ./nvim
-  ];
+  imports = [ ./nvim ];
 
-  programs.vim.enable = true;
+  programs.vim = enabled;
 
-  programs.neovim = {
-    enable = true;
-    defaultEditor = true;
-    viAlias = true;
-    vimAlias = true;
-  };
-
-  programs.nvf = {
-    enable = true;
+  programs.nvf = enabled {
     settings = {
       vim.viAlias = true;
       vim.vimAlias = true;

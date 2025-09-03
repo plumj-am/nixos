@@ -1,10 +1,4 @@
-{
-  pkgs,
-  fenix,
-  bacon-ls,
-  system,
-  ...
-}:
+{ pkgs, fenix, bacon-ls, system, ... }:
 
 {
   home.packages = [

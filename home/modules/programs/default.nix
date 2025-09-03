@@ -1,4 +1,4 @@
 { lib, ... }: {
-  imports = lib.collectNix ./. 
+  imports = lib.collectNix ./.
 		|> lib.remove ./default.nix;
 }

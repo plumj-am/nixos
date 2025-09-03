@@ -1,10 +1,7 @@
-{
-  pkgs,
-  lib,
-  ...
-}:
+{ pkgs, lib, ... }:
 {
   programs.nix-index.enable = true;
+
   programs.bun.enable = true;
 
   home.packages = [

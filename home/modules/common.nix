@@ -1,9 +1,9 @@
 { pkgs, ... }:
 {
   home.sessionVariables = {
-    EDITOR = "nvim";
-    SHELL = "${pkgs.nushell}/bin/nu";
-    BROWSER = "wslview"; # use wslview for WSL
+    EDITOR   = "nvim";
+    SHELL    = "${pkgs.nushell}/bin/nu";
+    BROWSER  = "wslview"; # use wslview for WSL
     TERMINAL = "zellij";
   };
 

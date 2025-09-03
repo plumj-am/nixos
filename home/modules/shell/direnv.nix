@@ -1,7 +1,11 @@
+{ lib, ... }:
+let
+	inherit (lib) enabled;
+in
 {
-  programs.direnv = {
-    enable = true;
+  programs.direnv = enabled {
     enableNushellIntegration = true;
-    nix-direnv.enable = true;
+
+    nix-direnv = enabled;
   };
 }

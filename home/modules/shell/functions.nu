@@ -5,7 +5,7 @@ def zellij-update-tabname [] {
         } else {
             (pwd | path parse | get stem)
         };
-        
+
         zellij action rename-tab $tab_name;
     }
 }

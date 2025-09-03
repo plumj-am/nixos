@@ -1,11 +1,14 @@
+{ lib, ... }:
+let
+	inherit (lib) enabled;
+in
 {
   home.sessionVariables = {
     MANPAGER = "bat";
-    PAGER = "bat";
+    PAGER    = "bat";
   };
-  programs.less.enable = true;
-  programs.bat = {
-    enable = true;
+  programs.less = enabled;
+  programs.bat  = enabled {
     config.pager = "less --quit-if-one-screen --RAW-CONTROL-CHARS";
   };
 }

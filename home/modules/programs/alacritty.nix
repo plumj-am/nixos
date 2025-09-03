@@ -1,36 +1,21 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, pkgs, ... }:
 
 {
   programs.alacritty = lib.mkIf pkgs.stdenv.isDarwin {
-    enable = true;
-    theme = config.theme.alacritty;
-    package = pkgs.alacritty;
+    enable   = true;
+    theme    = config.theme.alacritty;
+    package  = pkgs.alacritty;
     settings = {
-      window = {
-        decorations = "None";
-      };
+      window.decorations = "None";
 
-      font = {
-        size = 22;
-        builtin_box_drawing = false;
-        normal = {
-          family = "IosevkaTerm Nerd Font Mono";
-          style = "Regular";
-        };
-      };
+      font.size                = 22;
+			font.builtin_box_drawing = false;
+			font.normal.family       = "IosevkaTerm Nerd Font Mono";
+			font.normal.style        = "Regular";
 
-      cursor = {
-        unfocused_hollow = true;
-      };
+      cursor.unfocused_hollow = true;
 
-      terminal.shell = {
-        program = "/etc/profiles/per-user/james/bin/nu";
-      };
+      terminal.shell.program = "/etc/profiles/per-user/james/bin/nu";
     };
   };
 }
