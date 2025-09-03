@@ -8,4 +8,5 @@ in
   "hosts/pear/id.age".publicKeys               = [ pear ] ++ admins;
 	"hosts/kiwi/id.age".publicKeys               = [ kiwi ] ++ admins;
 	"hosts/plum/forgejo-password.age".publicKeys = [ plum ] ++ admins;
+	"modules/acme/environment.age".publicKeys    = all;
 }

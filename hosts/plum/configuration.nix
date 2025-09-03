@@ -9,6 +9,7 @@ in
 		(modulesPath + "/installer/scan/not-detected.nix")
 		(modulesPath + "/profiles/qemu-guest.nix")
 		./disk.nix
+		../../modules/forgejo.nix
 	];
 
 	nix.settings.experimental-features = [ "nix-command" "flakes" "pipe-operators" ];
@@ -72,6 +73,7 @@ in
 
   networking = {
     hostName = "plum";
+    domain = "plumj.am";
     firewall = enabled {
 			trustedInterfaces = [ interface ];
       allowedTCPPorts = [ 22 ];

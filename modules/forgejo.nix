@@ -1,6 +1,6 @@
 { self, config, lib, ... }: let
   inherit (config.networking) domain;
-  inherit (lib) enabled;
+  inherit (lib) enabled mkForce;
 
   fqdn = "git.${domain}";
   port = 8001;
@@ -9,6 +9,9 @@ in {
     (self + /modules/caddy.nix)
   ];
 
+  # combine AcceptEnv settings for SSH and Git protocol
+  services.openssh.settings.AcceptEnv = mkForce "SHELLS COLORTERM GIT_PROTOCOL";
+
   # secrets for forgejo
   age.secrets.forgejoAdminPassword = {
     file = ../hosts/plum/forgejo-password.age;
@@ -16,40 +19,40 @@ in {
     group = "forgejo";
   };
 
+  # backup configuration for sqlite database and data
+  systemd.services.forgejo-backup = {
+    description = "Backup Forgejo data and database";
+    after = [ "forgejo.service" ];
+
+    script = ''
+      mkdir -p /var/backup/forgejo
+      cp -r /var/lib/forgejo /var/backup/forgejo/$(date +%Y%m%d_%H%M%S)
+
+      # keep only last 7 backups
+      ls -1t /var/backup/forgejo/ | tail -n +8 | xargs -r rm -rf
+    '';
+
+    serviceConfig = {
+      Type = "oneshot";
+      User = "forgejo";
+    };
+  };
+
+  systemd.timers.forgejo-backup = {
+    description = "Run Forgejo backup daily";
+    wantedBy = [ "timers.target" ];
+
+    timerConfig = {
+      OnCalendar = "daily";
+      Persistent = true;
+    };
+  };
+
   services.forgejo = enabled {
     lfs = enabled;
 
     database = {
       type = "sqlite3";
-    };
-
-    # backup configuration for sqlite database and data
-    systemd.services.forgejo-backup = {
-      description = "Backup Forgejo data and database";
-      after = [ "forgejo.service" ];
-
-      script = ''
-        mkdir -p /var/backup/forgejo
-        cp -r /var/lib/forgejo /var/backup/forgejo/$(date +%Y%m%d_%H%M%S)
-
-        # keep only last 7 backups
-        ls -1t /var/backup/forgejo/ | tail -n +8 | xargs -r rm -rf
-      '';
-
-      serviceConfig = {
-        Type = "oneshot";
-        User = "forgejo";
-      };
-    };
-
-    systemd.timers.forgejo-backup = {
-      description = "Run Forgejo backup daily";
-      wantedBy = [ "timers.target" ];
-
-      timerConfig = {
-        OnCalendar = "daily";
-        Persistent = true;
-      };
     };
 
     settings = let
@@ -118,5 +121,15 @@ in {
         DESCRIPTION = description;
       };
     };
+  };
+
+  # caddy reverse proxy configuration
+  services.caddy.virtualHosts.${fqdn} = {
+    useACMEHost = domain;
+    extraConfig = /* caddy */ ''
+      reverse_proxy http://[::1]:${toString port}
+      
+      import cors
+    '';
   };
 }
