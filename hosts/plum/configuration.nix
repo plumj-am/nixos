@@ -27,7 +27,12 @@ in
 
 	age.identityPaths = [ "/root/.ssh/id" ];
 	age.secrets.password.file = ./password.age;
-	age.secrets.id.file = ./id.age;
+	age.secrets.id = {
+		file = ./id.age;
+		mode = "0600";
+		owner = "root";
+		group = "root";
+	};
 
   # user configuration
   users.mutableUsers = false;
@@ -67,7 +72,7 @@ in
 
   # ensure SSH waits for agenix to decrypt secrets
   systemd.services.sshd.after = [ "agenix.service" ];
-  systemd.services.sshd.wants = [ "agenix.service" ];
+  systemd.services.sshd.requisite = [ "agenix.service" ];
 
 	services.resolved.domains = ["taild29fec.ts.net"];
 	services.tailscale = enabled {
