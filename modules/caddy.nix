@@ -52,7 +52,12 @@ in {
 
         respond @cors_methods "" 204
 
-        ${config.services.caddy.headers}
+        header {
+          Strict-Transport-Security "max-age=31536000; includeSubdomains; preload"
+          Content-Security-Policy "script-src 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain}; object-src 'self' ${domain} *.${domain}; base-uri 'self';"
+          Referrer-Policy "no-referrer"
+          X-Frame-Options "DENY"
+        }
       }
     '';
   };
