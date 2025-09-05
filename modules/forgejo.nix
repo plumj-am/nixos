@@ -16,7 +16,6 @@ in {
   age.secrets.forgejoAdminPassword = {
     file = ../hosts/plum/forgejo-password.age;
     owner = "forgejo";
-    group = "forgejo";
   };
 
   # backup configuration for sqlite database and data
@@ -54,6 +53,7 @@ in {
     database = {
       type = "sqlite3";
     };
+
 
     settings = let
       description = "James's Git Forge";
