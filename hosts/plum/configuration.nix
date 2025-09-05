@@ -65,6 +65,10 @@ in
     }];
   };
 
+  # ensure SSH waits for agenix to decrypt secrets
+  systemd.services.sshd.after = [ "agenix.service" ];
+  systemd.services.sshd.wants = [ "agenix.service" ];
+
 	services.resolved.domains = ["taild29fec.ts.net"];
 	services.tailscale = enabled {
 		useRoutingFeatures = "both";
