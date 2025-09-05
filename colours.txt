@@ -1,0 +1,6 @@
+colour palette for plumjam branding
+#A66AA2 light purple
+#592D59 purple
+#3C2240 dark purple
+#48734F green
+#F2EEEB background
