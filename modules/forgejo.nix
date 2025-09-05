@@ -6,7 +6,7 @@
   port = 8001;
 in {
   imports = [
-    (self + /modules/caddy.nix)
+    (self + /modules/nginx.nix)
   ];
 
   # combine AcceptEnv settings for SSH and Git protocol
@@ -123,13 +123,8 @@ in {
     };
   };
 
-  # caddy reverse proxy configuration
-  services.caddy.virtualHosts.${fqdn} = {
-    useACMEHost = domain;
-    extraConfig = /* caddy */ ''
-      reverse_proxy http://[::1]:${toString port}
-      
-      import cors
-    '';
+  # nginx reverse proxy configuration
+  services.nginx.virtualHosts.${fqdn} = lib.merge config.services.nginx.sslTemplate {
+    locations."/".proxyPass = "http://[::1]:${toString port}";
   };
 }
