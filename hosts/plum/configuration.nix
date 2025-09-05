@@ -70,10 +70,6 @@ in
     }];
   };
 
-  # ensure SSH waits for agenix to decrypt secrets and mount
-  systemd.services.sshd.after = [ "agenix.service" "run-agenix.d.mount" ];
-  systemd.services.sshd.wants = [ "agenix.service" "run-agenix.d.mount" ];
-
 	services.resolved.domains = ["taild29fec.ts.net"];
 	services.tailscale = enabled {
 		useRoutingFeatures = "both";

@@ -25,8 +25,6 @@
     pkgs.jq
 		pkgs.ast-grep
 
-		pkgs.agenix
-
     pkgs.vivid
 
     # starship-jj from crates.io
