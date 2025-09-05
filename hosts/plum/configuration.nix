@@ -10,6 +10,7 @@ in
 		(modulesPath + "/profiles/qemu-guest.nix")
 		./disk.nix
 		../../modules/forgejo.nix
+		../../modules/site.nix
 	];
 
 	nix.settings.experimental-features = [ "nix-command" "flakes" "pipe-operators" ];

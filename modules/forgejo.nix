@@ -126,9 +126,4 @@ in {
   services.nginx.virtualHosts.${fqdn} = lib.merge config.services.nginx.sslTemplate {
     locations."/".proxyPass = "http://[::1]:${toString port}";
   };
-
-  # temporarily
-  services.nginx.virtualHosts.${domain} = lib.merge config.services.nginx.sslTemplate {
-    locations."/".return = "404";
-  };
 }
