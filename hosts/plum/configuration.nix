@@ -11,6 +11,8 @@ in
 		./disk.nix
 		../../modules/forgejo.nix
 		../../modules/site.nix
+		../../modules/matrix.nix
+		../../modules/cinny.nix
 	];
 
 	nix.settings.experimental-features = [ "nix-command" "flakes" "pipe-operators" ];

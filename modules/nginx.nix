@@ -64,10 +64,12 @@ in {
 
       map $http_origin $allow_origin {
         ~^https://(?:.+\.)?${domain}$ $http_origin;
+        ~^https://awesome-technologies\.github\.io$ $http_origin;
       }
 
       map $http_origin $allow_methods {
         ~^https://(?:.+\.)?${domain}$ "CONNECT, DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT, TRACE";
+        ~^https://awesome-technologies\.github\.io$ "CONNECT, DELETE, GET, HEAD, OPTIONS, PATCH, POST, PUT, TRACE";
       }
 
       ${config.services.nginx.headers}
