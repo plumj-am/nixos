@@ -235,6 +235,27 @@
         "type": "github"
       }
     },
+    "github2forgejo": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "systems": "systems_4"
+      },
+      "locked": {
+        "lastModified": 1753309491,
+        "narHash": "sha256-yO9fqkIed749VlTqUYghGpsE0dWDj3DMHWmb+DOdGMg=",
+        "owner": "RGBCube",
+        "repo": "GitHub2Forgejo",
+        "rev": "1db5512edf0af97f7f3a8be5b1283275375a0f23",
+        "type": "github"
+      },
+      "original": {
+        "owner": "RGBCube",
+        "repo": "GitHub2Forgejo",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -393,7 +414,7 @@
         "nixpkgs": [
           "nixpkgs"
         ],
-        "systems": "systems_4"
+        "systems": "systems_5"
       },
       "locked": {
         "lastModified": 1756668885,
@@ -416,6 +437,7 @@
         "disko": "disko",
         "fenix": "fenix",
         "fff-nvim": "fff-nvim",
+        "github2forgejo": "github2forgejo",
         "home-manager": "home-manager_2",
         "nix-darwin": "nix-darwin",
         "nixos-wsl": "nixos-wsl",
@@ -507,6 +529,21 @@
       }
     },
     "systems_4": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "systems_5": {
       "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",

@@ -8,6 +8,7 @@ in
 	imports = [
 		(modulesPath + "/installer/scan/not-detected.nix")
 		(modulesPath + "/profiles/qemu-guest.nix")
+		./github2forgejo/github2forgejo.nix
 		./disk.nix
 	];
 

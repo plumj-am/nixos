@@ -46,7 +46,7 @@
 
     nvf.url = "github:notashelf/nvf";
     nvf.inputs.nixpkgs.follows = "nixpkgs";
-    
+
     bacon-ls.url = "github:crisidev/bacon-ls";
     bacon-ls.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -58,9 +58,12 @@
 
 		agenix.url = "github:ryantm/agenix";
 		agenix.inputs.nixpkgs.follows = "nixpkgs";
+
+    github2forgejo.url = "github:RGBCube/GitHub2Forgejo";
+		github2forgejo.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs @ { nixpkgs, nixos-wsl, nix-darwin, home-manager, fenix, nvf, bacon-ls, fff-nvim, disko, agenix, ... }: let
+  outputs = inputs @ { nixpkgs, nixos-wsl, nix-darwin, home-manager, fenix, nvf, bacon-ls, fff-nvim, disko, agenix, github2forgejo, ... }: let
     inherit (builtins) readDir;
     inherit (nixpkgs.lib) attrsToList const extend groupBy listToAttrs mapAttrs nameValuePair;
 
@@ -70,7 +73,7 @@
 
     rawHosts = readDir ./hosts
       |> mapAttrs (name: const <| import ./hosts/${name} lib);
-    
+
     hostsByType = rawHosts
       |> attrsToList
       |> groupBy ({ value, ... }:
@@ -78,8 +81,8 @@
           "nixosConfigurations"
         else
           "darwinConfigurations")
-      |> mapAttrs (const (hosts: 
-          hosts 
+      |> mapAttrs (const (hosts:
+          hosts
           |> map ({ name, value }: nameValuePair name value.config)
           |> listToAttrs));
 
