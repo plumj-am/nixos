@@ -27,12 +27,7 @@ in
 
 	age.identityPaths = [ "/root/.ssh/id" ];
 	age.secrets.password.file = ./password.age;
-	age.secrets.id = {
-		file = ./id.age;
-		mode = "0600";
-		owner = "root";
-		group = "root";
-	};
+	age.secrets.id.file = ./id.age;
 
   # user configuration
   users.mutableUsers = false;
