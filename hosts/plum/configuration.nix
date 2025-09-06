@@ -12,7 +12,7 @@ in
 		../../modules/forgejo.nix
 		../../modules/site.nix
 		../../modules/matrix.nix
-		../../modules/cinny.nix
+		../../modules/element.nix
 	];
 
 	nix.settings.experimental-features = [ "nix-command" "flakes" "pipe-operators" ];

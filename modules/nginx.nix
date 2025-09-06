@@ -2,7 +2,7 @@
   inherit (config.networking) domain;
   inherit (lib) enabled mkConst;
 in {
-  imports = [(self + /modules/acme)];
+  imports = [ (self + /modules/acme) ];
 
   options.services.nginx.sslTemplate = mkConst {
     forceSSL    = true;
@@ -25,13 +25,23 @@ in {
     add_header Strict-Transport-Security $hsts_header always;
 
     proxy_hide_header Content-Security-Policy;
-    add_header Content-Security-Policy "script-src 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain}; object-src 'self' ${domain} *.${domain}; base-uri 'self';" always;
+    add_header Content-Security-Policy "script-src 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain}; object-src 'self' ${domain} *.${domain}; base-uri 'self'; frame-ancestors 'self';" always;
 
     proxy_hide_header Referrer-Policy;
     add_header Referrer-Policy no-referrer always;
 
     proxy_hide_header X-Frame-Options;
     add_header X-Frame-Options DENY always;
+
+    # SECURITY: Additional 2024 security headers
+    proxy_hide_header X-Content-Type-Options;
+    add_header X-Content-Type-Options nosniff always;
+
+    proxy_hide_header X-XSS-Protection;
+    add_header X-XSS-Protection "1; mode=block" always;
+
+    proxy_hide_header Permissions-Policy;
+    add_header Permissions-Policy "camera=(), geolocation=(), payment=(), usb=()" always;
   '';
 
   config.networking.firewall = {
