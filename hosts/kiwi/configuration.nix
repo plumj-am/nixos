@@ -10,6 +10,7 @@ in
 		(modulesPath + "/profiles/qemu-guest.nix")
 		./github2forgejo/github2forgejo.nix
 		./disk.nix
+		../../modules/dr-radka.nix
 	];
 
 	nix.settings.experimental-features = [ "nix-command" "flakes" "pipe-operators" ];
@@ -73,10 +74,11 @@ in
 
   networking = {
     hostName = "kiwi";
+    domain = "dr-radka.pl";
     firewall = {
 			trustedInterfaces = [ interface ];
       enable = true;
-      allowedTCPPorts = [ 22 ];
+      allowedTCPPorts = [ 22 80 443 ];
     };
     useDHCP = lib.mkDefault true;
     interfaces = {};

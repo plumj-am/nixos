@@ -16,4 +16,6 @@ in
 	"modules/acme/environment.age".publicKeys = all;
 
   "hosts/kiwi/github2forgejo/environment.age".publicKeys = [ kiwi ] ++ admins;
+
+  "hosts/kiwi/dr-radka-environment.age".publicKeys = [ kiwi ] ++ admins;
 }
