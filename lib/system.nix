@@ -2,8 +2,7 @@ inputs: self: super: let
   inherit (self) attrValues filter getAttrFromPath hasAttrByPath collectNix;
 
   # collect common modules that should be applied to all systems
-  # Note: we shouldn't automatically collect home modules at system level
-  modulesCommon = [];
+  modulesCommon = collectNix ../modules/common;
 
   # collect input modules and overlays from flake inputs
   collectInputs = let
@@ -14,7 +13,7 @@ inputs: self: super: let
 
   inputHomeModules   = collectInputs [ "homeModules"   "default" ];
   inputModulesLinux  = collectInputs [ "nixosModules"  "default" ] ++ [
-    inputs.home-manager.nixosModules.home-manager 
+    inputs.home-manager.nixosModules.home-manager
     inputs.agenix.nixosModules.default
   ];
   inputModulesDarwin = collectInputs [ "darwinModules" "default" ] ++ [
@@ -43,26 +42,28 @@ in {
         home-manager = {
           useGlobalPkgs = true;
           useUserPackages = true;
-          sharedModules = inputHomeModules;
-          users.james = import ../home/default.nix {
-            inherit (config) system;
-            lib = self;
-            inherit (inputs) fenix nvf bacon-ls fff-nvim agenix;
-            pkgs = import inputs.nixpkgs {
+          sharedModules = inputHomeModules ++ modulesCommon;
+          users.james = {
+            imports = [ inputs.nvf.homeManagerModules.default ];
+            _module.args = {
+              inherit (inputs) fenix nvf bacon-ls fff-nvim;
+              pkgs = import inputs.nixpkgs {
+                inherit (config) system;
+                config.allowUnfree = true;
+                config.permittedInsecurePackages = [
+                  "arc-browser-1.106.0-66192"
+                ];
+              };
               inherit (config) system;
-              config.allowUnfree = true;
-              config.permittedInsecurePackages = [
-                "arc-browser-1.106.0-66192"
-              ];
+              lib = self;
             };
           };
         };
       }
-    ] ++ modulesCommon
-      ++ inputModulesLinux;
+    ] ++ inputModulesLinux;
   };
 
-  # wrapper for darwinSystem that automatically applies common modules  
+  # wrapper for darwinSystem that automatically applies common modules
   darwinSystem' = config: super.darwinSystem {
     inherit (config) system;
     inherit specialArgs;

@@ -48,7 +48,7 @@ in
       cdn = "cd ~/nixos-config/dotfiles/nvim";
       cdc = "cd ~/nixos-config";
       cdp = "cd ~/projects";
-      cdu = "cd ~/nixos-config/home/modules/shell";
+      cdu = "cd ~/nixos-config/modules/common/shell";
 
       rm = "rm --recursive --verbose";
       cp = "cp --recursive --verbose --progress";

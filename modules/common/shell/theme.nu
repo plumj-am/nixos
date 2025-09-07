@@ -2,7 +2,7 @@ def toggle-theme [theme?: string] {
     let dark_mode_file = $"($env.HOME)/.config/dark-mode"
 
     # determine current theme from nix theme file
-    let theme_file = $"($env.HOME)/nixos-config/home/modules/theme.nix"
+    let theme_file = $"($env.HOME)/nixos-config/modules/common/theme.nix"
     let current_theme = try {
         let content = open $theme_file
         if ($content | str contains "is_dark = true;") {
@@ -66,7 +66,7 @@ def toggle-theme [theme?: string] {
 
 # check current theme
 def current-theme [] {
-    let theme_file = $"($env.HOME)/nixos-config/home/modules/theme.nix"
+    let theme_file = $"($env.HOME)/nixos-config/modules/common/theme.nix"
     try {
         let content = open $theme_file
         if ($content | str contains "is_dark = true;") {

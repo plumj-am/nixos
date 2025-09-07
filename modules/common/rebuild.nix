@@ -1,30 +1,4 @@
-{
-  pkgs,
-  lib,
-  fenix,
-  system,
-  nvf,
-  bacon-ls,
-  fff-nvim,
-  ...
-}:
-
-{
-  imports = [
-    nvf.homeManagerModules.default
-  ] ++ (lib.collectNix ./modules);
-
-  _module.args = {
-    inherit
-      pkgs
-      system
-      fenix
-      nvf
-      bacon-ls
-      fff-nvim
-      ;
-  };
-
+{ ... }: {
   # generated scripts for rebuilds
   home.file."nixos-config/rebuild.nu" = {
     text = ''
@@ -84,5 +58,4 @@
 
   home.stateVersion = "24.11";
   programs.home-manager.enable = true;
-
 }
