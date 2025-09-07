@@ -50,6 +50,10 @@ in
 	home-manager.users = {
 		james = {};
 	};
+	home-manager.sharedModules = [{
+		home.stateVersion = "24.11";
+		programs.home-manager.enable = true;
+	}];
 
 	programs.mosh = enabled {
 		openFirewall = true;
