@@ -1,4 +1,4 @@
-{ pkgs, lib, modulesPath, config, keys, ... }:
+{ pkgs, lib, modulesPath, config, keys, self, ... }:
 let
 	inherit (lib) enabled;
 
@@ -9,10 +9,10 @@ in
 		(modulesPath + "/installer/scan/not-detected.nix")
 		(modulesPath + "/profiles/qemu-guest.nix")
 		./disk.nix
-		../../modules/forgejo.nix
-		../../modules/site.nix
-		../../modules/matrix.nix
-		../../modules/element.nix
+		(self + /modules/forgejo.nix)
+		(self + /modules/site.nix)
+		(self + /modules/matrix.nix)
+		(self + /modules/element.nix)
 	];
 
 	nix.settings.experimental-features = [ "nix-command" "flakes" "pipe-operators" ];

@@ -1,4 +1,4 @@
-{ pkgs, lib, modulesPath, config, keys, ... }:
+{ pkgs, lib, modulesPath, config, keys, self, ... }:
 let
 	inherit (lib) enabled;
 
@@ -10,7 +10,7 @@ in
 		(modulesPath + "/profiles/qemu-guest.nix")
 		./github2forgejo/github2forgejo.nix
 		./disk.nix
-		../../modules/dr-radka.nix
+		(self + /modules/dr-radka.nix)
 	];
 
 	nix.settings.experimental-features = [ "nix-command" "flakes" "pipe-operators" ];
