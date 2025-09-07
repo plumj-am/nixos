@@ -9,6 +9,7 @@ in
 		(modulesPath + "/installer/scan/not-detected.nix")
 		(modulesPath + "/profiles/qemu-guest.nix")
 		./disk.nix
+		./cache/default.nix
 		(self + /modules/forgejo.nix)
 		(self + /modules/site.nix)
 		(self + /modules/matrix.nix)
@@ -83,7 +84,7 @@ in
     domain = "plumj.am";
     firewall = enabled {
 			trustedInterfaces = [ interface ];
-      allowedTCPPorts = [ 22 ];
+      allowedTCPPorts = [ 22 80 443 ];
     };
     useDHCP = lib.mkDefault true;
     interfaces = {};
