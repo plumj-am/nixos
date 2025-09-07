@@ -76,7 +76,7 @@ in {
         tls            = false;
         x_forwarded    = true; # behind reverse proxy
         resources      = [{
-          names    = [ "client" "federation" ];
+          names    = [ "client" "federation" "media" ];
           compress = false;
         }];
       }];

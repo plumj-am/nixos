@@ -25,7 +25,7 @@ in {
     add_header Strict-Transport-Security $hsts_header always;
 
     proxy_hide_header Content-Security-Policy;
-    add_header Content-Security-Policy "script-src 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain}; object-src 'self' ${domain} *.${domain}; base-uri 'self'; frame-ancestors 'self';" always;
+    add_header Content-Security-Policy "script-src 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain}; object-src 'self' ${domain} *.${domain}; img-src 'self' data: https:; base-uri 'self'; frame-ancestors 'self';" always;
 
     proxy_hide_header Referrer-Policy;
     add_header Referrer-Policy no-referrer always;
