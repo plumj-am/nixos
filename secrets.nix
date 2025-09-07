@@ -11,6 +11,8 @@ in
 
   "hosts/plum/cache/key.age".publicKeys = [ plum ] ++ admins;
 
+  "hosts/plum/grafana/password.age".publicKeys = [ plum ] ++ admins;
+
 	"hosts/kiwi/id.age".publicKeys               = [ kiwi ] ++ admins;
   "hosts/kiwi/password.age".publicKeys         = [ kiwi ] ++ admins;
 

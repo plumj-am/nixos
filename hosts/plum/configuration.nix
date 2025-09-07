@@ -10,10 +10,13 @@ in
 		(modulesPath + "/profiles/qemu-guest.nix")
 		./disk.nix
 		./cache/default.nix
+		./grafana
+		./grafana/prometheus.nix
 		(self + /modules/forgejo.nix)
 		(self + /modules/site.nix)
 		(self + /modules/matrix.nix)
 		(self + /modules/element.nix)
+		(self + /modules/linux/node-exporter.nix)
 	];
 
 	nix.settings.experimental-features = [ "nix-command" "flakes" "pipe-operators" ];
