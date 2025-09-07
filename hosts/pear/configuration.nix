@@ -113,6 +113,8 @@ in
 			trustedInterfaces = [ interface ];
 			allowedTCPPorts = [ 22 ];
 		};
+		useDHCP = lib.mkDefault true;
+		interfaces = {};
   };
 
   time.timeZone = "Europe/Warsaw";
