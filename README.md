@@ -7,7 +7,7 @@ NixOS..
 
 ## License
 
-Copyright (c) James Plummer <jamesp2001@live.co.uk>
+Copyright (c) James Plummer <git@plumj.am>
 
 This project is licensed under the MIT license ([LICENSE.md] or
 <http://opensource.org/licenses/MIT>)
