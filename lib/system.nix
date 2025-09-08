@@ -72,9 +72,8 @@ in {
       overlayModule
 
       {
-        home-manager.sharedModules = inputHomeModules;
+        home-manager.sharedModules = inputHomeModules ++ modulesCommon;
       }
-    ] ++ modulesCommon
-      ++ inputModulesDarwin;
+    ] ++ inputModulesDarwin;
   };
 }
