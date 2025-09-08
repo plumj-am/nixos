@@ -27,6 +27,8 @@ in {
       ui.movement.edit         = true;
       ui.pager                 = ":builtin";
 
+      snapshot.max-new-file-size = "5MiB";
+
       lazyjj.highlight-color = "#f2e5bc";
 
       git.sign-on-push        = true; # sign in bulk on push
