@@ -1,19 +1,22 @@
 {
-  description = "jamesukiyo's NixOS WSL Configuration";
+  description = "James' NixOS Configuration Collection";
 
   nixConfig = {
     extra-substituters = [
       "https://nix-community.cachix.org/"
       "https://cache.nixos.org/"
+      "https://cache.garnix.io/"
+      "https://numtide.cachix.org/"
     ];
 
     extra-trusted-public-keys = [
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+      "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
+      "numtide.cachix.org-1:2ps1kLBUWjxIneOy2Yk6H6WdHjLQ0Rb5h9R0OXiEiL8="
     ];
 
     experimental-features = [
-      # "cgroups"
       "flakes"
       "nix-command"
       "pipe-operators"
@@ -23,9 +26,9 @@
     flake-registry           = "";
     http-connections         = 50;
     lazy-trees               = true;
+    max-jobs                 = "auto";
     show-trace               = true;
     trusted-users            = [ "root" "@wheel" ];
-    # use-cgroups              = true;
     warn-dirty               = false;
   };
 
@@ -53,14 +56,14 @@
     fff-nvim.url = "github:dmtrKovalenko/fff.nvim";
     fff-nvim.inputs.nixpkgs.follows = "nixpkgs";
 
-		disko.url = "github:nix-community/disko";
-		disko.inputs.nixpkgs.follows = "nixpkgs";
+    disko.url = "github:nix-community/disko";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
 
-		agenix.url = "github:ryantm/agenix";
-		agenix.inputs.nixpkgs.follows = "nixpkgs";
+    agenix.url = "github:ryantm/agenix";
+    agenix.inputs.nixpkgs.follows = "nixpkgs";
 
     github2forgejo.url = "github:RGBCube/GitHub2Forgejo";
-		github2forgejo.inputs.nixpkgs.follows = "nixpkgs";
+    github2forgejo.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs @ { nixpkgs, nixos-wsl, nix-darwin, home-manager, fenix, nvf, bacon-ls, fff-nvim, disko, agenix, github2forgejo, ... }: let
