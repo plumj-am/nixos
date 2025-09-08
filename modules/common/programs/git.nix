@@ -1,7 +1,7 @@
 { lib, ... }:
 let
   inherit (lib) enabled;
-in 
+in
 {
   programs.gh = enabled {
     settings = {
@@ -12,7 +12,7 @@ in
 
   programs.git = enabled {
     userName  = "James Plummer";
-    userEmail = "jamesp2001@live.co.uk";
+    userEmail = "git@plumj.am";
 
     signing.key           = "58805BF7676222B4";
     signing.signByDefault = true;
@@ -33,16 +33,16 @@ in
       tag.gpgSign    = true;
 
       status.branch             = true;
-			status.showStash          = true;
-			status.showUntrackedFiles = "all";
+      status.showStash          = true;
+      status.showUntrackedFiles = "all";
 
       pull.rebase = true;
 
       push.autoSetupRemote = true;
 
       rebase.autoStash           = true;
-			rebase.missingCommitsCheck = "warn";
-			rebase.updateRefs          = true;
+      rebase.missingCommitsCheck = "warn";
+      rebase.updateRefs          = true;
       rerere.enabled             = true;
 
       fetch.fsckObjects    = true;
