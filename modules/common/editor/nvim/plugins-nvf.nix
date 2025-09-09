@@ -90,7 +90,7 @@ in
           ''{ "filename", show_filename_only = false, path = 1 }''
           ''{ "diff" }''
         ];
-        x = [ ''{ LualinePomoTimer }'' ];
+        x = [ ];
         y = [
           # cant get LualineFileInfo to work :[
           ''{ "encoding" }''
@@ -109,7 +109,7 @@ in
           ''{ "filename", show_filename_only = false, path = 1 }''
           ''{ "diff" }''
         ];
-        x = [ ''{ LualinePomoTimer }'' ];
+        x = [ ];
         y = [
           ''{ "encoding" }''
           ''{ "fileformat" }''

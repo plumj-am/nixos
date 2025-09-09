@@ -7,27 +7,27 @@ in
 
     globals = {
       vimwiki_option_diary_path = "./diary/";
-      vimwiki_global_ext = 0;
+      vimwiki_global_ext        = 0;
+
       vimwiki_option_nested_syntaxes = {
-        svelte = "svelte";
+        svelte     = "svelte";
         typescript = "ts";
       };
+
       vimwiki_list = [
         {
-          path = "~/vimwiki/james/";
+          path   = "~/vimwiki/james/";
           syntax = "markdown";
-          ext = ".md";
+          ext    = ".md";
         }
         {
-          path = "~/vimwiki/healgorithms/";
+          path   = "~/vimwiki/healgorithms/";
           syntax = "markdown";
-          ext = ".md";
+          ext    = ".md";
         }
       ];
-      zenbones = {
-        lightness = "bright";
-        italic_strings = false;
-      };
+      zenbones.lightness      = "bright";
+      zenbones.italic_strings = false;
     };
 
     lazy.plugins = {
@@ -37,9 +37,7 @@ in
         lazy = false;
       };
 
-      "SchemaStore.nvim" = {
-        package = pkgs.vimPlugins.SchemaStore-nvim;
-      };
+      "SchemaStore.nvim".package = pkgs.vimPlugins.SchemaStore-nvim;
 
       "dirbuf.nvim" = {
         package = pkgs.vimPlugins.dirbuf-nvim;
@@ -100,76 +98,6 @@ in
             desc = "Open trouble quickfix list";
           }
         ];
-      };
-
-      "no-neck-pain.nvim" = {
-        # doesnt load on startup idk why
-        package = pkgs.vimPlugins.no-neck-pain-nvim;
-        lazy = false;
-        priority = 1001;
-        setupOpts = {
-          width = 110;
-          autocmds = {
-            enableOnVimEnter = true;
-            skipEnteringNoNeckPainBuffer = true;
-          };
-          buffers.wo.fillchars = "eob: ";
-        };
-      };
-
-      "vimplugin-pomo.nvim" = {
-        package = pkgs.vimUtils.buildVimPlugin {
-          name = "pomo.nvim";
-          src = pkgs.fetchFromGitHub {
-            owner = "epwalsh";
-            repo = "pomo.nvim";
-            rev = "aa8decc421d89be0f10b1fc6a602cdd269f350ff";
-            sha256 = "sha256-tJ2TrypKnCnQm+6FDjX0KDr+UNoBBVvGIm+uWJtpNLc=";
-          };
-        };
-        cmd = [
-          "TimerStart"
-          "TimerRepeat"
-          "TimerSession"
-        ];
-        setupModule = "pomo";
-        setupOpts = {
-          update_interval = 500;
-          sessions = {
-            pomodoro = [
-              {
-                name = "Work";
-                duration = "25m";
-              }
-              {
-                name = "Break";
-                duration = "5m";
-              }
-              {
-                name = "Work";
-                duration = "25m";
-              }
-              {
-                name = "Break";
-                duration = "5m";
-              }
-              {
-                name = "Work";
-                duration = "25m";
-              }
-              {
-                name = "Break";
-                duration = "15m";
-              }
-            ];
-          };
-          notifiers = [
-            {
-              name = "Default";
-              opts.sticky = false;
-            }
-          ];
-        };
       };
 
       "vimplugin-scrolleof.nvim" = {
@@ -264,132 +192,6 @@ in
         ];
       };
 
-      "zen-mode.nvim" = {
-        enabled = false;
-        package = pkgs.vimPlugins.zen-mode-nvim;
-        cmd = [ "ZenMode" ];
-        setupModule = "zen-mode";
-        setupOpts = {
-          window = {
-            backdrop = 0.95;
-            width = 80;
-            height = 1;
-            options = {
-              signcolumn = "no";
-              number = false;
-              relativenumber = false;
-              cursorline = false;
-              cursorcolumn = false;
-              foldcolumn = "0";
-              list = false;
-            };
-          };
-          plugins = {
-            options = {
-              enabled = true;
-              ruler = false;
-              showcmd = true;
-              laststatus = 0;
-            };
-            twilight.enabled = true;
-            gitsigns.enabled = false;
-          };
-          on_open = "function() vim.opt.colorcolumn = '' end";
-        };
-      };
-
-      "twilight.nvim" = {
-        enabled = false;
-        package = pkgs.vimPlugins.twilight-nvim;
-        cmd = [ "Twilight" ];
-        setupModule = "twilight";
-        setupOpts.dimming.alpha = 0.4;
-      };
-
-      "typr" = {
-        enabled = false;
-        package = pkgs.vimPlugins.nvzone-typr;
-        cmd = [
-          "Typr"
-          "TyprStats"
-        ];
-        setupModule = "typr";
-        setupOpts.on_attach = "function() vim.opt_local.wrap = false; vim.opt_local.complete = '' end";
-      };
-
-      "vimplugin-screenkey.nvim" = {
-        package = pkgs.vimUtils.buildVimPlugin {
-          name = "screenkey.nvim";
-          src = pkgs.fetchFromGitHub {
-            owner = "NStefan002";
-            repo = "screenkey.nvim";
-            rev = "363730221a97bd4199beb878c54aa75facfe0dfe";
-            sha256 = "sha256-lu2LuBgBPSeJuQn2H63Sz2UhE7Nz6KEQS9N6aEg88tE=";
-          };
-        };
-        cmd = [ "Screenkey" ];
-        enabled = false;
-        setupModule = "screenkey";
-        setupOpts = {
-          win_opts = {
-            row = "vim.o.lines - 3";
-            col = "vim.o.columns - 25";
-            relative = "editor";
-            anchor = "SE";
-            width = 25;
-            height = 1;
-            title = "Key";
-            title_pos = "center";
-            style = "minimal";
-            focusable = false;
-            noautocmd = true;
-          };
-          compress_after = 3;
-          clear_after = 5;
-          disable = {
-            filetypes = [ ];
-            buftypes = [ ];
-          };
-          show_leader = true;
-          group_mappings = true;
-          display_infront = [ ];
-          display_behind = [ ];
-          filter = "function(keys) return keys end";
-          keys = {
-            "<TAB>" = "󰌒";
-            "<CR>" = "󰌑";
-            "<ESC>" = "Esc";
-            "<SPACE>" = "󱁐";
-            "<BS>" = "󰁮";
-            "<DEL>" = "󰁮";
-            "<LEFT>" = "";
-            "<RIGHT>" = "";
-            "<UP>" = "";
-            "<DOWN>" = "";
-            "<HOME>" = "Home";
-            "<END>" = "End";
-            "<PAGEUP>" = "PgUp";
-            "<PAGEDOWN>" = "PgDn";
-            "<INSERT>" = "Ins";
-            "<F1>" = "󱊫";
-            "<F2>" = "󱊬";
-            "<F3>" = "󱊭";
-            "<F4>" = "󱊮";
-            "<F5>" = "󱊯";
-            "<F6>" = "󱊰";
-            "<F7>" = "󱊱";
-            "<F8>" = "󱊲";
-            "<F9>" = "󱊳";
-            "<F10>" = "󱊴";
-            "<F11>" = "󱊵";
-            "<F12>" = "󱊶";
-          };
-        };
-        after = ''
-          vim.cmd("Screenkey")
-        '';
-      };
-
       "vimplugin-quicksnip.vim" = {
         package = pkgs.vimUtils.buildVimPlugin {
           name = "quicksnip.vim";
@@ -419,7 +221,7 @@ in
           }
         ];
         beforeAll = ''
-          vim.g.miniSnip_dirs = { "~/.vim/snippets" }
+          vim.g.miniSnip_dirs = { "~/nixos-config/modules/common/editor/nvim/snippets" }
           vim.g.miniSnip_trigger = "<C-c>"
           vim.g.miniSnip_extends = {
             html = { "html", "javascript" },
@@ -574,11 +376,6 @@ in
 
       "baleia.nvim" = {
         package = pkgs.vimPlugins.baleia-nvim;
-        lazy = true;
-      };
-
-      "volt" = {
-        package = pkgs.vimPlugins.nvzone-volt;
         lazy = true;
       };
     };

@@ -1,13 +1,5 @@
 {
 	programs.nvf.settings.vim.luaConfigRC.globals = ''
-		-- Global variables
-		CMD = vim.cmd
-		AUTOCMD = vim.api.nvim_create_autocmd
-		AUGROUP = vim.api.nvim_create_augroup
-		CREATE_CMD = vim.api.nvim_create_user_command
-		MAP = vim.keymap.set
-		SET_HL = vim.api.nvim_set_hl
-
 		-- Global functions
 		function ColorMyPencils(color, theme, transparent)
 			vim.o.background = theme or "light"
@@ -139,23 +131,7 @@
 			end
 		end
 
-		function LualinePomoTimer()
-			local ok, pomo = pcall(require, "pomo")
-			if not ok then
-				return ""
-			end
-
-			local timer = pomo.get_first_to_finish()
-			if timer == nil then
-				return ""
-			end
-
-			return "󰄉 " .. tostring(timer)
-		end
-
-    function OpenTodo()
-      vim.cmd("edit ~/notes/todo.md")
-    end
+    function OpenTodo() vim.cmd("edit ~/notes/todo.md") end
 
     vim.api.nvim_create_user_command("TD", OpenTodo, { desc = "Open ~/notes/todo.md" })
 	'';
