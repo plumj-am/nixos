@@ -245,7 +245,7 @@ in
           after = "";
         };
       };
-      mappings.telescope = "<leader>td";
+      mappings.telescope = "<leader>ftd";
     };
   };
 }

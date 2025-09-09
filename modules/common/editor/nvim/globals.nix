@@ -152,5 +152,11 @@
 
 			return "󰄉 " .. tostring(timer)
 		end
+
+    function OpenTodo()
+      vim.cmd("edit ~/notes/todo.md")
+    end
+
+    vim.api.nvim_create_user_command("TD", OpenTodo, { desc = "Open ~/notes/todo.md" })
 	'';
 }
