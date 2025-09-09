@@ -1,6 +1,6 @@
 { pkgs, lib, config, ... }:
 let
-	inherit (lib) enabled;
+  inherit (lib) enabled;
 in
 {
   imports = [ ./nvim ];
@@ -11,8 +11,9 @@ in
 
     settings.vim = {
       enableLuaLoader = true;
-      additionalRuntimePaths = [ ./after ];
-      extraLuaFiles = [
+
+      additionalRuntimePaths = [ ./nvim/after ];
+      extraLuaFiles          = [
         (builtins.path { path = ./nvim/set_colorscheme.lua; })
       ];
 
