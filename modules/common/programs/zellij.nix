@@ -419,8 +419,8 @@ in
 							mode_normal        "#[fg=#FFFFFF,bg=green] NORMAL "
 							mode_locked        "#[fg=#FFFFFF,bg=red] LOCKED "
 
-							tab_normal         "#[fg=#FFFFFF,bg=#7F7F7F] {index} :: {name} "
-							tab_active         "#[fg=#FFFFFF,bg=blue,bold] {index} :: {name} "
+							tab_normal         "#[fg=#FFFFFF,bg=#7F7F7F] {index}:{name} "
+							tab_active         "#[fg=#FFFFFF,bg=blue,bold] {index}:{name} "
 
 							datetime           "#[fg=blue,bold] {format}"
 							datetime_format		 "%H:%M"
