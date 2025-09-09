@@ -225,6 +225,7 @@ in
         lsp = enabled;
         extensions.render-markdown-nvim = enabled {
           setupOpts = {
+            enabled = false; # off by default
             sign.enabled = false;
             completions.blink.enabled = true;
             file_types = [
