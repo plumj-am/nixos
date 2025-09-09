@@ -55,6 +55,7 @@ in {
       NODE_ENV = "production";
       PORT = toString app_port;
       HOST = "127.0.0.1";
+      ORIGIN = "https://${domain}";
     };
     path = with pkgs; [ bun ];
   };
@@ -73,7 +74,7 @@ in {
 
           # override csp for built app requirements and maintain security headers
           proxy_hide_header Content-Security-Policy;
-          add_header Content-Security-Policy "script-src 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain} cdn.jsdelivr.net *.posthog.com *.sanity.io *.googletagmanager.com *.google-analytics.com *.vercel.app vercel.live *.vercel.com; object-src 'self' ${domain} *.${domain}; base-uri 'self'; frame-ancestors 'self'; font-src 'self' ${domain} *.${domain} cdn.jsdelivr.net; connect-src 'self' ${domain} *.${domain} *.posthog.com *.sanity.io *.googletagmanager.com *.google-analytics.com *.vercel.app vercel.live *.vercel.com; img-src 'self' ${domain} *.${domain} *.sanity.io cdn.sanity.io data:;" always;
+          add_header Content-Security-Policy "script-src 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain} cdn.jsdelivr.net unpkg.com *.posthog.com *.sanity.io *.googletagmanager.com *.google-analytics.com; object-src 'self' ${domain} *.${domain}; base-uri 'self'; frame-ancestors 'self'; form-action 'self' ${domain} *.${domain}; font-src 'self' ${domain} *.${domain} cdn.jsdelivr.net; connect-src 'self' ${domain} *.${domain} unpkg.com *.posthog.com *.sanity.io *.googletagmanager.com *.google-analytics.com; img-src 'self' ${domain} *.${domain} unpkg.com *.tile.openstreetmap.org *.sanity.io cdn.sanity.io data:;" always;
           add_header X-Frame-Options DENY always;
           add_header X-Content-Type-Options nosniff always;
           add_header X-XSS-Protection "1; mode=block" always;
