@@ -74,7 +74,8 @@ in {
 
           # override csp for built app requirements and maintain security headers
           proxy_hide_header Content-Security-Policy;
-          add_header Content-Security-Policy "script-src 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain} cdn.jsdelivr.net unpkg.com *.posthog.com *.sanity.io *.googletagmanager.com *.google-analytics.com; object-src 'self' ${domain} *.${domain}; base-uri 'self'; frame-ancestors 'self'; form-action 'self' ${domain} *.${domain}; font-src 'self' ${domain} *.${domain} cdn.jsdelivr.net; connect-src 'self' ${domain} *.${domain} unpkg.com *.posthog.com *.sanity.io *.googletagmanager.com *.google-analytics.com; img-src 'self' ${domain} *.${domain} unpkg.com *.tile.openstreetmap.org *.sanity.io cdn.sanity.io googletagmanager.com data:;" always;
+          add_header Content-Security-Policy "script-src 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain} cdn.jsdelivr.net unpkg.com *.posthog.com *.sanity.io *.googletagmanager.com *.google-analytics.com; object-src 'self' ${domain} *.${domain}; base-uri 'self'; frame-ancestors 'self' dr-radka.sanity.studio *.sanity.io; form-action 'self' ${domain} *.${domain}; font-src 'self' ${domain} *.${domain} cdn.jsdelivr.net; connect-src 'self' ${domain} *.${domain} unpkg.com *.posthog.com *.sanity.io *.googletagmanager.com *.google-analytics.com; img-src 'self' ${domain} *.${domain} unpkg.com *.tile.openstreetmap.org *.sanity.io cdn.sanity.io googletagmanager.com data:;" always;
+          # need to fix because I can't access nested routes in sanity presentation mode
           add_header X-Frame-Options DENY always;
           add_header X-Content-Type-Options nosniff always;
           add_header X-XSS-Protection "1; mode=block" always;
