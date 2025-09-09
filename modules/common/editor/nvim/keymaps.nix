@@ -342,7 +342,7 @@ in
     }
   ];
 
-  autocmds = [
+  programs.nvf.settings.vim.autocmds = [
     {
       event = [ "LspAttach" ];
       callback = mkLuaInline ''
