@@ -11,6 +11,7 @@ in
 		./github2forgejo/github2forgejo.nix
 		./disk.nix
 		(self + /modules/dr-radka.nix)
+		(self + /modules/linux/node-exporter.nix)
 	];
 
 	nix.settings.experimental-features = [ "nix-command" "flakes" "pipe-operators" ];
