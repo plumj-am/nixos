@@ -39,6 +39,8 @@ in {
       admin_password = "$__file{${config.age.secrets.grafanaPassword.path}}";
       admin_user = "admin";
 
+      disable_initial_admin_creation = true; # after initial creation
+
       cookie_secure = true;
       disable_gravatar = true;
     };
