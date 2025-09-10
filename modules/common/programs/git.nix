@@ -6,7 +6,7 @@ in
   programs.gh = enabled {
     settings = {
       git_protocol = "ssh";
-      editor       = "nvim";
+      editor       = "hx";
     };
   };
 
@@ -54,7 +54,7 @@ in
 
       core.compression  = 9;
       core.preloadindex = true;
-      core.editor       = "nvim";
+      core.editor       = "hx";
       core.longpaths    = true;
       core.excludesfile = "~/.global_gitignore";
 

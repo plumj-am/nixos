@@ -69,7 +69,7 @@ in
     };
     settings = {
       edit_mode     = "vi";
-      buffer_editor = "nvim";
+      buffer_editor = "hx";
       show_banner   = false;
       footer_mode   = "auto";
 

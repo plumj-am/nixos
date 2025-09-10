@@ -22,7 +22,7 @@ in {
       ui.default-command       = "lg";
       ui.diff-editor           = ":builtin";
       ui.diff-formatter        = [ "difft" "--color" "always" "$left" "$right" ];
-      ui.editor                = "nvim";
+      ui.editor                = "hx";
       ui.graph-style           = "square";
       ui.movement.edit         = true;
       ui.pager                 = ":builtin";

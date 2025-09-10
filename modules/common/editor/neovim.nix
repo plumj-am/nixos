@@ -1,13 +1,14 @@
 { pkgs, lib, config, ... }:
 let
-  inherit (lib) enabled;
+  inherit (lib) enabled disabled;
 in
 {
   imports = [ ./nvim ];
 
   programs.vim = enabled;
 
-  programs.nvf = enabled {
+  # lets see how helix goes
+  programs.nvf = disabled {
 
     settings.vim = {
       enableLuaLoader = true;

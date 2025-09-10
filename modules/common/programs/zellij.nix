@@ -13,7 +13,7 @@ in
       theme = config.theme.zellij;
 
       default_shell     = "nu";
-      scrollback_editor = "nvim";
+      scrollback_editor = "hx";
 
       default_layout        = "james";
       session_serialization = true;
@@ -36,7 +36,7 @@ in
       pane_viewport_serialization   = true;
       scrollback_lines_to_serialize = 5000;
 
-      env.EDITOR = "nvim";
+      env.EDITOR = "hx";
 			env.SHELL  = "nu";
 
       simplified_ui_default_plugin     = "compact-bar";
