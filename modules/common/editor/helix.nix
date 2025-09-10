@@ -1,25 +1,30 @@
-{ lib, config, ... }:
+{ pkgs, lib, config, ... }:
 let
-  inherit (lib) enabled;
+  inherit (lib) enabled const genAttrs;
 in
 {
+  home.packages = [
+    # rust-analyzer is in modules/common/rust.nix
+    pkgs.deno
+    pkgs.nixd
+    pkgs.yaml-language-server
+  ];
   programs.helix = enabled {
     settings.theme = config.theme.helix;
     settings.editor = {
-      true-color         = true;
-      auto-completion    = true;
-      bufferline         = "multiple";
-      color-modes        = true;
-      cursorline         = true;
-      file-picker.hidden = false;
-      idle-timeout       = 0;
-      shell              = [ "nu" "--commands" ];
-      text-width         = 100;
+      completion-timeout       = 5;
+      color-modes              = true;
+      cursorline               = true;
+      file-picker.hidden       = false;
+      idle-timeout             = 0;
+      shell                    = [ "nu" "--commands" ];
+      trim-trailing-whitespace = true;
+      true-color               = true;
     };
     settings.editor.cursor-shape = {
       insert = "block";
       normal = "block";
-      select = "block";
+      select = "underline";
     };
     settings.editor.statusline.mode = {
       insert = "INSERT";
@@ -33,6 +38,55 @@ in
     settings.editor.whitespace = {
       characters.tab = "→";
       render.tab     = "all";
+    };
+
+    settings.keys = genAttrs [ "normal" "select" ] <| const {
+      D = "extend_to_line_end";
+    };
+
+    languages.language = [
+      {
+        name        = "rust";
+        auto-format = true;
+      }
+      {
+        name              = "nix";
+        auto-format       = false;
+        formatter.command = "alejandra";
+      }
+      {
+        name        = "toml";
+        auto-format = true;
+      }
+    ];
+
+    languages.language-server = {
+      deno = {
+        command = "deno";
+        args    = [ "lsp" ];
+
+        config.javascript = enabled {
+          lint     = true;
+          unstable = true;
+
+          suggest.imports.hosts."https://deno.land" = true;
+
+          inlayHints.enumMemberValues.enabled         = true;
+          inlayHints.functionLikeReturnTypes.enabled  = true;
+          inlayHints.parameterNames.enabled           = "all";
+          inlayHints.parameterTypes.enabled           = true;
+          inlayHints.propertyDeclarationTypes.enabled = true;
+          inlayHints.variableTypes.enabled            = true;
+        };
+      };
+
+      rust-analyzer = {
+        config = {
+          cargo.features               = "all";
+          check.command                = "clippy";
+          completion.callable.snippets = "add_parentheses";
+        };
+      };
     };
   };
 }
