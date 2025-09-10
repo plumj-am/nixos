@@ -120,6 +120,22 @@ in
 						];
           }
           {
+            bind._args     = [ "Ctrl j" ];
+            bind._children = [
+              {
+                Run = {
+                  _args         = [ "lazyjj" ];
+                  close_on_exit = true;
+                  floating      = true;
+                  x             = "5%";
+                  y             = "5%";
+                  width         = "90%";
+                  height        = "90%";
+                };
+              }
+            ];
+          }
+          {
 						bind._args         = [ "q" ];
 						bind.GoToTab._args = [ 1 ];
           }
@@ -390,6 +406,7 @@ in
 						bind._children = [ { SwitchToMode._args = [ "locked" ]; } ];
           }
         ];
+
       };
 
       load_plugins = [
