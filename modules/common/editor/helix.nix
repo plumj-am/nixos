@@ -8,6 +8,7 @@ in
     pkgs.deno
     pkgs.nixd
     pkgs.yaml-language-server
+    pkgs.svelte-language-server
   ];
   programs.helix = enabled {
     settings.theme = config.theme.helix;
@@ -46,8 +47,20 @@ in
 
     languages.language = [
       {
-        name        = "rust";
-        auto-format = true;
+        name              = "rust";
+        auto-format       = true;
+      }
+      {
+        name              = "typescript";
+        auto-format       = true;
+        formatter.command = "deno";
+        formatter.args    = [ "fmt" "--use-tabs" "--no-semicolons" "--indent-width" "4" "--unstable-component" "--ext" "ts" "-"];
+      }
+      {
+        name              = "svelte";
+        auto-format       = true;
+        formatter.command = "deno";
+        formatter.args    = [ "fmt" "--use-tabs" "--no-semicolons" "--indent-width" "4" "--unstable-component" "--ext" "svelte" "-"];
       }
       {
         name              = "nix";
@@ -55,8 +68,8 @@ in
         formatter.command = "alejandra";
       }
       {
-        name        = "toml";
-        auto-format = true;
+        name              = "toml";
+        auto-format       = true;
       }
     ];
 
@@ -78,6 +91,11 @@ in
           inlayHints.propertyDeclarationTypes.enabled = true;
           inlayHints.variableTypes.enabled            = true;
         };
+      };
+
+      svelte-language-server = {
+        command = "svelteserver";
+        args    = [ "stdio" ];
       };
 
       rust-analyzer = {
