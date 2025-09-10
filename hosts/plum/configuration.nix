@@ -12,6 +12,7 @@ in
 		./cache/default.nix
 		./grafana
 		./grafana/prometheus.nix
+		./uptime-kuma
 		(self + /modules/forgejo.nix)
 		(self + /modules/site.nix)
 		(self + /modules/matrix.nix)
