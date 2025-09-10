@@ -11,237 +11,132 @@ in
     diagnostics = enabled {
       config = {
         update_in_insert = false;
-        virtual_text = false;
-        float = {
-          focusable = false;
-          source = "always";
-          header = "";
-          prefix = "";
-        };
-
+        virtual_text     = false;
+        float.focusable  = false;
+        float.source     = "always";
+        float.header     = "";
+        float.prefix     = "";
       };
     };
-    globals = {
-      rustaceanvim = {
-        tools.test_executor = "background";
-        server.default_settings = mkLuaInline ''
-          {
-            ["rust-analyzer"] = {
-              assist = {
-                preferSelf = true,
-              },
-              lens = {
-                references = {
-                  adt = {
-                    enable = true,
-                  },
-                  enumVariant = {
-                    enable = true,
-                  },
-                  method = {
-                    enable = true,
-                  },
-                  trait = {
-                    enable = true,
-                    all = true,
-                  },
-                },
-              },
-              inlayHints = {
-                bindingModeHints = {
-                  enable = true,
-                },
-                closureCaptureHints = {
-                  enable = true,
-                },
-                closureReturnTypeHints = {
-                  enable = true,
-                },
-                discriminantHints = {
-                  enable = true,
-                },
-                expressionAdjustmentHints = {
-                  enable = true,
-                },
-                genericParameterHints = {
-                  lifetime = {
-                    enable = true,
-                  },
-                  type = {
-                    enable = true,
-                  },
-                },
-                implicitDrops = {
-                  enable = true,
-                },
-                implicitSizedBoundHints = {
-                  enable = true,
-                },
-                lifetimeElisionHints = {
-                  useParameterNames = true,
-                  enable = true,
-                },
-                rangeExclusiveHints = {
-                  enable = true,
-                },
-              },
-              -- checkOnSave and diagnostics must be disabled for bacon-ls
-              checkOnSave = {
-                command = "clippy",
-                enable = true,
-              },
-              diagnostics = {
-                enable = true,
-                experimental = {
-                  enable = true,
-                },
-                styleLints = {
-                  enable = true,
-                },
-              },
-              hover = {
-                actions = {
-                  references = {
-                    enable = true,
-                  },
-                },
-              },
-              interpret = {
-                tests = true,
-              },
-              cargo = {
-                features = "all",
-              },
-              completion = {
-                hideDeprecated = true,
-                fullFunctionSignatures = {
-                  enable = true,
-                },
-              },
+    globals.rustaceanvim = {
+      tools.test_executor = "background";
+      server.default_settings = mkLuaInline ''
+        {
+          ["rust-analyzer"] = {
+            assist = {
+              preferSelf = true,
             },
-          }
-        '';
-        dap = { };
-      };
+            -- checkOnSave and diagnostics must be disabled for bacon-ls
+            checkOnSave.enable = true,
+            checkOnSave.command = "clippy",
+            diagnostics = {
+              enable = true,
+              experimental.enable = true,
+              styleLints.enable = true,
+            },
+            hover.actions.references.enable = true,
+            interpret.tests = true,
+            cargo.features = "all",
+
+            completion.hideDeprecated = true,
+            completion.fullFunctionSignatures.enable = true,
+            completion.callable.snippets = "add_parentheses",
+          },
+        }
+      '';
+      dap = { };
     };
 
     #==============#
     # LANG SUPPORT #
     #==============#
-    languages = {
-      html = enabled {
-        treesitter = enabled;
-      };
 
-      css = enabled {
-        treesitter = enabled;
-        lsp = enabled;
-        format = enabled {
-          type = "prettierd";
-        };
-      };
+    languages.enableFormat     = true; # enable formatters for all enabled langs
+    languages.enableTreesitter = true; # enable treesitter for all enabled langs
 
-      rust = enabled {
-        treesitter = enabled;
-        dap = enabled;
-        # lsp handled in ./langs.nix
-        crates = enabled;
-        format = enabled;
-      };
+    languages.html = enabled;
 
-      assembly = enabled {
-        treesitter = enabled;
-        lsp = enabled;
-      };
+    languages.css = enabled {
+      lsp         = enabled;
+      format.type = "prettierd";
+    };
 
-      astro = enabled {
-        treesitter = enabled;
-        lsp = enabled;
-        format = enabled {
-          type = "prettierd";
-        };
-      };
+    languages.rust = enabled {
+      dap        = enabled;
+    # lsp handled by rustacean.vim
+      crates     = enabled;
+    };
 
-      ts = enabled {
-        treesitter = enabled;
-        lsp = enabled {
-          server = "denols";
-        };
-        format = enabled {
-          type = "prettierd";
-        };
-      };
+    languages.assembly = enabled {
+      lsp = enabled;
+    };
 
-      lua = enabled {
-        treesitter = enabled;
-        lsp = enabled;
-        format = enabled;
-      };
+    languages.astro = enabled {
+      lsp         = enabled;
+      format.type = "prettierd";
+    };
 
-      nix = enabled {
-        treesitter = enabled;
-        lsp = enabled {
-          server = "nixd";
-        };
-        format = disabled {
-          # prefer to manually format for configs
-          type = "alejandra";
-        };
+    languages.ts = enabled {
+      lsp   = enabled {
+        server = "denols";
       };
+      format.type = "prettierd";
+    };
 
-      nu = enabled {
-        treesitter = enabled;
-        lsp = enabled;
+    languages.lua = enabled {
+      lsp = enabled;
+    };
+
+    languages.nix = enabled {
+      lsp    = enabled {
+        server = "nixd";
       };
-
-      svelte = enabled {
-        treesitter = enabled;
-        lsp = enabled;
-        format = enabled {
-          type = "prettier";
-        };
+      format = disabled {
+        # prefer to manually format for configs
+        type = "alejandra";
       };
+    };
 
-      tailwind = enabled {
-        lsp = enabled;
-      };
+    languages.nu = enabled {
+      lsp = enabled;
+    };
 
-      yaml = enabled {
-        treesitter = enabled;
-        # lsp handled in ./langs.nix
-      };
+    languages.svelte = enabled {
+      lsp         = enabled;
+      format.type = "prettier";
+    };
 
-      go = enabled {
-        treesitter = enabled;
-        lsp = enabled;
-        dap = enabled;
-        format = enabled {
-          type = "gofumpt";
-        };
-      };
+    languages.tailwind = enabled {
+      lsp = enabled;
+    };
 
-      markdown = enabled {
-        treesitter = enabled;
-        lsp = enabled;
-        extensions.render-markdown-nvim = enabled {
-          setupOpts = {
-            enabled = false; # off by default
-            sign.enabled = false;
-            completions.blink.enabled = true;
-            file_types = [
-              "markdown"
-              "md"
-            ];
-            overrides.buftype.nofile = {
-              render_modes = true;
-              link.enabled = false;
-              heading.enabled = false;
-              code = {
-                language_icon = false;
-                language_name = false;
-                language_info = false;
-              };
-            };
+    languages.yaml = enabled; # lsp handled in ./langs.nix
+
+    languages.go = enabled {
+      lsp         = enabled;
+      dap         = enabled;
+      format.type = "gofumpt";
+    };
+
+    languages.markdown = enabled {
+      lsp = enabled;
+
+      extensions.render-markdown-nvim = enabled {
+        setupOpts = {
+          enabled = false; # off by default
+
+          sign.enabled = false;
+
+          completions.blink.enabled = true;
+
+          file_types = [ "markdown" "md" ];
+          overrides.buftype.nofile = {
+            render_modes       = true;
+            link.enabled       = false;
+            heading.enabled    = false;
+            code.language_icon = false;
+            code.language_name = false;
+            code.language_info = false;
           };
         };
       };
@@ -252,21 +147,17 @@ in
     #============#
     treesitter = enabled {
       grammars = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [
-        astro # needed manually for astro hl
+        astro      # needed manually for astro hl
         typescript # needed manually for astro hl
-        vim
-        json
-        vimdoc
-        http
-        nasm
-        asm
+        vim json vimdoc
+        http nasm asm
       ];
-      fold = true;
-      indent = enabled;
-      highlight = enabled;
+      fold        = true;
+      indent      = enabled;
+      highlight   = enabled;
       textobjects = enabled;
       autotagHtml = true;
-      context = enabled {
+      context     = enabled {
         setupOpts = {
           max_lines = 3;
           separator = "▁";
@@ -281,48 +172,40 @@ in
       "*" = {
         root_markers = [ ".git" ];
         capabilities = mkLuaInline ''
-          					vim.tbl_deep_extend(
-          						"force",
-          						{},
-          						vim.lsp.protocol.make_client_capabilities(),
-          						require("blink.cmp").get_lsp_capabilities()
-          					)
-          				'';
+          vim.tbl_deep_extend(
+            "force",
+            {},
+            vim.lsp.protocol.make_client_capabilities(),
+            require("blink.cmp").get_lsp_capabilities()
+          )
+        '';
       };
       # too inconsistent right now
       # bacon-ls = {
-      #   root_markers = [
-      #     "Cargo.toml"
-      #     "Cargo.lock"
-      #     ".bacon-locations"
-      #   ];
-      #   filetypes = [ "rust" ];
-      #   cmd = [ "bacon-ls" ];
-      #   settings = {
-      #     init_options = {
-      #       locationsFile = ".bacon-locations";
-      #       updateOnSave = true;
-      #       updateOnSaveWaitMillis = 100;
-      #       runBaconInBackground = true;
-      #       synchronizeAllOpenFilesWaitMillis = 1000;
-      #     };
+      #   root_markers = [ "Cargo.toml" "Cargo.lock" ".bacon-locations" ];
+      #   filetypes    = [ "rust" ];
+      #   cmd          = [ "bacon-ls" ];
+      #   settings.init_options = {
+      #     locationsFile        = ".bacon-locations";
+      #     runBaconInBackground = true;
+      #     updateOnSave         = true;
+
+      #     updateOnSaveWaitMillis            = 100;
+      #     synchronizeAllOpenFilesWaitMillis = 1000;
       #   };
       # };
 
       json_ls = {
-        filetypes = [
-          "json"
-          "jsonc"
-        ];
+        filetypes     = [ "json" "jsonc" ];
         settings.json = {
-          schema = mkLuaInline ''require("schemastore").json.schemas()'';
+          schema   = mkLuaInline ''require("schemastore").json.schemas()'';
           validate = enabled;
         };
 
       };
 
       "yamlls" = {
-        filetypes = [ "yaml" ];
+        filetypes     = [ "yaml" ];
         settings.yaml = {
           # You must disable built-in schemaStore support if you want to use
           # this plugin and its advanced options like `ignore`.
