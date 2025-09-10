@@ -44,7 +44,7 @@ in
 
       tt = "toggle-theme";
 
-      td = "nvim ~/notes/todo.md";
+      td = "hx ~/notes/todo.md";
 
       cdr = "cd (git rev-parse --show-toplevel | str trim)";
       cdn = "cd ~/nixos-config/dotfiles/nvim";
