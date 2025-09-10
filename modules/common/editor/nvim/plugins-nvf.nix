@@ -1,8 +1,6 @@
 { pkgs, lib, ... }:
 let
   inherit (lib) enabled disabled mkLuaInline;
-
-	telescopeMappings = [ "buffers" "diagnostics" "findFiles" "findProjects" "gitBranches" "gitBufferCommits" "gitCommits" "gitStash" "gitStatus" "helpTags" "liveGrep" "lspDefinitions" "lspDocumentSymbols" "lspImplementations" "lspReferences" "lspTypeDefinitions" "lspWorkspaceSymbols" "open" "resume" "treesitter" ];
 in
 {
   programs.nvf.settings.vim = {
@@ -119,9 +117,7 @@ in
       };
     };
 
-    autopairs.nvim-autopairs = enabled {
-      setupOpts.disable_filetype = [ "typr" ];
-    };
+    autopairs.nvim-autopairs = enabled;
 
     mini = {
       ai = enabled;
@@ -232,8 +228,27 @@ in
           workspaces = { };
         };
       };
-      # handled in ./keymaps.nix (set all to null)
-			mappings = builtins.listToAttrs (builtins.map (name: { name = name; value = null; }) telescopeMappings);
+      # rest are handled in ./keymaps.nix
+      mappings.findFiles           = null; # now using fff
+      mappings.findProjects        = null;
+      mappings.diagnostics         = null;
+      mappings.gitBranches         = null;
+      mappings.gitBufferCommits    = null;
+      mappings.gitCommits          = null;
+      mappings.gitStash            = null;
+      mpapings.gitStatus           = null;
+      mappings.helpTags            = null;
+      mappings.lspDefinitions      = null;
+      mappings.lspDocumentSymbols  = null;
+      mappings.lspImplementations  = null;
+      mappings.lspReferences       = null;
+      mappings.lspTypeDefinitions  = null;
+      mappings.lspWorkspaceSymbols = null;
+      mappings.open                = null;
+      mappings.liveGrep            = "<leader>fg";
+      mappings.buffers             = "<leader>fb";
+      mappings.treesitter          = "<leader>ft";
+      mappings.resume              = "<leader>fc";
     };
 
     notes.todo-comments = enabled {

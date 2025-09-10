@@ -279,30 +279,6 @@ in
       action = "<cmd>lua MiniBufremove.delete()<CR>";
     }
     # telescope
-    # {
-    #   desc   = "Telescope find_files";
-    #   key    = "<leader>ff";
-    #   mode   = "n";
-    #   action = "<cmd>lua require('telescope.builtin').find_files()<CR>"; # now using fff
-    # }
-    {
-      desc   = "Telescope live grep";
-      key    = "<leader>fg";
-      mode   = "n";
-      action = "<cmd>lua require('telescope.builtin').live_grep()<CR>";
-    }
-    {
-      desc   = "Telescope buffers";
-      key    = "<leader>fb";
-      mode   = "n";
-      action = "<cmd>lua require('telescope.builtin').buffers()<CR>";
-    }
-    {
-      desc   = "Telescope treesitter";
-      key    = "<leader>ft";
-      mode   = "n";
-      action = "<cmd>Telescope treesitter<CR>";
-    }
     {
       desc   = "Telescope word";
       key    = "<leader>fw";
@@ -320,12 +296,6 @@ in
       key    = "<leader>fs";
       mode   = "n";
       action = "<cmd>lua require('telescope.builtin').grep_string({ search = vim.fn.input('Grep > ') })<CR>";
-    }
-    {
-      desc   = "Telescope resume last picker";
-      key    = "<leader>fc";
-      mode   = "n";
-      action = "<cmd>lua require('telescope.builtin').resume()<CR>";
     }
     # missing from builtin undotree
     {
@@ -364,12 +334,6 @@ in
             vim.wo.foldmethod = "indent"
           end
 
-          vim.keymap.set("n", "gd", function()
-            vim.lsp.buf.definition()
-          end, { desc = "Go to definition" })
-          vim.keymap.set("n", "gr", function()
-            vim.lsp.buf.references()
-          end, { desc = "Show references" })
           vim.keymap.set("n", "grn", function()
             vim.lsp.buf.rename()
           end, { desc = "vim.lsp rename" })
