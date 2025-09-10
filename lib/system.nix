@@ -1,4 +1,5 @@
 inputs: self: super: let
+  flakeOutputs = inputs.self;
   inherit (self) attrValues filter getAttrFromPath hasAttrByPath collectNix;
 
   # collect common modules that should be applied to all systems
@@ -28,6 +29,7 @@ inputs: self: super: let
     inherit inputs;
     lib = self;
     keys = import ../keys.nix;
+    self = flakeOutputs;
   };
 in {
   # wrapper for nixosSystem that automatically applies common modules

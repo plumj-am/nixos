@@ -17,6 +17,7 @@
     ];
 
     experimental-features = [
+      "cgroups"
       "flakes"
       "nix-command"
       "pipe-operators"
@@ -25,8 +26,8 @@
     builders-use-substitutes = true;
     flake-registry           = "";
     http-connections         = 0;
-    lazy-trees               = true;
     max-jobs                 = "auto";
+    use-cgroups              = true;
     show-trace               = true;
     trusted-users            = [ "root" "@wheel" ];
     warn-dirty               = false;
