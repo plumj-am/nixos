@@ -27,20 +27,40 @@ in
               preferSelf = true,
             },
             -- checkOnSave and diagnostics must be disabled for bacon-ls
-            checkOnSave.enable = true,
-            checkOnSave.command = "clippy",
+            checkOnSave = {
+              command = "clippy",
+            },
             diagnostics = {
               enable = true,
-              experimental.enable = true,
-              styleLints.enable = true,
+              experimental = {
+                enable = true,
+              },
+              styleLints = {
+                enable = true,
+              },
             },
-            hover.actions.references.enable = true,
-            interpret.tests = true,
-            cargo.features = "all",
-
-            completion.hideDeprecated = true,
-            completion.fullFunctionSignatures.enable = true,
-            completion.callable.snippets = "add_parentheses",
+            hover = {
+              actions = {
+                references = {
+                  enable = true,
+                },
+              },
+            },
+            interpret = {
+              tests = true,
+            },
+            cargo = {
+              features = "all",
+            },
+            completion = {
+              hideDeprecated = true,
+              fullFunctionSignatures = {
+                enable = true,
+              },
+              callable = {
+                snippets = "add_parentheses",
+              },
+            },
           },
         }
       '';
