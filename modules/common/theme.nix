@@ -3,26 +3,29 @@ let
   inherit (lib) mkOption types;
 
   # global theme configuration - use `tt dark` or `tt light` to switch
-  is_dark = true;
+  is_dark = false;
 
   themes = {
-    nvim.dark	      = "gruvbox-material";
-		nvim.light      = "gruvbox-material";
+    nvim.dark       = "gruvbox-material";
+    nvim.light      = "gruvbox-material";
 
-		alacritty.dark  = "gruber_darker";
-		alacritty.light = "gruvbox_material_medium_light";
+    alacritty.dark  = "gruber_darker";
+    alacritty.light = "gruvbox_material_medium_light";
 
     zellij.dark     = "gruvbox-dark";
     zellij.light    = "gruvbox-light";
 
-		starship.dark   = "dark_theme";
-		starship.light  = "light_theme";
+    starship.dark   = "dark_theme";
+    starship.light  = "light_theme";
 
     vivid.dark      = "gruvbox-dark";
     vivid.light     = "gruvbox-light";
 
-		nushell.dark    = "dark-theme";
-		nushell.light   = "light-theme";
+    nushell.dark    = "dark-theme";
+    nushell.light   = "light-theme";
+
+    helix.dark      = "gruvbox_dark_hard";
+    helix.light     = "gruvbox_light_hard";
   };
 
   # helpers
@@ -49,7 +52,8 @@ in
     zellij    = get_theme "zellij";
     starship  = get_theme "starship";
     vivid     = get_theme "vivid";
-		nushell   = get_theme "nushell";
+    nushell   = get_theme "nushell";
+    helix     = get_theme "helix";
 
     # expose raw theme definitions for flexibility
     themes = themes;

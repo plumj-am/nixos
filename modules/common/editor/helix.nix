@@ -1,11 +1,12 @@
-{ lib, ... }:
+{ lib, config, ... }:
 let
   inherit (lib) enabled;
 in
 {
   programs.helix = enabled {
-    settings.theme = "gruvbox_dark_hard";
+    settings.theme = config.theme.helix;
     settings.editor = {
+      true-color         = true;
       auto-completion    = true;
       bufferline         = "multiple";
       color-modes        = true;
