@@ -79,6 +79,16 @@ in {
           extraGroups                 = [ "build" ];
         };
 
+        home-manager.users = {
+          james = {
+            imports = [ inputs.nvf.homeManagerModules.default ];
+          };
+        };
+
+        home-manager.sharedModules = [{
+          home.stateVersion = "24.11";
+        }];
+
         programs.mosh = enabled {
           openFirewall = true;
         };

@@ -44,9 +44,7 @@ in {
         home-manager = {
           useGlobalPkgs = true;
           useUserPackages = true;
-          sharedModules = inputHomeModules ++ modulesCommon;
-          users.james = {
-            imports = [ inputs.nvf.homeManagerModules.default ];
+          sharedModules = inputHomeModules ++ modulesCommon ++ [{
             _module.args = {
               inherit (inputs) fenix nvf bacon-ls fff-nvim;
               pkgs = import inputs.nixpkgs {
@@ -59,7 +57,7 @@ in {
               inherit (config) system;
               lib = self;
             };
-          };
+          }];
         };
       }
     ] ++ inputModulesLinux;
