@@ -10,7 +10,6 @@ in {
         imports = [
           (self + /modules/system.nix)
           (self + /modules/nix.nix)
-          (self + /modules/shared.nix)
         ];
         nixpkgs.hostPlatform.system              = "aarch64-darwin";
         nixpkgs.config.allowUnfree               = true;

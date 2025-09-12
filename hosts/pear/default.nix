@@ -12,7 +12,6 @@ in {
         imports = [
           (self + /modules/system.nix)
           (self + /modules/nix.nix)
-          (self + /modules/shared.nix)
         ];
 
         security.sudo = enabled {
@@ -71,9 +70,23 @@ in {
           };
         };
 
-        users.users.james.extraGroups = [ "docker" "dialout" ];
+        users.users.james = {
+          isNormalUser = true;
+          shell        = pkgs.nushell;
+          extraGroups  = [ "wheel" "docker" "dialout" ];
+          openssh.authorizedKeys.keys = [ keys.james ];
+        };
 
         users.users.root.openssh.authorizedKeys.keys = [ keys.james ];
+
+        users.groups.build = {};
+
+        users.users.build = {
+          description                 = "Build";
+          openssh.authorizedKeys.keys = [ keys.james ];
+          isNormalUser                = true;
+          extraGroups                 = [ "build" ];
+        };
 
         programs.mosh = enabled {
           openFirewall = true;

@@ -20,7 +20,6 @@ in {
           (self + /modules/linux/node-exporter.nix)
           (self + /modules/system.nix)
           (self + /modules/nix.nix)
-          (self + /modules/shared.nix)
         ];
 
         security.sudo = enabled {
@@ -57,11 +56,27 @@ in {
 
         users.mutableUsers = false;
 
-        users.users.james.hashedPasswordFile = config.age.secrets.password.path;
+        users.users.james = {
+          isNormalUser       = true;
+          shell              = pkgs.nushell;
+          hashedPasswordFile = config.age.secrets.password.path;
+          extraGroups        = [ "wheel" ];
+          openssh.authorizedKeys.keys = [ keys.james ];
+        };
 
         users.users.root = {
           openssh.authorizedKeys.keys = [ keys.james ];
           hashedPasswordFile          = config.age.secrets.password.path;
+        };
+
+        users.groups.build = {};
+
+        users.users.build = {
+          description                 = "Build";
+          openssh.authorizedKeys.keys = [ keys.james ];
+          hashedPasswordFile          = config.age.secrets.password.path;
+          isNormalUser                = true;
+          extraGroups                 = [ "build" ];
         };
 
         programs.mosh = enabled {
