@@ -13,14 +13,16 @@ in
   programs.helix = enabled {
     settings.theme = config.theme.helix;
     settings.editor = {
-      completion-timeout       = 5;
-      color-modes              = true;
-      cursorline               = true;
-      file-picker.hidden       = false;
-      idle-timeout             = 0;
-      shell                    = [ "nu" "--commands" ];
-      trim-trailing-whitespace = true;
-      true-color               = true;
+      completion-timeout             = 5;
+      color-modes                    = true;
+      cursorline                     = true;
+      file-picker.hidden             = false;
+      idle-timeout                   = 0;
+      shell                          = [ "nu" "--commands" ];
+      trim-trailing-whitespace       = true;
+      true-color                     = true;
+      lsp.display-inlay-hints        = true;
+      inline-diagnostics.cursor-line = "hint";
     };
     settings.editor.cursor-shape = {
       insert = "block";
