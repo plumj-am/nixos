@@ -19,6 +19,7 @@ in {
     group = "matrix-synapse";
   };
 
+
   systemd.services.matrix-backup = {
     description = "Backup Matrix data and database";
     after       = [ "matrix-synapse.service" ];
@@ -90,11 +91,18 @@ in {
       enable_registration         = true;
       registration_requires_token = true;
 
+      report_stats = false;
+
       delete_stale_devices_after = "30d";
 
       redis.enabled = true;
 
       max_upload_size = "512M";
+
+      media_store_path = "/var/lib/matrix-synapse/media_store";
+
+      url_preview_enabled = true;
+      dynamic_thumbnails  = true;
 
       signing_key_path           = config.age.secrets.matrixSigningKey.path;
       registration_shared_secret = config.age.secrets.matrixRegistrationSecret.path;
@@ -106,7 +114,7 @@ in {
   };
 
   services.nginx.virtualHosts.${fqdn} = lib.merge config.services.nginx.sslTemplate {
-    extraConfig = lib.optionalString (config.services ? plausible) 
+    extraConfig = lib.optionalString (config.services ? plausible)
       (config.services.plausible.extraNginxConfigFor fqdn);
     locations."/_matrix".proxyPass         = "http://[::1]:${toString port}";
     locations."/_synapse/client".proxyPass = "http://[::1]:${toString port}";

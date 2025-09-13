@@ -23,7 +23,7 @@ in {
           (self + /modules/forgejo.nix)
           (self + /modules/site.nix)
           (self + /modules/matrix.nix)
-          (self + /modules/element.nix)
+          (self + /modules/cinny.nix)
           (self + /modules/linux/node-exporter.nix)
           (self + /modules/system.nix)
           (self + /modules/nix.nix)
