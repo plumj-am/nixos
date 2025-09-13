@@ -79,6 +79,13 @@ in {
           extraGroups                 = [ "build" ];
         };
 
+        users.users.github2forgejo = {
+          isSystemUser = true;
+          group = "github2forgejo";
+        };
+
+        users.groups.github2forgejo = {};
+
         home-manager.users = {
           james = {
             imports = [ inputs.nvf.homeManagerModules.default ];
