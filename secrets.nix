@@ -13,6 +13,8 @@ in
 
   "hosts/plum/grafana/password.age".publicKeys = [ plum ] ++ admins;
 
+  "hosts/plum/plausible/key.age".publicKeys = [ plum ] ++ admins;
+
 	"hosts/kiwi/id.age".publicKeys               = [ kiwi ] ++ admins;
   "hosts/kiwi/password.age".publicKeys         = [ kiwi ] ++ admins;
 

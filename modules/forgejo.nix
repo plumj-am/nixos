@@ -124,6 +124,8 @@ in {
   };
 
   services.nginx.virtualHosts.${fqdn} = lib.merge config.services.nginx.sslTemplate {
+    extraConfig = lib.optionalString (config.services ? plausible) 
+      (config.services.plausible.extraNginxConfigFor fqdn);
     locations."/".proxyPass = "http://[::1]:${toString port}";
   };
 }

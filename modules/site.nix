@@ -28,6 +28,8 @@ in {
 		# site not ready yet
 		virtualHosts.${domain} = lib.merge config.services.nginx.sslTemplate {
 			# inherit root;
+			extraConfig = lib.optionalString (config.services ? plausible) 
+			  (config.services.plausible.extraNginxConfigFor domain);
 			locations."/".return = "404";
   };
   };

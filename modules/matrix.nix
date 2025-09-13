@@ -106,6 +106,8 @@ in {
   };
 
   services.nginx.virtualHosts.${fqdn} = lib.merge config.services.nginx.sslTemplate {
+    extraConfig = lib.optionalString (config.services ? plausible) 
+      (config.services.plausible.extraNginxConfigFor fqdn);
     locations."/_matrix".proxyPass         = "http://[::1]:${toString port}";
     locations."/_synapse/client".proxyPass = "http://[::1]:${toString port}";
     locations."/_synapse/admin".proxyPass  = "http://[::1]:${toString port}";

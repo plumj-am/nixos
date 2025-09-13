@@ -47,6 +47,9 @@ in {
   };
 
   services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
+    extraConfig = lib.optionalString (config.services ? plausible) 
+      (config.services.plausible.extraNginxConfigFor fqdn);
+      
     locations."/" = {
       extraConfig = /* nginx */ ''
         # grafana sets `nosniff` without correct content type so unset the header
