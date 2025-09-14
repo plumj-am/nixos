@@ -1,3 +1,5 @@
 {
-  programs.fd.enable = true;
+  home-manager.sharedModules = [{
+    programs.fd.enable = true;
+  }];
 }

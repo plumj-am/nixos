@@ -1,4 +1,4 @@
 { pkgs, lib, ... }:
 {
-  home.packages = [ pkgs.nerd-fonts.iosevka-term ];
+  fonts.packages = [ pkgs.nerd-fonts.iosevka-term ];
 }

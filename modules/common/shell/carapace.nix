@@ -1,8 +1,14 @@
-{
-  programs.carapace = {
-    enable = true;
-    enableBashIntegration = true;
-    enableNushellIntegration = true;
-    enableZshIntegration = true;
-  };
+{ lib, pkgs, ... }: let
+  inherit (lib) enabled;
+in {
+  environment.systemPackages = [
+    pkgs.carapace
+    pkgs.fish
+    pkgs.zsh
+    pkgs.inshellisense
+  ];
+
+  home-manager.sharedModules = [{
+    programs.carapace = enabled;
+  }];
 }

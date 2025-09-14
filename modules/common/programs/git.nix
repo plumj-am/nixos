@@ -3,14 +3,15 @@ let
   inherit (lib) enabled;
 in
 {
-  programs.gh = enabled {
-    settings = {
-      git_protocol = "ssh";
-      editor       = "hx";
+  home-manager.sharedModules = [{
+    programs.gh = enabled {
+      settings = {
+        git_protocol = "ssh";
+        editor       = "hx";
+      };
     };
-  };
 
-  programs.git = enabled {
+    programs.git = enabled {
     userName  = "James Plummer";
     userEmail = "git@plumj.am";
 
@@ -205,5 +206,6 @@ in
                 done; \
             }; f'';
     };
-  };
+    };
+  }];
 }

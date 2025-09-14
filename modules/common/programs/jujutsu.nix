@@ -2,14 +2,14 @@
 let
   inherit (lib) enabled;
 in {
-  home.packages = [ pkgs.lazyjj ];
+  environment.systemPackages = [ pkgs.lazyjj ];
 
-  programs.git.difftastic = enabled;
+  home-manager.sharedModules = [{
+    programs.git.difftastic = enabled;
+    programs.mergiraf = enabled;
 
-  programs.mergiraf = enabled;
-
-  # credit to https://github.com/rgbcube/ncc for most of this
-  programs.jujutsu = enabled {
+    # credit to https://github.com/rgbcube/ncc for most of this
+    programs.jujutsu = enabled {
     settings = {
       user.name  = "James Plummer";
       user.email = "git@plumj.am";
@@ -109,5 +109,6 @@ in {
       '';
 
     };
-  };
+    };
+  }];
 }

@@ -1,3 +1,5 @@
 {
-  programs.fzf.enable = true;
+  home-manager.sharedModules = [{
+    programs.fzf.enable = true;
+  }];
 }

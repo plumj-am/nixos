@@ -1,3 +1,5 @@
 {
-  programs.eza.enable = true;
+  home-manager.sharedModules = [{
+    programs.eza.enable = true;
+  }];
 }

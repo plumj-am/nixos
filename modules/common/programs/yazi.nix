@@ -1,3 +1,5 @@
 {
-  programs.yazi.enable = true;
+  home-manager.sharedModules = [{
+    programs.yazi.enable = true;
+  }];
 }

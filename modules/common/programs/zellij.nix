@@ -3,7 +3,8 @@ let
 	inherit (lib) enabled;
 in
 {
-  programs.zellij = enabled {
+  home-manager.sharedModules = [{
+    programs.zellij = enabled {
     enableBashIntegration = true;
 
     attachExistingSession = true;
@@ -473,5 +474,6 @@ in
 				}
       '';
     };
-  };
+    };
+  }];
 }

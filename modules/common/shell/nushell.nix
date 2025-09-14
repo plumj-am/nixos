@@ -3,7 +3,8 @@ let
 	inherit (lib) enabled;
 in
 {
-  programs.nushell = enabled {
+  home-manager.sharedModules = [{
+    programs.nushell = enabled {
     shellAliases = {
       cat = "bat";
 
@@ -168,5 +169,6 @@ in
 			$env.CARAPACE_BRIDGES = "zsh,fish,bash,inshellisense,clap"
 			$env.LS_COLORS = (vivid generate ${config.theme.vivid})
     '';
-  };
+    };
+  }];
 }

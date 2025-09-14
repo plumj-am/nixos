@@ -44,7 +44,7 @@ in {
         home-manager = {
           useGlobalPkgs = true;
           useUserPackages = true;
-          sharedModules = inputHomeModules ++ modulesCommon ++ [{
+          sharedModules = inputHomeModules ++ [{
             _module.args = {
               inherit (inputs) fenix bacon-ls;
               pkgs = import inputs.nixpkgs {
@@ -60,7 +60,7 @@ in {
           }];
         };
       }
-    ] ++ inputModulesLinux;
+    ] ++ modulesCommon ++ inputModulesLinux;
   };
 
   # wrapper for darwinSystem that automatically applies common modules

@@ -1,6 +1,7 @@
 { ... }: {
-  # generated scripts for rebuilds
-  home.file."nixos-config/rebuild.nu" = {
+  home-manager.sharedModules = [{
+    # generated scripts for rebuilds
+    home.file."nixos-config/rebuild.nu" = {
     text = ''
       #!/usr/bin/env nu
 
@@ -28,7 +29,7 @@
     executable = true;
   };
 
-  home.file."nixos-config/rollback.nu" = {
+    home.file."nixos-config/rollback.nu" = {
     text = ''
       #!/usr/bin/env nu
 
@@ -54,5 +55,6 @@
       }
     '';
     executable = true;
-  };
+    };
+  }];
 }

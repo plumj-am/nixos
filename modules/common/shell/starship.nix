@@ -3,7 +3,8 @@ let
   inherit (lib) enabled;
 in
 {
-  programs.starship = enabled {
+  home-manager.sharedModules = [{
+    programs.starship = enabled {
     enableBashIntegration    = true;
     enableNushellIntegration = true;
     settings = {
@@ -96,5 +97,6 @@ in
 			custom.jj.use_stdin      = false;
 			custom.jj.when           = true;
     };
-  };
+    };
+  }];
 }

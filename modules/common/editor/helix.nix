@@ -3,14 +3,16 @@ let
   inherit (lib) enabled const genAttrs;
 in
 {
-  home.packages = [
+  environment.systemPackages = [
     # rust-analyzer is in modules/common/rust.nix
     pkgs.deno
     pkgs.nixd
     pkgs.yaml-language-server
     pkgs.svelte-language-server
   ];
-  programs.helix = enabled {
+
+  home-manager.sharedModules = [{
+    programs.helix = enabled {
     settings.theme = config.theme.helix;
     settings.editor = {
       completion-timeout             = 5;
@@ -126,4 +128,5 @@ in
       fi
     '';
   };
+  }];
 }

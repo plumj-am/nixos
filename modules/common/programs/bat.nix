@@ -1,14 +1,21 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 let
 	inherit (lib) enabled;
 in
 {
-  home.sessionVariables = {
-    MANPAGER = "bat";
-    PAGER    = "bat";
+  environment.variables = {
+    MANPAGER = "bat --plain";
+    PAGER    = "bat --plain";
   };
-  programs.less = enabled;
-  programs.bat  = enabled {
-    config.pager = "less --quit-if-one-screen --RAW-CONTROL-CHARS";
+  environment.shellAliases = {
+    cat  = "bat";
+    less = "bat --plain";
   };
+
+  home-manager.sharedModules = [{
+    programs.less = enabled;
+    programs.bat  = enabled {
+      config.pager = "less --quit-if-one-screen --RAW-CONTROL-CHARS";
+    };
+  }];
 }

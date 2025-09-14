@@ -1,11 +1,11 @@
 { pkgs, lib, ... }:
+let
+  inherit (lib) enabled;
+in
 {
-  programs.nix-index.enable = true;
-
-  programs.bun.enable = true;
-
-  home.packages = [
+  environment.systemPackages = [
     pkgs.nodejs
+    pkgs.deno
     pkgs.pnpm
     pkgs.python3
 
@@ -13,7 +13,6 @@
     pkgs.proto
     pkgs.mprocs
 
-    pkgs.claude-code
     pkgs.gemini-cli
 
     pkgs.comma
@@ -22,10 +21,7 @@
     pkgs.hyperfine
     pkgs.curl
     pkgs.tokei
-    pkgs.jq
 		pkgs.ast-grep
-
-    pkgs.vivid
 
     # starship-jj from crates.io
     (pkgs.rustPlatform.buildRustPackage rec {
@@ -43,9 +39,6 @@
     })
 
     # carapace
-    pkgs.carapace
-    pkgs.fish
-    pkgs.zsh
     pkgs.inshellisense
   ]
   ++ lib.optionals pkgs.stdenv.isLinux [
@@ -60,4 +53,17 @@
     pkgs.karabiner-elements
     pkgs.raycast
   ];
+
+  home-manager.sharedModules = [{
+    programs.nix-index = enabled;
+    programs.bun = enabled;
+    programs.claude-code = enabled;
+    programs.jq = enabled;
+    programs.vivid = enabled;
+    
+    # Carapace stuff
+    programs.carapace = enabled;
+    programs.fish     = enabled;
+    programs.zsh      = enabled;
+  }];
 }
