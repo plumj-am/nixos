@@ -31,13 +31,13 @@ def toggle-theme [theme?: string] {
     # update centralized theme file
     try {
         let content = open $theme_file
-        
+
         let updated = if $new_theme == "dark" {
             $content | str replace "is_dark = false;" "is_dark = true;"
         } else {
             $content | str replace "is_dark = true;" "is_dark = false;"
         }
-        
+
         $updated | save $theme_file --force
         print $"updated theme to ($new_theme)"
     } catch { |e|
@@ -57,8 +57,8 @@ def toggle-theme [theme?: string] {
         $env.THEME_MODE = "light"
         print "light mode activated"
     }
-        # rebuild nixos config to apply nvim theme
-        print "Rebuilding nixos config to apply nvim theme... (this may take a moment)"
+        # rebuild nixos config to apply themes
+        print "Rebuilding nixos config to apply themes... (this may take a moment)"
         nu $"($env.HOME)/nixos-config/rebuild.nu"
 
     print "Theme switch completed!"

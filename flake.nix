@@ -48,14 +48,8 @@
     fenix.url = "github:nix-community/fenix";
     fenix.inputs.nixpkgs.follows = "nixpkgs";
 
-    nvf.url = "github:notashelf/nvf";
-    nvf.inputs.nixpkgs.follows = "nixpkgs";
-
     bacon-ls.url = "github:crisidev/bacon-ls";
     bacon-ls.inputs.nixpkgs.follows = "nixpkgs";
-
-    fff-nvim.url = "github:dmtrKovalenko/fff.nvim";
-    fff-nvim.inputs.nixpkgs.follows = "nixpkgs";
 
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
@@ -67,7 +61,7 @@
     github2forgejo.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs @ { nixpkgs, nixos-wsl, nix-darwin, home-manager, fenix, nvf, bacon-ls, fff-nvim, disko, agenix, github2forgejo, ... }: let
+  outputs = inputs @ { nixpkgs, nixos-wsl, nix-darwin, home-manager, fenix, bacon-ls, disko, agenix, github2forgejo, ... }: let
     inherit (builtins) readDir;
     inherit (nixpkgs.lib) attrsToList const extend groupBy listToAttrs mapAttrs nameValuePair;
 

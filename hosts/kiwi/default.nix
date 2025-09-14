@@ -87,9 +87,7 @@ in {
         users.groups.github2forgejo = {};
 
         home-manager.users = {
-          james = {
-            imports = [ inputs.nvf.homeManagerModules.default ];
-          };
+          james = {};
         };
 
         home-manager.sharedModules = [{

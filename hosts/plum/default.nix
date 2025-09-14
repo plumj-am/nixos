@@ -87,9 +87,7 @@ in {
         };
 
         home-manager.users = {
-          james = {
-            imports = [ inputs.nvf.homeManagerModules.default ];
-          };
+          james = {};
         };
 
         home-manager.sharedModules = [{

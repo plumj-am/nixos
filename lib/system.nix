@@ -46,7 +46,7 @@ in {
           useUserPackages = true;
           sharedModules = inputHomeModules ++ modulesCommon ++ [{
             _module.args = {
-              inherit (inputs) fenix nvf bacon-ls fff-nvim;
+              inherit (inputs) fenix bacon-ls;
               pkgs = import inputs.nixpkgs {
                 inherit (config) system;
                 config.allowUnfree = true;
