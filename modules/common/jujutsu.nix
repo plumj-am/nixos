@@ -1,21 +1,25 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, keys, ... }:
 let
   inherit (lib) enabled;
 in {
   environment.systemPackages = [ pkgs.lazyjj ];
 
-  home-manager.sharedModules = [{
-    programs.git.difftastic = enabled;
-    programs.mergiraf = enabled;
+  home-manager.sharedModules = [
+    {
+      programs.git.difftastic = enabled;
+      programs.mergiraf = enabled;
+    }
+    (homeArgs: let
+      config' = homeArgs.config;
+    in {
+      # credit to https://github.com/rgbcube/ncc for most of this
+      programs.jujutsu = enabled {
+      settings = {
+        user.name  = config'.programs.git.userName;
+        user.email = config'.programs.git.userEmail;
 
-    # credit to https://github.com/rgbcube/ncc for most of this
-    programs.jujutsu = enabled {
-    settings = {
-      user.name  = config.programs.git.userName;
-      user.email = config.programs.git.userEmail;
-
-      signing.key      = "58805BF7676222B4";
-      signing.backend  = "gpg";
+      signing.key      = "~/.ssh/id";
+      signing.backend  = "ssh";
       signing.behavior = "own";
 
       ui.conflict-marker-style = "snapshot";
@@ -108,7 +112,8 @@ in {
         "change/jamesukiyo-" ++ change_id.short()
       '';
 
-    };
-    };
-  }];
+      };
+      };
+    })
+  ];
 }

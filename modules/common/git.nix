@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, keys, ... }:
 let
   inherit (lib) enabled;
 in
@@ -15,7 +15,7 @@ in
     userName  = "James Plummer";
     userEmail = "git@plumj.am";
 
-    signing.key           = "58805BF7676222B4";
+    signing.key           = "~/.ssh/id";
     signing.signByDefault = true;
 
     lfs = enabled;
@@ -63,6 +63,8 @@ in
       diff.colorMoved = "default";
 
       merge.conflictStyle = "zdiff3";
+
+      gpg.format = "ssh";
 
       credential.helper = "!gh auth git-credential";
 
