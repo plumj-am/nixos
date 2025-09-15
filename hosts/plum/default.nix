@@ -63,8 +63,6 @@ in {
         age.secrets.password.file = ./password.age;
         age.secrets.id.file       = ./id.age;
 
-        users.mutableUsers = false;
-
         users.users.james = {
           isNormalUser       = true;
           shell              = pkgs.nushell;

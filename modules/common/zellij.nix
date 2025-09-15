@@ -14,7 +14,7 @@ in
       theme = config.theme.zellij;
 
       default_shell     = "nu";
-      scrollback_editor = "hx";
+      scrollback_editor = config.environment.variables.EDITOR;
 
       default_layout        = "james";
       session_serialization = true;
@@ -37,7 +37,7 @@ in
       pane_viewport_serialization   = true;
       scrollback_lines_to_serialize = 5000;
 
-      env.EDITOR = "hx";
+      env.EDITOR = config.environment.variables.EDITOR;
 			env.SHELL  = "nu";
 
       simplified_ui_default_plugin     = "compact-bar";

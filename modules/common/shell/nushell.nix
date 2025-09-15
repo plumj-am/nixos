@@ -70,7 +70,7 @@ in
     };
     settings = {
       edit_mode     = "vi";
-      buffer_editor = "hx";
+      buffer_editor = config.environment.variables.EDITOR;
       show_banner   = false;
       footer_mode   = "auto";
 

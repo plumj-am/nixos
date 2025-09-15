@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ config, lib, ... }:
 let
   inherit (lib) enabled;
 in
@@ -7,7 +7,7 @@ in
     programs.gh = enabled {
       settings = {
         git_protocol = "ssh";
-        editor       = "hx";
+        editor       = config.environment.variables.EDITOR;
       };
     };
 
@@ -55,7 +55,7 @@ in
 
       core.compression  = 9;
       core.preloadindex = true;
-      core.editor       = "hx";
+      core.editor       = config.environment.variables.EDITOR;
       core.longpaths    = true;
       core.excludesfile = "~/.global_gitignore";
 

@@ -63,10 +63,7 @@ in {
   services.nginx = enabled {
     virtualHosts.${domain} = merge config.services.nginx.sslTemplate {
       extraConfig = ''
-        proxy_set_header Accept-Encoding "";
-        sub_filter "</head>" '<script data-goatcounter="https://analytics.plumj.am/count" async src="https://analytics.plumj.am/count.js"></script></head>';
-        sub_filter_last_modified on;
-        sub_filter_once on;
+        ${config.services.nginx.goatCounterTemplate}
       '';
 
       locations."/" = {

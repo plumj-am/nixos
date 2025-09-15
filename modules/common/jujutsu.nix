@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ config, pkgs, lib, ... }:
 let
   inherit (lib) enabled;
 in {
@@ -11,8 +11,8 @@ in {
     # credit to https://github.com/rgbcube/ncc for most of this
     programs.jujutsu = enabled {
     settings = {
-      user.name  = "James Plummer";
-      user.email = "git@plumj.am";
+      user.name  = config.programs.git.userName;
+      user.email = config.programs.git.userEmail;
 
       signing.key      = "58805BF7676222B4";
       signing.backend  = "gpg";
@@ -22,7 +22,7 @@ in {
       ui.default-command       = "lg";
       ui.diff-editor           = ":builtin";
       ui.diff-formatter        = [ "difft" "--color" "always" "$left" "$right" ];
-      ui.editor                = "hx";
+      ui.editor                = config.environment.variables.EDITOR;
       ui.graph-style           = "square";
       ui.movement.edit         = true;
       ui.pager                 = ":builtin";
