@@ -24,20 +24,20 @@ in {
   nix.gc = merge {
     automatic = true;
     options = "--delete-older-than 7d";
-  } <| optionalAttrs (pkgs.stdenv.isLinux) {
+  } <| optionalAttrs (config.isLinux) {
     dates = "weekly";
     persistent = true;
   };
 
   nix.nixPath = registryMap
     |> mapAttrsToList (name: value: "${name}=${value}")
-    |> (if pkgs.stdenv.isDarwin then concatStringsSep ":" else id);
+    |> (if config.isDarwin then concatStringsSep ":" else id);
 
   nix.registry = registryMap // { default = inputs.nixpkgs; }
     |> mapAttrs (_: flake: { inherit flake; });
 
   nix.settings = (import <| self + /flake.nix).nixConfig
-    |> flip removeAttrs (optionals pkgs.stdenv.isDarwin [ "use-cgroups" "cgroups" ]);
+    |> flip removeAttrs (optionals config.isDarwin [ "use-cgroups" "cgroups" ]);
 
   nix.optimise.automatic = true;
 }

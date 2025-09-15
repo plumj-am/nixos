@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ config, pkgs, lib, ... }:
 let
   inherit (lib) enabled;
 in
@@ -41,13 +41,13 @@ in
     # carapace
     pkgs.inshellisense
   ]
-  ++ lib.optionals pkgs.stdenv.isLinux [
+  ++ lib.optionals config.isLinux [
     pkgs.wget
     pkgs.gcc
     pkgs.gnumake
     pkgs.steam-run
   ]
-  ++ lib.optionals pkgs.stdenv.isDarwin [
+  ++ lib.optionals config.isDarwin [
     pkgs.arc-browser
     pkgs.alacritty
     pkgs.karabiner-elements
