@@ -62,10 +62,9 @@ in {
 
   services.nginx = enabled {
     virtualHosts.${domain} = merge config.services.nginx.sslTemplate {
-      # plausible
       extraConfig = ''
         proxy_set_header Accept-Encoding "";
-        sub_filter "</head>" '<script defer data-domain="${domain}" data-api="https://analytics.plumj.am/api/event" src="https://analytics.plumj.am/js/script.file-downloads.hash.outbound-links.js"></script><script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script></head>';
+        sub_filter "</head>" '<script data-goatcounter="https://analytics.plumj.am/count" async src="https://analytics.plumj.am/count.js"></script></head>';
         sub_filter_last_modified on;
         sub_filter_once on;
       '';
@@ -82,7 +81,7 @@ in {
 
           # override csp for built app requirements and maintain security headers
           proxy_hide_header Content-Security-Policy;
-          add_header Content-Security-Policy "script-src 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain} cdn.jsdelivr.net unpkg.com *.posthog.com *.sanity.io *.googletagmanager.com *.google-analytics.com analytics.plumj.am; object-src 'self' ${domain} *.${domain}; base-uri 'self'; frame-ancestors 'self' dr-radka.sanity.studio *.sanity.io; form-action 'self' ${domain} *.${domain}; font-src 'self' ${domain} *.${domain} cdn.jsdelivr.net; connect-src 'self' ${domain} *.${domain} unpkg.com *.posthog.com *.sanity.io *.googletagmanager.com *.google-analytics.com plausible.io analytics.plumj.am; img-src 'self' ${domain} *.${domain} unpkg.com *.tile.openstreetmap.org *.sanity.io cdn.sanity.io www.googletagmanager.com data:;" always;
+          add_header Content-Security-Policy "script-src 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain} cdn.jsdelivr.net unpkg.com *.posthog.com *.sanity.io *.googletagmanager.com *.google-analytics.com analytics.plumj.am; object-src 'self' ${domain} *.${domain}; base-uri 'self'; frame-ancestors 'self' dr-radka.sanity.studio *.sanity.io; form-action 'self' ${domain} *.${domain}; font-src 'self' ${domain} *.${domain} cdn.jsdelivr.net; connect-src 'self' ${domain} *.${domain} unpkg.com *.posthog.com *.sanity.io *.googletagmanager.com *.google-analytics.com analytics.plumj.am; img-src 'self' ${domain} *.${domain} unpkg.com *.tile.openstreetmap.org *.sanity.io cdn.sanity.io www.googletagmanager.com data:;" always;
           # need to fix because I can't access nested routes in sanity presentation mode
           add_header X-Frame-Options DENY always;
           add_header X-Content-Type-Options nosniff always;

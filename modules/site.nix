@@ -28,8 +28,12 @@ in {
 		# site not ready yet
 		virtualHosts.${domain} = lib.merge config.services.nginx.sslTemplate {
 			# inherit root;
-			extraConfig = lib.optionalString (config.services ? plausible) 
-			  (config.services.plausible.extraNginxConfigFor domain);
+			extraConfig = ''
+				proxy_set_header Accept-Encoding "";
+				sub_filter "</head>" '<script data-goatcounter="https://analytics.${domain}/count" async src="https://analytics.${domain}/count.js"></script></head>';
+				sub_filter_last_modified on;
+				sub_filter_once on;
+			'';
 			locations."/".return = "404";
   };
   };
