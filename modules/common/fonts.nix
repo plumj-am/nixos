@@ -1,4 +1,7 @@
-{ pkgs, lib, ... }:
+{ config, pkgs, lib, ... }: let
+  inherit (lib) mkIf;
+in
 {
-  fonts.packages = [ pkgs.nerd-fonts.iosevka-term ];
+  fonts.packages = mkIf config.isDesktop [ pkgs.nerd-fonts.iosevka-term ];
 }
+

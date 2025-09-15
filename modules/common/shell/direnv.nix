@@ -1,13 +1,13 @@
-{ lib, ... }:
+{ lib, config, ... }:
 let
-	inherit (lib) enabled;
+	inherit (lib) enabled mkIf;
 in
 {
   home-manager.sharedModules = [{
-    programs.direnv = enabled {
-    enableNushellIntegration = true;
+    programs.direnv = mkIf config.isDesktop (enabled {
+      enableNushellIntegration = true;
 
-    nix-direnv = enabled;
-    };
+      nix-direnv = enabled;
+    });
   }];
 }

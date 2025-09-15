@@ -6,10 +6,12 @@ in {
 
     isLinux  = mkConst <| config.os == "linux";
     isDarwin = mkConst <| config.os == "darwin";
+    isWsl    = mkValue false;
 
     type = mkValue "server";
 
-    isDesktop = mkConst <| config.type == "desktop";
-    isServer  = mkConst <| config.type == "server";
+    isDesktop       = mkConst <| config.type == "desktop";
+    isServer        = mkConst <| config.type == "server";
+    isDesktopNotWsl = mkConst <| config.isDesktop && !config.isWsl;
   };
 }

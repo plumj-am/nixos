@@ -1,7 +1,8 @@
-{ pkgs, fenix, bacon-ls, ... }:
-
+{ config, lib, pkgs, fenix, bacon-ls, ... }: let
+  inherit (lib) mkIf;
+in
 {
-  environment.systemPackages = [
+  environment.systemPackages = mkIf config.isDesktop [
     fenix.packages.${pkgs.system}.complete.toolchain # nightly
     # fenix.packages.${pkgs.system}.stable.toolchain # stable
     pkgs.cargo-binstall

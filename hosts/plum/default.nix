@@ -24,7 +24,6 @@ in {
           (self + /modules/site.nix)
           (self + /modules/matrix.nix)
           (self + /modules/cinny.nix)
-          (self + /modules/linux/node-exporter.nix)
           (self + /modules/system.nix)
           (self + /modules/nix.nix)
         ];
@@ -35,6 +34,8 @@ in {
 
         nixpkgs.hostPlatform.system = "x86_64-linux";
         nixpkgs.config.allowUnfree  = true;
+
+        type = "server";
 
         time.timeZone      = "Europe/Warsaw";
         i18n.defaultLocale = "en_US.UTF-8";

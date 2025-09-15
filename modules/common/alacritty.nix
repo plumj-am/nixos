@@ -1,23 +1,18 @@
-{ config, lib, pkgs, ... }:
-
-{
+{ config, lib, pkgs, ... }: let
+  inherit (lib) enabled mkIf;
+in {
   home-manager.sharedModules = [{
-    programs.alacritty = lib.mkIf pkgs.stdenv.isDarwin {
-      enable   = true;
+    programs.alacritty = mkIf config.isDesktopNotWsl (enabled {
       theme    = config.theme.alacritty;
       package  = pkgs.alacritty;
       settings = {
         window.decorations = "None";
 
-        font.size                = 22;
-  			font.builtin_box_drawing = false;
+        font.size                = 18;
   			font.normal.family       = "IosevkaTerm Nerd Font Mono";
-  			font.normal.style        = "Regular";
-
-        cursor.unfocused_hollow = true;
 
         terminal.shell.program = "/etc/profiles/per-user/james/bin/nu";
       };
-    };
+    });
   }];
 }

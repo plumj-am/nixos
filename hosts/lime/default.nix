@@ -11,9 +11,8 @@ in {
           (self + /modules/system.nix)
           (self + /modules/nix.nix)
         ];
-        nixpkgs.hostPlatform.system              = "aarch64-darwin";
-        nixpkgs.config.allowUnfree               = true;
-        nixpkgs.config.permittedInsecurePackages = [ "arc-browser-1.106.0-66192" ];
+        nixpkgs.hostPlatform.system = "aarch64-darwin";
+        nixpkgs.config.allowUnfree  = true;
 
         system.primaryUser = "james";
         type               = "desktop";

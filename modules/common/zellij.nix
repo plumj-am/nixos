@@ -1,16 +1,16 @@
 { config, lib, ... }:
 let
-	inherit (lib) enabled;
+	inherit (lib) enabled mkIf;
 in
 {
   home-manager.sharedModules = [{
-    programs.zellij = enabled {
-    enableBashIntegration = true;
+    programs.zellij = mkIf config.isDesktop (enabled {
+      enableBashIntegration = true;
 
-    attachExistingSession = true;
-    exitShellOnExit       = false;
+      attachExistingSession = true;
+      exitShellOnExit       = false;
 
-    settings = {
+      settings = {
       theme = config.theme.zellij;
 
       default_shell     = "nu";
@@ -473,7 +473,7 @@ in
 					}
 				}
       '';
-    };
-    };
+      };
+    });
   }];
 }

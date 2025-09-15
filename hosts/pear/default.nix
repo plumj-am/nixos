@@ -21,7 +21,8 @@ in {
         nixpkgs.hostPlatform.system = "x86_64-linux";
         nixpkgs.config.allowUnfree  = true;
 
-        type = "desktop";
+        type  = "desktop";
+        isWsl = true;
 
         time.timeZone      = "Europe/Warsaw";
         i18n.defaultLocale = "en_US.UTF-8";

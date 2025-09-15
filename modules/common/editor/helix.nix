@@ -1,9 +1,9 @@
 { pkgs, lib, config, ... }:
 let
-  inherit (lib) enabled const genAttrs;
+  inherit (lib) enabled const genAttrs mkIf;
 in
 {
-  environment.systemPackages = [
+  environment.systemPackages = mkIf config.isDesktop [
     # rust-analyzer is in modules/common/rust.nix
     pkgs.deno
     pkgs.nixd
@@ -78,7 +78,7 @@ in
       }
     ];
 
-    languages.language-server = {
+    languages.language-server = mkIf config.isDesktop {
       deno = {
         command = "deno";
         args    = [ "lsp" ];

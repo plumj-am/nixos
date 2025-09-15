@@ -4,6 +4,8 @@ inputs: self: super: let
 
   # collect common modules that should be applied to all systems
   modulesCommon = collectNix ../modules/common;
+  modulesLinux  = collectNix ../modules/linux;
+  modulesDarwin = collectNix ../modules/darwin;
 
   # collect input modules and overlays from flake inputs
   collectInputs = let
@@ -60,7 +62,7 @@ in {
           }];
         };
       }
-    ] ++ modulesCommon ++ inputModulesLinux;
+    ] ++ modulesCommon ++ modulesLinux ++ inputModulesLinux;
   };
 
   # wrapper for darwinSystem that automatically applies common modules
@@ -74,6 +76,6 @@ in {
       {
         home-manager.sharedModules = inputHomeModules ++ modulesCommon;
       }
-    ] ++ inputModulesDarwin;
+    ] ++ modulesDarwin ++ inputModulesDarwin;
   };
 }

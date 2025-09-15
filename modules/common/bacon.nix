@@ -1,10 +1,10 @@
-{ lib, ... }:
+{ config, lib, ... }:
 let
-	inherit (lib) enabled;
+	inherit (lib) enabled mkIf;
 in
 {
   home-manager.sharedModules = [{
-    programs.bacon = enabled {
+    programs.bacon = mkIf config.isDesktop (enabled {
       settings = {
         jobs.bacon-ls = {
           command = [
@@ -27,6 +27,6 @@ in
           path        = ".bacon-locations";
         };
       };
-    };
+    });
   }];
 }
