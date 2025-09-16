@@ -1,60 +1,78 @@
 { ... }: {
   home-manager.sharedModules = [{
-    # generated scripts for rebuilds
     home.file."nixos-config/rebuild.nu" = {
-    text = ''
-      #!/usr/bin/env nu
+      executable = true;
+      text = /* nu */ ''
+        #!/usr/bin/env nu
 
-      def main [--remote] {
-          let os = (sys host | get name)
-          let hostname = (hostname | str trim)
+        def --wrapped main [
+          host: string = ""    # The host to build (maybe useless will see)
+          --remote             # Deploy to remote host using --target-host
+          --rollback           # Rollback
+          ...arguments         # Extra arguments to pass to rebuild commands
+        ]: nothing -> nothing {
+          let host = if ($host | is-not-empty) {
+            if $host != (hostname) and not $remote {
+              print $"(ansi yellow_bold)warn:(ansi reset) building local configuration for hostname that does not match the local machine"
+            }
+            $host
+          } else if $remote {
+            print $"(ansi red_bold)error:(ansi reset) hostname not specified for remote deployment"
+            exit 1
+          } else {
+            (hostname)
+          }
 
+          # Build locally (always)
+          let os = (uname | get kernel-name)
           let config_path = if $os == "Darwin" { "/Users/james/nixos-config" } else { "/home/james/nixos-config" }
+          let flake_ref = $"($config_path)#($host)"
 
-          let flake = if $remote {
-              $"github:jamesukiyo/nixos#($hostname)"
+          let base_args = [
+            "switch"
+            "--flake" $flake_ref
+            "--accept-flake-config" # avoid asking for y/n approval for all settings
+          ] | append $arguments
+
+          # Add target-host for remote deployments
+          let final_args = if $remote {
+            $base_args | append ["--target-host" $"root@($host)"]
           } else {
-              $"($config_path)#($hostname)"
+            $base_args
           }
 
+          # Add rollback flag if specified
+          let final_args = if $rollback {
+            $final_args | prepend "--rollback"
+          } else {
+            $final_args
+          }
+
+          # Handle Darwin/Linux
           if $os == "Darwin" {
-              print $"Building Darwin configuration for ($hostname) from ($flake)..."
-              sudo darwin-rebuild switch --flake $flake
+            let action = if $remote { $"deploying to ($host)" } else { "building locally" }
+            print $"(ansi green_bold)($action) Darwin configuration for ($host)...(ansi reset)"
+            if $remote {
+              darwin-rebuild ...$final_args
+            } else {
+              sudo darwin-rebuild ...$final_args
+            }
           } else {
-              print $"Building NixOS configuration for ($hostname) from ($flake)..."
-              sudo nixos-rebuild switch --flake $flake
+            let action = if $remote { $"deploying to ($host)" } else { "building locally" }
+            print $"(ansi green_bold)($action) NixOS configuration for ($host)...(ansi reset)"
+            if $remote {
+              nixos-rebuild ...$final_args
+            } else {
+              sudo nixos-rebuild ...$final_args
+            }
           }
-      }
+        }
+
+        # Rollback wrapper
+        def rollback [host: string = ""] {
+          main $host --rollback
+        }
     '';
-    executable = true;
-  };
-
-    home.file."nixos-config/rollback.nu" = {
-    text = ''
-      #!/usr/bin/env nu
-
-      def main [--remote] {
-          let os = (sys host | get name)
-          let hostname = (hostname | str trim)
-
-          let config_path = if $os == "Darwin" { "/Users/james/nixos-config" } else { "/home/james/nixos-config" }
-
-          let flake = if $remote {
-              $"github:jamesukiyo/nixos#($hostname)"
-          } else {
-              $"($config_path)#($hostname)"
-          }
-
-          if $os == "Darwin" {
-              print $"Rolling back Darwin configuration for ($hostname) from ($flake)..."
-              sudo darwin-rebuild switch --rollback --flake $flake
-          } else {
-              print $"Rolling back NixOS configuration for ($hostname) from ($flake)..."
-              sudo nixos-rebuild switch --rollback --flake $flake
-          }
-      }
-    '';
-    executable = true;
     };
   }];
 }

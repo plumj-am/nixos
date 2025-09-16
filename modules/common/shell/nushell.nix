@@ -39,7 +39,7 @@ in
 			mosh = "mosh --no-init";
 
       rebuild  = "~/nixos-config/rebuild.nu";
-      rollback = "~/nixos-config/rollback.nu";
+      rollback = "~/nixos-config/rebuild.nu --rollback";
       # for some reason this doesn't work and is called every time I open a new shell
       # upgrade  = "sudo nix-store --verify --check-contents --repair ; sudo nix flake update --flake ~/nixos-config ; sudo nixos-rebuild switch --flake ~/nixos-config#nixos-wsl";
 
