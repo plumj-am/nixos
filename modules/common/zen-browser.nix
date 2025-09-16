@@ -1,0 +1,73 @@
+# thanks github:rgbcube/ncc
+{ lib, config, ... }: let
+  inherit (lib) enabled mkIf;
+
+  lockedAs = Value: attrs: attrs // {
+    inherit Value;
+    Locked = true;
+  };
+
+  locked = attrs: attrs // { Locked = true; };
+
+  policies = {
+    AutofillAddressEnabled    = false;
+    AutofillCreditCardEnabled = false;
+    AutofillPasswordEnabled   = false;
+
+    DisableAppUpdate    = true;
+    AppAutoUpdate       = false;
+    BackgroundAppUpdate = false;
+
+    DisableFeedbackCommands = true;
+    DisableFirefoxStudies   = true;
+    DisablePocket           = true;
+    DisableTelemetry        = true;
+    DisableProfileImport    = true;
+    DisableProfileRefresh   = true;
+
+    BlockAboutConfig   = false;
+    BlockAboutProfiles = true;
+    BlockAboutSupport  = true;
+
+    DontCheckDefaultBrowser = false;
+
+    NoDefaultBookmarks = true;
+
+    SkipTermsOfUse = true;
+
+    PictureInPicture = lockedAs false {};
+
+    Homepage = locked { StartPage = "previous-session"; };
+
+    EnableTrackingProtection = lockedAs true {
+      Cryptomining   = true;
+      EmailTracking  = true;
+      Fingerprinting = true;
+    };
+
+    UserMessaging = locked {
+      ExtensionRecommendations = false;
+      FeatureRecommendations   = false;
+      FirefoxLabs              = false;
+      MoreFromMozilla          = false;
+      SkipOnboarding           = true;
+    };
+
+    FirefoxSuggest = locked {
+      ImproveSuggest       = false;
+      SponsoredSuggestions = false;
+      WebSuggestions       = false;
+    };
+
+    SearchEngines = {
+      Default = "Google";
+      PreventInstalls = true;
+    };
+  };
+in {
+  home-manager.sharedModules = [{
+    programs.zen-browser = mkIf config.isDesktopNotWsl (enabled {
+      inherit policies;
+    });
+  }];
+}
