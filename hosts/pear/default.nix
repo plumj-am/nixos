@@ -39,7 +39,6 @@ in {
           };
         };
 
-        age.identityPaths   = [ "/root/.ssh/id" ];
         age.secrets.id.file = ./id.age;
 
         wsl = enabled {

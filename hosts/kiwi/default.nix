@@ -52,7 +52,6 @@ in {
 
         zramSwap = enabled;
 
-        age.identityPaths         = [ "/root/.ssh/id" ];
         age.secrets.password.file = ./password.age;
         age.secrets.id.file       = ./id.age;
 
