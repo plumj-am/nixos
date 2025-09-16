@@ -27,7 +27,6 @@ in
     pkgs.wget
     pkgs.gcc
     pkgs.gnumake
-    pkgs.steam-run
   ]
 ;
 

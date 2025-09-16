@@ -60,12 +60,6 @@ in
 
       tree = "eza --tree --git-ignore --group-directories-first";
 
-      # steam-run for dynamically linked executables
-      moon  = "steam-run moon";
-      proto = "steam-run proto";
-      bun   = "steam-run bun";
-      bunx  = "steam-run bunx";
-      npx   = "steam-run npx";
 
     };
     settings = {
