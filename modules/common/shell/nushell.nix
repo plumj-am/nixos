@@ -147,11 +147,10 @@ in
 
 			hooks.pre_prompt     = [
 				''
-					if (which direnv | is-empty) {
-						return
+					if not (which direnv | is-empty) {
+						direnv export json | from json | default {} | load-env
+						$env.PATH = ($env.PATH | split row (char env_sep))
 					}
-					direnv export json | from json | default {} | load-env
-					$env.PATH = ($env.PATH | split row (char env_sep))
 				''
 			];
     };
