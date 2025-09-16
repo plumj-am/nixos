@@ -63,16 +63,16 @@ in {
         age.secrets.password.file = ./password.age;
         age.secrets.id.file       = ./id.age;
 
-        users.users.james = {
+        users.users.jam = {
           isNormalUser       = true;
           shell              = pkgs.nushell;
           hashedPasswordFile = config.age.secrets.password.path;
           extraGroups        = [ "wheel" ];
-          openssh.authorizedKeys.keys = [ keys.james ];
+          openssh.authorizedKeys.keys = [ keys.jam ];
         };
 
         users.users.root = {
-          openssh.authorizedKeys.keys = [ keys.james ];
+          openssh.authorizedKeys.keys = [ keys.jam ];
           hashedPasswordFile          = config.age.secrets.password.path;
         };
 
@@ -80,14 +80,14 @@ in {
 
         users.users.build = {
           description                 = "Build";
-          openssh.authorizedKeys.keys = [ keys.james ];
+          openssh.authorizedKeys.keys = [ keys.jam ];
           hashedPasswordFile          = config.age.secrets.password.path;
           isNormalUser                = true;
           extraGroups                 = [ "build" ];
         };
 
         home-manager.users = {
-          james = {};
+          jam = {};
         };
 
         home-manager.sharedModules = [{

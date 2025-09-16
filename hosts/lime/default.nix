@@ -14,7 +14,7 @@ in {
         nixpkgs.hostPlatform.system = "aarch64-darwin";
         nixpkgs.config.allowUnfree  = true;
 
-        system.primaryUser = "james";
+        system.primaryUser = "jam";
         type               = "desktop";
 
         # thanks github/rgbcube for the stuff below
@@ -56,9 +56,9 @@ in {
           enable-spring-load-actions-on-all-items = true;
 
           persistent-apps = [
-            { app = "/Users/james/Applications/Home Manager Apps/Alacritty.app"; }
-            { app = "/Users/james/Applications/Home Manager Apps/Arc.app"; }
-            { app = "/Users/james/Applications/Home Manager Apps/Karabiner-Elements.app"; }
+            { app = "/Users/jam/Applications/Home Manager Apps/Alacritty.app"; }
+            { app = "/Users/jam/Applications/Home Manager Apps/Arc.app"; }
+            { app = "/Users/jam/Applications/Home Manager Apps/Karabiner-Elements.app"; }
           ];
         };
 

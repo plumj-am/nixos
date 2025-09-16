@@ -25,7 +25,7 @@
 
           # Build locally (always)
           let os = (uname | get kernel-name)
-          let config_path = if $os == "Darwin" { "/Users/james/nixos-config" } else { "/home/james/nixos-config" }
+          let config_path = if $os == "Darwin" { "/Users/jam/nixos-config" } else { "/home/jam/nixos-config" }
           let flake_ref = $"($config_path)#($host)"
 
           let base_args = [

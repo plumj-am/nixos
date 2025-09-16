@@ -43,7 +43,7 @@ in {
         age.secrets.id.file = ./id.age;
 
         wsl = enabled {
-          defaultUser = "james";
+          defaultUser = "jam";
 
           startMenuLaunchers    = true;
           useWindowsDriver      = true;
@@ -71,26 +71,26 @@ in {
           };
         };
 
-        users.users.james = {
+        users.users.jam = {
           isNormalUser = true;
           shell        = pkgs.nushell;
           extraGroups  = [ "wheel" "docker" "dialout" ];
-          openssh.authorizedKeys.keys = [ keys.james ];
+          openssh.authorizedKeys.keys = [ keys.jam ];
         };
 
-        users.users.root.openssh.authorizedKeys.keys = [ keys.james ];
+        users.users.root.openssh.authorizedKeys.keys = [ keys.jam ];
 
         users.groups.build = {};
 
         users.users.build = {
           description                 = "Build";
-          openssh.authorizedKeys.keys = [ keys.james ];
+          openssh.authorizedKeys.keys = [ keys.jam ];
           isNormalUser                = true;
           extraGroups                 = [ "build" ];
         };
 
         home-manager.users = {
-          james = {};
+          jam = {};
         };
 
         home-manager.sharedModules = [{

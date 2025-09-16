@@ -109,7 +109,7 @@ in {
         '';
 
       templates.git_push_bookmark = /* python */ ''
-        "change/jamesukiyo-" ++ change_id.short()
+        "change/PlumJam-" ++ change_id.short()
       '';
 
       };

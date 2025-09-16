@@ -12,7 +12,7 @@ in
     };
 
     programs.git = enabled {
-    userName  = "James Plummer";
+    userName  = "PlumJam";
     userEmail = "git@plumj.am";
 
     signing.key           = "~/.ssh/id";

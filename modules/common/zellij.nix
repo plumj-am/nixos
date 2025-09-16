@@ -16,7 +16,7 @@ in
       default_shell     = "nu";
       scrollback_editor = config.environment.variables.EDITOR;
 
-      default_layout        = "james";
+      default_layout        = "default";
       session_serialization = true;
       auto_layout           = true;
       mirror_session        = false;
@@ -438,7 +438,7 @@ in
     };
 
     layouts = {
-      james = ''
+      default = ''
 				layout {
 					pane
 					pane size=1 borderless=true {

@@ -11,7 +11,7 @@ in {
         font.size                = 18;
   			font.normal.family       = "IosevkaTerm Nerd Font Mono";
 
-        terminal.shell.program = "/etc/profiles/per-user/james/bin/nu";
+        terminal.shell.program = "/etc/profiles/per-user/jam/bin/nu";
       };
     });
   }];

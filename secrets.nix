@@ -1,5 +1,5 @@
 let
-	inherit (import ./keys.nix) james plum pear kiwi all admins;
+	inherit (import ./keys.nix) jam plum pear kiwi all admins;
 in
 {
 	"hosts/plum/id.age".publicKeys                    = [ plum ] ++ admins;
