@@ -93,17 +93,6 @@ in {
           home.stateVersion = "24.11";
         }];
 
-        programs.mosh = enabled {
-          openFirewall = true;
-        };
-
-        services.resolved.domains = ["taild29fec.ts.net"];
-
-        services.tailscale = enabled {
-          useRoutingFeatures = "both";
-          interfaceName      = interface;
-        };
-
         networking = {
           hostName   = "plum";
           domain     = "plumj.am";

@@ -3,6 +3,12 @@ let
 	inherit (lib) enabled;
 in
 {
+	environment.shellAliases.mosh = "mosh --no-init";
+
+	programs.mosh = enabled {
+		openFirewall = true;
+	};
+
 	home-manager.sharedModules = [{
 	  programs.ssh = enabled {
 			enableDefaultConfig = false;

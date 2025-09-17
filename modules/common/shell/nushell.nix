@@ -8,8 +8,6 @@ in {
       mp = "mprocs";
       ko = "kondo";
 
-			mosh = "mosh --no-init";
-
       rebuild  = "~/nixos-config/rebuild.nu";
       rollback = "~/nixos-config/rebuild.nu --rollback";
       # for some reason this doesn't work and is called every time I open a new shell
