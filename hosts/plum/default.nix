@@ -33,7 +33,6 @@ in {
         };
 
         nixpkgs.hostPlatform.system = "x86_64-linux";
-        nixpkgs.config.allowUnfree  = true;
 
         type = "server";
 

@@ -51,10 +51,6 @@ in {
               inherit (inputs) fenix bacon-ls;
               pkgs = import inputs.nixpkgs {
                 inherit (config) system;
-                config.allowUnfree = true;
-                config.permittedInsecurePackages = [
-                  "arc-browser-1.106.0-66192"
-                ];
               };
               inherit (config) system;
               lib = self;
