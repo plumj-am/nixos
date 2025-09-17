@@ -31,6 +31,7 @@ in {
           };
         };
 
+        age.secrets.password.file = ./password.age;
         age.secrets.id.file = ./id.age;
 
         wsl = enabled {
@@ -57,7 +58,7 @@ in {
             automount.options         = "metadata,uid=1000,gid=100,noatime";
             boot.systemd              = true;
             interop.enabled           = true;
-            interop.appendWindowsPath = true;
+            interop.appendWindowsPath = false;
             network.generateHosts     = true;
           };
         };
@@ -65,11 +66,15 @@ in {
         users.users.jam = {
           isNormalUser = true;
           shell        = pkgs.nushell;
+          hashedPasswordFile = config.age.secrets.password.path;
           extraGroups  = [ "wheel" "docker" "dialout" ];
           openssh.authorizedKeys.keys = [ keys.jam ];
         };
 
-        users.users.root.openssh.authorizedKeys.keys = [ keys.jam ];
+        users.users.root = {
+          openssh.authorizedKeys.keys = [ keys.jam ];
+          hashedPasswordFile = config.age.secrets.password.path;
+        };
 
         users.groups.build = {};
 
