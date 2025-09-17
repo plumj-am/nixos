@@ -1,8 +1,15 @@
-{ pkgs, lib, config, ... }:
-let
+{ pkgs, lib, config, ... }: let
   inherit (lib) enabled const genAttrs mkIf;
-in
-{
+in {
+  environment.shellAliases = {
+    nvim = "echo 'no more neovim, use hx'";
+    nv   = "echo 'no more neovim, use hx'";
+    vim  = "echo 'no more vim, use hx'";
+    v    = "echo 'no more vim, use hx'";
+    h    = "hx";
+    e    = "hx"; # editor
+  };
+
   environment.systemPackages = mkIf config.isDesktop [
     # rust-analyzer is in modules/common/rust.nix
     pkgs.deno

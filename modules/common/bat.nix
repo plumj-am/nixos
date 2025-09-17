@@ -1,8 +1,6 @@
-{ lib, pkgs, ... }:
-let
+{ lib, pkgs, ... }: let
 	inherit (lib) enabled;
-in
-{
+in {
   environment.variables = {
     MANPAGER = "bat --plain";
     PAGER    = "bat --plain";

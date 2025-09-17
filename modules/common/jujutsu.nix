@@ -1,7 +1,11 @@
-{ config, pkgs, lib, keys, ... }:
-let
+{ config, pkgs, lib, keys, ... }: let
   inherit (lib) enabled;
 in {
+  environment.shellAliases = {
+    j  = "jj";
+    lj = "lazyjj";
+  };
+
   environment.systemPackages = [ pkgs.lazyjj ];
 
   home-manager.sharedModules = [

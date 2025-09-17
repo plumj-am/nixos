@@ -1,213 +1,222 @@
-{ config, lib, keys, ... }:
-let
+{ config, lib, ... }: let
   inherit (lib) enabled;
-in
-{
-  home-manager.sharedModules = [{
-    programs.gh = enabled {
-      settings = {
-        git_protocol = "ssh";
-        editor       = config.environment.variables.EDITOR;
+in {
+  environment.shellAliases = {
+    g   = "git";
+    gi  = "git";
+    gt  = "git";
+    gti = "git";
+  };
+
+  home-manager.sharedModules = [
+    {
+      programs.gh = enabled {
+        settings = {
+          git_protocol = "ssh";
+
+          editor = config.environment.variables.EDITOR;
+        };
       };
-    };
 
-    programs.git = enabled {
-    userName  = "PlumJam";
-    userEmail = "git@plumj.am";
+      programs.git = enabled {
+        userName  = "PlumJam";
+        userEmail = "git@plumj.am";
 
-    signing.key           = "~/.ssh/id";
-    signing.signByDefault = true;
+        signing.key           = "~/.ssh/id";
+        signing.signByDefault = true;
 
-    lfs = enabled;
+        lfs = enabled;
 
-    difftastic = enabled;
+        difftastic = enabled;
 
-    extraConfig = {
-      init.defaultBranch = "master";
+        extraConfig = {
+          init.defaultBranch = "master";
 
-      log.date  = "iso";
-      column.ui = "auto";
+          log.date  = "iso";
+          column.ui = "auto";
 
-      commit.verbose = true;
+          commit.verbose = true;
 
-      commit.gpgSign = true;
-      tag.gpgSign    = true;
+          status.branch             = true;
+          status.showStash          = true;
+          status.showUntrackedFiles = "all";
 
-      status.branch             = true;
-      status.showStash          = true;
-      status.showUntrackedFiles = "all";
+          push.autoSetupRemote = true;
 
-      pull.rebase = true;
+          pull.rebase                = true;
+          rebase.autoStash           = true;
+          rebase.missingCommitsCheck = "warn";
+          rebase.updateRefs          = true;
+          rerere.enabled             = true;
 
-      push.autoSetupRemote = true;
+          fetch.fsckObjects    = true;
+          receive.fsckObjects  = true;
+          transfer.fsckObjects = true;
 
-      rebase.autoStash           = true;
-      rebase.missingCommitsCheck = "warn";
-      rebase.updateRefs          = true;
-      rerere.enabled             = true;
+          branch.sort = "-committerdate";
+          tag.sort    = "-taggerdate";
 
-      fetch.fsckObjects    = true;
-      receive.fsckObjects  = true;
-      transfer.fsckObjects = true;
+          core.compression  = 9;
+          core.preloadindex = true;
+          core.editor       = config.environment.variables.EDITOR;
+          core.longpaths    = true;
+          core.excludesfile = "~/.global_gitignore";
 
-      branch.sort = "-committerdate";
-      tag.sort    = "-taggerdate";
+          diff.algorithm  = "histogram";
+          diff.colorMoved = "default";
 
-      core.compression  = 9;
-      core.preloadindex = true;
-      core.editor       = config.environment.variables.EDITOR;
-      core.longpaths    = true;
-      core.excludesfile = "~/.global_gitignore";
+          merge.conflictStyle = "zdiff3";
 
-      diff.algorithm  = "histogram";
-      diff.colorMoved = "default";
+          commit.gpgSign    = true;
+          tag.gpgSign       = true;
+          gpg.format        = "ssh";
+          credential.helper = "!gh auth git-credential";
 
-      merge.conflictStyle = "zdiff3";
+          "url \"https://github.com/\"".insteadOf = "gh:";
+        };
 
-      gpg.format = "ssh";
+        aliases = {
+          diff-stat = "diff --stat --ignore-space-change -r";
 
-      credential.helper = "!gh auth git-credential";
+          f = "pull";
+          p = "push";
 
-      "url \"https://github.com/\"".insteadOf = "gh:";
-    };
+          cm = "commit -m";
+          ca = "commit --amend";
 
-    aliases = {
-      diff-stat = "diff --stat --ignore-space-change -r";
+          aa = "add .";
+          ap = "add -p";
 
-      p = "pull";
-      P = "push";
+          lg = "log --all --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
 
-      cm = "commit -m";
-      ca = "commit --amend";
-      aa = "add .";
-      ap = "add -p";
-      lg = "log --all --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit";
+          st  = "status -s";
+          sta = "status";
 
-      st  = "status -s";
-      sta = "status";
-      sw  = "switch";
+          sw = "switch";
 
-      oneln = "log --oneline";
-      sus = "!f() { git branch --set-upstream-to $1; }; f";
+          oneln = "log --oneline";
 
-      a = ''
-        !f() { \
-                for pattern in "$@"; do \
-                    matches=$(git ls-files | grep -i "$pattern"); \
-                    if [ -z "$matches" ]; then \
-                        echo "no files found matching \"$pattern\""; \
-                        continue; \
-                    fi; \
-                    if [ $(echo "$matches" | wc -l) -eq 1 ]; then \
-                        git add "$matches"; \
-                        echo "added: $matches"; \
-                    else \
-                        echo "multiple matches for \"$pattern\":"; \
-                        echo "$matches"; \
-                        echo "$matches" | xargs git add; \
-                        echo "added all matches"; \
-                    fi; \
-                done; \
-            }; f'';
-      r = ''
-        !f() { \
-                if [ $# -eq 0 ]; then \
-                    git restore .; \
-                    echo "restored all files"; \
-                    return; \
+          sus = "!f() { git branch --set-upstream-to $1; }; f";
+
+          a = ''
+            !f() { \
+              for pattern in "$@"; do \
+                matches=$(git ls-files | grep -i "$pattern"); \
+                if [ -z "$matches" ]; then \
+                  echo "no files found matching \"$pattern\""; \
+                  continue; \
                 fi; \
-                for pattern in "$@"; do \
-                    matches=$(git ls-files | grep -i "$pattern"); \
-                    if [ -z "$matches" ]; then \
-                        echo "no files found matching \"$pattern\""; \
-                        continue; \
-                    fi; \
-                    if [ $(echo "$matches" | wc -l) -eq 1 ]; then \
-                        git restore "$matches"; \
-                        echo "restored: $matches"; \
-                    else \
-                        echo "multiple matches for \"$pattern\":"; \
-                        echo "$matches"; \
-                        printf "restore all? (y/n): "; \
-                        read response; \
-                        if echo "$response" | grep -q "^[Yy]"; then \
-                            echo "$matches" | xargs git restore; \
-                            echo "restored all matches"; \
-                        fi; \
-                    fi; \
-                done; \
-            }; f'';
-      rs = ''
-        !f() { \
-                if [ $# -eq 0 ]; then \
-                    git restore --staged .; \
-                    echo "unstaged all files"; \
-                    return; \
+                if [ $(echo "$matches" | wc -l) -eq 1 ]; then \
+                  git add "$matches"; \
+                  echo "added: $matches"; \
+                else \
+                  echo "multiple matches for \"$pattern\":"; \
+                  echo "$matches"; \
+                  echo "$matches" | xargs git add; \
+                  echo "added all matches"; \
                 fi; \
-                for pattern in "$@"; do \
-                    matches=$(git ls-files | grep -i "$pattern"); \
-                    if [ -z "$matches" ]; then \
-                        echo "no files found matching \"$pattern\""; \
-                        continue; \
-                    fi; \
-                    if [ $(echo "$matches" | wc -l) -eq 1 ]; then \
-                        git restore --staged "$matches"; \
-                        echo "unstaged: $matches"; \
-                    else \
-                        echo "multiple matches for \"$pattern\":"; \
-                        echo "$matches"; \
-                        printf "unstage all? (y/n): "; \
-                        read response; \
-                        if echo "$response" | grep -q "^[Yy]"; then \
-                            echo "$matches" | xargs git restore --staged; \
-                            echo "unstaged all matches"; \
-                        fi; \
-                    fi; \
-                done; \
+              done; \
             }; f'';
-      d = ''
-        !f() { \
-                if [ $# -eq 0 ]; then \
-                    git diff; \
-                    return; \
+          r = ''
+            !f() { \
+              if [ $# -eq 0 ]; then \
+                git restore .; \
+                echo "restored all files"; \
+                return; \
+              fi; \
+              for pattern in "$@"; do \
+                matches=$(git ls-files | grep -i "$pattern"); \
+                if [ -z "$matches" ]; then \
+                  echo "no files found matching \"$pattern\""; \
+                  continue; \
                 fi; \
-                for pattern in "$@"; do \
-                    matches=$(git ls-files | grep -i "$pattern"); \
-                    if [ -z "$matches" ]; then \
-                        echo "no files found matching \"$pattern\""; \
-                        continue; \
-                    fi; \
-                    if [ $(echo "$matches" | wc -l) -eq 1 ]; then \
-                        git diff "$matches"; \
-                    else \
-                        echo "multiple matches for \"$pattern\":"; \
-                        echo "$matches"; \
-                        echo "$matches" | xargs git diff; \
-                    fi; \
-                done; \
-            }; f'';
-      ds = ''
-        !f() { \
-                if [ $# -eq 0 ]; then \
-                    git diff --staged; \
-                    return; \
+                if [ $(echo "$matches" | wc -l) -eq 1 ]; then \
+                  git restore "$matches"; \
+                  echo "restored: $matches"; \
+                else \
+                  echo "multiple matches for \"$pattern\":"; \
+                  echo "$matches"; \
+                  printf "restore all? (y/n): "; \
+                  read response; \
+                  if echo "$response" | grep -q "^[Yy]"; then \
+                    echo "$matches" | xargs git restore; \
+                    echo "restored all matches"; \
+                  fi; \
                 fi; \
-                for pattern in "$@"; do \
-                    matches=$(git ls-files | grep -i "$pattern"); \
-                    if [ -z "$matches" ]; then \
-                        echo "no files found matching \"$pattern\""; \
-                        continue; \
-                    fi; \
-                    if [ $(echo "$matches" | wc -l) -eq 1 ]; then \
-                        git diff --staged "$matches"; \
-                    else \
-                        echo "multiple matches for \"$pattern\":"; \
-                        echo "$matches"; \
-                        echo "$matches" | xargs git diff --staged; \
-                    fi; \
-                done; \
+              done; \
             }; f'';
-    };
-    };
-  }];
+          rs = ''
+            !f() { \
+              if [ $# -eq 0 ]; then \
+                git restore --staged .; \
+                echo "unstaged all files"; \
+                return; \
+              fi; \
+              for pattern in "$@"; do \
+                matches=$(git ls-files | grep -i "$pattern"); \
+                if [ -z "$matches" ]; then \
+                  echo "no files found matching \"$pattern\""; \
+                  continue; \
+                fi; \
+                if [ $(echo "$matches" | wc -l) -eq 1 ]; then \
+                  git restore --staged "$matches"; \
+                  echo "unstaged: $matches"; \
+                else \
+                  echo "multiple matches for \"$pattern\":"; \
+                  echo "$matches"; \
+                  printf "unstage all? (y/n): "; \
+                  read response; \
+                  if echo "$response" | grep -q "^[Yy]"; then \
+                    echo "$matches" | xargs git restore --staged; \
+                    echo "unstaged all matches"; \
+                  fi; \
+                fi; \
+              done; \
+            }; f'';
+          d = ''
+            !f() { \
+              if [ $# -eq 0 ]; then \
+                git diff; \
+                return; \
+              fi; \
+              for pattern in "$@"; do \
+                matches=$(git ls-files | grep -i "$pattern"); \
+                if [ -z "$matches" ]; then \
+                  echo "no files found matching \"$pattern\""; \
+                  continue; \
+                fi; \
+                if [ $(echo "$matches" | wc -l) -eq 1 ]; then \
+                  git diff "$matches"; \
+                else \
+                  echo "multiple matches for \"$pattern\":"; \
+                  echo "$matches"; \
+                  echo "$matches" | xargs git diff; \
+                fi; \
+              done; \
+            }; f'';
+          ds = ''
+            !f() { \
+              if [ $# -eq 0 ]; then \
+                git diff --staged; \
+                return; \
+              fi; \
+              for pattern in "$@"; do \
+                matches=$(git ls-files | grep -i "$pattern"); \
+                if [ -z "$matches" ]; then \
+                  echo "no files found matching \"$pattern\""; \
+                  continue; \
+                fi; \
+                if [ $(echo "$matches" | wc -l) -eq 1 ]; then \
+                  git diff --staged "$matches"; \
+                else \
+                  echo "multiple matches for \"$pattern\":"; \
+                  echo "$matches"; \
+                  echo "$matches" | xargs git diff --staged; \
+                fi; \
+              done; \
+            }; f'';
+        };
+      };
+    }
+  ];
 }

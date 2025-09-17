@@ -1,28 +1,15 @@
-{
+{ config, lib, ... }: let
+  inherit (lib) enabled;
+in {
   home-manager.sharedModules = [{
-    programs.bash = {
-      enable = true;
+    programs.bash = enabled {
       enableCompletion = true;
-      shellAliases = {
-  			cat = "bat";
-  			ls  = "eza";
-  			ll  = "eza -la";
-  			la  = "eza -a";
-  			lsa = "eza -a";
-  			lsl = "eza -l -a";
-
+      shellAliases = config.environment.shellAliases // {
   			".."     = "cd ..";
-  			"...."   = "cd ../..";
-  			"......" = "cd ../../..";
-
-  			v  = "vim";
-  			vi = "vim";
-  			nv = "nvim";
 
   			m  = "moon";
   			mp = "mprocs";
   			ko = "kondo";
-  			g  = "git";
 
   			tt = "toggle-theme";
   		};

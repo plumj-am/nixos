@@ -1,40 +1,12 @@
-{ config, lib, ... }:
-let
+{ config, lib, ... }: let
 	inherit (lib) enabled;
-in
-{
+in {
   home-manager.sharedModules = [{
     programs.nushell = enabled {
-    shellAliases = {
-      cat = "bat";
-
-      ls  = "eza";
-      sl  = "eza";
-      ll  = "eza -la";
-      la  = "eza -a";
-      lsa = "eza -a";
-      lsl = "eza -l -a";
-
-      v   = "vim";
-      vi  = "vim";
-      nv  = "nvim";
-      nvi = "nvim";
-
-      claude = "claude --continue";
-
+    shellAliases = config.environment.shellAliases // {
       m  = "moon";
       mp = "mprocs";
       ko = "kondo";
-
-			# git
-      g   = "git";
-      gi  = "git";
-      gti = "git";
-      gt  = "git";
-
-			# jujutsu
-			j   = "jj";
-			lj  = "lazyjj";
 
 			mosh = "mosh --no-init";
 
@@ -46,12 +18,6 @@ in
       tt = "toggle-theme";
 
       td = "hx ~/notes/todo.md";
-
-      cdr = "cd (git rev-parse --show-toplevel | str trim)";
-      cdn = "cd ~/nixos-config/dotfiles/nvim";
-      cdc = "cd ~/nixos-config";
-      cdp = "cd ~/projects";
-      cdu = "cd ~/nixos-config/modules/common/shell";
 
       rm = "rm --recursive --verbose";
       cp = "cp --recursive --verbose --progress";
