@@ -14,17 +14,10 @@ in {
           (self + /modules/nix.nix)
         ];
 
-        security.sudo = enabled {
-          execWheelOnly = true;
-        };
-
         nixpkgs.hostPlatform.system = "x86_64-linux";
 
         type  = "desktop";
         isWsl = true;
-
-        time.timeZone      = "Europe/Warsaw";
-        i18n.defaultLocale = "en_US.UTF-8";
 
         services.openssh = enabled {
           hostKeys = [{

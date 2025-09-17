@@ -1,12 +1,9 @@
-lib:
-let
-  inherit (lib) enabled;
-in {
+lib: {
   class = "darwin";
   config = lib.darwinSystem' {
     system  = "aarch64-darwin";
     modules = [
-      ({ pkgs, lib, self, ... }: {
+      ({ self, ... }: {
         imports = [
           (self + /modules/system.nix)
           (self + /modules/nix.nix)
@@ -17,10 +14,6 @@ in {
         type               = "desktop";
 
         # thanks github/rgbcube for the stuff below
-        security.pam.services.sudo_local = enabled {
-          touchIdAuth = true;
-        };
-
         system.defaults.CustomSystemPreferences."com.apple.AdLib" = {
           allowApplePersonalizedAdvertising = false;
           allowIdentifierForAdvertising     = false;

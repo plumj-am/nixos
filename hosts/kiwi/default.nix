@@ -21,16 +21,9 @@ in {
           (self + /modules/nix.nix)
         ];
 
-        security.sudo = enabled {
-          execWheelOnly = true;
-        };
-
         nixpkgs.hostPlatform.system = "x86_64-linux";
 
         type = "server";
-
-        time.timeZone      = "Europe/Warsaw";
-        i18n.defaultLocale = "en_US.UTF-8";
 
         services.openssh = enabled {
           hostKeys = [{
@@ -43,13 +36,6 @@ in {
             AcceptEnv                    = "SHELLS COLORTERM";
           };
         };
-
-        boot.loader.grub = {
-          efiSupport            = true;
-          efiInstallAsRemovable = true;
-        };
-
-        zramSwap = enabled;
 
         age.secrets.password.file = ./password.age;
         age.secrets.id.file       = ./id.age;
