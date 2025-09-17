@@ -24,6 +24,9 @@ in {
 
       tree = "eza --tree --git-ignore --group-directories-first";
 
+      # Deletes the last 5 entries from the nushell history sqlite database.
+      oops = "nix run nixpkgs#sqlite -- ~/.config/nushell/history.sqlite3 'DELETE FROM history WHERE rowid IN (SELECT rowid FROM history ORDER BY rowid DESC LIMIT 5);'";
+
 
     };
     settings = {
