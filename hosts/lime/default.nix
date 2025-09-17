@@ -9,6 +9,7 @@ lib: {
           (self + /modules/nix.nix)
         ];
         nixpkgs.hostPlatform.system = "aarch64-darwin";
+        nixpkgs.config.allowUnfree  = true;
 
         system.primaryUser = "jam";
         type               = "desktop";
