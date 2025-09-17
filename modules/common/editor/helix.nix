@@ -12,10 +12,21 @@ in {
 
   environment.systemPackages = mkIf config.isDesktop [
     # rust-analyzer is in modules/common/rust.nix
+
+    # TypeScript etc.
     pkgs.deno
+
+    # Nix
     pkgs.nixd
+
+    # YAML
     pkgs.yaml-language-server
+
+    # Svelte
     pkgs.svelte-language-server
+
+    # Markdown
+    pkgs.mdformat
   ];
 
   home-manager.sharedModules = [{
@@ -82,6 +93,12 @@ in {
       {
         name              = "toml";
         auto-format       = true;
+      }
+      {
+        name              = "markdown";
+        auto-format       = false;
+        formatter.command = "mdformat";
+        formatter.args    = [ "--wrap=80" "--number" "-" ];
       }
     ];
 
