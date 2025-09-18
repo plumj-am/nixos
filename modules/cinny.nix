@@ -19,7 +19,10 @@
     featuredCommunities = {
       openAsDefault = false;
 
-      servers = [ domain ];
+      servers = [
+        domain
+        "matrix.org"
+      ];
 
       spaces = [ ];
 

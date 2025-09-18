@@ -66,7 +66,7 @@ in {
     configureRedisLocally = true;
 
     settings = let
-      description = "James's Matrix Server";
+      description = "PlumJam's Matrix Server";
     in {
       server_name = domain;
 
@@ -90,6 +90,9 @@ in {
 
       enable_registration         = true;
       registration_requires_token = true;
+
+      allow_public_rooms_without_auth    = true;
+      allow_public_rooms_over_federation = true;
 
       report_stats = false;
 
