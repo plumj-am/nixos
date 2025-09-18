@@ -1,6 +1,6 @@
 { ... }: {
   home-manager.sharedModules = [{
-    home.file."nixos-config/rebuild.nu" = {
+    home.file."rebuild.nu" = {
       executable = true;
       text = /* nu */ ''
         #!/usr/bin/env nu

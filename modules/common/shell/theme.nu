@@ -59,7 +59,7 @@ def toggle-theme [theme?: string] {
     }
         # rebuild nixos config to apply themes
         print "Rebuilding nixos config to apply themes... (this may take a moment)"
-        nu $"($env.HOME)/nixos-config/rebuild.nu"
+        nu $"($env.HOME)/rebuild.nu"
 
     print "Theme switch completed!"
 }
