@@ -1,5 +1,4 @@
-lib:
-let
+lib: let
   inherit (lib) inputs enabled;
   interface = "ts0";
 in {
@@ -15,12 +14,12 @@ in {
           ./backup.nix
         ];
 
+        type                        = "desktop";
         nixpkgs.hostPlatform.system = "x86_64-linux";
+        isWsl                       = true;
 
-        type  = "desktop";
-        isWsl = true;
-
-        services.openssh = enabled {
+        age.secrets.id.file = ./id.age;
+        services.openssh    = enabled {
           hostKeys = [{
             type = "ed25519";
             path = config.age.secrets.id.path;
@@ -32,22 +31,19 @@ in {
           };
         };
 
-        age.secrets.password.file = ./password.age;
-        age.secrets.id.file = ./id.age;
 
         wsl = enabled {
-          defaultUser = "jam";
+          defaultUser            = "jam";
+          startMenuLaunchers     = false; # Hide from start menu.
+          useWindowsDriver       = true; # Use Windows graphics drivers.
+          docker-desktop.enable  = true; # Allow docker-desktop to use NixOS-WSL.
 
-          startMenuLaunchers    = true;
-          useWindowsDriver      = true;
-          docker-desktop.enable = true;
-
-          # usb passthrough
+          # Allow USB passthrough.
           usbip = enabled {
-            # autoAttach = [ "1-9" ]; # add device IDs like "4-1" to auto-attach USB devices
+            # autoAttach = [ "1-9" ]; # Add device IDs like "4-1" to auto-attach USB devices.
           };
 
-          # for usbip
+          # Necessary for usbip.
           extraBin = [
             { src = "${lib.getExe' pkgs.coreutils-full "ls"}"; }
             { src = "${lib.getExe pkgs.bash}"; }
@@ -59,41 +55,41 @@ in {
             automount.options         = "metadata,uid=1000,gid=100,noatime";
             boot.systemd              = true;
             interop.enabled           = true;
-            interop.appendWindowsPath = false;
+            interop.appendWindowsPath = false; # Do not add Windows executables to WSL path.
             network.generateHosts     = true;
           };
         };
 
-        users.users.jam = {
-          isNormalUser = true;
-          shell        = pkgs.nushell;
-          hashedPasswordFile = config.age.secrets.password.path;
-          extraGroups  = [ "wheel" "docker" "dialout" ];
-          openssh.authorizedKeys.keys = [ keys.jam ];
-        };
+        age.secrets.password.file = ./password.age;
+        users.users               = {
+          root = {
+            shell                       = pkgs.nushell;
+            hashedPasswordFile          = config.age.secrets.password.path;
+            openssh.authorizedKeys.keys = keys.admins;
+          };
 
-        users.users.root = {
-          openssh.authorizedKeys.keys = [ keys.jam ];
-          hashedPasswordFile = config.age.secrets.password.path;
-        };
+          jam = {
+            description                 = "Jam";
+            isNormalUser                = true;
+            shell                       = pkgs.nushell;
+            hashedPasswordFile          = config.age.secrets.password.path;
+            openssh.authorizedKeys.keys = keys.admins;
+            extraGroups                 = [ "wheel" "docker" "dialout" ]; # Dialout for serial, Docker for docker-desktop.
+          };
 
-        users.groups.build = {};
-
-        users.users.build = {
-          description                 = "Build";
-          openssh.authorizedKeys.keys = keys.all;
-          isNormalUser                = true;
-          createHome                  = false;
-          group                       = "build";
+          build = {
+            description                 = "Build";
+            isNormalUser                = true;
+            createHome                  = false;
+            openssh.authorizedKeys.keys = keys.all;
+            extraGroups                 = [ "build" ];
+          };
         };
 
         home-manager.users = {
-          jam = {};
+          root = {};
+          jam  = {};
         };
-
-        home-manager.sharedModules = [{
-          home.stateVersion = "24.11";
-        }];
 
         networking = {
           hostName   = "pear";
@@ -104,6 +100,10 @@ in {
           useDHCP    = lib.mkDefault true;
           interfaces = {};
         };
+
+        home-manager.sharedModules = [{
+          home.stateVersion = "24.11";
+        }];
 
         system.stateVersion = "24.11";
       })

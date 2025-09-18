@@ -1,5 +1,4 @@
-lib:
-let
+lib: let
   inherit (lib) inputs enabled;
   interface = "ts0";
 in {
@@ -14,25 +13,25 @@ in {
           (modulesPath + "/installer/scan/not-detected.nix")
           (modulesPath + "/profiles/qemu-guest.nix")
 
-          ./disk.nix
-          ./cache/default.nix
-          ./grafana
-          ./grafana/prometheus.nix
-          ./uptime-kuma
-          ./goatcounter
           (self + /modules/forgejo.nix)
           (self + /modules/site.nix)
           (self + /modules/matrix.nix)
           (self + /modules/cinny.nix)
           (self + /modules/system.nix)
           (self + /modules/nix.nix)
+          ./disk.nix
+          ./cache/default.nix
+          ./grafana
+          ./grafana/prometheus.nix
+          ./uptime-kuma
+          ./goatcounter
         ];
 
+        type                        = "server";
         nixpkgs.hostPlatform.system = "x86_64-linux";
 
-        type = "server";
-
-        services.openssh = enabled {
+        age.secrets.id.file = ./id.age;
+        services.openssh    = enabled {
           hostKeys = [{
             type = "ed25519";
             path = config.age.secrets.id.path;
@@ -45,38 +44,35 @@ in {
         };
 
         age.secrets.password.file = ./password.age;
-        age.secrets.id.file       = ./id.age;
+        users.users               = {
+          root = {
+            shell                       = pkgs.nushell;
+            openssh.authorizedKeys.keys = keys.admins;
+            hashedPasswordFile          = config.age.secrets.password.path;
+          };
 
-        users.users.jam = {
-          isNormalUser       = true;
-          shell              = pkgs.nushell;
-          hashedPasswordFile = config.age.secrets.password.path;
-          extraGroups        = [ "wheel" ];
-          openssh.authorizedKeys.keys = [ keys.jam ];
-        };
+          jam = {
+            description                 = "Jam";
+            isNormalUser                = true;
+            shell                       = pkgs.nushell;
+            hashedPasswordFile          = config.age.secrets.password.path;
+            openssh.authorizedKeys.keys = keys.admins;
+            extraGroups                 = [ "wheel" ];
+          };
 
-        users.users.root = {
-          openssh.authorizedKeys.keys = [ keys.jam ];
-          hashedPasswordFile          = config.age.secrets.password.path;
-        };
-
-        users.groups.build = {};
-
-        users.users.build = {
-          description                 = "Build";
-          openssh.authorizedKeys.keys = keys.all;
-          isNormalUser                = true;
-          createHome                  = false;
-          group                       = "build";
+          build = {
+            description                 = "Build";
+            isNormalUser                = true;
+            createHome                  = false;
+            openssh.authorizedKeys.keys = keys.all;
+            extraGroups                 = [ "build" ];
+          };
         };
 
         home-manager.users = {
-          jam = {};
+          root = {};
+          jam  = {};
         };
-
-        home-manager.sharedModules = [{
-          home.stateVersion = "24.11";
-        }];
 
         networking = {
           hostName   = "plum";
@@ -88,6 +84,10 @@ in {
           useDHCP    = lib.mkDefault true;
           interfaces = {};
         };
+
+        home-manager.sharedModules = [{
+          home.stateVersion = "24.11";
+        }];
 
         system.stateVersion = "24.11";
       })
