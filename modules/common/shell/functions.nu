@@ -1,3 +1,10 @@
+def zellij-dev-tab [] {
+    zellij action new-tab --layout dev --name dev
+    while (zellij action query-tab-names | lines | first) != "dev" {
+        zellij action move-tab left
+    }
+}
+
 def zellij-update-tabname [] {
     if ("ZELLIJ" in $env) {
         let tab_name = if ((pwd) == $env.HOME) {
@@ -54,30 +61,4 @@ def "git summary" [
     } catch {
         print "Error: Make sure you're in a git repository"
     }
-}
-
-def mega-update [--force (-f), --yes (-y)] {
-    # confirmation check
-    if $force and not $yes and not (input "Force update all packages? (y/n): " | str starts-with "y") {
-        return
-    }
-
-    let results = try {
-        print "Starting cargo updates..."
-        if $force {
-            do -i { cargo update-all --force }
-        } else {
-            do -i { cargo update-all }
-        }
-        print "cargo completed"
-        [{ manager: "cargo", status: "success" }]
-    } catch { |e|
-        print $"cargo failed: ($e.msg)"
-        [{ manager: "cargo", status: "failed", error: $e.msg }]
-    }
-
-    print "
-All updates finished"
-
-    $results
 }
