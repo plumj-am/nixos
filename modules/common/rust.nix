@@ -3,8 +3,16 @@
 in
 {
   environment.systemPackages = mkIf config.isDesktop [
-    fenix.packages.${pkgs.system}.complete.toolchain # nightly
-    # fenix.packages.${pkgs.system}.stable.toolchain # stable
+    (fenix.packages.${pkgs.system}.complete.withComponents [ # nightly
+      "cargo"
+      "clippy"
+      "miri"
+      "rustc"
+      "rust-analyzer"
+      "rustfmt"
+      "rust-std"
+      "rust-src"
+    ])
     pkgs.cargo-binstall
     bacon-ls.defaultPackage.${pkgs.system}
     pkgs.cargo-careful
