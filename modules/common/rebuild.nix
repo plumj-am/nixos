@@ -26,11 +26,12 @@
           # Build locally (always)
           let os = (uname | get kernel-name)
           let config_path = if $os == "Darwin" { "/Users/jam/nixos-config" } else { "/home/jam/nixos-config" }
-          let flake_ref = $"($config_path)#($host)"
 
+          # nh os/darwin switch [flake_path] --hostname [host] -- [nix_args]
           let base_args = [
             "switch"
-            "--flake" $flake_ref
+            $config_path
+            "--hostname" $host
             "--accept-flake-config" # avoid asking for y/n approval for all settings
           ] | append $arguments
 
@@ -41,30 +42,28 @@
             $base_args
           }
 
-          # Add rollback flag if specified
+          # Handle rollback differently for nh
+          let command = if $rollback {
+            "rollback"
+          } else {
+            if $os == "Darwin" { "darwin" } else { "os" }
+          }
+
           let final_args = if $rollback {
-            $final_args | prepend "--rollback"
+            [$host] | append $arguments
           } else {
             $final_args
           }
 
-          # Handle Darwin/Linux
-          if $os == "Darwin" {
-            let action = if $remote { $"deploying to ($host)" } else { "building locally" }
-            print $"(ansi green_bold)($action) Darwin configuration for ($host)...(ansi reset)"
-            if $remote {
-              darwin-rebuild ...$final_args
-            } else {
-              sudo darwin-rebuild ...$final_args
-            }
+          # Execute nh command
+          let action = if $remote { $"deploying to ($host)" } else { "building locally" }
+          let platform = if $os == "Darwin" { "Darwin" } else { "NixOS" }
+          print $"(ansi green_bold)($action) ($platform) configuration for ($host)...(ansi reset)"
+
+          if $remote {
+            NH_BYPASS_ROOT_CHECK=true NH_NO_CHECKS=true nh $command ...$final_args
           } else {
-            let action = if $remote { $"deploying to ($host)" } else { "building locally" }
-            print $"(ansi green_bold)($action) NixOS configuration for ($host)...(ansi reset)"
-            if $remote {
-              nixos-rebuild ...$final_args
-            } else {
-              sudo nixos-rebuild ...$final_args
-            }
+            sudo NH_BYPASS_ROOT_CHECK=true NH_NO_CHECKS=true nh $command ...$final_args
           }
         }
 
