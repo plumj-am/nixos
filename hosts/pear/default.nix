@@ -80,9 +80,10 @@ in {
 
         users.users.build = {
           description                 = "Build";
-          openssh.authorizedKeys.keys = [ keys.jam ];
+          openssh.authorizedKeys.keys = keys.all;
           isNormalUser                = true;
-          extraGroups                 = [ "build" ];
+          createHome                  = false;
+          group                       = "build";
         };
 
         home-manager.users = {

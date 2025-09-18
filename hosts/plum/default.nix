@@ -64,10 +64,10 @@ in {
 
         users.users.build = {
           description                 = "Build";
-          openssh.authorizedKeys.keys = [ keys.jam ];
-          hashedPasswordFile          = config.age.secrets.password.path;
+          openssh.authorizedKeys.keys = keys.all;
           isNormalUser                = true;
-          extraGroups                 = [ "build" ];
+          createHome                  = false;
+          group                       = "build";
         };
 
         home-manager.users = {
