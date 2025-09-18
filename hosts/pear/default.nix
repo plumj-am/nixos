@@ -12,6 +12,7 @@ in {
         imports = [
           (self + /modules/system.nix)
           (self + /modules/nix.nix)
+          ./backup.nix
         ];
 
         nixpkgs.hostPlatform.system = "x86_64-linux";
