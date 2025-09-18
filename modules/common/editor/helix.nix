@@ -1,33 +1,6 @@
 { pkgs, lib, config, ... }: let
-  inherit (lib) enabled const genAttrs mkIf;
+  inherit (lib) enabled const genAttrs mkIf elem mapAttrs optionalAttrs attrValues;
 in {
-  environment.shellAliases = {
-    nvim = "echo 'no more neovim, use hx'";
-    nv   = "echo 'no more neovim, use hx'";
-    vim  = "echo 'no more vim, use hx'";
-    v    = "echo 'no more vim, use hx'";
-    h    = "hx";
-    e    = "hx"; # editor
-  };
-
-  environment.systemPackages = mkIf config.isDesktop [
-    # rust-analyzer is in modules/common/rust.nix
-
-    # TypeScript etc.
-    pkgs.deno
-
-    # Nix
-    pkgs.nixd
-
-    # YAML
-    pkgs.yaml-language-server
-
-    # Svelte
-    pkgs.svelte-language-server
-
-    # Markdown
-    pkgs.mdformat
-  ];
 
   home-manager.sharedModules = [{
     programs.helix = enabled {
@@ -45,14 +18,7 @@ in {
       inline-diagnostics.cursor-line = "hint";
     };
     settings.editor.cursor-shape = {
-      insert = "block";
-      normal = "block";
       select = "underline";
-    };
-    settings.editor.statusline.mode = {
-      insert = "INSERT";
-      normal = "NORMAL";
-      select = "SELECT";
     };
     settings.editor.indent-guides = {
       character = "▏";
@@ -65,26 +31,30 @@ in {
 
     settings.keys = genAttrs [ "normal" "select" ] <| const {
       D = "extend_to_line_end";
+
       "C-y" = ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- bash ~/.config/helix/yazi-picker.sh open %{buffer_name}";
     };
 
-    languages.language = [
-      {
-        name              = "rust";
-        auto-format       = true;
+    languages.language = let
+      denoFmtLanguages = {
+        astro = "astro";  css        = "css";
+        html  = "html";   javascript = "js";
+        json  = "json";   jsonc      = "jsonc";
+        jsx   = "jsx";    markdown   = "md";
+        scss  = "scss";   svelte     = "svelte";
+        tsx   = "tsx";    typescript = "ts";
+        vue   = "vue";    yaml       = "yaml";
       }
-      {
-        name              = "typescript";
+      |> mapAttrs (name: extension: {
+        inherit name;
         auto-format       = true;
         formatter.command = "deno";
-        formatter.args    = [ "fmt" "--use-tabs" "--no-semicolons" "--indent-width" "4" "--unstable-component" "--ext" "ts" "-"];
-      }
-      {
-        name              = "svelte";
-        auto-format       = true;
-        formatter.command = "deno";
-        formatter.args    = [ "fmt" "--use-tabs" "--no-semicolons" "--indent-width" "4" "--unstable-component" "--ext" "svelte" "-"];
-      }
+        formatter.args    = [ "fmt" "--use-tabs" "--no-semicolons" "--indent-width" "4" "--unstable-component" "--ext" extension "-" ];
+      } // optionalAttrs (elem name [ "javascript" "jsx" "typescript" "tsx" ]) {
+        language-servers = [ "deno" ];
+      })
+      |> attrValues;
+    in denoFmtLanguages ++ [
       {
         name              = "nix";
         auto-format       = false;
@@ -93,6 +63,7 @@ in {
       {
         name              = "toml";
         auto-format       = true;
+        formatter.command = "taplo";
       }
       {
         name              = "markdown";
@@ -100,6 +71,22 @@ in {
         formatter.command = "mdformat";
         formatter.args    = [ "--wrap=80" "--number" "-" ];
       }
+      # I can't get this working right now.
+      # {
+      #   name               = "rust";
+      #   debugger.name      = "lldb-dap";
+      #   debugger.transport = "stdio";
+      #   debugger.command   = "lldb-dap";
+      #   debugger.templates = [{
+      #     name         = "binary";
+      #     request      = "launch";
+      #     args.program = "{0}";
+      #     completion   = [{
+      #       name       = "binary";
+      #       completion = "filename";
+      #     }];
+      #   }];
+      # }
     ];
 
     languages.language-server = mkIf config.isDesktop {
@@ -136,6 +123,7 @@ in {
       };
     };
   };
+
   home.file.".config/helix/yazi-picker.sh" = {
     text = ''
       #!/usr/bin/env bash
@@ -153,4 +141,48 @@ in {
     '';
   };
   }];
+
+  environment.shellAliases = {
+    nvim = "echo 'no more neovim, use hx'";
+    nv   = "echo 'no more neovim, use hx'";
+    vim  = "echo 'no more vim, use hx'";
+    v    = "echo 'no more vim, use hx'";
+    h    = "hx";
+    e    = "hx"; # editor
+  };
+
+  environment.systemPackages = mkIf config.isDesktop [
+    # Rust
+    # rust-analyzer is in modules/common/rust.nix
+    pkgs.lldb
+
+    # Assembler
+    pkgs.asm-lsp
+
+    # TypeScript etc.
+    pkgs.deno
+
+    # Nix
+    pkgs.nixd
+    pkgs.alejandra
+
+    # YAML
+    pkgs.yaml-language-server
+
+    # JSON
+    pkgs.vscode-json-languageserver
+
+    # TOML
+    pkgs.taplo
+
+    # Svelte
+    pkgs.svelte-language-server
+
+    # Markdown
+    pkgs.mdformat
+
+    # Just
+    pkgs.just-lsp
+    pkgs.just-formatter
+  ];
 }
