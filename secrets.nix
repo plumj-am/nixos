@@ -17,6 +17,7 @@ in
   "hosts/kiwi/password.age".publicKeys         = [ kiwi ] ++ admins;
 
   "hosts/pear/id.age".publicKeys               = [ pear ] ++ admins;
+	"hosts/pear/password.age".publicKeys         = [ pear ] ++ admins;
 
 	"modules/acme/environment.age".publicKeys = all;
 
