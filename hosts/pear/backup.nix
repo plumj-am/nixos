@@ -15,7 +15,7 @@ in {
           log "Starting NixOS-WSL backup..."
 
           let nixos_host    = "pear"
-          let github_repo   = "jamesukiyo/nixos"
+          let github_repo   = "plumj-am/nixos"
           let windows_drive = "c"
           let windows_user  = "james"
           let windows_base  = $"/mnt/($windows_drive)/Users/($windows_user)"
