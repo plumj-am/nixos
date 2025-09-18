@@ -11,7 +11,7 @@ in
       scan_timeout    = 100;
       command_timeout = 1000;
 
-      format  = "[┏━](success_color)$status[━](success_color) $hostname$directory [━┫](success_color) \${custom.jj} [┣━](success_color) $cmd_duration$line_break$character";
+      format  = "[┏━](success_color)$status[━](success_color) [\\[$username$hostname\\]](hostname_color) $directory [━┫](success_color) \${custom.jj} [┣━](success_color) $cmd_duration$line_break$character";
 			# old for reference
       # format  = "[┏━](success_color)$status[━](success_color) $hostname $directory [━┫](success_color) $git_branch$git_state$git_status$git_metrics [┣━━┫](success_color) \${custom.jj} [┣━](success_color) $cmd_duration$line_break$character";
       palette = config.theme.starship;
@@ -42,17 +42,15 @@ in
         duration_color   = "yellow";
       };
 
-      username.disabled    = true;
 			username.show_always = true;
-			username.format      = "[$user]($style)";
-			username.style_user  = "username_color";
+			username.format      = "$user";
 
       hostname.ssh_symbol = "s";
-			hostname.ssh_only   = true;
-			hostname.format     = "[\\[$hostname\\]](hostname_color) ";
+			hostname.ssh_only   = false;
+			hostname.format     = "@$hostname";
 
       status.disabled      = false;
-			# success_symbol     = " "; # uncomment to always show
+			# success_symbol     = " "; # Uncomment to always show.
 			status.format        = "[┫$status┣]($style)";
 			status.failure_style = "error_color";
 			status.success_style = "success_color";
