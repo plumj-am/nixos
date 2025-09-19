@@ -1,7 +1,4 @@
 { config, pkgs, lib, ... }:
-let
-  inherit (lib) enabled;
-in
 {
   environment.systemPackages = [
     pkgs.comma
@@ -21,13 +18,10 @@ in
 
     pkgs.moon
     pkgs.proto
-    pkgs.mprocs
   ]
   ++ lib.optionals config.isLinux [
     pkgs.wget
     pkgs.gcc
     pkgs.gnumake
-  ]
-;
-
+  ];
 }
