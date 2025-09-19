@@ -63,9 +63,12 @@
 
     github2forgejo.url = "github:RGBCube/GitHub2Forgejo";
     github2forgejo.inputs.nixpkgs.follows = "nixpkgs";
+
+    helix.url = "github:helix-editor/helix";
+    helix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs @ { nixpkgs, nixos-wsl, nix-darwin, home-manager, fenix, bacon-ls, disko, agenix, github2forgejo, ... }: let
+  outputs = inputs @ { nixpkgs, nix-darwin,  ... }: let
     inherit (builtins) readDir;
     inherit (nixpkgs.lib) attrsToList const extend groupBy listToAttrs mapAttrs nameValuePair;
 
