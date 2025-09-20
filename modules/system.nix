@@ -13,5 +13,7 @@ in {
     isDesktop       = mkConst <| config.type == "desktop";
     isServer        = mkConst <| config.type == "server";
     isDesktopNotWsl = mkConst <| config.isDesktop && !config.isWsl;
+
+    isGaming = mkValue false;
   };
 }

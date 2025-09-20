@@ -1,7 +1,7 @@
 { lib, config, ... }: let
   inherit (lib) mkIf;
 in {
-  boot.loader.grub = mkIf config.isServer {
+  boot.loader.grub = {
     efiSupport            = true;
     efiInstallAsRemovable = true;
   };

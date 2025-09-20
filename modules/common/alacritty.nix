@@ -8,8 +8,8 @@ in {
       settings = {
         window.decorations = "None";
 
-        font.size                = 18;
-  			font.normal.family       = "IosevkaTerm Nerd Font Mono";
+        font.size                = config.theme.font.size.normal;
+  			font.normal.family       = config.theme.font.mono.family;
 
         terminal.shell.program = "/etc/profiles/per-user/jam/bin/nu";
       };

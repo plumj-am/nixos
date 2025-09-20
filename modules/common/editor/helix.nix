@@ -5,7 +5,9 @@ in {
   home-manager.sharedModules = [{
     programs.helix = enabled {
       package = helix.packages.${pkgs.system}.helix; # [`.helix`] follows the master branch.
-      settings.theme = config.theme.helix;
+      settings.theme.fallback = config.theme.helix;
+      settings.theme.dark     = config.theme.themes.helix.dark;
+      settings.theme.light    = config.theme.themes.helix.light;
       settings.editor = {
         completion-timeout             = 5;
         color-modes                    = true;
