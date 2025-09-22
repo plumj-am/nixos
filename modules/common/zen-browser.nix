@@ -63,6 +63,12 @@
       Default = "Google";
       PreventInstalls = true;
     };
+
+    # Can't get theme switching to work right now.
+    Preferences = {
+      "layout.css.prefers-color-scheme.content-override" = if config.theme.is_dark then 0 else 1;
+      "devtools.theme" = if config.theme.is_dark then "dark" else "light";
+    };
   };
 in {
   home-manager.sharedModules = [{

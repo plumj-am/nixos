@@ -3,7 +3,7 @@ let
   inherit (lib) mkOption types;
 
   # Global theme configuration - use `tt dark` or `tt light` to switch.
-  is_dark = false;
+  is_dark = true;
 
   # Gruvbox hard Base16 color definitions.
   gruvbox_colors = {
@@ -52,8 +52,8 @@ let
     nvim.dark       = "gruvbox-material";
     nvim.light      = "gruvbox-material";
 
-    alacritty.dark  = "gruber_darker";
-    alacritty.light = "gruvbox_material_medium_light";
+    alacritty.dark  = "gruvbox_material_hard_dark";
+    alacritty.light = "gruvbox_material_hard_light";
 
     zellij.dark     = "gruvbox-dark";
     zellij.light    = "gruvbox-light";
@@ -94,7 +94,7 @@ in
 
     # Color helpers with prefixes.
     withHashtag = lib.mapAttrs (name: value: "#${value}") colors;
-    with0x = lib.mapAttrs (name: value: "0x${value}") colors;
+    with0x      = lib.mapAttrs (name: value: "0x${value}") colors;
 
     # Design tokens.
     cornerRadius = 4;

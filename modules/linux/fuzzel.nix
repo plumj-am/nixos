@@ -1,11 +1,8 @@
-{ config, lib, pkgs, ... }: let
-  inherit (lib) mkIf;
+{ config, lib, ... }: let
+  inherit (lib) mkIf enabled;
 in mkIf config.isDesktop {
-  environment.systemPackages = [
-    pkgs.fuzzel
-  ];
 
   home-manager.sharedModules = [{
-    programs.fuzzel.enable = true;
+    programs.fuzzel = enabled;
   }];
 }

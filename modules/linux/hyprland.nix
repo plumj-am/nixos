@@ -13,17 +13,23 @@ in mkIf config.isDesktopNotWsl {
 
   environment.systemPackages = [
     pkgs.hyprland
+    pkgs.wl-clipboard
+    pkgs.xdg-utils
   ];
 
   home-manager.sharedModules = [{
     wayland.windowManager.hyprland = enabled {
+      systemd = enabled {
+        enableXdgAutostart = true;
+      };
       settings = {
-        # Monitor configuration - auto-detect setup
-        monitor = [
-          # Primary monitor configs for different setups
-          "DP-1,3840x1440@80,0x0,1"        # 4K main if available
-          "DP-2,1920x1080@280,3840x0,1"    # 1080p secondary if available
-          ",1920x1080@144,auto,1"          # Fallback for single monitor
+        monitor = if config.networking.hostName == "yuzu" then [
+          # Yuzu: 1920*1080@280hz left, 3840*1440@50hz right.
+          "DP-1,1920x1080@280,0x0,1"   # Main (front).
+          "DP-2,3440x1440@50,1920x0,1" # Secondary (right).
+        ] else [
+          # Date: 1920*1080@144hz
+          ",1920x1080@144,auto,1"
         ];
 
         bind = [
@@ -88,20 +94,29 @@ in mkIf config.isDesktopNotWsl {
 
         # Basic appearance
         general = with config.theme.with0x; {
-          gaps_in = 0;
-          gaps_out = 0;
+          gaps_in     = 0;
+          gaps_out    = 0;
           border_size = config.theme.borderWidth;
-          "col.active_border" = "0xFF${config.theme.colors.base0D}";
+
+          "col.active_border"   = "0xFF${config.theme.colors.base0D}";
           "col.inactive_border" = "0xFF${config.theme.colors.base02}";
         };
 
         decoration = {
-          rounding = config.theme.cornerRadius;
+          rounding     = config.theme.cornerRadius;
+          blur.enabled = false;
+        };
+
+        cursor = {
+          hide_on_key_press = true;
+          inactive_timeout  = 10;
+          no_warps          = true;
         };
 
         input = {
-          kb_layout = "us";
-          follow_mouse = 1;
+          kb_layout    = "us";
+          follow_mouse = 0;
+          left_handed  = true;
           touchpad = {
             natural_scroll = false;
           };

@@ -11,7 +11,8 @@ in {
         font.size                = config.theme.font.size.normal;
   			font.normal.family       = config.theme.font.mono.family;
 
-        terminal.shell.program = "/etc/profiles/per-user/jam/bin/nu";
+        terminal.shell.program = "/etc/profiles/per-user/jam/bin/zellij";
+        terminal.shell.args    = [ "attach" "plumjam" "--create" ];
       };
     });
   }];

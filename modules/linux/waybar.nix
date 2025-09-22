@@ -1,9 +1,6 @@
-{ config, lib, pkgs, ... }: let
+{ config, lib, ... }: let
   inherit (lib) mkIf enabled;
 in mkIf config.isDesktopNotWsl {
-  environment.systemPackages = [
-    pkgs.waybar
-  ];
 
   home-manager.sharedModules = [{
     programs.waybar = with config.theme.withHashtag; enabled {
@@ -18,7 +15,7 @@ in mkIf config.isDesktopNotWsl {
           modules-right = [ "tray" "pulseaudio" "cpu" "memory" "network" "battery" "clock" ];
 
           "hyprland/workspaces" = {
-            format = "{icon}";
+            format = "{name}";
             format-icons = {
               default = "";
               active = "";
@@ -30,7 +27,7 @@ in mkIf config.isDesktopNotWsl {
             max-length = 50;
             separate-outputs = true;
             rewrite = {
-              "(.*) — Zen" = "󰖟 $1";
+              "(.*) — Zen Browser" = "󰖟 $1";
               "(.*) - Discord" = "󰙯 $1";
               "(.*) — nu" = " $1";
             };
@@ -114,7 +111,7 @@ in mkIf config.isDesktopNotWsl {
         #workspaces button:nth-child(8) { color: ${base0F}; }
 
         #workspaces button.empty {
-          color: ${base02};
+          color: ${base03};
         }
 
         #workspaces button.active {

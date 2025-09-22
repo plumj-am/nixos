@@ -1,11 +1,7 @@
-{ config, lib, pkgs, ... }: let
-  inherit (lib) mkIf;
+{ config, lib, ... }: let
+  inherit (lib) mkIf enabled;
 in mkIf config.isDesktop {
-  environment.systemPackages = [
-    pkgs.dunst
-  ];
-
   home-manager.sharedModules = [{
-    services.dunst.enable = true;
+    services.dunst = enabled;
   }];
 }

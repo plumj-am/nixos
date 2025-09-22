@@ -11,9 +11,9 @@ in mkIf (config.isDesktopNotWsl && config.isGaming) {
   # Performance.
   programs.gamemode.enable = true;
 
-  environment.systemPackages = with pkgs; [
-    protontricks
-    winetricks
+  environment.systemPackages = [
+    pkgs.protontricks
+    pkgs.winetricks
   ];
 
   # Hardware acceleration and 32-bit graphics support.
