@@ -77,6 +77,7 @@ in mkIf config.isDesktopNotWsl {
 
           # Launcher
           "CTRL, BackSpace, exec, fuzzel"
+          "SUPER, V, exec, cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"
         ];
 
         # Resize controls
