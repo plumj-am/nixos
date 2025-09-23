@@ -17,6 +17,9 @@ in mkIf config.isDesktopNotWsl {
     pkgs.xdg-utils
   ];
 
+  # Hint Electron apps to use wayland.
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+
   home-manager.sharedModules = [{
     wayland.windowManager.hyprland = enabled {
       systemd = enabled {
@@ -25,11 +28,11 @@ in mkIf config.isDesktopNotWsl {
       settings = {
         monitor = if config.networking.hostName == "yuzu" then [
           # Yuzu: 1920*1080@280hz left, 3840*1440@50hz right.
-          "DP-1,1920x1080@280,0x0,1"   # Main (front).
-          "DP-2,3440x1440@50,1920x0,1" # Secondary (right).
+          ",preferred,auto,1"   # Main (front).
+          ",preferred,auto,1"   # Secondary (right).
         ] else [
           # Date: 1920*1080@144hz
-          ",1920x1080@144,auto,1"
+          ",preferred,auto,1"
         ];
 
         bind = [
