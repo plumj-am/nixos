@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 let
   inherit (lib) mkOption types;
 
@@ -69,6 +69,33 @@ let
 
     helix.dark      = "gruvbox_dark_hard";
     helix.light     = "gruvbox_light_hard";
+
+    gtk.dark = {
+      name = "Adwaita-dark";
+      package = pkgs.gnome-themes-extra;
+    };
+    gtk.light = {
+      name = "Adwaita";
+      package = pkgs.gnome-themes-extra;
+    };
+
+    qt.dark = {
+      name          = "adwaita-dark";
+      platformTheme = "adwaita";
+    };
+    qt.light = {
+      name          = "adwaita";
+      platformTheme = "adwaita";
+    };
+
+    icons.dark = {
+      name    = "Gruvbox-Plus-Dark";
+      package = pkgs.gruvbox-plus-icons;
+    };
+    icons.light = {
+      name    = "Gruvbox-Plus-Light";
+      package = pkgs.gruvbox-plus-icons;
+    };
   };
 
   # helpers
@@ -76,7 +103,7 @@ let
   variant   = if is_dark then "dark" else "light";
 in
 {
-  # define theme as a top-level option that all modules can access via config.theme
+  # Define theme as a top-level option that all modules can access via config.theme.
   options.theme = mkOption {
     type        = types.attrs;
     default     = {};
@@ -96,24 +123,27 @@ in
     withHashtag = lib.mapAttrs (name: value: "#${value}") colors;
     with0x      = lib.mapAttrs (name: value: "0x${value}") colors;
 
-    # Design tokens.
-    cornerRadius = 4;
-    borderWidth = 2;
-    margin = 8;
+    # Shared design system.
+    radius  = 4;
+    border  = 2;
+    margin  = 8;
     padding = 8;
 
     # Font configuration.
     font = {
-      size = {
-        normal = 16;
-        big = 20;
-        small = 12;
-      };
-      mono = {
-        name = "JetBrainsMono Nerd Font";
-        family = "JetBrainsMono Nerd Font Mono";
-      };
+      size.small  = 12;
+      size.normal = 16;
+      size.big    = 20;
+
+      mono.name   = "JetBrainsMono Nerd Font";
+      mono.family = "JetBrainsMono Nerd Font Mono";
+
+      sans.name    = "Lexend";
+      sans.package = pkgs.lexend;
     };
+
+    icons = get_theme "icons";
+
 
     # Program-specific theme names.
     nvim      = get_theme "nvim";
@@ -123,6 +153,8 @@ in
     vivid     = get_theme "vivid";
     nushell   = get_theme "nushell";
     helix     = get_theme "helix";
+    gtk       = get_theme "gtk";
+    qt        = get_theme "qt";
 
     # Expose raw theme definitions for flexibility.
     themes = themes;

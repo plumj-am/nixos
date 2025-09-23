@@ -96,18 +96,19 @@ in mkIf config.isDesktopNotWsl {
           "waybar"
         ];
 
+
         # Basic appearance
-        general = with config.theme.with0x; {
-          gaps_in     = 0;
-          gaps_out    = 0;
-          border_size = config.theme.borderWidth;
+        general = with config.theme; {
+          gaps_in     = margin / 4;
+          gaps_out    = margin / 2;
+          border_size = border;
 
           "col.active_border"   = "0xFF${config.theme.colors.base0D}";
           "col.inactive_border" = "0xFF${config.theme.colors.base02}";
         };
 
         decoration = {
-          rounding     = config.theme.cornerRadius;
+          rounding     = config.theme.radius;
           blur.enabled = false;
         };
 
@@ -117,13 +118,44 @@ in mkIf config.isDesktopNotWsl {
           no_warps          = true;
         };
 
+        dwindle = {
+          preserve_split = true;
+          smart_resizing = false;
+        };
+
+        animations = {
+          bezier = [ "material_decelerate, 0.05, 0.7, 0.1, 1" ];
+
+          animation = [
+            "border    , 1, 3, material_decelerate"
+            "fade      , 1, 3, material_decelerate"
+            "layers    , 1, 3, material_decelerate"
+            "windows   , 1, 3, material_decelerate, popin 80%"
+            "workspaces, 1, 3, material_decelerate"
+          ];
+        };
+
+        misc = {
+          animate_manual_resizes   = true;
+          background_color         = config.theme.with0x.base00;
+          disable_hyprland_logo    = true;
+          disable_splash_rendering = true;
+
+          # Wakes screen.
+          key_press_enables_dpms   = true;
+          mouse_move_enables_dpms  = true;
+        };
+
         input = {
-          kb_layout    = "us";
-          follow_mouse = 0;
-          left_handed  = true;
-          touchpad = {
-            natural_scroll = false;
-          };
+          kb_layout     = "us";
+          follow_mouse  = 1;
+          left_handed   = true;
+
+          # Disable mouse acceleration
+          accel_profile = "flat";
+          sensitivity   = 0;
+
+          touchpad.natural_scroll = false;
         };
       };
     };
