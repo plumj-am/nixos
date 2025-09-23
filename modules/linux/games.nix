@@ -9,7 +9,15 @@ in mkIf (config.isDesktopNotWsl && config.isGaming) {
   };
 
   # Performance.
-  programs.gamemode.enable = true;
+  programs.gamemode = enabled {
+    settings = {
+      custom = {
+        # Doesn't seem to work right now.
+        start = "${pkgs.systemd}/bin/systemctl --user stop gammastep.service";
+        end   = "${pkgs.systemd}/bin/systemctl --user start gammastep.service";
+      };
+    };
+  };
 
   environment.systemPackages = [
     pkgs.protontricks
@@ -18,7 +26,7 @@ in mkIf (config.isDesktopNotWsl && config.isGaming) {
 
   # Hardware acceleration and 32-bit graphics support.
   hardware.graphics = {
-    enable = true;
+    enable      = true;
     enable32Bit = true; # Required for Steam and 32-bit games
   };
 
