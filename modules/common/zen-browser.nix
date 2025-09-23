@@ -35,7 +35,7 @@
 
     SkipTermsOfUse = true;
 
-    PictureInPicture = lockedAs false {};
+    PictureInPicture = lockedAs true {};
 
     Homepage = locked { StartPage = "previous-session"; };
 
@@ -60,7 +60,7 @@
     };
 
     SearchEngines = {
-      Default = "Google";
+      Default         = "Google";
       PreventInstalls = true;
     };
 
