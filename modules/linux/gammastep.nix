@@ -1,11 +1,13 @@
 { config, lib, pkgs, ... }: let
   inherit (lib) mkIf enabled;
 in mkIf config.isDesktop {
-  environment.systemPackages = [
-    pkgs.gammastep
-  ];
 
-  services.geoclue2.enable = true;
+  services.geoclue2 = enabled {
+    appConfig.gammastep = {
+      isAllowed = true;
+      isSystem  = false;
+    };
+  };
 
   home-manager.sharedModules = [{
     services.gammastep = enabled {
