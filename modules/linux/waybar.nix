@@ -15,10 +15,10 @@ in mkIf config.isDesktopNotWsl {
           modules-right = [ "tray" "pulseaudio" "cpu" "memory" "network" "battery" "clock" ];
 
           "hyprland/workspaces" = {
-            format = "{name}";
+            format = "{icon}";
             format-icons = {
-              default = "";
-              active = "";
+              default = "○";
+              active  = "●";
             };
             persistent-workspaces."*" = 4;
           };
