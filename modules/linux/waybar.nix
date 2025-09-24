@@ -3,7 +3,7 @@
 in mkIf config.isDesktopNotWsl {
 
   home-manager.sharedModules = [{
-    programs.waybar = with config.theme.withHashtag; enabled {
+    programs.waybar = with config.theme.withHash; enabled {
       settings = {
         mainBar = {
           layer = "top";

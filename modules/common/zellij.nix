@@ -19,7 +19,7 @@ in {
   };
 
   home-manager.sharedModules = [{
-    programs.zellij = mkIf config.isDesktop (enabled {
+    programs.zellij = with config.theme.withHash; mkIf config.isDesktop (enabled {
       enableBashIntegration = true;
 
       attachExistingSession = true;
@@ -227,13 +227,13 @@ in {
 							format_right  "{datetime}"
 							format_space  ""
 
-							mode_normal        "#[fg=#FFFFFF,bg=green] NORMAL "
-							mode_locked        "#[fg=#FFFFFF,bg=red] LOCKED "
+							mode_normal        "#[fg=${base00},bg=${base0B}] NORMAL "
+							mode_locked        "#[fg=${base00},bg=${base08}] LOCKED "
 
-							tab_normal         "#[fg=#FFFFFF,bg=#7F7F7F] {index}:{name} "
-							tab_active         "#[fg=#FFFFFF,bg=blue,bold] {index}:{name} "
+							tab_normal         "#[fg=${base05},bg=${base02}] {index}:{name} "
+							tab_active         "#[fg=${base00},bg=${base0D},bold] {index}:{name} "
 
-							datetime           "#[fg=blue,bold] {format}"
+							datetime           "#[fg=${base0D},bold] {format}"
 							datetime_format		 "%H:%M"
 							datetime_timezone  "Europe/Warsaw"
 						}
@@ -256,13 +256,13 @@ in {
 							format_right  "{datetime}"
 							format_space  ""
 
-							mode_normal        "#[fg=#FFFFFF,bg=green] NORMAL "
-							mode_locked        "#[fg=#FFFFFF,bg=red] LOCKED "
+							mode_normal        "#[fg=${base00},bg=${base0B}] NORMAL "
+							mode_locked        "#[fg=${base00},bg=${base08}] LOCKED "
 
-							tab_normal         "#[fg=#FFFFFF,bg=#7F7F7F] {index}:{name} "
-							tab_active         "#[fg=#FFFFFF,bg=blue,bold] {index}:{name} "
+							tab_normal         "#[fg=${base05},bg=${base02}] {index}:{name} "
+							tab_active         "#[fg=${base00},bg=${base0D},bold] {index}:{name} "
 
-							datetime           "#[fg=blue,bold] {format}"
+							datetime           "#[fg=${base0D},bold] {format}"
 							datetime_format		 "%H:%M"
 							datetime_timezone  "Europe/Warsaw"
 						}

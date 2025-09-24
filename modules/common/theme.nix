@@ -3,7 +3,7 @@ let
   inherit (lib) mkOption types;
 
   # Global theme configuration - use `tt dark` or `tt light` to switch.
-  is_dark = true;
+  is_dark = false;
 
   # Gruvbox hard Base16 color definitions.
   gruvbox_colors = {
@@ -120,7 +120,7 @@ in
     inherit colors;
 
     # Color helpers with prefixes.
-    withHashtag = lib.mapAttrs (name: value: "#${value}") colors;
+    withHash    = lib.mapAttrs (name: value: "#${value}") colors;
     with0x      = lib.mapAttrs (name: value: "0x${value}") colors;
 
     # Shared design system.
