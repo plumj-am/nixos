@@ -4,7 +4,7 @@
   window-switcher = pkgs.writeShellScriptBin "window-switcher" ''
     # Get all windows, format them nicely, let user select, then focus
     selected=$(${pkgs.hyprland}/bin/hyprctl clients -j | \
-      ${pkgs.jq}/bin/jq -r '.[] | "\(.address) [\(.workspace.name)] \(.class) - \(.title)"' | \
+      ${pkgs.jq}/bin/jq -r '.[] | "[\(.workspace.name)] \(.class) - \(.title)"' | \
       ${pkgs.fuzzel}/bin/fuzzel --dmenu --prompt "Window: ")
 
     if [ -n "$selected" ]; then
