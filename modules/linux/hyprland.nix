@@ -84,6 +84,7 @@ in mkIf config.isDesktopNotWsl {
           "SUPER, V, exec, cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"
           "SUPER, P, exec, power-menu"
           "SUPER, W, exec, window-switcher"
+          "SUPER, G, togglespecialworkspace, games"
         ];
 
         # Resize controls
@@ -148,6 +149,14 @@ in mkIf config.isDesktopNotWsl {
           key_press_enables_dpms   = true;
           mouse_move_enables_dpms  = true;
         };
+
+        # Game window rules - Steam games only
+        windowrulev2 = [
+          "workspace special:games, class:^(steam_app_).*"
+          "fullscreen, class:^(steam_app_).*"
+          "immediate, class:^(steam_app_).*"  # Reduce input lag
+          "noborder, class:^(steam_app_).*"   # Remove borders for fullscreen
+        ];
 
         input = {
           kb_layout     = "us";
