@@ -25,7 +25,7 @@
 
           # Build locally (always)
           let os = (uname | get kernel-name)
-          let config_path = if $os == "Darwin" { "/Users/jam/nixos-config" } else { "/home/jam/nixos-config" }
+          let config_path = if $os == "Darwin" { "/Users/jam/nixos" } else { "/home/jam/nixos" }
 
           # nh os/darwin switch [flake_path] --hostname [host] -- [nix_args]
           let base_args = [
