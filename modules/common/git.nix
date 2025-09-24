@@ -72,7 +72,7 @@ in {
           gpg.format        = "ssh";
           credential.helper = "!gh auth git-credential";
 
-          "url \"https://github.com/\"".insteadOf = "gh:";
+          url."ssh://git@github.com/".insteadOf = "gh:";
         };
 
         aliases = {
