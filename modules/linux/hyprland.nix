@@ -40,6 +40,7 @@ in mkIf config.isDesktopNotWsl {
           "SUPER, O, exec, hyprctl reload"
           "SUPER, Q, killactive"
           "SUPER, M, exec, hyprctl dispatch movetoworkspace special"
+          "SUPER SHIFT, M, togglespecialworkspace"
 
           # Focus windows
           "SUPER, H, movefocus, l"
