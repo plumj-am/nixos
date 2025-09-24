@@ -154,8 +154,12 @@ in mkIf config.isDesktopNotWsl {
         windowrulev2 = [
           "workspace special:games, class:^(steam_app_).*"
           "fullscreen, class:^(steam_app_).*"
-          "immediate, class:^(steam_app_).*"  # Reduce input lag
-          "noborder, class:^(steam_app_).*"   # Remove borders for fullscreen
+          "immediate, class:^(steam_app_).*"    # Reduce input lag.
+          "noborder, class:^(steam_app_).*"     # Remove borders for fullscreen.
+          "noanim, class:^(steam_app_).*"       # Disable animations for performance.
+          "noblur, class:^(steam_app_).*"       # Disable blur for performance.
+          "noshadow, class:^(steam_app_).*"     # Disable shadows for performance.
+          "opaque, class:^(steam_app_).*"       # Force opaque for performance.
         ];
 
         input = {
