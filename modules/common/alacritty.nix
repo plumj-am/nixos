@@ -11,7 +11,7 @@ in {
         font.size          = config.theme.font.size.normal;
   			font.normal.family = config.theme.font.mono.family;
 
-        terminal.shell.program = "/etc/profiles/per-user/jam/bin/nu";
+        terminal.shell.program = "${pkgs.nushell}/bin/nu";
       };
     };
 
@@ -19,7 +19,7 @@ in {
     xdg.desktopEntries.alacritty-zellij = {
       name     = "Zellij";
       icon     = "Alacritty";
-      exec     = "alacritty -e /etc/profiles/per-user/jam/bin/zellij attach plumjam --create";
+      exec     = "alacritty -e ${pkgs.zellij}/bin/zellij";
       terminal = false;
     };
   }];
