@@ -70,15 +70,16 @@ in {
         # Normal mode.
         normal._children = [
           (key "Esc"    { SwitchToMode._args = [ "locked" ]; })
+          (key "Enter"  { SwitchToMode._args = [ "normal" ]; })
           (key "Ctrl w" { SwitchToMode._args = [ "pane" ]; })
           (key "Ctrl t" { SwitchToMode._args = [ "tab" ]; })
           (key "Ctrl r" { SwitchToMode._args = [ "resize" ]; })
           (key "Ctrl s" { SwitchToMode._args = [ "scroll" ]; })
           (key "Ctrl o" { SwitchToMode._args = [ "session" ]; })
-          (key "Ctrl h" { MoveFocus = [ "Left" ]; })
-          (key "Ctrl j" { MoveFocus = [ "Down" ]; })
-          (key "Ctrl k" { MoveFocus = [ "Up" ]; })
-          (key "Ctrl l" { MoveFocus = [ "Right" ]; })
+          (key "Ctrl h" { MoveFocus = [ "Left" ];  SwitchToMode._args = [ "locked" ]; })
+          (key "Ctrl j" { MoveFocus = [ "Down" ];  SwitchToMode._args = [ "locked" ]; })
+          (key "Ctrl k" { MoveFocus = [ "Up" ];    SwitchToMode._args = [ "locked" ]; })
+          (key "Ctrl l" { MoveFocus = [ "Right" ]; SwitchToMode._args = [ "locked" ]; })
           (key "q"      { GoToTab._args = [ 1 ];})
           (key "w"      { GoToTab._args = [ 2 ];})
           (key "e"      { GoToTab._args = [ 3 ];})
@@ -94,7 +95,7 @@ in {
             LaunchOrFocusPlugin = {
               _args = [ "https://github.com/karimould/zellij-forgot/releases/latest/download/zellij_forgot.wasm" ];
               floating = true;
-            };
+            }; SwitchToMode._args = [ "locked" ];
           }])
           (keyPlugin "Ctrl j" [{
             Run = {
@@ -105,7 +106,7 @@ in {
               y             = "5%";
               width         = "90%";
               height        = "90%";
-            };
+            }; SwitchToMode._args = [ "locked" ];
           }])
           (keyPlugin "Ctrl n" [{
             Run = {
@@ -116,7 +117,17 @@ in {
               y             = "5%";
               width         = "90%";
               height        = "90%";
-            };
+            }; SwitchToMode._args = [ "locked" ];
+          }])
+          (keyPlugin "Ctrl p" [{
+            LaunchOrFocusPlugin = {
+              _args = [ "https://github.com/laperlej/zellij-sessionizer/releases/latest/download/zellij-sessionizer.wasm" ];
+              floating = true;
+              move_to_focused_tab = true;
+              cwd = "/";
+              root_dirs = "/home/jam;/home/jam/projects;/home/jam/notes";
+              session_layout = "plumjam";
+            }; SwitchToMode._args = [ "locked" ];
           }])
         ];
 
@@ -206,11 +217,12 @@ in {
       load_plugins = [
         "https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm"
         "https://github.com/karimould/zellij-forgot/releases/latest/download/zellij_forgot.wasm"
+        "https://github.com/laperlej/zellij-sessionizer/releases/latest/download/zellij-sessionizer.wasm"
       ];
-      plugins.tab-bar.path     = "tab-bar";
-			plugins.status-bar.path  = "status-bar";
-			plugins.strider.path     = "strider";
-			plugins.compact-bar.path = "compact-bar";
+      plugins.tab-bar.path        = "tab-bar";
+			plugins.status-bar.path     = "status-bar";
+			plugins.strider.path        = "strider";
+			plugins.compact-bar.path    = "compact-bar";
 
     };
 
@@ -227,8 +239,14 @@ in {
 							format_right  "{datetime}"
 							format_space  ""
 
-							mode_normal        "#[fg=${base00},bg=${base0B}] NORMAL "
-							mode_locked        "#[fg=${base00},bg=${base08}] LOCKED "
+							mode_normal        "#[fg=${base00},bg=${base0B}] NOR "
+							mode_locked        "#[fg=${base00},bg=${base08}] LOC "
+							mode_pane          "#[fg=${base00},bg=${base0D}] PAN "
+							mode_tab           "#[fg=${base00},bg=${base0E}] TAB "
+							mode_rename        "#[fg=${base00},bg=${base0A}] REN "
+							mode_resize        "#[fg=${base00},bg=${base0C}] RES "
+							mode_scroll        "#[fg=${base00},bg=${base09}] SCR "
+							mode_session       "#[fg=${base00},bg=${base0F}] SES "
 
 							tab_normal         "#[fg=${base05},bg=${base02}] {index}:{name} "
 							tab_active         "#[fg=${base00},bg=${base0D},bold] {index}:{name} "
@@ -243,6 +261,7 @@ in {
 
       dev = ''
         layout {
+          pane_frames true
           pane split_direction="vertical" {
             pane size="70%"
             pane size="30%"
@@ -256,8 +275,14 @@ in {
 							format_right  "{datetime}"
 							format_space  ""
 
-							mode_normal        "#[fg=${base00},bg=${base0B}] NORMAL "
-							mode_locked        "#[fg=${base00},bg=${base08}] LOCKED "
+							mode_normal        "#[fg=${base00},bg=${base0B}] NOR "
+							mode_locked        "#[fg=${base00},bg=${base08}] LOC "
+							mode_pane          "#[fg=${base00},bg=${base0D}] PAN "
+							mode_tab           "#[fg=${base00},bg=${base0E}] TAB "
+							mode_rename        "#[fg=${base00},bg=${base0A}] REN "
+							mode_resize        "#[fg=${base00},bg=${base0C}] RES "
+							mode_scroll        "#[fg=${base00},bg=${base09}] SCR "
+							mode_session       "#[fg=${base00},bg=${base0F}] SES "
 
 							tab_normal         "#[fg=${base05},bg=${base02}] {index}:{name} "
 							tab_active         "#[fg=${base00},bg=${base0D},bold] {index}:{name} "
