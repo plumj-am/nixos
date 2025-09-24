@@ -10,12 +10,11 @@ in {
 
       rebuild  = "~/rebuild.nu";
       rollback = "~/rebuild.nu --rollback";
-      # for some reason this doesn't work and is called every time I open a new shell
-      # upgrade  = "sudo nix-store --verify --check-contents --repair ; sudo nix flake update --flake ~/nixos-config ; sudo nixos-rebuild switch --flake ~/nixos-config#nixos-wsl";
 
       tt = "toggle-theme";
 
-      td = "hx ~/notes/todo.md";
+      td    = "hx ~/notes/todo.md";
+      notes = "hx ~/notes";
 
       rm = "rm --recursive --verbose";
       cp = "cp --recursive --verbose --progress";
