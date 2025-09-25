@@ -135,8 +135,9 @@ in
       size.normal = 16;
       size.big    = 20;
 
-      mono.name   = "JetBrainsMono Nerd Font";
-      mono.family = "JetBrainsMono Nerd Font Mono";
+      mono.name    = "JetBrainsMono Nerd Font";
+      mono.family  = "JetBrainsMono Nerd Font Mono";
+      mono.package = pkgs.nerd-fonts.jetbrains-mono;
 
       sans.name    = "Lexend";
       sans.package = pkgs.lexend;
