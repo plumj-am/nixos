@@ -1,5 +1,17 @@
-{ ... }: {
+{ config, lib, ... }: let
+  inherit (lib) mkIf;
+in {
   home-manager.sharedModules = [{
+    xdg.desktopEntries.rebuild = mkIf config.isDesktopNotWsl {
+      name     = "Rebuild";
+      exec     = ''nu /home/jam/rebuild.nu'';
+      terminal = true;
+    };
+    xdg.desktopEntries.rollback = mkIf config.isDesktopNotWsl {
+      name     = "Rollback";
+      exec     = ''nu /home/jam/rebuild.nu --rollback'';
+      terminal = true;
+    };
     home.file."rebuild.nu" = {
       executable = true;
       text = /* nu */ ''
