@@ -37,7 +37,7 @@ in {
       mirror_session        = false;
       on_force_close        = "detach";
 
-      pane_frames       = false;
+      pane_frames       = true;
       simplified_ui     = true;
       show_startup_tips = false;
 
@@ -261,7 +261,6 @@ in {
 
       dev = ''
         layout {
-          pane_frames true
           pane split_direction="vertical" {
             pane size="70%"
             pane size="30%"
