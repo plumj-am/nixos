@@ -79,6 +79,13 @@ in {
         https "max-age=31536000; includeSubdomains; preload";
       }
 
+      # cache only successful responses
+      map $status $cache_header {
+        200     "public";
+        302     "public";
+        default "no-cache";
+      }
+
       map $http_origin $allow_origin {
         ~^https://(?:.+\.)?${domain}$ $http_origin;
         ~^https://dr-radka\.pl$ $http_origin;

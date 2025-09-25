@@ -8,15 +8,6 @@ in {
   imports = [(self + /modules/nginx.nix)];
 
   services.nginx = enabled {
-    appendHttpConfig = /* nginx */ ''
-      # cache only successful responses
-      map $status $cache_header {
-        200     "public";
-        302     "public";
-        default "no-cache";
-      }
-    '';
-
     virtualHosts."www.${fqdn}" = merge config.services.nginx.sslTemplate {
       locations."/".return = "301 https://${fqdn}$request_uri";
     };
