@@ -57,14 +57,6 @@ in {
             openssh.authorizedKeys.keys = keys.admins;
             extraGroups                 = [ "wheel" "networkmanager" ];
           };
-
-          build = {
-            description                 = "Build";
-            isNormalUser                = true;
-            createHome                  = false;
-            openssh.authorizedKeys.keys = keys.all;
-            extraGroups                 = [ "build" ];
-          };
         };
 
         home-manager.users = {

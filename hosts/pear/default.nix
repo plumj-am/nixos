@@ -76,14 +76,6 @@ in {
             openssh.authorizedKeys.keys = keys.admins;
             extraGroups                 = [ "wheel" "docker" "dialout" ]; # Dialout for serial, Docker for docker-desktop.
           };
-
-          build = {
-            description                 = "Build";
-            isNormalUser                = true;
-            createHome                  = false;
-            openssh.authorizedKeys.keys = keys.all;
-            extraGroups                 = [ "build" ];
-          };
         };
 
         home-manager.users = {
