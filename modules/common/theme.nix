@@ -1,9 +1,9 @@
-{ lib, pkgs, ... }:
+{ lib, pkgs, config, ... }:
 let
-  inherit (lib) mkOption types;
+  inherit (lib) mkOption types mkIf;
 
   # Global theme configuration - use `tt dark` or `tt light` to switch.
-  is_dark = false;
+  is_dark = true;
 
   # Gruvbox hard Base16 color definitions.
   gruvbox_colors = {
@@ -162,4 +162,17 @@ in
 
   # Export theme info as env var.
   config.environment.variables.THEME_MODE = variant;
+
+  config.home-manager.sharedModules = mkIf config.isDesktopNotWsl [{
+    xdg.desktopEntries.dark-mode = {
+      name     = "Dark Mode";
+      exec     = ''nu -l -c "tt dark"'';
+      terminal = true;
+    };
+    xdg.desktopEntries.light-mode = {
+      name     = "Light Mode";
+      exec     = ''nu -l -c "tt light"'';
+      terminal = true;
+    };
+  }];
 }
