@@ -46,7 +46,7 @@ in mkIf config.isDesktopNotWsl {
             format-icons = {
               default = [ "󰕿" "󰖀" "󰕾" ];
             };
-            on-click = "pavucontrol";
+            on-click = "pwvucontrol";
             on-click-right = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
             tooltip = true;
             tooltip-format = "Volume: {volume}%\nClick: Open audio manager\nRight-click: Mute toggle";

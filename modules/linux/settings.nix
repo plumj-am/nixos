@@ -17,8 +17,6 @@ in mkIf config.isDesktopNotWsl {
 
   # System configuration GUI tools.
   environment.systemPackages = with pkgs; [
-    # Audio.
-    pavucontrol          # Audio mixer GUI.
 
     # Network.
     networkmanagerapplet # Network manager system tray.
