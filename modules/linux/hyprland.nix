@@ -159,7 +159,6 @@ in mkIf config.isDesktopNotWsl {
           "noanim, class:^(steam_app_).*"       # Disable animations for performance.
           "noblur, class:^(steam_app_).*"       # Disable blur for performance.
           "noshadow, class:^(steam_app_).*"     # Disable shadows for performance.
-          "opaque, class:^(steam_app_).*"       # Force opaque for performance.
         ];
 
         input = {
