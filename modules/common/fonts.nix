@@ -3,9 +3,14 @@
 in
 {
   fonts.packages = mkIf config.isDesktop [
-    pkgs.nerd-fonts.jetbrains-mono
-    pkgs.nerd-fonts.symbols-only  # Fallback for missing icons
-    pkgs.lexend
+    config.theme.font.mono.package
+    config.theme.font.sans.package
+
+    # Fallback for emojis and icons.
+    pkgs.noto-fonts
+    pkgs.noto-fonts-cjk-sans
+    pkgs.noto-fonts-lgc-plus
+    pkgs.noto-fonts-emoji
   ];
 }
 
