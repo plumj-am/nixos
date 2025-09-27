@@ -37,7 +37,7 @@ in {
       mirror_session        = false;
       on_force_close        = "detach";
 
-      pane_frames       = true;
+      pane_frames       = false;
       simplified_ui     = true;
       show_startup_tips = false;
 
@@ -267,7 +267,7 @@ in {
           }
 					pane size=1 borderless=true {
 						plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
-							hide_frame_for_single_pane "false"
+							hide_frame_for_single_pane "true"
 
 							format_left   "{mode} #[fg=gray]{session} {tabs}"
 							format_center ""
