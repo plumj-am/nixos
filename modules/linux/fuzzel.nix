@@ -13,7 +13,7 @@ in mkIf config.isDesktop {
         font       = "${font.mono.name}:size=${toString font.size.small}";
         layer      = "overlay";
         prompt     = ''"❯ "'';
-        terminal   = "alacritty -e";
+        terminal   = "kitty";
 
         horizontal-pad = padding;
         vertical-pad   = padding;
