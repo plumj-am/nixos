@@ -1,12 +1,9 @@
 { config, lib, pkgs, ... }: let
   inherit (lib) enabled mkIf;
 in mkIf config.isDesktopNotWsl {
-  # NetworkManager for network configuration.
   networking.networkmanager = enabled {
     wifi.powersave = false;
   };
-
-  # Add user to networkmanager group.
   users.users.jam.extraGroups = [ "networkmanager" ];
 
   # Bluetooth support.
@@ -15,21 +12,12 @@ in mkIf config.isDesktopNotWsl {
   };
   services.blueman = enabled;
 
-  # System configuration GUI tools.
-  environment.systemPackages = with pkgs; [
-
-    # Network.
-    networkmanagerapplet # Network manager system tray.
-
-    # Bluetooth.
-    blueman              # Bluetooth manager.
-
-    # System utilities.
-    lshw                 # Hardware info.
-    usbutils             # USB device info.
-    pciutils             # PCI device info.
+  environment.systemPackages = [
+    pkgs.lshw     # Hardware info.
+    pkgs.usbutils # USB device info.
+    pkgs.pciutils # PCI device info.
   ];
 
-  # Enable system tray for network/bluetooth applets.
+  # Network manager
   programs.nm-applet = enabled;
 }
