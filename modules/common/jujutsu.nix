@@ -65,6 +65,7 @@ in {
       aliases.sm = [ "split" "--message" ];
 
       aliases.sq   = [ "squash" ];
+      aliases.sqf  = [ "squash" "--from" ];
       aliases.sqi  = [ "squash" "--interactive" ];
       aliases.sqm  = [ "squash" "--message" ];
       aliases.sqmi = [ "squash" "--interactive" "--message" ];
