@@ -168,12 +168,12 @@ in
     xdg.desktopEntries.dark-mode = {
       name     = "Dark Mode";
       exec     = ''nu -l -c "tt dark"'';
-      terminal = true;
+      terminal = false;
     };
     xdg.desktopEntries.light-mode = {
       name     = "Light Mode";
       exec     = ''nu -l -c "tt light"'';
-      terminal = true;
+      terminal = false;
     };
   }];
 }
