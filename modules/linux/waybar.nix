@@ -12,7 +12,7 @@ in mkIf config.isDesktopNotWsl {
 
           modules-left = [ "hyprland/workspaces" ];
           modules-center = [ "hyprland/window" ];
-          modules-right = [ "tray" "pulseaudio" "cpu" "memory" "network" "battery" "clock" ];
+          modules-right = [ "tray" "pulseaudio" "cpu" "memory" "disk" "network" "battery" "clock" ];
 
           "hyprland/workspaces" = {
             format = "{icon}";
@@ -57,6 +57,7 @@ in mkIf config.isDesktopNotWsl {
             tooltip = true;
             tooltip-format = "CPU Usage: {usage}%\nLoad: {load}";
             interval = 1;
+            on-click = "kitty btop";
             states = {
               warning = 70;
               critical = 90;
@@ -68,6 +69,19 @@ in mkIf config.isDesktopNotWsl {
             tooltip = true;
             tooltip-format = "Memory: {used:0.1f}G/{total:0.1f}G ({percentage}%)\nAvailable: {avail:0.1f}G";
             interval = 1;
+            on-click = "kitty btop";
+            states = {
+              warning = 70;
+              critical = 90;
+            };
+          };
+
+          disk = {
+            format = "󰋊 {percentage_used}%";
+            path = "/";
+            tooltip = true;
+            tooltip-format = "Disk: {used}/{total} ({percentage_used}%)\nAvailable: {free}";
+            interval = 300;
             states = {
               warning = 70;
               critical = 90;
@@ -111,7 +125,7 @@ in mkIf config.isDesktopNotWsl {
           border: none;
           border-radius: 0;
           font-family: "${config.theme.font.mono.name}";
-          font-size: 13px;
+          font-size: ${toString config.theme.font.size.small}px;
           margin: 0;
           padding: 0;
         }
@@ -134,7 +148,7 @@ in mkIf config.isDesktopNotWsl {
         #workspaces button:nth-child(7) { color: ${base0E}; }
         #workspaces button:nth-child(8) { color: ${base0F}; }
 
-        #workspaces button { padding: 0 10px; }
+        #workspaces button { padding: 0 ${toString config.theme.padding}px; }
 
         #workspaces button.empty {
           color: ${base03};
@@ -145,7 +159,7 @@ in mkIf config.isDesktopNotWsl {
           background: ${base02};
         }
 
-        #tray, #pulseaudio, #cpu, #memory, #network, #battery, #clock {
+        #tray, #pulseaudio, #cpu, #memory, #disk, #network, #battery, #clock {
           margin: 0;
           margin-left: ${toString config.theme.margin}px;
           padding: 0 ${toString config.theme.padding}px;
@@ -161,11 +175,11 @@ in mkIf config.isDesktopNotWsl {
           color: ${base08};
         }
 
-        #cpu.warning, #memory.warning {
+        #cpu.warning, #memory.warning, #disk.warning {
           color: ${base0A};
         }
 
-        #cpu.critical, #memory.critical {
+        #cpu.critical, #memory.critical, #disk.critical {
           color: ${base08};
           animation-name: blink;
           animation-duration: 1s;
