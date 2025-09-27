@@ -4,7 +4,6 @@ in {
   home-manager.sharedModules = mkIf config.isDesktopNotWsl [{
     programs.alacritty = enabled {
       theme    = config.theme.alacritty;
-      package  = pkgs.alacritty;
       settings = {
         window.decorations = "None";
 
@@ -15,9 +14,9 @@ in {
       };
     };
 
-    # Desktop entries for Zellij in Fuzzel.
-    xdg.desktopEntries.alacritty-zellij = {
-      name     = "Zellij";
+    # Desktop entry for Zellij in Fuzzel.
+    xdg.desktopEntries.zellij-alacritty = {
+      name     = "Zellij Alacritty";
       icon     = "Alacritty";
       exec     = "alacritty -e ${pkgs.zellij}/bin/zellij";
       terminal = false;
