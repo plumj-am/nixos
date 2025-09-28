@@ -14,6 +14,7 @@ in mkIf config.isDesktop {
         layer      = "overlay";
         prompt     = ''"❯ "'';
         terminal   = "kitty";
+        output     = if config.networking.hostName == "yuzu" then "DP-1" else null;
 
         horizontal-pad = padding;
         vertical-pad   = padding;
