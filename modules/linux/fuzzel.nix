@@ -1,6 +1,6 @@
 { config, lib, ... }: let
   inherit (lib) mkIf enabled;
-in mkIf config.isDesktop {
+in mkIf config.isDesktopNotWsl {
 
   home-manager.sharedModules = [{
     services.cliphist = enabled {
