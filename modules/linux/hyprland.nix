@@ -84,7 +84,7 @@ in mkIf config.isDesktopNotWsl {
           "SUPER, V, exec, cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"
           "SUPER, P, exec, power-menu"
           "SUPER SHIFT, P, exec, process-killer"
-          "SUPER, W, exec, window-switcher"
+          "SUPER, Tab, exec, window-switcher"
           "SUPER, G, togglespecialworkspace, games"
         ];
 
