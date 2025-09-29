@@ -2,8 +2,10 @@
 let
   inherit (lib) mkOption types mkIf;
 
-  # Global theme configuration - use `tt dark` or `tt light` to switch.
-  is_dark = true;
+  # Global theme configuration - can be overridden by specialisations.
+  is_dark = if config.themeOverride != null
+           then config.themeOverride
+           else false;  # Default to light.
 
   # Gruvbox hard Base16 color definitions.
   gruvbox_colors = {
@@ -98,7 +100,7 @@ let
     };
   };
 
-  # helpers
+  # Helpers.
   get_theme = program: if is_dark then themes.${program}.dark else themes.${program}.light;
   variant   = if is_dark then "dark" else "light";
 in
@@ -108,6 +110,13 @@ in
     type        = types.attrs;
     default     = {};
     description = "Global theme configuration";
+  };
+
+  # Separate option for specialisation override.
+  options.themeOverride = mkOption {
+    type = types.nullOr types.bool;
+    default = null;
+    description = "Force dark or light theme (used by specialisations)";
   };
 
   # Set the theme values.
@@ -161,8 +170,9 @@ in
     themes = themes;
   };
 
-  # Export theme info as env var.
-  config.environment.variables.THEME_MODE = variant;
+  # Export theme info as environment variable.
+  config.environment.variables.THEME_MODE        = variant;
+  config.environment.sessionVariables.THEME_MODE = variant;
 
   config.home-manager.sharedModules = mkIf config.isDesktopNotWsl [{
     xdg.desktopEntries.dark-mode = {
@@ -176,4 +186,5 @@ in
       terminal = false;
     };
   }];
+
 }

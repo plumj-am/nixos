@@ -1,84 +1,53 @@
 def toggle-theme [theme?: string] {
     let dark_mode_file = $"($env.HOME)/.config/dark-mode"
 
-    # determine current theme from nix theme file
-    let theme_file = $"($env.HOME)/nixos/modules/common/theme.nix"
-    let current_theme = try {
-        let content = open $theme_file
-        if ($content | str contains "is_dark = true;") {
-            "dark"
-        } else {
-            "light"
-        }
-    } catch {
-        "light"
-    }
-
-    # use provided theme or toggle current
-    let new_theme = if $theme != null {
-        if $theme in ["light", "dark"] {
-            $theme
-        } else {
-            print $"Invalid theme: ($theme). Use 'light' or 'dark'"
-            return
-        }
+    # Use provided theme.
+    let new_theme = if $theme in ["light", "dark"] {
+        $theme
     } else {
-        if $current_theme == "light" { "dark" } else { "light" }
-    }
-
-    print $"Switching from ($current_theme) to ($new_theme) theme..."
-
-    # update centralized theme file
-    try {
-        let content = open $theme_file
-
-        let updated = if $new_theme == "dark" {
-            $content | str replace "is_dark = false;" "is_dark = true;"
-        } else {
-            $content | str replace "is_dark = true;" "is_dark = false;"
-        }
-
-        $updated | save $theme_file --force
-        print $"updated theme to ($new_theme)"
-    } catch { |e|
-        print $"failed to update theme: ($e.msg)"
+        print_notify $"Invalid theme: '($theme)'. Use 'light' or 'dark'."
         return
     }
 
-    # update system dark mode marker
+    print_notify $"Switching to ($new_theme) theme."
+
+    # Use NixOS specialisations for theme switching.
+    # Always switch to base system first, then to target specialisation if needed.
+    try {
+        ^sudo /nix/var/nix/profiles/system/bin/switch-to-configuration switch
+
+        print_notify $"Activating ($new_theme) specialisation."
+        if $new_theme == "dark" {
+            ^sudo /run/current-system/specialisation/dark-theme/bin/switch-to-configuration switch
+        } else {
+            ^sudo /run/current-system/specialisation/light-theme/bin/switch-to-configuration switch
+        }
+
+    } catch { |e|
+        print_notify $"Failed to switch theme: ($e.msg)"
+        return
+    }
+
+    # Update system dark mode marker and environment variable.
     if $new_theme == "dark" {
         touch $dark_mode_file
         $env.THEME_MODE = "dark"
-        print "dark mode activated"
+        print_notify "Dark mode activated."
     } else {
         if ($dark_mode_file | path exists) {
             rm $dark_mode_file
         }
         $env.THEME_MODE = "light"
-        print "light mode activated"
+        print_notify "Light mode activated."
     }
-        # rebuild nixos config to apply themes
-        print "Rebuilding nixos config to apply themes... (this may take a moment)"
-        nu $"($env.HOME)/rebuild.nu"
 
-    print "Theme switch completed!"
-
-    if (which dunstify | is-not-empty) {
-        ^dunstify "Theme Switch" $"Switched to ($new_theme) theme."
-    }
+    print_notify($"Theme switch to ($new_theme) completed!")
 }
 
-# check current theme
-def current-theme [] {
-    let theme_file = $"($env.HOME)/nixos/modules/common/theme.nix"
-    try {
-        let content = open $theme_file
-        if ($content | str contains "is_dark = true;") {
-            "dark"
-        } else {
-            "light"
-        }
-    } catch {
-        "light"
+def print_notify [message: string] {
+    print $"[Theme Switcher]: ($message)"
+    if (which dunstify | is-not-empty) {
+        ^dunstify "[Theme Switcher]" $"($message)"
     }
+
 }
