@@ -1,8 +1,8 @@
 { config, lib, pkgs, ... }: let
-  inherit (lib) enabled mkIf;
+  inherit (lib) disabled mkIf;
 in {
   home-manager.sharedModules = mkIf config.isDesktopNotWsl [{
-    programs.alacritty = enabled {
+    programs.alacritty = disabled {
       theme    = config.theme.alacritty;
       settings = {
         window.decorations = "None";
@@ -15,11 +15,11 @@ in {
     };
 
     # Desktop entry for Zellij in Fuzzel.
-    xdg.desktopEntries.zellij-alacritty = {
-      name     = "Zellij Alacritty";
-      icon     = "Alacritty";
-      exec     = "alacritty -e ${pkgs.zellij}/bin/zellij";
-      terminal = false;
-    };
+    # xdg.desktopEntries.zellij-alacritty = {
+    #   name     = "Zellij Alacritty";
+    #   icon     = "Alacritty";
+    #   exec     = "alacritty -e ${pkgs.zellij}/bin/zellij";
+    #   terminal = false;
+    # };
   }];
 }
