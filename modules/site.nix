@@ -13,6 +13,7 @@ in {
     };
 
     virtualHosts."nerd.${fqdn}" = merge config.services.nginx.sslTemplate {
+      root = "${root}/nerd";
 
       locations."/" = {
         tryFiles = "$uri $uri.html $uri/index.html =404";
