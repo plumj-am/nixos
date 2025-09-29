@@ -14,32 +14,19 @@ in
       format  = "[┏━](success_color)$status[━](success_color) [\\[$username$hostname\\]](hostname_color) $directory [━┫](success_color) \${custom.jj} [┣━](success_color) $cmd_duration$line_break$character";
 			# old for reference
       # format  = "[┏━](success_color)$status[━](success_color) $hostname $directory [━┫](success_color) $git_branch$git_state$git_status$git_metrics [┣━━┫](success_color) \${custom.jj} [┣━](success_color) $cmd_duration$line_break$character";
-      palette = config.theme.starship;
+      palette = "custom";
 
-      palettes.light_theme = {
-        username_color   = "#2d2d2d";
-        hostname_color   = "#1f5f99";
-        directory_color  = "#7c3aed";
-        success_color    = "#059669";
-        error_color      = "#dc2626";
-        branch_color     = "#374151";
-        status_highlight = "#b45309";
-        status_color     = "#1e40af";
-        state_color      = "#6b7280";
-        duration_color   = "#dc2626";
-      };
-
-      palettes.dark_theme = {
-        username_color   = "white";
-        hostname_color   = "green";
-        directory_color  = "blue";
-        success_color    = "blue";
-        error_color      = "red";
-        branch_color     = "cyan";
-        status_highlight = "218";
-        status_color     = "cyan";
-        state_color      = "bright-black";
-        duration_color   = "yellow";
+      palettes.custom = with config.theme.withHash; {
+        username_color   = base07;
+        hostname_color   = base0B;
+        directory_color  = base0D;
+        success_color    = base0D;
+        error_color      = base08;
+        branch_color     = base0C;
+        status_highlight = base09;
+        status_color     = base0C;
+        state_color      = base01;
+        duration_color   = base0A;
       };
 
 			username.show_always = true;

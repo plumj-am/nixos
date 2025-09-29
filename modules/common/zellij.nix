@@ -26,203 +26,214 @@ in {
       exitShellOnExit       = false;
 
       settings = {
-      theme = config.theme.zellij;
+        themes.custom = {
+          bg     = base00;
+          fg     = base07;
+          red    = base08;
+          orange = base09;
+          yellow = base0A;
+          green  = base0B;
+          aqua   = base0C;
+          blue   = base0D;
+          purple = base0E;
+          brown  = base0F;
+        };
 
-      default_shell     = "nu";
-      scrollback_editor = config.environment.variables.EDITOR;
+        default_shell     = "nu";
+        scrollback_editor = config.environment.variables.EDITOR;
 
-      default_layout        = "plumjam";
-      session_serialization = true;
-      auto_layout           = true;
-      mirror_session        = false;
-      on_force_close        = "detach";
+        default_layout        = "plumjam";
+        session_serialization = true;
+        auto_layout           = true;
+        mirror_session        = false;
+        on_force_close        = "detach";
 
-      pane_frames       = false;
-      simplified_ui     = true;
-      show_startup_tips = false;
+        pane_frames       = false;
+        simplified_ui     = true;
+        show_startup_tips = false;
 
-      mouse_mode         = false;
-      scroll_buffer_size = 5000;
+        mouse_mode         = false;
+        scroll_buffer_size = 5000;
 
-      copy_on_select = false;
-      copy_clipboard = "system";
+        copy_on_select = false;
+        copy_clipboard = "system";
 
-      default_mode = "locked";
+        default_mode = "locked";
 
-      pane_viewport_serialization   = true;
-      scrollback_lines_to_serialize = 5000;
+        pane_viewport_serialization   = true;
+        scrollback_lines_to_serialize = 5000;
 
-      env.EDITOR = config.environment.variables.EDITOR;
-			env.SHELL  = "nu";
+        env.EDITOR = config.environment.variables.EDITOR;
+  			env.SHELL  = "nu";
 
-      simplified_ui_default_plugin     = "compact-bar";
-      ui.pane_frames.hide_session_name = false;
-			ui.pane_frames.rounded_corners   = false;
+        simplified_ui_default_plugin     = "compact-bar";
+        ui.pane_frames.hide_session_name = false;
+  			ui.pane_frames.rounded_corners   = false;
 
-      keybinds = {
-        _props.clear-defaults = true;
+        keybinds = {
+          _props.clear-defaults = true;
 
-        # Locked mode.
-        locked._children = [
-          (key "Ctrl g" { SwitchToMode._args = [ "normal" ]; })
+          # Locked mode.
+          locked._children = [
+            (key "Ctrl g" { SwitchToMode._args = [ "normal" ]; })
+          ];
+
+          # Normal mode.
+          normal._children = [
+            (key "Esc"    { SwitchToMode._args = [ "locked" ]; })
+            (key "Enter"  { SwitchToMode._args = [ "normal" ]; })
+            (key "Ctrl w" { SwitchToMode._args = [ "pane" ]; })
+            (key "Ctrl t" { SwitchToMode._args = [ "tab" ]; })
+            (key "Ctrl r" { SwitchToMode._args = [ "resize" ]; })
+            (key "Ctrl s" { SwitchToMode._args = [ "scroll" ]; })
+            (key "Ctrl o" { SwitchToMode._args = [ "session" ]; })
+            (key "Ctrl h" { MoveFocus = [ "Left" ];  SwitchToMode._args = [ "locked" ]; })
+            (key "Ctrl j" { MoveFocus = [ "Down" ];  SwitchToMode._args = [ "locked" ]; })
+            (key "Ctrl k" { MoveFocus = [ "Up" ];    SwitchToMode._args = [ "locked" ]; })
+            (key "Ctrl l" { MoveFocus = [ "Right" ]; SwitchToMode._args = [ "locked" ]; })
+            (key "q"      { GoToTab._args = [ 1 ];})
+            (key "w"      { GoToTab._args = [ 2 ];})
+            (key "e"      { GoToTab._args = [ 3 ];})
+            (key "r"      { GoToTab._args = [ 4 ];})
+            (key "t"      { GoToTab._args = [ 5 ];})
+            (key "y"      { GoToTab._args = [ 6 ];})
+            (key "u"      { GoToTab._args = [ 7 ];})
+            (key "i"      { GoToTab._args = [ 8 ];})
+            (key "o"      { GoToTab._args = [ 9 ];})
+            (key "H"      { GoToPreviousTab = {}; })
+            (key "L"      { GoToNextTab = {}; })
+            (keyPlugin "Ctrl f" [{
+              LaunchOrFocusPlugin = {
+                _args = [ "https://github.com/karimould/zellij-forgot/releases/latest/download/zellij_forgot.wasm" ];
+                floating = true;
+              }; SwitchToMode._args = [ "locked" ];
+            }])
+            (keyPlugin "Ctrl j" [{
+              Run = {
+                _args         = [ "lazyjj" ];
+                close_on_exit = true;
+                floating      = true;
+                x             = "5%";
+                y             = "5%";
+                width         = "90%";
+                height        = "90%";
+              }; SwitchToMode._args = [ "locked" ];
+            }])
+            (keyPlugin "Ctrl n" [{
+              Run = {
+                _args         = [ "nu" ];
+                close_on_exit = true;
+                floating      = true;
+                x             = "5%";
+                y             = "5%";
+                width         = "90%";
+                height        = "90%";
+              }; SwitchToMode._args = [ "locked" ];
+            }])
+            (keyPlugin "Ctrl p" [{
+              LaunchOrFocusPlugin = {
+                _args = [ "https://github.com/laperlej/zellij-sessionizer/releases/latest/download/zellij-sessionizer.wasm" ];
+                floating = true;
+                move_to_focused_tab = true;
+                cwd = "/";
+                root_dirs = "/home/jam;/home/jam/projects;/home/jam/notes";
+                session_layout = "plumjam";
+              }; SwitchToMode._args = [ "locked" ];
+            }])
+          ];
+
+          # Pane mode.
+          pane._children = [
+            (key "Esc"   { SwitchToMode._args = [ "locked" ];})
+            (key "Enter" { SwitchToMode._args = [ "normal" ];})
+            (key "h"     { MoveFocus = [ "Left" ];})
+            (key "j"     { MoveFocus = [ "Up" ];})
+            (key "k"     { MoveFocus = [ "Down" ];})
+            (key "l"     { MoveFocus = [ "Right" ];})
+            (key "n"     { NewPane = {};})
+            (key "d"     { NewPane._args = [ "Down" ];})
+            (key "r"     { NewPane._args = [ "Right" ];})
+            (key "x"     { CloseFocus = {};})
+            (key "f"     { ToggleFocusFullscreen = {};})
+            (key "z"     { TogglePaneFrames = {};})
+            (key "w"     { ToggleFloatingPanes = {};})
+          ];
+
+          # Tab mode.
+          tab._children = [
+            (key "Esc"   { SwitchToMode._args = [ "locked" ]; })
+            (key "Enter" { SwitchToMode._args = [ "normal" ]; })
+            (key "h"     { MoveTab._args = [ "Left" ]; })
+            (key "l"     { MoveTab._args = [ "Right" ]; })
+            (key "n"     { NewTab = {}; })
+            (key "x"     { CloseTab = {}; })
+            (key "1"     { GoToTab._args = [ 1 ]; })
+            (key "2"     { GoToTab._args = [ 2 ]; })
+            (key "3"     { GoToTab._args = [ 3 ]; })
+            (key "4"     { GoToTab._args = [ 4 ]; })
+            (key "5"     { GoToTab._args = [ 5 ]; })
+            (keyPlugin "r" [
+              { SwitchToMode._args = [ "RenameTab" ]; }
+              { TabNameInput._args = [ 0 ]; }
+            ])
+          ];
+
+          # Resize mode.
+          resize._children = [
+            (key "Esc"   { SwitchToMode._args = [ "locked" ]; })
+            (key "Enter" { SwitchToMode._args = [ "normal" ]; })
+            (key "h"     { Resize._args = [ "Increase Left" ]; })
+            (key "j"     { Resize._args = [ "Increase Down" ]; })
+            (key "k"     { Resize._args = [ "Increase Up" ]; })
+            (key "l"     { Resize._args = [ "Increase Right" ]; })
+            (key "H"     { Resize._args = [ "Decrease Left" ]; })
+            (key "J"     { Resize._args = [ "Decrease Down" ]; })
+            (key "K"     { Resize._args = [ "Decrease Up" ]; })
+            (key "L"     { Resize._args = [ "Decrease Right" ]; })
+            (key "+"     { Resize._args = [ "Increase" ]; })
+            (key "-"     { Resize._args = [ "Decrease" ]; })
+          ];
+
+          # Scroll mode.
+          scroll._children = [
+            (key "Esc"   { SwitchToMode._args = [ "locked" ]; })
+            (key "Enter" { SwitchToMode._args = [ "normal" ]; })
+            (key "j"     { ScrollDown = {}; })
+            (key "k"     { ScrollUp = {}; })
+            (key "d"     { HalfPageScrollDown = {}; })
+            (key "u"     { HalfPageScrollUp = {}; })
+            (key "e"     { EditScrollback = {}; })
+          ];
+
+          # Session mode.
+          session._children = [
+            (key "Esc"   { SwitchToMode._args = [ "locked" ]; })
+            (key "Enter" { SwitchToMode._args = [ "normal" ]; })
+            (key "d"     { Detach = {}; })
+            (keyPlugin "w" [
+              { SwitchToMode._args = [ "normal" ]; }
+              { LaunchOrFocusPlugin._args = [ "session-manager" "true" ]; }
+            ])
+          ];
+
+          # Rename tab mode.
+          RenameTab._children = [
+            (key "Esc"         { SwitchToMode._args = [ "locked" ]; })
+            (keyPlugin "Enter" [ { SwitchToMode._args = [ "locked" ]; }
+            ])
+          ];
+
+        };
+
+        load_plugins = [
+          "https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm"
+          "https://github.com/karimould/zellij-forgot/releases/latest/download/zellij_forgot.wasm"
+          "https://github.com/laperlej/zellij-sessionizer/releases/latest/download/zellij-sessionizer.wasm"
         ];
-
-        # Normal mode.
-        normal._children = [
-          (key "Esc"    { SwitchToMode._args = [ "locked" ]; })
-          (key "Enter"  { SwitchToMode._args = [ "normal" ]; })
-          (key "Ctrl w" { SwitchToMode._args = [ "pane" ]; })
-          (key "Ctrl t" { SwitchToMode._args = [ "tab" ]; })
-          (key "Ctrl r" { SwitchToMode._args = [ "resize" ]; })
-          (key "Ctrl s" { SwitchToMode._args = [ "scroll" ]; })
-          (key "Ctrl o" { SwitchToMode._args = [ "session" ]; })
-          (key "Ctrl h" { MoveFocus = [ "Left" ];  SwitchToMode._args = [ "locked" ]; })
-          (key "Ctrl j" { MoveFocus = [ "Down" ];  SwitchToMode._args = [ "locked" ]; })
-          (key "Ctrl k" { MoveFocus = [ "Up" ];    SwitchToMode._args = [ "locked" ]; })
-          (key "Ctrl l" { MoveFocus = [ "Right" ]; SwitchToMode._args = [ "locked" ]; })
-          (key "q"      { GoToTab._args = [ 1 ];})
-          (key "w"      { GoToTab._args = [ 2 ];})
-          (key "e"      { GoToTab._args = [ 3 ];})
-          (key "r"      { GoToTab._args = [ 4 ];})
-          (key "t"      { GoToTab._args = [ 5 ];})
-          (key "y"      { GoToTab._args = [ 6 ];})
-          (key "u"      { GoToTab._args = [ 7 ];})
-          (key "i"      { GoToTab._args = [ 8 ];})
-          (key "o"      { GoToTab._args = [ 9 ];})
-          (key "H"      { GoToPreviousTab = {}; })
-          (key "L"      { GoToNextTab = {}; })
-          (keyPlugin "Ctrl f" [{
-            LaunchOrFocusPlugin = {
-              _args = [ "https://github.com/karimould/zellij-forgot/releases/latest/download/zellij_forgot.wasm" ];
-              floating = true;
-            }; SwitchToMode._args = [ "locked" ];
-          }])
-          (keyPlugin "Ctrl j" [{
-            Run = {
-              _args         = [ "lazyjj" ];
-              close_on_exit = true;
-              floating      = true;
-              x             = "5%";
-              y             = "5%";
-              width         = "90%";
-              height        = "90%";
-            }; SwitchToMode._args = [ "locked" ];
-          }])
-          (keyPlugin "Ctrl n" [{
-            Run = {
-              _args         = [ "nu" ];
-              close_on_exit = true;
-              floating      = true;
-              x             = "5%";
-              y             = "5%";
-              width         = "90%";
-              height        = "90%";
-            }; SwitchToMode._args = [ "locked" ];
-          }])
-          (keyPlugin "Ctrl p" [{
-            LaunchOrFocusPlugin = {
-              _args = [ "https://github.com/laperlej/zellij-sessionizer/releases/latest/download/zellij-sessionizer.wasm" ];
-              floating = true;
-              move_to_focused_tab = true;
-              cwd = "/";
-              root_dirs = "/home/jam;/home/jam/projects;/home/jam/notes";
-              session_layout = "plumjam";
-            }; SwitchToMode._args = [ "locked" ];
-          }])
-        ];
-
-        # Pane mode.
-        pane._children = [
-          (key "Esc"   { SwitchToMode._args = [ "locked" ];})
-          (key "Enter" { SwitchToMode._args = [ "normal" ];})
-          (key "h"     { MoveFocus = [ "Left" ];})
-          (key "j"     { MoveFocus = [ "Up" ];})
-          (key "k"     { MoveFocus = [ "Down" ];})
-          (key "l"     { MoveFocus = [ "Right" ];})
-          (key "n"     { NewPane = {};})
-          (key "d"     { NewPane._args = [ "Down" ];})
-          (key "r"     { NewPane._args = [ "Right" ];})
-          (key "x"     { CloseFocus = {};})
-          (key "f"     { ToggleFocusFullscreen = {};})
-          (key "z"     { TogglePaneFrames = {};})
-          (key "w"     { ToggleFloatingPanes = {};})
-        ];
-
-        # Tab mode.
-        tab._children = [
-          (key "Esc"   { SwitchToMode._args = [ "locked" ]; })
-          (key "Enter" { SwitchToMode._args = [ "normal" ]; })
-          (key "h"     { MoveTab._args = [ "Left" ]; })
-          (key "l"     { MoveTab._args = [ "Right" ]; })
-          (key "n"     { NewTab = {}; })
-          (key "x"     { CloseTab = {}; })
-          (key "1"     { GoToTab._args = [ 1 ]; })
-          (key "2"     { GoToTab._args = [ 2 ]; })
-          (key "3"     { GoToTab._args = [ 3 ]; })
-          (key "4"     { GoToTab._args = [ 4 ]; })
-          (key "5"     { GoToTab._args = [ 5 ]; })
-          (keyPlugin "r" [
-            { SwitchToMode._args = [ "RenameTab" ]; }
-            { TabNameInput._args = [ 0 ]; }
-          ])
-        ];
-
-        # Resize mode.
-        resize._children = [
-          (key "Esc"   { SwitchToMode._args = [ "locked" ]; })
-          (key "Enter" { SwitchToMode._args = [ "normal" ]; })
-          (key "h"     { Resize._args = [ "Increase Left" ]; })
-          (key "j"     { Resize._args = [ "Increase Down" ]; })
-          (key "k"     { Resize._args = [ "Increase Up" ]; })
-          (key "l"     { Resize._args = [ "Increase Right" ]; })
-          (key "H"     { Resize._args = [ "Decrease Left" ]; })
-          (key "J"     { Resize._args = [ "Decrease Down" ]; })
-          (key "K"     { Resize._args = [ "Decrease Up" ]; })
-          (key "L"     { Resize._args = [ "Decrease Right" ]; })
-          (key "+"     { Resize._args = [ "Increase" ]; })
-          (key "-"     { Resize._args = [ "Decrease" ]; })
-        ];
-
-        # Scroll mode.
-        scroll._children = [
-          (key "Esc"   { SwitchToMode._args = [ "locked" ]; })
-          (key "Enter" { SwitchToMode._args = [ "normal" ]; })
-          (key "j"     { ScrollDown = {}; })
-          (key "k"     { ScrollUp = {}; })
-          (key "d"     { HalfPageScrollDown = {}; })
-          (key "u"     { HalfPageScrollUp = {}; })
-          (key "e"     { EditScrollback = {}; })
-        ];
-
-        # Session mode.
-        session._children = [
-          (key "Esc"   { SwitchToMode._args = [ "locked" ]; })
-          (key "Enter" { SwitchToMode._args = [ "normal" ]; })
-          (key "d"     { Detach = {}; })
-          (keyPlugin "w" [
-            { SwitchToMode._args = [ "normal" ]; }
-            { LaunchOrFocusPlugin._args = [ "session-manager" "true" ]; }
-          ])
-        ];
-
-        # Rename tab mode.
-        RenameTab._children = [
-          (key "Esc"         { SwitchToMode._args = [ "locked" ]; })
-          (keyPlugin "Enter" [ { SwitchToMode._args = [ "locked" ]; }
-          ])
-        ];
-
-      };
-
-      load_plugins = [
-        "https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm"
-        "https://github.com/karimould/zellij-forgot/releases/latest/download/zellij_forgot.wasm"
-        "https://github.com/laperlej/zellij-sessionizer/releases/latest/download/zellij-sessionizer.wasm"
-      ];
-      plugins.tab-bar.path        = "tab-bar";
-			plugins.status-bar.path     = "status-bar";
-			plugins.strider.path        = "strider";
-			plugins.compact-bar.path    = "compact-bar";
+        plugins.tab-bar.path        = "tab-bar";
+  			plugins.status-bar.path     = "status-bar";
+  			plugins.strider.path        = "strider";
+  			plugins.compact-bar.path    = "compact-bar";
 
     };
 

@@ -51,18 +51,6 @@ let
   colors = if is_dark then gruvbox_colors.dark else gruvbox_colors.light;
 
   themes = {
-    nvim.dark       = "gruvbox-material";
-    nvim.light      = "gruvbox-material";
-
-    alacritty.dark  = "gruvbox_material_hard_dark";
-    alacritty.light = "gruvbox_material_hard_light";
-
-    zellij.dark     = "gruvbox-dark";
-    zellij.light    = "gruvbox-light";
-
-    starship.dark   = "dark_theme";
-    starship.light  = "light_theme";
-
     vivid.dark      = "gruvbox-dark";
     vivid.light     = "gruvbox-light";
 
@@ -156,10 +144,6 @@ in
 
 
     # Program-specific theme names.
-    nvim      = get_theme "nvim";
-    alacritty = get_theme "alacritty";
-    zellij    = get_theme "zellij";
-    starship  = get_theme "starship";
     vivid     = get_theme "vivid";
     nushell   = get_theme "nushell";
     helix     = get_theme "helix";
