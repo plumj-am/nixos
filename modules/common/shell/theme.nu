@@ -62,6 +62,10 @@ def toggle-theme [theme?: string] {
         nu $"($env.HOME)/rebuild.nu"
 
     print "Theme switch completed!"
+
+    if (which dunstify | is-not-empty) {
+        ^dunstify "Theme Switch" $"Switched to ($new_theme) theme."
+    }
 }
 
 # check current theme
