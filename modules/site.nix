@@ -19,7 +19,7 @@ in {
         tryFiles = "$uri $uri.html $uri/index.html =404";
         extraConfig = ''
           proxy_hide_header Content-Security-Policy;
-          add_header Content-Security-Policy "script-src 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain} kit.fontawesome.com; script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain} kit.fontawesome.com; img-src 'self' data: https: ghchart.rshah.org;" always;
+          add_header Content-Security-Policy "script-src 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain} kit.fontawesome.com https://kit.fontawesome.com; script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain} kit.fontawesome.com https://kit.fontawesome.com; img-src 'self' data: https: ghchart.rshah.org;" always;
           add_header X-Frame-Options DENY always;
           add_header X-Content-Type-Options nosniff always;
           add_header X-XSS-Protection "1; mode=block" always;
@@ -56,7 +56,7 @@ in {
         tryFiles = "$uri $uri.html $uri/index.html =404";
         extraConfig = ''
           proxy_hide_header Content-Security-Policy;
-          add_header Content-Security-Policy "script-src 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain} kit.fontawesome.com; script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain} kit.fontawesome.com; img-src 'self' data: https: ghchart.rshah.org;" always;
+          add_header Content-Security-Policy "script-src 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain} kit.fontawesome.com https://kit.fontawesome.com; script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain} kit.fontawesome.com https://kit.fontawesome.com; img-src 'self' data: https: ghchart.rshah.org;" always;
           add_header X-Frame-Options DENY always;
           add_header X-Content-Type-Options nosniff always;
           add_header X-XSS-Protection "1; mode=block" always;
