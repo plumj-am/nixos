@@ -17,23 +17,26 @@ in {
       text = /* nu */ ''
         #!/usr/bin/env nu
         def print-notify [message: string, progress: int = -1] {
-            print $"[Rebuild]: ($message)"
-            if (which dunstify | is-not-empty) {
-                let base_args = ["--appname=Rebuild" "--replace=1001"]
-                let args = if $progress >= 0 {
-                    $base_args | append ["--hints" $"int:value:($progress)"]
-                } else {
-                    $base_args
-                }
-
-                if ($message | str downcase | str contains "error") {
-                    ^dunstify ...$args --urgency=critical --timeout=30000 "Error" $"($message)"
-                } else {
-                    ^dunstify ...$args "Status" $"($message)"
-                }
+          print $"(ansi purple)[Rebuilder] ($message)"
+          if (which dunstify | is-not-empty) {
+            let base_args = ["--appname=Rebuilder" "--replace=1003"]
+            let args = if $progress >= 0 {
+              $base_args | append ["--hints" $"int:value:($progress)"]
+            } else {
+              $base_args
             }
-        }
 
+            # Use persistent notifications (timeout=0) when in-progress.
+            # Use short timeout for completion messages (progress=100).
+            let timeout = if $progress >= 0 and $progress < 100 { 0 } else { 15000 }
+
+            if ($message | str downcase | str contains "error") {
+              ^dunstify ...$args --urgency=critical --timeout=30000 "Error" $"($message)"
+            } else {
+              ^dunstify ...$args --urgency=normal --timeout=($timeout) "Status" $"($message)"
+            }
+          }
+        }
 
         def --wrapped main [
           host: string = ""    # The host to build.
@@ -43,12 +46,12 @@ in {
         ]: nothing -> nothing {
           let host = if ($host | is-not-empty) {
             if $host != (hostname) and not $remote {
-              print-notify $"Error: Attempted to build local configuration for hostname that does not match the local machine."
+              print-notify $"Error: Building local configuration for hostname that does not match the local machine."
               exit 1
             }
             $host
           } else if $remote {
-            print-notify $"Error: Hostname not specified for remote deployment."
+            print-notify "Error: Hostname not specified for remote deployment."
             exit 1
           } else {
             (hostname)
@@ -66,14 +69,13 @@ in {
             "--accept-flake-config" # Avoid asking for y/n approval for all settings.
           ] | append $arguments
 
-          # Add target-host for remote deployments
+          # Add target-host for remote deployments.
           let final_args = if $remote {
             $base_args | append ["--target-host" $"root@($host)"]
           } else {
             $base_args
           }
 
-          # Handle rollback differently for nh.
           let command = if $rollback {
             "rollback"
           } else {
@@ -86,29 +88,22 @@ in {
             $final_args
           }
 
-          # Execute nh command.
-          # Execute build and activation.
-          let action = if $remote { $"Deploying to ($host): " } else { "Building locally:" }
+          # Execute final command.
+          let action = if $remote { $"Deploying to: ($host)" } else { "Building locally:" }
           let platform = if $os == "Darwin" { "Darwin" } else { "NixOS" }
-          print-notify $"($action) ($platform) configuration for ($host)..." 0
+          print-notify $"($action) ($platform). Configuration for: ($host)." 0
 
           if $remote {
-            try {
-              print-notify "Starting remote build..." 25
-              NH_BYPASS_ROOT_CHECK=true NH_NO_CHECKS=true nh $command ...$final_args
-            } catch { |e|
-              print-notify "An error occurred during the rebuild. Run `rebuild` manually."
-              exit 1
-            }
+            NH_BYPASS_ROOT_CHECK=true NH_NO_CHECKS=true nh $command ...$final_args
           } else {
-            try {
-              sudo NH_BYPASS_ROOT_CHECK=true NH_NO_CHECKS=true nh $command ...$final_args
-            } catch { |e|
-              print-notify "An error occurred during the rebuild. Run `rebuild` manually."
-            }
+            sudo NH_BYPASS_ROOT_CHECK=true NH_NO_CHECKS=true nh $command ...$final_args
           }
 
-          print-notify "Rebuild succeeded." 100
+          if $rollback {
+            print-notify $"Rollback for ($host) succeeded." 100
+          } else {
+            print-notify $"Rebuild for ($host) succeeded." 100
+          }
         }
 
         # Rollback wrapper.
