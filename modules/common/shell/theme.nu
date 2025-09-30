@@ -1,17 +1,21 @@
 def print-notify [message: string, progress: int = -1] {
-    print $"[Theme Switch]: ($message)"
+    print $"(ansi purple)[Theme Switcher] ($message)"
     if (which dunstify | is-not-empty) {
-        let base_args = ["--appname=Theme Switch" "--replace=1002"]
+        let base_args = ["--appname=Theme Switcher" "--replace=1002"]
         let args = if $progress >= 0 {
             $base_args | append ["--hints" $"int:value:($progress)"]
         } else {
             $base_args
         }
 
+        # Use persistent notifications (timeout=0) when in-progress.
+        # Use short timeout for completion messages (progress=100).
+        let timeout = if $progress >= 0 and $progress < 100 { 0 } else { 15000 }
+
         if ($message | str downcase | str contains "error") {
             ^dunstify ...$args --urgency=critical --timeout=30000 "Error" $"($message)"
         } else {
-            ^dunstify ...$args --urgency=normal --timeout=30000 "Status" $"($message)"
+            ^dunstify ...$args --urgency=normal --timeout=($timeout) "Status" $"($message)"
         }
     }
 }
@@ -82,11 +86,4 @@ def toggle-theme [theme?: string] {
     nu $"($env.HOME)/rebuild.nu"
 
     print-notify $"Theme switch to ($new_theme) completed!" 100
-}
-
-def print_notify [message: string] {
-    print $"[Theme Switcher]: ($message)"
-    if (which dunstify | is-not-empty) {
-        ^dunstify "[Theme Switcher]" $"($message)"
-    }
 }
