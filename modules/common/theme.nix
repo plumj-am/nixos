@@ -2,10 +2,8 @@
 let
   inherit (lib) mkOption types mkIf;
 
-  # Global theme configuration - can be overridden by specialisations.
-  is_dark = if config.themeOverride != null
-           then config.themeOverride
-           else false;  # Default to light.
+  # Global theme configuration - use `tt dark` or `tt light` to switch.
+  is_dark = true;
 
   # Gruvbox hard Base16 color definitions.
   gruvbox_colors = {
@@ -51,8 +49,20 @@ let
   colors = if is_dark then gruvbox_colors.dark else gruvbox_colors.light;
 
   themes = {
-    vivid.dark      = "gruvbox-dark-hard";
-    vivid.light     = "gruvbox-light-hard";
+    nvim.dark       = "gruvbox-material";
+    nvim.light      = "gruvbox-material";
+
+    alacritty.dark  = "gruvbox_material_hard_dark";
+    alacritty.light = "gruvbox_material_hard_light";
+
+    zellij.dark     = "gruvbox-dark";
+    zellij.light    = "gruvbox-light";
+
+    starship.dark   = "dark_theme";
+    starship.light  = "light_theme";
+
+    vivid.dark      = "gruvbox-dark";
+    vivid.light     = "gruvbox-light";
 
     nushell.dark    = "dark-theme";
     nushell.light   = "light-theme";
@@ -61,11 +71,11 @@ let
     helix.light     = "gruvbox_light_hard";
 
     gtk.dark = {
-      name    = "Adwaita-dark";
+      name = "Adwaita-dark";
       package = pkgs.gnome-themes-extra;
     };
     gtk.light = {
-      name    = "Adwaita";
+      name = "Adwaita";
       package = pkgs.gnome-themes-extra;
     };
 
@@ -88,7 +98,7 @@ let
     };
   };
 
-  # Helpers.
+  # helpers
   get_theme = program: if is_dark then themes.${program}.dark else themes.${program}.light;
   variant   = if is_dark then "dark" else "light";
 in
@@ -98,13 +108,6 @@ in
     type        = types.attrs;
     default     = {};
     description = "Global theme configuration";
-  };
-
-  # Separate option for specialisation override.
-  options.themeOverride = mkOption {
-    type = types.nullOr types.bool;
-    default = null;
-    description = "Force dark or light theme (used by specialisations)";
   };
 
   # Set the theme values.
@@ -144,6 +147,10 @@ in
 
 
     # Program-specific theme names.
+    nvim      = get_theme "nvim";
+    alacritty = get_theme "alacritty";
+    zellij    = get_theme "zellij";
+    starship  = get_theme "starship";
     vivid     = get_theme "vivid";
     nushell   = get_theme "nushell";
     helix     = get_theme "helix";
@@ -154,9 +161,8 @@ in
     themes = themes;
   };
 
-  # Export theme info as environment variable.
-  config.environment.variables.THEME_MODE        = variant;
-  config.environment.sessionVariables.THEME_MODE = variant;
+  # Export theme info as env var.
+  config.environment.variables.THEME_MODE = variant;
 
   config.home-manager.sharedModules = mkIf config.isDesktopNotWsl [{
     xdg.desktopEntries.dark-mode = {
@@ -170,5 +176,4 @@ in
       terminal = false;
     };
   }];
-
 }
