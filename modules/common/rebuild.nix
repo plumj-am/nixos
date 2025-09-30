@@ -16,16 +16,24 @@ in {
       executable = true;
       text = /* nu */ ''
         #!/usr/bin/env nu
-        def print-notify [message: string] {
+        def print-notify [message: string, progress: int = -1] {
             print $"[Rebuild]: ($message)"
             if (which dunstify | is-not-empty) {
-                if ($message | str downcase | str contains "error") {
-                    ^dunstify --appname="Rebuild" --urgency=critical --timeout=30000 "Error" $"($message)"
+                let base_args = ["--appname=Rebuild" "--replace=1001"]
+                let args = if $progress >= 0 {
+                    $base_args | append ["--hints" $"int:value:($progress)"]
                 } else {
-                    ^dunstify --appname="Rebuild" "Status" $"($message)"
+                    $base_args
+                }
+
+                if ($message | str downcase | str contains "error") {
+                    ^dunstify ...$args --urgency=critical --timeout=30000 "Error" $"($message)"
+                } else {
+                    ^dunstify ...$args "Status" $"($message)"
                 }
             }
         }
+
 
         def --wrapped main [
           host: string = ""    # The host to build.
@@ -79,15 +87,18 @@ in {
           }
 
           # Execute nh command.
+          # Execute build and activation.
           let action = if $remote { $"Deploying to ($host): " } else { "Building locally:" }
           let platform = if $os == "Darwin" { "Darwin" } else { "NixOS" }
-          print-notify $"($action) ($platform) configuration for ($host)..."
+          print-notify $"($action) ($platform) configuration for ($host)..." 0
 
           if $remote {
             try {
+              print-notify "Starting remote build..." 25
               NH_BYPASS_ROOT_CHECK=true NH_NO_CHECKS=true nh $command ...$final_args
             } catch { |e|
               print-notify "An error occurred during the rebuild. Run `rebuild` manually."
+              exit 1
             }
           } else {
             try {
@@ -96,6 +107,8 @@ in {
               print-notify "An error occurred during the rebuild. Run `rebuild` manually."
             }
           }
+
+          print-notify "Rebuild succeeded." 100
         }
 
         # Rollback wrapper.
