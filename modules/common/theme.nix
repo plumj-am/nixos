@@ -51,8 +51,8 @@ let
   colors = if is_dark then gruvbox_colors.dark else gruvbox_colors.light;
 
   themes = {
-    vivid.dark      = "gruvbox-dark";
-    vivid.light     = "gruvbox-light";
+    vivid.dark      = "gruvbox-dark-hard";
+    vivid.light     = "gruvbox-light-hard";
 
     nushell.dark    = "dark-theme";
     nushell.light   = "light-theme";
@@ -61,11 +61,11 @@ let
     helix.light     = "gruvbox_light_hard";
 
     gtk.dark = {
-      name = "Adwaita-dark";
+      name    = "Adwaita-dark";
       package = pkgs.gnome-themes-extra;
     };
     gtk.light = {
-      name = "Adwaita";
+      name    = "Adwaita";
       package = pkgs.gnome-themes-extra;
     };
 
