@@ -91,12 +91,22 @@ in {
           # Execute final command.
           let action = if $remote { $"Deploying to: ($host)" } else { "Building locally:" }
           let platform = if $os == "Darwin" { "Darwin" } else { "NixOS" }
-          print-notify $"($action) ($platform). Configuration for: ($host)." 0
+          print-notify $"($action) ($platform). Configuration for: ($host)." 50
 
           if $remote {
-            NH_BYPASS_ROOT_CHECK=true NH_NO_CHECKS=true nh $command ...$final_args
+            try {
+              NH_BYPASS_ROOT_CHECK=true NH_NO_CHECKS=true nh $command ...$final_args
+            } catch { |e|
+              print-notify "Error: Rebuild failed, run manually in a terminal."
+              exit 1
+            }
           } else {
-            sudo NH_BYPASS_ROOT_CHECK=true NH_NO_CHECKS=true nh $command ...$final_args
+            try {
+              sudo NH_BYPASS_ROOT_CHECK=true NH_NO_CHECKS=true nh $command ...$final_args
+            } catch { |e|
+              print-notify "Error: Rebuild failed, run manually in a terminal."
+              exit 1
+            }
           }
 
           if $rollback {
