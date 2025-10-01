@@ -7,6 +7,16 @@ in {
       exec     = ''nu /home/jam/rebuild.nu'';
       terminal = false;
     };
+    xdg.desktopEntries.rebuild-plum = mkIf config.isDesktopNotWsl {
+      name     = "Rebuild plum";
+      exec     = ''nu /home/jam/rebuild.nu --remote plum'';
+      terminal = false;
+    };
+    xdg.desktopEntries.rebuild-kiwi = mkIf config.isDesktopNotWsl {
+      name     = "Rebuild kiwi";
+      exec     = ''nu /home/jam/rebuild.nu --remote kiwi'';
+      terminal = false;
+    };
     xdg.desktopEntries.rollback = mkIf config.isDesktopNotWsl {
       name     = "Rollback";
       exec     = ''nu /home/jam/rebuild.nu --rollback'';
