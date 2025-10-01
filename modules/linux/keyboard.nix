@@ -1,4 +1,6 @@
-{ pkgs, ... }: {
+{ pkgs, lib, config, ... }: let
+  inherit (lib) mkIf;
+in mkIf config.isDesktopNotWsl {
   environment.systemPackages = [ pkgs.vial ];
 
   # Udev rule for Vial keyboard access
