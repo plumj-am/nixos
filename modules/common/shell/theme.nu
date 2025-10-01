@@ -45,11 +45,11 @@ def toggle-theme [theme?: string] {
             return
         }
     } else {
-        print_notify $"Invalid theme: '($theme)'. Use 'light' or 'dark'."
+        print-notify $"Invalid theme: '($theme)'. Use 'light' or 'dark'."
         return
     }
 
-    print_notify $"Switching to ($new_theme) theme."
+    print-notify $"Switching to ($new_theme) theme."
 
     # update centralized theme file
     try {
@@ -64,7 +64,7 @@ def toggle-theme [theme?: string] {
         $updated | save $theme_file --force
         print $"updated theme to ($new_theme)"
     } catch { |e|
-        print_notify $"Failed to switch theme: ($e.msg)"
+        print-notify $"Failed to switch theme: ($e.msg)"
         return
     }
 
@@ -73,13 +73,13 @@ def toggle-theme [theme?: string] {
     if $new_theme == "dark" {
         touch $dark_mode_file
         $env.THEME_MODE = "dark"
-        print_notify "Dark mode activated."
+        print-notify "Dark mode activated."
     } else {
         if ($dark_mode_file | path exists) {
             rm $dark_mode_file
         }
         $env.THEME_MODE = "light"
-        print_notify "Light mode activated."
+        print-notify "Light mode activated."
     }
     # rebuild nixos config to apply themes
     print "Rebuilding nixos config to apply themes... (this may take a moment)"
