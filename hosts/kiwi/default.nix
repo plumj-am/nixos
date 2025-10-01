@@ -36,6 +36,11 @@ in {
           };
         };
 
+        systemd.services.sshd = {
+          after = [ "agenix.service" ];
+          wants = [ "agenix.service" ];
+        };
+
         age.secrets.password.file = ./password.age;
         users.users               = {
           root = {
