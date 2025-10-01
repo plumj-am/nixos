@@ -247,8 +247,8 @@ in {
 						plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
 							hide_frame_for_single_pane "true"
 
-							format_left   "{mode} #[fg=gray]{session} {tabs}"
-							format_center ""
+							format_left   "{mode} #[fg=gray]{session}"
+							format_center "{tabs}"
 							format_right  "{datetime}"
 							format_space  ""
 
@@ -282,8 +282,8 @@ in {
 						plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
 							hide_frame_for_single_pane "false"
 
-							format_left   "{mode} #[fg=gray]{session} {tabs}"
-							format_center ""
+							format_left   "{mode} #[fg=gray]{session}"
+							format_center "{tabs}"
 							format_right  "{datetime}"
 							format_space  ""
 
