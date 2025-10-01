@@ -101,6 +101,13 @@ let
   # helpers
   get_theme = program: if is_dark then themes.${program}.dark else themes.${program}.light;
   variant   = if is_dark then "dark" else "light";
+
+  # Convert hex to RGB array helper for colors.
+  hexToRgb = hex: let
+    r = lib.fromHexString (builtins.substring 0 2 hex);
+    g = lib.fromHexString (builtins.substring 2 2 hex);
+    b = lib.fromHexString (builtins.substring 4 2 hex);
+  in [ r g b ];
 in
 {
   # Define theme as a top-level option that all modules can access via config.theme.
@@ -122,6 +129,7 @@ in
     # Color helpers with prefixes.
     withHash    = lib.mapAttrs (name: value: "#${value}") colors;
     with0x      = lib.mapAttrs (name: value: "0x${value}") colors;
+    withRgb     = lib.mapAttrs (name: value: hexToRgb value) colors;
 
     # Shared design system.
     radius  = 4;

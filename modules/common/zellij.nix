@@ -19,24 +19,26 @@ in {
   };
 
   home-manager.sharedModules = [{
-    programs.zellij = with config.theme.withHash; mkIf config.isDesktop (enabled {
+    programs.zellij = mkIf config.isDesktop (enabled {
       enableBashIntegration = true;
 
       attachExistingSession = true;
       exitShellOnExit       = false;
 
       settings = {
-        themes.custom = {
-          bg     = base00;
-          fg     = base07;
-          red    = base08;
-          orange = base09;
-          yellow = base0A;
-          green  = base0B;
-          aqua   = base0C;
-          blue   = base0D;
-          purple = base0E;
-          brown  = base0F;
+        theme = "custom";
+        themes.custom = with config.theme.withRgb; {
+          bg      = base00;
+          fg      = base06;
+          red     = base08;
+          green   = base0B;
+          yellow  = base0A;
+          blue    = base0D;
+          magenta = base0E;
+          orange  = base09;
+          cyan    = base0C;
+          black   = base01;
+          white   = base05;
         };
 
         default_shell     = "nu";
@@ -237,7 +239,7 @@ in {
 
     };
 
-    layouts = {
+    layouts = with config.theme.withHash; {
       plumjam = ''
 				layout {
 					pane
