@@ -33,4 +33,12 @@ in mkIf (config.isDesktopNotWsl && config.isGaming) {
 
   # Audio settings for gaming
   security.rtkit.enable = true; # For low-latency audio
+
+  home-manager.sharedModules = [{
+    xdg.desktopEntries.overwatch = {
+      name     = "Overwatch";
+      exec     = "steam steam://rungameid/2357570";
+      terminal = false;
+    };
+  }];
 }
