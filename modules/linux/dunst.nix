@@ -3,11 +3,15 @@
 in mkIf config.isDesktopNotWsl {
   home-manager.sharedModules = [{
     services.dunst = with config.theme.withHash; enabled {
+      iconTheme.name    = config.theme.icons.name;
+      iconTheme.package = config.theme.icons.package;
+      iconTheme.size    = "32";
+
       settings.global = {
         dmenu              = "fuzzel --dmenu";
         show_age_threshold = 0;
         transparency       = 0;
-        separator_height   = config.theme.margin;
+        separator_height   = 0;
         padding            = config.theme.padding;
         horizontal_padding = config.theme.padding;
         frame_width        = 1;
@@ -17,23 +21,31 @@ in mkIf config.isDesktopNotWsl {
 
         font = "${config.theme.font.mono.name}:size=${toString config.theme.font.size.normal}";
 
-        urgency_low = ''
-          background = "${base0E}"
-          foreground = "${base07}"
-          timeout    = 10
-        '';
+      };
 
-        urgency_normal = ''
-          background = "${base0D}"
-          foreground = "${base07}"
-          timeout    = 20
-        '';
+      settings.urgency_low = {
+        background = "${base0E}";
+        foreground = "${base07}";
+        timeout    = 10;
+      };
 
-        urgency_critical = ''
-          background = "${base0B}"
-          foreground = "${base07}"
-          timeout    = 30
-        '';
+      settings.urgency_normal = {
+        background = "${base0D}";
+        foreground = "${base07}";
+        timeout    = 20;
+      };
+
+      settings.urgency_critical = {
+        background = "${base08}";
+        foreground = "${base07}";
+        timeout    = 30;
+      };
+
+      settings.general = {
+        appname = "*";
+        summary = "*";
+        body    = "*download*|*steam*|*now playing*|*error*|*failed*|*success*|*complete*";
+        urgency = "normal";
       };
     };
   }];
