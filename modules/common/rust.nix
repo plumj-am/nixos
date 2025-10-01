@@ -22,6 +22,7 @@ in
     pkgs.cargo-nextest
     pkgs.cargo-machete
     pkgs.cargo-workspaces
+    pkgs.cargo-outdated
     pkgs.dioxus-cli
     pkgs.kondo
   ];
