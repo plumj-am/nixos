@@ -6,11 +6,19 @@
   '';
 
   screenshot-clip = pkgs.writeShellScriptBin "screenshot-clip" ''
-    ${pkgs.grim}/bin/grim -g "$(${pkgs.slurp}/bin/slurp)" - | ${pkgs.wl-clipboard}/bin/wl-copy --type image/png
+    if ${pkgs.grim}/bin/grim -g "$(${pkgs.slurp}/bin/slurp)" - | ${pkgs.wl-clipboard}/bin/wl-copy --type image/png; then
+      ${pkgs.dunst}/bin/dunstify "Screenshot" "Area screenshot copied to clipboard" --icon=image-x-generic
+    else
+      ${pkgs.dunst}/bin/dunstify "Screenshot" "Failed to take screenshot" --icon=dialog-error --urgency=critical
+    fi
   '';
 
   screenshot-full = pkgs.writeShellScriptBin "screenshot-full" ''
-    ${pkgs.grim}/bin/grim - | ${pkgs.wl-clipboard}/bin/wl-copy --type image/png
+    if ${pkgs.grim}/bin/grim - | ${pkgs.wl-clipboard}/bin/wl-copy --type image/png; then
+      ${pkgs.dunst}/bin/dunstify "Screenshot" "Full screen screenshot copied to clipboard" --icon=image-x-generic
+    else
+      ${pkgs.dunst}/bin/dunstify "Screenshot" "Failed to take screenshot" --icon=dialog-error --urgency=critical
+    fi
   '';
 
 in mkIf config.isDesktop {
