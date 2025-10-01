@@ -280,7 +280,7 @@ in {
           }
 					pane size=1 borderless=true {
 						plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
-							hide_frame_for_single_pane "true"
+							hide_frame_for_single_pane "false"
 
 							format_left   "{mode} #[fg=gray]{session} {tabs}"
 							format_center ""
