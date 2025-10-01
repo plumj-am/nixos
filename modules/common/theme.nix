@@ -133,7 +133,7 @@ in
 
     # Shared design system.
     radius  = 4;
-    border  = 2;
+    border  = 4;
     margin  = 8;
     padding = 8;
 

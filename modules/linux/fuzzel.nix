@@ -25,7 +25,7 @@ in mkIf config.isDesktopNotWsl {
       };
       settings.border = {
         radius = radius;
-        width  = border;
+        width  = border / 2;
       };
     };
   }];

@@ -5,7 +5,8 @@ in mkIf config.isDesktopNotWsl {
 
   xdg.portal = enabled {
     config.common.default = "*";
-    extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
+
+    extraPortals   = [ pkgs.xdg-desktop-portal-hyprland ];
     configPackages = [ pkgs.hyprland ];
   };
 
@@ -36,30 +37,30 @@ in mkIf config.isDesktopNotWsl {
         ];
 
         bind = [
-          # Config and window controls
+          # Config and window controls.
           "SUPER, O, exec, hyprctl reload"
           "SUPER, Q, killactive"
           "SUPER, M, exec, hyprctl dispatch movetoworkspace special"
           "SUPER SHIFT, M, togglespecialworkspace"
 
-          # Focus windows
+          # Focus windows.
           "SUPER, H, movefocus, l"
           "SUPER, J, movefocus, d"
           "SUPER, K, movefocus, u"
           "SUPER, L, movefocus, r"
 
-          # Move windows
+          # Move windows.
           "SUPER SHIFT, H, movewindow, l"
           "SUPER SHIFT, J, movewindow, d"
           "SUPER SHIFT, K, movewindow, u"
           "SUPER SHIFT, L, movewindow, r"
           "SUPER SHIFT, Return, layoutmsg, swapwithmaster"
 
-          # Window toggles
+          # Window toggles.
           "SUPER, T, togglefloating"
           "SUPER SHIFT, F, fullscreen, 1"
 
-          # Workspaces
+          # Workspaces.
           "SUPER, 1, workspace, 1"
           "SUPER, 2, workspace, 2"
           "SUPER, 3, workspace, 3"
@@ -69,7 +70,7 @@ in mkIf config.isDesktopNotWsl {
           "SUPER, 7, workspace, 7"
           "SUPER, 8, workspace, 8"
 
-          # Move windows to workspaces
+          # Move windows to workspaces.
           "SUPER SHIFT, 1, movetoworkspace, 1"
           "SUPER SHIFT, 2, movetoworkspace, 2"
           "SUPER SHIFT, 3, movetoworkspace, 3"
@@ -79,7 +80,7 @@ in mkIf config.isDesktopNotWsl {
           "SUPER SHIFT, 7, movetoworkspace, 7"
           "SUPER SHIFT, 8, movetoworkspace, 8"
 
-          # Launcher
+          # Launcher.
           "CTRL, BackSpace, exec, fuzzel"
           "SUPER, V, exec, cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"
           "SUPER, P, exec, power-menu"
@@ -88,7 +89,7 @@ in mkIf config.isDesktopNotWsl {
           "SUPER, G, togglespecialworkspace, games"
         ];
 
-        # Resize controls
+        # Resize controls.
         binde = [
           "SUPER, equal, resizeactive, 50 0"
           "SUPER, minus, resizeactive, -50 0"
@@ -96,20 +97,24 @@ in mkIf config.isDesktopNotWsl {
           "SUPER SHIFT, minus, resizeactive, 0 -50"
         ];
 
-        # Auto-start waybar
+        # Auto-start waybar.
         exec-once = [
           "waybar"
         ];
 
 
-        # Basic appearance
+        # Basic appearance.
         general = with config.theme; {
-          gaps_in     = margin / 4;
-          gaps_out    = margin / 2;
+          gaps_in     = margin / 2;
+          gaps_out    = margin;
           border_size = border;
 
-          "col.active_border"   = "0xFF${config.theme.colors.base0D}";
-          "col.inactive_border" = "0xFF${config.theme.colors.base02}";
+
+          "col.active_border"         = "0xFF${colors.base0A}";
+          "col.nogroup_border_active" = "0xFF${colors.base0A}";
+
+          "col.inactive_border" = "0xFF${colors.base01}";
+          "col.nogroup_border"  = "0xFF${colors.base01}";
         };
 
         decoration = {
@@ -151,7 +156,7 @@ in mkIf config.isDesktopNotWsl {
           mouse_move_enables_dpms  = true;
         };
 
-        # Game window rules - Steam games only
+        # Game window rules - Steam games only.
         windowrulev2 = [
           "workspace special:games, class:^(steam_app_).*"
           "fullscreen, class:^(steam_app_).*"
@@ -160,6 +165,7 @@ in mkIf config.isDesktopNotWsl {
           "noanim, class:^(steam_app_).*"       # Disable animations for performance.
           "noblur, class:^(steam_app_).*"       # Disable blur for performance.
           "noshadow, class:^(steam_app_).*"     # Disable shadows for performance.
+          "monitor 0, class:^(steam_app_).*"    # Force games to primary monitor.
         ];
 
         input = {
@@ -167,7 +173,7 @@ in mkIf config.isDesktopNotWsl {
           follow_mouse  = 1;
           left_handed   = true;
 
-          # Disable mouse acceleration
+          # Disable mouse acceleration.
           accel_profile = "flat";
           sensitivity   = 0;
 
