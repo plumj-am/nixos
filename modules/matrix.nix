@@ -8,13 +8,13 @@ in {
   imports = [ (self + /modules/nginx.nix) ];
 
   age.secrets.matrixSigningKey = {
-    file  = ../hosts/plum/matrix-signing-key.age;
+    file  = self + /hosts/plum/matrix-signing-key.age;
     owner = "matrix-synapse";
     group = "matrix-synapse";
   };
 
   age.secrets.matrixRegistrationSecret = {
-    file  = ../hosts/plum/matrix-registration-secret.age;
+    file  = self + /hosts/plum/matrix-registration-secret.age;
     owner = "matrix-synapse";
     group = "matrix-synapse";
   };

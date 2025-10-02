@@ -14,7 +14,7 @@ in {
 
   # secrets for forgejo
   age.secrets.forgejoAdminPassword = {
-    file = ../hosts/plum/forgejo-password.age;
+    file = self + /hosts/plum/forgejo-password.age;
     owner = "forgejo";
   };
 

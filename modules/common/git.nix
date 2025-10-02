@@ -1,5 +1,10 @@
-{ config, lib, ... }: let
+{ config, lib, pkgs, ... }: let
   inherit (lib) enabled;
+
+  globalGitignore = pkgs.writeText "global-gitignore" ''
+    .claude/
+    mprocs.log
+  '';
 in {
   environment.shellAliases = {
     g   = "git";
@@ -17,12 +22,13 @@ in {
           editor = config.environment.variables.EDITOR;
         };
       };
-
+    }
+    (homeArgs: {
       programs.git = enabled {
         userName  = "PlumJam";
         userEmail = "git@plumj.am";
 
-        signing.key           = "~/.ssh/id";
+        signing.key           = "${homeArgs.config.home.homeDirectory}/.ssh/id";
         signing.signByDefault = true;
 
         lfs = enabled;
@@ -60,7 +66,7 @@ in {
           core.preloadindex = true;
           core.editor       = config.environment.variables.EDITOR;
           core.longpaths    = true;
-          core.excludesfile = "~/.global_gitignore";
+          core.excludesfile = "${globalGitignore}";
 
           diff.algorithm  = "histogram";
           diff.colorMoved = "default";
@@ -217,6 +223,6 @@ in {
             }; f'';
         };
       };
-    }
+    })
   ];
 }

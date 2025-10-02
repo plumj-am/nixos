@@ -22,7 +22,7 @@ in {
         user.name  = config'.programs.git.userName;
         user.email = config'.programs.git.userEmail;
 
-      signing.key      = "~/.ssh/id";
+      signing.key      = "${homeArgs.config.home.homeDirectory}/.ssh/id";
       signing.backend  = "ssh";
       signing.behavior = "own";
 

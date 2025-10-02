@@ -3,9 +3,9 @@ inputs: self: super: let
   inherit (self) attrValues filter getAttrFromPath hasAttrByPath collectNix;
 
   # collect common modules that should be applied to all systems
-  modulesCommon = collectNix ../modules/common;
-  modulesLinux  = collectNix ../modules/linux;
-  modulesDarwin = collectNix ../modules/darwin;
+  modulesCommon = collectNix (inputs.self + /modules/common);
+  modulesLinux  = collectNix (inputs.self + /modules/linux);
+  modulesDarwin = collectNix (inputs.self + /modules/darwin);
 
   # collect input modules and overlays from flake inputs
   collectInputs = let
@@ -30,7 +30,7 @@ inputs: self: super: let
   specialArgs = inputs // {
     inherit inputs;
     lib = self;
-    keys = import ../keys.nix;
+    keys = import (inputs.self + /keys.nix);
     self = flakeOutputs;
   };
 in {

@@ -4,13 +4,16 @@ in {
 
   age.identityPaths = [
     (if config.isLinux then
-      "/root/.ssh/id"
+      "${config.users.users.root.home}/.ssh/id"
     else
-      "/Users/${config.system.primaryUser}/.ssh/id")
+      "${config.users.users.${config.system.primaryUser}.home}/.ssh/id")
   ];
 
   environment = mkIf config.isDesktop {
-    shellAliases.agenix = "agenix --identity ~/.ssh/id";
+    shellAliases.agenix = if config.isLinux then
+      "agenix --identity ${config.users.users.root.home}/.ssh/id"
+    else
+      "agenix --identity ${config.users.users.${config.system.primaryUser}.home}/.ssh/id";
 
     systemPackages = [ pkgs.agenix ];
   };

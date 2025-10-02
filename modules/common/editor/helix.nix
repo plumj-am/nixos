@@ -1,5 +1,26 @@
 { pkgs, lib, config, helix, ... }: let
   inherit (lib) enabled const genAttrs mkIf elem mapAttrs optionalAttrs attrValues;
+
+  yaziPickerScript = pkgs.writeShellScript "yazi-picker.sh" ''
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    ACTION="$1"
+    FILE="$2"
+
+    case "$ACTION" in
+      "open")
+        if [[ -n "$FILE" ]]; then
+          echo ":open $FILE" | zellij action write-chars -
+          zellij action toggle-floating-panes
+        fi
+        ;;
+      *)
+        echo "Unknown action: $ACTION"
+        exit 1
+        ;;
+    esac
+  '';
 in {
 
   home-manager.sharedModules = [{
@@ -38,7 +59,7 @@ in {
       settings.keys = genAttrs [ "normal" "select" ] <| const {
         D = "extend_to_line_end";
 
-        "C-y" = ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- bash ~/.config/helix/yazi-picker.sh open %{buffer_name}";
+        "C-y" = ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- ${yaziPickerScript} open %{buffer_name}";
       };
 
       languages.language = let

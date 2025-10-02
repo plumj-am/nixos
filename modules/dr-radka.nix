@@ -11,7 +11,7 @@ in {
   imports = [(self + /modules/nginx.nix)];
 
   age.secrets.dr-radka-environment = {
-    file = ../hosts/kiwi/dr-radka-environment.age;
+    file = self + /hosts/kiwi/dr-radka-environment.age;
     owner = app_user;
     group = app_group;
   };

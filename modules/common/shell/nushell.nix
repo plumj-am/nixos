@@ -1,33 +1,34 @@
 { config, lib, ... }: let
 	inherit (lib) enabled;
 in {
-  home-manager.sharedModules = [{
-    programs.nushell = enabled {
-    shellAliases = config.environment.shellAliases // {
-      m  = "moon";
-      mp = "mprocs";
-      ko = "kondo";
+  home-manager.sharedModules = [
+    (homeArgs: {
+      programs.nushell = enabled {
+      shellAliases = config.environment.shellAliases // {
+        m  = "moon";
+        mp = "mprocs";
+        ko = "kondo";
 
-      rebuild  = "~/rebuild.nu";
-      rollback = "~/rebuild.nu --rollback";
+        rebuild  = "${homeArgs.config.home.homeDirectory}/rebuild.nu";
+        rollback = "${homeArgs.config.home.homeDirectory}/rebuild.nu --rollback";
 
-      tt = "toggle-theme";
+        tt = "toggle-theme";
 
-      td    = "hx ~/notes/todo.md";
-      notes = "hx ~/notes";
+        td    = "hx ${homeArgs.config.home.homeDirectory}/notes/todo.md";
+        notes = "hx ${homeArgs.config.home.homeDirectory}/notes";
 
-      rm = "rm --recursive --verbose";
-      cp = "cp --recursive --verbose --progress";
-      mv = "mv --verbose";
-      mk = "mkdir";
+        rm = "rm --recursive --verbose";
+        cp = "cp --recursive --verbose --progress";
+        mv = "mv --verbose";
+        mk = "mkdir";
 
-      tree = "eza --tree --git-ignore --group-directories-first";
+        tree = "eza --tree --git-ignore --group-directories-first";
 
-      # Deletes the last 5 entries from the nushell history sqlite database.
-      oops = "nix run nixpkgs#sqlite -- ~/.config/nushell/history.sqlite3 'DELETE FROM history WHERE rowid IN (SELECT rowid FROM history ORDER BY rowid DESC LIMIT 5);'";
+        # Deletes the last 5 entries from the nushell history sqlite database.
+        oops = "nix run nixpkgs#sqlite -- ${homeArgs.config.home.homeDirectory}/.config/nushell/history.sqlite3 'DELETE FROM history WHERE rowid IN (SELECT rowid FROM history ORDER BY rowid DESC LIMIT 5);'";
 
 
-    };
+      };
     settings = {
       edit_mode     = "vi";
       buffer_editor = config.environment.variables.EDITOR;
@@ -129,5 +130,6 @@ in {
 			$env.LS_COLORS = (vivid generate ${config.theme.vivid})
     '';
     };
-  }];
+    })
+  ];
 }
