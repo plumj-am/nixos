@@ -138,9 +138,11 @@ in mkIf config.isDesktopNotWsl {
         }
 
         #waybar {
-          background: ${base00};
+          background:
+            linear-gradient(${base00}, ${base00}) padding-box,
+            linear-gradient(45deg, ${base0A}, ${base08}) border-box;
           color: ${base07};
-          border: ${toString (config.theme.border / 2)}px solid ${base01};
+          border: ${toString (config.theme.border / 2)}px solid transparent;
           border-radius: ${toString config.theme.radius}px;
         }
 
@@ -169,8 +171,10 @@ in mkIf config.isDesktopNotWsl {
 
         #workspaces button.active {
           color: ${base07};
-          background: ${base02};
-          border-color: ${base01};
+          background:
+            linear-gradient(${base02}, ${base02}) padding-box,
+            linear-gradient(45deg, ${base0A}, ${base08}) border-box;
+          border: ${toString (config.theme.border / 2)}px solid transparent;
         }
 
         #tray, #pulseaudio, #cpu, #memory, #disk, #battery, #clock, #custom-gpu {
