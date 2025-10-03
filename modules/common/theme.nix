@@ -94,8 +94,8 @@ let
       package = pkgs.gruvbox-plus-icons;
     };
     icons.light = {
-      name    = "Gruvbox-Plus-Light";
-      package = pkgs.gruvbox-plus-icons;
+      name    = "Papirus-Light";
+      package = pkgs.papirus-icon-theme;
     };
 
     # Missing wallpapers are handled by `wallpaper-switcher` in `modules/common/theme.nix`.
