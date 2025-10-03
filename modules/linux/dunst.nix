@@ -9,36 +9,51 @@ in mkIf config.isDesktopNotWsl {
 
       settings.global = {
         dmenu              = "fuzzel --dmenu";
-        show_age_threshold = 0;
-        transparency       = 0;
+        show_age_threshold = 30;
+        transparency       = 80;
         separator_height   = 0;
-        padding            = config.theme.padding;
-        horizontal_padding = config.theme.padding;
-        frame_width        = 1;
-        frame_color        = "${base00}";
+        sort               = "update";
+
+        enable_recursive_icon_lookup = true;
 
         monitor = if config.networking.hostName == "yuzu" then 1 else 0;
+        font    = "${config.theme.font.mono.name}:size=${toString config.theme.font.size.normal}";
+        width   = ''(350, 500)'';
+        height  = ''(0, 750)'';
+        offset  = ''(${toString config.theme.margin}, ${toString config.theme.margin})'';
 
-        font = "${config.theme.font.mono.name}:size=${toString config.theme.font.size.normal}";
+        padding            = config.theme.padding;
+        horizontal_padding = config.theme.padding;
+        corner_radius      = config.theme.radius * 2;
+        frame_width        = config.theme.border;
 
+        progress_bar_min_width     = 0;
+        progress_bar_max_width     = 750;
+        progress_bar_corner_radius = config.theme.radius;
       };
 
       settings.urgency_low = {
-        background = "${base0E}";
-        foreground = "${base07}";
-        timeout    = 10;
+        frame_color = "${base0E}";
+        highlight   = "${base0E}";
+        background  = "${base00}";
+        foreground  = "${base04}";
+        timeout     = 10;
       };
 
       settings.urgency_normal = {
-        background = "${base0D}";
-        foreground = "${base07}";
-        timeout    = 20;
+        frame_color = "${base09}";
+        highlight   = "${base09}";
+        background  = "${base00}";
+        foreground  = "${base04}";
+        timeout     = 20;
       };
 
       settings.urgency_critical = {
-        background = "${base08}";
-        foreground = "${base07}";
-        timeout    = 30;
+        frame_color = "${base08}";
+        highlight   = "${base08}";
+        background  = "${base00}";
+        foreground  = "${base04}";
+        timeout     = 30;
       };
 
       settings.general = {
