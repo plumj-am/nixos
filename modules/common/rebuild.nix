@@ -22,7 +22,7 @@ in {
       exec     = ''nu /home/jam/rebuild.nu --rollback'';
       terminal = false;
     };
-    home.file."rebuild.nu" = {
+    home.file."rebuild.nu" = mkIf config.isDesktop {
       executable = true;
       text = /* nu */ ''
         #!/usr/bin/env nu
@@ -103,20 +103,11 @@ in {
           let platform = if $os == "Darwin" { "Darwin" } else { "NixOS" }
           print-notify $"($action) ($platform). Configuration for: ($host)." 50
 
-          if $remote {
-            try {
-              NH_BYPASS_ROOT_CHECK=true NH_NO_CHECKS=true nh $command ...$final_args
-            } catch { |e|
-              print-notify "Error: Rebuild failed, run manually in a terminal."
-              exit 1
-            }
-          } else {
-            try {
-              sudo NH_BYPASS_ROOT_CHECK=true NH_NO_CHECKS=true nh $command ...$final_args
-            } catch { |e|
-              print-notify "Error: Rebuild failed, run manually in a terminal."
-              exit 1
-            }
+          try {
+            nh $command ...$final_args
+          } catch { |e|
+            print-notify "Error: Rebuild failed, run manually in a terminal."
+            exit 1
           }
 
           if $rollback {
