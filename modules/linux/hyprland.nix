@@ -109,9 +109,9 @@ in mkIf config.isDesktopNotWsl {
           gaps_out    = margin;
           border_size = border;
 
-
-          "col.active_border"         = "0xFF${colors.base0A}";
-          "col.nogroup_border_active" = "0xFF${colors.base0A}";
+          # Gradient window borders.
+          "col.active_border"         = "rgb(${colors.base0A}) rgb(${colors.base08}) 45deg";
+          "col.nogroup_border_active" = "rgb(${colors.base0A}) rgb(${colors.base08}) 45deg";
 
           "col.inactive_border" = "0xFF${colors.base01}";
           "col.nogroup_border"  = "0xFF${colors.base01}";
@@ -134,14 +134,19 @@ in mkIf config.isDesktopNotWsl {
         };
 
         animations = {
-          bezier = [ "material_decelerate, 0.05, 0.7, 0.1, 1" ];
+          bezier = [
+            "material_decelerate, 0.05, 0.7, 0.1, 1"
+            "fluent_decel, 0, 0.2, 0.4, 1"
+            "easeOutCirc, 0, 0.55, 0.45, 1"
+            "easeOutCubic, 0.33, 1, 0.68, 1"
+          ];
 
           animation = [
-            "border    , 1, 3, material_decelerate"
-            "fade      , 1, 3, material_decelerate"
-            "layers    , 1, 3, material_decelerate"
-            "windows   , 1, 3, material_decelerate, popin 80%"
-            "workspaces, 1, 3, material_decelerate"
+            "border    , 1, 10, default"
+            "fade      , 1, 4, easeOutCirc"
+            "layers    , 1, 2, fluent_decel, slide"
+            "windows   , 1, 4, fluent_decel, popin 90%"
+            "workspaces, 1, 6, easeOutCubic, slide"
           ];
         };
 
