@@ -11,8 +11,9 @@ in mkIf config.isDesktopNotWsl {
         dmenu              = "fuzzel --dmenu";
         show_age_threshold = 30;
         transparency       = 80;
-        separator_height   = 0;
+        separator_height   = config.theme.border;
         sort               = "update";
+        format             = "<b>%a</b>\n<b>%s</b>\n%b";
 
         enable_recursive_icon_lookup = true;
 
