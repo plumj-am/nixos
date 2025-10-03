@@ -34,45 +34,67 @@
   };
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs = {
+      url = "github:NixOS/nixpkgs/nixos-unstable";
+    };
 
-    nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
-    nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
+    nixos-wsl = {
+      url                    = "github:nix-community/NixOS-WSL/main";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    nix-darwin.url = "github:nix-darwin/nix-darwin/master";
-    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    nix-darwin = {
+      url                    = "github:nix-darwin/nix-darwin/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    home-manager.url = "github:nix-community/home-manager/master";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager = {
+      url                    = "github:nix-community/home-manager/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    fenix.url = "github:nix-community/fenix";
-    fenix.inputs.nixpkgs.follows = "nixpkgs";
+    fenix = {
+      url                    = "github:nix-community/fenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    bacon-ls.url = "github:crisidev/bacon-ls";
-    bacon-ls.inputs.nixpkgs.follows = "nixpkgs";
+    bacon-ls = {
+      url                    = "github:crisidev/bacon-ls";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    zen-browser.url = "github:0xc000022070/zen-browser-flake";
-    zen-browser.inputs.nixpkgs.follows = "nixpkgs";
-    zen-browser.inputs.home-manager.follows = "home-manager";
+    zen-browser = {
+      url                         = "github:0xc000022070/zen-browser-flake";
+      inputs.nixpkgs.follows      = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
 
-    disko.url = "github:nix-community/disko";
-    disko.inputs.nixpkgs.follows = "nixpkgs";
+    disko = {
+      url                    = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    agenix.url = "github:ryantm/agenix";
-    agenix.inputs.nixpkgs.follows = "nixpkgs";
+    agenix = {
+      url                    = "github:yaxitech/ragenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    github2forgejo.url = "github:RGBCube/GitHub2Forgejo";
-    github2forgejo.inputs.nixpkgs.follows = "nixpkgs";
+    github2forgejo = {
+      url                    = "github:RGBCube/GitHub2Forgejo";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    helix.url = "github:helix-editor/helix";
-    helix.inputs.nixpkgs.follows = "nixpkgs";
+    helix = {
+      url                          = "github:helix-editor/helix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ { nixpkgs, nix-darwin,  ... }: let
     inherit (builtins) readDir;
     inherit (nixpkgs.lib) attrsToList const extend groupBy listToAttrs mapAttrs nameValuePair;
 
-    # extend nixpkgs.lib with nix-darwin.lib, then our custom lib
+    # Extend nixpkgs.lib with nix-darwin.lib, then our custom lib.
     lib' = nixpkgs.lib.extend (const <| const <| nix-darwin.lib);
     lib  = lib'.extend <| import ./lib inputs;
 
