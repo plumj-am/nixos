@@ -1,9 +1,10 @@
-{ lib, pkgs, config, ... }:
+{ self, lib, pkgs, config, ... }:
 let
   inherit (lib) mkOption types mkIf;
 
   # Global theme configuration - use `tt dark` or `tt light` to switch.
   is_dark = true;
+
 
   # Gruvbox hard Base16 color definitions.
   gruvbox_colors = {
@@ -96,6 +97,11 @@ let
       name    = "Gruvbox-Plus-Light";
       package = pkgs.gruvbox-plus-icons;
     };
+
+    # Missing wallpapers are handled by `wallpaper-switcher` in `modules/common/theme.nix`.
+    # TODO: Handle this better.
+    wallpaper.light = "${config.users.users.jam.home}/wallpapers/1053268.jpg";
+    wallpaper.dark  = "${config.users.users.jam.home}/wallpapers/1005830.jpg";
   };
 
   # helpers
@@ -153,6 +159,7 @@ in
 
     icons = get_theme "icons";
 
+    wallpaper = get_theme "wallpaper";
 
     # Program-specific theme names.
     nvim      = get_theme "nvim";

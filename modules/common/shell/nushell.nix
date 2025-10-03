@@ -1,4 +1,4 @@
-{ config, lib, ... }: let
+{ pkgs, config, lib, ... }: let
 	inherit (lib) enabled;
 in {
   home-manager.sharedModules = [
@@ -102,12 +102,16 @@ in {
       float_precision   = 2;
       use_ansi_coloring = "auto";
 
-      hooks.env_change.PWD = [ ''{ |before, after| zellij-update-tabname }'' ];
+      hooks.env_change.PWD = [
+        /* nu */ ''{ |before, after| zellij-update-tabname }''
+      ];
 
-      hooks.display_output = "if (term size).columns >= 100 { table -e } else { table }";
+      hooks.display_output = /* nu */ ''
+        if (term size).columns >= 100 { table -e } else { table }
+      '';
 
 			hooks.pre_prompt     = [
-				''
+				/* nu */ ''
 					if not (which direnv | is-empty) {
 						direnv export json | from json | default {} | load-env
 						$env.PATH = ($env.PATH | split row (char env_sep))
@@ -116,9 +120,34 @@ in {
 			];
     };
 
-    extraConfig = ''
+    extraConfig = /* nu */ ''
       ${builtins.readFile ./menus.nu}
       ${builtins.readFile ./functions.nu}
+
+      # Returns `true` on success and `false` on error.
+      def switch-wallpaper [theme?: string]: nothing -> bool {
+        # Skip wallpaper switching on non-Linux systems (swww is Wayland-only).
+        # TODO: Handle this better.
+        if (uname).kernel-name != "Linux" {
+          return false
+        }
+
+        let wallpaper = if $theme == "dark" {
+          "${config.theme.themes.wallpaper.dark}"
+        } else if $theme == "light" {
+          "${config.theme.themes.wallpaper.light}"
+        } else {
+          "${config.theme.wallpaper}"
+        }
+
+        try {
+          ${pkgs.swww}/bin/swww img $wallpaper
+          true
+        } catch {
+          false
+        }
+      }
+
       ${builtins.readFile ./theme.nu}
     '';
 

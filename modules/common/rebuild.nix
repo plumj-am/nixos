@@ -41,9 +41,9 @@ in {
             let timeout = if $progress >= 0 and $progress < 100 { 0 } else { 15000 }
 
             if ($message | str downcase | str contains "error") {
-              ^dunstify ...$args --urgency=critical --timeout=30000 "Error" $"($message)"
+              ^dunstify ...$args --urgency=critical --timeout=30000 "Rebuilder" $"($message)"
             } else {
-              ^dunstify ...$args --urgency=normal --timeout=($timeout) "Status" $"($message)"
+              ^dunstify ...$args --urgency=normal --timeout=($timeout) "Rebuilder" $"($message)"
             }
           }
         }
@@ -52,16 +52,17 @@ in {
           host: string = ""    # The host to build.
           --remote             # Deploy to remote host using --target-host.
           --rollback           # Rollback.
+          --quiet              # Run without output (for theme toggling).
           ...arguments         # Extra arguments to pass to rebuild commands.
         ]: nothing -> nothing {
           let host = if ($host | is-not-empty) {
             if $host != (hostname) and not $remote {
-              print-notify $"Error: Building local configuration for hostname that does not match the local machine."
+              if not $quiet { print-notify $"Error: Building local configuration for hostname that does not match the local machine." }
               exit 1
             }
             $host
           } else if $remote {
-            print-notify "Error: Hostname not specified for remote deployment."
+            if not $quiet { print-notify "Error: Hostname not specified for remote deployment." }
             exit 1
           } else {
             (hostname)
@@ -101,19 +102,19 @@ in {
           # Execute final command.
           let action = if $remote { $"Deploying to: ($host)" } else { "Building locally:" }
           let platform = if $os == "Darwin" { "Darwin" } else { "NixOS" }
-          print-notify $"($action) ($platform). Configuration for: ($host)." 50
+          if not $quiet { print-notify $"($action) ($platform). Configuration for: ($host)." 50 }
 
           try {
             nh $command ...$final_args
           } catch { |e|
-            print-notify "Error: Rebuild failed, run manually in a terminal."
+            if not $quiet { print-notify "Error: Rebuild failed, run manually in a terminal." }
             exit 1
           }
 
           if $rollback {
-            print-notify $"Rollback for ($host) succeeded." 100
+            if not $quiet { print-notify $"Rollback for ($host) succeeded." 100 }
           } else {
-            print-notify $"Rebuild for ($host) succeeded." 100
+            if not $quiet { print-notify $"Rebuild for ($host) succeeded." 100 }
           }
         }
 

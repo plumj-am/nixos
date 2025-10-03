@@ -13,9 +13,9 @@ def print-notify [message: string, progress: int = -1] {
         let timeout = if $progress >= 0 and $progress < 100 { 0 } else { 15000 }
 
         if ($message | str downcase | str contains "error") {
-            ^dunstify ...$args --urgency=critical --timeout=30000 "Error" $"($message)"
+            ^dunstify ...$args --urgency=critical --timeout=30000 "Theme Switcher" $"($message)"
         } else {
-            ^dunstify ...$args --urgency=normal --timeout=($timeout) "Status" $"($message)"
+            ^dunstify ...$args --urgency=normal --timeout=($timeout) "Theme Switcher" $"($message)"
         }
     }
 }
@@ -23,7 +23,7 @@ def print-notify [message: string, progress: int = -1] {
 def toggle-theme [theme?: string] {
     let dark_mode_file = $"($env.HOME)/.config/dark-mode"
 
-    # determine current theme from nix theme file
+    # Determine current theme from nix theme file.
     let theme_file = $"($env.HOME)/nixos/modules/common/theme.nix"
     let current_theme = try {
         let content = open $theme_file
@@ -36,7 +36,7 @@ def toggle-theme [theme?: string] {
         "light"
     }
 
-    # use provided theme or toggle current
+    # Use provided theme or toggle current.
     let new_theme = if $theme != null {
         if $theme in ["light", "dark"] {
             $theme
@@ -51,7 +51,7 @@ def toggle-theme [theme?: string] {
 
     print-notify $"Switching to ($new_theme) theme."
 
-    # update centralized theme file
+    # Update centralized theme file.
     try {
         let content = open $theme_file
 
@@ -69,21 +69,37 @@ def toggle-theme [theme?: string] {
     }
 
     # Update system dark mode marker and environment variable.
-    print-notify "Updating environment..." 75
+    print-notify "Updating environment..." 25
     if $new_theme == "dark" {
         touch $dark_mode_file
         $env.THEME_MODE = "dark"
-        print-notify "Dark mode activated."
+        print-notify "Dark mode activated." 25
     } else {
         if ($dark_mode_file | path exists) {
             rm $dark_mode_file
         }
         $env.THEME_MODE = "light"
-        print-notify "Light mode activated."
+        print-notify "Light mode activated." 25
     }
-    # rebuild nixos config to apply themes
-    print "Rebuilding nixos config to apply themes... (this may take a moment)"
-    nu $"($env.HOME)/rebuild.nu"
 
-    print-notify $"Theme switch to ($new_theme) completed!" 100
+    # Rebuild configuration to apply themes.
+    print-notify $"Rebuilding configuration to apply ($new_theme) theme." 50
+
+    try {
+        nu $"($env.HOME)/rebuild.nu" --quiet
+    } catch { |e|
+        print-notify "Error: Rebuild failed, run manually in a terminal." 100
+        exit 1
+    }
+
+    # Switch wallpaper to the new theme.
+    let wallpaper_success: bool = switch-wallpaper $new_theme
+
+    if $wallpaper_success {
+        print-notify $"Wallpaper switch for the ($new_theme) theme succeeded." 75
+    } else {
+        print-notify $"Wallpaper switch failed, continuing with theme switch." 75
+    }
+
+    print-notify $"Switch to the ($new_theme) theme completed!" 100
 }

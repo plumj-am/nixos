@@ -123,10 +123,10 @@ in mkIf config.isDesktopNotWsl {
   ];
 
   home-manager.sharedModules = [{
-    # Auto-start swww daemon.
+    # Auto-start swww daemon and set wallpaper based on theme.
     wayland.windowManager.hyprland.settings.exec-once = [
       "swww-daemon"
-      # "swww img /path/to/your/wallpaper.jpg" # Can be used to auto-set an initial wallpaper.
+      "swww img ${config.theme.wallpaper}"
     ];
 
     # Desktop entry for fuzzel.
