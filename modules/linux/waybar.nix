@@ -139,11 +139,11 @@ in mkIf config.isDesktopNotWsl {
 
         #waybar {
           background:
-            linear-gradient(${base00}, ${base00}) padding-box,
-            linear-gradient(45deg, ${base0A}, ${base08}) border-box;
+            linear-gradient(rgba(${builtins.concatStringsSep ", " (map toString config.theme.withRgb.base00)}, 0.85), rgba(${builtins.concatStringsSep ", " (map toString config.theme.withRgb.base00)}, 0.85)) padding-box,
+            linear-gradient(225deg, ${base0A}, ${base08}) border-box;
           color: ${base07};
           border: ${toString (config.theme.border / 2)}px solid transparent;
-          border-radius: ${toString config.theme.radius}px;
+          border-radius: ${toString (config.theme.radius * 2)}px;
         }
 
         #window {
