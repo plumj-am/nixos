@@ -125,7 +125,6 @@ in mkIf config.isDesktopNotWsl {
           "waybar"
         ];
 
-
         # Basic appearance.
         general = with config.theme; {
           gaps_in     = margin / 2;
@@ -141,8 +140,22 @@ in mkIf config.isDesktopNotWsl {
         };
 
         decoration = {
-          rounding     = config.theme.radius;
-          blur.enabled = false;
+          rounding = config.theme.radius;
+
+          blur = {
+            enabled           = true;
+            size              = 5;
+            passes            = 1;
+            new_optimizations = true;
+            ignore_opacity    = true;
+          };
+
+          shadow = {
+            enabled      = true;
+            range        = 8;
+            render_power = 2;
+            color        = "0x66${config.theme.colors.base00}";
+          };
         };
 
         cursor = {
@@ -184,8 +197,22 @@ in mkIf config.isDesktopNotWsl {
           mouse_move_enables_dpms  = true;
         };
 
-        # Game window rules - Steam games only.
+        # Layer rules for blur on layer surfaces (notifications, launchers).
+        layerrule = [
+          "blur, notifications"
+          "blur, launcher"
+          "ignorealpha 0.5, notifications"
+          "ignorealpha 0.5, launcher"
+        ];
+
+        # Window rules.
         windowrulev2 = [
+          # Floating windows - transparency + blur.
+          "opacity 0.92 0.88, floating:1"
+          "opacity 1.0 override, class:^(zen-browser)$"  # Browser always opaque.
+          "opacity 1.0 override, title:^(.*)(YouTube|Twitch)(.*)$"  # Videos opaque.
+
+          # Game window rules - Steam games only.
           "workspace special:games, class:^(steam_app_).*"
           "fullscreen, class:^(steam_app_).*"
           "immediate, class:^(steam_app_).*"    # Reduce input lag.
