@@ -14,6 +14,7 @@ in mkIf config.isDesktopNotWsl {
 
   environment.systemPackages = [
     pkgs.hyprland
+    pkgs.hyprpicker
     pkgs.wl-clipboard
     pkgs.xdg-utils
   ];
@@ -235,6 +236,12 @@ in mkIf config.isDesktopNotWsl {
           touchpad.natural_scroll = false;
         };
       };
+    };
+
+    xdg.desktopEntries.hyprpicker = {
+      name     = "Colour Picker";
+      exec     = "hyprpicker --format=hex --autocopy";
+      terminal = false;
     };
   }];
 }
