@@ -22,6 +22,22 @@ in mkIf config.isDesktopNotWsl {
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   home-manager.sharedModules = [{
+
+    services.hyprsunset = enabled {
+      settings = {
+        profile = [
+          {
+            time        = "7:00";
+            temperature = 4500;
+          }
+          {
+            time        = "18:30";
+            temperature = 3500;
+          }
+        ];
+      };
+    };
+
     wayland.windowManager.hyprland = enabled {
       systemd = enabled {
         enableXdgAutostart = true;

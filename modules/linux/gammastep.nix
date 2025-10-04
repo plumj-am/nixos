@@ -1,8 +1,8 @@
-{ config, lib, pkgs, ... }: let
-  inherit (lib) mkIf enabled;
+{ config, lib, ... }: let
+  inherit (lib) mkIf disabled;
 in mkIf config.isDesktop {
 
-  services.geoclue2 = enabled {
+  services.geoclue2 = disabled {
     appConfig.gammastep = {
       isAllowed = true;
       isSystem  = false;
@@ -10,7 +10,7 @@ in mkIf config.isDesktop {
   };
 
   home-manager.sharedModules = [{
-    services.gammastep = enabled {
+    services.gammastep = disabled {
       temperature.day   = 4500;
       temperature.night = 3500;
 
