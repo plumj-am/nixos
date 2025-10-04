@@ -28,14 +28,7 @@ in mkIf config.isDesktopNotWsl {
         enableXdgAutostart = true;
       };
       settings = {
-        monitor = if config.networking.hostName == "yuzu" then [
-          # Yuzu: 1920*1080@280hz left, 3840*1440@50hz right.
-          ",preferred,auto,1"   # Main (front).
-          ",preferred,auto,1"   # Secondary (right).
-        ] else [
-          # Date: 1920*1080@144hz
-          ",preferred,auto,1"
-        ];
+        monitor = [ ",preferred,auto,1" ];
 
         bind = [
           # Config and window controls.
@@ -89,6 +82,7 @@ in mkIf config.isDesktopNotWsl {
           "SUPER SHIFT, P, exec, process-killer"
           "SUPER, Tab, exec, window-switcher"
           "SUPER, G, togglespecialworkspace, games"
+          "SUPER SHIFT, G, movetoworkspace, special:games"
         ];
 
         # Resize controls.
