@@ -14,15 +14,22 @@ in mkIf config.isDesktopNotWsl {
         layer      = "overlay";
         prompt     = ''"❯ "'';
         terminal   = "kitty";
-        output     = if config.networking.hostName == "yuzu" then "DP-1" else null;
+        output     = mkIf (config.networking.hostName == "yuzu") "DP-1";
 
         horizontal-pad = padding;
         vertical-pad   = padding;
       };
-      settings.colors = {
-        background = colors.base00 + "FF";
 
+      settings.colors = {
+        background      = colors.base00 + "D9"; # 85% opacity.
+        text            = colors.base07 + "FF";
+        match           = colors.base0A + "FF"; # Yellow.
+        selection       = colors.base02 + "FF";
+        selection-text  = colors.base07 + "FF";
+        selection-match = colors.base08 + "FF"; # Red.
+        border          = colors.base0A + "FF"; # Yellow.
       };
+
       settings.border = {
         radius = radius;
         width  = border / 2;
