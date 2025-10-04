@@ -92,14 +92,15 @@ def toggle-theme [theme?: string] {
         exit 1
     }
 
+    # Using `hyprpaper` now in `modules/linux/hyprland.nix`.
     # Switch wallpaper to the new theme.
-    let wallpaper_success: bool = switch-wallpaper $new_theme
+    # let wallpaper_success: bool = switch-wallpaper $new_theme
 
-    if $wallpaper_success {
-        print-notify $"Wallpaper switch for the ($new_theme) theme succeeded." 75
-    } else {
-        print-notify $"Wallpaper switch failed, continuing with theme switch." 75
-    }
+    # if $wallpaper_success {
+    #     print-notify $"Wallpaper switch for the ($new_theme) theme succeeded." 75
+    # } else {
+    #     print-notify $"Wallpaper switch failed, continuing with theme switch." 75
+    # }
 
     print-notify $"Switch to the ($new_theme) theme completed!" 100
 }

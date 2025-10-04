@@ -124,29 +124,30 @@ in {
       ${builtins.readFile ./menus.nu}
       ${builtins.readFile ./functions.nu}
 
-      # Returns `true` on success and `false` on error.
-      def switch-wallpaper [theme?: string]: nothing -> bool {
-        # Skip wallpaper switching on non-Linux systems (swww is Wayland-only).
-        # TODO: Handle this better.
-        if (uname).kernel-name != "Linux" {
-          return false
-        }
+      # Using `hyprpaper` now in `modules/linux/hyprland.nix`.
+      # # Returns `true` on success and `false` on error.
+      # def switch-wallpaper [theme?: string]: nothing -> bool {
+      #   # Skip wallpaper switching on non-Linux systems (swww is Wayland-only).
+      #   # TODO: Handle this better.
+      #   if (uname).kernel-name != "Linux" {
+      #     return false
+      #   }
 
-        let wallpaper = if $theme == "dark" {
-          "${config.theme.themes.wallpaper.dark}"
-        } else if $theme == "light" {
-          "${config.theme.themes.wallpaper.light}"
-        } else {
-          "${config.theme.wallpaper}"
-        }
+      #   let wallpaper = if $theme == "dark" {
+      #     "${config.theme.themes.wallpaper.dark}"
+      #   } else if $theme == "light" {
+      #     "${config.theme.themes.wallpaper.light}"
+      #   } else {
+      #     "${config.theme.wallpaper}"
+      #   }
 
-        try {
-          ${pkgs.swww}/bin/swww img $wallpaper
-          true
-        } catch {
-          false
-        }
-      }
+      #   try {
+      #     ${pkgs.swww}/bin/swww img $wallpaper
+      #     true
+      #   } catch {
+      #     false
+      #   }
+      # }
 
       ${builtins.readFile ./theme.nu}
     '';
