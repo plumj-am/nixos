@@ -3,23 +3,17 @@
 
   yaziPickerScript = pkgs.writeShellScript "yazi-picker.sh" ''
     #!/usr/bin/env bash
-    set -euo pipefail
 
-    ACTION="$1"
-    FILE="$2"
+    paths=$(yazi "$2" --chooser-file=/dev/stdout | while read -r; do printf "%q " "$REPLY"; done)
 
-    case "$ACTION" in
-      "open")
-        if [[ -n "$FILE" ]]; then
-          echo ":open $FILE" | zellij action write-chars -
-          zellij action toggle-floating-panes
-        fi
-        ;;
-      *)
-        echo "Unknown action: $ACTION"
-        exit 1
-        ;;
-    esac
+    if [[ -n "$paths" ]]; then
+    	zellij action toggle-floating-panes
+    	zellij action write 27 # send <Escape> key
+    	zellij action write-chars ":$1 $paths"
+    	zellij action write 13 # send <Enter> key
+    else
+    	zellij action toggle-floating-panes
+    fi
   '';
 in {
 
@@ -145,23 +139,6 @@ in {
           };
         };
       };
-    };
-
-    home.file.".config/helix/yazi-picker.sh" = {
-      text = ''
-        #!/usr/bin/env bash
-
-        paths=$(yazi "$2" --chooser-file=/dev/stdout | while read -r; do printf "%q " "$REPLY"; done)
-
-        if [[ -n "$paths" ]]; then
-        	zellij action toggle-floating-panes
-        	zellij action write 27 # send <Escape> key
-        	zellij action write-chars ":$1 $paths"
-        	zellij action write 13 # send <Enter> key
-        else
-        	zellij action toggle-floating-panes
-        fi
-      '';
     };
   }];
 
