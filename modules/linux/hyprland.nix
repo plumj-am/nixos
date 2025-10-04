@@ -14,7 +14,6 @@ in mkIf config.isDesktopNotWsl {
 
   environment.systemPackages = [
     pkgs.hyprland
-    pkgs.hyprpicker
     pkgs.wl-clipboard
     pkgs.xdg-utils
   ];
@@ -23,27 +22,6 @@ in mkIf config.isDesktopNotWsl {
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   home-manager.sharedModules = [{
-
-    services.hyprpaper = enabled {
-      settings = {
-        preload   = [ "${config.theme.wallpaper}" ];
-        wallpaper = [ ",${config.theme.wallpaper}" ];
-      };
-    };
-    services.hyprsunset = enabled {
-      settings = {
-        profile = [
-          {
-            time        = "7:00";
-            temperature = 4500;
-          }
-          {
-            time        = "18:30";
-            temperature = 3500;
-          }
-        ];
-      };
-    };
 
     wayland.windowManager.hyprland = enabled {
       systemd = enabled {
@@ -236,12 +214,6 @@ in mkIf config.isDesktopNotWsl {
           touchpad.natural_scroll = false;
         };
       };
-    };
-
-    xdg.desktopEntries.hyprpicker = {
-      name     = "Colour Picker";
-      exec     = "hyprpicker --format=hex --autocopy";
-      terminal = false;
     };
   }];
 }
