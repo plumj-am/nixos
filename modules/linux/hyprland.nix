@@ -111,11 +111,11 @@ in mkIf config.isDesktopNotWsl {
           border_size = border;
 
           # Gradient window borders.
-          "col.active_border"         = "rgb(${colors.base0A}) rgb(${colors.base08}) 45deg";
-          "col.nogroup_border_active" = "rgb(${colors.base0A}) rgb(${colors.base08}) 45deg";
+          "col.active_border"         = "rgb(${colors.base0B}) rgb(${colors.base09}) 45deg";
+          "col.nogroup_border_active" = "rgb(${colors.base0B}) rgb(${colors.base09}) 45deg";
 
-          "col.inactive_border" = "0xFF${colors.base01}";
-          "col.nogroup_border"  = "0xFF${colors.base01}";
+          "col.inactive_border" = "0xFF${colors.base00}";
+          "col.nogroup_border"  = "0xFF${colors.base00}";
         };
 
         decoration = {
