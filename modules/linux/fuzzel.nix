@@ -23,15 +23,15 @@ in mkIf config.isDesktopNotWsl {
       settings.colors = {
         background      = colors.base00 + "D9"; # 85% opacity.
         text            = colors.base07 + "FF";
-        match           = colors.base0A + "FF"; # Yellow.
-        selection       = colors.base02 + "FF";
+        match           = colors.base0A + "FF";
+        selection       = colors.base0A + "88"; # Lower opacity.
         selection-text  = colors.base07 + "FF";
-        selection-match = colors.base08 + "FF"; # Red.
-        border          = colors.base0A + "FF"; # Yellow.
+        selection-match = colors.base08 + "FF";
+        border          = colors.base0A + "FF";
       };
 
       settings.border = {
-        radius = radius;
+        radius = radius * 2;
         width  = border / 2;
       };
     };
