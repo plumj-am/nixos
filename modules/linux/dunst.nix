@@ -1,8 +1,8 @@
 { config, lib, ... }: let
-  inherit (lib) mkIf enabled;
+  inherit (lib) mkIf disabled;
 in mkIf config.isDesktopNotWsl {
   home-manager.sharedModules = [{
-    services.dunst = with config.theme.withHash; enabled {
+    services.dunst = with config.theme.withHash; disabled {
       iconTheme.name    = config.theme.icons.name;
       iconTheme.package = config.theme.icons.package;
       iconTheme.size    = "32";
@@ -10,7 +10,7 @@ in mkIf config.isDesktopNotWsl {
       settings.global = {
         dmenu              = "fuzzel --dmenu";
         show_age_threshold = 30;
-        transparency       = 80;
+        transparency       = 0;  # Doesn't work on Wayland.
         separator_height   = config.theme.border;
         sort               = "update";
         format             = "<b>%a</b>\n<b>%s</b>\n%b";

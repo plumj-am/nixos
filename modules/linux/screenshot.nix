@@ -7,17 +7,17 @@
 
   screenshot-clip = pkgs.writeShellScriptBin "screenshot-clip" ''
     if ${pkgs.grim}/bin/grim -g "$(${pkgs.slurp}/bin/slurp)" - | ${pkgs.wl-clipboard}/bin/wl-copy --type image/png; then
-      ${pkgs.dunst}/bin/dunstify "Screenshot" "Area screenshot copied to clipboard" --icon=image-x-generic
+      ${pkgs.libnotify}/bin/notify-send "Screenshot" "Area screenshot copied to clipboard" --icon=image-x-generic
     else
-      ${pkgs.dunst}/bin/dunstify "Screenshot" "Failed to take screenshot" --icon=dialog-error --urgency=critical
+      ${pkgs.libnotify}/bin/notify-send "Screenshot" "Failed to take screenshot" --icon=dialog-error --urgency=critical
     fi
   '';
 
   screenshot-full = pkgs.writeShellScriptBin "screenshot-full" ''
     if ${pkgs.grim}/bin/grim - | ${pkgs.wl-clipboard}/bin/wl-copy --type image/png; then
-      ${pkgs.dunst}/bin/dunstify "Screenshot" "Full screen screenshot copied to clipboard" --icon=image-x-generic
+      ${pkgs.libnotify}/bin/notify-send "Screenshot" "Full screen screenshot copied to clipboard" --icon=image-x-generic
     else
-      ${pkgs.dunst}/bin/dunstify "Screenshot" "Failed to take screenshot" --icon=dialog-error --urgency=critical
+      ${pkgs.libnotify}/bin/notify-send "Screenshot" "Failed to take screenshot" --icon=dialog-error --urgency=critical
     fi
   '';
 

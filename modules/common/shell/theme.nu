@@ -1,22 +1,20 @@
+# TODO: Make 100 progress show full bar but prevent sticky notification.
 def print-notify [message: string, progress: int = -1] {
     print $"(ansi purple)[Theme Switcher] ($message)"
-    if (which dunstify | is-not-empty) {
-        let base_args = ["--appname=Theme Switcher" "--replace=1002"]
-        let args = if $progress >= 0 {
-            $base_args | append ["--hints" $"int:value:($progress)"]
+    if (which notify-send | is-not-empty) {
+        let base_args = ["--replace-id=1002" "--print-id"]
+
+        # Don't add progress hint for completion (progress=100) so it times out.
+        let args = if $progress >= 0 and $progress < 100 {
+            $base_args | append ["--hint" $"int:value:($progress)"]
         } else {
             $base_args
         }
 
-        # Use persistent notifications (timeout=0) when in-progress.
-        # Use short timeout for completion messages (progress=100).
-        let timeout = if $progress >= 0 and $progress < 100 { 0 } else { 15000 }
+        let timeout = if ($message | str downcase | str contains "error") { 30000 } else { 15000 }
+        let urgency = if ($message | str downcase | str contains "error") { "critical" } else { "normal" }
 
-        if ($message | str downcase | str contains "error") {
-            ^dunstify ...$args --urgency=critical --timeout=30000 "Theme Switcher" $"($message)"
-        } else {
-            ^dunstify ...$args --urgency=normal --timeout=($timeout) "Theme Switcher" $"($message)"
-        }
+        ^notify-send ...$args --urgency=($urgency) --expire-time=($timeout) "Theme Switcher" $"($message)"
     }
 }
 
