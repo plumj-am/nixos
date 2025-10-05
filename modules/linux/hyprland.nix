@@ -191,6 +191,7 @@ in mkIf config.isDesktopNotWsl {
 
           # Exceptions - always opaque (must come after general rules).
           "opaque, class:^(zen)(.*)$"
+          "opaque, class:^(org.qutebrowser)(.*)$"
 
           # Game window rules - Steam games only.
           "workspace special:games, class:^(steam_app_).*"
