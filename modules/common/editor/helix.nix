@@ -29,8 +29,8 @@ in {
         "ui.cursorline.primary".bg   = if config.theme.is_dark then "#404040" else "#F0F0F0";
         "ui.popup".bg                = if config.theme.is_dark then "#404040" else "#F0F0F0";
         "ui.popup.info".bg           = if config.theme.is_dark then "#404040" else "#F0F0F0";
-        "ui.selection".bg            = if config.theme.is_dark then "#707070" else "#D0D0D0";
-        "ui.selection.primary".bg    = if config.theme.is_dark then "#707070" else "#D0D0D0";
+        "ui.selection".bg            = if config.theme.is_dark then "#707070" else "#E0E0E0";
+        "ui.selection.primary".bg    = if config.theme.is_dark then "#707070" else "#E0E0E0";
         "comment".fg                 = if config.theme.is_dark then "#909090" else "#C0C0C0";
       };
 
