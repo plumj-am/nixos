@@ -129,6 +129,9 @@ in mkIf config.isDesktopNotWsl {
             render_power = 2;
             color        = "0x66${config.theme.colors.base00}";
           };
+
+          dim_inactive = true;
+          dim_strength = 0.08;
         };
 
         cursor = {
@@ -180,10 +183,14 @@ in mkIf config.isDesktopNotWsl {
 
         # Window rules.
         windowrulev2 = [
+          # Normal (tiled) windows - slight transparency.
+          "opacity 0.97 0.97, floating:0"
+
           # Floating windows - transparency + blur.
           "opacity 0.92 0.88, floating:1"
-          "opacity 1.0 override, class:^(zen-browser)$"  # Browser always opaque.
-          "opacity 1.0 override, title:^(.*)(YouTube|Twitch)(.*)$"  # Videos opaque.
+
+          # Exceptions - always opaque (must come after general rules).
+          "opaque, class:^(zen)(.*)$"
 
           # Game window rules - Steam games only.
           "workspace special:games, class:^(steam_app_).*"
