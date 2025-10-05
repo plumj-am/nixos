@@ -34,9 +34,7 @@
   };
 
   inputs = {
-    nixpkgs = {
-      url = "github:NixOS/nixpkgs/nixos-unstable";
-    };
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
     nixos-wsl = {
       url                    = "github:nix-community/NixOS-WSL/main";
@@ -85,7 +83,7 @@
     };
 
     helix = {
-      url                          = "github:helix-editor/helix";
+      url                    = "github:helix-editor/helix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
