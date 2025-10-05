@@ -12,8 +12,6 @@ in {
         rebuild  = "${homeArgs.config.home.homeDirectory}/rebuild.nu";
         rollback = "${homeArgs.config.home.homeDirectory}/rebuild.nu --rollback";
 
-        tt = "toggle-theme";
-
         td    = "hx ${homeArgs.config.home.homeDirectory}/notes/todo.md";
         notes = "hx ${homeArgs.config.home.homeDirectory}/notes";
 
@@ -123,38 +121,12 @@ in {
     extraConfig = /* nu */ ''
       ${builtins.readFile ./menus.nu}
       ${builtins.readFile ./functions.nu}
-
-      # Using `hyprpaper` now in `modules/linux/hyprland.nix`.
-      # # Returns `true` on success and `false` on error.
-      # def switch-wallpaper [theme?: string]: nothing -> bool {
-      #   # Skip wallpaper switching on non-Linux systems (swww is Wayland-only).
-      #   # TODO: Handle this better.
-      #   if (uname).kernel-name != "Linux" {
-      #     return false
-      #   }
-
-      #   let wallpaper = if $theme == "dark" {
-      #     "${config.theme.themes.wallpaper.dark}"
-      #   } else if $theme == "light" {
-      #     "${config.theme.themes.wallpaper.light}"
-      #   } else {
-      #     "${config.theme.wallpaper}"
-      #   }
-
-      #   try {
-      #     ${pkgs.swww}/bin/swww img $wallpaper
-      #     true
-      #   } catch {
-      #     false
-      #   }
-      # }
-
       ${builtins.readFile ./theme.nu}
     '';
 
     envFile.text = ''
-			use std/config ${config.theme.nushell}
-			$env.config.color_config = (${config.theme.nushell})
+			# use std/config ${config.theme.nushell}
+			# $env.config.color_config = (${config.theme.nushell})
 
 			$env.CARAPACE_BRIDGES = "zsh,fish,bash,inshellisense,clap"
 			$env.LS_COLORS = (vivid generate ${config.theme.vivid})
