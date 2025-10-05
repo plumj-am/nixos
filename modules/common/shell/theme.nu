@@ -76,7 +76,7 @@ def toggle-theme [theme?: string] {
                 let wal_args = if $new_theme == "dark" {
                     ["-n" "--saturate" "0.7" "-i" $wallpaper]
                 } else {
-                    ["-n" "--saturate" "0.5" "-l" "-i" $wallpaper]
+                    ["-n" "--saturate" "0.6" "-l" "-i" $wallpaper]
                 }
                 ^wal --backend wal ...$wal_args err> /dev/null
                 ^cp ~/.cache/wal/colors.json $"($env.HOME)/nixos/pywal-colors.json"
@@ -171,7 +171,7 @@ def switch-scheme [scheme: string] {
                 let wal_args = if $is_dark {
                     ["-n" "--saturate" "0.7" "-i" $wallpaper]
                 } else {
-                    ["-n" "--saturate" "0.5" "-l" "-i" $wallpaper]
+                    ["-n" "--saturate" "0.6" "-l" "-i" $wallpaper]
                 }
                 ^wal --backend wal ...$wal_args err> /dev/null
                 ^cp ~/.cache/wal/colors.json $"($env.HOME)/nixos/pywal-colors.json"

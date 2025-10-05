@@ -50,7 +50,7 @@
         let wallpaper_dir = $"($env.HOME)/wallpapers"
         mkdir $wallpaper_dir
 
-        let wallpapers = (ls $wallpaper_dir | where type == file | where name =~ '\.(jpg|png|jpeg|webp)$')
+        let wallpapers = (ls $wallpaper_dir | where type == file | where name =~ '\.(jpg|png|jpeg|webp|gif)$')
 
         if ($wallpapers | is-empty) {
           print $"No wallpapers found in ($wallpaper_dir)"
@@ -96,7 +96,7 @@
               let wal_args = if $is_dark {
                 ["-n" "--saturate" "0.7" "-i" $selected]
               } else {
-                ["-n" "--saturate" "0.5" "-l" "-i" $selected]
+                ["-n" "--saturate" "0.6" "-l" "-i" $selected]
               }
               ^${pkgs.pywal}/bin/wal --backend wal ...$wal_args err> /dev/null
               ^cp ~/.cache/wal/colors.json $"($env.HOME)/nixos/pywal-colors.json"
