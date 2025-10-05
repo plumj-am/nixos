@@ -43,7 +43,7 @@
 
   pick-wallpaper = pkgs.writeTextFile {
     name = "pick-wallpaper";
-    text = ''
+    text = /* nu */ ''
       #!/usr/bin/env nu
 
       def main [] {
@@ -68,6 +68,49 @@
         if not ($selected | is-empty) {
           ^${pkgs.swww}/bin/swww img $selected o+e>| ignore
           print $"Wallpaper set: (($selected | path basename))"
+
+          # Regenerate pywal colors if using pywal scheme
+          let theme_file = $"($env.HOME)/nixos/modules/common/theme.nix"
+          let using_pywal = try {
+            let content = open $theme_file
+            $content | str contains 'color_scheme = "pywal";'
+          } catch {
+            false
+          }
+
+          if $using_pywal {
+            print "Regenerating pywal colors..."
+
+            # Determine if dark mode
+            let is_dark = try {
+              let content = open $theme_file
+              $content | str contains "is_dark = true;"
+            } catch {
+              false
+            }
+
+            try {
+              # Clear pywal cache to force regeneration
+              ^rm -rf ~/.cache/wal
+
+              let wal_args = if $is_dark {
+                ["-n" "--saturate" "0.7" "-i" $selected]
+              } else {
+                ["-n" "--saturate" "0.5" "-l" "-i" $selected]
+              }
+              ^${pkgs.pywal}/bin/wal --backend wal ...$wal_args err> /dev/null
+              ^cp ~/.cache/wal/colors.json $"($env.HOME)/nixos/pywal-colors.json"
+              print "Colors regenerated!"
+              try {
+                nu -l -c "~/rebuild.nu --quiet"
+              } catch { |e|
+                print "Failed to rebuild."
+              }
+              print "Rebuilt system to apply colors."
+            } catch { |e|
+              print $"Warning: Failed to regenerate colors: ($e.msg)"
+            }
+          }
         }
       }
     '';
@@ -126,7 +169,6 @@ in mkIf config.isDesktopNotWsl {
     # Auto-start swww daemon and set wallpaper based on theme.
     wayland.windowManager.hyprland.settings.exec-once = [
       "swww-daemon"
-      "swww img ${config.theme.wallpaper}"
     ];
 
     # Desktop entry for fuzzel.

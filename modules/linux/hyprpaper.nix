@@ -1,12 +1,13 @@
 { lib, config, ... }: let
-  inherit (lib) mkIf enabled;
+  inherit (lib) mkIf enabled disabled;
 in mkIf config.isDesktopNotWsl {
   home-manager.sharedModules = [{
 
-   services.hyprpaper = enabled {
-      settings = {
-        preload   = [ "${config.theme.wallpaper}" ];
-        wallpaper = [ ",${config.theme.wallpaper}" ];
+   services.hyprpaper = disabled {
+      settings = let
+      in {
+        preload   = [ "~/wallpapers" ];
+        # wallpaper = [ ",{}" ];
       };
     };
   }];

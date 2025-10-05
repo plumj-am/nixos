@@ -1,10 +1,50 @@
-{ self, lib, pkgs, config, ... }:
+{ lib, pkgs, config, self, ... }:
 let
-  inherit (lib) mkOption types mkIf;
+  inherit (lib) mkOption types mkIf enabled;
 
-  # Global theme configuration - use `tt dark` or `tt light` to switch.
+  # Global theme configuration - use `tt dark`/`tt light` to switch light/dark.
+  # Use `tt pywal`/`tt gruvbox` to switch color scheme.
   is_dark = true;
+  color_scheme = "pywal"; # "gruvbox" or "pywal"
 
+  # Pywal colors cache - single file updated when theme changes.
+  # Stored in flake directory so Nix can access it (Nix can't read ~/.cache).
+  pywal_cache = self + /pywal-colors.json;
+
+  # Parse pywal colors and convert to base16 format.
+  # Pywal provides: background, foreground, color0-15.
+  # Base16 needs smooth grayscale gradient base00-07.
+  # Use color0 (black), color8 (gray), color7/15 (white) for gradient.
+  parse_pywal_colors = json: let
+    colors = builtins.fromJSON json;
+    strip_hash = s: builtins.substring 1 6 s;
+  in {
+    base00 = strip_hash colors.colors.color0;  # Background 0.
+    base01 = strip_hash colors.colors.color1;  # Background 1.
+    base02 = strip_hash colors.colors.color2;  # Background 2.
+    base03 = strip_hash colors.colors.color3;  # Background 3.
+    base04 = strip_hash colors.colors.color4;  # Foreground 3.
+    base05 = strip_hash colors.colors.color5; # Foreground 2.
+    base06 = strip_hash colors.colors.color6; # Foreground 1.
+    base07 = strip_hash colors.colors.color7;  # Foreground 0.
+    base08 = strip_hash colors.colors.color8;  # Main colour 1.
+    base09 = strip_hash colors.colors.color9;  # Main colour 2.
+    base0A = strip_hash colors.colors.color10;  # Main colour 3.
+    base0B = strip_hash colors.colors.color11;  # Main colour 4.
+    base0C = strip_hash colors.colors.color12;  # Main colour 5.
+    base0D = strip_hash colors.colors.color13;  # Main colour 6.
+    base0E = strip_hash colors.colors.color14;  # Main colour 7.
+    base0F = strip_hash colors.colors.color15; # Main colour 8.
+  };
+
+  # Read pywal colors if cache exists and scheme is pywal.
+  pywal_colors_raw = if builtins.pathExists pywal_cache
+    then builtins.readFile pywal_cache
+    else null;
+
+  pywal_colors = if pywal_colors_raw != null
+    then parse_pywal_colors pywal_colors_raw
+    else gruvbox_colors.dark; # Fallback to gruvbox dark.
 
   # Gruvbox hard Base16 color definitions.
   gruvbox_colors = {
@@ -46,13 +86,13 @@ let
     };
   };
 
-  # Current color scheme.
-  colors = if is_dark then gruvbox_colors.dark else gruvbox_colors.light;
+  # Current color scheme (two-dimensional: scheme × light/dark).
+  # Note: pywal colors are pre-generated in the correct mode (light/dark) by tt command.
+  colors = if color_scheme == "pywal"
+    then pywal_colors
+    else (if is_dark then gruvbox_colors.dark else gruvbox_colors.light);
 
   themes = {
-    nvim.dark       = "gruvbox-material";
-    nvim.light      = "gruvbox-material";
-
     alacritty.dark  = "gruvbox_material_hard_dark";
     alacritty.light = "gruvbox_material_hard_light";
 
@@ -98,10 +138,8 @@ let
       package = pkgs.papirus-icon-theme;
     };
 
-    # Missing wallpapers are handled by `wallpaper-switcher` in `modules/common/theme.nix`.
-    # TODO: Handle this better.
-    wallpaper.light = "${config.users.users.jam.home}/wallpapers/1053268.jpg";
-    wallpaper.dark  = "${config.users.users.jam.home}/wallpapers/1005830.jpg";
+    # Wallpapers are managed by swww - use pick-wallpaper or set-wallpaper commands.
+    # Pywal colors are generated from the current wallpaper when switching themes.
   };
 
   # helpers
@@ -127,6 +165,7 @@ in
   config.theme = {
     # Core theme state.
     is_dark = is_dark;
+    color_scheme = color_scheme;
     variant = variant;
 
     # Base16 color scheme.
@@ -159,10 +198,7 @@ in
 
     icons = get_theme "icons";
 
-    wallpaper = get_theme "wallpaper";
-
     # Program-specific theme names.
-    nvim      = get_theme "nvim";
     alacritty = get_theme "alacritty";
     zellij    = get_theme "zellij";
     starship  = get_theme "starship";
@@ -176,10 +212,19 @@ in
     themes = themes;
   };
 
-  # Export theme info as env var.
-  config.environment.variables.THEME_MODE = variant;
+  # Export theme info as env vars.
+  config.environment.variables.THEME_MODE   = variant;
+  config.environment.variables.THEME_SCHEME = color_scheme;
 
-  config.home-manager.sharedModules = mkIf config.isDesktopNotWsl [{
+  config.home-manager.sharedModules = mkIf config.isDesktopNotWsl [
+    (homeArgs: {
+
+    programs.pywal = enabled;
+
+    # Pywal colors are now generated in theme.nu before rebuilds. This ensures
+    # the correct mode colors are in ~/.cache/wal/colors.json when the rebuild
+    # happens, preventing the terminal from flickering between modes.
+
     xdg.desktopEntries.dark-mode = {
       name     = "Dark Mode";
       exec     = ''nu -l -c "tt dark"'';
@@ -190,5 +235,5 @@ in
       exec     = ''nu -l -c "tt light"'';
       terminal = false;
     };
-  }];
+  })];
 }

@@ -20,9 +20,20 @@ in {
   home-manager.sharedModules = [{
     programs.helix = enabled {
       package = helix.packages.${pkgs.system}.helix; # [`.helix`] follows the master branch.
-      settings.theme.fallback = config.theme.helix;
-      settings.theme.dark     = config.theme.themes.helix.dark;
-      settings.theme.light    = config.theme.themes.helix.light;
+      settings.theme = "base16_default_custom";
+
+      # Pywal output doesn't have gradients like base16 needs.
+      # So it's necessary to override a few colours.
+      themes.base16_default_custom = {
+        inherits = "base16_default";
+        "ui.cursorline.primary".bg   = if config.theme.is_dark then "#404040" else "#F0F0F0";
+        "ui.popup".bg                = if config.theme.is_dark then "#404040" else "#F0F0F0";
+        "ui.popup.info".bg           = if config.theme.is_dark then "#404040" else "#F0F0F0";
+        "ui.selection".bg            = if config.theme.is_dark then "#707070" else "#D0D0D0";
+        "ui.selection.primary".bg    = if config.theme.is_dark then "#707070" else "#D0D0D0";
+        "comment".fg                 = if config.theme.is_dark then "#909090" else "#C0C0C0";
+      };
+
       settings.editor = {
         completion-timeout             = 5;
         color-modes                    = true;
