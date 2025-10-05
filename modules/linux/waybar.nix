@@ -127,7 +127,7 @@ in mkIf config.isDesktopNotWsl {
         };
       };
 
-      style = ''
+      style = /* css */ ''
         * {
           border: none;
           border-radius: 0;
@@ -139,7 +139,7 @@ in mkIf config.isDesktopNotWsl {
 
         #waybar {
           background:
-            linear-gradient(rgba(${builtins.concatStringsSep ", " (map toString config.theme.withRgb.base00)}, 0.85), rgba(${builtins.concatStringsSep ", " (map toString config.theme.withRgb.base00)}, 0.85)) padding-box,
+            linear-gradient(rgba(${builtins.concatStringsSep ", " (map toString config.theme.withRgb.base00)}, 0.7), rgba(${builtins.concatStringsSep ", " (map toString config.theme.withRgb.base00)}, 0.7)) padding-box,
             linear-gradient(225deg, ${base0B}, ${base09}) border-box;
           color: ${base07};
           border: ${toString (config.theme.border / 2)}px solid transparent;
@@ -149,15 +149,6 @@ in mkIf config.isDesktopNotWsl {
         #window {
           color: ${base07};
         }
-
-        #workspaces button:nth-child(1) { color: ${base08}; }
-        #workspaces button:nth-child(2) { color: ${base09}; }
-        #workspaces button:nth-child(3) { color: ${base0A}; }
-        #workspaces button:nth-child(4) { color: ${base0B}; }
-        #workspaces button:nth-child(5) { color: ${base0C}; }
-        #workspaces button:nth-child(6) { color: ${base0D}; }
-        #workspaces button:nth-child(7) { color: ${base0E}; }
-        #workspaces button:nth-child(8) { color: ${base0F}; }
 
         #workspaces button {
           padding: 0 ${toString config.theme.padding}px;
@@ -171,10 +162,7 @@ in mkIf config.isDesktopNotWsl {
 
         #workspaces button.active {
           color: ${base07};
-          background:
-            linear-gradient(${base02}, ${base02}) padding-box,
-            linear-gradient(45deg, ${base0B}, ${base09}) border-box;
-          border: ${toString (config.theme.border / 2)}px solid transparent;
+          background: rgba(${builtins.concatStringsSep ", " (map toString config.theme.withRgb.base00)}, 0.45) padding-box;
         }
 
         #tray, #pulseaudio, #cpu, #memory, #disk, #battery, #clock, #custom-gpu {

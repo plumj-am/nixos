@@ -131,7 +131,7 @@ in mkIf config.isDesktopNotWsl {
           };
 
           dim_inactive = true;
-          dim_strength = 0.08;
+          dim_strength = 0.05;
         };
 
         cursor = {
