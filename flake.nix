@@ -86,11 +86,16 @@
       url                    = "github:helix-editor/helix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    niri = {
+      url                    = "github:sodiboo/niri-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ { nixpkgs, nix-darwin,  ... }: let
     inherit (builtins) readDir;
-    inherit (nixpkgs.lib) attrsToList const extend groupBy listToAttrs mapAttrs nameValuePair;
+    inherit (nixpkgs.lib) attrsToList const groupBy listToAttrs mapAttrs nameValuePair;
 
     # Extend nixpkgs.lib with nix-darwin.lib, then our custom lib.
     lib' = nixpkgs.lib.extend (const <| const <| nix-darwin.lib);

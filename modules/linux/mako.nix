@@ -24,7 +24,7 @@ in mkIf config.isDesktopNotWsl {
         margin  = "${toString margin}";
         padding = "${toString padding}";
 
-        output = mkIf (config.networking.hostName == "yuzu") "DP-1";
+        # output = mkIf (config.networking.hostName == "yuzu") "DP-1";
 
         sort        = "-time";
         max-visible = 10;

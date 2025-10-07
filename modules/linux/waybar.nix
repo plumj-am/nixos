@@ -12,18 +12,23 @@ in mkIf config.isDesktopNotWsl {
           margin-left  = config.theme.margin;
           margin-right = config.theme.margin;
 
-          modules-left   = [ "hyprland/workspaces" ];
-          modules-center = [ "hyprland/window" ];
+          modules-left   = [ "hyprland/workspaces" "niri/workspaces" ];
+          modules-center = [ "hyprland/window" "niri/window" ];
           modules-right  = [ "tray" "pulseaudio" "cpu" "memory" "disk" "custom/gpu" "battery" "clock" ];
 
           "hyprland/workspaces" = {
+            all-outputs  = true;
             format       = "{icon}";
             format-icons = {
               default = "○";
               active  = "●";
             };
-
             persistent-workspaces."*" = 4;
+          };
+
+          "niri/workspaces" = {
+            all-outputs  = true;
+            format       = "{index}";
           };
 
           "hyprland/window" = {
@@ -31,8 +36,18 @@ in mkIf config.isDesktopNotWsl {
             separate-outputs = true;
             rewrite          = {
               "(.*) — Zen Browser" = "󰖟 $1";
-              "(.*) - Discord" = "󰙯 $1";
-              "(.*) — nu" = " $1";
+              "(.*) - Discord"     = "󰙯 $1";
+              "(.*) — nu"          = " $1";
+            };
+          };
+
+          "niri/window" = {
+            max-length       = 50;
+            separate-outputs = true;
+            rewrite          = {
+              "(.*) — Zen Browser" = "󰖟 $1";
+              "(.*) - Discord"     = "󰙯 $1";
+              "(.*) — nu"          = " $1";
             };
           };
 
@@ -45,7 +60,7 @@ in mkIf config.isDesktopNotWsl {
             format              = "{format_source} {icon} {volume}%";
             format-muted        = "{format_source} 󰸈";
             format-source       = "󰍬";
-            format-source-muted = "󰍭";
+            format-source-muted = ""; # 󰍭
             format-icons        = {
               default = [ "󰕿" "󰖀" "󰕾" ];
             };
@@ -139,7 +154,7 @@ in mkIf config.isDesktopNotWsl {
 
         #waybar {
           background:
-            linear-gradient(rgba(${builtins.concatStringsSep ", " (map toString config.theme.withRgb.base00)}, 0.7), rgba(${builtins.concatStringsSep ", " (map toString config.theme.withRgb.base00)}, 0.7)) padding-box,
+            linear-gradient(rgba(${builtins.concatStringsSep ", " (map toString config.theme.withRgb.base00)}, 0.8), rgba(${builtins.concatStringsSep ", " (map toString config.theme.withRgb.base00)}, 0.8)) padding-box,
             linear-gradient(225deg, ${base0B}, ${base09}) border-box;
           color: ${base07};
           border: ${toString (config.theme.border / 2)}px solid transparent;

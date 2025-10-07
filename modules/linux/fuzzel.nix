@@ -14,7 +14,7 @@ in mkIf config.isDesktopNotWsl {
         layer      = "overlay";
         prompt     = ''"❯ "'';
         terminal   = "kitty";
-        output     = mkIf (config.networking.hostName == "yuzu") "DP-1";
+        # output     = mkIf (config.networking.hostName == "yuzu") "DP-1";
 
         horizontal-pad = padding;
         vertical-pad   = padding;
