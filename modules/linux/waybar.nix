@@ -7,10 +7,10 @@ in mkIf config.isDesktopNotWsl {
       settings = {
         mainBar = {
           layer        = "top";
-          height       = config.theme.radius * 8;
-          margin-top   = config.theme.margin;
-          margin-left  = config.theme.margin;
-          margin-right = config.theme.margin;
+          height       = config.theme.margin.big;
+          margin-top   = config.theme.margin.normal;
+          margin-left  = config.theme.margin.normal;
+          margin-right = config.theme.margin.normal;
 
           modules-left   = [ "hyprland/workspaces" "niri/workspaces" ];
           modules-center = [ "hyprland/window" "niri/window" ];
@@ -154,11 +154,11 @@ in mkIf config.isDesktopNotWsl {
 
         #waybar {
           background:
-            linear-gradient(rgba(${builtins.concatStringsSep ", " (map toString config.theme.withRgb.base00)}, 0.8), rgba(${builtins.concatStringsSep ", " (map toString config.theme.withRgb.base00)}, 0.8)) padding-box,
+            linear-gradient(rgba(${builtins.concatStringsSep ", " (map toString config.theme.withRgb.base00)}, (toString config.theme.opacity.verylow)), rgba(${builtins.concatStringsSep ", " (map toString config.theme.withRgb.base00)}, (toString config.theme.opacity.verylow)) padding-box,
             linear-gradient(225deg, ${base0B}, ${base09}) border-box;
           color: ${base07};
-          border: ${toString (config.theme.border / 2)}px solid transparent;
-          border-radius: ${toString (config.theme.radius * 2)}px;
+          border: ${toString (config.theme.border.small)}px solid transparent;
+          border-radius: ${toString (config.theme.radius.big)}px;
         }
 
         #window {
@@ -166,9 +166,9 @@ in mkIf config.isDesktopNotWsl {
         }
 
         #workspaces button {
-          padding: 0 ${toString config.theme.padding}px;
-          border: ${toString (config.theme.border / 2)}px solid transparent;
-          border-radius: ${toString config.theme.radius}px;
+          padding: 0 ${toString config.theme.padding.normal}px;
+          border: ${toString (config.theme.border.small)}px solid transparent;
+          border-radius: ${toString config.theme.radius.normal}px;
         }
 
         #workspaces button.empty {
@@ -182,8 +182,8 @@ in mkIf config.isDesktopNotWsl {
 
         #tray, #pulseaudio, #cpu, #memory, #disk, #battery, #clock, #custom-gpu {
           margin: 0;
-          margin-left: ${toString config.theme.margin}px;
-          padding: 0 ${toString config.theme.padding}px;
+          margin-left: ${toString config.theme.margin.normal}px;
+          padding: 0 ${toString config.theme.padding.normal}px;
           color: ${base07}; /* Use highest contrast text */
         }
 
@@ -194,7 +194,7 @@ in mkIf config.isDesktopNotWsl {
 
         #battery.critical:not(.charging) {
           animation-name: blink;
-          animation-duration: 0.5s;
+          animation-duration: ${toString config.theme.duration.s.short}s;
           animation-timing-function: linear;
           animation-iteration-count: infinite;
           animation-direction: alternate;
@@ -208,7 +208,7 @@ in mkIf config.isDesktopNotWsl {
         #cpu.critical, #memory.critical, #disk.critical, #custom-gpu.critical {
           color: ${base08};
           animation-name: blink;
-          animation-duration: 1s;
+          animation-duration: ${toString config.theme.duration.s.normal}s;
           animation-timing-function: linear;
           animation-iteration-count: infinite;
           animation-direction: alternate;

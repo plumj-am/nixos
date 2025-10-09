@@ -21,8 +21,8 @@ in mkIf config.isDesktopNotWsl {
         layer   = "overlay";
         width   = 400;
         height  = 150;
-        margin  = "${toString margin}";
-        padding = "${toString padding}";
+        margin  = "${toString margin.normal}";
+        padding = "${toString padding.normal}";
 
         # output = mkIf (config.networking.hostName == "yuzu") "DP-1";
 
@@ -30,10 +30,10 @@ in mkIf config.isDesktopNotWsl {
         max-visible = 10;
         group-by    = "app-name";
 
-        border-size   = border;
-        border-radius = radius * 2;
+        border-size   = border.normal;
+        border-radius = radius.verybig;
 
-        background-color = "#${colors.base00}BB";
+        background-color = "#${colors.base00}FF";
         text-color       = "#${colors.base07}FF";
         border-color     = "#${colors.base0A}BB";
         progress-color   = "over #${colors.base09}55";

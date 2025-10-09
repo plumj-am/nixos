@@ -11,7 +11,7 @@ in mkIf config.isDesktopNotWsl {
         dmenu              = "fuzzel --dmenu";
         show_age_threshold = 30;
         transparency       = 0;  # Doesn't work on Wayland.
-        separator_height   = config.theme.border;
+        separator_height   = config.theme.border.normal;
         sort               = "update";
         format             = "<b>%a</b>\n<b>%s</b>\n%b";
 
@@ -21,16 +21,16 @@ in mkIf config.isDesktopNotWsl {
         font    = "${config.theme.font.mono.name}:size=${toString config.theme.font.size.normal}";
         width   = ''(350, 500)'';
         height  = ''(0, 750)'';
-        offset  = ''(${toString config.theme.margin}, ${toString config.theme.margin})'';
+        offset  = ''(${toString config.theme.margin.normal}, ${toString config.theme.margin.normal})'';
 
-        padding            = config.theme.padding;
-        horizontal_padding = config.theme.padding;
-        corner_radius      = config.theme.radius * 2;
-        frame_width        = config.theme.border;
+        padding            = config.theme.padding.normal;
+        horizontal_padding = config.theme.padding.normal;
+        corner_radius      = config.theme.radius.big;
+        frame_width        = config.theme.border.normal;
 
         progress_bar_min_width     = 0;
         progress_bar_max_width     = 750;
-        progress_bar_corner_radius = config.theme.radius;
+        progress_bar_corner_radius = config.theme.radius.normal;
       };
 
       settings.urgency_low = {

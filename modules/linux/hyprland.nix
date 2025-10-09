@@ -100,9 +100,9 @@ in mkIf config.isDesktopNotWsl {
 
         # Basic appearance.
         general = with config.theme; {
-          gaps_in     = margin / 2;
-          gaps_out    = margin;
-          border_size = border;
+          gaps_in     = margin.small;
+          gaps_out    = margin.normal;
+          border_size = border.normal;
 
           # Gradient window borders.
           "col.active_border"         = "rgb(${colors.base0B}) rgb(${colors.base09}) 45deg";
@@ -113,7 +113,7 @@ in mkIf config.isDesktopNotWsl {
         };
 
         decoration = {
-          rounding = config.theme.radius;
+          rounding = config.theme.radius.normal;
 
           blur = {
             enabled           = true;

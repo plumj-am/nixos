@@ -16,12 +16,12 @@ in mkIf config.isDesktopNotWsl {
         terminal   = "kitty";
         # output     = mkIf (config.networking.hostName == "yuzu") "DP-1";
 
-        horizontal-pad = padding;
-        vertical-pad   = padding;
+        horizontal-pad = padding.normal;
+        vertical-pad   = padding.normal;
       };
 
       settings.colors = {
-        background      = colors.base00 + "D9"; # 85% opacity.
+        background      = colors.base00 + "FF";
         text            = colors.base07 + "FF";
         match           = colors.base0A + "FF";
         selection       = colors.base0A + "88"; # Lower opacity.
@@ -31,8 +31,8 @@ in mkIf config.isDesktopNotWsl {
       };
 
       settings.border = {
-        radius = radius * 2;
-        width  = border / 2;
+        radius = radius.verybig;
+        width  = border.small;
       };
     };
   }];

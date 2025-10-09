@@ -1,4 +1,4 @@
-{ pkgs, config, lib, ... }: let
+{ self, pkgs, config, lib, ... }: let
 	inherit (lib) enabled;
 in {
   home-manager.sharedModules = [
@@ -8,9 +8,6 @@ in {
         m  = "moon";
         mp = "mprocs";
         ko = "kondo";
-
-        rebuild  = "${homeArgs.config.home.homeDirectory}/rebuild.nu";
-        rollback = "${homeArgs.config.home.homeDirectory}/rebuild.nu --rollback";
 
         td    = "hx ${homeArgs.config.home.homeDirectory}/notes/todo.md";
         notes = "hx ${homeArgs.config.home.homeDirectory}/notes";
@@ -121,7 +118,7 @@ in {
     extraConfig = /* nu */ ''
       ${builtins.readFile ./menus.nu}
       ${builtins.readFile ./functions.nu}
-      ${builtins.readFile ./theme.nu}
+      ${builtins.readFile (self + /modules/common/theme/theme.nu)}
     '';
 
     envFile.text = ''
@@ -129,7 +126,7 @@ in {
 			# $env.config.color_config = (${config.theme.nushell})
 
 			$env.CARAPACE_BRIDGES = "zsh,fish,bash,inshellisense,clap"
-			$env.LS_COLORS = (vivid generate ${config.theme.vivid})
+			$env.LS_COLORS = (${pkgs.vivid}/bin/vivid generate ${config.theme.vivid})
     '';
     };
     })

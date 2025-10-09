@@ -19,9 +19,9 @@ in {
         completion.shrink = true;
         messages.timeout  = 10000;
 
-        prompt.radius  = config.theme.radius;
-        keyhint.radius = config.theme.radius;
-        hints.radius   = config.theme.radius;
+        prompt.radius  = config.theme.radius.normal;
+        keyhint.radius = config.theme.radius.normal;
+        hints.radius   = config.theme.radius.normal;
 
         fonts.default_family = config.theme.font.mono.family;
 

@@ -1,10 +1,8 @@
-{ lib, pkgs, config, self, ... }:
+{ lib, self, ... }:
 let
-  inherit (lib) mkOption types mkIf enabled;
-
   # Global theme configuration - use `tt dark`/`tt light` to switch light/dark.
   # Use `tt pywal`/`tt gruvbox` to switch color scheme.
-  is_dark = true;
+  is_dark = if builtins.pathExists (self + /modules/common/theme/dark-mode) then true else false;
   color_scheme = "pywal"; # "gruvbox" or "pywal"
 
   # Pywal colors cache - single file updated when theme changes.
@@ -13,8 +11,6 @@ let
 
   # Parse pywal colors and convert to base16 format.
   # Pywal provides: background, foreground, color0-15.
-  # Base16 needs smooth grayscale gradient base00-07.
-  # Use color0 (black), color8 (gray), color7/15 (white) for gradient.
   parse_pywal_colors = json: let
     colors = builtins.fromJSON json;
     strip_hash = s: builtins.substring 1 6 s;
@@ -92,59 +88,7 @@ let
     then pywal_colors
     else (if is_dark then gruvbox_colors.dark else gruvbox_colors.light);
 
-  themes = {
-    alacritty.dark  = "gruvbox_material_hard_dark";
-    alacritty.light = "gruvbox_material_hard_light";
-
-    zellij.dark     = "gruvbox-dark";
-    zellij.light    = "gruvbox-light";
-
-    starship.dark   = "dark_theme";
-    starship.light  = "light_theme";
-
-    vivid.dark      = "gruvbox-dark";
-    vivid.light     = "gruvbox-light";
-
-    nushell.dark    = "dark-theme";
-    nushell.light   = "light-theme";
-
-    helix.dark      = "gruvbox_dark_hard";
-    helix.light     = "gruvbox_light_hard";
-
-    gtk.dark = {
-      name = "Adwaita-dark";
-      package = pkgs.gnome-themes-extra;
-    };
-    gtk.light = {
-      name = "Adwaita";
-      package = pkgs.gnome-themes-extra;
-    };
-
-    qt.dark = {
-      name          = "adwaita-dark";
-      platformTheme = "adwaita";
-    };
-    qt.light = {
-      name          = "adwaita";
-      platformTheme = "adwaita";
-    };
-
-    icons.dark = {
-      name    = "Gruvbox-Plus-Dark";
-      package = pkgs.gruvbox-plus-icons;
-    };
-    icons.light = {
-      name    = "Papirus-Light";
-      package = pkgs.papirus-icon-theme;
-    };
-
-    # Wallpapers are managed by swww - use pick-wallpaper or set-wallpaper commands.
-    # Pywal colors are generated from the current wallpaper when switching themes.
-  };
-
-  # Helpers.
-  get_theme = program: if is_dark then themes.${program}.dark else themes.${program}.light;
-  variant   = if is_dark then "dark" else "light";
+  variant = if is_dark then "dark" else "light";
 
   # Convert hex to RGB array helper for colors.
   hexToRgb = hex: let
@@ -154,82 +98,22 @@ let
   in [ r g b ];
 in
 {
-  # Define theme as a top-level option that all modules can access via config.theme.
-  options.theme = mkOption {
-    type        = types.attrs;
-    default     = {};
-    description = "Global theme configuration";
-  };
-
-  # Set the theme values.
   config.theme = {
-    # Core theme state.
-    is_dark = is_dark;
-    color_scheme = color_scheme;
-    variant = variant;
-
-    # Base16 color scheme.
-    inherit colors;
+    inherit
+      # Core theme state.
+      is_dark
+      color_scheme
+      variant
+      # Base16 color scheme.
+      colors;
 
     # Color helpers with prefixes.
-    withHash    = lib.mapAttrs (name: value: "#${value}") colors;
-    with0x      = lib.mapAttrs (name: value: "0x${value}") colors;
-    withRgb     = lib.mapAttrs (name: value: hexToRgb value) colors;
-
-    # Shared design system.
-    radius  = 4;
-    border  = 4;
-    margin  = 8;
-    padding = 8;
-
-    # Font configuration.
-    font = {
-      size.small  = 12;
-      size.normal = 16;
-      size.big    = 20;
-
-      mono.name    = "JetBrainsMono Nerd Font";
-      mono.family  = "JetBrainsMono Nerd Font Mono";
-      mono.package = pkgs.nerd-fonts.jetbrains-mono;
-
-      sans.name    = "Lexend";
-      sans.package = pkgs.lexend;
-    };
-
-    icons = get_theme "icons";
-
-    # Program-specific theme names.
-    alacritty = get_theme "alacritty";
-    zellij    = get_theme "zellij";
-    starship  = get_theme "starship";
-    vivid     = get_theme "vivid";
-    nushell   = get_theme "nushell";
-    helix     = get_theme "helix";
-    gtk       = get_theme "gtk";
-    qt        = get_theme "qt";
-
-    # Expose raw theme definitions for flexibility.
-    themes = themes;
+    withHash = lib.mapAttrs (name: value: "#${value}") colors;
+    with0x   = lib.mapAttrs (name: value: "0x${value}") colors;
+    withRgb  = lib.mapAttrs (name: value: hexToRgb value) colors;
   };
 
   # Export theme info as env vars.
   config.environment.variables.THEME_MODE   = variant;
   config.environment.variables.THEME_SCHEME = color_scheme;
-
-  config.home-manager.sharedModules = mkIf config.isDesktopNotWsl [
-    (homeArgs: {
-
-    programs.pywal = enabled;
-
-    xdg.desktopEntries.dark-mode = {
-      name     = "Dark Mode";
-      exec     = ''nu -l -c "tt dark"'';
-      terminal = false;
-    };
-    xdg.desktopEntries.light-mode = {
-      name     = "Light Mode";
-      exec     = ''nu -l -c "tt light"'';
-      terminal = false;
-    };
-  })];
 }
