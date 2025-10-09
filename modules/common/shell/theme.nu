@@ -74,7 +74,7 @@ def toggle-theme [theme?: string] {
                 ^rm -rf ~/.cache/wal
 
                 let wal_args = if $new_theme == "dark" {
-                    ["-n" "--saturate" "0.7" "-i" $wallpaper]
+                    ["-n" "--saturate" "0.5" "-i" $wallpaper]
                 } else {
                     ["-n" "--saturate" "0.6" "-l" "-i" $wallpaper]
                 }
@@ -124,7 +124,7 @@ def toggle-theme [theme?: string] {
     print-notify $"Rebuilding configuration to apply ($new_theme) theme." 75
 
     try {
-        nu $"($env.HOME)/rebuild.nu" --quiet
+        ^rebuild --quiet
     } catch { |e|
         print-notify "Error: Rebuild failed, run manually in a terminal." 100
         exit 1
@@ -169,7 +169,7 @@ def switch-scheme [scheme: string] {
                 ^rm -rf ~/.cache/wal
 
                 let wal_args = if $is_dark {
-                    ["-n" "--saturate" "0.7" "-i" $wallpaper]
+                    ["-n" "--saturate" "0.5" "-i" $wallpaper]
                 } else {
                     ["-n" "--saturate" "0.6" "-l" "-i" $wallpaper]
                 }
@@ -205,7 +205,7 @@ def switch-scheme [scheme: string] {
     print-notify $"Rebuilding configuration to apply ($scheme) scheme..." 75
 
     try {
-        nu $"($env.HOME)/rebuild.nu" --quiet
+        ^rebuild --quiet
     } catch { |e|
         print-notify "Error: Rebuild failed, run manually in a terminal."
         exit 1

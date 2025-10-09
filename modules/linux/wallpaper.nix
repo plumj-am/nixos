@@ -94,7 +94,7 @@
               ^rm -rf ~/.cache/wal
 
               let wal_args = if $is_dark {
-                ["-n" "--saturate" "0.7" "-i" $selected]
+                ["-n" "--saturate" "0.5" "-i" $selected]
               } else {
                 ["-n" "--saturate" "0.6" "-l" "-i" $selected]
               }
@@ -102,7 +102,7 @@
               ^cp ~/.cache/wal/colors.json $"($env.HOME)/nixos/pywal-colors.json"
               print "Colors regenerated!"
               try {
-                nu -l -c "~/rebuild.nu --quiet"
+                ^rebuild --quiet
               } catch { |e|
                 print "Failed to rebuild."
               }

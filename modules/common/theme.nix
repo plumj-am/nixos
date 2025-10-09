@@ -86,8 +86,8 @@ let
     };
   };
 
-  # Current color scheme (two-dimensional: scheme × light/dark).
-  # Note: pywal colors are pre-generated in the correct mode (light/dark) by tt command.
+  # Current color scheme (two-dimensional: scheme + light/dark).
+  # NOTE: pywal colors are pre-generated in the correct mode (light/dark) by tt command.
   colors = if color_scheme == "pywal"
     then pywal_colors
     else (if is_dark then gruvbox_colors.dark else gruvbox_colors.light);
@@ -142,7 +142,7 @@ let
     # Pywal colors are generated from the current wallpaper when switching themes.
   };
 
-  # helpers
+  # Helpers.
   get_theme = program: if is_dark then themes.${program}.dark else themes.${program}.light;
   variant   = if is_dark then "dark" else "light";
 
@@ -220,10 +220,6 @@ in
     (homeArgs: {
 
     programs.pywal = enabled;
-
-    # Pywal colors are now generated in theme.nu before rebuilds. This ensures
-    # the correct mode colors are in ~/.cache/wal/colors.json when the rebuild
-    # happens, preventing the terminal from flickering between modes.
 
     xdg.desktopEntries.dark-mode = {
       name     = "Dark Mode";
