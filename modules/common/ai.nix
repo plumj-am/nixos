@@ -10,6 +10,8 @@
   environment.systemPackages = lib.optionals config.isDesktop [
     pkgs.claude-code
     pkgs.codex
+    pkgs.qwen-code
+    pkgs.gemini-cli
   ];
 
   # There is a HM program from claude-code but unfree doesn't work the same

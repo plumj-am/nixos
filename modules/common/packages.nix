@@ -12,20 +12,18 @@
     pkgs.tree
     pkgs.typos
     pkgs.uutils-coreutils-noprefix
+    pkgs.sqlite
   ]
   ++ lib.optionals config.isDesktop [
     pkgs.deno
-    pkgs.gemini-cli
     pkgs.moon
     pkgs.nodejs
     pkgs.pnpm
     pkgs.proto
     pkgs.python3
-    pkgs.sqlite
   ]
-  ++ lib.optionals config.isLinux [
-    pkgs.gcc
-    pkgs.gnumake
-    pkgs.wget
+  ++ lib.optionals config.isDesktopNotWsl [
+    pkgs.whatsapp-for-linux
+    pkgs.thunderbird
   ];
 }
