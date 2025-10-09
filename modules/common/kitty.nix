@@ -27,8 +27,9 @@ in{
         input_delay     = 1;
         sync_to_monitor = false;
 
-        window_padding_width = config.theme.padding / 2;
-        window_border_width  = "0pt";
+        hide_window_decorations = true;
+        window_padding_width    = config.theme.padding / 2;
+        window_border_width     = "0pt";
 
         cursor                  = base05;
         cursor_text_color       = base00;
