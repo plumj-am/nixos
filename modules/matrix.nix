@@ -1,6 +1,6 @@
 { self, config, lib, ... }: let
   inherit (config.networking) domain;
-  inherit (lib) enabled mkForce;
+  inherit (lib) enabled;
 
   fqdn = "matrix.${domain}";
   port = 8008;
@@ -65,9 +65,7 @@ in {
 
     configureRedisLocally = true;
 
-    settings = let
-      description = "PlumJam's Matrix Server";
-    in {
+    settings = {
       server_name = domain;
 
       listeners = [{
