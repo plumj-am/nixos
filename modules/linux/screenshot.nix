@@ -35,18 +35,21 @@ in mkIf config.isDesktop {
     # Desktop entries allow them to appear in Fuzzel.
     xdg.desktopEntries.screenshot = {
       name     = "Screenshot";
+      icon     = "camera-web";
       exec     = "screenshot";
       terminal = false;
     };
 
     xdg.desktopEntries.screenshot-clip = {
       name     = "Screenshot Clipboard";
+      icon     = "camera-web";
       exec     = "screenshot-clip";
       terminal = false;
     };
 
     xdg.desktopEntries.screenshot-full = {
       name     = "Screenshot Full";
+      icon     = "camera-web";
       exec     = "screenshot-full";
       terminal = false;
     };

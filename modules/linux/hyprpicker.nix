@@ -8,6 +8,7 @@ in mkIf config.isDesktopNotWsl {
   home-manager.sharedModules = [{
     xdg.desktopEntries.hyprpicker = {
       name     = "Colour Picker";
+      icon     = "image-x-generic";
       exec     = "hyprpicker --format=hex --autocopy";
       terminal = false;
     };

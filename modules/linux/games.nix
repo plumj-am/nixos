@@ -37,6 +37,7 @@ in mkIf (config.isDesktopNotWsl && config.isGaming) {
   home-manager.sharedModules = [{
     xdg.desktopEntries.overwatch = {
       name     = "Overwatch";
+      icon     = "com.valvesoftware.Steam";
       exec     = "steam steam://rungameid/2357570";
       terminal = false;
     };
