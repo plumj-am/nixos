@@ -154,7 +154,7 @@ in mkIf config.isDesktopNotWsl {
 
         #waybar {
           background:
-            linear-gradient(rgba(${builtins.concatStringsSep ", " (map toString config.theme.withRgb.base00)}, (toString config.theme.opacity.verylow)), rgba(${builtins.concatStringsSep ", " (map toString config.theme.withRgb.base00)}, (toString config.theme.opacity.verylow)) padding-box,
+            linear-gradient(rgba(${builtins.concatStringsSep ", " (map toString config.theme.withRgb.base00)}, ${toString config.theme.opacity.verylow}), rgba(${builtins.concatStringsSep ", " (map toString config.theme.withRgb.base00)}, ${toString config.theme.opacity.verylow})) padding-box,
             linear-gradient(225deg, ${base0B}, ${base09}) border-box;
           color: ${base07};
           border: ${toString (config.theme.border.small)}px solid transparent;
