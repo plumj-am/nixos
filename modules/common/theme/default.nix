@@ -13,7 +13,8 @@ in
     description = "Global theme configuration";
   };
 
-  config.theme = {
+  config = mkIf config.isDesktop {
+    theme = {
     # Shared design system.
     radius = {
       small    = 2;
@@ -60,22 +61,37 @@ in
         long   = 300;
       };
     };
+    };
+
+    home-manager.sharedModules = mkIf config.isDesktopNotWsl [
+      (homeArgs: {
+        programs.pywal = enabled;
+
+        xdg.desktopEntries.dark-mode = {
+          name     = "Dark Mode";
+          icon     = "preferences-color-symbolic";
+          exec     = ''tt dark'';
+          terminal = false;
+        };
+        xdg.desktopEntries.light-mode = {
+          name     = "Light Mode";
+          icon     = "preferences-color-symbolic";
+          exec     = ''tt light'';
+          terminal = false;
+        };
+        xdg.desktopEntries.pywal-mode = {
+          name     = "Pywal Mode";
+          icon     = "preferences-color-symbolic";
+          exec     = ''tt pywal'';
+          terminal = false;
+        };
+        xdg.desktopEntries.gruvbox-mode = {
+          name     = "Gruvbox Mode";
+          icon     = "preferences-color-symbolic";
+          exec     = ''tt gruvbox'';
+          terminal = false;
+        };
+      })
+    ];
   };
-
-  config.home-manager.sharedModules = mkIf config.isDesktopNotWsl [
-    (homeArgs: {
-      programs.pywal = enabled;
-
-      xdg.desktopEntries.dark-mode = {
-        name     = "Dark Mode";
-        exec     = ''nu -l -c "tt dark"'';
-        terminal = false;
-      };
-      xdg.desktopEntries.light-mode = {
-        name     = "Light Mode";
-        exec     = ''nu -l -c "tt light"'';
-        terminal = false;
-      };
-    })
-  ];
 }

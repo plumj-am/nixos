@@ -2,12 +2,14 @@
 let
   # Global theme configuration - use `tt dark`/`tt light` to switch light/dark.
   # Use `tt pywal`/`tt gruvbox` to switch color scheme.
-  is_dark = if builtins.pathExists (self + /modules/common/theme/dark-mode) then true else false;
-  color_scheme = "pywal"; # "gruvbox" or "pywal"
+  # Both are controlled via theme.json file that gets updated by theme commands.
+  themeConfig = builtins.fromJSON (builtins.readFile ./theme.json);
+  is_dark = themeConfig.mode == "dark";
+  color_scheme = themeConfig.scheme;
 
   # Pywal colors cache - single file updated when theme changes.
   # Stored in flake directory so Nix can access it (Nix can't read ~/.cache).
-  pywal_cache = self + /pywal-colors.json;
+  pywal_cache = ./pywal-colors.json;
 
   # Parse pywal colors and convert to base16 format.
   # Pywal provides: background, foreground, color0-15.
@@ -112,8 +114,4 @@ in
     with0x   = lib.mapAttrs (name: value: "0x${value}") colors;
     withRgb  = lib.mapAttrs (name: value: hexToRgb value) colors;
   };
-
-  # Export theme info as env vars.
-  config.environment.variables.THEME_MODE   = variant;
-  config.environment.variables.THEME_SCHEME = color_scheme;
 }

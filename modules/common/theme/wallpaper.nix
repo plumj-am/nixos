@@ -70,10 +70,8 @@
           print $"Wallpaper set: (($selected | path basename))"
 
           # Regenerate pywal colors if using pywal scheme
-          let theme_file = $"($env.HOME)/nixos/modules/common/theme.nix"
           let using_pywal = try {
-            let content = open $theme_file
-            $content | str contains 'color_scheme = "pywal";'
+            $env.THEME_SCHEME == "pywal"
           } catch {
             false
           }
@@ -81,10 +79,8 @@
           if $using_pywal {
             print "Regenerating pywal colors..."
 
-            # Determine if dark mode
             let is_dark = try {
-              let content = open $theme_file
-              $content | str contains "is_dark = true;"
+              $env.THEME_MODE == "dark"
             } catch {
               false
             }
@@ -93,13 +89,16 @@
               # Clear pywal cache to force regeneration
               ^rm -rf ~/.cache/wal
 
-              let wal_args = if $is_dark {
-                ["-n" "--saturate" "0.5" "-i" $selected]
+              # Build args: start with base, then append mode-specific ones
+              let base_args = ["-n" "--backend" "wal" "-i" $selected]
+              let mode_args = if $is_dark {
+                ["--saturate" "0.5"]
               } else {
-                ["-n" "--saturate" "0.6" "-l" "-i" $selected]
+                ["--saturate" "0.75" "-l"]
               }
-              ^${pkgs.pywal}/bin/wal --backend wal ...$wal_args err> /dev/null
-              ^cp ~/.cache/wal/colors.json $"($env.HOME)/nixos/pywal-colors.json"
+
+              ^${pkgs.pywal}/bin/wal ...($base_args | append $mode_args) err> /dev/null
+              ^cp ~/.cache/wal/colors.json $"($env.HOME)/nixos/modules/common/theme/pywal-colors.json"
               print "Colors regenerated!"
               try {
                 ^rebuild --quiet
@@ -156,7 +155,7 @@
     destination = "/bin/save-wallpaper";
   };
 
-in mkIf config.isDesktopNotWsl {
+in mkIf (config.isDesktopNotWsl && !config.isDarwin) {
   environment.systemPackages = [
     pkgs.swww
     pkgs.chafa  # Terminal image viewer for previews.
@@ -174,6 +173,7 @@ in mkIf config.isDesktopNotWsl {
     # Desktop entry for fuzzel.
     xdg.desktopEntries.pick-wallpaper = {
       name     = "Pick Wallpaper";
+      icon     = "preferences-desktop-wallpaper";
       exec     = "pick-wallpaper";
       terminal = true;
     };

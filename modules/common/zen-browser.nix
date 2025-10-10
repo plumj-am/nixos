@@ -65,9 +65,15 @@
     };
 
     # Can't get theme switching to work right now.
+    # Actually none of this seems to work.
     Preferences = {
       "layout.css.prefers-color-scheme.content-override" = if config.theme.is_dark then 0 else 1;
       "devtools.theme" = if config.theme.is_dark then "dark" else "light";
+      "zen.theme.accent-color" = "#${config.theme.colors.base09}";
+      "zen.widget.linux.transparency" = "true";
+      "zen.theme.gradient" = true;
+      "zen.theme.gradient.show-custom-colors" = true;
+      "zen.watermark.enabled" = false;
     };
   };
 in {

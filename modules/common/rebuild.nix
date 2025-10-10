@@ -4,24 +4,35 @@
   rebuildScript = pkgs.writeScriptBin "rebuild" /* nu */ ''
     #!${pkgs.nushell}/bin/nu
 
-    # TODO: Make 100 progress show full bar but prevent sticky notification.
     def print-notify [message: string, progress: int = -1] {
       print $"(ansi purple)[Rebuilder] ($message)"
-      if (which notify-send | is-not-empty) {
-        let base_args = ["--replace-id=1003" "--print-id"]
 
-        # Don't add progress hint for completion (progress=100) so it times out.
-        let args = if $progress >= 0 and $progress < 100 {
-          $base_args | append ["--hint" $"int:value:($progress)"]
-        } else {
-          $base_args
-        }
+      # Progress notifications persist, completion/error notifications auto-dismiss.
+      let is_complete = $progress == 100
+      let is_error = ($message | str downcase | str contains "error")
 
-        let timeout = if ($message | str downcase | str contains "error") { 30000 } else { 15000 }
-        let urgency = if ($message | str downcase | str contains "error") { "critical" } else { "normal" }
-
-        ^notify-send ...$args --urgency=($urgency) --expire-time=($timeout) "Rebuilder" $"($message)"
+      # Dismiss all previous notifications before showing completion.
+      if $is_complete {
+        ^${pkgs.mako}/bin/makoctl dismiss --all
       }
+
+      let timeout = if $is_error {
+        30000
+      } else if $is_complete {
+        5000
+      } else {
+        0  # Persist until replaced.
+      }
+
+      let urgency = if $is_error { "critical" } else { "normal" }
+
+      let args = if $progress >= 0 and $progress < 100 {
+        ["--hint" $"int:value:($progress)"]
+      } else {
+        []
+      }
+
+      ^${pkgs.libnotify}/bin/notify-send ...$args --urgency=($urgency) --expire-time=($timeout) "Rebuilder" $"($message)"
     }
 
     def --wrapped main [
@@ -98,21 +109,25 @@ in {
   home-manager.sharedModules = mkIf config.isDesktopNotWsl [{
     xdg.desktopEntries.rebuild = {
       name     = "Rebuild";
+      icon     = "system-run";
       exec     = ''rebuild'';
       terminal = false;
     };
     xdg.desktopEntries.rebuild-plum = {
       name     = "Rebuild plum";
+      icon     = "system-run";
       exec     = ''rebuild --remote plum'';
       terminal = false;
     };
     xdg.desktopEntries.rebuild-kiwi = {
       name     = "Rebuild kiwi";
+      icon     = "system-run";
       exec     = ''rebuild --remote kiwi'';
       terminal = false;
     };
     xdg.desktopEntries.rollback = {
       name     = "Rollback";
+      icon     = "folder";
       exec     = ''rebuild rollback'';
       terminal = false;
     };

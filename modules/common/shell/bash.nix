@@ -11,11 +11,18 @@ in {
     			m  = "moon";
     			mp = "mprocs";
     			ko = "kondo";
-
-    			tt = "toggle-theme";
     		};
 
         initExtra = ''
+          # Load theme state from theme.json
+          if [ -f "$HOME/nixos/modules/common/theme/theme.json" ]; then
+            export THEME_MODE=$(grep -o '"mode":"[^"]*"' "$HOME/nixos/modules/common/theme/theme.json" | cut -d'"' -f4)
+            export THEME_SCHEME=$(grep -o '"scheme":"[^"]*"' "$HOME/nixos/modules/common/theme/theme.json" | cut -d'"' -f4)
+          else
+            export THEME_MODE="${config.theme.variant}"
+            export THEME_SCHEME="${config.theme.color_scheme}"
+          fi
+
           # fzf key bindings
           if command -v fzf >/dev/null 2>&1; then
             bind -m emacs-standard '"\C-f": " \C-b\C-k \C-u`__fzf_cd__`\e\C-e\er\C-m\C-y\C-h\e \C-y\ey\C-x\C-x\C-d"'

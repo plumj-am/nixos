@@ -118,7 +118,6 @@ in {
     extraConfig = /* nu */ ''
       ${builtins.readFile ./menus.nu}
       ${builtins.readFile ./functions.nu}
-      ${builtins.readFile (self + /modules/common/theme/theme.nu)}
     '';
 
     envFile.text = ''
@@ -127,6 +126,17 @@ in {
 
 			$env.CARAPACE_BRIDGES = "zsh,fish,bash,inshellisense,clap"
 			$env.LS_COLORS = (${pkgs.vivid}/bin/vivid generate ${config.theme.vivid})
+
+			# Load theme state from theme.json
+			let theme_json = $"($env.HOME)/nixos/modules/common/theme/theme.json"
+			if ($theme_json | path exists) {
+				let theme = (open $theme_json)
+				$env.THEME_MODE = $theme.mode
+				$env.THEME_SCHEME = $theme.scheme
+			} else {
+				$env.THEME_MODE = "${config.theme.variant}"
+				$env.THEME_SCHEME = "${config.theme.color_scheme}"
+			}
     '';
     };
     })
