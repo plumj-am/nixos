@@ -2,19 +2,25 @@
   inherit (lib) enabled mkIf;
 in mkIf config.isDesktop {
   services.pipewire = enabled {
-    audio.enable = true;
-    pulse.enable = true;
-    jack.enable  = true;
-    alsa         = enabled {
+    audio = enabled;
+    pulse = enabled;
+    jack  = enabled;
+    alsa  = enabled {
       support32Bit = true;
     };
   };
 
   security.rtkit.enable = true;
 
-  environment.systemPackages = with pkgs; [
-    helvum               # PipeWire patchbay GUI.
-    pwvucontrol          # PipeWire volume control.
-    pulsemixer           # Terminal-based audio mixer.
+  # Disable built-in audio for "yuzu".
+  # Only use NVIDIA audio output.
+  boot.extraModprobeConfig = mkIf (config.networking.hostName == "yuzu") ''
+    options snd_hda_intel enable=0,1
+  '';
+
+  environment.systemPackages = [
+    pkgs.helvum               # PipeWire patchbay GUI.
+    pkgs.pwvucontrol          # PipeWire volume control.
+    pkgs.pulsemixer           # Terminal-based audio mixer.
   ];
 }
