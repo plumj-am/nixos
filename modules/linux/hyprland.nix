@@ -51,7 +51,7 @@ in mkIf config.isDesktopNotWsl {
           "SUPER SHIFT, Return, layoutmsg, swapwithmaster"
 
           # Window toggles.
-          "SUPER, T, togglefloating"
+          "SUPER SHIFT, T, togglefloating"
           "SUPER SHIFT, F, fullscreen, 1"
 
           # Workspaces.
@@ -78,8 +78,11 @@ in mkIf config.isDesktopNotWsl {
           "CTRL, BackSpace, exec, fuzzel"
           "SUPER, V, exec, cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"
           "SUPER, C, exec, cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"
-          "SUPER, P, exec, power-menu"
-          "SUPER SHIFT, P, exec, process-killer"
+          "SUPER SHIFT, P, exec, power-menu"
+          "SUPER, D, exec, todo-scratchpad"
+          "SUPER, S, exec, random-scratchpad"
+          "SUPER, T, exec, process-monitor"
+          "SUPER, P, exec, process-killer"
           "SUPER, Tab, exec, window-switcher"
           "SUPER, G, togglespecialworkspace, games"
           "SUPER SHIFT, G, movetoworkspace, special:games"
@@ -192,6 +195,23 @@ in mkIf config.isDesktopNotWsl {
           # Exceptions - always opaque (must come after general rules).
           "opaque, class:^(zen)(.*)$"
           "opaque, class:^(org.qutebrowser)(.*)$"
+
+          # Process monitor popup.
+          "float, class:^(btop-popup)$"
+          "monitor 0, class:^(btop-popup)$"
+          "size 600 490, class:^(btop-popup)$"
+          "move 100%-612 52, class:^(btop-popup)$"
+          "pin, class:^(btop-popup)$"
+          "noinitialfocus, class:^(btop-popup)$"
+          "animation slide top, class:^(btop-popup)$"
+
+          # Kitty scratchpad.
+          "float, class:^(.*)(scratchpad)$"
+          "monitor 0, class:^(.*)(scratchpad)$"
+          "size 960 590, class:^(.*)(scratchpad)$"
+          "move 640 52, class:^(.*)(scratchpad)$"
+          "pin, class:^(.*)(scratchpad)$"
+          "animation slide top, class:^(.*)(scratchpad)$"
 
           # Game window rules - Steam games only.
           "workspace special:games, class:^(steam_app_).*"
