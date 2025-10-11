@@ -162,6 +162,9 @@ in mkIf config.isDesktopNotWsl {
           "Mod+7".action = focus-workspace 7;
           "Mod+8".action = focus-workspace 8;
 
+          "Mod+Ctrl+H".action = focus-monitor-left;
+          "Mod+Ctrl+L".action = focus-monitor-right;
+
           "Mod+F".action            = expand-column-to-available-width;
           "Mod+Shift+F".action      = maximize-column;
           "Mod+Shift+C".action      = center-visible-columns;
