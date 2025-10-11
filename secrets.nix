@@ -31,4 +31,5 @@ in
 
   "hosts/kiwi/dr-radka-environment.age".publicKeys = [ kiwi ] ++ admins;
 
+  "modules/common/z-ai-key.age".publicKeys = [ yuzu date kiwi ] ++ admins;
 }

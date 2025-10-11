@@ -8,6 +8,6 @@ let
 		yuzu = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFDLlddona4PlORWd+QpR/7F5H46/Dic9vV23/YSrZl0 root@yuzu";
 	};
 in keys // {
-		admins = [ keys.jam keys.pear keys.yuzu keys.date ];
+		admins = [ keys.jam ];
 		all    = builtins.attrValues keys;
 	}
