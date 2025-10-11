@@ -144,6 +144,8 @@ in {
         };
 
         rust-analyzer = {
+          except-features = [ "inlay-hints" ];
+
           config = {
             cargo.features               = "all";
             check.command                = "clippy";
