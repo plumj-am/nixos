@@ -40,7 +40,7 @@ in {
       })
       # Info.
       // genAttrs [ "hint" "info" "diagnostic" "diagnostic.hint" "diagnostic.info" "diagnostic.unnecessary" ] (const {
-        fg = if config.theme.is_dark then "#427B58" else "#53868A"; # Muted teal.
+        fg = if config.theme.is_dark then "#2B83A6" else "#3A8C9A"; # Muted teal.
       })
       # Warnings.
       // genAttrs [ "warning" "diagnostic.warning" "diagnostic.deprecated" ] (const {
