@@ -19,24 +19,41 @@ in {
 
   home-manager.sharedModules = [{
     programs.helix = enabled {
-      package = helix.packages.${pkgs.system}.helix; # [`.helix`] follows the master branch.
+      package = helix.packages.${pkgs.system}.helix; # `.helix` follows the master branch.
       settings.theme = "base16_custom";
 
       # Pywal output doesn't have gradients like base16 needs.
       # So it's necessary to override a few colours.
+      # Also added overrides for diagnostic colours which don't work well from Pywal.
       themes.base16_custom = {
         inherits = "base16_default";
-        "ui.cursorline.primary".bg   = if config.theme.is_dark then "#404040" else "#F0F0F0";
-        "ui.cursorline.secondary".bg = if config.theme.is_dark then "#404040" else "#F0F0F0";
-        "ui.popup".bg                = if config.theme.is_dark then "#404040" else "#F0F0F0";
-        "ui.popup.info".bg           = if config.theme.is_dark then "#404040" else "#F0F0F0";
-        "ui.selection".bg            = if config.theme.is_dark then "#707070" else "#E0E0E0";
-        "ui.selection.primary".bg    = if config.theme.is_dark then "#707070" else "#E0E0E0";
-        "comment".fg                 = if config.theme.is_dark then "#909090" else "#C0C0C0";
-      };
+
+        "comment".fg = if config.theme.is_dark then "#909090" else "#C0C0C0";
+
+      # Selections.
+      } // genAttrs [ "ui.selection" "ui.selection.primary" ] (const {
+        bg = if config.theme.is_dark then "#707070" else "#E0E0E0";
+      })
+      # Cursorline and popups.
+      // genAttrs [ "ui.cursorline.primary" "ui.cursorline.secondary" "ui.popup" "ui.popup.info" ] (const {
+        bg = if config.theme.is_dark then "#404040" else "#F0F0F0";
+      })
+      # Info.
+      // genAttrs [ "hint" "info" "diagnostic" "diagnostic.hint" "diagnostic.info" "diagnostic.unnecessary" ] (const {
+        fg = if config.theme.is_dark then "#427B58" else "#53868A"; # Muted teal.
+      })
+      # Warnings.
+      // genAttrs [ "warning" "diagnostic.warning" "diagnostic.deprecated" ] (const {
+        fg = if config.theme.is_dark then "#B58900" else "#9D8740"; # Muted yellow.
+      })
+      # Errors.
+      // genAttrs [ "error" "diagnostic.error" ] (const {
+        fg = if config.theme.is_dark then "#9D0006" else "#8F3F71"; # Muted red/brown.
+      });
 
       settings.editor = {
         completion-timeout             = 5;
+        completion-replace             = true;
         color-modes                    = true;
         cursorline                     = true;
         file-picker.hidden             = false;

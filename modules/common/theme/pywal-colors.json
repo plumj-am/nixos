@@ -1,28 +1,28 @@
 {
-    "wallpaper": "/home/jam/wallpapers/057.png",
+    "wallpaper": "/home/jam/wallpapers/064.png",
     "alpha": "100",
 
     "special": {
-        "background": "#1b2326",
-        "foreground": "#e3eaed",
-        "cursor": "#e3eaed"
+        "background": "#180c16",
+        "foreground": "#d3c2e4",
+        "cursor": "#d3c2e4"
     },
     "colors": {
-        "color0": "#1b2326",
-        "color1": "#93b4db",
-        "color2": "#e0a2c1",
-        "color3": "#a4cfe0",
-        "color4": "#b4cfe6",
-        "color5": "#b7dae7",
-        "color6": "#c9d8ed",
-        "color7": "#e3eaed",
-        "color8": "#9ea3a5",
-        "color9": "#93b4db",
-        "color10": "#e0a2c1",
-        "color11": "#a4cfe0",
-        "color12": "#b4cfe6",
-        "color13": "#b7dae7",
-        "color14": "#c9d8ed",
-        "color15": "#e3eaed"
+        "color0": "#180c16",
+        "color1": "#3e4aba",
+        "color2": "#3f6cbe",
+        "color3": "#a145c1",
+        "color4": "#c567cc",
+        "color5": "#577ec7",
+        "color6": "#668acc",
+        "color7": "#d3c2e4",
+        "color8": "#93879f",
+        "color9": "#3e4aba",
+        "color10": "#3f6cbe",
+        "color11": "#a145c1",
+        "color12": "#c567cc",
+        "color13": "#577ec7",
+        "color14": "#668acc",
+        "color15": "#d3c2e4"
     }
 }
