@@ -1,5 +1,5 @@
 # thanks github:rgbcube/ncc
-{ lib, config, ... }: let
+{ pkgs, lib, config, zen-browser, ... }: let
   inherit (lib) enabled mkIf;
 
   lockedAs = Value: attrs: attrs // {
@@ -79,6 +79,7 @@
 in {
   home-manager.sharedModules = [{
     programs.zen-browser = mkIf config.isDesktopNotWsl (enabled {
+      package = zen-browser.packages.${pkgs.system}.twilight;
       inherit policies;
     });
   }];
