@@ -106,6 +106,11 @@ in {
         |> attrValues;
       in denoFmtLanguages ++ [
         {
+          name             = "rust";
+          auto-format      = true;
+          language-servers = [ { name = "rust-analyzer"; except-features = [ "inlay-hints" ]; } ];
+        }
+        {
           name              = "nix";
           auto-format       = false;
           formatter.command = "alejandra";
