@@ -76,7 +76,7 @@ in {
         window.decorations = "Disabled";
 
         fonts = merge {
-          size               = font.size.term;
+          size               = font.size.big;
           features           = [];
           use-drawable-chars = true;
 
@@ -86,6 +86,13 @@ in {
           width  = "Normal";
         });
       };
+    };
+
+    xdg.desktopEntries.zellij-rio = {
+      name     = "Zellij Rio";
+      icon     = "rio";
+      exec     = "rio --command ${pkgs.zellij}/bin/zellij";
+      terminal = false;
     };
   }];
 }
