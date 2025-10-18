@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }: let
+{ inputs, config, lib, pkgs, ... }: let
   inherit (lib) mkIf;
 in {
 
@@ -9,13 +9,10 @@ in {
       "${config.users.users.${config.system.primaryUser}.home}/.ssh/id")
   ];
 
-  environment = mkIf config.isDesktop {
-    shellAliases.agenix = if config.isLinux then
-      "agenix --identity ${config.users.users.root.home}/.ssh/id"
-    else
-      "agenix --identity ${config.users.users.${config.system.primaryUser}.home}/.ssh/id";
-
-    systemPackages = [ pkgs.agenix ];
-  };
+  environment.systemPackages = mkIf config.isDesktop [
+    pkgs.agenix
+    inputs.agenix-rekey.packages.${pkgs.system}.default
+    pkgs.age-plugin-yubikey
+  ];
 }
 

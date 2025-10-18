@@ -23,8 +23,15 @@ in {
           "nvidia-persistenced"
         ];
 
-        age.secrets.id.file = ./id.age;
-        services.openssh    = enabled {
+        age.rekey = {
+          hostPubkey       = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEzfoVKZDyiyyMiX1JRFaaTELspG25MlLNq0kI2AANTa root@date";
+          masterIdentities = [ (self + /yubikey.pub) ];
+          localStorageDir  = self + "/hosts/${config.networking.hostName}/rekeyed";
+          storageMode      = "local";
+        };
+
+        age.secrets.id.rekeyFile = ./id.age;
+        services.openssh         = enabled {
           hostKeys = [{
             type = "ed25519";
             path = config.age.secrets.id.path;
@@ -36,8 +43,8 @@ in {
           };
         };
 
-        age.secrets.password.file = ./password.age;
-        users.users               = {
+        age.secrets.password.rekeyFile = ./password.age;
+        users.users                    = {
           root = {
             shell                       = pkgs.nushell;
             hashedPasswordFile          = config.age.secrets.password.path;

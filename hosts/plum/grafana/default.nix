@@ -10,8 +10,8 @@ in {
   ];
 
   age.secrets.grafanaPassword = {
-    file = ./password.age;
-    owner = "grafana";
+    rekeyFile = ./password.age;
+    owner     = "grafana";
   };
 
   systemd.services.grafana = {
@@ -50,7 +50,7 @@ in {
     extraConfig = ''
       ${config.services.nginx.goatCounterTemplate}
     '';
-      
+
     locations."/" = {
       extraConfig = /* nginx */ ''
         # grafana sets `nosniff` without correct content type so unset the header

@@ -2,6 +2,7 @@
 {
   environment.systemPackages = [
 		pkgs.ast-grep
+		pkgs.bitwarden
     pkgs.comma
     pkgs.curl
     pkgs.hyperfine

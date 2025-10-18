@@ -10,12 +10,7 @@
 in {
   imports = [(self + /modules/nginx.nix)];
 
-  age.secrets.dr-radka-environment = {
-    file = self + /hosts/kiwi/dr-radka-environment.age;
-    owner = app_user;
-    group = app_group;
-  };
-
+  
   users.users.${app_user} = {
     isSystemUser = true;
     group = app_group;

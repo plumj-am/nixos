@@ -4,8 +4,8 @@
 in {
   options.security.acme.users = mkValue [];
 
-  config.age.secrets.acmeEnvironment.file = ./environment.age;
-
+  
+  
   config.users.groups.acme.members = config.security.acme.users;
 
   config.security.acme = {

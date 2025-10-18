@@ -7,18 +7,7 @@
 in {
   imports = [ (self + /modules/nginx.nix) ];
 
-  age.secrets.matrixSigningKey = {
-    file  = self + /hosts/plum/matrix-signing-key.age;
-    owner = "matrix-synapse";
-    group = "matrix-synapse";
-  };
-
-  age.secrets.matrixRegistrationSecret = {
-    file  = self + /hosts/plum/matrix-registration-secret.age;
-    owner = "matrix-synapse";
-    group = "matrix-synapse";
-  };
-
+  
 
   systemd.services.matrix-backup = {
     description = "Backup Matrix data and database";

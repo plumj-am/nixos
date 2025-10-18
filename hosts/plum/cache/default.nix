@@ -8,8 +8,8 @@ in {
   imports = [(self + /modules/nginx.nix)];
 
   age.secrets.nixServeKey = {
-    file = ./key.age;
-    owner = "root";
+    rekeyFile = ./key.age;
+    owner     = "root";
   };
 
   services.nix-serve = enabled {

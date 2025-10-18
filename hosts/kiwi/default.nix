@@ -23,8 +23,15 @@ in {
         type                        = "server";
         nixpkgs.hostPlatform.system = "x86_64-linux";
 
-        age.secrets.id.file = ./id.age;
-        services.openssh    = enabled {
+        age.rekey = {
+          hostPubkey       = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIElcSHxI64xqUUKEY83tKyzEH+fYT5JCWn3qCqtw16af root@kiwi";
+          masterIdentities = [ (self + /yubikey.pub) ];
+          localStorageDir  = self + "/hosts/${config.networking.hostName}/rekeyed";
+          storageMode      = "local";
+        };
+
+        age.secrets.id.rekeyFile = ./id.age;
+        services.openssh         = enabled {
           hostKeys = [{
             type = "ed25519";
             path = config.age.secrets.id.path;
@@ -41,8 +48,8 @@ in {
           wants = [ "agenix.service" ];
         };
 
-        age.secrets.password.file = ./password.age;
-        users.users               = {
+        age.secrets.password.rekeyFile = ./password.age;
+        users.users                    = {
           root = {
             shell                       = pkgs.nushell;
             hashedPasswordFile          = config.age.secrets.password.path;
@@ -91,6 +98,19 @@ in {
           };
           useDHCP    = lib.mkDefault true;
           interfaces = {};
+        };
+
+        age.secrets.acmeEnvironment.rekeyFile = self + /modules/acme/environment.age;
+
+        age.secrets.dr-radka-environment = {
+          rekeyFile = ./dr-radka-environment.age;
+          owner     = "dr-radka";
+          group     = "dr-radka";
+        };
+
+        age.secrets.github2forgejoEnvironment = {
+          rekeyFile = ./github2forgejo/environment.age;
+          owner     = "github2forgejo";
         };
 
         home-manager.sharedModules = [{

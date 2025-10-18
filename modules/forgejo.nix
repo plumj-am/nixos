@@ -12,12 +12,7 @@ in {
   # combine AcceptEnv settings for SSH and Git protocol
   services.openssh.settings.AcceptEnv = mkForce "SHELLS COLORTERM GIT_PROTOCOL";
 
-  # secrets for forgejo
-  age.secrets.forgejoAdminPassword = {
-    file = self + /hosts/plum/forgejo-password.age;
-    owner = "forgejo";
-  };
-
+  
   # backup configuration for sqlite database and data
   systemd.services.forgejo-backup = {
     description = "Backup Forgejo data and database";

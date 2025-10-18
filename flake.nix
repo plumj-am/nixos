@@ -73,7 +73,12 @@
     };
 
     agenix = {
-      url                    = "github:yaxitech/ragenix";
+      url                    = "github:ryantm/agenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    agenix-rekey = {
+      url                    = "github:oddlama/agenix-rekey";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -93,7 +98,7 @@
     };
   };
 
-  outputs = inputs @ { nixpkgs, nix-darwin,  ... }: let
+  outputs = inputs @ { self, nixpkgs, nix-darwin,  ... }: let
     inherit (builtins) readDir;
     inherit (nixpkgs.lib) attrsToList const groupBy listToAttrs mapAttrs nameValuePair;
 
@@ -119,5 +124,9 @@
   in hostsByType // {
     inherit inputs lib;
 
+    agenix-rekey = inputs.agenix-rekey.configure {
+      userFlake = self;
+      nixosConfigurations = self.nixosConfigurations;
+    };
   };
 }

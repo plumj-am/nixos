@@ -16,7 +16,7 @@ in mkIf config.isDesktop {
   ];
 
   age.secrets.key = {
-    file = ./z-ai-key.age;
+    rekeyFile = ./z-ai-key.age;
     owner = "jam";
     group = "users";
     mode = "0400";
