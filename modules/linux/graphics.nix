@@ -13,7 +13,9 @@ in mkIf config.isDesktopNotWsl {
     # Enable modesetting (required for Wayland).
     modesetting.enable = true;
 
-    powerManagement.enable      = false;
+    # For sleep handling.
+    powerManagement.enable      = true;
+
     powerManagement.finegrained = false;
 
     # Use open source kernel modules (recommended for RTX/GTX 16xx+).
@@ -22,7 +24,7 @@ in mkIf config.isDesktopNotWsl {
     # Enable nvidia-settings menu.
     nvidiaSettings = true;
 
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
+    package = config.boot.kernelPackages.nvidiaPackages.beta;
   };
 
   # Environment variables for NVIDIA on Wayland.
