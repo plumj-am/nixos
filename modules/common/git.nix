@@ -71,7 +71,7 @@ in {
           diff.algorithm  = "histogram";
           diff.colorMoved = "default";
 
-          merge.conflictStyle = "zdiff3";
+          merge.conflictStyle = lib.mkDefault "zdiff3";
 
           commit.gpgSign    = true;
           tag.gpgSign       = true;
