@@ -10,9 +10,18 @@ in mkIf config.isDesktop {
   security.pam.services = {
     login.u2fAuth = true;
     sudo.u2fAuth  = true;
+    su.u2fAuth    = true;
   };
 
-  environment.systemPackages = [ pkgs.yubioath-flutter ];
+  environment.systemPackages = [
+    pkgs.yubikey-personalization
+    pkgs.yubioath-flutter
+    pkgs.age-plugin-yubikey
+  ];
+
+  services.udev.packages = [
+    pkgs.yubikey-personalization
+  ];
 
   home-manager.sharedModules = [{
 
