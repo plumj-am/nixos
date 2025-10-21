@@ -47,11 +47,20 @@ in mkIf config.isDesktop {
           ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-4.6";
           ANTHROPIC_DEFAULT_OPUS_MODEL   = "glm-4.6";
 
-          CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR = 1;
-          CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = 1;
-          DISABLE_NON_ESSENTIAL_MODEL_CALLS        = 1;
+          CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR = "1";
+          CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1";
+          DISABLE_NON_ESSENTIAL_MODEL_CALLS        = "1";
 
         };
+
+        allow = [
+          "Edit(PROJECT_MANAGER.md)"
+          "Edit(CURRENT_TASK.md)"
+          "Edit(STATE.md)"
+          "Update(PROJECT_MANAGER.md)"
+          "Update(CURRENT_TASK.md)"
+          "Update(STATE.md)"
+        ];
 
         deny = [
           "Read(*.env)"
