@@ -10,7 +10,8 @@ in {
 
   home-manager.sharedModules = [
     {
-      programs.git.difftastic = enabled;
+      programs.difftastic = enabled;
+
       programs.mergiraf = enabled;
     }
     (homeArgs: let
@@ -19,8 +20,8 @@ in {
       # credit to https://github.com/rgbcube/ncc for most of this
       programs.jujutsu = enabled {
       settings = {
-        user.name  = config'.programs.git.userName;
-        user.email = config'.programs.git.userEmail;
+        user.name  = config'.programs.git.settings.user.name;
+        user.email = config'.programs.git.settings.user.email;
 
       signing.key      = "${homeArgs.config.home.homeDirectory}/.ssh/id";
       signing.backend  = "ssh";
@@ -35,7 +36,7 @@ in {
       ui.movement.edit         = true;
       ui.pager                 = ":builtin";
 
-      snapshot.max-new-file-size = "5MiB";
+      snapshot.max-new-file-size = "10MiB";
 
       lazyjj.highlight-color = "#f2e5bc";
 
