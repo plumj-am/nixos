@@ -18,6 +18,7 @@ in {
           (self + /modules/nix.nix)
           ./github2forgejo/github2forgejo.nix
           ./disk.nix
+          ./cache/default.nix
         ];
 
         type                        = "server";

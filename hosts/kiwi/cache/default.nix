@@ -1,9 +1,9 @@
 { self, config, lib, pkgs, ... }: let
-  inherit (config.networking) domain;
   inherit (lib) enabled merge;
 
-  fqdn = "cache1.${domain}";
-  portNixServe = 8006;
+  cacheDomain = "plumj.am";
+  fqdn = "cache2.${cacheDomain}";
+  portNixServe = 8007;
 in {
   imports = [(self + /modules/nginx.nix)];
 
@@ -21,7 +21,7 @@ in {
   };
 
   services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
-    locations."= /".return = "301 https://${domain}/404";
+    locations."= /".return = "301 https://${cacheDomain}/404";
     locations."/".proxyPass = "http://127.0.0.1:${toString portNixServe}";
   };
 }

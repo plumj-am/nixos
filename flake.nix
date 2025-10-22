@@ -3,14 +3,16 @@
 
   nixConfig = {
     extra-substituters = [
-      "https://cache.plumj.am/"
+      "https://cache1.plumj.am/"
+      "https://cache2.plumj.am/"
       "https://cache.garnix.io/"
       "https://numtide.cachix.org/"
       "https://nix-community.cachix.org/"
     ];
 
     extra-trusted-public-keys = [
-      "cache.plumj.am:NnfLDMdPEH3LE5WqFAilb4/UoIUfb0lZoFv2MoeMBbA="
+      "cache1.plumj.am:4Z36iDpxFmn1nBuTwamdwNAkRd/WA1kfAQ6sHmb7RSQ="
+      "cache2.plumj.am:IoMjbQ43lgHh8gMoEJj/VYK8c3Xbpc/TLRPKAaQSGas="
       "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
       "numtide.cachix.org-1:2ps1kLBUWjxIneOy2Yk6H6WdHjLQ0Rb5h9R0OXiEiL8="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
