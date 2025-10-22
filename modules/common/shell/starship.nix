@@ -33,7 +33,7 @@ in
 			username.format      = "$user";
 
       hostname.ssh_symbol = "s";
-			hostname.ssh_only   = false;
+			hostname.ssh_only   = true;
 			hostname.format     = "@$hostname";
 
       status.disabled      = false;
