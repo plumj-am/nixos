@@ -7,12 +7,16 @@
     pkgs.hyperfine
     pkgs.moreutils
 		pkgs.openssl
+		pkgs.pv
 		pkgs.rsync
     pkgs.tokei
     pkgs.tree
+    pkgs.turso-cli
     pkgs.typos
     pkgs.uutils-coreutils-noprefix
+    pkgs.sqld
     pkgs.sqlite
+    pkgs.xh
   ]
   ++ lib.optionals config.isDesktop [
 		pkgs.bitwarden
