@@ -26,7 +26,7 @@ in {
       exitShellOnExit       = false;
 
       settings = {
-        theme = "custom";
+        theme = if config.theme.color_scheme == "pywal" then "custom" else config.theme.zellij;
         themes.custom = with config.theme.withRgb; {
           bg      = base00;
           fg      = base06;

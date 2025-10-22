@@ -70,20 +70,18 @@
           print $"Wallpaper set: (($selected | path basename))"
 
           # Regenerate pywal colors if using pywal scheme
-          let using_pywal = try {
-            $env.THEME_SCHEME == "pywal"
+          let theme_config = try {
+            open $"($env.HOME)/nixos/modules/common/theme/theme.json"
           } catch {
-            false
+            { mode: "light", scheme: "pywal" }
           }
+
+          let using_pywal = $theme_config.scheme == "pywal"
 
           if $using_pywal {
             print "Regenerating pywal colors..."
 
-            let is_dark = try {
-              $env.THEME_MODE == "dark"
-            } catch {
-              false
-            }
+            let is_dark = $theme_config.mode == "dark"
 
             try {
               # Clear pywal cache to force regeneration

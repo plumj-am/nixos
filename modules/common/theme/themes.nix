@@ -6,6 +6,9 @@ let
     alacritty.dark  = "gruvbox_material_hard_dark";
     alacritty.light = "gruvbox_material_hard_light";
 
+    ghostty.dark  = "Gruvbox Dark Hard";
+    ghostty.light = "Gruvbox Light Hard";
+
     zellij.dark     = "gruvbox-dark";
     zellij.light    = "gruvbox-light";
 
@@ -61,6 +64,7 @@ in
 
     # Program-specific theme names.
     alacritty = get_theme "alacritty";
+    ghostty   = get_theme "ghostty";
     zellij    = get_theme "zellij";
     starship  = get_theme "starship";
     vivid     = get_theme "vivid";

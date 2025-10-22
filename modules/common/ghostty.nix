@@ -11,7 +11,7 @@ in mkIf config.isDesktopNotWsl {
         font-size   = font.size.normal;
         font-family = font.mono.name;
 
-        theme = "custom";
+        theme = if config.theme.color_scheme == "pywal" then "custom" else config.theme.ghostty;
 
         window-padding-x  = padding.small;
         window-padding-y  = padding.small;

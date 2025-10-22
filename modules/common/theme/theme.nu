@@ -47,19 +47,16 @@ def generate-pywal-colors [wallpaper: string, is_dark: bool] {
 }
 
 def toggle-theme [theme?: string] {
-    # Determine current theme from environment variable.
-    let current_theme = try {
-        $env.THEME_MODE
+    # Determine current theme and scheme from theme.json file.
+    let theme_json_path = $"($env.HOME)/nixos/modules/common/theme/theme.json"
+    let theme_config = try {
+        open $theme_json_path
     } catch {
-        "light"
+        { mode: "light", scheme: "pywal" }
     }
 
-    # Check if using pywal scheme.
-    let using_pywal = try {
-        $env.THEME_SCHEME == "pywal"
-    } catch {
-        false
-    }
+    let current_theme = $theme_config.mode
+    let using_pywal = $theme_config.scheme == "pywal"
 
     # Use provided theme or error if not provided.
     let new_theme = if $theme != null {
@@ -98,12 +95,12 @@ def toggle-theme [theme?: string] {
         }
     }
 
-    # Update environment and persist to theme.json.
+    # Update theme.json with new configuration.
     print-notify "Updating theme configuration..." 40
     $env.THEME_MODE = $new_theme
 
     let theme_json = $"($env.HOME)/nixos/modules/common/theme/theme.json"
-    { mode: $new_theme, scheme: $env.THEME_SCHEME } | to json | save $theme_json --force
+    { mode: $new_theme, scheme: $theme_config.scheme } | to json | save $theme_json --force
 
     print-notify $"($new_theme | str capitalize) mode activated." 50
 
@@ -129,15 +126,19 @@ def switch-scheme [scheme: string] {
 
     print-notify $"Switching to ($scheme) color scheme."
 
+    # Get current theme configuration from theme.json file.
+    let theme_json_path = $"($env.HOME)/nixos/modules/common/theme/theme.json"
+    let theme_config = try {
+        open $theme_json_path
+    } catch {
+        { mode: "light", scheme: "pywal" }
+    }
+
     # If switching to pywal, generate colors from current wallpaper.
     if $scheme == "pywal" {
         print-notify "Generating pywal colors from current wallpaper..." 25
 
-        let is_dark = try {
-            $env.THEME_MODE == "dark"
-        } catch {
-            false
-        }
+        let is_dark = $theme_config.mode == "dark"
 
         let wallpaper = try {
             ^swww query | lines | first | parse "{monitor}: image: {path}" | get path.0
@@ -157,11 +158,11 @@ def switch-scheme [scheme: string] {
         }
     }
 
-    # Update environment and persist to theme.json.
+    # Update theme.json with new configuration.
     $env.THEME_SCHEME = $scheme
 
     let theme_json = $"($env.HOME)/nixos/modules/common/theme/theme.json"
-    { mode: $env.THEME_MODE, scheme: $scheme } | to json | save $theme_json --force
+    { mode: $theme_config.mode, scheme: $scheme } | to json | save $theme_json --force
 
     print $"Updated THEME_SCHEME to ($scheme)"
 

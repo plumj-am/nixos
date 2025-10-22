@@ -20,7 +20,7 @@ in {
   home-manager.sharedModules = [{
     programs.helix = enabled {
       package = helix.packages.${pkgs.system}.helix; # `.helix` follows the master branch.
-      settings.theme = "base16_custom";
+      settings.theme = if config.theme.color_scheme == "pywal" then "base16_custom" else config.theme.helix;
 
       # Pywal output doesn't have gradients like base16 needs.
       # So it's necessary to override a few colours.
