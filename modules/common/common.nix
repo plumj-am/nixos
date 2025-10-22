@@ -1,9 +1,10 @@
 { config, lib, pkgs, ... }:
 {
   environment.variables = {
-    EDITOR   = "hx";
-    SHELL    = "${pkgs.nushell}/bin/nu";
-    TERMINAL = "zellij";
+    EDITOR       = "hx";
+    SHELL        = "${pkgs.nushell}/bin/nu";
+    TERMINAL     = "zellij";
+    TERM_PROGRAM = "zellij";
   } // lib.optionalAttrs config.isWsl {
     BROWSER = "wslview"; # use wslview for WSL
   };
