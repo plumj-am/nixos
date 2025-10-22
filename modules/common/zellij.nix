@@ -83,7 +83,7 @@ in {
           # Normal mode.
           normal._children = [
             (key "Esc"    { SwitchToMode._args = [ "locked" ]; })
-            (key "Enter"  { SwitchToMode._args = [ "normal" ]; })
+            (key "Enter"  { SwitchToMode._args = [ "locked" ]; })
             (key "Ctrl w" { SwitchToMode._args = [ "pane" ]; })
             (key "Ctrl t" { SwitchToMode._args = [ "tab" ]; })
             (key "Ctrl r" { SwitchToMode._args = [ "resize" ]; })
@@ -104,6 +104,17 @@ in {
             (key "o"      { GoToTab._args = [ 9 ];})
             (key "H"      { GoToPreviousTab = {}; })
             (key "L"      { GoToNextTab = {}; })
+            (keyPlugin "g" [{
+              Run = {
+                _args         = [ "nu" "--commands" "repo" ];
+                close_on_exit = true;
+                floating      = true;
+                x             = "1%";
+                y             = "1%";
+                width         = "1%";
+                height        = "1%";
+              }; SwitchToMode._args = [ "locked" ];
+            }])
             (keyPlugin "Ctrl f" [{
               LaunchOrFocusPlugin = {
                 _args = [ "https://github.com/karimould/zellij-forgot/releases/latest/download/zellij_forgot.wasm" ];

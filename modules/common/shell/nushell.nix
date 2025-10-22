@@ -1,4 +1,4 @@
-{ self, pkgs, config, lib, ... }: let
+{ pkgs, config, lib, ... }: let
 	inherit (lib) enabled;
 in {
   home-manager.sharedModules = [
@@ -9,8 +9,9 @@ in {
         mp = "mprocs";
         ko = "kondo";
 
-        td    = "hx ${homeArgs.config.home.homeDirectory}/notes/todo.md";
-        notes = "hx ${homeArgs.config.home.homeDirectory}/notes";
+        td     = "hx ${homeArgs.config.home.homeDirectory}/notes/todo.md";
+        notes  = "hx ${homeArgs.config.home.homeDirectory}/notes";
+        random = "hx ${homeArgs.config.home.homeDirectory}/notes/random.md";
 
         rm = "rm --recursive --verbose";
         cp = "cp --recursive --verbose --progress";
@@ -18,6 +19,18 @@ in {
         mk = "mkdir";
 
         tree = "eza --tree --git-ignore --group-directories-first";
+
+        # Open current repository in GitHub.
+        repo = /* nu */ ''
+          if (^git rev-parse --is-inside-work-tree | complete | get exit_code) == 0 {
+            start (^git remote get-url origin | str replace "git@github.com:" "https://github.com/")
+          } else {
+            print "Not in a Git directory."
+            ${pkgs.libnotify}/bin/notify-send "Repo" "Failed to open repository. Not in a Git directory."
+            exit 1
+          }
+        '';
+
 
         # Deletes the last 5 entries from the nushell history sqlite database.
         oops = "nix run nixpkgs#sqlite -- ${homeArgs.config.home.homeDirectory}/.config/nushell/history.sqlite3 'DELETE FROM history WHERE rowid IN (SELECT rowid FROM history ORDER BY rowid DESC LIMIT 5);'";

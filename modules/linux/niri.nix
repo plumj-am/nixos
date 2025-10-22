@@ -3,7 +3,7 @@
   myConfig = config;
 in mkIf config.isDesktopNotWsl {
 
-  environment.shellAliases.start = "niri-session";
+  environment.shellAliases.ns = "niri-session";
 
   environment.systemPackages = [ pkgs.xwayland-satellite ];
 
