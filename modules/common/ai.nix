@@ -60,6 +60,8 @@ in mkIf config.isDesktop {
           "Update(PROJECT_MANAGER.md)"
           "Update(CURRENT_TASK.md)"
           "Update(STATE.md)"
+          "Bash(curl http://localhost:*)"
+          "Bash(curl -X GET http://localhost:*)"
         ];
 
         deny = [
