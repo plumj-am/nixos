@@ -56,6 +56,11 @@ in {
   };
 
   services.nginx = enabled {
+    # Redirect www.dr-radka.pl to dr-radka.pl
+    virtualHosts."www.${domain}" = merge config.services.nginx.sslTemplate {
+      locations."/".return = "301 https://${domain}$request_uri";
+    };
+
     virtualHosts.${domain} = merge config.services.nginx.sslTemplate {
       extraConfig = ''
         ${config.services.nginx.goatCounterTemplate}
