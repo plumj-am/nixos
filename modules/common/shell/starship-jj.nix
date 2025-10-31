@@ -44,7 +44,7 @@ in {
         [[module]]
         type                 = "Commit"
         max_length           = 18
-        empty_text           = "(no description)"
+        empty_text           = "..."
         surround_with_quotes = true
 
         [[module]]

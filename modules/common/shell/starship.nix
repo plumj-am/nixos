@@ -1,19 +1,17 @@
 { lib, config, ... }:
 let
-  inherit (lib) enabled;
+  inherit (lib) disabled;
 in
 {
   home-manager.sharedModules = [{
-    programs.starship = enabled {
+    programs.starship = disabled {
     enableBashIntegration    = true;
     enableNushellIntegration = true;
     settings = {
       scan_timeout    = 100;
       command_timeout = 1000;
 
-      format  = "[┏━](success_color)$status[━](success_color) [\\[$username$hostname\\]](hostname_color) $directory [━┫](success_color) \${custom.jj} [┣━](success_color) $cmd_duration$line_break$character";
-			# old for reference
-      # format  = "[┏━](success_color)$status[━](success_color) $hostname $directory [━┫](success_color) $git_branch$git_state$git_status$git_metrics [┣━━┫](success_color) \${custom.jj} [┣━](success_color) $cmd_duration$line_break$character";
+      format  = "[━](success_color)$status[━](success_color)[$username$hostname](hostname_color) $directory [━┫](success_color) \${custom.jj} [┣━](success_color) $cmd_duration$line_break$line_break";
       palette = "custom";
 
       palettes.custom = with config.theme.withHash; {
@@ -29,12 +27,13 @@ in
         duration_color   = base0A;
       };
 
+      username.disabled    = true;
 			username.show_always = true;
 			username.format      = "$user";
 
       hostname.ssh_symbol = "s";
 			hostname.ssh_only   = true;
-			hostname.format     = "@$hostname";
+			hostname.format     = "[$hostname]";
 
       status.disabled      = false;
 			# success_symbol     = " "; # Uncomment to always show.
@@ -42,7 +41,7 @@ in
 			status.failure_style = "error_color";
 			status.success_style = "success_color";
 
-      directory.format          = "[$path](directory_color)";
+      directory.format          = "[$path](duration_color)";
 			directory.use_os_path_sep = false;
 			directory.read_only       = "RO";
 

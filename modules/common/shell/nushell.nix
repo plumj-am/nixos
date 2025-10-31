@@ -133,7 +133,7 @@ in {
       ${builtins.readFile ./functions.nu}
     '';
 
-    envFile.text = ''
+    envFile.text = with config.theme.withHash; /* nu */ ''
 			# use std/config ${config.theme.nushell}
 			# $env.config.color_config = (${config.theme.nushell})
 
@@ -150,6 +150,115 @@ in {
 				$env.THEME_MODE = "${config.theme.variant}"
 				$env.THEME_SCHEME = "${config.theme.color_scheme}"
 			}
+
+			# Custom Nushell prompt.
+
+			def prompt [--transient]: nothing -> string {
+				let exit_code = $env.LAST_EXIT_CODE
+
+				let status = if not ($exit_code == 0) or $transient {
+					$"(ansi '${base0D}')┫(ansi rst)(if $exit_code == 0 { ansi '${base0D}' } else { ansi '${base08}' })($exit_code)(ansi rst)(ansi '${base0D}')┣(ansi rst)"
+				} else {
+					$"(ansi '${base0D}')━(ansi rst)"
+				}
+
+				let host = if ($env.SSH_CONNECTION? | is-not-empty) {
+					$"(ansi '${base0B}')(hostname)(ansi rst)"
+				} else { "" }
+
+				# TODO: Add to prompt.
+				let jj_root = try {
+		      jj workspace root err> /dev/null
+		    } catch { "" }
+				let dir = if $env.PWD == $env.HOME { "~" } else { ($env.PWD | path basename) }
+				let directory = $"(ansi '${base0A}')($dir)(ansi rst)"
+
+				let jj_info = if (which jj | is-not-empty) {
+					try {
+						let jj_output = (^jj --quiet --color always --ignore-working-copy log --no-graph --revisions @ --template '
+							separate(
+								" ",
+								bookmarks.join(", "),
+								if(empty, label("empty", "(empty)")),
+								coalesce(
+									surround("\"", "\"",
+										if(
+											description.first_line().substr(0, 16).starts_with(description.first_line()),
+											description.first_line().substr(0, 16),
+											description.first_line().substr(0, 15) ++ "…"
+								  	)
+								  ),
+									label(if(empty, "empty"), "")
+								),
+								change_id.shortest(),
+								commit_id.shortest(),
+								if(conflict, label("conflict", "(conflict)")),
+								if(divergent, label("divergent prefix", "(divergent)")),
+								if(hidden, label("hidden prefix", "(hidden)")),
+								if(immutable, label("immutable", "(immutable)")),
+							)
+						' err> /dev/null | str trim)
+						if ($jj_output | is-not-empty) {
+							$" ($jj_output)"
+						} else { "" }
+					} catch { "" }
+				} else { "" }
+
+				let ms = ($env.CMD_DURATION_MS | into int)
+				let duration = if $transient or $ms > 1000 {
+					let secs = $ms / 1000 | math floor
+					if $transient and $ms < 1000 {
+						$" (ansi '${base0A}')($ms)ms"
+					} else {
+						$" (ansi '${base0A}')($secs)s"
+					}
+				} else { "" }
+
+				let bar = $"(ansi '${base0D}')(ansi attr_bold)━(ansi rst)"
+
+				let prompt_line = [
+					(char nl)
+					$bar
+					$status
+					$bar
+					$host
+					" "
+					$directory
+					" "
+					(if ($jj_info | is-not-empty) {
+						[
+							$"(ansi '${base0D}')━┫(ansi rst)"
+							$jj_info
+							$" (ansi '${base0D}')┣━(ansi rst)"
+						] | str join
+					} else {
+						[
+							$bar
+							$bar
+							$bar
+						] | str join
+					})
+					$duration
+					(char nl)
+				] | str join
+
+				$prompt_line
+			}
+
+			# Set prompt
+			$env.PROMPT_COMMAND                 = { || prompt }
+			$env.PROMPT_COMMAND_RIGHT           = ""
+			$env.TRANSIENT_PROMPT_COMMAND       = { || prompt --transient }
+			$env.TRANSIENT_PROMPT_COMMAND_RIGHT = ""
+
+			$env.PROMPT_INDICATOR                     = " "
+			$env.PROMPT_INDICATOR_VI_NORMAL           = $env.PROMPT_INDICATOR
+			$env.PROMPT_INDICATOR_VI_INSERT           = $env.PROMPT_INDICATOR
+			$env.PROMPT_MULTILINE_INDICATOR           = $env.PROMPT_INDICATOR
+			$env.TRANSIENT_PROMPT_INDICATOR           = $env.PROMPT_INDICATOR
+			$env.TRANSIENT_PROMPT_INDICATOR_VI_NORMAL = $env.PROMPT_INDICATOR
+			$env.TRANSIENT_PROMPT_INDICATOR_VI_INSERT = $env.PROMPT_INDICATOR
+			$env.TRANSIENT_PROMPT_MULTILINE_INDICATOR = $env.PROMPT_INDICATOR
     '';
     };
     })
