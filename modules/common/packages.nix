@@ -28,7 +28,9 @@
     pkgs.python3
   ]
   ++ lib.optionals config.isDesktopNotWsl [
-    pkgs.whatsapp-for-linux
+    pkgs.obs-studio
     pkgs.thunderbird
+    pkgs.vesktop
+    pkgs.whatsapp-for-linux
   ];
 }
