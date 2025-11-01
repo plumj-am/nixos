@@ -93,7 +93,7 @@ in {
       aliases.lsa = [ "log" "--summary" "--revisions" "::" ];
       aliases.lp  = [ "log" "--patch" ];
       aliases.lpa = [ "log" "--patch" "--revisions" "::" ];
-      aliases.lg  = [ "log" "--summary" "--no-pager" "--limit=6" ];
+      aliases.lg  = [ "log" "--summary" "--no-pager" "--limit=4" ];
       aliases.el  = [ "evolog" ];
       aliases.ol  = [ "op" "log" ];
 
