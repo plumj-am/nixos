@@ -6,7 +6,7 @@ in {
       settings = {
         window.decorations = "None";
 
-        font.size          = config.theme.font.size.normal;
+        font.size          = config.theme.font.size.term;
   			font.normal.family = config.theme.font.mono.family;
 
         terminal.shell.program = "${pkgs.nushell}/bin/nu";

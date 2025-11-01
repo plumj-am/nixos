@@ -6,7 +6,7 @@ in{
       font = {
         name    = config.theme.font.mono.family;
         package = config.theme.font.mono.package;
-        size    = config.theme.font.size.normal;
+        size    = config.theme.font.size.term;
       };
 
       settings = {

@@ -8,7 +8,7 @@ in mkIf config.isDesktopNotWsl {
       installBatSyntax = true;
 
       settings = with config.theme; {
-        font-size   = font.size.normal;
+        font-size   = font.size.term;
         font-family = font.mono.name;
 
         theme = if config.theme.color_scheme == "pywal" then "custom" else config.theme.ghostty;
