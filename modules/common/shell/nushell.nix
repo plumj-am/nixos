@@ -166,11 +166,26 @@ in {
 					$"(ansi '${base0B}')(hostname)(ansi rst)"
 				} else { "" }
 
-				# TODO: Add to prompt.
 				let jj_root = try {
 		      jj workspace root err> /dev/null
 		    } catch { "" }
-				let dir = if $env.PWD == $env.HOME { "~" } else { ($env.PWD | path basename) }
+
+		    let pwd = pwd | path expand
+
+		    let dir = if ($jj_root | is-not-empty) {
+		      let subpath = $pwd | path relative-to $jj_root
+		      let subpath = if ($subpath | is-not-empty) {
+		        $"(ansi '${base0E}') ⟶ (ansi rst)(ansi '${base0B}')($subpath)(ansi rst)"
+		      }
+			      $"($jj_root | path basename)($subpath)"
+			    } else {
+			      let pwd = if ($pwd | str starts-with $env.HOME) {
+			        "~" | path join ($pwd | path relative-to $env.HOME)
+	      } else { $pwd }
+
+	      $pwd
+	    }
+
 				let directory = $"(ansi '${base0A}')($dir)(ansi rst)"
 
 				let jj_info = if (which jj | is-not-empty) {
