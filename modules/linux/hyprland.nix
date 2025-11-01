@@ -1,5 +1,5 @@
 { config, lib, pkgs, ... }: let
-  inherit (lib) enabled mkIf;
+  inherit (lib) enabled disabled mkIf;
 in mkIf config.isDesktopNotWsl {
   hardware.graphics = enabled;
 
@@ -12,7 +12,7 @@ in mkIf config.isDesktopNotWsl {
 
   home-manager.sharedModules = [{
 
-    wayland.windowManager.hyprland = enabled {
+    wayland.windowManager.hyprland = disabled {
       systemd = enabled {
         enableXdgAutostart = true;
       };
