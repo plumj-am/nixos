@@ -3,23 +3,12 @@
 in mkIf config.isDesktopNotWsl {
   hardware.graphics = enabled;
 
-  xdg.portal = enabled {
-    config.common.default = "*";
-
-    extraPortals   = [ pkgs.xdg-desktop-portal-hyprland ];
-    configPackages = [ pkgs.hyprland ];
-  };
-
   programs.xwayland = enabled;
 
   environment.systemPackages = [
     pkgs.hyprland
     pkgs.wl-clipboard
-    pkgs.xdg-utils
   ];
-
-  # Hint Electron apps to use wayland.
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   home-manager.sharedModules = [{
 
