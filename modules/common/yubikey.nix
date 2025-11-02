@@ -8,9 +8,13 @@ in mkIf config.isDesktop {
   };
 
   security.pam.services = {
-    login.u2fAuth = true;
+    login = {
+      u2fAuth            = true;
+      enableGnomeKeyring = true;
+    };
     sudo.u2fAuth  = true;
     su.u2fAuth    = true;
+    sshd.u2fAuth  = true;
   };
 
   environment.systemPackages = [
@@ -22,9 +26,4 @@ in mkIf config.isDesktop {
   services.udev.packages = [
     pkgs.yubikey-personalization
   ];
-
-  home-manager.sharedModules = [{
-
-
-  }];
 }
