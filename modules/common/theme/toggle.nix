@@ -5,26 +5,12 @@
     #!${pkgs.nushell}/bin/nu
 
     def print-notify [message: string, progress: int = -1] {
-      print $"(ansi purple)[Theme Switcher] ($message)"
+      print $"(ansi purple)[Theme Switcher](ansi rst) ($message)"
 
-      # Progress notifications persist, completion/error notifications auto-dismiss.
-      let is_complete = $progress == 100
       let is_error = ($message | str downcase | str contains "error")
-
-      # Dismiss all previous notifications before showing completion.
-      if $is_complete {
-        ^${pkgs.mako}/bin/makoctl dismiss --all
-      }
-
-      let timeout = if $is_error {
-        30000
-      } else if $is_complete {
-        5000
-      } else {
-        0  # Persist until replaced.
-      }
-
       let urgency = if $is_error { "critical" } else { "normal" }
+
+      let timeout = 5000
 
       let args = if $progress >= 0 and $progress < 100 {
         ["--hint" $"int:value:($progress)"]
