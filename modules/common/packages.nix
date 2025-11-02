@@ -2,6 +2,7 @@
 {
   environment.systemPackages = [
 		pkgs.ast-grep
+		pkgs.brave
     pkgs.comma
     pkgs.curl
     pkgs.hyperfine
@@ -20,6 +21,7 @@
   ]
   ++ lib.optionals config.isDesktop [
 		pkgs.bitwarden
+		pkgs.bitwarden-cli
     pkgs.deno
     pkgs.moon
     pkgs.nodejs
