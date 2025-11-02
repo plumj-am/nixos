@@ -29,8 +29,8 @@ let
       package = pkgs.gruvbox-gtk-theme;
     };
     gtk.light = {
-      name    = "Gruvbox-Light";
-      package = pkgs.gruvbox-gtk-theme;
+      name    = "Adwaita";
+      package = pkgs.gnome-themes-extra;
     };
 
     qt.dark = {
