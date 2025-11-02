@@ -4,7 +4,7 @@ in{
   home-manager.sharedModules = mkIf config.isDesktopNotWsl [{
     programs.kitty = with config.theme.withHash; enabled {
       font = {
-        name    = config.theme.font.mono.family;
+        name    = config.theme.font.mono.name;
         package = config.theme.font.mono.package;
         size    = config.theme.font.size.term;
       };

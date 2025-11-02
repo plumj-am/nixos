@@ -4,15 +4,28 @@ in
 {
   config.theme.font = {
     size.small  = 12;
-    size.term   = 15;
+    size.term   = 14;
     size.normal = 16;
     size.big    = 20;
 
-    mono.name    = "JetBrainsMono Nerd Font";
-    mono.family  = "JetBrainsMono Nerd Font Mono";
-    mono.package = pkgs.nerd-fonts.jetbrains-mono;
+    # mono.name    = "JetBrainsMono Nerd Font Mono";
+    # mono.family  = "JetBrainsMono Nerd Font";
+    # mono.package = pkgs.nerd-fonts.jetbrains-mono;
+
+    mono.name    = "Fira Code Nerd Font Mono";
+    mono.family  = "Fira Code Nerd Font";
+    mono.package = pkgs.nerd-fonts.fira-code;
+
+    # mono.name    = "Hasklug Nerd Font Mono";
+    # mono.family  = "Hasklug Nerd Font";
+    # mono.package = pkgs.nerd-fonts.hasklug;
+
+    # mono.name    = "Iosevka Nerd Font Mono";
+    # mono.family  = "Iosevka Nerd Font";
+    # mono.package = pkgs.nerd-fonts.iosevka;
 
     sans.name    = "Lexend";
+    sans.family  = "Lexend";
     sans.package = pkgs.lexend;
   };
 
