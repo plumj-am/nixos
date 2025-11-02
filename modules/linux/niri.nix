@@ -27,7 +27,7 @@ in mkIf config.isDesktopNotWsl {
               (const (myConfig.theme.radius.big * 1.0)); # Convert to floating point.
           }
           {
-            matches = [{ app-id = "^(zen-.*|org\.qutebrowser\.qutebrowser)$"; }];
+            matches = [{ app-id = "^(zen-.*|org\.qutebrowser\.qutebrowser|brave-browser)$"; }];
 
             opacity = myConfig.theme.opacity.veryhigh;
           }
