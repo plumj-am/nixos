@@ -10,7 +10,7 @@ in mkIf config.isDesktopNotWsl {
     programs.fuzzel = with config.theme; enabled {
       settings.main = {
         icon-theme = icons.name;
-        font       = "${font.mono.name}:size=${toString font.size.small}";
+        font       = "${font.sans.name}:size=${toString font.size.small}";
         layer      = "overlay";
         prompt     = ''"❯ "'';
         terminal   = "kitty";

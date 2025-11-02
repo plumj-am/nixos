@@ -11,7 +11,7 @@ in mkIf config.isDesktopNotWsl {
         icons         = true;
         max-icon-size = 32;
 
-        font = "${font.mono.name} ${toString font.size.small}";
+        font = "${font.sans.name} ${toString font.size.small}";
 
         # Format: `bold app, bold summary, body`.
         format = "<b>%s</b>\\n%b";

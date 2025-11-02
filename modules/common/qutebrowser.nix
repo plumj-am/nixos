@@ -37,7 +37,7 @@ in {
         keyhint.radius = config.theme.radius.normal;
         hints.radius   = config.theme.radius.normal;
 
-        fonts.default_family = config.theme.font.mono.family;
+        fonts.default_family = config.theme.font.sans.name;
         fonts.web.family     = genAttrs
           [ "sans_serif" "serif" "standard" ]
           (const (config.theme.font.sans.name));

@@ -18,7 +18,7 @@ in mkIf config.isDesktopNotWsl {
         enable_recursive_icon_lookup = true;
 
         monitor = if config.networking.hostName == "yuzu" then 1 else 0;
-        font    = "${config.theme.font.mono.name}:size=${toString config.theme.font.size.normal}";
+        font    = "${config.theme.font.sans.name}:size=${toString config.theme.font.size.normal}";
         width   = ''(350, 500)'';
         height  = ''(0, 750)'';
         offset  = ''(${toString config.theme.margin.normal}, ${toString config.theme.margin.normal})'';

@@ -57,8 +57,8 @@ in mkIf config.isDesktopNotWsl {
           };
 
           pulseaudio = {
-            format              = "{format_source} {icon} {volume}%";
-            format-muted        = "{format_source} 󰸈";
+            format              = "{format_source} {icon}  {volume}%";
+            format-muted        = "{format_source}  󰸈";
             format-source       = "󰍬";
             format-source-muted = ""; # 󰍭
             format-icons        = {
@@ -71,7 +71,7 @@ in mkIf config.isDesktopNotWsl {
           };
 
           cpu = {
-            format         = "󰘚 {usage}%";
+            format         = "󰘚  {usage}%";
             tooltip        = true;
             tooltip-format = "CPU Usage: {usage}%\nLoad: {load}";
             interval       = 2;
@@ -83,7 +83,7 @@ in mkIf config.isDesktopNotWsl {
           };
 
           memory = {
-            format         = "󰽘 {used:0.1f}G/{total:0.1f}G";
+            format         = "󰽘  {used:0.1f}G/{total:0.1f}G";
             tooltip        = true;
             tooltip-format = "Memory: {used:0.1f}G/{total:0.1f}G ({percentage}%)\nAvailable: {avail:0.1f}G";
             interval       = 2;
@@ -95,7 +95,7 @@ in mkIf config.isDesktopNotWsl {
           };
 
           disk = {
-            format         = "󰋊 {percentage_used}%";
+            format         = "󰋊  {percentage_used}%";
             path           = "/";
             tooltip        = true;
             tooltip-format = "Disk: {used}/{total} ({percentage_used}%)\nAvailable: {free}";
@@ -109,7 +109,7 @@ in mkIf config.isDesktopNotWsl {
 
           "custom/gpu" = {
             exec           = "bash -c 'if command -v nvidia-smi >/dev/null; then nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits | head -1; elif command -v radeontop >/dev/null; then radeontop -d - -l 1 | grep -o \"gpu [0-9]*\" | cut -d\" \" -f2; else echo \"N/A\"; fi'";
-            format         = "󰢮 {}%";
+            format         = "󰢮  {}%";
             interval       = 5;
             tooltip        = true;
             tooltip-format = "GPU Usage: {}%\nClick: Open system monitor";
@@ -121,9 +121,9 @@ in mkIf config.isDesktopNotWsl {
           };
 
           battery = {
-            format          = "{icon} {capacity}%";
-            format-charging = "󰂄 {capacity}%";
-            format-plugged  = "󰂄 {capacity}%";
+            format          = "{icon}  {capacity}%";
+            format-charging = "󰂄  {capacity}%";
+            format-plugged  = "󰂄  {capacity}%";
             format-icons    = [ "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹" ];
             tooltip         = true;
             tooltip-format  = "Battery: {capacity}%\nTime: {time}\nHealth: {health}%";
@@ -146,7 +146,7 @@ in mkIf config.isDesktopNotWsl {
         * {
           border: none;
           border-radius: 0;
-          font-family: "${config.theme.font.mono.name}";
+          font-family: "${config.theme.font.sans.name}";
           font-size: ${toString config.theme.font.size.small}px;
           margin: 0;
           padding: 0;

@@ -12,7 +12,7 @@ in mkIf config.isDesktopNotWsl {
 
   home-manager.sharedModules = [{
 
-    wayland.windowManager.hyprland = disabled {
+    wayland.windowManager.hyprland = enabled {
       systemd = enabled {
         enableXdgAutostart = true;
       };
