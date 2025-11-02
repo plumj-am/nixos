@@ -25,12 +25,12 @@ let
     helix.light     = "gruvbox_light_hard";
 
     gtk.dark = {
-      name = "Adwaita-dark";
-      package = pkgs.gnome-themes-extra;
+      name    = "Gruvbox-Dark";
+      package = pkgs.gruvbox-gtk-theme;
     };
     gtk.light = {
-      name = "Adwaita";
-      package = pkgs.gnome-themes-extra;
+      name    = "Gruvbox-Light";
+      package = pkgs.gruvbox-gtk-theme;
     };
 
     qt.dark = {
@@ -50,12 +50,9 @@ let
       name    = "Papirus-Light";
       package = pkgs.papirus-icon-theme;
     };
-
-    # Wallpapers are managed by swww - use pick-wallpaper or set-wallpaper commands.
-    # Pywal colors are generated from the current wallpaper when switching themes.
   };
 
-  # Helpers.
+  # Helper for the current theme.
   get_theme = program: if is_dark then themes.${program}.dark else themes.${program}.light;
 in
 {
