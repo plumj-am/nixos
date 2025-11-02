@@ -1,6 +1,6 @@
 # thanks github:rgbcube/ncc
 { pkgs, lib, config, zen-browser, ... }: let
-  inherit (lib) enabled mkIf;
+  inherit (lib) disabled mkIf;
 
   lockedAs = Value: attrs: attrs // {
     inherit Value;
@@ -78,8 +78,11 @@
   };
 in {
   home-manager.sharedModules = [{
-    programs.zen-browser = mkIf config.isDesktopNotWsl (enabled {
-      package = zen-browser.packages.${pkgs.system}.twilight;
+    programs.zen-browser = mkIf config.isDesktopNotWsl (disabled {
+      package = zen-browser.packages.${pkgs.system}.twilight.override {
+        nativeMessagingHosts = [ pkgs.firefoxpwa ];
+      };
+
       inherit policies;
     });
   }];
