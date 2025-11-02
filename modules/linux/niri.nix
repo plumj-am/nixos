@@ -23,11 +23,11 @@ in mkIf config.isDesktopNotWsl {
             draw-border-with-background = false;
             clip-to-geometry            = true;
             geometry-corner-radius      = genAttrs
-                [ "top-left" "top-right" "bottom-left" "bottom-right" ]
-                (const (myConfig.theme.radius.big * 1.0)); # Convert to floating point.
+              [ "top-left" "top-right" "bottom-left" "bottom-right" ]
+              (const (myConfig.theme.radius.big * 1.0)); # Convert to floating point.
           }
           {
-            matches = [{ app-id = "^zen-.*$"; }];
+            matches = [{ app-id = "^(zen-.*|org\.qutebrowser\.qutebrowser)$"; }];
 
             opacity = myConfig.theme.opacity.veryhigh;
           }
