@@ -46,7 +46,7 @@ in
     pkgs.noto-fonts
     pkgs.noto-fonts-cjk-sans
     pkgs.noto-fonts-lgc-plus
-    pkgs.noto-fonts-emoji
+    pkgs.noto-fonts-color-emoji
   ];
 }
 

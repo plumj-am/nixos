@@ -20,7 +20,7 @@
     pkgs.xh
   ]
   ++ lib.optionals config.isDesktop [
-		pkgs.bitwarden
+		pkgs.bitwarden-desktop
 		pkgs.bitwarden-cli
     pkgs.deno
     pkgs.moon
@@ -33,6 +33,6 @@
     pkgs.obs-studio
     pkgs.thunderbird
     pkgs.vesktop
-    pkgs.whatsapp-for-linux
+    pkgs.wasistlos
   ];
 }
