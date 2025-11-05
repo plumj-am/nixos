@@ -95,7 +95,8 @@ in mkIf config.isDesktopNotWsl {
           natural-scroll = false;
         });
 
-        hotkey-overlay.hide-not-bound = true;
+        hotkey-overlay.hide-not-bound  = true;
+        hotkey-overlay.skip-at-startup = true;
 
         gestures.hot-corners = disabled;
 
