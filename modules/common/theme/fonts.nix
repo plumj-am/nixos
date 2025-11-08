@@ -4,7 +4,7 @@ in
 {
   config.theme.font = {
     size.small  = 12;
-    size.term   = 13;
+    size.term   = 12;
     size.normal = 16;
     size.big    = 20;
 

@@ -42,7 +42,7 @@ in
 
     opacity = {
       opaque   = 1.00;
-      veryhigh = 0.98;
+      veryhigh = 0.99;
       high     = 0.97;
       medium   = 0.94;
       low      = 0.90;
