@@ -13,6 +13,8 @@ in {
     gti = "git";
   };
 
+  environment.systemPackages = [ pkgs.git-credential-oauth ];
+
   home-manager.sharedModules = [
     {
       programs.gh = enabled {
@@ -78,9 +80,17 @@ in {
           commit.gpgSign    = true;
           tag.gpgSign       = true;
           gpg.format        = "ssh";
-          credential.helper = "!gh auth git-credential";
+          credential.helper = [
+            "!gh auth git-credential"
+            "cache --timeout 21600" # 6 hours
+            "oauth"
+            "oauth -device"
+          ];
+
+          core.sshCommand   = "ssh -i ~/.ssh/id";
 
           url."ssh://git@github.com/".insteadOf = "gh:";
+
           aliases = {
             diff-stat = "diff --stat --ignore-space-change -r";
 
