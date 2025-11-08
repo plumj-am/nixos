@@ -2,7 +2,6 @@
 {
   environment.systemPackages = [
 		pkgs.ast-grep
-		pkgs.brave
     pkgs.comma
     pkgs.curl
     pkgs.hyperfine
@@ -20,7 +19,6 @@
     pkgs.xh
   ]
   ++ lib.optionals config.isDesktop [
-		pkgs.bitwarden-desktop
 		pkgs.bitwarden-cli
     pkgs.deno
     pkgs.moon
@@ -30,6 +28,8 @@
     pkgs.python3
   ]
   ++ lib.optionals config.isDesktopNotWsl [
+		pkgs.bitwarden-desktop
+		pkgs.brave
     pkgs.obs-studio
     pkgs.thunderbird
     pkgs.vesktop
