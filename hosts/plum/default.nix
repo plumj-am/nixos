@@ -25,6 +25,7 @@ in {
           ./grafana/prometheus.nix
           ./uptime-kuma
           ./goatcounter
+          ./git-runners/default.nix
         ];
 
         type                        = "server";
@@ -78,6 +79,12 @@ in {
             createHome                  = false;
             openssh.authorizedKeys.keys = keys.all;
             extraGroups                 = [ "build" ];
+          };
+
+          forgejo = {
+            description                 = "Forgejo";
+            createHome                  = false;
+            openssh.authorizedKeys.keys = keys.admins;
           };
         };
 

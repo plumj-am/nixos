@@ -12,7 +12,7 @@ in {
   # combine AcceptEnv settings for SSH and Git protocol
   services.openssh.settings.AcceptEnv = mkForce "SHELLS COLORTERM GIT_PROTOCOL";
 
-  
+
   # backup configuration for sqlite database and data
   systemd.services.forgejo-backup = {
     description = "Backup Forgejo data and database";
@@ -44,6 +44,8 @@ in {
 
   services.forgejo = enabled {
     lfs = enabled;
+
+    user  = "forgejo";
 
     database = {
       type = "sqlite3";
@@ -99,7 +101,9 @@ in {
         HTTP_ADDR = "::1";
         HTTP_PORT = port;
 
-        SSH_PORT = 22;
+        SSH_DOMAIN       = fqdn;
+        SSH_PORT         = 22;
+        START_SSH_SERVER = false;
 
         DISABLE_ROUTER_LOG = true;
       };
