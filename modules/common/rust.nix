@@ -1,9 +1,13 @@
-{ config, lib, pkgs, fenix, bacon-ls, ... }: let
-  inherit (lib) mkIf;
-in
+{ config, lib, pkgs, fenix, bacon-ls, ... }:
 {
-  environment.systemPackages = mkIf config.isDesktop [
-    (fenix.packages.${pkgs.system}.complete.withComponents [ # nightly
+  environment.systemPackages = [
+    # [1/2] For Forgejo Action runners.
+    pkgs.cargo-binstall
+    pkgs.cargo-nextest
+    pkgs.dioxus-cli
+  ]
+  ++ lib.optionals config.isDesktop [
+    (fenix.packages.${pkgs.system}.complete.withComponents [ # Nightly.
       "cargo"
       "clippy"
       "miri"
@@ -13,17 +17,26 @@ in
       "rust-std"
       "rust-src"
     ])
-    pkgs.cargo-binstall
     bacon-ls.defaultPackage.${pkgs.system}
     pkgs.cargo-careful
     pkgs.cargo-deny
     pkgs.cargo-fuzz
     pkgs.cargo-generate
-    pkgs.cargo-nextest
     pkgs.cargo-machete
     pkgs.cargo-workspaces
     pkgs.cargo-outdated
-    pkgs.dioxus-cli
     pkgs.kondo
+  ]
+  ++ lib.optionals config.isServer [
+    # [1/2] For Forgejo Action runners.
+    (fenix.packages.${pkgs.system}.complete.withComponents [ # Nightly.
+      "cargo"
+      "clippy"
+      "miri"
+      "rustc"
+      "rustfmt"
+      "rust-std"
+      "rust-src"
+    ])
   ];
 }

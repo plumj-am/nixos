@@ -6,6 +6,7 @@
     pkgs.curl
     pkgs.hyperfine
     pkgs.moreutils
+    pkgs.nodejs
 		pkgs.openssl
 		pkgs.pv
 		pkgs.rsync
@@ -22,7 +23,6 @@
 		pkgs.bitwarden-cli
     pkgs.deno
     pkgs.moon
-    pkgs.nodejs
     pkgs.pnpm
     pkgs.proto
     pkgs.python3
