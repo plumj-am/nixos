@@ -1,0 +1,37 @@
+name: "Nix CI"
+on:
+    pull_request:
+        paths-ignore:
+            - "README.md"
+            - "LICENSE.md"
+    push:
+        paths-ignore:
+            - "README.md"
+            - "LICENSE.md"
+    workflow_dispatch:
+
+jobs:
+    build:
+        name: "Build: ${{ matrix.host }}"
+        runs-on: self-hosted
+        permissions:
+            contents: read
+            id-token: write
+        strategy:
+            fail-fast: false
+            matrix:
+                host:
+                    - "date"
+                    - "kiwi"
+                    - "pear"
+                    - "plum"
+                    - "yuzu"
+                    # - "lime" # Can't be done without an aarch64-darwin runner.
+                    # I will look into containers or something later - for now it's not that important.
+        steps:
+            - name: "Checkout"
+              uses: https://github.com/actions/checkout@v5
+            - name: "Build configuration for ${{ matrix.host }}"
+              run: |
+                  echo "Building NixOS configuration for: ${{ matrix.host }}"
+                  nix build .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel --accept-flake-config --builders "" --fallback
