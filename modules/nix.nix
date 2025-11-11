@@ -40,9 +40,11 @@ in {
   nix.registry = registryMap // { default = inputs.nixpkgs; }
     |> mapAttrs (_: flake: { inherit flake; });
 
-  nix.settings = (import <| self + /flake.nix).nixConfig
-    |> flip removeAttrs (optionals config.isDarwin [ "use-cgroups" "cgroups" ]);
+  nix.settings = ((import <| self + /flake.nix).nixConfig
+    |> flip removeAttrs (optionals config.isDarwin [ "use-cgroups" "cgroups" ]))
+  // {
+      min-free = "4G";
+    };
 
   nix.optimise.automatic = true;
-
 }

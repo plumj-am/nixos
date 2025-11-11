@@ -29,23 +29,21 @@ jobs:
                     # - "lime" # Can't be done without an aarch64-darwin runner.
                     # I will look into containers or something later - for now it's not that important.
         steps:
-            - name: "Collect garbage pre-build"
-              run: |
-                  echo "Freeing disk space before a build"
-                  echo "Current /nix/store size: $(du -sh /nix/store)"
-                  nix-collect-garbage
-                  echo "/nix/store size after cleanup: $(du -sh /nix/store)"
+            # - name: "Collect garbage pre-build"
+            #   run: |
+            #       echo "Freeing disk space before a build"
+            #       echo "Current /nix/store size: $(du -sh /nix/store)"
+            #       nix-collect-garbage
+            #       echo "/nix/store size after cleanup: $(du -sh /nix/store)"
             - name: "Checkout"
               uses: https://github.com/actions/checkout@v5
             - name: "Build configuration for ${{ matrix.host }}"
               run: |
-                  echo "Freeing disk space"
-                  nix-collect-garbage
                   echo "Building NixOS configuration for: ${{ matrix.host }}"
-                  nix build .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel --accept-flake-config --builders "" --fallback
-            - name: "Collect garbage post-build"
-              run: |
-                  echo "Freeing disk space before a build"
-                  echo "Current /nix/store size: $(du -sh /nix/store)"
-                  nix-collect-garbage
-                  echo "/nix/store size after cleanup: $(du -sh /nix/store)"
+                  nix build .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
+            # - name: "Collect garbage post-build"
+            #   run: |
+            #       echo "Freeing disk space after a build"
+            #       echo "Current /nix/store size: $(du -sh /nix/store)"
+            #       nix-collect-garbage
+            #       echo "/nix/store size after cleanup: $(du -sh /nix/store)"
