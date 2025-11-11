@@ -31,7 +31,7 @@
     max-jobs                 = "auto";
     use-cgroups              = true;
     show-trace               = true;
-    trusted-users            = [ "root" "@wheel" "build" ];
+    trusted-users            = [ "root" "@wheel" "build" "runner" ];
     warn-dirty               = false;
   };
 
