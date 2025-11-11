@@ -31,7 +31,7 @@
     max-jobs                 = "auto";
     use-cgroups              = true;
     show-trace               = true;
-    trusted-users            = [ "root" "@wheel" "build" "runner" ];
+    trusted-users            = [ "root" "@wheel" "build" "gitea-runner" ];
     warn-dirty               = false;
   };
 
