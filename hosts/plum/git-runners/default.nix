@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }: let
+{ pkgs, lib, config, inputs, ... }: let
   inherit (lib) enabled;
 in {
   age.secrets.forgejoRunnerToken.rekeyFile = ./forgejo-runner-token.age;
@@ -13,11 +13,28 @@ in {
       settings.cache.enabled = true;
 
       hostPackages = [
+        (inputs.fenix.packages.${pkgs.system}.complete.withComponents [ # Nightly.
+          "cargo"
+          "clippy"
+          "miri"
+          "rustc"
+          "rustfmt"
+          "rust-std"
+          "rust-src"
+        ])
         pkgs.bash
         pkgs.curl
+        pkgs.gcc # Fixes cc linker not found errors.
         pkgs.git
+        pkgs.gnutar # For cache processes.
+        pkgs.gzip   # ...
+        pkgs.just
         pkgs.nix
         pkgs.nodejs
+        pkgs.openssl
+        pkgs.pkg-config
+        pkgs.sqlite
+        pkgs.sqlx-cli
         pkgs.xz
       ];
     };
