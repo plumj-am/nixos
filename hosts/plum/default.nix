@@ -13,12 +13,12 @@ in {
           (modulesPath + "/installer/scan/not-detected.nix")
           (modulesPath + "/profiles/qemu-guest.nix")
 
-          (self + /modules/forgejo.nix)
           (self + /modules/site.nix)
           (self + /modules/system.nix)
           (self + /modules/nix.nix)
           ./disk.nix
           ./cache/default.nix
+          ./forgejo
           ./grafana
           ./grafana/prometheus.nix
           ./matrix

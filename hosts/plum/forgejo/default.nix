@@ -9,9 +9,13 @@ in {
     (self + /modules/nginx.nix)
   ];
 
+  age.secrets.forgejoAdminPassword = {
+    rekeyFile = ./forgejo-password.age;
+    owner     = "forgejo";
+  };
+
   # combine AcceptEnv settings for SSH and Git protocol
   services.openssh.settings.AcceptEnv = mkForce "SHELLS COLORTERM GIT_PROTOCOL";
-
 
   # backup configuration for sqlite database and data
   systemd.services.forgejo-backup = {
