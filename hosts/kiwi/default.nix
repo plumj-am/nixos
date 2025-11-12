@@ -14,12 +14,13 @@ in {
           (modulesPath + "/profiles/qemu-guest.nix")
 
           (self + /modules/dr-radka.nix)
-          (self + /modules/system.nix)
           (self + /modules/nix.nix)
+          (self + /modules/system.nix)
+
           ./disk.nix
-          ./cache/default.nix
-          ./git-runners/default.nix
+          ./cache
           ./github2forgejo
+          ./git-runners
         ];
 
         type                        = "server";
