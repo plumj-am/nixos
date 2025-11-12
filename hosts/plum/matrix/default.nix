@@ -5,9 +5,21 @@
   fqdn = "matrix.${domain}";
   port = 8008;
 in {
-  imports = [ (self + /modules/nginx.nix) ];
+  imports = [
+    (self + /modules/nginx.nix)
+  ] ++ (lib.collectNix ./. |> lib.remove ./default.nix);
 
-  
+  age.secrets.matrixSigningKey = {
+    rekeyFile = ./matrix-signing-key.age;
+    owner     = "matrix-synapse";
+    group     = "matrix-synapse";
+  };
+
+  age.secrets.matrixRegistrationSecret = {
+    rekeyFile = ./matrix-registration-secret.age;
+    owner     = "matrix-synapse";
+    group     = "matrix-synapse";
+  };
 
   systemd.services.matrix-backup = {
     description = "Backup Matrix data and database";

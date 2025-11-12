@@ -15,14 +15,13 @@ in {
 
           (self + /modules/forgejo.nix)
           (self + /modules/site.nix)
-          (self + /modules/matrix.nix)
-          (self + /modules/cinny.nix)
           (self + /modules/system.nix)
           (self + /modules/nix.nix)
           ./disk.nix
           ./cache/default.nix
           ./grafana
           ./grafana/prometheus.nix
+          ./matrix
           ./uptime-kuma
           ./goatcounter
           ./git-runners/default.nix
@@ -106,17 +105,6 @@ in {
 
         age.secrets.acmeEnvironment.rekeyFile = self + /modules/acme/environment.age;
 
-        age.secrets.matrixSigningKey = {
-          rekeyFile = ./matrix-signing-key.age;
-          owner     = "matrix-synapse";
-          group     = "matrix-synapse";
-        };
-
-        age.secrets.matrixRegistrationSecret = {
-          rekeyFile = ./matrix-registration-secret.age;
-          owner     = "matrix-synapse";
-          group     = "matrix-synapse";
-        };
 
         age.secrets.forgejoAdminPassword = {
           rekeyFile = ./forgejo-password.age;
