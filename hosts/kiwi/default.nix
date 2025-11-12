@@ -16,10 +16,10 @@ in {
           (self + /modules/dr-radka.nix)
           (self + /modules/system.nix)
           (self + /modules/nix.nix)
-          ./github2forgejo/github2forgejo.nix
           ./disk.nix
           ./cache/default.nix
           ./git-runners/default.nix
+          ./github2forgejo
         ];
 
         type                        = "server";
