@@ -9,6 +9,9 @@ in {
       tokenFile    = config.age.secrets.forgejoRunnerToken.path;
       url          = "https://git.plumj.am/";
       labels       = [ "self-hosted:host" ];
+
+      settings.cache.enabled = true;
+
       hostPackages = [
         pkgs.bash
         pkgs.curl
