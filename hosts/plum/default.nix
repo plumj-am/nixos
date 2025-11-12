@@ -13,18 +13,18 @@ in {
           (modulesPath + "/installer/scan/not-detected.nix")
           (modulesPath + "/profiles/qemu-guest.nix")
 
+          (self + /modules/nix.nix)
           (self + /modules/site.nix)
           (self + /modules/system.nix)
-          (self + /modules/nix.nix)
+
+          ./cache
           ./disk.nix
-          ./cache/default.nix
           ./forgejo
+          ./git-runners
+          ./goatcounter
           ./grafana
-          ./grafana/prometheus.nix
           ./matrix
           ./uptime-kuma
-          ./goatcounter
-          ./git-runners/default.nix
         ];
 
         type                        = "server";

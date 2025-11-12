@@ -7,7 +7,7 @@
 in {
   imports = [
     (self + /modules/nginx.nix)
-  ];
+  ] ++ (lib.collectNix ./. |> lib.remove ./default.nix);
 
   age.secrets.grafanaPassword = {
     rekeyFile = ./password.age;
