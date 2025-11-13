@@ -163,11 +163,6 @@ in mkIf (config.isDesktopNotWsl && !config.isDarwin) {
   ];
 
   home-manager.sharedModules = [{
-    # Auto-start swww daemon and set wallpaper based on theme.
-    wayland.windowManager.hyprland.settings.exec-once = [
-      "swww-daemon"
-    ];
-
     # Desktop entry for fuzzel.
     xdg.desktopEntries.pick-wallpaper = {
       name     = "Pick Wallpaper";

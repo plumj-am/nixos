@@ -12,33 +12,13 @@ in mkIf config.isDesktopNotWsl {
           margin-left  = config.theme.margin.normal;
           margin-right = config.theme.margin.normal;
 
-          modules-left   = [ "hyprland/workspaces" "niri/workspaces" ];
-          modules-center = [ "hyprland/window" "niri/window" ];
+          modules-left   = [ "niri/workspaces" ];
+          modules-center = [ "niri/window" ];
           modules-right  = [ "tray" "pulseaudio" "cpu" "memory" "disk" "custom/gpu" "battery" "clock" ];
-
-          "hyprland/workspaces" = {
-            all-outputs  = true;
-            format       = "{icon}";
-            format-icons = {
-              default = "○";
-              active  = "●";
-            };
-            persistent-workspaces."*" = 4;
-          };
 
           "niri/workspaces" = {
             all-outputs  = true;
             format       = "{index}";
-          };
-
-          "hyprland/window" = {
-            max-length       = 50;
-            separate-outputs = true;
-            rewrite          = {
-              "(.*) — Zen Browser" = "󰖟 $1";
-              "(.*) - Discord"     = "󰙯 $1";
-              "(.*) — nu"          = " $1";
-            };
           };
 
           "niri/window" = {

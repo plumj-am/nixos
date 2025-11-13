@@ -10,12 +10,9 @@ in mkIf config.isDesktopNotWsl {
     };
 
     extraPortals = [
-      # pkgs.xdg-desktop-portal-hyprland
-
       # [2/2] Niri screensharing fixes.
       pkgs.xdg-desktop-portal-gnome
     ];
-    # configPackages = [ pkgs.hyprland ];
   };
 
   environment.systemPackages = [

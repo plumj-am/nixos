@@ -15,11 +15,6 @@ in mkIf config.isDesktop {
 
       size = 24;
     };
-
-    wayland.windowManager.hyprland.settings.env = [
-      "XCURSOR_THEME,Bibata-Modern-Classic"
-      "XCURSOR_SIZE,24"
-    ];
   }];
 
   environment.variables = {

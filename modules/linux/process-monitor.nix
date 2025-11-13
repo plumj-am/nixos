@@ -25,32 +25,23 @@
   process-monitor = pkgs.writeScriptBin "process-monitor" /* nu */ ''
     #!${pkgs.nushell}/bin/nu
 
-    let hyprctl = "${pkgs.hyprland}/bin/hyprctl"
     let niri_bin = (try { (which niri | get 0.path) } catch { null })
     let class_name = "btop-popup"
 
-    let compositor = if (try { $env.NIRI_SOCKET } catch { null }) != null {
-        "niri"
-      } else if (try { $env.HYPRLAND_INSTANCE_SIGNATURE } catch { null }) != null {
-        "hyprland"
-      } else if $niri_bin != null {
+    let compositor = if $niri_bin != null {
         "niri"
       } else {
         "unknown"
       }
 
-    let windows = if $compositor == "niri" and $niri_bin != null {
+    let windows = if $compositor == "niri" {
         try { ^$niri_bin msg --json windows | from json } catch { [] }
-      } else if $compositor == "hyprland" {
-        try { ^$hyprctl clients -j | from json } catch { [] }
-      } else {
-        []
-      }
+    } else {
+      []
+    }
 
     let existing = if $compositor == "niri" {
         $windows | where app_id? == $class_name
-      } else if $compositor == "hyprland" {
-        $windows | where class? == $class_name
       } else {
         []
       }
@@ -60,9 +51,6 @@
     } else if $compositor == "niri" and $niri_bin != null {
       let id = ($existing | first | get id?)
       if $id != null { ^$niri_bin msg action close-window --id $id }
-    } else if $compositor == "hyprland" {
-      let address = ($existing | first | get address?)
-      if $address != null { ^$hyprctl dispatch closewindow $"address:($address)" }
     }
   '';
 in mkIf config.isDesktopNotWsl {
