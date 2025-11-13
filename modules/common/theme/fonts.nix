@@ -12,9 +12,9 @@ in
     # mono.family  = "JetBrainsMono Nerd Font";
     # mono.package = pkgs.nerd-fonts.jetbrains-mono;
 
-    mono.name    = "Fira Code Nerd Font Mono";
-    mono.family  = "Fira Code Nerd Font";
-    mono.package = pkgs.nerd-fonts.fira-code;
+    # mono.name    = "Fira Code Nerd Font Mono";
+    # mono.family  = "Fira Code Nerd Font";
+    # mono.package = pkgs.nerd-fonts.fira-code;
 
     # mono.name    = "Hasklug Nerd Font Mono";
     # mono.family  = "Hasklug Nerd Font";
@@ -23,6 +23,18 @@ in
     # mono.name    = "Iosevka Nerd Font Mono";
     # mono.family  = "Iosevka Nerd Font";
     # mono.package = pkgs.nerd-fonts.iosevka;
+
+    # mono.name    = "Cascadia Code NF";
+    # mono.family  = "Cascadia Code";
+    # mono.package = pkgs.cascadia-code;
+
+    # mono.name    = "Hack Nerd Font Mono";
+    # mono.family  = "Hack Nerd Font";
+    # mono.package = pkgs.nerd-fonts.hack;
+
+    mono.name    = "Maple Mono NF";
+    mono.family  = "Maple Mono";
+    mono.package = pkgs.maple-mono.NF;
 
     sans.name    = "Lexend";
     sans.family  = "Lexend";
