@@ -105,12 +105,6 @@ in {
 
         age.secrets.acmeEnvironment.rekeyFile = self + /modules/acme/environment.age;
 
-
-        age.secrets.forgejoAdminPassword = {
-          rekeyFile = ./forgejo-password.age;
-          owner     = "forgejo";
-        };
-
         home-manager.sharedModules = [{
           home.stateVersion = "24.11";
         }];
