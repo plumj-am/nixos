@@ -12,10 +12,10 @@
         systemctl reboot
         ;;
       "Sleep")
-        swaylock -fF & systemctl suspend
+        hyprlock --quiet & systemctl suspend
         ;;
       "Lock")
-        swaylock -fF
+        hyprlock --quiet --grace 60
         ;;
       *)
         exit 1
