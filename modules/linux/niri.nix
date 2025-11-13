@@ -15,6 +15,16 @@ in mkIf config.isDesktopNotWsl {
       package = niri.packages.${pkgs.system}.niri-unstable;
       settings = {
 
+        # Need to wait for custom output options to arrive in niri-flake.
+        # outputs."DP-1" = mkIf (myConfig.networking.hostName == "yuzu") {
+        #   mode = {
+        #     custom  = true;
+        #     width   = 3440.0;
+        #     height  = 1440.0;
+        #     refresh = 80.0;
+        #   };
+        # };
+
         window-rules = [
           {
             matches = [{ app-id = "^*$"; }];
@@ -97,6 +107,8 @@ in mkIf config.isDesktopNotWsl {
 
         hotkey-overlay.hide-not-bound  = true;
         hotkey-overlay.skip-at-startup = true;
+
+        screenshot-path = "${myConfig.users.users.jam.home}/Pictures/Screenshots/screenshot_%Y-%m-%d_%H-%M-%S.png";
 
         gestures.hot-corners = disabled;
 
@@ -232,6 +244,19 @@ in mkIf config.isDesktopNotWsl {
           };
         };
       };
+    };
+
+    xdg.desktopEntries.screenshot = {
+      name     = "Screenshot";
+      icon     = "camera-web";
+      exec     = "niri msg action screenshot";
+      terminal = false;
+    };
+    xdg.desktopEntries.screenshot-window = {
+      name     = "Screenshot Window";
+      icon     = "camera-web";
+      exec     = "niri msg action screenshot-window --write-to-disk";
+      terminal = false;
     };
   })];
 }
