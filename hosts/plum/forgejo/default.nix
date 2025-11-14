@@ -1,4 +1,4 @@
-{ self, config, lib, ... }: let
+{ pkgs, self, config, lib, ... }: let
   inherit (config.networking) domain;
   inherit (lib) enabled mkForce;
 
@@ -47,6 +47,7 @@ in {
   };
 
   services.forgejo = enabled {
+    package = pkgs.forgejo; # The service version is ~11 so better to specify and get the latest.
     lfs = enabled;
 
     user  = "forgejo";
