@@ -113,6 +113,8 @@ in mkIf config.isDesktopNotWsl {
         gestures.hot-corners = disabled;
 
         layout = {
+          always-center-single-column = true;
+          empty-workspace-above-first = true;
 
           preset-column-widths = [
             { proportion = 1. / 3.; }
@@ -165,6 +167,9 @@ in mkIf config.isDesktopNotWsl {
 
           "Mod+Q"   = { action = close-window;    repeat = false; };
           "Mod+Tab" = { action = toggle-overview; repeat = false; };
+          # Waiting for support in niri-flake.
+          # TODO: open PR
+          # "Mod+Tab" = { action = focus-window-mru-next; repeat = true; };
 
           "Mod+1".action = focus-workspace 1;
           "Mod+2".action = focus-workspace 2;
