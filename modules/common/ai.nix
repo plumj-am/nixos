@@ -54,11 +54,11 @@ in mkIf config.isDesktop {
         };
 
         allow = [
-          "Edit(PROJECT_MANAGER.md)"
-          "Edit(CURRENT_TASK.md)"
+          "Edit(PROJECT.md)"
+          "Edit(CURRENT.md)"
           "Edit(STATE.md)"
-          "Update(PROJECT_MANAGER.md)"
-          "Update(CURRENT_TASK.md)"
+          "Update(PROJECT.md)"
+          "Update(CURRENT.md)"
           "Update(STATE.md)"
           "Bash(curl http://localhost:*)"
           "Bash(curl -X GET http://localhost:*)"
