@@ -22,6 +22,7 @@
   ++ lib.optionals config.isDesktop [
 		pkgs.bitwarden-cli
     pkgs.deno
+    pkgs.exercism
     pkgs.moon
     pkgs.pnpm
     pkgs.proto

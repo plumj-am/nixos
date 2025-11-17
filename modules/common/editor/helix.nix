@@ -220,5 +220,9 @@ in {
     # Just
     pkgs.just-lsp
     pkgs.just-formatter
+
+    # Haskell
+    pkgs.fourmolu
+    pkgs.haskell-language-server
   ];
 }
