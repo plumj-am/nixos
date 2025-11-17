@@ -115,7 +115,7 @@ in {
       ];
 
       hooks.display_output = /* nu */ ''
-        if (term size).columns >= 100 { table -e } else { table }
+        if (term size).columns >= 100  { tee { table --expand | print } } | try { if $in != null { $env.last = $in } }
       '';
 
 			hooks.pre_prompt     = [
