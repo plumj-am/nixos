@@ -27,7 +27,7 @@ in {
 
   nix.gc = merge {
     automatic  = true;
-    options    = "--delete-older-than 7d";
+    options    = "--delete-older-than 3d";
   } <| optionalAttrs (config.isLinux) {
     dates      = "weekly";
     persistent = true;
@@ -43,8 +43,13 @@ in {
   nix.settings = ((import <| self + /flake.nix).nixConfig
     |> flip removeAttrs (optionals config.isDarwin [ "use-cgroups" "cgroups" ]))
   // {
-      min-free = "4G";
-    };
+
+  };
+
+  nix.extraOptions = mkIf config.isServer ''
+    min-free = ${toString (2 * 1024 * 1024 * 1024)} # 2G
+    max-free = ${toString (1 * 1024 * 1024 * 1024)} # 1G
+  '';
 
   nix.optimise.automatic = true;
 }
