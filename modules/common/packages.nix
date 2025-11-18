@@ -22,6 +22,8 @@
   ++ lib.optionals config.isDesktop [
 		pkgs.bitwarden-cli
     pkgs.deno
+		pkgs.docker
+		pkgs.docker-compose
     pkgs.exercism
     pkgs.moon
     pkgs.pnpm

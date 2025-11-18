@@ -62,7 +62,7 @@ in {
             shell                       = pkgs.nushell;
             hashedPasswordFile          = config.age.secrets.password.path;
             openssh.authorizedKeys.keys = keys.admins;
-            extraGroups                 = [ "wheel" "networkmanager" ];
+            extraGroups                 = [ "wheel" "networkmanager" "docker" ];
           };
         };
 
