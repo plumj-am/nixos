@@ -17,10 +17,7 @@ concurrency:
 jobs:
     build:
         name: "Build: ${{ matrix.host }}"
-        runs-on: self-hosted
-        permissions:
-            contents: read
-            id-token: write
+        runs-on: plum
         strategy:
             fail-fast: false
             matrix:

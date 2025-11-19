@@ -8,9 +8,12 @@ in {
       name         = config.networking.hostName;
       tokenFile    = config.age.secrets.forgejoRunnerToken.path;
       url          = "https://git.plumj.am/";
-      labels       = [ "self-hosted:host" ];
+      labels       = [
+        "plum:host"
+        "self-hosted:host"
+      ];
 
-      settings.cache.enabled = true;
+      settings.cache.enabled = false;
 
       hostPackages = [
         (inputs.fenix.packages.${pkgs.system}.complete.withComponents [ # Nightly.
@@ -24,6 +27,8 @@ in {
         ])
         pkgs.bash
         pkgs.curl
+        pkgs.docker
+        pkgs.docker-compose
         pkgs.gcc # Fixes cc linker not found errors.
         pkgs.git
         pkgs.gnutar # For cache processes.
