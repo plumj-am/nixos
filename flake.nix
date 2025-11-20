@@ -11,7 +11,7 @@
     ];
 
     extra-trusted-public-keys = [
-      "cache1.plumj.am:4Z36iDpxFmn1nBuTwamdwNAkRd/WA1kfAQ6sHmb7RSQ="
+      "cache1.plumj.am:FEsfh5NIwtRYmNXuDVpNF391g/vod89UNCuRmbIjvb8="
       "cache2.plumj.am:IoMjbQ43lgHh8gMoEJj/VYK8c3Xbpc/TLRPKAaQSGas="
       "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
       "numtide.cachix.org-1:2ps1kLBUWjxIneOy2Yk6H6WdHjLQ0Rb5h9R0OXiEiL8="
