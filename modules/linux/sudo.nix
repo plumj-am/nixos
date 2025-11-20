@@ -1,12 +1,12 @@
 { lib, config, ... }: let
   inherit (lib) enabled mkIf optionalString;
 in {
-  security.sudo = enabled {
+  security.sudo-rs = enabled {
     execWheelOnly = true;
     extraConfig   = /* sudo */ ''
       Defaults pwfeedback
-      Defaults lecture = never
-      Defaults env_keep += "DISPLAY EDITOR PATH"
+      Defaults !lecture
+      Defaults env_keep+="DISPLAY EDITOR PATH"
       ${optionalString config.isServer /* sudo */ ''
         Defaults timestamp_timeout = 0
       ''}
