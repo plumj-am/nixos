@@ -29,7 +29,7 @@ in mkIf config.isDesktopNotWsl {
           {
             matches = [{ app-id = "^*$"; }];
 
-            opacity                     = myConfig.theme.opacity.high;
+            opacity                     = myConfig.theme.opacity.opaque;
             draw-border-with-background = false;
             clip-to-geometry            = true;
             geometry-corner-radius      = genAttrs
@@ -39,7 +39,7 @@ in mkIf config.isDesktopNotWsl {
           {
             matches = [{ app-id = "^(zen-.*|org\.qutebrowser\.qutebrowser|brave-browser)$"; }];
 
-            opacity = myConfig.theme.opacity.veryhigh;
+            opacity = myConfig.theme.opacity.opaque;
           }
           {
             matches = [{ title = "^.*YouTube|Picture-in-Picture.*"; }];
@@ -80,12 +80,12 @@ in mkIf config.isDesktopNotWsl {
           {
             matches = [{ namespace = "waybar"; }];
 
-            opacity = myConfig.theme.opacity.low;
+            opacity = myConfig.theme.opacity.opaque;
           }
           {
             matches = [{ namespace = "notifications|launcher"; }];
 
-            opacity = myConfig.theme.opacity.medium;
+            opacity = myConfig.theme.opacity.opaque;
           }
         ];
 
