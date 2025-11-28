@@ -6,6 +6,7 @@ in mkIf config.isDesktop {
   environment.shellAliases = {
     claude = "claude --continue --fork-session";
     codex  = "codex resume --ask-for-approval untrusted";
+    oc     = "opencode --continue";
   };
 
   environment.systemPackages = [
@@ -21,13 +22,19 @@ in mkIf config.isDesktop {
     mode  = "0400";
   };
 
+  age.secrets.context7Key = {
+    rekeyFile = ./context7-key.age;
+    owner = "jam";
+    mode  = "0400";
+  };
+
   home-manager.sharedModules = [{
     programs.claude-code = disabled {
       package = pkgs.symlinkJoin {
-        name = "claude-code-wrapped";
-        paths = [ pkgs.claude-code ];
+        name        = "claude-code-wrapped";
+        paths       = [ pkgs.claude-code ];
         buildInputs = [ pkgs.makeWrapper ];
-        postBuild = ''
+        postBuild   = ''
           wrapProgram $out/bin/claude \
             --run 'export ANTHROPIC_AUTH_TOKEN=$(cat ${config.age.secrets.key.path})'
         '';
@@ -74,12 +81,46 @@ in mkIf config.isDesktop {
 
     programs.opencode = enabled {
       settings = {
-        theme      = "system";
+        theme      = "gruvbox";
         autoupdate = false;
         model      = "zai-coding-plan/glm-4.6";
+
+        keybinds = {
+          app_exit                = "ctrl+c";
+          messages_half_page_up   = "ctrl+u";
+          messages_half_page_down = "ctrl+d";
+          input_newline           = "shift+enter";
+        };
+
+        lsp = {
+          nixd = {
+            command    = [ "nixd" ];
+            extensions = [ ".nix" ];
+          };
+        };
+
+        formatter = {
+          rustfmt = {
+            command    = [ "cargo" "fmt" "--" "$FILE" ];
+            extensions = [ ".rs" ];
+          };
+        };
+
+        mcp = {
+          context7 = {
+            type    = "remote";
+            url     = "https://mcp.context7.com/mcp";
+            headers = {
+              CONTEXT7_API_KEY = "{file:${config.age.secrets.context7Key.path}}";
+            };
+          };
+
+          gh_grep = {
+            type = "remote";
+            url  = "https://mcp.grep.app";
+          };
+        };
       };
     };
   }];
-
-  environment.shellAliases.oc = "opencode --continue";
 }
