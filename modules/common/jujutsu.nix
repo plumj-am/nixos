@@ -1,5 +1,5 @@
 { config, pkgs, lib, ... }: let
-  inherit (lib) enabled mkAfter;
+  inherit (lib) enabled;
 
 in {
   environment.shellAliases = {
@@ -14,39 +14,6 @@ in {
       programs.difftastic = enabled;
 
       programs.mergiraf = enabled;
-
-      programs.nushell.configFile.text = mkAfter /* nu */ ''
-        def --wrapped jpa [
-          --revisions (-r): string = "@" # The revision(s) to pass to `jj git push`
-          ...rest: string # Any other args to pass to `jj git push`
-        ] {
-          let remotes       = ["origin" "forgejo"]
-          let remotes_full  = (jj git remote list | lines | split column " " name url)
-          let remotes_names = ($remotes_full | get name)
-          for remote in $remotes {
-            if $remote in $remotes_names {
-              print $"(ansi purple)[Pusher](ansi rst) Pushing to ($remote)."
-              jj git push ...$rest --revisions $revisions --remote $remote
-            } else if $remote == "forgejo" {
-              print $"(ansi purple)[Pusher](ansi rst) Forgejo remote not found."
-              let input = (input --numchar 1 $"(ansi purple)[Pusher](ansi rst) Attempt to add forgejo remote? \(y/n\) ")
-              if ($input | str downcase | str starts-with "y") {
-                let origin_url = ($remotes_full | where name == "origin" | get url | first)
-                let repo_name = ($origin_url | split row "/" | last)
-                let forgejo_url = $"https://git.plumj.am/plumjam/($repo_name)"
-                print $"(ansi purple)[Pusher](ansi rst) Adding forgejo remote: ($forgejo_url)"
-                jj git remote add forgejo $forgejo_url
-                print $"(ansi purple)[Pusher](ansi rst) Added forgejo remote, pushing..."
-                jj git push ...$rest --revisions $revisions --remote $remote
-              } else {
-                print $"(ansi purple)[Pusher](ansi rst) Skipping forgejo remote setup."
-              }
-            } else {
-              print $"(ansi purple)[Pusher](ansi rst) Remote ($remote) not available, skipping."
-            }
-          }
-        }
-      '';
     }
     (homeArgs: let
       config' = homeArgs.config;
