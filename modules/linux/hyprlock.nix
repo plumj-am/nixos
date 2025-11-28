@@ -61,7 +61,7 @@ in mkIf config.isDesktopNotWsl {
           }
           {
             monitor     = yuzuMonitor;
-            text        = ''cmd[update:1000] echo "<b> Uptime: $(nu -c 'uptime | split column , | get column1 | split column " " | get column6.0 | str trim') </b>"'';
+            text        = ''cmd[update:1000] echo "<b> Uptime: $(cat /proc/uptime | awk '{printf "%.0f", $1}' | awk '{days=int($1/86400); hours=int(($1%86400)/3600); minutes=int(($1%3600)/60); seconds=$1%60; printf "%dd %dh %dm %ds", days, hours, minutes, seconds}') </b>"'';
             font_size   = 12;
             font_family = config.theme.font.mono.family;
             position    = "0, -100";
