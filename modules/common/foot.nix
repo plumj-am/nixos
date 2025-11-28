@@ -1,8 +1,8 @@
 { lib, config, ... }: let
-  inherit (lib) enabled mkIf;
+  inherit (lib) disabled mkIf;
 in mkIf config.isDesktopNotWsl {
   home-manager.sharedModules = [{
-    programs.foot = enabled {
+    programs.foot = disabled {
       settings = {
         main = with config.theme.font; {
           font      = "${mono.name}:size=${toString size.term}";
