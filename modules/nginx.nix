@@ -40,7 +40,6 @@ in {
     proxy_hide_header X-Frame-Options;
     add_header X-Frame-Options DENY always;
 
-    # SECURITY: Additional 2024 security headers
     proxy_hide_header X-Content-Type-Options;
     add_header X-Content-Type-Options nosniff always;
 
@@ -63,8 +62,6 @@ in {
   config.security.acme.users = [ "nginx" ];
 
   config.services.nginx = enabled {
-    package = pkgs.nginxQuic;
-
     statusPage = true;
 
     recommendedBrotliSettings = true;
