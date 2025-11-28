@@ -116,7 +116,7 @@ in mkIf config.isDesktopNotWsl {
           always-center-single-column = true;
           empty-workspace-above-first = true;
 
-          default-column-width.proportion = 1. / 1.;
+          # default-column-width.proportion = 1. / 1.;
 
           preset-column-widths = [
             { proportion = 1. / 5.; }
