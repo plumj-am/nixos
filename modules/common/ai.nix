@@ -1,6 +1,6 @@
 { pkgs, lib, config, ... }: let
-  inherit (lib) mkIf enabled disabled;
-in mkIf config.isDesktop {
+  inherit (lib) enabled disabled;
+in {
   unfree.allowedNames = [ "claude-code" "codex" ];
 
   environment.shellAliases = {
