@@ -4,6 +4,7 @@
 		pkgs.ast-grep
     pkgs.comma
     pkgs.curl
+    pkgs.forgejo-cli
     pkgs.hyperfine
     pkgs.moreutils
     pkgs.nodejs
