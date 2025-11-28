@@ -175,7 +175,7 @@ in {
 				}
 
 				let host = if ($env.SSH_CONNECTION? | is-not-empty) {
-					$"(ansi '${base0B}')(hostname)(ansi rst)"
+					$" (ansi '${base0B}')(hostname)(ansi rst)"
 				} else { "" }
 
 				let jj_root = try {
