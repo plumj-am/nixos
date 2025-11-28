@@ -132,17 +132,17 @@ in {
       ${builtins.readFile ./menus.nu}
       ${builtins.readFile ./functions.nu}
 
-			$env.config.hooks.command_not_found = {|c|
-				try {
-					print $"(ansi purple)[FALLBACK](ansi rst) Command not found '($c)'"
-					print $"(ansi purple)[FALLBACK](ansi rst) Trying with comma."
-					let pkg = ($c | str trim)
-					let pkgs = (comma --print-packages ($pkg))
-					if ($pkgs | str downcase | str contains "no packages") { null }
-					comma --ask ($pkg)
-					null
-				} catch { null }
-			}
+			# $env.config.hooks.command_not_found = {|c|
+			# 	try {
+			# 		print $"(ansi purple)[FALLBACK](ansi rst) Command not found '($c)'"
+			# 		print $"(ansi purple)[FALLBACK](ansi rst) Trying with comma."
+			# 		let pkg = ($c | str trim)
+			# 		let pkgs = (comma --print-packages ($pkg))
+			# 		if ($pkgs | str downcase | str contains "no packages") { null }
+			# 		comma --ask ($pkg)
+			# 		null
+			# 	} catch { null }
+			# }
     '';
 
     envFile.text = with config.theme.withHash; /* nu */ ''
