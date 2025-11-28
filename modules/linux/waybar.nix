@@ -17,7 +17,7 @@ in mkIf config.isDesktopNotWsl {
           modules-right  = [ "tray" "pulseaudio" "cpu" "memory" "disk" "custom/gpu" "battery" "clock" ];
 
           "niri/workspaces" = {
-            all-outputs  = true;
+            current-only = true;
             format       = "{index}";
           };
 
@@ -25,9 +25,9 @@ in mkIf config.isDesktopNotWsl {
             max-length       = 50;
             separate-outputs = true;
             rewrite          = {
-              "(.*) — Zen Browser" = "󰖟 $1";
-              "(.*) - Discord"     = "󰙯 $1";
-              "(.*) — nu"          = " $1";
+              "(.*) (—|-) (Zen Browser|Brave)" = "󰖟  $1";
+              "(.*) - Discord"                 = "󰙯  $1";
+              "(.*) — nu"                      = " $1";
             };
           };
 
