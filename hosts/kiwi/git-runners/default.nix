@@ -27,6 +27,7 @@ in {
         ])
         pkgs.bash
         pkgs.curl
+        pkgs.forgejo-cli
         pkgs.gcc # Fixes cc linker not found errors.
         pkgs.git
         pkgs.gnutar # For cache processes.
@@ -34,10 +35,13 @@ in {
         pkgs.just
         pkgs.nix
         pkgs.nodejs
+        pkgs.nushell
+        pkgs.opencode
         pkgs.openssl
         pkgs.pkg-config
-        pkgs.sqlite
+        pkgs.ripgrep
         pkgs.sqlx-cli
+        pkgs.which
         pkgs.xz
       ];
     };
