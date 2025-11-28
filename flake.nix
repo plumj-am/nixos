@@ -3,10 +3,10 @@
 
   nixConfig = {
     extra-substituters = [
-      "https://cache1.plumj.am/"
-      "https://cache2.plumj.am/"
-      "https://cache.garnix.io/"
-      "https://nix-community.cachix.org/"
+      "https://cache1.plumj.am?priority=10"
+      "https://cache2.plumj.am?priority=10"
+      "https://cache.garnix.io"
+      "https://nix-community.cachix.org"
     ];
 
     extra-trusted-public-keys = [
