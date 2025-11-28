@@ -41,8 +41,9 @@ in {
 
           lazyjj.highlight-color = "#f2e5bc";
 
-          git.sign-on-push        = true; # sign in bulk on push
-          git.auto-local-bookmark = true;
+          git.sign-on-push = true; # sign in bulk on push
+
+          remotes.origin.auto-track-bookmarks = "glob:*";
 
           git.subprocess = true;
 
