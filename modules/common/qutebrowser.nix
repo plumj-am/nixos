@@ -1,9 +1,9 @@
 { lib, config, ... }: let
-  inherit (lib) enabled mkIf genAttrs const merge;
+  inherit (lib) disabled mkIf genAttrs const merge;
 in {
 
   home-manager.sharedModules = mkIf config.isDesktopNotWsl [{
-    programs.qutebrowser = enabled {
+    programs.qutebrowser = disabled {
       settings = {
         tabs = {
           position             = "left";
