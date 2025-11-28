@@ -1,5 +1,5 @@
 { pkgs, lib, config, ... }: let
-  inherit (lib) mkIf enabled;
+  inherit (lib) mkIf enabled disabled;
 in mkIf config.isDesktop {
   unfree.allowedNames = [ "claude-code" "codex" ];
 
@@ -18,12 +18,11 @@ in mkIf config.isDesktop {
   age.secrets.key = {
     rekeyFile = ./z-ai-key.age;
     owner = "jam";
-    group = "users";
-    mode = "0400";
+    mode  = "0400";
   };
 
   home-manager.sharedModules = [{
-    programs.claude-code = enabled {
+    programs.claude-code = disabled {
       package = pkgs.symlinkJoin {
         name = "claude-code-wrapped";
         paths = [ pkgs.claude-code ];
@@ -72,5 +71,15 @@ in mkIf config.isDesktop {
         ];
       };
     };
+
+    programs.opencode = enabled {
+      settings = {
+        theme      = "system";
+        autoupdate = false;
+        model      = "zai-coding-plan/glm-4.6";
+      };
+    };
   }];
+
+  environment.shellAliases.oc = "opencode --continue";
 }
