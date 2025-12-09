@@ -22,6 +22,7 @@ in {
           "clippy"
           "miri"
           "rustc"
+          "rust-analyzer"
           "rustfmt"
           "rust-std"
           "rust-src"

@@ -10,6 +10,7 @@ in {
       url          = "https://git.plumj.am/";
       labels       = [
         "kiwi:host"
+        "docpad-infra:host"
         "self-hosted:host"
       ];
 
@@ -21,6 +22,7 @@ in {
           "clippy"
           "miri"
           "rustc"
+          "rust-analyzer"
           "rustfmt"
           "rust-std"
           "rust-src"
