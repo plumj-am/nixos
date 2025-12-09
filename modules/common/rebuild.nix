@@ -78,11 +78,20 @@
       let platform = if $os == "Darwin" { "Darwin" } else { "NixOS" }
       if not $quiet { print-notify $"($action) ($platform). Configuration for: ($host)." 50 }
 
-      try {
-        nh $command ...$final_args
-      } catch { |e|
-        if not $quiet { print-notify "Error: Rebuild failed, run manually in a terminal." }
-        exit 1
+      if $remote {
+        try {
+          NH_BYPASS_ROOT_CHECK=true NH_NO_CHECKS=true nh $command ...$final_args
+        } catch { |e|
+          print-notify "Error: Rebuild failed, run manually in a terminal."
+          exit 1
+        }
+      } else {
+        try {
+          sudo NH_BYPASS_ROOT_CHECK=true NH_NO_CHECKS=true nh $command ...$final_args
+        } catch { |e|
+          print-notify "Error: Rebuild failed, run manually in a terminal."
+          exit 1
+        }
       }
 
       if $rollback {
