@@ -17,7 +17,7 @@ in {
       settings.cache.enabled = false;
 
       hostPackages = [
-        (inputs.fenix.packages.${pkgs.system}.complete.withComponents [ # Nightly.
+        (inputs.fenix.packages.${pkgs.stdenv.hostPlatform.system}.complete.withComponents [ # Nightly.
           "cargo"
           "clippy"
           "miri"

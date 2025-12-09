@@ -12,7 +12,7 @@ in mkIf config.isDesktopNotWsl {
         niriConfig = config;
       in {
     programs.niri = enabled {
-      package = niri.packages.${pkgs.system}.niri-unstable;
+      package = niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable;
       settings = {
 
         # Need to wait for custom output options to arrive in niri-flake.

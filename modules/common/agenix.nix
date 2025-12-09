@@ -11,7 +11,7 @@ in {
 
   environment.systemPackages = mkIf config.isDesktop [
     pkgs.agenix
-    inputs.agenix-rekey.packages.${pkgs.system}.default
+    inputs.agenix-rekey.packages.${pkgs.stdenv.hostPlatform.system}.default
     pkgs.age-plugin-yubikey
   ];
 }

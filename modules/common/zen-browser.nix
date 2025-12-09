@@ -79,7 +79,7 @@
 in {
   home-manager.sharedModules = [{
     programs.zen-browser = mkIf config.isDesktopNotWsl (disabled {
-      package = zen-browser.packages.${pkgs.system}.twilight.override {
+      package = zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.twilight.override {
         nativeMessagingHosts = [ pkgs.firefoxpwa ];
       };
 
