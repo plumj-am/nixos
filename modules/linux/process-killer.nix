@@ -76,13 +76,13 @@
         return
       }
 
-      let confirm = fuzzel_select ["Yes" "No"] ($"Kill ($process_name) (PID: " + ($pid | into string) + ")? ")
+      let confirm = fuzzel_select ["Yes" "No"] ($"Kill ($process_name) \(PID: ($pid | into string)\)? ")
 
       if $confirm == "Yes" {
         if (kill_process $pid) {
-          notify "Process Killed" ($"Killed ($process_name) (PID: " + ($pid | into string) + ")")
+          notify "Process Killed" ($"Killed ($process_name) \(PID: ($pid | into string)\)")
         } else {
-          notify "Failed" ($"Could not kill ($process_name) (PID: " + ($pid | into string) + ")")
+          notify "Failed" ($"Could not kill ($process_name) \(PID: ($pid | into string)\)")
         }
       }
     }
