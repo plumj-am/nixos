@@ -106,6 +106,16 @@ in {
           };
         };
 
+        provider.zai-coding-plan.models = {
+          "glm-4.6".options = {
+            do_sample     = false;
+            stream        = true;
+            thinking.type = "enabled";
+            temperature   = 0.3;
+            max_tokens    = 32768;
+          };
+        };
+
         mcp = {
           context7 = {
             type    = "remote";
@@ -118,6 +128,22 @@ in {
           gh_grep = {
             type = "remote";
             url  = "https://mcp.grep.app";
+          };
+
+          web-reader = {
+            type = "remote";
+            url = "https://api.z.ai/api/mcp/web_reader/mcp";
+            headers = {
+              Authorization = "Bearer {file:${config.age.secrets.key.path}}";
+            };
+          };
+
+          web-search-prime = {
+            type = "remote";
+            url = "https://api.z.ai/api/mcp/web_search_prime/mcp";
+            headers = {
+              Authorization = "Bearer {file:${config.age.secrets.key.path}}";
+            };
           };
         };
       };
