@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }: let
+{ pkgs, lib, config, ai-tools, ... }: let
   inherit (lib) enabled disabled;
 in {
   unfree.allowedNames = [ "claude-code" "codex" ];
@@ -80,6 +80,8 @@ in {
     };
 
     programs.opencode = enabled {
+      package = ai-tools.packages.${pkgs.stdenv.hostPlatform.system}.opencode;
+
       settings = {
         theme      = "gruvbox";
         autoupdate = false;
@@ -145,6 +147,18 @@ in {
               Authorization = "Bearer {file:${config.age.secrets.key.path}}";
             };
           };
+
+          nixos = {
+            type    = "local";
+            command = [ "/run/current-system/sw/bin/nix" "run" "github:utensils/mcp-nixos" "--" ];
+          };
+
+          playwright = {
+            type    = "local";
+            command = [ "/run/current-system/sw/bin/nix" "run" "nixpkgs#playwright-mcp" "--" ];
+          };
+
+          # TODO: Add nixpkgs#mcp-grafana?
         };
       };
     };

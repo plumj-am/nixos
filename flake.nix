@@ -96,6 +96,11 @@
       url                    = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    ai-tools = {
+      url                    = "github:clempat/ai-tools-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ { self, nixpkgs, nix-darwin,  ... }: let
