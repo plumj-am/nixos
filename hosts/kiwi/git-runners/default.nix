@@ -35,6 +35,7 @@ in {
         pkgs.gnutar # For cache processes.
         pkgs.gzip   # ...
         pkgs.just
+        pkgs.jq
         pkgs.nix
         pkgs.nodejs
         pkgs.nushell
