@@ -4,35 +4,81 @@ on:
         paths-ignore:
             - "README.md"
             - "LICENSE.md"
+            - ".forgejo/workflows/nix-ci.yml"
     push:
         paths-ignore:
             - "README.md"
             - "LICENSE.md"
-    workflow_dispatch:
+            - ".forgejo/workflows/nix-ci.yml"
 
 concurrency:
     group: nix-ci-${{ forgejo.ref_name }}
     cancel-in-progress: false
 
 jobs:
-    build:
-        name: "Build: ${{ matrix.host }}"
+    check-changes:
+        name: Check for changes
         runs-on: plum
+        outputs:
+            hosts: ${{ steps.filter.outputs.changes }}
+        steps:
+            - uses: actions/checkout@v5
+              with:
+                  fetch-depth: 0
+            - uses: https://github.com/dorny/paths-filter@v3
+              id: filter
+              with:
+                  base: master
+                  filters: |
+                      shared: &shared
+                        - modules/common/**
+                        - flake.*
+                        - lib/**
+                        - modules/nix.nix
+                        - modules/system.nix
+                        - keys.nix
+                        - yubikey.pub
+                      servers: &servers
+                        - modules/acme/**
+                        - modules/nginx.nix
+                      nixosConfigurations.date:
+                        - hosts/date/**
+                        - modules/linux/**
+                        - *shared
+                      nixosConfigurations.kiwi:
+                        - hosts/kiwi/**
+                        - modules/linux/**
+                        - modules/dr-radka.nix
+                        - *shared
+                        - *servers
+                      nixosConfigurations.lime:
+                        - hosts/lime/**
+                        - modules/darwin/**
+                        - *shared
+                      nixosConfigurations.pear:
+                        - hosts/pear/**
+                        - modules/linux/**
+                        - *shared
+                      nixosConfigurations.plum:
+                        - hosts/plum/**
+                        - modules/linux/**
+                        - modules/site.nix
+                        - *shared
+                        - *servers
+                      nixosConfigurations.yuzu:
+                        - hosts/yuzu/**
+                        - modules/linux/**
+                        - *shared
+
+    build-hosts:
+        name: "Build: ${{ matrix.hosts }}"
+        needs: check-changes
         strategy:
             fail-fast: false
             matrix:
-                host:
-                    - "date"
-                    - "kiwi"
-                    - "pear"
-                    - "plum"
-                    - "yuzu"
-                    # - "lime" # Can't be done without an aarch64-darwin runner.
-                    # I will look into containers or something later - for now it's not that important.
+                hosts: ${{ fromJSON(needs.check-changes.outputs.hosts) }}
+        runs-on: plum
         steps:
-            - name: "Checkout"
-              uses: https://github.com/actions/checkout@v5
-            - name: "Build configuration for ${{ matrix.host }}"
-              run: |
-                  echo "Building NixOS configuration for: ${{ matrix.host }}"
-                  nix build .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
+            - uses: actions/checkout@v5
+            - name: "Build configuration for ${{ matrix.hosts }}"
+              run: nix build .#${{ matrix.hosts }}.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
