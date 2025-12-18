@@ -58,6 +58,48 @@ in {
 
         };
 
+        hooks = {
+          # Unreliable right now: https://github.com/anthropics/claude-code/issues/11947
+          # Stop = [{
+          #   hooks = [{
+          #     type    = "prompt";
+          #     prompt  = ''You are evaluating whether Claude should stop working. Context: $ARGUMENTS\n\nAnalyze the conversation and determine if:\n1. All user-requested tasks are complete\n2. Any errors need to be addressed\n3. Follow-up work is needed.'';
+          #     timeout = 30;
+          #   }];
+          # }];
+
+          # SubagentStop = [{
+          #   hooks = [{
+          #     type    = "prompt";
+          #     prompt = ''Evaluate if this subagent should stop. Input: $ARGUMENTS\n\nCheck if:\n- The subagent completed its assigned task\n- Any errors occurred that need fixing\n- Additional context gathering is needed.'';
+          #   }];
+          # }];
+
+          Notification = [
+            {
+              matcher = "permission_prompt|idle_prompt|elicitation_dialog";
+              hooks   = [
+                {
+                  type    = "command";
+                  command = "${pkgs.libnotify}/bin/notify-send --expire-time=15000 'Claude' 'Waiting for user input.'";
+                }
+              ];
+            }
+          ];
+
+          PostToolUse = [
+            {
+      				matcher = "Edit|MultiEdit|Write";
+      				hooks   = [
+      				  {
+                  type    = "command";
+                  command = "~/.claude/hooks/format-files";
+                }
+      				];
+            }
+          ];
+        };
+
         allow = [
           "Edit(PROJECT.md)"
           "Edit(CURRENT.md)"
@@ -79,25 +121,25 @@ in {
         ];
       };
 
-      mcpServers = {
-        context7 = {
-          type    = "http";
-          url     = "https://mcp.context7.com/mcp";
-          headers = {
-            # We need this for higher limits but for now it's fine and doesn't stop us using it.
-            CONTEXT7_API_KEY = "{file:${config.age.secrets.context7Key.path}}";
-          };
-        };
+      # Creating with home-manager below to avoid permissions issues.
+      # hooks = {};
 
+      mcpServers = {
         gh_grep = {
           type = "http";
           url  = "https://mcp.grep.app";
         };
-
-        # No support for reading from files yet. Add these manually.
-        # ```
-        # claude mcp add -s user -t http web-reader https://api.z.ai/api/mcp/web_reader/mcp --header "Authorization: Bearer your_api_key"
-        # ```
+        # No support for reading secrets from files yet. These are added with
+        # `~/.claude/claude-mcps.sh` instead.
+        # context7 = {
+        #   type    = "http";
+        #   url     = "https://mcp.context7.com/mcp";
+        #   headers = {
+        #     # We need this for higher limits but for now it's fine and doesn't stop us using it.
+        #     CONTEXT7_API_KEY = "{file:${config.age.secrets.context7Key.path}}";
+        #   };
+        # };
+        #
         # web-reader = {
         #   type    = "http";
         #   url     = "https://api.z.ai/api/mcp/web_reader/mcp";
@@ -105,10 +147,7 @@ in {
         #     Authorization = "Bearer {file:${config.age.secrets.key.path}}";
         #   };
         # };
-
-        # ```
-        # claude mcp add -s user -t http web-search-prime https://api.z.ai/api/mcp/web_search_prime/mcp --header "Authorization: Bearer your_api_key"
-        # ```
+        #
         # web-search-prime = {
         #   type    = "http";
         #   url     = "https://api.z.ai/api/mcp/web_search_prime/mcp";
@@ -123,10 +162,10 @@ in {
           args    = [ "run" "github:utensils/mcp-nixos" "--" ];
         };
 
-        playwright = {
+        playwriter = {
           type    = "stdio";
-          command = "/run/current-system/sw/bin/nix";
-          args    = [ "run" "nixpkgs#playwright-mcp" "--" ];
+          command = "/run/current-system/sw/bin/npx";
+          args    = [ "playwriter@latest" ];
         };
 
         # TODO: Add nixpkgs#mcp-grafana?
@@ -207,14 +246,49 @@ in {
             command = [ "/run/current-system/sw/bin/nix" "run" "github:utensils/mcp-nixos" "--" ];
           };
 
-          playwright = {
+          playwriter = {
             type    = "local";
-            command = [ "/run/current-system/sw/bin/nix" "run" "nixpkgs#playwright-mcp" "--" ];
+            command = [ "/run/current-system/sw/bin/npx" "playwriter@latest" ];
           };
 
           # TODO: Add nixpkgs#mcp-grafana?
         };
       };
     };
+  # Create hooks with home-manager to avoid permissions issues.
+    home.file.".claude/hooks/format-files" = {
+      text = /* nu */ ''
+        #!/usr/bin/env nu
+        let json_input = (^cat)
+        let file_path = ""
+
+        if (which jq | is-empty) { exit 1 }
+
+        let $file_path = ($json_input | from json | get tool_input.file_path)
+        if ($file_path | is-empty) { exit 1 }
+
+        let extension = ($file_path | path parse | get extension)
+        let command = match ($extension | str trim) {
+          "rs" if (which cargo | is-not-empty) => { ["rustfmt" $file_path] }
+          "toml" if (which taplo | is-not-empty) => { ["taplo" "fmt" $file_path] }
+          _ => { exit 1 }
+        }
+        ^$command.0 ...($command | skip 1)
+      '';
+      executable = true;
+    };
+
+    # Helper script to add MCPs.
+    home.file.".claude/claude-mcps.sh" = {
+      text = ''
+        #!/usr/bin/env bash
+        # Run this once to add the MCP servers that need API keys
+        claude mcp add -s user -t http context7 https://mcp.context7.com/mcp --header "CONTEXT7_API_KEY: $(cat ${config.age.secrets.context7Key.path})"
+        claude mcp add -s user -t http web-reader https://api.z.ai/api/mcp/web_reader/mcp --header "Authorization: Bearer $(cat ${config.age.secrets.key.path})"
+        claude mcp add -s user -t http web-search-prime https://api.z.ai/api/mcp/web_search_prime/mcp --header "Authorization: Bearer $(cat ${config.age.secrets.key.path})"
+      '';
+      executable = true;
+    };
   }];
+
 }
