@@ -97,8 +97,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    ai-tools = {
-      url                    = "github:clempat/ai-tools-flake";
+    opencode = {
+      url                    = "github:sst/opencode";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    claude-code = {
+      url                    = "github:sadjow/claude-code-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

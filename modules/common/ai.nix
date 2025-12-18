@@ -1,5 +1,5 @@
-{ pkgs, lib, config, ai-tools, ... }: let
-  inherit (lib) enabled disabled;
+{ pkgs, lib, config, inputs, ... }: let
+  inherit (lib) enabled;
 in {
   unfree.allowedNames = [ "claude-code" "codex" ];
 
@@ -10,7 +10,6 @@ in {
   };
 
   environment.systemPackages = [
-    pkgs.claude-code
     pkgs.codex
     pkgs.qwen-code
     pkgs.gemini-cli
@@ -29,10 +28,10 @@ in {
   };
 
   home-manager.sharedModules = [{
-    programs.claude-code = disabled {
+    programs.claude-code = enabled {
       package = pkgs.symlinkJoin {
         name        = "claude-code-wrapped";
-        paths       = [ pkgs.claude-code ];
+        paths       = [ inputs.claude-code.packages.${pkgs.stdenv.hostPlatform.system}.default ];
         buildInputs = [ pkgs.makeWrapper ];
         postBuild   = ''
           wrapProgram $out/bin/claude \
@@ -68,6 +67,8 @@ in {
           "Update(STATE.md)"
           "Bash(curl http://localhost:*)"
           "Bash(curl -X GET http://localhost:*)"
+          "Bash(find:*)"
+          "Bash(rg:*)"
         ];
 
         deny = [
@@ -77,10 +78,63 @@ in {
           "Bash(git commit:*)"
         ];
       };
+
+      mcpServers = {
+        context7 = {
+          type    = "http";
+          url     = "https://mcp.context7.com/mcp";
+          headers = {
+            # We need this for higher limits but for now it's fine and doesn't stop us using it.
+            CONTEXT7_API_KEY = "{file:${config.age.secrets.context7Key.path}}";
+          };
+        };
+
+        gh_grep = {
+          type = "http";
+          url  = "https://mcp.grep.app";
+        };
+
+        # No support for reading from files yet. Add these manually.
+        # ```
+        # claude mcp add -s user -t http web-reader https://api.z.ai/api/mcp/web_reader/mcp --header "Authorization: Bearer your_api_key"
+        # ```
+        # web-reader = {
+        #   type    = "http";
+        #   url     = "https://api.z.ai/api/mcp/web_reader/mcp";
+        #   headers = {
+        #     Authorization = "Bearer {file:${config.age.secrets.key.path}}";
+        #   };
+        # };
+
+        # ```
+        # claude mcp add -s user -t http web-search-prime https://api.z.ai/api/mcp/web_search_prime/mcp --header "Authorization: Bearer your_api_key"
+        # ```
+        # web-search-prime = {
+        #   type    = "http";
+        #   url     = "https://api.z.ai/api/mcp/web_search_prime/mcp";
+        #   headers = {
+        #     Authorization = "Bearer {file:${config.age.secrets.key.path}}";
+        #   };
+        # };
+
+        nixos = {
+          type    = "stdio";
+          command = "/run/current-system/sw/bin/nix";
+          args    = [ "run" "github:utensils/mcp-nixos" "--" ];
+        };
+
+        playwright = {
+          type    = "stdio";
+          command = "/run/current-system/sw/bin/nix";
+          args    = [ "run" "nixpkgs#playwright-mcp" "--" ];
+        };
+
+        # TODO: Add nixpkgs#mcp-grafana?
+      };
     };
 
     programs.opencode = enabled {
-      package = ai-tools.packages.${pkgs.stdenv.hostPlatform.system}.opencode;
+      package = inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
       settings = {
         theme      = "gruvbox";
@@ -110,11 +164,11 @@ in {
 
         provider.zai-coding-plan.models = {
           "glm-4.6".options = {
-            do_sample     = false;
+            # do_sample     = false;
             stream        = true;
             thinking.type = "enabled";
-            temperature   = 0.3;
-            max_tokens    = 32768;
+            # temperature   = 0.3;
+            # max_tokens    = 32768;
           };
         };
 
@@ -133,16 +187,16 @@ in {
           };
 
           web-reader = {
-            type = "remote";
-            url = "https://api.z.ai/api/mcp/web_reader/mcp";
+            type    = "remote";
+            url     = "https://api.z.ai/api/mcp/web_reader/mcp";
             headers = {
               Authorization = "Bearer {file:${config.age.secrets.key.path}}";
             };
           };
 
           web-search-prime = {
-            type = "remote";
-            url = "https://api.z.ai/api/mcp/web_search_prime/mcp";
+            type    = "remote";
+            url     = "https://api.z.ai/api/mcp/web_search_prime/mcp";
             headers = {
               Authorization = "Bearer {file:${config.age.secrets.key.path}}";
             };
