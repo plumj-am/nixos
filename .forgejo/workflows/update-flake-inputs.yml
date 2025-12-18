@@ -1,0 +1,33 @@
+name: "Update Flake Inputs"
+on:
+    schedule:
+        - cron: "0 0 * * *" # Every 24 hours at 00:00.
+    workflow_dispatch:
+
+jobs:
+    update-flake-inputs:
+        name: "Update flake inputs"
+        runs-on: plum
+        steps:
+            - uses: actions/checkout@v5
+              with:
+                  fetch-depth: 0
+            - name: "Update specific inputs"
+              run: nix flake update opencode claude-code helix niri
+            # `./nix-ci` will be triggered automatically by the commit/push so
+            # no need to run any checks here.
+            - name: "Commit and push changes"
+              run: |
+                  fj auth add-key plumjam ${{ secrets.FORGEJO_TOKEN }}
+
+                  git config --global user.name "PlumJam [bot]"
+                  git config --global user.email "forgejo-bot@plumj.am"
+
+                  if [ -n "$(git status --porcelain flake.lock)" ]; then
+                    git add flake.lock
+                    git commit -m "nix: Update flake inputs for opencode, claude-code, helix, and niri."
+                    git push origin master
+                    echo "Changes commited and pushed."
+                  else
+                    echo "No changes to push."
+                  fi
