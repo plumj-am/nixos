@@ -16,11 +16,16 @@ concurrency:
     cancel-in-progress: false
 
 jobs:
-    check-changes:
+    changes:
         name: Check for changes
         runs-on: plum
         outputs:
-            hosts: ${{ steps.filter.outputs.changes }}
+            date: ${{ steps.filter.outputs.date }}
+            kiwi: ${{ steps.filter.outputs.kiwi }}
+            lime: ${{ steps.filter.outputs.lime }}
+            pear: ${{ steps.filter.outputs.pear }}
+            plum: ${{ steps.filter.outputs.plum }}
+            yuzu: ${{ steps.filter.outputs.yuzu }}
         steps:
             - uses: actions/checkout@v5
               with:
@@ -41,44 +46,91 @@ jobs:
                       servers: &servers
                         - modules/acme/**
                         - modules/nginx.nix
-                      nixosConfigurations.date:
+                      date:
                         - hosts/date/**
                         - modules/linux/**
                         - *shared
-                      nixosConfigurations.kiwi:
+                      kiwi:
                         - hosts/kiwi/**
                         - modules/linux/**
                         - modules/dr-radka.nix
                         - *shared
                         - *servers
-                      nixosConfigurations.lime:
+                      lime:
                         - hosts/lime/**
                         - modules/darwin/**
                         - *shared
-                      nixosConfigurations.pear:
+                      pear:
                         - hosts/pear/**
                         - modules/linux/**
                         - *shared
-                      nixosConfigurations.plum:
+                      plum:
                         - hosts/plum/**
                         - modules/linux/**
                         - modules/site.nix
                         - *shared
                         - *servers
-                      nixosConfigurations.yuzu:
+                      yuzu:
                         - hosts/yuzu/**
                         - modules/linux/**
                         - *shared
 
-    build-hosts:
-        name: "Build: ${{ matrix.hosts }}"
-        needs: check-changes
-        strategy:
-            fail-fast: false
-            matrix:
-                hosts: ${{ fromJSON(needs.check-changes.outputs.hosts) }}
+    build-date:
+        name: "Build: date"
+        needs: changes
+        if: needs.changes.outputs.date == 'true'
         runs-on: plum
         steps:
             - uses: actions/checkout@v5
-            - name: "Build configuration for ${{ matrix.hosts }}"
-              run: nix build .#${{ matrix.hosts }}.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
+            - name: "Build configuration for date"
+              run: nix build .#nixosConfigurations.date.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
+
+    build-kiwi:
+        name: "Build: kiwi"
+        needs: changes
+        if: needs.changes.outputs.kiwi == 'true'
+        runs-on: plum
+        steps:
+            - uses: actions/checkout@v5
+            - name: "Build configuration for kiwi"
+              run: nix build .#nixosConfigurations.kiwi.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
+
+    build-lime:
+        name: "Build: lime"
+        needs: changes
+        if: needs.changes.outputs.lime == 'true'
+        runs-on: plum
+        steps:
+            - uses: actions/checkout@v5
+            - name: "Build configuration for lime"
+              run: nix build .#darwinConfigurations.lime.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
+
+    build-pear:
+        name: "Build: pear"
+        needs: changes
+        if: needs.changes.outputs.pear == 'true'
+        runs-on: plum
+        steps:
+            - uses: actions/checkout@v5
+            - name: "Build configuration for pear"
+              run: nix build .#nixosConfigurations.pear.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
+
+    build-plum:
+        name: "Build: plum"
+        needs: changes
+        if: needs.changes.outputs.plum == 'true'
+        runs-on: plum
+        steps:
+            - uses: actions/checkout@v5
+            - name: "Build configuration for plum"
+              run: nix build .#nixosConfigurations.plum.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
+
+    build-yuzu:
+        name: "Build: yuzu"
+        needs: changes
+        if: needs.changes.outputs.yuzu == 'true'
+        runs-on: plum
+        steps:
+            - uses: actions/checkout@v5
+            - name: "Build configuration for yuzu"
+              run: nix build .#nixosConfigurations.yuzu.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
