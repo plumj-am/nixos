@@ -1,9 +1,6 @@
 # PlumJam's NixOS Configuration Collection
 
-A collection of NixOS configurations for my machines.
-
-I'd appreciate any feedback or pointers from someone with more experience using
-NixOS..
+A collection of NixOS configurations for my personal machines.
 
 ## License
 
