@@ -4,7 +4,7 @@
 in {
   environment.shellAliases = {
     j  = "jj";
-  } // lib.optionals config.isDesktop {
+  } // lib.optionalAttrs config.isDesktop {
     lj = "lazyjj";
     ju = "jjui";
   };
