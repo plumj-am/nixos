@@ -210,9 +210,9 @@ in {
 								coalesce(
 									surround("\"", "\"",
 										if(
-											description.first_line().substr(0, 16).starts_with(description.first_line()),
-											description.first_line().substr(0, 16),
-											description.first_line().substr(0, 15) ++ "…"
+											description.first_line().substr(0, 22).starts_with(description.first_line()),
+											description.first_line().substr(0, 22),
+											description.first_line().substr(0, 21) ++ "…"
 								  	)
 								  ),
 									label(if(empty, "empty"), "")
