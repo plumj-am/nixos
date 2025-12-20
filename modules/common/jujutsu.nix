@@ -47,7 +47,7 @@ in {
 
           git.subprocess = true;
 
-          git.fetch = [ "origin" "forgejo" ];
+          git.fetch = [ "origin" ];
           git.push  = "origin";
 
           aliases.".." = [ "edit" "@-" ];
