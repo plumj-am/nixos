@@ -1,15 +1,15 @@
 { pkgs, lib, config, inputs, ... }: let
-  inherit (lib) enabled;
+  inherit (lib) enabled mkIf;
 in {
-  unfree.allowedNames = [ "claude-code" "codex" ];
+  unfree.allowedNames = mkIf config.isDesktop [ "claude-code" "codex" ];
 
-  environment.shellAliases = {
+  environment.shellAliases = mkIf config.isDesktop {
     claude = "claude --continue --fork-session";
     codex  = "codex resume --ask-for-approval untrusted";
     oc     = "opencode --continue";
   };
 
-  environment.systemPackages = [
+  environment.systemPackages = mkIf config.isDesktop [
     pkgs.codex
     pkgs.qwen-code
     pkgs.gemini-cli
@@ -28,7 +28,7 @@ in {
   };
 
   home-manager.sharedModules = [{
-    programs.claude-code = enabled {
+    programs.claude-code = mkIf config.isDesktop (enabled {
       package = pkgs.symlinkJoin {
         name        = "claude-code-wrapped";
         paths       = [ inputs.claude-code.packages.${pkgs.stdenv.hostPlatform.system}.default ];
@@ -77,11 +77,20 @@ in {
 
           Notification = [
             {
-              matcher = "permission_prompt|idle_prompt|elicitation_dialog";
+              matcher = "permission_prompt|elicitation_dialog";
               hooks   = [
                 {
                   type    = "command";
-                  command = "${pkgs.libnotify}/bin/notify-send --expire-time=15000 'Claude' 'Waiting for user input.'";
+                  command = "${pkgs.libnotify}/bin/notify-send --expire-time=15000 'Claude' 'Waiting for approval.'";
+                }
+              ];
+            }
+            {
+              matcher = "idle_prompt";
+              hooks   = [
+                {
+                  type    = "command";
+                  command = "${pkgs.libnotify}/bin/notify-send --expire-time=15000 'Claude' 'Waiting for next message.'";
                 }
               ];
             }
@@ -170,10 +179,11 @@ in {
 
         # TODO: Add nixpkgs#mcp-grafana?
       };
-    };
+    });
 
     programs.opencode = enabled {
-      package = inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.default;
+      # We don't need latest for CI runners.
+      package = mkIf config.isDesktop inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
       settings = {
         theme      = "gruvbox";
