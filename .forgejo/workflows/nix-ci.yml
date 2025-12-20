@@ -4,12 +4,16 @@ on:
         paths-ignore:
             - "README.md"
             - "LICENSE.md"
-            - ".forgejo/workflows/nix-ci.yml"
+            - ".forgejo/workflows/*"
     push:
         paths-ignore:
             - "README.md"
             - "LICENSE.md"
-            - ".forgejo/workflows/nix-ci.yml"
+            - ".forgejo/workflows/*"
+    schedule:
+        # See `./update-flake-inputs.yml` for more details.
+        - cron: "5 0 * * *" # Every day at 00:05. Keep ahead of `./update-flake-inputs.yml`.
+    workflow_dispatch:
 
 concurrency:
     group: nix-ci-${{ forgejo.ref_name }}

@@ -1,7 +1,10 @@
 name: "Update Flake Inputs"
 on:
     schedule:
-        - cron: "0 0 * * *" # Every 24 hours at 00:00.
+        # Unfortunately the `workflow_call` options aren't great so we'll solve
+        # this with cron runs of `./nix-ci.yml` for now. I would prefer to handle
+        # this automatically if it becomes easier.
+        - cron: "0 0 * * *" # Every day at 00:00. Keep behind `./nix-ci.yml` cron.
     workflow_dispatch:
 
 jobs:
@@ -14,8 +17,6 @@ jobs:
                   fetch-depth: 0
             - name: "Update specific inputs"
               run: nix flake update opencode claude-code helix niri
-            # `./nix-ci` will be triggered automatically by the commit/push so
-            # no need to run any checks here.
             - name: "Commit and push changes"
               run: |
                   fj auth add-key plumjam ${{ secrets.FORGEJO_TOKEN }}
