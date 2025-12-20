@@ -77,11 +77,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1766107791,
-        "narHash": "sha256-4aK7RMBspck0FsBURuK5lv4JUp9I0GaJrAWbKRhD3bU=",
+        "lastModified": 1766185308,
+        "narHash": "sha256-xq2oBvii/OuEQ9XLiU/Jfw9H96P5+fIWzlTDsg/r8gg=",
         "owner": "sadjow",
         "repo": "claude-code-nix",
-        "rev": "0e92f8dabe04bcd179add0e5d74086da87102aa1",
+        "rev": "74b7194cd1883b06ce8f98acf7dc9394b301ddf4",
         "type": "github"
       },
       "original": {
@@ -399,11 +399,11 @@
         "xwayland-satellite-unstable": "xwayland-satellite-unstable"
       },
       "locked": {
-        "lastModified": 1766090778,
-        "narHash": "sha256-e1SOJYHe5IbKFIOpWswB/4nIog1Zx5iXA4YB49XTFxE=",
+        "lastModified": 1766191534,
+        "narHash": "sha256-qCW0niZEYnkJunetteb/OW2DQj50cX0jWGxe/9RUhQY=",
         "owner": "sodiboo",
         "repo": "niri-flake",
-        "rev": "d06ab0308d797dc4b2f9025d5952cca90afd11a7",
+        "rev": "3630951ee49443f0301ddc432ddee1bfe62b9740",
         "type": "github"
       },
       "original": {
@@ -543,11 +543,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1766183856,
-        "narHash": "sha256-iKEZkoeNcV8xwN3t05Hp6Z8Ac8bKJC7dGlfyFbpNJSc=",
+        "lastModified": 1766188147,
+        "narHash": "sha256-IhV9ch0XvF3xIAl2rzagexo+MWw1iIwDY+5cWy+8FQo=",
         "owner": "sst",
         "repo": "opencode",
-        "rev": "edfe2e4f1c32edee60f88dcc5603be3d23d15cb1",
+        "rev": "129d4f0b1b168cb51101a65f92434f82701ec86d",
         "type": "github"
       },
       "original": {
