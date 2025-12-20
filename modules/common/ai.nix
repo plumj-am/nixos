@@ -46,7 +46,7 @@ in {
 
       	statusLine = {
       		type    = "command";
-      		command = "python3 .claude/scripts/statusline.py";
+      		command = "python3 ~/.claude/scripts/statusline.py";
       	};
 
         env = {
