@@ -99,15 +99,16 @@ jobs:
             - name: "Build configuration for kiwi"
               run: nix build .#nixosConfigurations.kiwi.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
 
-    build-lime:
-        name: "Build: lime"
-        needs: changes
-        if: needs.changes.outputs.lime == 'true'
-        runs-on: plum
-        steps:
-            - uses: actions/checkout@v5
-            - name: "Build configuration for lime"
-              run: nix build .#darwinConfigurations.lime.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
+    # Until we setup a container for aarch64_darwin.
+    # build-lime:
+    #     name: "Build: lime"
+    #     needs: changes
+    #     if: needs.changes.outputs.lime == 'true'
+    #     runs-on: plum
+    #     steps:
+    #         - uses: actions/checkout@v5
+    #         - name: "Build configuration for lime"
+    #           run: nix build .#darwinConfigurations.lime.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
 
     build-pear:
         name: "Build: pear"
