@@ -20,6 +20,8 @@ in {
 
         tree = "eza --tree --git-ignore --group-directories-first";
 
+        swarm = "mprocs claude claude claude claude claude";
+
         # Open current repository in GitHub.
         repo = /* nu */ ''
           if (^git rev-parse --is-inside-work-tree | complete | get exit_code) == 0 {
