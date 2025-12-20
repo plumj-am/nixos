@@ -116,10 +116,24 @@ in {
           "Update(PROJECT.md)"
           "Update(CURRENT.md)"
           "Update(STATE.md)"
+
           "Bash(curl http://localhost:*)"
           "Bash(curl -X GET http://localhost:*)"
+
           "Bash(find:*)"
           "Bash(rg:*)"
+
+          "Bash(fj issue search:*)"
+          "Bash(fj issue view:*)"
+          "Bash(fj actions tasks:*)"
+          "Bash(fj wiki contents:*)"
+          "Bash(fj wiki view:*)"
+
+          "mcp__context7"
+          "mcp__gh_grep"
+          "mcp__web-reader"
+          "mcp__web-search-prime"
+          "mcp__nixos"
         ];
 
         deny = [
