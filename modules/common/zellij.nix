@@ -121,17 +121,17 @@ in {
                 floating = true;
               }; SwitchToMode._args = [ "locked" ];
             }])
-            (keyPlugin "Ctrl j" [{
-              Run = {
-                _args         = [ "lazyjj" ];
-                close_on_exit = true;
-                floating      = true;
-                x             = "5%";
-                y             = "5%";
-                width         = "90%";
-                height        = "90%";
-              }; SwitchToMode._args = [ "locked" ];
-            }])
+            # (keyPlugin "Ctrl j" [{
+            #   Run = {
+            #     _args         = [ "lazyjj" ];
+            #     close_on_exit = true;
+            #     floating      = true;
+            #     x             = "5%";
+            #     y             = "5%";
+            #     width         = "90%";
+            #     height        = "90%";
+            #   }; SwitchToMode._args = [ "locked" ];
+            # }])
             (keyPlugin "Ctrl n" [{
               Run = {
                 _args         = [ "nu" ];

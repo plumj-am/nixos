@@ -1,13 +1,18 @@
 { config, pkgs, lib, ... }: let
-  inherit (lib) enabled;
+  inherit (lib) enabled mkIf;
 
 in {
   environment.shellAliases = {
     j  = "jj";
+  } // lib.optionals config.isDesktop {
     lj = "lazyjj";
+    ju = "jjui";
   };
 
-  environment.systemPackages = [ pkgs.lazyjj ];
+  environment.systemPackages = mkIf config.isDesktop [
+    pkgs.lazyjj
+    pkgs.jjui
+  ];
 
   home-manager.sharedModules = [
     {
