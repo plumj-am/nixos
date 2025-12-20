@@ -9,7 +9,7 @@ in {
     home.file.".config/mprocs/mprocs.yaml" = mkIf config.isDesktop {
       text = /* yaml */ ''
         hide_keymap_window: true
-        proc_list_width: 15
+        proc_list_width: 18
 
         keymap_procs:
           <C-j>:
