@@ -116,39 +116,41 @@ in {
           ];
         };
 
-        allow = [
-          "Edit(PROJECT.md)"
-          "Edit(CURRENT.md)"
-          "Edit(STATE.md)"
-          "Update(PROJECT.md)"
-          "Update(CURRENT.md)"
-          "Update(STATE.md)"
+        permissions = {
+          allow = [
+            "Edit(PROJECT.md)"
+            "Edit(CURRENT.md)"
+            "Edit(STATE.md)"
+            "Update(PROJECT.md)"
+            "Update(CURRENT.md)"
+            "Update(STATE.md)"
 
-          "Bash(curl http://localhost:*)"
-          "Bash(curl -X GET http://localhost:*)"
+            "Bash(curl http://localhost:*)"
+            "Bash(curl -X GET http://localhost:*)"
 
-          "Bash(find:*)"
-          "Bash(rg:*)"
+            "Bash(find:*)"
+            "Bash(rg:*)"
 
-          "Bash(fj issue search:*)"
-          "Bash(fj issue view:*)"
-          "Bash(fj actions tasks:*)"
-          "Bash(fj wiki contents:*)"
-          "Bash(fj wiki view:*)"
+            "Bash(fj issue search:*)"
+            "Bash(fj issue view:*)"
+            "Bash(fj actions tasks:*)"
+            "Bash(fj wiki contents:*)"
+            "Bash(fj wiki view:*)"
 
-          "mcp__context7"
-          "mcp__gh_grep"
-          "mcp__web-reader"
-          "mcp__web-search-prime"
-          "mcp__nixos"
-        ];
+            "mcp__context7"
+            "mcp__gh_grep"
+            "mcp__web-reader"
+            "mcp__web-search-prime"
+            "mcp__nixos"
+          ];
 
-        deny = [
-          "Read(*.env)"
-          "Read(*.envrc)"
-          "Bash(git push:*)"
-          "Bash(git commit:*)"
-        ];
+          deny = [
+            "Read(*.env)"
+            "Read(*.envrc)"
+            "Bash(git push:*)"
+            "Bash(git commit:*)"
+          ];
+        };
       };
 
       # Creating with home-manager below to avoid permissions issues.
