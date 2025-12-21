@@ -29,7 +29,6 @@
     pkgs.moon
     pkgs.pnpm
     pkgs.proto
-    pkgs.python3
   ]
   ++ lib.optionals config.isDesktopNotWsl [
 		pkgs.bitwarden-desktop

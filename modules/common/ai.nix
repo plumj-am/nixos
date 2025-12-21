@@ -11,8 +11,10 @@ in {
 
   environment.systemPackages = mkIf config.isDesktop [
     pkgs.codex
-    pkgs.qwen-code
     pkgs.gemini-cli
+    pkgs.qwen-code
+    pkgs.python3
+    pkgs.uv
   ];
 
   age.secrets.key = {
@@ -54,8 +56,8 @@ in {
           API_TIMEOUT_MS       = "3000000";
 
           ANTHROPIC_DEFAULT_HAIKU_MODEL  = "glm-4.5-air";
-          ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-4.6";
-          ANTHROPIC_DEFAULT_OPUS_MODEL   = "glm-4.6";
+          ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-4.7";
+          ANTHROPIC_DEFAULT_OPUS_MODEL   = "glm-4.7";
 
           CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR = "1";
           CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1";
@@ -291,16 +293,19 @@ in {
         let json_input = (^cat)
         let file_path = ""
 
-        if (which jq | is-empty) { exit 1 }
+        if (which jq | is-empty) { exit 2 }
 
         let $file_path = ($json_input | from json | get tool_input.file_path)
-        if ($file_path | is-empty) { exit 1 }
+        if ($file_path | is-empty) { exit 2 }
 
         let extension = ($file_path | path parse | get extension)
         let command = match ($extension | str trim) {
           "rs" if (which cargo | is-not-empty) => { ["rustfmt" $file_path] }
           "toml" if (which taplo | is-not-empty) => { ["taplo" "fmt" $file_path] }
-          _ => { exit 1 }
+          _ => {
+            print "This file extension is not covered by this script"
+            exit 0
+          }
         }
         ^$command.0 ...($command | skip 1)
       '';
