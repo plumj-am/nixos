@@ -106,6 +106,11 @@
       url                    = "github:sadjow/claude-code-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    rio = {
+      url                    = "github:raphamorim/rio/main";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ { self, nixpkgs, nix-darwin,  ... }: let
