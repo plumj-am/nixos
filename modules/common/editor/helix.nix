@@ -101,31 +101,38 @@ in {
           formatter.command = "deno";
           formatter.args    = [ "fmt" "--use-tabs" "--no-semicolons" "--indent-width" "4" "--unstable-component" "--ext" extension "-" ];
         } // optionalAttrs (elem name [ "javascript" "jsx" "typescript" "tsx" ]) {
-          language-servers = [ "deno" ];
+          language-servers = [ "deno" "typos" ];
         })
         |> attrValues;
       in denoFmtLanguages ++ [
         {
           name             = "rust";
           auto-format      = true;
-          language-servers = [ { name = "rust-analyzer"; except-features = [ "inlay-hints" ]; } ];
+          language-servers = [ { name = "rust-analyzer"; except-features = [ "inlay-hints" ]; } "typos" ];
         }
         {
           name              = "nix";
           auto-format       = false;
           formatter.command = "alejandra";
+          language-servers  = [ "nixd" "typos" ];
         }
         {
           name              = "toml";
           auto-format       = true;
           formatter.command = "taplo";
           formatter.args    = [ "fmt" "--option" "align_entries=true" "--option" "column_width=100" "--option" "compact_arrays=false" "--option" "reorder_inline_tables=true" "--option" "reorder_keys=true" "-" ];
+          language-servers  = [ "taplo" "typos" ];
         }
         {
           name              = "markdown";
-          auto-format       = false;
-          formatter.command = "mdformat";
-          formatter.args    = [ "--wrap=80" "--number" "-" ];
+          auto-format       = true;
+          language-servers  = [ "marksman" "typos" ];
+        }
+        {
+          name              = "just";
+          auto-format       = true;
+          formatter.command = "just-formatter";
+          language-servers  = [ "just-lsp" "typos" ];
         }
         # I can't get this working right now.
         # {
@@ -146,6 +153,9 @@ in {
       ];
 
       languages.language-server = mkIf config.isDesktop {
+
+        typos.command = "typos-lsp";
+
         deno = {
           command = "deno";
           args    = [ "lsp" ];
@@ -215,6 +225,7 @@ in {
     pkgs.svelte-language-server
 
     # Markdown
+    pkgs.marksman
     pkgs.mdformat
 
     # Just
@@ -224,5 +235,8 @@ in {
     # Haskell
     pkgs.fourmolu
     pkgs.haskell-language-server
+
+    # Typos
+    pkgs.typos-lsp
   ];
 }
