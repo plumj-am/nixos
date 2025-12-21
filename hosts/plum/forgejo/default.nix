@@ -79,7 +79,7 @@ in {
         SHOW_FOOTER_VERSION            = false;
       };
 
-      packages.ENABLED = false;
+      packages.ENABLED = true;
 
       repository = {
         DEFAULT_BRANCH      = "master";
