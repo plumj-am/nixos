@@ -4,6 +4,6 @@ in mkIf config.isDesktop {
   programs.thunar = enabled;
 
   environment.systemPackages = [
-    pkgs.xfce.tumbler
+    pkgs.tumbler
   ];
 }

@@ -65,7 +65,8 @@ in {
         padding-x = padding.small;
         padding-y = [ padding.small padding.small ];
 
-        shell.program = pkgs.bash;
+        shell.program = pkgs.nushell;
+        shell.args    = [ "--login" "--interactive" ];
 
         renderer = {
           disable-unfocused-render = true;

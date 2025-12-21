@@ -15,7 +15,7 @@ in {
   };
 
   # combine AcceptEnv settings for SSH and Git protocol
-  services.openssh.settings.AcceptEnv = mkForce "SHELLS COLORTERM GIT_PROTOCOL";
+  services.openssh.settings.AcceptEnv = mkForce [ "SHELLS" "COLORTERM" "GIT_PROTOCOL" ];
 
   # backup configuration for sqlite database and data
   systemd.services.forgejo-backup = {

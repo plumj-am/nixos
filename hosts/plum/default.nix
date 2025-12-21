@@ -46,7 +46,7 @@ in {
           settings = {
             PasswordAuthentication       = false;
             KbdInteractiveAuthentication = false;
-            AcceptEnv                    = "SHELLS COLORTERM";
+            AcceptEnv                    = [ "SHELLS" "COLORTERM" ];
           };
         };
 
