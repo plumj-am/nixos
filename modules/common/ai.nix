@@ -12,7 +12,7 @@ in {
   environment.systemPackages = mkIf config.isDesktop [
     pkgs.codex
     pkgs.gemini-cli
-    pkgs.qwen-code
+    # pkgs.qwen-code
     pkgs.python3
     pkgs.uv
   ];

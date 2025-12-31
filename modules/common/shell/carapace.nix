@@ -5,7 +5,7 @@ in {
     pkgs.carapace
     pkgs.fish
     pkgs.zsh
-    pkgs.inshellisense
+    # pkgs.inshellisense
   ];
 
   home-manager.sharedModules = [{
