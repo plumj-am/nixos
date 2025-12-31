@@ -1,5 +1,5 @@
 { pkgs, lib, config, helix, ... }: let
-  inherit (lib) enabled const genAttrs mkIf elem mapAttrs optionalAttrs attrValues;
+  inherit (lib) enabled const genAttrs mkIf elem mapAttrs optionalAttrs attrValues merge;
 
   yaziPickerScript = pkgs.writeShellScript "yazi-picker.sh" ''
     #!/usr/bin/env bash
@@ -79,11 +79,11 @@ in {
         render.tab     = "all";
       };
 
-      settings.keys = genAttrs [ "normal" "select" ] <| const {
+      settings.keys = merge {
+        normal."C-y" = ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- ${yaziPickerScript} open ...%{buffer_name}";
+      } <| genAttrs [ "normal" "select" ] (const {
         D = "extend_to_line_end";
-
-        "C-y" = ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- ${yaziPickerScript} open %{buffer_name}";
-      };
+      });
 
       languages.language = let
         denoFmtLanguages = {
