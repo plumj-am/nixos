@@ -15,6 +15,10 @@ in {
     # pkgs.qwen-code
     pkgs.python3
     pkgs.uv
+
+    # claude-code sandboxing deps.
+    pkgs.socat
+    pkgs.bubblewrap
   ];
 
   age.secrets.z-ai-key = {
@@ -51,6 +55,15 @@ in {
       		command = "python3 ~/.claude/scripts/statusline.py";
       	};
 
+      	sandbox = {
+      	  enabled                   = true;
+      	  autoAllowBashIfSandboxed  = true;
+      	  excludedCommands          = [ "git" "jj" "docker" "just" ];
+      	  allowUnsandboxedCommands  = true;
+      	  network.allowUnixSockets  = [ "/run/user/1000/docker.sock" ];
+      	  network.allowLocalBinding = true;
+      	};
+
         env = {
           ANTHROPIC_BASE_URL   = "https://api.z.ai/api/anthropic";
           API_TIMEOUT_MS       = "3000000";
@@ -62,7 +75,6 @@ in {
           CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR = "1";
           CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1";
           DISABLE_NON_ESSENTIAL_MODEL_CALLS        = "1";
-
         };
 
         hooks = {
@@ -269,6 +281,14 @@ in {
           web-search-prime = {
             type    = "remote";
             url     = "https://api.z.ai/api/mcp/web_search_prime/mcp";
+            headers = {
+              Authorization = "Bearer {file:${config.age.secrets.z-ai-key.path}}";
+            };
+          };
+
+          zread = {
+            type    = "remote";
+            url     = "https://api.z.ai/api/mcp/zread/mcp";
             headers = {
               Authorization = "Bearer {file:${config.age.secrets.z-ai-key.path}}";
             };
@@ -486,6 +506,7 @@ in {
         claude mcp add -s user -t http context7 https://mcp.context7.com/mcp --header "CONTEXT7_API_KEY: $(cat ${config.age.secrets.context7Key.path})"
         claude mcp add -s user -t http web-reader https://api.z.ai/api/mcp/web_reader/mcp --header "Authorization: Bearer $(cat ${config.age.secrets.z-ai-key.path})"
         claude mcp add -s user -t http web-search-prime https://api.z.ai/api/mcp/web_search_prime/mcp --header "Authorization: Bearer $(cat ${config.age.secrets.z-ai-key.path})"
+        claude mcp add -s user -t http zread https://api.z.ai/api/mcp/zread/mcp --header "Authorization: Bearer your_api_key"
       '';
       executable = true;
     };
