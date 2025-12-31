@@ -52,6 +52,7 @@ in {
       });
 
       settings.editor = {
+        bufferline                     = "multiple";
         completion-timeout             = 5;
         completion-replace             = true;
         color-modes                    = true;
@@ -68,7 +69,9 @@ in {
         # rainbow-brackets               = true;
       };
       settings.editor.cursor-shape = {
+        normal = "block";
         select = "underline";
+        insert = "bar";
       };
       settings.editor.indent-guides = {
         character = "▏";
