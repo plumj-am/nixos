@@ -1,4 +1,4 @@
-{ config, lib, pkgs, fenix, bacon-ls, ... }:
+{ config, lib, pkgs, fenix, ... }:
 {
   environment.systemPackages = [
     # [1/2] For Forgejo Action runners.
@@ -17,7 +17,6 @@
       "rust-std"
       "rust-src"
     ])
-    bacon-ls.defaultPackage.${pkgs.stdenv.hostPlatform.system}
     pkgs.cargo-careful
     pkgs.cargo-deny
     pkgs.cargo-fuzz

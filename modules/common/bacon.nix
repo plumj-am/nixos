@@ -1,32 +1,8 @@
-{ config, lib, ... }:
-let
+{ config, lib, ... }: let
 	inherit (lib) enabled mkIf;
 in
 {
   home-manager.sharedModules = [{
-    programs.bacon = mkIf config.isDesktop (enabled {
-      settings = {
-        jobs.bacon-ls = {
-          command = [
-            "cargo"
-            "clippy"
-            "--workspace"
-            "--all-targets"
-            "--all-features"
-            "--message-format"
-            "json-diagnostic-rendered-ansi"
-          ];
-
-          analyzer    = "cargo_json";
-          need_stdout = true;
-        };
-        exports.cargo-json-spans = {
-          auto        = true;
-          exporter    = "analyzer";
-          line_format = ''{diagnostic.level}|:|{span.file_name}|:|{span.line_start}|:|{span.line_end}|:|{span.column_start}|:|{span.column_end}|:|{diagnostic.message}|:|{diagnostic.rendered}|:|{span.suggested_replacement}'';
-          path        = ".bacon-locations";
-        };
-      };
-    });
+    programs.bacon = mkIf config.isDesktop enabled;
   }];
 }

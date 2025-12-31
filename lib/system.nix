@@ -49,7 +49,7 @@ in {
           useUserPackages = true;
           sharedModules = inputHomeModules ++ [{
             _module.args = {
-              inherit (inputs) fenix bacon-ls;
+              inherit (inputs) fenix;
               pkgs = import inputs.nixpkgs {
                 inherit (config) system;
               };
