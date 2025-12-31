@@ -37,7 +37,7 @@ in {
     |> mapAttrsToList (name: value: "${name}=${value}")
     |> (if config.isDarwin then concatStringsSep ":" else id);
 
-  nix.registry = registryMap // { default = inputs.nixpkgs; }
+  nix.registry = registryMap // { default = inputs.os; }
     |> mapAttrs (_: flake: { inherit flake; });
 
   nix.settings = ((import <| self + /flake.nix).nixConfig

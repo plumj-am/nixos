@@ -50,7 +50,7 @@ in {
           sharedModules = inputHomeModules ++ [{
             _module.args = {
               inherit (inputs) fenix;
-              pkgs = import inputs.nixpkgs {
+              pkgs = import inputs.os {
                 inherit (config) system;
               };
               inherit (config) system;

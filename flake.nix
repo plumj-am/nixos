@@ -33,87 +33,103 @@
     warn-dirty               = false;
   };
 
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-
-    nixos-wsl = {
-      url                    = "github:nix-community/NixOS-WSL/main";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    nix-darwin = {
-      url                    = "github:nix-darwin/nix-darwin/master";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    home-manager = {
-      url                    = "github:nix-community/home-manager/master";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    fenix = {
-      url                    = "github:nix-community/fenix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    zen-browser = {
-      url                         = "github:0xc000022070/zen-browser-flake";
-      inputs.nixpkgs.follows      = "nixpkgs";
-      inputs.home-manager.follows = "home-manager";
-    };
-
-    disko = {
-      url                    = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    agenix = {
-      url                    = "github:ryantm/agenix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    agenix-rekey = {
-      url                    = "github:oddlama/agenix-rekey";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    github2forgejo = {
-      url                    = "github:RGBCube/GitHub2Forgejo";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    helix = {
-      url                    = "github:helix-editor/helix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    niri = {
-      url                    = "github:sodiboo/niri-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    opencode = {
-      url                    = "github:sst/opencode";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    claude-code = {
-      url                    = "github:sadjow/claude-code-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    rio = {
-      url                    = "github:raphamorim/rio/main";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+  inputs.os = {
+    url = "github:NixOS/nixpkgs/nixos-unstable-small";
   };
 
-  outputs = inputs @ { self, nixpkgs, nix-darwin,  ... }: let
+  inputs.os-wsl = {
+    url = "github:nix-community/NixOS-WSL/main";
+
+    inputs.nixpkgs.follows = "os";
+  };
+
+  inputs.os-darwin = {
+    url = "github:nix-darwin/nix-darwin/master";
+
+    inputs.nixpkgs.follows = "os";
+  };
+
+  inputs.home-manager = {
+    url = "github:nix-community/home-manager/master";
+
+    inputs.nixpkgs.follows = "os";
+  };
+
+  inputs.fenix = {
+    url = "github:nix-community/fenix";
+
+    inputs.nixpkgs.follows = "os";
+  };
+
+  inputs.zen-browser = {
+    url = "github:0xc000022070/zen-browser-flake";
+
+    inputs.nixpkgs.follows      = "os";
+    inputs.home-manager.follows = "home-manager";
+  };
+
+  inputs.disko = {
+    url = "github:nix-community/disko";
+
+    inputs.nixpkgs.follows = "os";
+  };
+
+  inputs.agenix = {
+    url = "github:ryantm/agenix";
+
+    inputs.nixpkgs.follows      = "os";
+    inputs.darwin.follows       = "os-darwin";
+    inputs.home-manager.follows = "home-manager";
+  };
+
+  inputs.agenix-rekey = {
+    url = "github:oddlama/agenix-rekey";
+
+    inputs.nixpkgs.follows = "os";
+  };
+
+  inputs.github2forgejo = {
+    url = "github:RGBCube/GitHub2Forgejo";
+
+    inputs.nixpkgs.follows = "os";
+  };
+
+  inputs.helix = {
+    url = "github:helix-editor/helix";
+
+    inputs.nixpkgs.follows = "os";
+  };
+
+  inputs.niri = {
+    url = "github:sodiboo/niri-flake";
+
+    inputs.nixpkgs.follows = "os";
+  };
+
+  inputs.opencode = {
+    url = "github:sst/opencode";
+
+    inputs.nixpkgs.follows = "os";
+  };
+
+  inputs.claude-code = {
+    url = "github:sadjow/claude-code-nix";
+
+    inputs.nixpkgs.follows = "os";
+  };
+
+  inputs.rio = {
+    url = "github:raphamorim/rio/main";
+
+    inputs.nixpkgs.follows = "os";
+  };
+
+  outputs = inputs @ { self, os, os-darwin,  ... }: let
     inherit (builtins) readDir;
-    inherit (nixpkgs.lib) attrsToList const groupBy listToAttrs mapAttrs nameValuePair;
+    inherit (os.lib) attrsToList const groupBy listToAttrs mapAttrs nameValuePair;
 
     # Extend nixpkgs.lib with nix-darwin.lib, then our custom lib.
-    lib' = nixpkgs.lib.extend (const <| const <| nix-darwin.lib);
+    lib' = os.lib.extend (const <| const <| os-darwin.lib);
     lib  = lib'.extend <| import ./lib inputs;
 
     rawHosts = readDir ./hosts
