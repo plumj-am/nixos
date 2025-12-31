@@ -105,7 +105,7 @@ in {
       filesize = {};
 
       cursor_shape.emacs     = "block";
-			cursor_shape.vi_insert = "block";
+			cursor_shape.vi_insert = "line";
 			cursor_shape.vi_normal = "block";
 
       float_precision   = 2;
