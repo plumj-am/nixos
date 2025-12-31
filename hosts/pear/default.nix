@@ -6,7 +6,7 @@ in {
   config = lib.nixosSystem' {
     system  = "x86_64-linux";
     modules = [
-      inputs.nixos-wsl.nixosModules.wsl
+      inputs.os-wsl.nixosModules.wsl
       ({ pkgs, lib, config, keys, self, ... }: {
         imports = [
           (self + /modules/system.nix)
