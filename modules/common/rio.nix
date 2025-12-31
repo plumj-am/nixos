@@ -65,7 +65,7 @@ in {
         padding-x = padding.small;
         padding-y = [ padding.small padding.small ];
 
-        shell.program = pkgs.nushell;
+        shell.program = lib.getExe pkgs.nushell;
         shell.args    = [ "--login" "--interactive" ];
 
         renderer = {
