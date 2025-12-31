@@ -97,7 +97,8 @@ in {
           aliases.clone = [ "git" "clone" "--colocate" ];
           aliases.cl    = [ "git" "clone" "--colocate" ];
 
-          aliases.d = [ "diff" ];
+          aliases.d  = [ "diff" ];
+          aliases.ds = [ "diff --stat" ];
 
           aliases.l   = [ "log" ];
           aliases.la  = [ "log" "--revisions" "::" ];
