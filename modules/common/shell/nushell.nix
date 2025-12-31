@@ -33,11 +33,10 @@ in {
           }
         '';
 
+        fj = "fj --host https://git.plumj.am";
 
         # Deletes the last 5 entries from the nushell history sqlite database.
         oops = "nix run nixpkgs#sqlite -- ${homeArgs.config.home.homeDirectory}/.config/nushell/history.sqlite3 'DELETE FROM history WHERE rowid IN (SELECT rowid FROM history ORDER BY rowid DESC LIMIT 5);'";
-
-
       };
     settings = {
       edit_mode     = "vi";
