@@ -83,9 +83,18 @@ in {
             createHome                  = false;
             group                       = "github2forgejo";
           };
+
+          gitea-runner = {
+            description  = "gitea-runner";
+            isSystemUser = true;
+            group        = "gitea-runner";
+          };
         };
 
-        users.groups.github2forgejo = {};
+        users.groups = {
+          github2forgejo = {};
+          gitea-runner   = {};
+        };
 
         home-manager.users = {
           root = {};

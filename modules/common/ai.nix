@@ -17,7 +17,7 @@ in {
     pkgs.uv
   ];
 
-  age.secrets.key = {
+  age.secrets.z-ai-key = {
     rekeyFile = ./z-ai-key.age;
     owner = "jam";
     mode  = "0400";
@@ -37,7 +37,7 @@ in {
         buildInputs = [ pkgs.makeWrapper ];
         postBuild   = ''
           wrapProgram $out/bin/claude \
-            --run 'export ANTHROPIC_AUTH_TOKEN=$(cat ${config.age.secrets.key.path})'
+            --run 'export ANTHROPIC_AUTH_TOKEN=$(cat ${config.age.secrets.z-ai-key.path})'
         '';
       };
 
@@ -176,7 +176,7 @@ in {
         #   type    = "http";
         #   url     = "https://api.z.ai/api/mcp/web_reader/mcp";
         #   headers = {
-        #     Authorization = "Bearer {file:${config.age.secrets.key.path}}";
+        #     Authorization = "Bearer {file:${config.age.secrets.z-ai-key.path}}";
         #   };
         # };
         #
@@ -184,7 +184,7 @@ in {
         #   type    = "http";
         #   url     = "https://api.z.ai/api/mcp/web_search_prime/mcp";
         #   headers = {
-        #     Authorization = "Bearer {file:${config.age.secrets.key.path}}";
+        #     Authorization = "Bearer {file:${config.age.secrets.z-ai-key.path}}";
         #   };
         # };
 
@@ -262,7 +262,7 @@ in {
             type    = "remote";
             url     = "https://api.z.ai/api/mcp/web_reader/mcp";
             headers = {
-              Authorization = "Bearer {file:${config.age.secrets.key.path}}";
+              Authorization = "Bearer {file:${config.age.secrets.z-ai-key.path}}";
             };
           };
 
@@ -270,7 +270,7 @@ in {
             type    = "remote";
             url     = "https://api.z.ai/api/mcp/web_search_prime/mcp";
             headers = {
-              Authorization = "Bearer {file:${config.age.secrets.key.path}}";
+              Authorization = "Bearer {file:${config.age.secrets.z-ai-key.path}}";
             };
           };
 
@@ -484,8 +484,8 @@ in {
         #!/usr/bin/env bash
         # Run this once to add the MCP servers that need API keys
         claude mcp add -s user -t http context7 https://mcp.context7.com/mcp --header "CONTEXT7_API_KEY: $(cat ${config.age.secrets.context7Key.path})"
-        claude mcp add -s user -t http web-reader https://api.z.ai/api/mcp/web_reader/mcp --header "Authorization: Bearer $(cat ${config.age.secrets.key.path})"
-        claude mcp add -s user -t http web-search-prime https://api.z.ai/api/mcp/web_search_prime/mcp --header "Authorization: Bearer $(cat ${config.age.secrets.key.path})"
+        claude mcp add -s user -t http web-reader https://api.z.ai/api/mcp/web_reader/mcp --header "Authorization: Bearer $(cat ${config.age.secrets.z-ai-key.path})"
+        claude mcp add -s user -t http web-search-prime https://api.z.ai/api/mcp/web_search_prime/mcp --header "Authorization: Bearer $(cat ${config.age.secrets.z-ai-key.path})"
       '';
       executable = true;
     };

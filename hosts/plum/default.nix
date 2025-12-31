@@ -85,7 +85,15 @@ in {
             createHome                  = false;
             openssh.authorizedKeys.keys = keys.admins;
           };
+
+          gitea-runner = {
+            description  = "gitea-runner";
+            isSystemUser = true;
+            group        = "gitea-runner";
+          };
         };
+
+        users.groups.gitea-runner = {};
 
         home-manager.users = {
           root = {};

@@ -1,7 +1,12 @@
-{ pkgs, lib, config, inputs, ... }: let
+{ self, pkgs, lib, config, inputs, ... }: let
   inherit (lib) enabled;
 in {
   age.secrets.forgejoRunnerToken.rekeyFile = ./forgejo-runner-token.age;
+
+  age.secrets.z-ai-key2 = {
+    rekeyFile = self + /modules/common/z-ai-key.age;
+  };
+
   services.gitea-actions-runner = {
     package = pkgs.forgejo-runner;
     instances.${config.networking.hostName} = enabled {
@@ -27,6 +32,9 @@ in {
           "rust-std"
           "rust-src"
         ])
+
+        inputs.claude-code.packages.${pkgs.stdenv.hostPlatform.system}.default
+
         pkgs.bash
         pkgs.curl
         pkgs.docker

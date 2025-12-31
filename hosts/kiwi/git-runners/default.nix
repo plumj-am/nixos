@@ -2,6 +2,7 @@
   inherit (lib) enabled;
 in {
   age.secrets.forgejoRunnerToken.rekeyFile = ./forgejo-runner-token.age;
+
   services.gitea-actions-runner = {
     package = pkgs.forgejo-runner;
     instances.${config.networking.hostName} = enabled {
@@ -27,6 +28,9 @@ in {
           "rust-std"
           "rust-src"
         ])
+
+        inputs.claude-code.packages.${pkgs.stdenv.hostPlatform.system}.default
+
         pkgs.bash
         pkgs.curl
         pkgs.forgejo-cli
