@@ -10,13 +10,13 @@ in {
   ] ++ (lib.collectNix ./. |> lib.remove ./default.nix);
 
   age.secrets.matrixSigningKey = {
-    rekeyFile = ./matrix-signing-key.age;
+    rekeyFile = self + /secrets/plum-matrix-signing-key.age;
     owner     = "matrix-synapse";
     group     = "matrix-synapse";
   };
 
   age.secrets.matrixRegistrationSecret = {
-    rekeyFile = ./matrix-registration-secret.age;
+    rekeyFile = self + /secrets/plum-matrix-registration-secret.age;
     owner     = "matrix-synapse";
     group     = "matrix-synapse";
   };

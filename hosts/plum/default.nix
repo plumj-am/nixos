@@ -37,7 +37,7 @@ in {
           storageMode      = "local";
         };
 
-        age.secrets.id.rekeyFile = ./id.age;
+        age.secrets.id.rekeyFile = self + /secrets/plum-id.age;
         services.openssh         = enabled {
           hostKeys = [{
             type = "ed25519";
@@ -55,7 +55,7 @@ in {
           wants = [ "agenix.service" ];
         };
 
-        age.secrets.password.rekeyFile = ./password.age;
+        age.secrets.password.rekeyFile = self + /secrets/plum-password.age;
         users.users                    = {
           root = {
             shell                       = pkgs.nushell;
@@ -111,7 +111,7 @@ in {
           interfaces = {};
         };
 
-        age.secrets.acmeEnvironment.rekeyFile = self + /modules/acme/environment.age;
+        age.secrets.acmeEnvironment.rekeyFile = self + /secrets/acme-environment.age;
 
         home-manager.sharedModules = [{
           home.stateVersion = "24.11";

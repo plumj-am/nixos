@@ -10,7 +10,7 @@ in {
   ];
 
   age.secrets.forgejoAdminPassword = {
-    rekeyFile = ./forgejo-password.age;
+    rekeyFile = self + /secrets/plum-forgejo-password.age;
     owner     = "forgejo";
   };
 

@@ -1,6 +1,6 @@
 { self, config, lib, ... }: let
   inherit (config.networking) domain;
-  inherit (lib) const enabled genAttrs merge;
+  inherit (lib) enabled merge;
 
   fqdn = "metrics.${domain}";
   port = 8000;
@@ -10,7 +10,7 @@ in {
   ] ++ (lib.collectNix ./. |> lib.remove ./default.nix);
 
   age.secrets.grafanaPassword = {
-    rekeyFile = ./password.age;
+    rekeyFile = self + /secrets/plum-grafana-password.age;
     owner     = "grafana";
   };
 

@@ -33,7 +33,7 @@ in {
           storageMode      = "local";
         };
 
-        age.secrets.id.rekeyFile = ./id.age;
+        age.secrets.id.rekeyFile = self + /secrets/kiwi-id.age;
         services.openssh         = enabled {
           hostKeys = [{
             type = "ed25519";
@@ -51,7 +51,7 @@ in {
           wants = [ "agenix.service" ];
         };
 
-        age.secrets.password.rekeyFile = ./password.age;
+        age.secrets.password.rekeyFile = self + /secrets/kiwi-password.age;
         users.users                    = {
           root = {
             shell                       = pkgs.nushell;
@@ -112,16 +112,16 @@ in {
           interfaces = {};
         };
 
-        age.secrets.acmeEnvironment.rekeyFile = self + /modules/acme/environment.age;
+        age.secrets.acmeEnvironment.rekeyFile = self + /secrets/acme-environment.age;
 
         age.secrets.dr-radka-environment = {
-          rekeyFile = ./dr-radka-environment.age;
+          rekeyFile = self + /secrets/kiwi-dr-radka-environment.age;
           owner     = "dr-radka";
           group     = "dr-radka";
         };
 
         age.secrets.github2forgejoEnvironment = {
-          rekeyFile = ./github2forgejo/environment.age;
+          rekeyFile = self + /secrets/kiwi-github2forgejo-environment.age;
           owner     = "github2forgejo";
         };
 

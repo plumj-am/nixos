@@ -8,7 +8,7 @@ in {
   imports = [(self + /modules/nginx.nix)];
 
   age.secrets.nixServeKey = {
-    rekeyFile = ./key.age;
+    rekeyFile = self + /secrets/plum-cache-key.age;
     owner     = "root";
   };
 

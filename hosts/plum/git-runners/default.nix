@@ -1,10 +1,10 @@
 { self, pkgs, lib, config, inputs, ... }: let
   inherit (lib) enabled;
 in {
-  age.secrets.forgejoRunnerToken.rekeyFile = ./forgejo-runner-token.age;
+  age.secrets.forgejoRunnerToken.rekeyFile = self + /secrets/plum-forgejo-runner-token.age;
 
   age.secrets.z-ai-key2 = {
-    rekeyFile = self + /modules/common/z-ai-key.age;
+    rekeyFile = self + /secrets/z-ai-key.age;
   };
 
   services.gitea-actions-runner = {

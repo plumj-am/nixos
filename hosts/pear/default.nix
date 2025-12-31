@@ -25,7 +25,7 @@ in {
           storageMode      = "local";
         };
 
-        age.secrets.id.rekeyFile = ./id.age;
+        age.secrets.id.rekeyFile = self + /secrets/pear-id.age;
         services.openssh         = enabled {
           hostKeys = [{
             type = "ed25519";
@@ -67,7 +67,7 @@ in {
           };
         };
 
-        age.secrets.password.rekeyFile = ./password.age;
+        age.secrets.password.rekeyFile = self + /secrets/pear-password.age;
         users.users                    = {
           root = {
             shell                       = pkgs.nushell;

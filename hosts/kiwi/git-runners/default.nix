@@ -1,7 +1,7 @@
-{ pkgs, lib, config, inputs, ... }: let
+{ self, pkgs, lib, config, inputs, ... }: let
   inherit (lib) enabled;
 in {
-  age.secrets.forgejoRunnerToken.rekeyFile = ./forgejo-runner-token.age;
+  age.secrets.forgejoRunnerToken.rekeyFile = self + /secrets/plum-forgejo-runner-token.age;
 
   services.gitea-actions-runner = {
     package = pkgs.forgejo-runner;

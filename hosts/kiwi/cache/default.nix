@@ -8,7 +8,7 @@ in {
   imports = [(self + /modules/nginx.nix)];
 
   age.secrets.nixServeKey = {
-    rekeyFile = ./key.age;
+    rekeyFile = self + /secrets/kiwi-cache-key.age;
     owner     = "root";
   };
 

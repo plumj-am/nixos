@@ -1,5 +1,5 @@
 lib: let
-  inherit (lib) inputs enabled;
+  inherit (lib) enabled;
   interface = "ts0";
 in {
   class  = "nixos";
@@ -30,7 +30,7 @@ in {
           storageMode      = "local";
         };
 
-        age.secrets.id.rekeyFile = ./id.age;
+        age.secrets.id.rekeyFile = self + /secrets/date-id.age;
         services.openssh         = enabled {
           hostKeys = [{
             type = "ed25519";
@@ -43,7 +43,7 @@ in {
           };
         };
 
-        age.secrets.password.rekeyFile = ./password.age;
+        age.secrets.password.rekeyFile = self + /secrets/date-password.age;
         users.users                    = {
           root = {
             shell                       = pkgs.nushell;

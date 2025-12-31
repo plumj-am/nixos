@@ -1,4 +1,4 @@
-{ pkgs, lib, config, inputs, ... }: let
+{ self, pkgs, lib, config, inputs, ... }: let
   inherit (lib) enabled mkIf;
 in {
   unfree.allowedNames = mkIf config.isDesktop [ "claude-code" "codex" ];
@@ -18,13 +18,13 @@ in {
   ];
 
   age.secrets.z-ai-key = {
-    rekeyFile = ./z-ai-key.age;
+    rekeyFile = self + /secrets/z-ai-key.age;
     owner = "jam";
     mode  = "0400";
   };
 
   age.secrets.context7Key = {
-    rekeyFile = ./context7-key.age;
+    rekeyFile = self + /secrets/context7-key.age;
     owner = "jam";
     mode  = "0400";
   };
