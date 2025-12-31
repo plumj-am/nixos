@@ -109,6 +109,7 @@ in {
           name             = "rust";
           auto-format      = true;
           language-servers = [ { name = "rust-analyzer"; except-features = [ "inlay-hints" ]; } "typos" ];
+          indent = { tab-width = 3; unit = "   "; };
         }
         {
           name              = "nix";
