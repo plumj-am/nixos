@@ -12,9 +12,8 @@ in mkIf config.isDesktop {
 
   security.rtkit.enable = true;
 
-  # Disable built-in audio for "yuzu".
-  # Only use NVIDIA audio output.
-  boot.extraModprobeConfig = mkIf (config.networking.hostName == "yuzu") ''
+  # Disable built-in audio. Only use NVIDIA audio output.
+  boot.extraModprobeConfig = ''
     options snd_hda_intel enable=0,1
   '';
 
