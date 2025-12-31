@@ -60,6 +60,10 @@ in {
 
           aliases.a = [ "abandon" ];
 
+          aliases.b = [ "bookmark" ];
+          aliases.bs = [ "bookmark" "set" ];
+          aliases.bc = [ "bookmark" "create" ];
+
           aliases.c  = [ "commit" ];
           aliases.ci = [ "commit" "--interactive" ];
 
@@ -74,7 +78,7 @@ in {
           aliases.resolve-ast = [ "resolve" "--tool" "mergiraf" ];
           aliases.resa        = [ "resolve-ast" ];
 
-          aliases.s = [ "split" ];
+          aliases.s  = [ "split" ];
           aliases.sm = [ "split" "--message" ];
 
           aliases.sq   = [ "squash" ];
@@ -90,6 +94,7 @@ in {
 
           aliases.push = [ "git" "push" ];
           aliases.p    = [ "git" "push" ];
+          aliases.pb   = [ "git" "push" "--bookmark" ];
 
           aliases.init  = [ "git" "init" "--colocate" ];
           aliases.i     = [ "git" "init" "--colocate" ];
