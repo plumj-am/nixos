@@ -223,7 +223,25 @@ in {
       settings = {
         theme      = "gruvbox";
         autoupdate = false;
-        model      = "zai-coding-plan/glm-4.6";
+        model      = "zai-coding-plan/glm-4.7";
+
+        agent.build = {
+          type = "primary";
+
+          permission = {
+            write."*" = "allow";
+            bash."*"  = "allow";
+            read."*"  = "allow";
+
+            bash."curl*" = "ask";
+
+            read."*.env"       = "deny";
+            read."*.envrc"     = "deny";
+            bash."git push*"   = "deny";
+            bash."git commit*" = "deny";
+            bash."jj*"         = "deny";
+          };
+        };
 
         keybinds = {
           app_exit                = "ctrl+c";
@@ -247,7 +265,7 @@ in {
         };
 
         provider.zai-coding-plan.models = {
-          "glm-4.6".options = {
+          "glm-4.7".options = {
             # do_sample     = false;
             stream        = true;
             thinking.type = "enabled";
