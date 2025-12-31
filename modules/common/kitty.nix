@@ -1,6 +1,6 @@
 { pkgs, config, lib, ... }: let
   inherit (lib) enabled mkIf;
-in{
+in {
   home-manager.sharedModules = mkIf config.isDesktopNotWsl [{
     programs.kitty = with config.theme.withHash; enabled {
       font = {
