@@ -19,7 +19,6 @@
     ])
     pkgs.cargo-careful
     pkgs.cargo-deny
-    pkgs.cargo-fuzz
     pkgs.cargo-generate
     pkgs.cargo-machete
     pkgs.cargo-workspaces
@@ -27,7 +26,7 @@
     pkgs.kondo
   ]
   ++ lib.optionals config.isServer [
-    # [1/2] For Forgejo Action runners.
+    # [2/2] For Forgejo Action runners.
     (fenix.packages.${pkgs.stdenv.hostPlatform.system}.complete.withComponents [ # Nightly.
       "cargo"
       "clippy"
