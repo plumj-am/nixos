@@ -18,6 +18,7 @@
     pkgs.uutils-coreutils-noprefix
     pkgs.sqld
     pkgs.sqlite
+    pkgs.wrk
     pkgs.xh
   ]
   ++ lib.optionals config.isDesktop [
