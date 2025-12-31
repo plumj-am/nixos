@@ -1,10 +1,3 @@
-def zellij-dev-tab [] {
-    zellij action new-tab --layout dev --name dev
-    while (zellij action query-tab-names | lines | first) != "dev" {
-        zellij action move-tab left
-    }
-}
-
 def zellij-update-tabname [] {
     if ("ZELLIJ" in $env) {
         let tab_name = if ((pwd) == $env.HOME) {
