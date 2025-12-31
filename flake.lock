@@ -538,8 +538,7 @@
         "os": "os",
         "os-darwin": "os-darwin",
         "os-wsl": "os-wsl",
-        "rio": "rio",
-        "zen-browser": "zen-browser"
+        "rio": "rio"
       }
     },
     "rust-analyzer-src": {
@@ -712,29 +711,6 @@
       "original": {
         "owner": "Supreeeme",
         "repo": "xwayland-satellite",
-        "type": "github"
-      }
-    },
-    "zen-browser": {
-      "inputs": {
-        "home-manager": [
-          "home-manager"
-        ],
-        "nixpkgs": [
-          "os"
-        ]
-      },
-      "locked": {
-        "lastModified": 1767763594,
-        "narHash": "sha256-5ysv8EuVAgDoYmNuXEUNf7vBzdeRaFxeIlIndv5HMvs=",
-        "owner": "0xc000022070",
-        "repo": "zen-browser-flake",
-        "rev": "8b2302d8c10369c9135552cc892da75cff5ddb03",
-        "type": "github"
-      },
-      "original": {
-        "owner": "0xc000022070",
-        "repo": "zen-browser-flake",
         "type": "github"
       }
     }
