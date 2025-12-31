@@ -81,12 +81,6 @@
     inputs.nixpkgs.follows = "os";
   };
 
-  inputs.github2forgejo = {
-    url = "github:RGBCube/GitHub2Forgejo";
-
-    inputs.nixpkgs.follows = "os";
-  };
-
   inputs.helix = {
     url = "github:helix-editor/helix";
 

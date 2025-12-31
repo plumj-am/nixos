@@ -223,27 +223,6 @@
         "type": "github"
       }
     },
-    "github2forgejo": {
-      "inputs": {
-        "nixpkgs": [
-          "os"
-        ],
-        "systems": "systems_3"
-      },
-      "locked": {
-        "lastModified": 1761325329,
-        "narHash": "sha256-H0IyRBKs/rz8hOPTl35pe7hc++l7s4kN+nz+THj8RUg=",
-        "owner": "RGBCube",
-        "repo": "GitHub2Forgejo",
-        "rev": "7d5469c249505410a2ad29bc7f5a4a642fdf176d",
-        "type": "github"
-      },
-      "original": {
-        "owner": "RGBCube",
-        "repo": "GitHub2Forgejo",
-        "type": "github"
-      }
-    },
     "gitignore": {
       "inputs": {
         "nixpkgs": [
@@ -506,7 +485,7 @@
           "os"
         ],
         "rust-overlay": "rust-overlay_2",
-        "systems": "systems_4"
+        "systems": "systems_3"
       },
       "locked": {
         "lastModified": 1767566591,
@@ -530,7 +509,6 @@
         "claude-code": "claude-code",
         "disko": "disko",
         "fenix": "fenix",
-        "github2forgejo": "github2forgejo",
         "helix": "helix",
         "home-manager": "home-manager",
         "niri": "niri",
@@ -631,21 +609,6 @@
       }
     },
     "systems_3": {
-      "locked": {
-        "lastModified": 1681028828,
-        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
-        "owner": "nix-systems",
-        "repo": "default",
-        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-systems",
-        "repo": "default",
-        "type": "github"
-      }
-    },
-    "systems_4": {
       "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",

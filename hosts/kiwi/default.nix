@@ -19,7 +19,6 @@ in {
 
           ./disk.nix
           ./cache
-          ./github2forgejo
           ./git-runners
         ];
 
@@ -76,14 +75,6 @@ in {
             extraGroups                 = [ "build" ];
           };
 
-          # I think the service should create it automatically but doesn't appear to.
-          # So we create it manually here, as well as the group.
-          github2forgejo = {
-            isSystemUser                = true;
-            createHome                  = false;
-            group                       = "github2forgejo";
-          };
-
           gitea-runner = {
             description  = "gitea-runner";
             isSystemUser = true;
@@ -92,7 +83,6 @@ in {
         };
 
         users.groups = {
-          github2forgejo = {};
           gitea-runner   = {};
         };
 
@@ -118,11 +108,6 @@ in {
           rekeyFile = self + /secrets/kiwi-dr-radka-environment.age;
           owner     = "dr-radka";
           group     = "dr-radka";
-        };
-
-        age.secrets.github2forgejoEnvironment = {
-          rekeyFile = self + /secrets/kiwi-github2forgejo-environment.age;
-          owner     = "github2forgejo";
         };
 
         home-manager.sharedModules = [{
