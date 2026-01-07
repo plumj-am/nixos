@@ -117,7 +117,7 @@ in {
         {
           name              = "nix";
           auto-format       = false;
-          formatter.command = "alejandra";
+          formatter.command = "nix fmt";
           language-servers  = [ "nixd" "typos" ];
         }
         {
@@ -214,7 +214,7 @@ in {
 
     # Nix
     pkgs.nixd
-    pkgs.alejandra
+    pkgs.nixfmt-rfc-style
 
     # YAML
     pkgs.yaml-language-server
