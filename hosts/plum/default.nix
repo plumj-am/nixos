@@ -19,12 +19,12 @@ in {
 
           ./disk.nix
           ./forgejo
-          ./git-runners
           ./goatcounter
           ./grafana
           ./matrix
           ./uptime-kuma
           (self + /modules/cache.nix)
+          (self + /modules/ci-runners.nix)
         ];
 
         type                        = "server";
@@ -85,15 +85,7 @@ in {
             createHome                  = false;
             openssh.authorizedKeys.keys = keys.admins;
           };
-
-          gitea-runner = {
-            description  = "gitea-runner";
-            isSystemUser = true;
-            group        = "gitea-runner";
-          };
         };
-
-        users.groups.gitea-runner = {};
 
         home-manager.users = {
           root = {};
@@ -113,6 +105,10 @@ in {
 
         age.secrets.acmeEnvironment.rekeyFile = self + /secrets/acme-environment.age;
 
+        age.secrets.z-ai-key2 = {
+          rekeyFile = self + /secrets/z-ai-key.age;
+        };
+
         age.secrets.nixServeKey = {
           rekeyFile = self + /secrets/plum-cache-key.age;
           owner     = "root";
@@ -120,6 +116,18 @@ in {
         cache = enabled {
           fqdn          = "cache1.${config.networking.domain}";
           secretKeyFile = config.age.secrets.nixServeKey.path;
+        };
+
+        age.secrets.forgejoRunnerToken.rekeyFile = self + /secrets/plum-forgejo-runner-token.age;
+        ci-runner = enabled {
+          tokenFile  = config.age.secrets.forgejoRunnerToken.path;
+          url        = "https://git.plumj.am/";
+          labels     = [
+            "plum:host"
+            "docpad-infra:host"
+            "self-hosted:host"
+          ];
+          withDocker = true;
         };
 
         home-manager.sharedModules = [{

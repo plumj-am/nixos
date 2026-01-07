@@ -18,8 +18,8 @@ in {
           (self + /modules/system.nix)
 
           ./disk.nix
-          ./git-runners
           (self + /modules/cache.nix)
+          (self + /modules/ci-runners.nix)
         ];
 
         type                        = "server";
@@ -74,16 +74,6 @@ in {
             openssh.authorizedKeys.keys = keys.all;
             extraGroups                 = [ "build" ];
           };
-
-          gitea-runner = {
-            description  = "gitea-runner";
-            isSystemUser = true;
-            group        = "gitea-runner";
-          };
-        };
-
-        users.groups = {
-          gitea-runner   = {};
         };
 
         home-manager.users = {
@@ -117,6 +107,17 @@ in {
         cache = enabled {
           fqdn          = "cache2.plumj.am";
           secretKeyFile = config.age.secrets.nixServeKey.path;
+        };
+
+        age.secrets.forgejoRunnerToken.rekeyFile = self + /secrets/plum-forgejo-runner-token.age;
+        ci-runner = enabled {
+          tokenFile  = config.age.secrets.forgejoRunnerToken.path;
+          url        = "https://git.plumj.am/";
+          labels     = [
+            "kiwi:host"
+            "docpad-infra:host"
+            "self-hosted:host"
+          ];
         };
 
         home-manager.sharedModules = [{
