@@ -12,12 +12,11 @@ in {
           # hetzner
           (modulesPath + "/installer/scan/not-detected.nix")
           (modulesPath + "/profiles/qemu-guest.nix")
+          (self + /modules/server-disks.nix)
 
           (self + /modules/dr-radka.nix)
           (self + /modules/nix.nix)
           (self + /modules/system.nix)
-
-          ./disk.nix
           (self + /modules/cache.nix)
           (self + /modules/ci-runners.nix)
         ];

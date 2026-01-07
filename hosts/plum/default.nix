@@ -12,12 +12,12 @@ in {
           # hetzner
           (modulesPath + "/installer/scan/not-detected.nix")
           (modulesPath + "/profiles/qemu-guest.nix")
+          (self + /modules/server-disks.nix)
 
           (self + /modules/nix.nix)
           (self + /modules/site.nix)
           (self + /modules/system.nix)
 
-          ./disk.nix
           ./forgejo
           ./goatcounter
           ./grafana
