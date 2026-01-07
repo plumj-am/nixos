@@ -10,7 +10,7 @@ in {
         imports = [
           (self + /modules/system.nix)
           (self + /modules/nix.nix)
-          ./hardware.nix
+          (self + /modules/desktop-hardware.nix)
         ];
 
         type                        = "desktop";
