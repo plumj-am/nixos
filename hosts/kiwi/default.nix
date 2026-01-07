@@ -18,8 +18,8 @@ in {
           (self + /modules/system.nix)
 
           ./disk.nix
-          ./cache
           ./git-runners
+          (self + /modules/cache.nix)
         ];
 
         type                        = "server";
@@ -108,6 +108,15 @@ in {
           rekeyFile = self + /secrets/kiwi-dr-radka-environment.age;
           owner     = "dr-radka";
           group     = "dr-radka";
+        };
+
+        age.secrets.nixServeKey = {
+          rekeyFile = self + /secrets/kiwi-cache-key.age;
+          owner     = "root";
+        };
+        cache = enabled {
+          fqdn          = "cache2.plumj.am";
+          secretKeyFile = config.age.secrets.nixServeKey.path;
         };
 
         home-manager.sharedModules = [{

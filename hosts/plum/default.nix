@@ -17,7 +17,6 @@ in {
           (self + /modules/site.nix)
           (self + /modules/system.nix)
 
-          ./cache
           ./disk.nix
           ./forgejo
           ./git-runners
@@ -25,6 +24,7 @@ in {
           ./grafana
           ./matrix
           ./uptime-kuma
+          (self + /modules/cache.nix)
         ];
 
         type                        = "server";
@@ -112,6 +112,15 @@ in {
         };
 
         age.secrets.acmeEnvironment.rekeyFile = self + /secrets/acme-environment.age;
+
+        age.secrets.nixServeKey = {
+          rekeyFile = self + /secrets/plum-cache-key.age;
+          owner     = "root";
+        };
+        cache = enabled {
+          fqdn          = "cache1.${config.networking.domain}";
+          secretKeyFile = config.age.secrets.nixServeKey.path;
+        };
 
         home-manager.sharedModules = [{
           home.stateVersion = "24.11";
