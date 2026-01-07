@@ -24,13 +24,18 @@
     ];
 
     builders-use-substitutes = true;
-    flake-registry           = "";
-    http-connections         = 0;
-    max-jobs                 = "auto";
-    use-cgroups              = true;
-    show-trace               = true;
-    trusted-users            = [ "root" "@wheel" "build" "gitea-runner" ];
-    warn-dirty               = false;
+    flake-registry = "";
+    http-connections = 0;
+    max-jobs = "auto";
+    use-cgroups = true;
+    show-trace = true;
+    trusted-users = [
+      "root"
+      "@wheel"
+      "build"
+      "gitea-runner"
+    ];
+    warn-dirty = false;
   };
 
   inputs.os = {
@@ -47,6 +52,12 @@
     url = "github:nix-darwin/nix-darwin/master";
 
     inputs.nixpkgs.follows = "os";
+  };
+
+  inputs.parts = {
+    url = "github:hercules-ci/flake-parts";
+
+    inputs.nixpkgs-lib.follows = "os";
   };
 
   inputs.home-manager = {
@@ -70,8 +81,8 @@
   inputs.agenix = {
     url = "github:ryantm/agenix";
 
-    inputs.nixpkgs.follows      = "os";
-    inputs.darwin.follows       = "os-darwin";
+    inputs.nixpkgs.follows = "os";
+    inputs.darwin.follows = "os-darwin";
     inputs.home-manager.follows = "home-manager";
   };
 
@@ -111,35 +122,17 @@
     inputs.nixpkgs.follows = "os";
   };
 
-  outputs = inputs @ { self, os, os-darwin,  ... }: let
-    inherit (builtins) readDir;
-    inherit (os.lib) attrsToList const groupBy listToAttrs mapAttrs nameValuePair;
-
-    # Extend nixpkgs.lib with nix-darwin.lib, then our custom lib.
-    lib' = os.lib.extend (const <| const <| os-darwin.lib);
-    lib  = lib'.extend <| import ./lib inputs;
-
-    rawHosts = readDir ./hosts
-      |> mapAttrs (name: const <| import ./hosts/${name} lib);
-
-    hostsByType = rawHosts
-      |> attrsToList
-      |> groupBy ({ value, ... }:
-        if value ? class && value.class == "nixos" then
-          "nixosConfigurations"
-        else
-          "darwinConfigurations")
-      |> mapAttrs (const (hosts:
-          hosts
-          |> map ({ name, value }: nameValuePair name value.config)
-          |> listToAttrs));
-
-  in hostsByType // {
-    inherit inputs lib;
-
-    agenix-rekey = inputs.agenix-rekey.configure {
-      userFlake = self;
-      nixosConfigurations = self.nixosConfigurations;
-    };
-  };
+  outputs =
+    inputs:
+    inputs.parts.lib.mkFlake { inherit inputs; } (
+      { lib, ... }:
+      let
+        inherit (lib.filesystem) listFilesRecursive;
+        inherit (lib.lists) filter;
+        inherit (lib.strings) hasSuffix;
+      in
+      {
+        imports = filter (hasSuffix ".mod.nix") (listFilesRecursive ./.);
+      }
+    );
 }
