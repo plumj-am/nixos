@@ -18,10 +18,10 @@ in {
           (self + /modules/site.nix)
           (self + /modules/system.nix)
 
-          ./grafana
           ./matrix
           ./uptime-kuma
           (self + /modules/forgejo.nix)
+          (self + /modules/grafana)
           (self + /modules/cache.nix)
           (self + /modules/ci-runners.nix)
         ];
