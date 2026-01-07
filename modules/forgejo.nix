@@ -6,7 +6,7 @@
   port = 8001;
 in {
   imports = [
-    (self + /modules/nginx.nix)
+    ./nginx.nix
   ];
 
   age.secrets.forgejoAdminPassword = {
