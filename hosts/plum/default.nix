@@ -18,9 +18,8 @@ in {
           (self + /modules/site.nix)
           (self + /modules/system.nix)
 
-          ./matrix
-          ./uptime-kuma
           (self + /modules/forgejo.nix)
+          (self + /modules/matrix)
           (self + /modules/goatcounter.nix)
           (self + /modules/grafana)
           (self + /modules/cache.nix)
