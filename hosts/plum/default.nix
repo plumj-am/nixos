@@ -21,6 +21,7 @@ in {
           ./matrix
           ./uptime-kuma
           (self + /modules/forgejo.nix)
+          (self + /modules/goatcounter.nix)
           (self + /modules/grafana)
           (self + /modules/cache.nix)
           (self + /modules/ci-runners.nix)
