@@ -20,6 +20,7 @@ in {
 
           (self + /modules/forgejo.nix)
           (self + /modules/matrix)
+          (self + /modules/uptime-kuma.nix)
           (self + /modules/goatcounter.nix)
           (self + /modules/grafana)
           (self + /modules/cache.nix)

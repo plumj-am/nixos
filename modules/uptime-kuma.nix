@@ -5,7 +5,7 @@
   fqdn = "uptime.${domain}";
   port = "3001"; # string for uptime-kuma
 in {
-  imports = [(self + /modules/nginx.nix)];
+  imports = [./nginx.nix];
 
   services.uptime-kuma = enabled {
     settings = {
