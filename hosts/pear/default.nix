@@ -11,7 +11,7 @@ in {
         imports = [
           (self + /modules/system.nix)
           (self + /modules/nix.nix)
-          ./backup.nix
+          (self + /modules/wsl-backup.nix)
         ];
 
         type                        = "desktop";
