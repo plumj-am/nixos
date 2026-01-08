@@ -31,8 +31,8 @@ inputs: self: super: let
   specialArgs = inputs // {
     inherit inputs;
     lib = self;
-    keys = import (inputs.self + /keys.nix);
     self = flakeOutputs;
+    keys = flakeOutputs.keys;
   };
 in {
   # wrapper for nixosSystem that automatically applies common modules
