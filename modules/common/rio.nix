@@ -3,6 +3,9 @@
 in {
   # This isn't working for now. Not sure why and can't find a related issue.
   # After loading I can't do anything and debug logs are full of: `[unhandled osc_dispatch]`.
+  #
+  # So it appears to be related to my keyboard (Corne v4) which sends different inputs?
+  # Rio works perfectly fine on the date host with the built-in keyboard...
   home-manager.sharedModules = mkIf config.isDesktopNotWsl [{
     programs.rio = with config.theme; enabled {
       package = inputs.rio.packages.${pkgs.stdenv.hostPlatform.system}.rio;
@@ -69,7 +72,7 @@ in {
         shell.args    = [ "--login" "--interactive" ];
 
         renderer = {
-          disable-unfocused-render = true;
+          disable-unfocused-render = false;
           target-fps = 280;
         };
 

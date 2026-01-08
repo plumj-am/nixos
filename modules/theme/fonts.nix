@@ -1,5 +1,5 @@
 { config, pkgs, lib, ... }: let
-  inherit (lib) mkIf disabled;
+  inherit (lib) mkIf;
 in
 {
   config.theme.font = {
@@ -48,7 +48,7 @@ in
     packages   = [ pkgs.terminus_font ];
   };
 
-  config.fonts.fontconfig = mkIf (!config.useTheme) false;
+  config.fonts.fontconfig.enable = mkIf (!config.useTheme) true;
 
   config.fonts.packages = mkIf config.useTheme [
     config.theme.font.mono.package

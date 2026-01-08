@@ -1,3 +1,7 @@
-{lib, ...}: {
-  systems = ["x86_64-linux" "aarch64-darwin"];
+{ lib, ... }:
+{
+  systems = [
+    "x86_64-linux"
+    "aarch64-darwin"
+  ];
 }

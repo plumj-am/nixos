@@ -18,7 +18,6 @@ inputs: self: super: let
   inputModulesLinux  = collectInputs [ "nixosModules"  "default" ] ++ [
     inputs.home-manager.nixosModules.home-manager
     inputs.agenix.nixosModules.default
-    # inputs.agenix-rekey.nixosModules.default
   ];
   inputModulesDarwin = collectInputs [ "darwinModules" "default" ] ++ [
     inputs.home-manager.darwinModules.home-manager

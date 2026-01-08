@@ -24,6 +24,5 @@ in {
         AcceptEnv                    = [ "SHELLS" "COLORTERM" ];
       };
     };
-
   };
 }

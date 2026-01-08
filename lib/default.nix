@@ -3,4 +3,5 @@ inputs: self: super: let
   option     = import ./option.nix     inputs self super;
   system     = import ./system.nix     inputs self super;
   values     = import ./values.nix     inputs self super;
-in filesystem // option // system // values // { inherit inputs; }
+  dendritic  = import ./dendritic.nix  inputs self super;
+in filesystem // option // system // values // dendritic // { inherit inputs; }
