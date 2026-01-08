@@ -1,14 +1,14 @@
-{ inputs, config, lib, ... }:
+{ inputs, lib, ... }:
 let
   inherit (builtins) readDir;
-  inherit (lib) attrsToList const groupBy listToAttrs mapAttrs nameValuePair;
+  inherit (lib) attrsToList const groupBy listToAttrs mapAttrs mapAttrs' nameValuePair removeSuffix;
 
   # Extend nixpkgs.lib with nix-darwin.lib, then our custom lib.
   lib' = inputs.os.lib.extend (const <| const <| inputs.os-darwin.lib);
   libCustom = lib'.extend <| import ../lib inputs;
 
   rawHosts = readDir ../hosts
-    |> mapAttrs (name: const <| import ../hosts/${name} libCustom);
+    |> mapAttrs' (name: _value: nameValuePair (removeSuffix ".nix" name) (import (../hosts + "/${name}") libCustom));
 
   hostsByType = rawHosts
     |> attrsToList
