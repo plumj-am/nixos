@@ -66,6 +66,19 @@
     inputs.nixpkgs.follows = "os";
   };
 
+  inputs.home = {
+    url = "github:feel-co/hjem";
+
+    inputs.nixpkgs.follows = "os";
+  };
+
+  inputs.home-modules = {
+    url = "github:snugnug/hjem-rum";
+
+    inputs.nixpkgs.follows = "os";
+    inputs.hjem.follows = "home";
+  };
+
   inputs.fenix = {
     url = "github:nix-community/fenix";
 

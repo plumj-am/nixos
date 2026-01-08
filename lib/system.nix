@@ -47,6 +47,7 @@ in {
         home-manager = {
           useGlobalPkgs = true;
           useUserPackages = true;
+          backupFileExtension = ".hm-bak";  # Clobber dotfiles by default.
           sharedModules = inputHomeModules ++ [{
             _module.args = {
               pkgs = import inputs.os {
