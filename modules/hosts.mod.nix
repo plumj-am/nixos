@@ -28,8 +28,8 @@ in
     lib = libCustom;
 
     agenix-rekey = inputs.agenix-rekey.configure {
-      userFlake = config.flake;
-      nixosConfigurations = hostsByType.nixosConfigurations or {};
+      userFlake = inputs.self;
+      nixosConfigurations = hostsByType.nixosConfigurations;
     };
   };
 }
