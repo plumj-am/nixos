@@ -14,6 +14,7 @@ in {
           (self + /modules/wsl-backup.nix)
           (self + /modules/openssh.nix)
           (self + /modules/age-rekey.nix)
+          (self + /modules/network.nix)
         ];
 
         type                        = "desktop";
@@ -27,6 +28,11 @@ in {
         openssh = enabled {
           idFile = self + /secrets/pear-id.age;
         };
+
+        network = enabled {
+          hostName = "pear";
+        };
+
 
         wsl = enabled {
           defaultUser            = "jam";
@@ -77,16 +83,6 @@ in {
         home-manager.users = {
           root = {};
           jam  = {};
-        };
-
-        networking = {
-          hostName   = "pear";
-          firewall   = enabled {
-            trustedInterfaces = [ interface ];
-            allowedTCPPorts   = [ 22 ];
-          };
-          useDHCP    = lib.mkDefault true;
-          interfaces = {};
         };
 
         home-manager.sharedModules = [{

@@ -27,6 +27,7 @@ in {
           (self + /modules/ci-runners.nix)
           (self + /modules/openssh.nix)
           (self + /modules/age-rekey.nix)
+          (self + /modules/network.nix)
         ];
 
         type                        = "server";
@@ -39,6 +40,13 @@ in {
         openssh = enabled {
           idFile = self + /secrets/plum-id.age;
         };
+
+        network = enabled {
+          hostName = "plum";
+          domain   = "plumj.am";
+          tcpPorts = [ 22 80 443 ];
+        };
+
 
         systemd.services.sshd = {
           after = [ "agenix.service" ];
@@ -80,17 +88,6 @@ in {
         home-manager.users = {
           root = {};
           jam  = {};
-        };
-
-        networking = {
-          hostName   = "plum";
-          domain     = "plumj.am";
-          firewall   = enabled {
-            trustedInterfaces = [ interface ];
-            allowedTCPPorts   = [ 22 80 443 ];
-          };
-          useDHCP    = lib.mkDefault true;
-          interfaces = {};
         };
 
         age.secrets.acmeEnvironment.rekeyFile = self + /secrets/acme-environment.age;

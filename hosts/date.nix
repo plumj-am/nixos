@@ -13,6 +13,7 @@ in {
           (self + /modules/desktop-hardware.nix)
           (self + /modules/openssh.nix)
           (self + /modules/age-rekey.nix)
+          (self + /modules/network.nix)
         ];
 
         type                        = "desktop";
@@ -31,6 +32,10 @@ in {
 
         openssh = enabled {
           idFile = self + /secrets/date-id.age;
+        };
+
+        network = enabled {
+          hostName = "date";
         };
 
         age.secrets.password.rekeyFile = self + /secrets/date-password.age;
@@ -54,16 +59,6 @@ in {
         home-manager.users = {
           root = {};
           jam  = {};
-        };
-
-        networking = {
-          hostName   = "date";
-          firewall   = enabled {
-            trustedInterfaces = [ interface ];
-            allowedTCPPorts   = [ 22 ];
-          };
-          useDHCP    = lib.mkDefault true;
-          interfaces = {};
         };
 
         home-manager.sharedModules = [{

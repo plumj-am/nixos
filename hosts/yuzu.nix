@@ -13,6 +13,7 @@ in {
           (self + /modules/desktop-hardware.nix)
           (self + /modules/openssh.nix)
           (self + /modules/age-rekey.nix)
+          (self + /modules/network.nix)
         ];
 
         type                        = "desktop";
@@ -38,6 +39,10 @@ in {
           idFile = self + /secrets/yuzu-id.age;
         };
 
+        network = enabled {
+          hostName = "yuzu";
+        };
+
         age.secrets.password.rekeyFile = self + /secrets/yuzu-password.age;
         users.users                    = {
           root = {
@@ -59,16 +64,6 @@ in {
         home-manager.users = {
           root = {};
           jam  = {};
-        };
-
-        networking = {
-          hostName   = "yuzu";
-          firewall   = enabled {
-            trustedInterfaces = [ interface ];
-            allowedTCPPorts   = [ 22 ];
-          };
-          useDHCP    = lib.mkDefault true;
-          interfaces = {};
         };
 
         # Ignore power button short presses.
