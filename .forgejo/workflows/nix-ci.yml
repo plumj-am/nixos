@@ -37,6 +37,7 @@ jobs:
             - uses: https://github.com/dorny/paths-filter@v3
               id: filter
               with:
+                  # TODO: Need to update these properly once all config changes are done.
                   base: master
                   filters: |
                       shared: &shared
@@ -45,37 +46,41 @@ jobs:
                         - lib/**
                         - modules/nix.nix
                         - modules/system.nix
+                        - modules/users.nix
+                        - modules/network.nix
+                        - modules/openssh.nix
+                        - modules/age-rekey.nix
                         - keys.nix
                         - yubikey.pub
                       servers: &servers
                         - modules/acme/**
                         - modules/nginx.nix
                       date:
-                        - hosts/date/**
+                        - hosts/date.nix
                         - modules/linux/**
                         - *shared
                       kiwi:
-                        - hosts/kiwi/**
+                        - hosts/kiwi.nix
                         - modules/linux/**
                         - modules/dr-radka.nix
                         - *shared
                         - *servers
                       lime:
-                        - hosts/lime/**
+                        - hosts/lime.nix
                         - modules/darwin/**
                         - *shared
                       pear:
-                        - hosts/pear/**
+                        - hosts/pear.nix
                         - modules/linux/**
                         - *shared
                       plum:
-                        - hosts/plum/**
+                        - hosts/plum.nix
                         - modules/linux/**
                         - modules/site.nix
                         - *shared
                         - *servers
                       yuzu:
-                        - hosts/yuzu/**
+                        - hosts/yuzu.nix
                         - modules/linux/**
                         - *shared
 
