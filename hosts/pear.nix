@@ -15,6 +15,7 @@ in {
           (self + /modules/openssh.nix)
           (self + /modules/age-rekey.nix)
           (self + /modules/network.nix)
+          (self + /modules/users.nix)
         ];
 
         type                        = "desktop";
@@ -62,27 +63,9 @@ in {
           };
         };
 
-        age.secrets.password.rekeyFile = self + /secrets/pear-password.age;
-        users.users                    = {
-          root = {
-            shell                       = pkgs.nushell;
-            hashedPasswordFile          = config.age.secrets.password.path;
-            openssh.authorizedKeys.keys = keys.admins;
-          };
-
-          jam = {
-            description                 = "Jam";
-            isNormalUser                = true;
-            shell                       = pkgs.nushell;
-            hashedPasswordFile          = config.age.secrets.password.path;
-            openssh.authorizedKeys.keys = keys.admins;
-            extraGroups                 = [ "wheel" "docker" "dialout" ]; # Dialout for serial, Docker for docker-desktop.
-          };
-        };
-
-        home-manager.users = {
-          root = {};
-          jam  = {};
+        customUsers = enabled {
+          passwordFile = self + /secrets/pear-password.age;
+          primaryUserExtraGroups = [ "wheel" "dialout" "docker" ];
         };
 
         home-manager.sharedModules = [{

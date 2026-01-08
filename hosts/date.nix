@@ -14,6 +14,7 @@ in {
           (self + /modules/openssh.nix)
           (self + /modules/age-rekey.nix)
           (self + /modules/network.nix)
+          (self + /modules/users.nix)
         ];
 
         type                        = "desktop";
@@ -38,27 +39,9 @@ in {
           hostName = "date";
         };
 
-        age.secrets.password.rekeyFile = self + /secrets/date-password.age;
-        users.users                    = {
-          root = {
-            shell                       = pkgs.nushell;
-            hashedPasswordFile          = config.age.secrets.password.path;
-            openssh.authorizedKeys.keys = keys.admins;
-          };
-
-          jam = {
-            description                 = "Jam";
-            isNormalUser                = true;
-            shell                       = pkgs.nushell;
-            hashedPasswordFile          = config.age.secrets.password.path;
-            openssh.authorizedKeys.keys = keys.admins;
-            extraGroups                 = [ "wheel" "networkmanager" "docker" ];
-          };
-        };
-
-        home-manager.users = {
-          root = {};
-          jam  = {};
+        customUsers = enabled {
+          passwordFile = self + /secrets/date-password.age;
+          primaryUserExtraGroups = [ "wheel" "networkmanager" "docker" ];
         };
 
         home-manager.sharedModules = [{

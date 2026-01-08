@@ -28,6 +28,7 @@ in {
           (self + /modules/openssh.nix)
           (self + /modules/age-rekey.nix)
           (self + /modules/network.nix)
+          (self + /modules/users.nix)
         ];
 
         type                        = "server";
@@ -53,41 +54,10 @@ in {
           wants = [ "agenix.service" ];
         };
 
-        age.secrets.password.rekeyFile = self + /secrets/plum-password.age;
-        users.users                    = {
-          root = {
-            shell                       = pkgs.nushell;
-            openssh.authorizedKeys.keys = keys.admins;
-            hashedPasswordFile          = config.age.secrets.password.path;
-          };
-
-          jam = {
-            description                 = "Jam";
-            isNormalUser                = true;
-            shell                       = pkgs.nushell;
-            hashedPasswordFile          = config.age.secrets.password.path;
-            openssh.authorizedKeys.keys = keys.admins;
-            extraGroups                 = [ "wheel" ];
-          };
-
-          build = {
-            description                 = "Build";
-            isNormalUser                = true;
-            createHome                  = false;
-            openssh.authorizedKeys.keys = keys.all;
-            extraGroups                 = [ "build" ];
-          };
-
-          forgejo = {
-            description                 = "Forgejo";
-            createHome                  = false;
-            openssh.authorizedKeys.keys = keys.admins;
-          };
-        };
-
-        home-manager.users = {
-          root = {};
-          jam  = {};
+        customUsers = enabled {
+          passwordFile = self + /secrets/plum-password.age;
+          buildUser = true;
+          forgejoUser = true;
         };
 
         age.secrets.acmeEnvironment.rekeyFile = self + /secrets/acme-environment.age;
