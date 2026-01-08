@@ -27,9 +27,14 @@ in {
   };
 
   config = mkIf config.cache.enable {
+    age.secrets.nixServeKey = {
+      rekeyFile = config.cache.secretKeyFile;
+      owner     = "root";
+    };
+
     services.nix-serve = enabled {
       package = pkgs.nix-serve-ng;
-      secretKeyFile = config.cache.secretKeyFile;
+      secretKeyFile = config.age.secrets.nixServeKey.path;
       bindAddress = "127.0.0.1";
       port = config.cache.port;
     };

@@ -35,6 +35,8 @@ in {
   };
 
   config = mkIf config.ci-runner.enable {
+    age.secrets.forgejoRunnerToken.rekeyFile = config.ci-runner.tokenFile;
+
     users.groups.gitea-runner = {};
 
     users.users.gitea-runner = {
@@ -47,7 +49,7 @@ in {
       package = pkgs.forgejo-runner;
       instances.${config.networking.hostName} = enabled {
         name         = config.networking.hostName;
-        tokenFile    = config.ci-runner.tokenFile;
+        tokenFile    = config.age.secrets.forgejoRunnerToken.path;
         url          = config.ci-runner.url;
         labels       = config.ci-runner.labels;
 

@@ -61,18 +61,13 @@ in {
           group     = "dr-radka";
         };
 
-        age.secrets.nixServeKey = {
-          rekeyFile = self + /secrets/kiwi-cache-key.age;
-          owner     = "root";
-        };
         cache = enabled {
           fqdn          = "cache2.plumj.am";
-          secretKeyFile = config.age.secrets.nixServeKey.path;
+          secretKeyFile = self + /secrets/kiwi-cache-key.age;
         };
 
-        age.secrets.forgejoRunnerToken.rekeyFile = self + /secrets/plum-forgejo-runner-token.age;
         ci-runner = enabled {
-          tokenFile  = config.age.secrets.forgejoRunnerToken.path;
+          tokenFile  = self + /secrets/plum-forgejo-runner-token.age;
           url        = "https://git.plumj.am/";
           labels     = [
             "kiwi:host"

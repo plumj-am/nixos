@@ -62,22 +62,13 @@ in {
 
         age.secrets.acmeEnvironment.rekeyFile = self + /secrets/acme-environment.age;
 
-        age.secrets.z-ai-key2 = {
-          rekeyFile = self + /secrets/z-ai-key.age;
-        };
-
-        age.secrets.nixServeKey = {
-          rekeyFile = self + /secrets/plum-cache-key.age;
-          owner     = "root";
-        };
         cache = enabled {
           fqdn          = "cache1.${config.networking.domain}";
-          secretKeyFile = config.age.secrets.nixServeKey.path;
+          secretKeyFile = self + /secrets/plum-cache-key.age;
         };
 
-        age.secrets.forgejoRunnerToken.rekeyFile = self + /secrets/plum-forgejo-runner-token.age;
         ci-runner = enabled {
-          tokenFile  = config.age.secrets.forgejoRunnerToken.path;
+          tokenFile  = self + /secrets/plum-forgejo-runner-token.age;
           url        = "https://git.plumj.am/";
           labels     = [
             "plum:host"
