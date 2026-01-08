@@ -49,7 +49,6 @@ in {
           useUserPackages = true;
           sharedModules = inputHomeModules ++ [{
             _module.args = {
-              inherit (inputs) fenix;
               pkgs = import inputs.os {
                 inherit (config) system;
               };

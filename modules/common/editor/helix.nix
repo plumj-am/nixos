@@ -1,4 +1,4 @@
-{ pkgs, lib, config, helix, ... }: let
+{ pkgs, lib, config, inputs, ... }: let
   inherit (lib) enabled const genAttrs mkIf elem mapAttrs optionalAttrs attrValues merge;
 
   yaziPickerScript = pkgs.writeShellScript "yazi-picker.sh" ''
@@ -19,7 +19,7 @@ in {
 
   home-manager.sharedModules = [{
     programs.helix = enabled {
-      package = helix.packages.${pkgs.stdenv.hostPlatform.system}.helix; # `.helix` follows the master branch.
+      package = inputs.helix.packages.${pkgs.stdenv.hostPlatform.system}.helix; # `.helix` follows the master branch.
       settings.theme = if config.theme.color_scheme == "pywal" then "base16_custom" else config.theme.helix;
 
       # Pywal output doesn't have gradients like base16 needs.

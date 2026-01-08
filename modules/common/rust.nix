@@ -1,4 +1,4 @@
-{ config, lib, pkgs, fenix, ... }:
+{ config, lib, pkgs, inputs, ... }:
 {
   environment.systemPackages = [
     # [1/2] For Forgejo Action runners.
@@ -7,7 +7,7 @@
     pkgs.dioxus-cli
   ]
   ++ lib.optionals config.isDesktop [
-    (fenix.packages.${pkgs.stdenv.hostPlatform.system}.complete.withComponents [ # Nightly.
+    (inputs.fenix.packages.${pkgs.stdenv.hostPlatform.system}.complete.withComponents [ # Nightly.
       "cargo"
       "clippy"
       "miri"
@@ -27,7 +27,7 @@
   ]
   ++ lib.optionals config.isServer [
     # [2/2] For Forgejo Action runners.
-    (fenix.packages.${pkgs.stdenv.hostPlatform.system}.complete.withComponents [ # Nightly.
+    (inputs.fenix.packages.${pkgs.stdenv.hostPlatform.system}.complete.withComponents [ # Nightly.
       "cargo"
       "clippy"
       "miri"
