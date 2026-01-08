@@ -19,29 +19,19 @@ in {
           (self + /modules/system.nix)
           (self + /modules/cache.nix)
           (self + /modules/ci-runners.nix)
+          (self + /modules/openssh.nix)
+          (self + /modules/age-rekey.nix)
         ];
 
         type                        = "server";
         nixpkgs.hostPlatform.system = "x86_64-linux";
 
-        age.rekey = {
-          hostPubkey       = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIElcSHxI64xqUUKEY83tKyzEH+fYT5JCWn3qCqtw16af root@kiwi";
-          masterIdentities = [ (self + /yubikey.pub) ];
-          localStorageDir  = self + "/secrets/rekeyed/${config.networking.hostName}";
-          storageMode      = "local";
+        age-rekey = enabled {
+          hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIElcSHxI64xqUUKEY83tKyzEH+fYT5JCWn3qCqtw16af root@kiwi";
         };
 
-        age.secrets.id.rekeyFile = self + /secrets/kiwi-id.age;
-        services.openssh         = enabled {
-          hostKeys = [{
-            type = "ed25519";
-            path = config.age.secrets.id.path;
-          }];
-          settings = {
-            PasswordAuthentication       = false;
-            KbdInteractiveAuthentication = false;
-            AcceptEnv                    = [ "SHELLS" "COLORTERM" ];
-          };
+        openssh = enabled {
+          idFile = self + /secrets/kiwi-id.age;
         };
 
         systemd.services.sshd = {

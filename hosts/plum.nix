@@ -25,29 +25,19 @@ in {
           (self + /modules/grafana)
           (self + /modules/cache.nix)
           (self + /modules/ci-runners.nix)
+          (self + /modules/openssh.nix)
+          (self + /modules/age-rekey.nix)
         ];
 
         type                        = "server";
         nixpkgs.hostPlatform.system = "x86_64-linux";
 
-        age.rekey = {
-          hostPubkey       = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBH1S3dhOYCCltqrseHc3YZFHc9XU90PsvDo7frzUGrr root@plum";
-          masterIdentities = [ (self + /yubikey.pub) ];
-          localStorageDir  = self + "/secrets/rekeyed/${config.networking.hostName}";
-          storageMode      = "local";
+        age-rekey = enabled {
+          hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBH1S3dhOYCCltqrseHc3YZFHc9XU90PsvDo7frzUGrr root@plum";
         };
 
-        age.secrets.id.rekeyFile = self + /secrets/plum-id.age;
-        services.openssh         = enabled {
-          hostKeys = [{
-            type = "ed25519";
-            path = config.age.secrets.id.path;
-          }];
-          settings = {
-            PasswordAuthentication       = false;
-            KbdInteractiveAuthentication = false;
-            AcceptEnv                    = [ "SHELLS" "COLORTERM" ];
-          };
+        openssh = enabled {
+          idFile = self + /secrets/plum-id.age;
         };
 
         systemd.services.sshd = {
