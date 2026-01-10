@@ -26,7 +26,7 @@ jobs:
 
                   if [ -n "$(git status --porcelain flake.lock)" ]; then
                     git add flake.lock
-                    git commit -m "nix: Update flake inputs for AI tools."
+                    git commit -m "nix: Bump flake inputs for AI tools."
                     git push origin master
                     echo "Changes commited and pushed."
                   else
