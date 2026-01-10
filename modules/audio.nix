@@ -1,8 +1,7 @@
 {
-  config.flake.modules.nixosModules.audio =
+  config.flake.modules.nixos.audio =
     { pkgs, ... }:
     {
-
       services.pipewire = {
         enable = true;
         audio.enable = true;
@@ -26,6 +25,5 @@
         pkgs.pwvucontrol # PipeWire volume control.
         pkgs.pulsemixer # Terminal-based audio mixer.
       ];
-
     };
 }
