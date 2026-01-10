@@ -1,11 +1,11 @@
 {
-  config.flake.modules.homeModules.env =
+  config.flake.modules.hjem.env =
     { pkgs, ... }:
     {
       environment.sessionVariables = {
-        EDITOR       = "hx";
-        SHELL        = "${pkgs.nushell}/bin/nu";
-        TERMINAL     = "zellij";
+        EDITOR = "hx";
+        SHELL = "${pkgs.nushell}/bin/nu";
+        TERMINAL = "zellij";
         TERM_PROGRAM = "zellij";
       };
 
