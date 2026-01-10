@@ -1,13 +1,11 @@
 {
   "nodes": {
-    "agenix": {
+    "age": {
       "inputs": {
         "darwin": [
           "os-darwin"
         ],
-        "home-manager": [
-          "home-manager"
-        ],
+        "home-manager": [],
         "nixpkgs": [
           "os"
         ],
@@ -27,7 +25,7 @@
         "type": "github"
       }
     },
-    "agenix-rekey": {
+    "age-rekey": {
       "inputs": {
         "devshell": "devshell",
         "flake-parts": "flake-parts",
@@ -75,7 +73,7 @@
     "devshell": {
       "inputs": {
         "nixpkgs": [
-          "agenix-rekey",
+          "age-rekey",
           "nixpkgs"
         ]
       },
@@ -169,7 +167,7 @@
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": [
-          "agenix-rekey",
+          "age-rekey",
           "nixpkgs"
         ]
       },
@@ -226,7 +224,7 @@
     "gitignore": {
       "inputs": {
         "nixpkgs": [
-          "agenix-rekey",
+          "age-rekey",
           "pre-commit-hooks",
           "nixpkgs"
         ]
@@ -266,20 +264,20 @@
         "type": "github"
       }
     },
-    "home": {
+    "hjem": {
       "inputs": {
-        "nix-darwin": "nix-darwin",
         "nixpkgs": [
-          "os"
+          "hjem-rum",
+          "nixpkgs"
         ],
         "smfh": "smfh"
       },
       "locked": {
-        "lastModified": 1767318528,
-        "narHash": "sha256-I2zxtEafZbFbqXe71rjqwVeTDv8SIVLaSzQd39SwfwM=",
+        "lastModified": 1756255328,
+        "narHash": "sha256-WJ70Dv+tJjIl7mMOqUgcdcz+RrujDRoeKptiU6oh1lI=",
         "owner": "feel-co",
         "repo": "hjem",
-        "rev": "8539013044624a257e8da370069107aea148e985",
+        "rev": "2426d6ad20e767895e936ed0c9563cc4e2b6c96f",
         "type": "github"
       },
       "original": {
@@ -288,32 +286,9 @@
         "type": "github"
       }
     },
-    "home-manager": {
+    "hjem-rum": {
       "inputs": {
-        "nixpkgs": [
-          "os"
-        ]
-      },
-      "locked": {
-        "lastModified": 1767792169,
-        "narHash": "sha256-WSAu+ZxF697u/OJDdBLO+YFhtqFsPowrXXOQbjDT/uA=",
-        "owner": "nix-community",
-        "repo": "home-manager",
-        "rev": "aea57993a89bfc2a66c0434e0f4383ebf164e2a3",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "ref": "master",
-        "repo": "home-manager",
-        "type": "github"
-      }
-    },
-    "home-modules": {
-      "inputs": {
-        "hjem": [
-          "home"
-        ],
+        "hjem": "hjem",
         "ndg": "ndg",
         "nixpkgs": [
           "os"
@@ -331,6 +306,21 @@
       "original": {
         "owner": "snugnug",
         "repo": "hjem-rum",
+        "type": "github"
+      }
+    },
+    "import-tree": {
+      "locked": {
+        "lastModified": 1763762820,
+        "narHash": "sha256-ZvYKbFib3AEwiNMLsejb/CWs/OL/srFQ8AogkebEPF0=",
+        "owner": "vic",
+        "repo": "import-tree",
+        "rev": "3c23749d8013ec6daa1d7255057590e9ca726646",
+        "type": "github"
+      },
+      "original": {
+        "owner": "vic",
+        "repo": "import-tree",
         "type": "github"
       }
     },
@@ -408,27 +398,6 @@
       "original": {
         "owner": "YaLTeR",
         "repo": "niri",
-        "type": "github"
-      }
-    },
-    "nix-darwin": {
-      "inputs": {
-        "nixpkgs": [
-          "home",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1765065051,
-        "narHash": "sha256-b7W9WsvyMOkUScNxbzS45KEJp0iiqRPyJ1I3JBE+oEE=",
-        "owner": "nix-darwin",
-        "repo": "nix-darwin",
-        "rev": "7e22bf538aa3e0937effcb1cee73d5f1bcc26f79",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-darwin",
-        "repo": "nix-darwin",
         "type": "github"
       }
     },
@@ -583,7 +552,7 @@
         "flake-compat": "flake-compat",
         "gitignore": "gitignore",
         "nixpkgs": [
-          "agenix-rekey",
+          "age-rekey",
           "nixpkgs"
         ]
       },
@@ -627,15 +596,18 @@
     },
     "root": {
       "inputs": {
-        "agenix": "agenix",
-        "agenix-rekey": "agenix-rekey",
+        "age": "age",
+        "age-rekey": "age-rekey",
         "claude-code": "claude-code",
         "disko": "disko",
         "fenix": "fenix",
         "helix": "helix",
-        "home": "home",
-        "home-manager": "home-manager",
-        "home-modules": "home-modules",
+        "hjem": [
+          "hjem-rum",
+          "hjem"
+        ],
+        "hjem-rum": "hjem-rum",
+        "import-tree": "import-tree",
         "niri": "niri",
         "opencode": "opencode",
         "os": "os",
@@ -686,17 +658,18 @@
     "rust-overlay_2": {
       "inputs": {
         "nixpkgs": [
-          "home",
+          "hjem-rum",
+          "hjem",
           "smfh",
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1763347184,
-        "narHash": "sha256-6QH8hpCYJxifvyHEYg+Da0BotUn03BwLIvYo3JAxuqQ=",
+        "lastModified": 1747622321,
+        "narHash": "sha256-W0dYIWgsUu6rvOJRtKLhKskkv0VhQhJYGNIq+gGUc8g=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-        "rev": "08895cce80433978d5bfd668efa41c5e24578cbd",
+        "rev": "bd030fd9983f7fddf87be1c64aa3064c8afa24c4",
         "type": "github"
       },
       "original": {
@@ -729,18 +702,19 @@
     "smfh": {
       "inputs": {
         "nixpkgs": [
-          "home",
+          "hjem-rum",
+          "hjem",
           "nixpkgs"
         ],
         "rust-overlay": "rust-overlay_2",
         "systems": "systems_3"
       },
       "locked": {
-        "lastModified": 1763430012,
-        "narHash": "sha256-06G7pXUdpMnUqR0JWWvV7sA8oNGOZU1cSLqQS1GMf7Y=",
+        "lastModified": 1749906619,
+        "narHash": "sha256-/9Ww10kYopxfCNNnNDwENTubs7Wzqlw+O6PJAHNOYQw=",
         "owner": "feel-co",
         "repo": "smfh",
-        "rev": "eddda76e3dd4c6deaea5f819f174fc16dbe70f90",
+        "rev": "39f5c06153f63100376bc607b1465850b6df77fd",
         "type": "github"
       },
       "original": {
@@ -812,7 +786,7 @@
     "treefmt-nix": {
       "inputs": {
         "nixpkgs": [
-          "agenix-rekey",
+          "age-rekey",
           "nixpkgs"
         ]
       },
@@ -833,7 +807,7 @@
     "treefmt-nix_2": {
       "inputs": {
         "nixpkgs": [
-          "home-modules",
+          "hjem-rum",
           "nixpkgs"
         ]
       },

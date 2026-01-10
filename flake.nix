@@ -1,43 +1,6 @@
 {
   description = "PlumJam's NixOS Configuration Collection";
 
-  nixConfig = {
-    extra-substituters = [
-      "https://cache1.plumj.am?priority=10"
-      "https://cache2.plumj.am?priority=10"
-      "https://cache.garnix.io"
-      "https://nix-community.cachix.org"
-    ];
-
-    extra-trusted-public-keys = [
-      "cache1.plumj.am:rFlt5V4tYjsyo3QMRsaoO9VGYISJR+45tT35/6BpKsA="
-      "cache2.plumj.am:IoMjbQ43lgHh8gMoEJj/VYK8c3Xbpc/TLRPKAaQSGas="
-      "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-    ];
-
-    experimental-features = [
-      "cgroups"
-      "flakes"
-      "nix-command"
-      "pipe-operators"
-    ];
-
-    builders-use-substitutes = true;
-    flake-registry = "";
-    http-connections = 0;
-    max-jobs = "auto";
-    use-cgroups = true;
-    show-trace = true;
-    trusted-users = [
-      "root"
-      "@wheel"
-      "build"
-      "gitea-runner"
-    ];
-    warn-dirty = false;
-  };
-
   inputs.os = {
     url = "github:NixOS/nixpkgs/nixos-unstable-small";
   };
@@ -60,23 +23,18 @@
     inputs.nixpkgs-lib.follows = "os";
   };
 
-  inputs.home-manager = {
-    url = "github:nix-community/home-manager/master";
-
-    inputs.nixpkgs.follows = "os";
+  inputs.import-tree = {
+    url = "github:vic/import-tree";
   };
 
-  inputs.home = {
-    url = "github:feel-co/hjem";
-
-    inputs.nixpkgs.follows = "os";
+  inputs.hjem = {
+    follows = "hjem-rum/hjem";
   };
 
-  inputs.home-modules = {
+  inputs.hjem-rum = {
     url = "github:snugnug/hjem-rum";
 
     inputs.nixpkgs.follows = "os";
-    inputs.hjem.follows = "home";
   };
 
   inputs.fenix = {
@@ -91,15 +49,15 @@
     inputs.nixpkgs.follows = "os";
   };
 
-  inputs.agenix = {
+  inputs.age = {
     url = "github:ryantm/agenix";
 
     inputs.nixpkgs.follows = "os";
     inputs.darwin.follows = "os-darwin";
-    inputs.home-manager.follows = "home-manager";
+    inputs.home-manager.follows = "";
   };
 
-  inputs.agenix-rekey = {
+  inputs.age-rekey = {
     url = "github:oddlama/agenix-rekey";
 
     inputs.nixpkgs.follows = "os";
@@ -135,17 +93,5 @@
     inputs.nixpkgs.follows = "os";
   };
 
-  outputs =
-    inputs:
-    inputs.parts.lib.mkFlake { inherit inputs; } (
-      { lib, ... }:
-      let
-        inherit (lib.filesystem) listFilesRecursive;
-        inherit (lib.lists) filter;
-        inherit (lib.strings) hasSuffix;
-      in
-      {
-        imports = filter (hasSuffix ".mod.nix") (listFilesRecursive ./.);
-      }
-    );
+  outputs = inputs: inputs.parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
 }
