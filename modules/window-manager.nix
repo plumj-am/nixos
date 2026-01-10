@@ -1,14 +1,19 @@
 {
-  config.flake.modules.homeModules.niri =
-    { inputs, pkgs, config, lib, theme, ... }:
+  config.flake.modules.hjem.window-manager =
+    {
+      inputs,
+      pkgs,
+      config,
+      theme,
+      ...
+    }:
     let
-      inherit (lib) genAttrs const merge;
       cfg = config // {
         inherit theme;
       };
     in
     {
-      programs.nushell.aliases.ns = "niri-session";
+      rum.programs.nushell.aliases.ns = "niri-session";
 
       rum.desktops.niri = {
         enable = true;
@@ -249,23 +254,61 @@
       };
 
     };
-  config.flake.modules.nixosModules.niri =
+  config.flake.modules.nixos.window-manager =
     { pkgs, ... }:
     {
-      environment.systemPackages = [ pkgs.xwayland-satellite ];
+      xdg.portal = {
+        enable = true;
+        config = {
+          common.default = "*";
+          # [1/2] Niri screensharing fixes.
+          niri.default = "*";
+          niri."org.freedesktop.impl.portal.ScreenCast" = [ "gnome" ];
+        };
 
-    # TODO: Add desktop entries.
-    #   xdg.desktopEntries.screenshot = {
-    #     name = "Screenshot";
-    #     icon = "camera-web";
-    #     exec = "niri msg action screenshot";
-    #     terminal = false;
-    #   };
-    #   xdg.desktopEntries.screenshot-window = {
-    #     name = "Screenshot Window";
-    #     icon = "camera-web";
-    #     exec = "niri msg action screenshot-window --write-to-disk";
-    #     terminal = false;
-    #   };
+        extraPortals = [
+          # [2/2] Niri screensharing fixes.
+          pkgs.xdg-desktop-portal-gnome
+        ];
+      };
+
+      environment.sessionVariables = {
+        # Hint Electron apps to use Wayland.
+        NIXOS_OZONE_WL = "1";
+        XDG_CURRENT_DESKTOP = "niri";
+        XDG_SESSION_TYPE = "wayland";
+        XDG_SESSION_DESKTOP = "niri";
+      };
+
+      environment.systemPackages = [
+        pkgs.xwayland-satellite
+
+        (pkgs.writeTextFile {
+          name = "screenshot";
+          destination = "/share/applications/screenshot.desktop";
+          text = ''
+            [Desktop Entry]
+            Name=Screenshot
+            Icon=camera-web
+            Exec=niri msg action screenshot
+            Terminal=false
+          '';
+        })
+
+        (pkgs.writeTextFile {
+          name = "screenshot-window";
+          destination = "/share/applications/screenshot-window.desktop";
+          text = ''
+            [Desktop Entry]
+            Name=Screenshot Window
+            Icon=camera-web
+            Exec=niri msg action screenshot-window --write-to-disk
+            Terminal=false
+          '';
+        })
+      ];
     };
+
+  # TODO: MacOS scrolling window manager?
+  config.flake.modules.darwin.window-manager = { };
 }
