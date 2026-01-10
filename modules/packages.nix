@@ -26,7 +26,6 @@ let
   darwinPackages =
     { pkgs, ... }:
     [
-      pkgs.raycast
       pkgs.karabiner-elements
     ];
 
@@ -40,13 +39,14 @@ let
 in
 {
 
-  config.flake.modules.nixosModules.packages =
+  config.flake.modules.nixos.packages =
     { pkgs, ... }:
     {
+      environment.defaultPackages = [ ];
       environment.systemPackages = commonPackages pkgs ++ linuxPackages pkgs;
     };
 
-  config.flake.modules.nixosModules.packages-extra-desktop =
+  config.flake.modules.nixos.packages-extra-desktop =
     { pkgs, ... }:
     {
       environment.systemPackages = [
@@ -62,11 +62,12 @@ in
         pkgs.brave
         pkgs.obs-studio
         pkgs.thunderbird
+        pkgs.vesktop
         pkgs.wasistlos
       ];
     };
 
-  config.flake.modules.nixosModules.packages-extra-wsl =
+  config.flake.modules.nixos.packages-extra-wsl =
     { pkgs, ... }:
     {
       environment.systemPackages = [
@@ -81,9 +82,10 @@ in
       ];
     };
 
-  config.flake.modules.darwinModules.packages =
+  config.flake.modules.darwin.packages =
     { pkgs, ... }:
     {
+      environment.defaultPackages = [ ];
       environment.systemPackages = commonPackages pkgs ++ darwinPackages pkgs;
     };
 }
