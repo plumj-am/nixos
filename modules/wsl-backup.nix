@@ -1,8 +1,6 @@
-{ pkgs, lib, ... }: let
-  inherit (lib) enabled;
-in {
-  home-manager.sharedModules = [{
-    home.file."wsl-backup.nu" = {
+{
+  config.flake.modules.hjem.wsl-backup = {
+    files."wsl-backup.nu" = {
       executable = true;
       text = /* nu */ ''
         #!/usr/bin/env nu
@@ -90,27 +88,36 @@ in {
         }
       '';
     };
-  }];
-
-  systemd.services.nixos-wsl-backup = {
-    description = "NixOS-WSL System Backup";
-
-    serviceConfig = {
-      Type      = "oneshot";
-      User      = "root";
-      ExecStart = "/home/jam/wsl-backup.nu";
-    };
-
-    path = with pkgs; [nix git nushell];
   };
 
-  systemd.timers.nixos-wsl-backup = enabled {
-    description = "Run NixOS-WSL backup every 6 hours";
-    wantedBy    = ["timers.target"];
-    timerConfig = {
-      OnBootSec       = "1min";
-      OnUnitActiveSec = "4h";
-      Persistent      = true;
+  config.flake.modules.nixos.wsl-backup =
+    { pkgs, ... }:
+    {
+      systemd.services.nixos-wsl-backup = {
+        description = "NixOS-WSL System Backup";
+
+        serviceConfig = {
+          Type = "oneshot";
+          User = "root";
+          ExecStart = "/home/jam/wsl-backup.nu";
+        };
+
+        path = with pkgs; [
+          nix
+          git
+          nushell
+        ];
+      };
+
+      systemd.timers.nixos-wsl-backup = {
+        enable = true;
+        description = "Run NixOS-WSL backup every 6 hours";
+        wantedBy = [ "timers.target" ];
+        timerConfig = {
+          OnBootSec = "1min";
+          OnUnitActiveSec = "4h";
+          Persistent = true;
+        };
+      };
     };
-  };
 }
