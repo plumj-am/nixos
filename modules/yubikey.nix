@@ -1,5 +1,5 @@
 {
-  config.flake.modules.homeModules.yubikey =
+  config.flake.modules.hjem.yubikey =
     { pkgs, ... }:
     let
       packages = [
@@ -12,7 +12,7 @@
       inherit packages;
     };
 
-  config.flake.modules.nixosModules.yubikey =
+  config.flake.modules.nixos.yubikey =
     { pkgs, ... }:
     {
       services.udev.packages = [
@@ -37,7 +37,7 @@
       };
     };
 
-  config.flake.modules.darwinModules.yubikey =
+  config.flake.modules.darwin.yubikey =
     { pkgs, ... }:
     {
       services.udev.packages = [
