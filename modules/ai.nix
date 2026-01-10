@@ -1,6 +1,13 @@
 {
-  config.flake.modules.homeModules.bat =
-    { lib, pkgs, config, inputs, secrets, ... }:
+  config.flake.modules.hjem.ai =
+    {
+      lib,
+      pkgs,
+      inputs,
+      secrets,
+      isDesktop,
+      ...
+    }:
     let
       inherit (lib) mkIf;
 
@@ -15,7 +22,9 @@
           '';
       };
 
-      packages = mkIf config.isDesktop [
+      opencodePackage = inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.default;
+
+      packages = mkIf isDesktop [
         pkgs.codex
         pkgs.gemini-cli
         # pkgs.qwen-code
@@ -27,14 +36,311 @@
         pkgs.bubblewrap
 
         claudeCodePackage
+        opencodePackage
       ];
     in
     {
       inherit packages;
 
       # TODO: Add claude-code and opencode config files.
+      files.".claude/settings.json" = {
+        generator = lib.generators.toJSON { };
+        value = {
+          cleanupPeriodDays = 1000;
+          alwaysThinkingEnabled = false;
+          includeCoAuthoredBy = false;
 
-      programs.nushell.aliases = {
+          statusLine = {
+            type = "command";
+            command = "python3 ~/.claude/scripts/statusline.py";
+          };
+
+          sandbox = {
+            enabled = true;
+            autoAllowBashIfSandboxed = true;
+            excludedCommands = [
+              "git"
+              "jj"
+              "docker"
+              "just"
+            ];
+            allowUnsandboxedCommands = true;
+            network.allowUnixSockets = [ "/run/user/1000/docker.sock" ];
+            network.allowLocalBinding = true;
+          };
+
+          env = {
+            ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
+            API_TIMEOUT_MS = "3000000";
+
+            ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.5-air";
+            ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-4.7";
+            ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-4.7";
+
+            CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR = "1";
+            CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1";
+            DISABLE_NON_ESSENTIAL_MODEL_CALLS = "1";
+          };
+
+          hooks = {
+            # Unreliable right now: https://github.com/anthropics/claude-code/issues/11947
+            # Stop = [{
+            #   hooks = [{
+            #     type    = "prompt";
+            #     prompt  = ''You are evaluating whether Claude should stop working. Context: $ARGUMENTS\n\nAnalyze the conversation and determine if:\n1. All user-requested tasks are complete\n2. Any errors need to be addressed\n3. Follow-up work is needed.'';
+            #     timeout = 30;
+            #   }];
+            # }];
+
+            # SubagentStop = [{
+            #   hooks = [{
+            #     type    = "prompt";
+            #     prompt = ''Evaluate if this subagent should stop. Input: $ARGUMENTS\n\nCheck if:\n- The subagent completed its assigned task\n- Any errors occurred that need fixing\n- Additional context gathering is needed.'';
+            #   }];
+            # }];
+
+            Notification = [
+              {
+                matcher = "permission_prompt|elicitation_dialog";
+                hooks = [
+                  {
+                    type = "command";
+                    command = "${pkgs.libnotify}/bin/notify-send --expire-time=15000 'Claude' 'Waiting for approval.'";
+                  }
+                ];
+              }
+              {
+                matcher = "idle_prompt";
+                hooks = [
+                  {
+                    type = "command";
+                    command = "${pkgs.libnotify}/bin/notify-send --expire-time=15000 'Claude' 'Waiting for next message.'";
+                  }
+                ];
+              }
+            ];
+
+            PostToolUse = [
+              {
+                matcher = "Edit|MultiEdit|Write";
+                hooks = [
+                  {
+                    type = "command";
+                    command = "~/.claude/hooks/format-files";
+                  }
+                ];
+              }
+            ];
+          };
+
+          permissions = {
+            allow = [
+              "Edit(PROJECT.md)"
+              "Edit(CURRENT.md)"
+              "Edit(STATE.md)"
+              "Update(PROJECT.md)"
+              "Update(CURRENT.md)"
+              "Update(STATE.md)"
+
+              "Bash(curl http://localhost:*)"
+              "Bash(curl -X GET http://localhost:*)"
+
+              "Bash(find:*)"
+              "Bash(rg:*)"
+
+              "Bash(fj issue search:*)"
+              "Bash(fj issue view:*)"
+              "Bash(fj actions tasks:*)"
+              "Bash(fj wiki contents:*)"
+              "Bash(fj wiki view:*)"
+
+              "mcp__context7"
+              "mcp__gh_grep"
+              "mcp__web-reader"
+              "mcp__web-search-prime"
+              "mcp__nixos"
+            ];
+
+            deny = [
+              "Read(*.env)"
+              "Read(*.envrc)"
+              "Bash(git push:*)"
+              "Bash(git commit:*)"
+            ];
+          };
+          mcpServers = {
+            gh_grep = {
+              type = "http";
+              url = "https://mcp.grep.app";
+            };
+            # No support for reading secrets from files yet. These are added with
+            # `~/.claude/claude-mcps.sh` instead.
+            # context7 = {
+            #   type    = "http";
+            #   url     = "https://mcp.context7.com/mcp";
+            #   headers = {
+            #     # We need this for higher limits but for now it's fine and doesn't stop us using it.
+            #     CONTEXT7_API_KEY = "{file:${secrets.context7Key.path}}";
+            #   };
+            # };
+            #
+            # web-reader = {
+            #   type    = "http";
+            #   url     = "https://api.z.ai/api/mcp/web_reader/mcp";
+            #   headers = {
+            #     Authorization = "Bearer {file:${secrets.z-ai-key.path}}";
+            #   };
+            # };
+            #
+            # web-search-prime = {
+            #   type    = "http";
+            #   url     = "https://api.z.ai/api/mcp/web_search_prime/mcp";
+            #   headers = {
+            #     Authorization = "Bearer {file:${secrets.z-ai-key.path}}";
+            #   };
+            # };
+
+            nixos = {
+              type = "stdio";
+              command = "/run/current-system/sw/bin/nix";
+              args = [
+                "run"
+                "github:utensils/mcp-nixos"
+                "--"
+              ];
+            };
+
+            playwriter = {
+              type = "stdio";
+              command = "/run/current-system/sw/bin/npx";
+              args = [ "playwriter@latest" ];
+            };
+          };
+        };
+      };
+
+      files."opencode/opencode.jsonc" = {
+        generator = lib.generators.toJSON { };
+        value = {
+
+          theme = "gruvbox";
+          autoupdate = false;
+          model = "zai-coding-plan/glm-4.7";
+
+          agent.build = {
+            type = "primary";
+
+            permission = {
+              write."*" = "allow";
+              bash."*" = "allow";
+              read."*" = "allow";
+
+              bash."curl*" = "ask";
+
+              read."*.env" = "deny";
+              read."*.envrc" = "deny";
+              bash."git push*" = "deny";
+              bash."git commit*" = "deny";
+              bash."jj*" = "deny";
+            };
+          };
+
+          keybinds = {
+            app_exit = "ctrl+c";
+            messages_half_page_up = "ctrl+u";
+            messages_half_page_down = "ctrl+d";
+            input_newline = "shift+enter";
+          };
+
+          lsp = {
+            nixd = {
+              command = [ "nixd" ];
+              extensions = [ ".nix" ];
+            };
+          };
+
+          formatter = {
+            rustfmt = {
+              command = [
+                "cargo"
+                "fmt"
+                "--"
+                "$FILE"
+              ];
+              extensions = [ ".rs" ];
+            };
+          };
+
+          provider.zai-coding-plan.models = {
+            "glm-4.7".options = {
+              # do_sample     = false;
+              stream = true;
+              thinking.type = "enabled";
+              # temperature   = 0.3;
+              # max_tokens    = 32768;
+            };
+          };
+
+          mcp = {
+            context7 = {
+              type = "remote";
+              url = "https://mcp.context7.com/mcp";
+              headers = {
+                CONTEXT7_API_KEY = "{file:${secrets.context7Key.path}}";
+              };
+            };
+
+            gh_grep = {
+              type = "remote";
+              url = "https://mcp.grep.app";
+            };
+
+            web-reader = {
+              type = "remote";
+              url = "https://api.z.ai/api/mcp/web_reader/mcp";
+              headers = {
+                Authorization = "Bearer {file:${secrets.z-ai-key.path}}";
+              };
+            };
+
+            web-search-prime = {
+              type = "remote";
+              url = "https://api.z.ai/api/mcp/web_search_prime/mcp";
+              headers = {
+                Authorization = "Bearer {file:${secrets.z-ai-key.path}}";
+              };
+            };
+
+            zread = {
+              type = "remote";
+              url = "https://api.z.ai/api/mcp/zread/mcp";
+              headers = {
+                Authorization = "Bearer {file:${secrets.z-ai-key.path}}";
+              };
+            };
+
+            nixos = {
+              type = "local";
+              command = [
+                "/run/current-system/sw/bin/nix"
+                "run"
+                "github:utensils/mcp-nixos"
+                "--"
+              ];
+            };
+
+            playwriter = {
+              type = "local";
+              command = [
+                "/run/current-system/sw/bin/npx"
+                "playwriter@latest"
+              ];
+            };
+          };
+        };
+      };
+
+      rum.programs.nushell.aliases = {
         claude = "claude --continue --fork-session";
         codex = "codex resume --ask-for-approval untrusted";
         oc = "opencode --continue";
@@ -74,7 +380,7 @@
             #!/usr/bin/env python3
             """
             PlumJam's Claude Code Statusline
-            <https://git.plumj.am/plumjam/nixos/src/branch/master/modules/common/ai.nix>
+            <https://git.plumj.am/plumjam/nixos/src/branch/master/modules/ai.nix>
             """
 
             import json
