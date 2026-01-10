@@ -1,42 +1,47 @@
-{
-  config.flake.modules.homeModules.helix =
-    { inputs, lib, config, pkgs, ... }:
+let
+  commonModule =
+    {
+      inputs,
+      lib,
+      pkgs,
+      theme,
+      ...
+    }:
     let
       inherit (lib)
         const
         genAttrs
-        mkIf
         elem
         mapAttrs
         optionalAttrs
         attrValues
-        merge
         ;
 
-      yaziPickerScript = pkgs.writeShellScript "yazi-picker.sh" ''
-        #!/usr/bin/env bash
+      yaziPickerScript =
+        pkgs.writeShellScript "yazi-picker.sh" # bash
+          ''
+            #!/usr/bin/env bash
 
-        paths=$(yazi "$2" --chooser-file=/dev/stdout | while read -r; do printf "%q " "$REPLY"; done)
+            paths=$(yazi "$2" --chooser-file=/dev/stdout | while read -r; do printf "%q " "$REPLY"; done)
 
-        if [[ -n "$paths" ]]; then
-        	zellij action toggle-floating-panes
-        	zellij action write 27 # send <Escape> key
-        	zellij action write-chars ":$1 $paths"
-        	zellij action write 13 # send <Enter> key
-        else
-        	zellij action toggle-floating-panes
-        fi
-      '';
+            if [[ -n "$paths" ]]; then
+            	zellij action toggle-floating-panes
+            	zellij action write 27 # send <Escape> key
+            	zellij action write-chars ":$1 $paths"
+            	zellij action write 13 # send <Enter> key
+            else
+            	zellij action toggle-floating-panes
+            fi
+          '';
 
       package = inputs.helix.packages.${pkgs.stdenv.hostPlatform.system}.helix; # `.helix` follows the master branch.
     in
     {
-      programs.helix = {
+      rum.programs.helix = {
         enable = true;
         inherit package;
 
-        settings.theme =
-          if config.theme.color_scheme == "pywal" then "base16_custom" else config.theme.helix;
+        settings.theme = if theme.color_scheme == "pywal" then "base16_custom" else theme.helix;
 
         # Pywal output doesn't have gradients like base16 needs.
         # So it's necessary to override a few colours.
@@ -44,32 +49,32 @@
         themes.base16_custom = {
           inherits = "base16_default";
 
-          "comment".fg = if config.theme.is_dark then "#909090" else "#C0C0C0";
+          "comment".fg = if theme.is_dark then "#909090" else "#C0C0C0";
 
           # Selections.
         }
         // genAttrs [ "ui.selection" "ui.selection.primary" ] (const {
-          bg = if config.theme.is_dark then "#707070" else "#E0E0E0";
+          bg = if theme.is_dark then "#707070" else "#E0E0E0";
         })
         # Cursorline and popups.
         //
           genAttrs [ "ui.cursorline.primary" "ui.cursorline.secondary" "ui.popup" "ui.popup.info" ]
             (const {
-              bg = if config.theme.is_dark then "#404040" else "#F0F0F0";
+              bg = if theme.is_dark then "#404040" else "#F0F0F0";
             })
         # Info.
         //
           genAttrs [ "hint" "info" "diagnostic" "diagnostic.hint" "diagnostic.info" "diagnostic.unnecessary" ]
             (const {
-              fg = if config.theme.is_dark then "#2B83A6" else "#3A8C9A"; # Muted teal.
+              fg = if theme.is_dark then "#2B83A6" else "#3A8C9A"; # Muted teal.
             })
         # Warnings.
         // genAttrs [ "warning" "diagnostic.warning" "diagnostic.deprecated" ] (const {
-          fg = if config.theme.is_dark then "#B58900" else "#9D8740"; # Muted yellow.
+          fg = if theme.is_dark then "#B58900" else "#9D8740"; # Muted yellow.
         })
         # Errors.
         // genAttrs [ "error" "diagnostic.error" ] (const {
-          fg = if config.theme.is_dark then "#9D0006" else "#8F3F71"; # Muted red/brown.
+          fg = if theme.is_dark then "#9D0006" else "#8F3F71"; # Muted red/brown.
         });
 
         settings.editor = {
@@ -106,14 +111,13 @@
           render.tab = "all";
         };
 
-        settings.keys =
-          merge {
-            normal."C-y" =
-              ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- ${yaziPickerScript} open ...%{buffer_name}";
-          }
-          <| genAttrs [ "normal" "select" ] (const {
-            D = "extend_to_line_end";
-          });
+        settings.keys = {
+          normal."C-y" =
+            ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- ${yaziPickerScript} open ...%{buffer_name}";
+        }
+        // genAttrs [ "normal" "select" ] (const {
+          D = "extend_to_line_end";
+        });
 
         languages.language =
           let
@@ -253,52 +257,55 @@
             # }
           ];
 
-        languages.language-server = mkIf config.isDesktop {
+      };
+      rum.programs.nushell.aliases = {
+        h = "hx";
+        e = "hx"; # editor
+      };
+    };
 
-          typos.command = "typos-lsp";
+  editorExtra =
+    { pkgs, ... }:
+    {
+      rum.programs.helix.languages.language-server = {
 
-          deno = {
-            command = "deno";
-            args = [ "lsp" ];
+        typos.command = "typos-lsp";
 
-            config.javascript = {
-              enable = true;
-              lint = true;
-              unstable = true;
+        deno = {
+          command = "deno";
+          args = [ "lsp" ];
 
-              suggest.imports.hosts."https://deno.land" = true;
+          config.javascript = {
+            enable = true;
+            lint = true;
+            unstable = true;
 
-              inlayHints.enumMemberValues.enabled = true;
-              inlayHints.functionLikeReturnTypes.enabled = true;
-              inlayHints.parameterNames.enabled = "all";
-              inlayHints.parameterTypes.enabled = true;
-              inlayHints.propertyDeclarationTypes.enabled = true;
-              inlayHints.variableTypes.enabled = true;
-            };
+            suggest.imports.hosts."https://deno.land" = true;
+
+            inlayHints.enumMemberValues.enabled = true;
+            inlayHints.functionLikeReturnTypes.enabled = true;
+            inlayHints.parameterNames.enabled = "all";
+            inlayHints.parameterTypes.enabled = true;
+            inlayHints.propertyDeclarationTypes.enabled = true;
+            inlayHints.variableTypes.enabled = true;
           };
+        };
 
-          rust-analyzer = {
-            except-features = [ "inlay-hints" ];
+        rust-analyzer = {
+          except-features = [ "inlay-hints" ];
 
-            config = {
-              cargo.features = "all";
-              check.command = "clippy";
-              completion.callable.snippets = "add_parentheses";
-            };
+          config = {
+            cargo.features = "all";
+            check.command = "clippy";
+            completion.callable.snippets = "add_parentheses";
           };
         };
       };
 
-      programs.nushell.aliases = {
-        nvim = "echo 'no more neovim, use hx'";
-        nv = "echo 'no more neovim, use hx'";
-        vim = "echo 'no more vim, use hx'";
-        v = "echo 'no more vim, use hx'";
-        h = "hx";
-        e = "hx"; # editor
-      };
+      packages = [
+        # Yazi file manager
+        pkgs.yazi
 
-      packages = mkIf config.isDesktop [
         # Rust
         # rust-analyzer is in modules/common/rust.nix
         pkgs.lldb
@@ -341,5 +348,11 @@
         pkgs.typos-lsp
       ];
     };
+in
+{
+  config.flake.modules.nixos.disable-nano = {
+    programs.nano.enable = false;
+  };
+  config.flake.modules.hjem.editor = commonModule;
+  config.flake.modules.hjem.editor-extra = editorExtra;
 }
-
