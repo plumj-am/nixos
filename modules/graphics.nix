@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixosModules.graphics =
+  config.flake.modules.nixos.graphics =
     { config, ... }:
     {
       hardware.graphics = {
@@ -15,7 +15,7 @@
         modesetting.enable = true;
 
         # For sleep handling.
-        powerManagement.enable      = true;
+        powerManagement.enable = true;
 
         powerManagement.finegrained = false;
 
@@ -36,7 +36,11 @@
         WLR_NO_HARDWARE_CURSORS = "1"; # Cursor fix.
       };
 
-      boot.kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
+      boot.kernelModules = [
+        "nvidia"
+        "nvidia_modeset"
+        "nvidia_uvm"
+        "nvidia_drm"
+      ];
     };
 }
-
