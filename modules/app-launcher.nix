@@ -1,8 +1,8 @@
 {
-  config.flake.modules.homeModules.fuzzel =
-    { config, ... }:
+  config.flake.modules.hjem.app-launcher =
+    { theme, ... }:
     {
-      programs.fuzzel = with config.theme; {
+      rum.programs.fuzzel = with theme; {
         enable = true;
 
         settings.main = {
@@ -11,7 +11,6 @@
           layer = "overlay";
           prompt = ''"❯ "'';
           terminal = "kitty";
-          # output     = mkIf (config.networking.hostName == "yuzu") "DP-1";
 
           horizontal-pad = padding.normal;
           vertical-pad = padding.normal;
@@ -32,5 +31,13 @@
           width = border.small;
         };
       };
+    };
+
+  config.flake.modules.darwin.app-launcher =
+    { pkgs, ... }:
+    {
+      environment.systemPackages = [
+        pkgs.raycast
+      ];
     };
 }
