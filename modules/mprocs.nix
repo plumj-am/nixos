@@ -1,12 +1,17 @@
 {
-  config.flake.modules.homeModules.mprocs =
-    { pkgs, lib, config, ... }:
+  config.flake.modules.hjem.mprocs =
+    {
+      pkgs,
+      lib,
+      isDesktop,
+      ...
+    }:
     let
       inherit (lib) mkIf;
 
       package = pkgs.mprocs;
     in
-    mkIf config.isDesktop {
+    mkIf isDesktop {
       packages = [ package ];
 
       xdg.config.files."mprocs/mprocs.yaml".text = # yaml
