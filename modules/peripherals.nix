@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixosModules.keyboard =
+  config.flake.modules.nixos.keyboard =
     { pkgs, ... }:
     {
       environment.systemPackages = [ pkgs.vial ];
@@ -12,4 +12,12 @@
         KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="4653", ATTRS{idProduct}=="0004", MODE="0660", GROUP="users", TAG+="uaccess", TAG+="udev-acl"
       '';
     };
+
+  config.flake.modules.nixos.mouse = {
+    services.libinput = {
+      enable = true;
+      mouse.leftHanded = true;
+      touchpad.leftHanded = true;
+    };
+  };
 }
