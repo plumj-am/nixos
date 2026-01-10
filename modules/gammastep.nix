@@ -1,15 +1,16 @@
 {
-  config.flake.modules.homeModules.gammastep =
+  config.flake.modules.hjem.gammastep =
     { pkgs, ... }:
     let
       packages = [
         pkgs.gammastep
         pkgs.geoclue2
       ];
-    in {
+    in
+    {
       inherit packages;
 
-      programs.gammastep = {
+      rum.programs.gammastep = {
         enable = true;
 
         settings.general = {
