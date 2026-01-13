@@ -8,14 +8,15 @@ let
       ...
     }:
     let
-      inherit (lib)
-        const
+      inherit (lib.trivial) const;
+      inherit (lib.attrsets)
         genAttrs
-        elem
-        mapAttrs
         optionalAttrs
         attrValues
+        mapAttrs
         ;
+      inherit (lib.lists) singleton;
+      inherit (builtins) elem;
 
       yaziPickerScript =
         pkgs.writeShellScript "yazi-picker.sh" # bash
@@ -34,6 +35,18 @@ let
             fi
           '';
 
+      mkFgStyle =
+        colors: color:
+        genAttrs colors (const {
+          fg = color;
+        });
+
+      mkBgStyle =
+        colors: color:
+        genAttrs colors (const {
+          bg = color;
+        });
+
       package = inputs.helix.packages.${pkgs.stdenv.hostPlatform.system}.helix; # `.helix` follows the master branch.
     in
     {
@@ -48,34 +61,32 @@ let
         # Also added overrides for diagnostic colours which don't work well from Pywal.
         themes.base16_custom = {
           inherits = "base16_default";
-
-          "comment".fg = if theme.is_dark then "#909090" else "#C0C0C0";
-
-          # Selections.
         }
-        // genAttrs [ "ui.selection" "ui.selection.primary" ] (const {
-          bg = if theme.is_dark then "#707070" else "#E0E0E0";
-        })
+        # Comments.
+        // mkFgStyle [ "comment" ] (if theme.is_dark then "#909090" else "#C0C0C0")
+        # Selections.
+        // mkBgStyle [ "ui.selection" "ui.selection.primary" ] (
+          if theme.is_dark then "#707070" else "#E0E0E0"
+        )
         # Cursorline and popups.
-        //
-          genAttrs [ "ui.cursorline.primary" "ui.cursorline.secondary" "ui.popup" "ui.popup.info" ]
-            (const {
-              bg = if theme.is_dark then "#404040" else "#F0F0F0";
-            })
+        // mkBgStyle [ "ui.cursorline.primary" "ui.cursorline.secondary" "ui.popup" "ui.popup.info" ] (
+          if theme.is_dark then "#404040" else "#F0F0F0"
+        )
         # Info.
         //
-          genAttrs [ "hint" "info" "diagnostic" "diagnostic.hint" "diagnostic.info" "diagnostic.unnecessary" ]
-            (const {
-              fg = if theme.is_dark then "#2B83A6" else "#3A8C9A"; # Muted teal.
-            })
+          mkFgStyle
+            [ "hint" "info" "diagnostic" "diagnostic.hint" "diagnostic.info" "diagnostic.unnecessary" ]
+            (
+              if theme.is_dark then "#2B83A6" else "#3A8C9A" # Muted teal.
+            )
         # Warnings.
-        // genAttrs [ "warning" "diagnostic.warning" "diagnostic.deprecated" ] (const {
-          fg = if theme.is_dark then "#B58900" else "#9D8740"; # Muted yellow.
-        })
+        // mkFgStyle [ "warning" "diagnostic.warning" "diagnostic.deprecated" ] (
+          if theme.is_dark then "#B58900" else "#9D8740" # Muted yellow.
+        )
         # Errors.
-        // genAttrs [ "error" "diagnostic.error" ] (const {
-          fg = if theme.is_dark then "#9D0006" else "#8F3F71"; # Muted red/brown.
-        });
+        // mkFgStyle [ "error" "diagnostic.error" ] (
+          if theme.is_dark then "#9D0006" else "#8F3F71" # Muted red/brown.
+        );
 
         settings.editor = {
           bufferline = "multiple";
@@ -181,7 +192,7 @@ let
               language-servers = [
                 {
                   name = "rust-analyzer";
-                  except-features = [ "inlay-hints" ];
+                  except-features = singleton "inlay-hints";
                 }
                 "typos"
               ];
@@ -193,7 +204,7 @@ let
             {
               name = "nix";
               auto-format = false;
-              formatter.command = "nix fmt";
+              formatter.command = "nixfmt";
               language-servers = [
                 "nixd"
                 "typos"
@@ -265,15 +276,20 @@ let
     };
 
   editorExtra =
-    { pkgs, ... }:
+    { pkgs, lib, ... }:
+    let
+      inherit (lib.lists) singleton;
+    in
     {
       rum.programs.helix.languages.language-server = {
+
+        nixd.args = singleton "--inlay-hints";
 
         typos.command = "typos-lsp";
 
         deno = {
           command = "deno";
-          args = [ "lsp" ];
+          args = singleton "lsp";
 
           config.javascript = {
             enable = true;
@@ -292,7 +308,7 @@ let
         };
 
         rust-analyzer = {
-          except-features = [ "inlay-hints" ];
+          except-features = singleton "inlay-hints";
 
           config = {
             cargo.features = "all";
