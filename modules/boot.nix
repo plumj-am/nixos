@@ -2,14 +2,10 @@ let
   commonModule = {
     boot = {
       tmp.cleanOnBoot = true;
-      loader = {
-        systemd-boot.enable = true;
-        efi.canTouchEfiVariables = true;
-        grub = {
-          device = "nodev";
-          efiSupport = true;
-          efiInstallAsRemovable = true;
-        };
+      loader.grub = {
+        device = "nodev";
+        efiSupport = true;
+        efiInstallAsRemovable = true;
       };
       initrd.availableKernelModules = [
         "ahci"
@@ -22,7 +18,13 @@ let
   };
 in
 {
-  flake.modules.nixos.boot-desktop = commonModule;
+  flake.modules.nixos.boot-desktop = {
+    imports = [ commonModule ];
+    boot.loader = {
+      systemd-boot.enable = true;
+      efi.canTouchEfiVariables = true;
+    };
+  };
 
   flake.modules.nixos.boot-server =
     { modulesPath, ... }:
