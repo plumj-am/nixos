@@ -75,7 +75,9 @@ in
 
   config.flake.modules.nixos.disks-desktop = commonModule;
 
-  config.flake.modules.nixos.disks-desktop-swap = commonModule // {
+  config.flake.modules.nixos.disks-desktop-swap = {
+    imports = [ commonModule ];
+
     swapDevices = [
       {
         device = "/dev/disk/by-label/SWAP";

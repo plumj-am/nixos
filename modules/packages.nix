@@ -40,10 +40,18 @@ in
 {
 
   config.flake.modules.nixos.packages =
-    { pkgs, ... }:
+    { pkgs, lib, ... }:
+    let
+      inherit (lib.lists) flatten;
+    in
     {
       environment.defaultPackages = [ ];
-      environment.systemPackages = commonPackages pkgs ++ linuxPackages pkgs;
+      environment.systemPackages =
+        [
+          (commonPackages pkgs)
+          (linuxPackages pkgs)
+        ]
+        |> flatten;
     };
 
   config.flake.modules.nixos.packages-extra-desktop =
@@ -83,9 +91,17 @@ in
     };
 
   config.flake.modules.darwin.packages =
-    { pkgs, ... }:
+    { pkgs, lib, ... }:
+    let
+      inherit (lib.lists) flatten;
+    in
     {
       environment.defaultPackages = [ ];
-      environment.systemPackages = commonPackages pkgs ++ darwinPackages pkgs;
+      environment.systemPackages =
+        [
+          (commonPackages pkgs)
+          (darwinPackages pkgs)
+        ]
+        |> flatten;
     };
 }

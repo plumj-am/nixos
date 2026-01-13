@@ -43,6 +43,10 @@ in
   config.flake.modules.nixos.rust =
     { pkgs, inputs, ... }:
     {
+      imports = [
+        (commonModule { inherit pkgs; })
+      ];
+
       environment.systemPackages = [
         (inputs.fenix.packages.${pkgs.stdenv.hostPlatform.system}.complete.withComponents [
           # Nightly.
@@ -55,11 +59,16 @@ in
           "rust-src"
         ])
       ];
-    }
-    // commonModule { inherit pkgs; };
+    };
 
   config.flake.modules.nixos.rust-desktop =
-    { pkgs, inputs, ... }: rustDesktop { inherit pkgs inputs; } // commonModule { inherit pkgs; };
+    { pkgs, inputs, ... }:
+    {
+      imports = [
+        (rustDesktop { inherit pkgs inputs; })
+        (commonModule { inherit pkgs; })
+      ];
+    };
 
   config.flake.modules.darwin.rust-desktop =
     {
@@ -71,8 +80,10 @@ in
     let
       inherit (lib.strings) makeLibraryPath;
     in
-    rustDesktop { inherit pkgs inputs; }
-    // {
+    {
+      imports = [
+        (rustDesktop { inherit pkgs inputs; })
+      ];
       environment.variables = {
         LIBRARY_PATH = makeLibraryPath [ pkgs.libiconv ];
       };

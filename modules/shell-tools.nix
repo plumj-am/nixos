@@ -76,13 +76,22 @@ in
   config.flake.modules.hjem.shell-tools =
     { pkgs, lib, ... }:
     let
+      inherit (lib.lists) flatten;
+
       bat = batConfig { inherit pkgs lib; };
       ripgrep = ripgrepConfig { inherit pkgs; };
       eza = ezaConfig { inherit pkgs; };
       other = otherConfig { inherit pkgs; };
     in
     {
-      packages = bat.packages ++ ripgrep.packages ++ eza.packages ++ other.packages;
+      packages =
+        [
+          bat.packages
+          ripgrep.packages
+          eza.packages
+          other.packages
+        ]
+        |> flatten;
 
       environment.sessionVariables =
         bat.environment.sessionVariables // ripgrep.environment.sessionVariables;

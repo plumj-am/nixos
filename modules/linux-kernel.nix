@@ -141,13 +141,15 @@ in
 
   config.flake.modules.nixos.linux-kernel =
     { pkgs, ... }:
-    commonModule // {
+    {
+      imports = [ commonModule ];
       boot.kernelPackages = pkgs.linuxPackages_latest;
     };
 
   config.flake.modules.nixos.linux-kernel-desktop =
     { pkgs, ... }:
-    commonModule // {
+    {
+      imports = [ commonModule ];
       boot.kernelPackages = pkgs.linuxKernel.packages.linux_zen;
     };
 }
