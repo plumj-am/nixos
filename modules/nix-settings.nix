@@ -1,7 +1,6 @@
 let
   commonModule =
     {
-      self,
       config,
       inputs,
       lib,
@@ -18,21 +17,17 @@ let
         optionalAttrs
         ;
       inherit (lib.strings) concatStringsSep;
-      inherit (lib.trivial)
-        const
-        filter
-        flip
-        id
-        ;
+      inherit (lib.trivial) const flip id;
       inherit (lib.types) isType;
       inherit (lib.lists) optionals;
+      inherit (builtins) filter;
 
       registryMap = inputs |> filterAttrs (const <| isType "flake");
     in
     {
       nix.distributedBuilds = mkIf (config.networking.hostName != "yuzu") true; # No distributed builds for powerful desktop.
       nix.buildMachines = mkIf (config.networking.hostName != "yuzu") (
-        self.nixosConfigurations
+        inputs.self.nixosConfigurations
         |> attrsToList
         |> filter ({ name, value }: name != config.networking.hostName && value.config.users.users ? build)
         |> map (
