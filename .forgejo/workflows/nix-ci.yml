@@ -20,74 +20,8 @@ concurrency:
     cancel-in-progress: false
 
 jobs:
-    changes:
-        name: Check for changes
-        runs-on: plum
-        outputs:
-            date: ${{ steps.filter.outputs.date }}
-            kiwi: ${{ steps.filter.outputs.kiwi }}
-            lime: ${{ steps.filter.outputs.lime }}
-            pear: ${{ steps.filter.outputs.pear }}
-            plum: ${{ steps.filter.outputs.plum }}
-            yuzu: ${{ steps.filter.outputs.yuzu }}
-        steps:
-            - uses: actions/checkout@v5
-              with:
-                  fetch-depth: 0
-            - uses: https://github.com/dorny/paths-filter@v3
-              id: filter
-              with:
-                  # TODO: Need to update these properly once all config changes are done.
-                  base: master
-                  filters: |
-                      shared: &shared
-                        - modules/common/**
-                        - flake.*
-                        - lib/**
-                        - modules/nix.nix
-                        - modules/system.nix
-                        - modules/users.nix
-                        - modules/network.nix
-                        - modules/openssh.nix
-                        - modules/age-rekey.nix
-                        - keys.nix
-                        - yubikey.pub
-                      servers: &servers
-                        - modules/acme/**
-                        - modules/nginx.nix
-                      date:
-                        - hosts/date.nix
-                        - modules/linux/**
-                        - *shared
-                      kiwi:
-                        - hosts/kiwi.nix
-                        - modules/linux/**
-                        - modules/dr-radka.nix
-                        - *shared
-                        - *servers
-                      lime:
-                        - hosts/lime.nix
-                        - modules/darwin/**
-                        - *shared
-                      pear:
-                        - hosts/pear.nix
-                        - modules/linux/**
-                        - *shared
-                      plum:
-                        - hosts/plum.nix
-                        - modules/linux/**
-                        - modules/site.nix
-                        - *shared
-                        - *servers
-                      yuzu:
-                        - hosts/yuzu.nix
-                        - modules/linux/**
-                        - *shared
-
     # build-date:
     #     name: "Build: date"
-    #     needs: changes
-    #     if: needs.changes.outputs.date == 'true'
     #     runs-on: plum
     #     steps:
     #         - uses: actions/checkout@v5
@@ -96,9 +30,7 @@ jobs:
 
     # build-kiwi:
     #     name: "Build: kiwi"
-    #     needs: changes
-    #     if: needs.changes.outputs.kiwi == 'true'
-    #     runs-on: plum
+    #     runs-on: kiwi
     #     steps:
     #         - uses: actions/checkout@v5
     #         - name: "Build configuration for kiwi"
@@ -107,8 +39,6 @@ jobs:
     # Until we setup a container for aarch64_darwin.
     # build-lime:
     #     name: "Build: lime"
-    #     needs: changes
-    #     if: needs.changes.outputs.lime == 'true'
     #     runs-on: plum
     #     steps:
     #         - uses: actions/checkout@v5
@@ -117,8 +47,6 @@ jobs:
 
     # build-pear:
     #     name: "Build: pear"
-    #     needs: changes
-    #     if: needs.changes.outputs.pear == 'true'
     #     runs-on: plum
     #     steps:
     #         - uses: actions/checkout@v5
@@ -127,18 +55,13 @@ jobs:
 
     # build-plum:
     #     name: "Build: plum"
-    #     needs: changes
-    #     if: needs.changes.outputs.plum == 'true'
     #     runs-on: plum
     #     steps:
     #         - uses: actions/checkout@v5
     #         - name: "Build configuration for plum"
     #           run: nix build .#nixosConfigurations.plum.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
-
     build-yuzu:
         name: "Build: yuzu"
-        needs: changes
-        if: needs.changes.outputs.yuzu == 'true'
         runs-on: plum
         steps:
             - uses: actions/checkout@v5
