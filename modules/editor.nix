@@ -322,9 +322,6 @@ let
       };
 
       packages = [
-        # Yazi file manager
-        pkgs.yazi
-
         # Rust
         # rust-analyzer is in modules/common/rust.nix
         pkgs.lldb
