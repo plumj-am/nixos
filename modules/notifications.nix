@@ -68,7 +68,7 @@
         pkgs.mako
       ];
 
-      xdg.config.files."mako/config" = {
+      files."mako/config" = {
         source = ini.generate "config" makoConfig;
       };
     };

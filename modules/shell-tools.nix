@@ -35,7 +35,7 @@ let
         RIPGREP_CONFIG_PATH = "/home/jam/.config/ripgrep/ripgreprc";
       };
 
-      xdg.config.files."ripgrep/ripgreprc".text = ''
+      files."ripgrep/ripgreprc".text = ''
         --line-number
         --smart-case
       '';
@@ -89,6 +89,6 @@ in
 
       rum.programs.nushell.aliases = bat.rum.programs.nushell.aliases // eza.rum.programs.nushell.aliases;
 
-      xdg.config.files = ripgrep.xdg.config.files;
+      files = ripgrep.files;
     };
 }

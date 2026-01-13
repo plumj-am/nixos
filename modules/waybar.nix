@@ -2,7 +2,7 @@
   config.flake.modules.hjem.waybar =
     { theme, ... }:
     {
-      xdg.config.files."waybar/config.jsonc".text =
+      files."waybar/config.jsonc".text =
         # jsonc
         ''
           {
@@ -132,7 +132,7 @@
           }
         '';
 
-      xdg.config.files."waybar/style.css".text =
+      files."waybar/style.css".text =
         with theme.withHash; # css
         ''
           * {

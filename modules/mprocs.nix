@@ -14,7 +14,7 @@
     mkIf isDesktop {
       packages = [ package ];
 
-      xdg.config.files."mprocs/mprocs.yaml".text = # yaml
+      files."mprocs/mprocs.yaml".text = # yaml
         ''
           hide_keymap_window = true;
           proc_list_width = 18;

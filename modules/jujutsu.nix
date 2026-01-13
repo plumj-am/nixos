@@ -237,7 +237,7 @@ in
       };
     in
     {
-      xdg.config.files."jj/config.toml" = {
+      files."jj/config.toml" = {
         source = toml.generate "config.toml" jjConfig;
       };
 
