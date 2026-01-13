@@ -247,7 +247,7 @@
         };
 
         spawn-at-startup = [
-          [ "waybar" ]
+          # [ "waybar" ] # Started by NixOS.
           [ "swww-daemon" ]
           [ "mako" ]
         ];

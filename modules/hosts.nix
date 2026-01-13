@@ -44,6 +44,7 @@
       theme-scripts
       unfree
       users
+      waybar
       window-manager
       yubikey
       {

@@ -1,6 +1,13 @@
 {
+  config.flake.modules.nixos.waybar = {
+    programs.waybar.enable = true;
+  };
+
   config.flake.modules.hjem.waybar =
     { theme, ... }:
+    let
+      inherit (builtins) concatStringsSep map toString;
+    in
     {
       files."waybar/config.jsonc".text =
         # jsonc
@@ -146,7 +153,7 @@
 
           #waybar {
             background:
-              linear-gradient(rgba(${builtins.concatStringsSep ", " (map toString theme.withRgb.base00)}, ${toString theme.opacity.verylow}), rgba(${builtins.concatStringsSep ", " (map toString theme.withRgb.base00)}, ${toString theme.opacity.verylow})) padding-box,
+              linear-gradient(rgba(${concatStringsSep ", " (map toString theme.withRgb.base00)}, ${toString theme.opacity.verylow}), rgba(${concatStringsSep ", " (map toString theme.withRgb.base00)}, ${toString theme.opacity.verylow})) padding-box,
               linear-gradient(225deg, ${base0B}, ${base09}) border-box;
             color: ${base07};
             border: ${toString (theme.border.small)}px solid transparent;
@@ -169,7 +176,7 @@
 
           #workspaces button.active {
             color: ${base07};
-            background: rgba(${builtins.concatStringsSep ", " (map toString theme.withRgb.base00)}, 0.45) padding-box;
+            background: rgba(${concatStringsSep ", " (map toString theme.withRgb.base00)}, 0.45) padding-box;
           }
 
           #tray, #pulseaudio, #cpu, #memory, #disk, #battery, #clock, #custom-gpu {
