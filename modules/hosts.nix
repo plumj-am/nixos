@@ -21,7 +21,6 @@
 
   flake.nixosConfigurations.yuzu = inputs.os.lib.nixosSystem {
     specialArgs = { inherit inputs; };
-    system = "x86_64-linux";
 
     modules = with inputs.self.modules.nixos; [
       audio
@@ -60,7 +59,7 @@
       scratchpads
       secret-manager
       sudo-desktop
-      system-types
+      system
       tailscale
       theme
       theme-fonts
@@ -73,13 +72,13 @@
       yubikey
       {
         config = {
-          operatingSystem = "linux";
-          systemPlatform = "x86_64-linux";
-          systemType = "desktop";
+          platform = "x86_64-linux";
+          type = "desktop";
 
           network.hostName = "yuzu";
 
           unfree.allowedNames = [
+            "claude-code"
             "nvidia-x11"
             "nvidia-settings"
             "steam"
@@ -115,7 +114,6 @@
   # TODO: Reduce duplication.
   flake.nixosConfigurations.date = inputs.os.lib.nixosSystem {
     specialArgs = { inherit inputs; };
-    system = "x86_64-linux";
 
     modules = with inputs.self.modules.nixos; [
       audio
@@ -154,7 +152,7 @@
       scratchpads
       secret-manager
       sudo-desktop
-      system-types
+      system
       tailscale
       theme
       theme-fonts
@@ -167,13 +165,13 @@
       yubikey
       {
         config = {
-          operatingSystem = "linux";
-          systemPlatform = "x86_64-linux";
-          systemType = "desktop";
+          platform = "x86_64-linux";
+          type = "desktop";
 
           network.hostName = "date";
 
           unfree.allowedNames = [
+            "claude-code"
             "nvidia-x11"
             "nvidia-settings"
             "steam"
@@ -209,7 +207,6 @@
 
   flake.nixosConfigurations.pear = inputs.os.lib.nixosSystem {
     specialArgs = { inherit inputs; };
-    system = "x86_64-linux";
 
     modules = with inputs.self.modules.nixos; [
       inputs.os-wsl.nixosModules.default
@@ -236,7 +233,7 @@
       scratchpads
       secret-manager
       sudo-desktop
-      system-types
+      system
       tailscale
       theme
       unfree
@@ -246,13 +243,13 @@
       yubikey
       {
         config = {
-          operatingSystem = "linux";
-          systemPlatform = "x86_64-linux";
-          systemType = "wsl";
+          platform = "x86_64-linux";
+          type = "wsl";
 
           network.hostName = "pear";
 
           unfree.allowedNames = [
+            "claude-code"
             "nvidia-x11"
             "nvidia-settings"
             "steam"
@@ -288,7 +285,6 @@
 
   flake.nixosConfigurations.plum = inputs.os.lib.nixosSystem {
     specialArgs = { inherit inputs; };
-    system = "x86_64-linux";
     modules = with inputs.self.modules.nixos; [
       acme
       boot-server
@@ -319,7 +315,7 @@
       rust
       secret-manager
       sudo-server
-      system-types
+      system
       tailscale
       theme
       unfree
@@ -330,9 +326,8 @@
       yubikey
       {
         config = {
-          operatingSystem = "linux";
-          systemPlatform = "x86_64-linux";
-          systemType = "server";
+          platform = "x86_64-linux";
+          type = "server";
 
           network = {
             hostName = "plum";
@@ -343,6 +338,8 @@
               443
             ];
           };
+
+          unfree.allowedNames = [ "claude-code" ];
 
           forgejo-action-runner = {
             withDocker = true;
@@ -385,7 +382,6 @@
 
   flake.nixosConfigurations.kiwi = inputs.os.lib.nixosSystem {
     specialArgs = { inherit inputs; };
-    system = "x86_64-linux";
     modules = with inputs.self.modules.nixos; [
       acme
       boot-server
@@ -414,7 +410,7 @@
       rust
       secret-manager
       sudo-server
-      system-types
+      system
       tailscale
       theme
       unfree
@@ -425,9 +421,8 @@
       yubikey
       {
         config = {
-          operatingSystem = "linux";
-          systemPlatform = "x86_64-linux";
-          systemType = "server";
+          platform = "x86_64-linux";
+          type = "server";
 
           network = {
             hostName = "kiwi";
@@ -438,6 +433,8 @@
               443
             ];
           };
+
+          unfree.allowedNames = [ "claude-code" ];
 
           forgejo-action-runner = {
             withDocker = true;
@@ -480,7 +477,6 @@
 
   flake.nixosConfigurations.blackwell = inputs.os.lib.nixosSystem {
     specialArgs = { inherit inputs; };
-    system = "x86_64-linux";
     modules = with inputs.self.modules.nixos; [
       boot-server
       disable-nano
@@ -507,7 +503,7 @@
       rust
       secret-manager
       sudo-server
-      system-types
+      system
       tailscale
       theme
       unfree
@@ -516,9 +512,8 @@
       yubikey
       {
         config = {
-          operatingSystem = "linux";
-          systemPlatform = "x86_64-linux";
-          systemType = "server";
+          platform = "x86_64-linux";
+          type = "server";
 
           network = {
             hostName = "blackwell";
@@ -526,6 +521,8 @@
               22
             ];
           };
+
+          unfree.allowedNames = [ "claude-code" ];
 
           forgejo-action-runner = {
             withDocker = true;
@@ -581,18 +578,18 @@
       rust-desktop
       secret-manager
       sudo
-      system-types
+      system
       tailscale
       unfree
       users
       {
-        config.operatingSystem = "darwin";
-        config.systemPlatform = "aarch64-darwin";
-        config.systemType = "desktop";
+        config.platform = "aarch64-darwin";
+        config.type = "desktop";
 
         config.network.hostName = "lime";
 
         config.unfree.allowedNames = [
+          "claude-code"
           "raycast"
         ];
 
