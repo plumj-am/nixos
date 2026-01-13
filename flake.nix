@@ -87,6 +87,19 @@
     inputs.xwayland-satellite-unstable.follows = "";
   };
 
+  inputs.quickshell = {
+    url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
+
+    inputs.nixpkgs.follows = "os";
+  };
+
+  inputs.qml-niri = {
+    url = "github:imiric/qml-niri/main";
+
+    inputs.nixpkgs.follows = "os";
+    inputs.quickshell.follows = "quickshell";
+  };
+
   inputs.opencode = {
     url = "github:anomalyco/opencode";
 

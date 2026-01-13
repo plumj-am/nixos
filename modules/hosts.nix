@@ -32,6 +32,7 @@
       packages-extra-desktop
       power-menu
       process-management
+      quickshell
       rebuild
       rust-desktop
       scratchpads
