@@ -1,10 +1,16 @@
 {
   config.flake.modules.hjem.git =
-    { config, lib, ... }:
+    {
+      pkgs,
+      config,
+      lib,
+      ...
+    }:
     let
       inherit (lib) mkDefault;
     in
     {
+      packages = [ pkgs.gh ];
       rum.programs.git = {
         enable = true;
 
