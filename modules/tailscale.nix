@@ -5,8 +5,7 @@
       domains = [ "taild29fec.ts.net" ];
     in
     {
-      services.resolved.domains = domains;
-
+      services.resolved.settings.Resolve.Domains = domains;
       services.tailscale = {
         enable = true;
 
