@@ -2,7 +2,7 @@
   config.flake.modules.nixos.users =
     { pkgs, config, ... }:
     let
-      keys = config.flake.keys;
+      inherit (config.flake) keys;
     in
     {
       # users.mutableUsers = false;
@@ -45,7 +45,7 @@
   config.flake.modules.darwin.users =
     { pkgs, config, ... }:
     let
-      keys = config.flake.keys;
+      inherit (config.flake) keys;
     in
     {
       system.primaryUser = "jam";

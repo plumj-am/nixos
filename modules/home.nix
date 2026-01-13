@@ -15,8 +15,8 @@
       hjemModules = attrValues inputs.self.modules.hjem;
 
       themeModule = inputs.self.modules.nixos.theme;
-      theme =
-        (evalModules {
+      inherit
+        ((evalModules {
           specialArgs = {
             inherit
               lib
@@ -29,7 +29,10 @@
             themeModule
             { config.useTheme = true; }
           ];
-        }).config.theme;
+        }).config
+        )
+        theme
+        ;
     in
     {
       imports = [

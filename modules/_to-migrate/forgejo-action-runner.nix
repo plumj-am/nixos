@@ -65,8 +65,8 @@
             enable = true;
             name = config.networking.hostName;
             tokenFile = config.age.secrets.forgejoRunnerToken.path;
-            url = config.ci-runner.url;
-            labels = config.ci-runner.labels;
+            inherit (config.ci-runner) url;
+            inherit (config.ci-runner) labels;
 
             settings.cache.enabled = false;
 

@@ -40,7 +40,7 @@
           hostKeys = [
             {
               type = "ed25519";
-              path = config.age.secrets.id.path;
+              inherit (config.age.secrets.id) path;
             }
           ];
           settings = {

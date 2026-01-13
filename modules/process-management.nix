@@ -135,7 +135,7 @@
           }
 
         if ($existing | is-empty) {
-          ^${pkgs.kitty}/bin/kitty --detach --class $class_name --title "Process Monitor" --override remember_window_size=no --override initial_window_width=44c --override initial_window_height=16c --override window_padding_width=${toString (config.theme.padding.small)} ${pkgs.btop}/bin/btop --config ${processMonitorConfig}
+          ^${pkgs.kitty}/bin/kitty --detach --class $class_name --title "Process Monitor" --override remember_window_size=no --override initial_window_width=44c --override initial_window_height=16c --override window_padding_width=${toString config.theme.padding.small} ${pkgs.btop}/bin/btop --config ${processMonitorConfig}
         } else if $compositor == "niri" and $niri_bin != null {
           let id = ($existing | first | get id?)
           if $id != null { ^$niri_bin msg action close-window --id $id }

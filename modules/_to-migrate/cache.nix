@@ -49,7 +49,7 @@ in
       package = pkgs.nix-serve-ng;
       secretKeyFile = config.age.secrets.nixServeKey.path;
       bindAddress = "127.0.0.1";
-      port = config.cache.port;
+      inherit (config.cache) port;
     };
 
     services.nginx.virtualHosts.${config.cache.fqdn} = merge config.services.nginx.sslTemplate {

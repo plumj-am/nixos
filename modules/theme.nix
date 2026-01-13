@@ -246,10 +246,13 @@ in
 
       config = mkIf config.useTheme {
         theme = theme.design_system // {
-          is_dark = theme.is_dark;
-          color_scheme = theme.color_scheme;
-          variant = theme.variant;
-          colors = theme.colors;
+          inherit (theme)
+            themes
+            is_dark
+            color_scheme
+            variant
+            colors
+            ;
 
           withHash = mapAttrs (_name: value: "#${value}") theme.colors;
           with0x = mapAttrs (_name: value: "0x${value}") theme.colors;
@@ -266,8 +269,6 @@ in
           helix = theme.get_theme "helix";
           gtk = theme.get_theme "gtk";
           qt = theme.get_theme "qt";
-
-          themes = theme.themes;
 
           font = {
             size.small = 12;
@@ -327,10 +328,13 @@ in
 
       config = mkIf config.useTheme {
         theme = theme.design_system // {
-          is_dark = theme.is_dark;
-          color_scheme = theme.color_scheme;
-          variant = theme.variant;
-          colors = theme.colors;
+          inherit (theme)
+            themes
+            is_dark
+            color_scheme
+            variant
+            colors
+            ;
 
           withHash = mapAttrs (_name: value: "#${value}") theme.colors;
           with0x = mapAttrs (_name: value: "0x${value}") theme.colors;
@@ -347,8 +351,6 @@ in
           helix = theme.get_theme "helix";
           gtk = theme.get_theme "gtk";
           qt = theme.get_theme "qt";
-
-          themes = theme.themes;
 
           font = {
             size.small = 12;

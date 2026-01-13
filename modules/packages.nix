@@ -35,6 +35,7 @@ let
       pkgs.pnpm
       pkgs.proto
       pkgs.deadnix
+      pkgs.statix
     ];
 
   desktopApps =

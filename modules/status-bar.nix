@@ -156,8 +156,8 @@
               linear-gradient(rgba(${concatStringsSep ", " (map toString theme.withRgb.base00)}, ${toString theme.opacity.verylow}), rgba(${concatStringsSep ", " (map toString theme.withRgb.base00)}, ${toString theme.opacity.verylow})) padding-box,
               linear-gradient(225deg, ${base0B}, ${base09}) border-box;
             color: ${base07};
-            border: ${toString (theme.border.small)}px solid transparent;
-            border-radius: ${toString (theme.radius.normal)}px;
+            border: ${toString theme.border.small}px solid transparent;
+            border-radius: ${toString theme.radius.normal}px;
           }
 
           #window {
@@ -166,7 +166,7 @@
 
           #workspaces button {
             padding: 0 ${toString theme.padding.normal}px;
-            border: ${toString (theme.border.small)}px solid transparent;
+            border: ${toString theme.border.small}px solid transparent;
             border-radius: ${toString theme.radius.normal}px;
           }
 
