@@ -76,7 +76,6 @@ let
           password.rekeyFile = ../secrets/${host}-password.age;
           s3AccessKey.rekeyFile = ../secrets/s3-access-key.age;
           s3SecretKey.rekeyFile = ../secrets/s3-secret-key.age;
-          nixStoreKey.rekeyFile = ../secrets/${host}-nix-store-key.age;
           context7Key = {
             rekeyFile = ../secrets/context7-key.age;
             owner = "jam";
@@ -149,6 +148,10 @@ in
           config = mkConfig "yuzu" "x86_64-linux" "desktop" {
             age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFDLlddona4PlORWd+QpR/7F5H46/Dic9vV23/YSrZl0 root@yuzu";
 
+            age.secrets = {
+              nixStoreKey.rekeyFile = ../secrets/yuzu-nix-store-key.age;
+            };
+
             system.stateVersion = "26.05";
           };
         }
@@ -170,6 +173,11 @@ in
         {
           config = mkConfig "date" "x86_64-linux" "desktop" {
             age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEzfoVKZDyiyyMiX1JRFaaTELspG25MlLNq0kI2AANTa root@date";
+
+            age.secrets = {
+              # TODO
+              # nixStoreKey.rekeyFile = ../secrets/yuzu-nix-store-key.age;
+            };
 
             system.stateVersion = "26.05";
           };
@@ -197,6 +205,11 @@ in
         {
           config = mkConfig "pear" "x86_64-linux" "wsl" {
             age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL2/Pg/5ohT3Dacnzjw9pvkeoQ1hEFwG5l1vRkr3v2sQ root@pear";
+
+            age.secrets = {
+              # TODO
+              # nixStoreKey.rekeyFile = ../secrets/yuzu-nix-store-key.age;
+            };
 
             system.stateVersion = "26.05";
           };
@@ -241,6 +254,7 @@ in
               forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
               forgejoAdminPassword.rekeyFile = ../secrets/plum-forgejo-password.age;
               acmeEnvironment.rekeyFile = ../secrets/acme-environment.age;
+              nixStoreKey.rekeyFile = ../secrets/plum-nix-store-key.age;
             };
 
             system.stateVersion = "26.05";
@@ -284,6 +298,7 @@ in
               forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
               acmeEnvironment.rekeyFile = ../secrets/acme-environment.age;
               drRadkaEnvironment.rekeyFile = ../secrets/kiwi-dr-radka-environment.age;
+              nixStoreKey.rekeyFile = ../secrets/kiwi-nix-store-key.age;
             };
 
             system.stateVersion = "26.05";
@@ -314,6 +329,7 @@ in
             age.secrets = {
               forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
               acmeEnvironment.rekeyFile = ../secrets/acme-environment.age;
+              nixStoreKey.rekeyFile = ../secrets/blackwell-nix-store-key.age;
             };
 
             system.stateVersion = "26.05";
