@@ -1,37 +1,29 @@
 let
   commonModule = {
-    boot.loader = {
-      efi.canTouchEfiVariables = true;
-      grub.device = "nodev";
+    boot = {
+      tmp.cleanOnBoot = true;
+      loader = {
+        systemd-boot.enable = true;
+        efi.canTouchEfiVariables = true;
+        grub = {
+          device = "nodev";
+          efiSupport = true;
+          efiInstallAsRemovable = true;
+        };
+      };
+      initrd.availableKernelModules = [
+        "ahci"
+        "nvme"
+        "xhci_pci"
+        "usb_storage"
+        "sd_mod"
+      ];
     };
-
-    boot.initrd.availableKernelModules = [
-      "ahci"
-      "nvme"
-      "xhci_pci"
-      "usb_storage"
-      "sd_mod"
-    ];
   };
 in
 {
-  flake.modules.nixos.boot-desktop =
-    { lib, ... }:
-    let
-      inherit (lib.lists) singleton;
-    in
-    {
-      imports = singleton commonModule;
-      boot.tmp.cleanOnBoot = true;
+  flake.modules.nixos.boot-desktop = commonModule;
 
-      boot.loader.systemd-boot.enable = true;
-      boot.loader.grub = {
-        efiSupport = true;
-        efiInstallAsRemovable = true;
-      };
-    };
-
-  # TODO?
   flake.modules.nixos.boot-server =
     { modulesPath, ... }:
     {
