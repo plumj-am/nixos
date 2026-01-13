@@ -5,6 +5,7 @@
 
   flake.modules.hjem.waybar =
     {
+      pkgs,
       lib,
       theme,
       isDesktop,
@@ -13,7 +14,12 @@
     }:
     let
       inherit (lib.modules) mkIf;
+      inherit (lib.meta) getExe getExe';
       inherit (builtins) concatStringsSep map toString;
+
+      nu = "${getExe pkgs.nushell} -c";
+      kitty = "${getExe pkgs.kitty} --hold";
+      btop = getExe pkgs.btop;
 
       enable = true;
     in
@@ -70,10 +76,10 @@
               "format-icons": {
                 "default": ["󰕿", "󰖀", "󰕾"]
               },
-              "on-click": "pwvucontrol",
-              "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+              "on-click": "${getExe pkgs.pwvucontrol}",
+              "on-click-right": "${getExe' pkgs.wireplumber "wpctl"} set-mute @DEFAULT_AUDIO_SINK@ toggle",
               "tooltip": true,
-              "tooltip-format": "Volume: {volume}%\nClick: Open audio manager\nRight-click: Mute toggle"
+              "tooltip-format": "Volume: {volume}%"
             },
 
             "cpu": {
@@ -81,7 +87,7 @@
               "tooltip": true,
               "tooltip-format": "CPU Usage: {usage}%\nLoad: {load}",
               "interval": 3,
-              "on-click": "kitty btop",
+              "on-click": "${kitty} ${nu} '${btop}'",
               "states": {
                 "warning": 70,
                 "critical": 90
@@ -93,7 +99,7 @@
               "tooltip": true,
               "tooltip-format": "Memory: {used:0.1f}G/{total:0.1f}G ({percentage}%)\nAvailable: {avail:0.1f}G",
               "interval": 3,
-              "on-click": "kitty btop",
+              "on-click": "${kitty} ${nu} '${btop}'",
               "states": {
                 "warning": 70,
                 "critical": 90
@@ -113,12 +119,12 @@
             },
 
             "custom/gpu": {
-              "exec": "bash -c 'if command -v nvidia-smi >/dev/null; then nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits | head -1; elif command -v radeontop >/dev/null; then radeontop -d - -l 1 | grep -o \"gpu [0-9]*\" | cut -d\" \" -f2; else echo \"N/A\"; fi'",
+              "exec": "${nu} 'if command -v nvidia-smi >/dev/null; then nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits | head -1; elif command -v radeontop >/dev/null; then radeontop -d - -l 1 | grep -o \"gpu [0-9]*\" | cut -d\" \" -f2; else echo \"N/A\"; fi'",
               "format": "󰢮  {}%",
               "interval": 5,
               "tooltip": true,
-              "tooltip-format": "GPU Usage: {}%\nClick: Open system monitor",
-              "on-click": "kitty btop",
+              "tooltip-format": "GPU Usage: {}%",
+              "on-click": "${kitty} ${nu} '${btop}'",
               "states": {
                 "warning": 70,
                 "critical": 90
