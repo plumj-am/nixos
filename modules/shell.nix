@@ -157,6 +157,8 @@
 
             ${readFile ./nushell.menus.nu}
             ${readFile ./nushell.functions.nu}
+
+            source $"($nu.cache-dir)/carapace.nu"
           '';
 
         envFile =
@@ -167,6 +169,9 @@
             			$env.config.color_config = (${theme.nushell})
 
             			$env.CARAPACE_BRIDGES = "zsh,fish,bash,inshellisense,clap"
+            			mkdir $"($nu.cache-dir)"
+            			carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu"
+
             			$env.LS_COLORS = (${pkgs.vivid}/bin/vivid generate ${theme.vivid})
 
             			let theme_json = $"($env.HOME)/nixos/modules/theme.json"
