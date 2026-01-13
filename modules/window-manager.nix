@@ -62,7 +62,7 @@
           layer-rule {
             match namespace=r#"waybar|notifications|launcher"#
             shadow {
-              on
+              off
               color "#${toString cfg.theme.colors.base09}33"
               draw-behind-window true
               softness 15
@@ -133,7 +133,7 @@
               urgent-color "#${cfg.theme.colors.base08}"
             }
             shadow {
-              on
+              off
               color "#${toString cfg.theme.colors.base09}DD"
               draw-behind-window false
               softness 10
@@ -144,27 +144,27 @@
             }
           }
 
-          animations {
-            slowdown 2.25
+          // animations {
+          //   slowdown 2.25
 
-            window-open {
-              curve "ease-out-cubic"
-              duration-ms ${toString cfg.theme.duration.ms.normal}
-            }
+          //   window-open {
+          //     curve "ease-out-cubic"
+          //     duration-ms ${toString cfg.theme.duration.ms.normal}
+          //   }
 
-            window-close {
-              curve "ease-out-expo"
-              duration-ms ${toString cfg.theme.duration.ms.short}
-            }
+          //   window-close {
+          //     curve "ease-out-expo"
+          //     duration-ms ${toString cfg.theme.duration.ms.short}
+          //   }
 
-            window-movement {
-              spring damping-ratio=1.0 stiffness=800 epsilon=0.0001
-            }
+          //   window-movement {
+          //     spring damping-ratio=1.0 stiffness=800 epsilon=0.0001
+          //   }
 
-            window-resize {
-              spring damping-ratio=1.0 stiffness=1200 epsilon=0.0001
-            }
-          }
+          //   window-resize {
+          //     spring damping-ratio=1.0 stiffness=1200 epsilon=0.0001
+          //   }
+          // }
 
           cursor {
             hide-when-typing
