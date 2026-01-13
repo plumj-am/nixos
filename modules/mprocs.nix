@@ -7,7 +7,7 @@
       ...
     }:
     let
-      inherit (lib) mkIf;
+      inherit (lib.modules) mkIf;
 
       package = pkgs.mprocs;
     in

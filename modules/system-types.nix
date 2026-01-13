@@ -2,11 +2,13 @@ let
   commonModule =
     { config, lib, ... }:
     let
-      inherit (lib) types mkOption mkIf;
+      inherit (lib.options) mkOption;
+      inherit (lib.modules) mkIf;
+      inherit (lib.types) enum bool;
     in
     {
       options.operatingSystem = mkOption {
-        type = types.enum [
+        type = enum [
           "linux"
           "darwin"
         ];
@@ -16,7 +18,7 @@ let
       };
 
       options.systemType = mkOption {
-        type = types.enum [
+        type = enum [
           "desktop"
           "server"
         ];
@@ -26,25 +28,25 @@ let
       };
 
       options.isLinux = mkOption {
-        type = types.bool;
+        type = bool;
         default = false;
         description = "Whether the system is Linux";
       };
 
       options.isDarwin = mkOption {
-        type = types.bool;
+        type = bool;
         default = false;
         description = "Whether the system is Darwin/macOS";
       };
 
       options.isDesktop = mkOption {
-        type = types.bool;
+        type = bool;
         default = false;
         description = "Whether the system is a desktop";
       };
 
       options.isServer = mkOption {
-        type = types.bool;
+        type = bool;
         default = false;
         description = "Whether the system is a server";
       };

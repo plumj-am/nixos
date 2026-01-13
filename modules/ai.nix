@@ -9,7 +9,8 @@
       ...
     }:
     let
-      inherit (lib) mkIf;
+      inherit (lib.modules) mkIf;
+      inherit (lib.generators) toJSON;
 
       claudeCodePackage = pkgs.symlinkJoin {
         name = "claude-code-wrapped";
@@ -44,7 +45,7 @@
 
       # TODO: Add claude-code and opencode config files.
       files.".claude/settings.json" = {
-        generator = lib.generators.toJSON { };
+        generator = toJSON { };
         value = {
           cleanupPeriodDays = 1000;
           alwaysThinkingEnabled = false;
@@ -220,7 +221,7 @@
       };
 
       files."opencode/opencode.jsonc" = {
-        generator = lib.generators.toJSON { };
+        generator = toJSON { };
         value = {
 
           theme = "gruvbox";

@@ -1,21 +1,33 @@
-{ pkgs, self, config, lib, ... }: let
+{
+  pkgs,
+  self,
+  config,
+  lib,
+  ...
+}:
+let
   inherit (config.networking) domain;
   inherit (lib) enabled mkForce;
 
   fqdn = "git.${domain}";
   port = 8001;
-in {
+in
+{
   imports = [
     ./nginx.nix
   ];
 
   age.secrets.forgejoAdminPassword = {
     rekeyFile = self + /secrets/plum-forgejo-password.age;
-    owner     = "forgejo";
+    owner = "forgejo";
   };
 
   # combine AcceptEnv settings for SSH and Git protocol
-  services.openssh.settings.AcceptEnv = mkForce [ "SHELLS" "COLORTERM" "GIT_PROTOCOL" ];
+  services.openssh.settings.AcceptEnv = mkForce [
+    "SHELLS"
+    "COLORTERM"
+    "GIT_PROTOCOL"
+  ];
 
   # backup configuration for sqlite database and data
   systemd.services.forgejo-backup = {
@@ -50,81 +62,84 @@ in {
     package = pkgs.forgejo; # The service version is ~11 so better to specify and get the latest.
     lfs = enabled;
 
-    user  = "forgejo";
+    user = "forgejo";
 
     database = {
       type = "sqlite3";
     };
 
+    settings =
+      let
+        description = "PlumJam's Git Forge";
+      in
+      {
+        default.APP_NAME = description;
 
-    settings = let
-      description = "PlumJam's Git Forge";
-    in {
-      default.APP_NAME = description;
+        attachment.ALLOWED_TYPES = "*/*";
 
-      attachment.ALLOWED_TYPES = "*/*";
+        cache.ENABLED = true;
 
-      cache.ENABLED = true;
+        # archive cleanup cron job
+        "cron.archive_cleanup" =
+          let
+            interval = "4h";
+          in
+          {
+            SCHEDULE = "@every ${interval}";
+            OLDER_THAN = interval;
+          };
 
-      # archive cleanup cron job
-      "cron.archive_cleanup" = let
-        interval = "4h";
-      in {
-        SCHEDULE   = "@every ${interval}";
-        OLDER_THAN =           interval;
+        other = {
+          SHOW_FOOTER_TEMPLATE_LOAD_TIME = false;
+          SHOW_FOOTER_VERSION = false;
+        };
+
+        packages.ENABLED = true;
+
+        repository = {
+          DEFAULT_BRANCH = "master";
+          DEFAULT_MERGE_STYLE = "rebase-merge";
+          DEFAULT_REPO_UNITS = "repo.code, repo.issues, repo.pulls";
+
+          DEFAULT_PUSH_CREATE_PRIVATE = false;
+          ENABLE_PUSH_CREATE_ORG = true;
+          ENABLE_PUSH_CREATE_USER = true;
+
+          DISABLE_STARS = true;
+        };
+
+        "repository.upload" = {
+          FILE_MAX_SIZE = 100;
+          MAX_FILES = 10;
+        };
+
+        server = {
+          DOMAIN = domain;
+          ROOT_URL = "https://${fqdn}/";
+          LANDING_PAGE = "/explore";
+
+          HTTP_ADDR = "::1";
+          HTTP_PORT = port;
+
+          SSH_DOMAIN = fqdn;
+          SSH_PORT = 22;
+          START_SSH_SERVER = false;
+
+          DISABLE_ROUTER_LOG = true;
+        };
+
+        service.DISABLE_REGISTRATION = true;
+
+        session = {
+          COOKIE_SECURE = true;
+          SAME_SITE = "strict";
+        };
+
+        "ui.meta" = {
+          AUTHOR = description;
+          DESCRIPTION = description;
+        };
       };
-
-      other = {
-        SHOW_FOOTER_TEMPLATE_LOAD_TIME = false;
-        SHOW_FOOTER_VERSION            = false;
-      };
-
-      packages.ENABLED = true;
-
-      repository = {
-        DEFAULT_BRANCH      = "master";
-        DEFAULT_MERGE_STYLE = "rebase-merge";
-        DEFAULT_REPO_UNITS  = "repo.code, repo.issues, repo.pulls";
-
-        DEFAULT_PUSH_CREATE_PRIVATE = false;
-        ENABLE_PUSH_CREATE_ORG      = true;
-        ENABLE_PUSH_CREATE_USER     = true;
-
-        DISABLE_STARS = true;
-      };
-
-      "repository.upload" = {
-        FILE_MAX_SIZE = 100;
-        MAX_FILES     = 10;
-      };
-
-      server = {
-        DOMAIN       = domain;
-        ROOT_URL     = "https://${fqdn}/";
-        LANDING_PAGE = "/explore";
-
-        HTTP_ADDR = "::1";
-        HTTP_PORT = port;
-
-        SSH_DOMAIN       = fqdn;
-        SSH_PORT         = 22;
-        START_SSH_SERVER = false;
-
-        DISABLE_ROUTER_LOG = true;
-      };
-
-      service.DISABLE_REGISTRATION = true;
-
-      session = {
-        COOKIE_SECURE = true;
-        SAME_SITE     = "strict";
-      };
-
-      "ui.meta" = {
-        AUTHOR      = description;
-        DESCRIPTION = description;
-      };
-    };
   };
 
   services.nginx.virtualHosts.${fqdn} = lib.merge config.services.nginx.sslTemplate {

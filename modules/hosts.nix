@@ -49,46 +49,42 @@
       window-manager
       yubikey
       {
-        config.operatingSystem = "linux";
-        config.systemType = "desktop";
+        config = {
+          operatingSystem = "linux";
+          systemType = "desktop";
 
-        config.network = {
-          hostName = "yuzu";
-          interfaces = [ "ts0" ];
-          tcpPorts = [ 22 ];
-        };
+          network.hostName = "yuzu";
 
-        config.unfree.allowedNames = [
-          "nvidia-x11"
-          "nvidia-settings"
-          "steam"
-          "steam-unwrapped"
-        ];
+          unfree.allowedNames = [
+            "nvidia-x11"
+            "nvidia-settings"
+            "steam"
+            "steam-unwrapped"
+          ];
 
-        config.age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFDLlddona4PlORWd+QpR/7F5H46/Dic9vV23/YSrZl0 root@yuzu";
+          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFDLlddona4PlORWd+QpR/7F5H46/Dic9vV23/YSrZl0 root@yuzu";
 
-        config.age.secrets = {
-          id.rekeyFile = ../secrets/yuzu-id.age;
-          password.rekeyFile = ../secrets/yuzu-password.age;
-          context7Key = {
-            rekeyFile = ../secrets/context7-key.age;
-            owner = "jam";
-            mode = "400";
+          age.secrets = {
+            id.rekeyFile = ../secrets/yuzu-id.age;
+            password.rekeyFile = ../secrets/yuzu-password.age;
+            context7Key = {
+              rekeyFile = ../secrets/context7-key.age;
+              owner = "jam";
+              mode = "400";
+            };
+            z-ai-key = {
+              rekeyFile = ../secrets/z-ai-key.age;
+              owner = "jam";
+              mode = "400";
+            };
           };
-          z-ai-key = {
-            rekeyFile = ../secrets/z-ai-key.age;
-            owner = "jam";
-            mode = "400";
-          };
+
+          openssh.enable = true;
+
+          useTheme = true;
+
+          system.stateVersion = "26.05";
         };
-
-        config.openssh = {
-          enable = true;
-        };
-
-        config.useTheme = true;
-
-        config.system.stateVersion = "26.05";
       }
     ];
   };

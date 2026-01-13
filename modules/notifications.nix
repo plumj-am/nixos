@@ -8,7 +8,7 @@
       ...
     }:
     let
-      inherit (lib) mkIf;
+      inherit (lib.modules) mkIf;
 
       ini = pkgs.formats.ini { };
 

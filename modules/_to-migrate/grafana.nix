@@ -1,17 +1,25 @@
-{ self, config, lib, ... }: let
+{
+  self,
+  config,
+  lib,
+  ...
+}:
+let
   inherit (config.networking) domain;
   inherit (lib) enabled merge;
 
   fqdn = "metrics.${domain}";
   port = 8000;
-in {
+in
+{
   imports = [
     (self + /modules/nginx.nix)
-  ] ++ (lib.collectNix ./. |> lib.remove ./default.nix);
+  ]
+  ++ (lib.collectNix ./. |> lib.remove ./default.nix);
 
   age.secrets.grafanaPassword = {
     rekeyFile = self + /secrets/plum-grafana-password.age;
-    owner     = "grafana";
+    owner = "grafana";
   };
 
   systemd.services.grafana = {

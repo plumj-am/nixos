@@ -2,12 +2,16 @@
   config.flake.modules.nixos.network =
     { config, lib, ... }:
     let
-      inherit (lib)
-        mkIf
-        types
-        mkOption
-        mkDefault
+      inherit (lib.modules) mkIf;
+      inherit (lib.types)
+        listOf
+        nullOr
+        str
+        int
+        either
         ;
+      inherit (lib.options) mkOption;
+      inherit (lib) mkDefault;
     in
     {
       # Named "network" to avoid conflicts with the "networking" options.
@@ -15,27 +19,27 @@
       options.network = {
 
         hostName = mkOption {
-          type = types.str;
+          type = str;
           example = "yuzu";
           description = "Host's unique name";
         };
 
         interfaces = mkOption {
-          type = with types; listOf str;
+          type = listOf str;
           example = [ "ts0" ];
           default = [ "ts0" ];
           description = "Network interfaces";
         };
 
         domain = mkOption {
-          type = with types; nullOr str;
+          type = nullOr str;
           default = null;
           example = "example.com";
           description = "Network domain (optional)";
         };
 
         tcpPorts = mkOption {
-          type = with types; listOf (either int str);
+          type = listOf (either int str);
           default = [ 22 ];
           example = [
             22
@@ -72,14 +76,15 @@
   config.flake.modules.darwin.network =
     { config, lib, ... }:
     let
-      inherit (lib) types mkOption;
+      inherit (lib.types) str;
+      inherit (lib.options) mkOption;
     in
     {
       # Named "network" to avoid conflicts with the "networking" options.
       # Not sure if it would even be a problem but oh well.
       options.network = {
         hostName = mkOption {
-          type = types.str;
+          type = str;
           example = "yuzu";
           description = "Host's unique name";
         };

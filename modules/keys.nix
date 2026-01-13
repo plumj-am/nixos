@@ -2,6 +2,10 @@ let
   commonModule =
     { lib, ... }:
     let
+      inherit (lib.options) mkOption;
+      inherit (lib.types) attrsOf anything;
+      inherit (lib.attrsets) attrValues;
+
       keys = {
         jam = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA7WV4+7uhIWQVHEN/2K0jJPTaZ/HbG3W8OKSpzmPBI4 jam";
         plum = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBH1S3dhOYCCltqrseHc3YZFHc9XU90PsvDo7frzUGrr root@plum";
@@ -12,15 +16,15 @@ let
       };
     in
     {
-      options.flake.keys = lib.mkOption {
-        type = with lib.types; attrsOf anything;
+      options.flake.keys = mkOption {
+        type = attrsOf anything;
         default = { };
         description = "SSH public keys";
       };
 
       config.flake.keys = keys // {
         admins = [ keys.jam ];
-        all = builtins.attrValues keys;
+        all = attrValues keys;
       };
     };
 in

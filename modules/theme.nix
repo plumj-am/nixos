@@ -1,17 +1,22 @@
 { lib, ... }:
 let
-  inherit (lib)
-    mkEnableOption
-    mkIf
-    mkOption
-    types
+  inherit (lib.options) mkEnableOption mkOption;
+  inherit (lib.modules) mkIf;
+  inherit (lib.attrsets) mapAttrs;
+  inherit (lib.trivial) fromHexString;
+  inherit (lib.types) attrs;
+  inherit (builtins)
+    fromJSON
+    readFile
+    substring
+    pathExists
     ;
 
   # Shared theme configuration logic
   mkThemeConfig =
-    { lib, pkgs }:
+    { pkgs }:
     let
-      themeConfig = builtins.fromJSON (builtins.readFile ./theme.json);
+      themeConfig = fromJSON (readFile ./theme.json);
       is_dark = themeConfig.mode == "dark";
       color_scheme = themeConfig.scheme;
 
@@ -20,8 +25,8 @@ let
       parse_pywal_colors =
         json:
         let
-          colors = builtins.fromJSON json;
-          strip_hash = s: builtins.substring 1 6 s;
+          colors = fromJSON json;
+          strip_hash = s: substring 1 6 s;
         in
         {
           base00 = strip_hash colors.colors.color0;
@@ -42,7 +47,7 @@ let
           base0F = strip_hash colors.colors.color15;
         };
 
-      pywal_colors_raw = if builtins.pathExists pywal_cache then builtins.readFile pywal_cache else null;
+      pywal_colors_raw = if pathExists pywal_cache then readFile pywal_cache else null;
 
       pywal_colors =
         if pywal_colors_raw != null then parse_pywal_colors pywal_colors_raw else gruvbox_colors.dark;
@@ -97,9 +102,9 @@ let
       hexToRgb =
         hex:
         let
-          r = lib.fromHexString (builtins.substring 0 2 hex);
-          g = lib.fromHexString (builtins.substring 2 2 hex);
-          b = lib.fromHexString (builtins.substring 4 2 hex);
+          r = fromHexString (substring 0 2 hex);
+          g = fromHexString (substring 2 2 hex);
+          b = fromHexString (substring 4 2 hex);
         in
         [
           r
@@ -228,11 +233,11 @@ in
   config.flake.theme =
     { config, pkgs, ... }:
     let
-      theme = mkThemeConfig { inherit lib pkgs; };
+      theme = mkThemeConfig { inherit pkgs; };
     in
     {
       options.theme = mkOption {
-        type = types.attrs;
+        type = attrs;
         default = { };
         description = "Global theme configuration";
       };
@@ -246,9 +251,9 @@ in
           variant = theme.variant;
           colors = theme.colors;
 
-          withHash = lib.mapAttrs (name: value: "#${value}") theme.colors;
-          with0x = lib.mapAttrs (name: value: "0x${value}") theme.colors;
-          withRgb = lib.mapAttrs (name: value: theme.hexToRgb value) theme.colors;
+          withHash = mapAttrs (name: value: "#${value}") theme.colors;
+          with0x = mapAttrs (name: value: "0x${value}") theme.colors;
+          withRgb = mapAttrs (name: value: theme.hexToRgb value) theme.colors;
 
           icons = theme.get_theme "icons";
           alacritty = theme.get_theme "alacritty";
@@ -309,11 +314,11 @@ in
   config.flake.modules.nixos.theme =
     { config, pkgs, ... }:
     let
-      theme = mkThemeConfig { inherit lib pkgs; };
+      theme = mkThemeConfig { inherit pkgs; };
     in
     {
       options.theme = mkOption {
-        type = types.attrs;
+        type = attrs;
         default = { };
         description = "Global theme configuration";
       };
@@ -327,9 +332,9 @@ in
           variant = theme.variant;
           colors = theme.colors;
 
-          withHash = lib.mapAttrs (name: value: "#${value}") theme.colors;
-          with0x = lib.mapAttrs (name: value: "0x${value}") theme.colors;
-          withRgb = lib.mapAttrs (name: value: theme.hexToRgb value) theme.colors;
+          withHash = mapAttrs (name: value: "#${value}") theme.colors;
+          with0x = mapAttrs (name: value: "0x${value}") theme.colors;
+          withRgb = mapAttrs (name: value: theme.hexToRgb value) theme.colors;
 
           icons = theme.get_theme "icons";
           alacritty = theme.get_theme "alacritty";

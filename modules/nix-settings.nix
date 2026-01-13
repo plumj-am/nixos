@@ -8,22 +8,23 @@
       ...
     }:
     let
-      inherit (lib)
+      inherit (lib.modules) mkIf;
+      inherit (lib.attrsets)
         attrsToList
-        concatStringsSep
-        const
-        filter
         filterAttrs
-        flip
-        id
-        isType
+        removeAttrs
         mapAttrs
         mapAttrsToList
-        optionalAttrs
-        optionals
-        removeAttrs
-        mkIf
         ;
+      inherit (lib.strings) concatStringsSep;
+      inherit (lib.trivial)
+        const
+        filter
+        flip
+        id
+        ;
+      inherit (lib.types) isType;
+      inherit (lib.lists) optionals;
 
       registryMap = inputs |> filterAttrs (const <| isType "flake");
     in

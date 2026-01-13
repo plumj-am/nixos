@@ -8,12 +8,15 @@
       ...
     }:
     let
+      inherit (lib.attrsets) attrValues;
+      inherit (lib.modules) evalModules;
+
       hjemModule = inputs.hjem-rum.hjemModules.default;
-      hjemModules = lib.attrValues inputs.self.modules.hjem;
+      hjemModules = attrValues inputs.self.modules.hjem;
 
       themeModule = inputs.self.modules.nixos.theme;
       theme =
-        (lib.evalModules {
+        (evalModules {
           specialArgs = {
             inherit
               lib
@@ -57,8 +60,10 @@
       ...
     }:
     let
+      inherit (lib.attrsets) attrValues;
+
       hjemModule = inputs.hjem-modules.hjemModules.default;
-      hjemModules = lib.attrValues inputs.self.modules.hjem;
+      hjemModules = attrValues inputs.self.modules.hjem;
     in
     {
       imports = [

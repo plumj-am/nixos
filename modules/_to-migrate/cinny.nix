@@ -1,4 +1,11 @@
-{ self, config, lib, pkgs, ... }: let
+{
+  self,
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
   inherit (config.networking) domain;
   inherit (lib) merge;
   inherit (lib.strings) toJSON;
@@ -8,11 +15,11 @@
 
   cinnyConfig = {
     allowCustomHomeservers = false;
-    homeserverList         = [ domain ];
-    defaultHomeserver      = 0;
+    homeserverList = [ domain ];
+    defaultHomeserver = 0;
 
     hashRouter = {
-      enabled  = false;
+      enabled = false;
       basename = "/";
     };
 
@@ -29,9 +36,9 @@
       rooms = [ ];
     };
   };
-in {
+in
+{
   imports = [ (self + /modules/nginx.nix) ];
-
 
   services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
     inherit root;

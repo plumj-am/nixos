@@ -1,8 +1,22 @@
-{ self, config, lib, pkgs, ... }: let
-  inherit (lib) enabled merge mkIf mkOption types;
+{
+  self,
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  inherit (lib.options) mkOption mkEnableOption;
+  inherit (lib.modules) mkIf;
+  inherit (lib)
+    enabled
+    merge
+    types
+    ;
   inherit (config.networking) domain;
-in {
-  imports = [(self + /modules/nginx.nix)];
+in
+{
+  imports = [ (self + /modules/nginx.nix) ];
 
   options.cache = {
     enable = lib.mkEnableOption "nix-serve cache server";
@@ -29,7 +43,7 @@ in {
   config = mkIf config.cache.enable {
     age.secrets.nixServeKey = {
       rekeyFile = config.cache.secretKeyFile;
-      owner     = "root";
+      owner = "root";
     };
 
     services.nix-serve = enabled {

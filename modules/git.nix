@@ -61,6 +61,7 @@
           commit.gpgSign = true;
           tag.gpgSign = true;
           gpg.format = "ssh";
+          # TODO: Check how to use many. This doesn't work.
           credential.helper = # .gitconfig
             ''
               "!gh auth git-credential"
