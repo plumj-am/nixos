@@ -1,9 +1,9 @@
 {
   config.flake.modules.nixos.acme =
-    { config, lib, ... }:
+    { config, ... }:
     let
       inherit (config.network) domain;
-      inherit (lib) mkValue;
+      inherit (config.myLib) mkValue;
     in
     {
       options.security.acme.users = mkValue [ ];
