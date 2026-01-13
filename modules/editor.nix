@@ -13,7 +13,15 @@
       inputs.nixpkgs.follows = "os";
       inputs.rust-overlay.follows = "rust-overlay";
       inputs.git-hooks.follows = "";
+    };
+
+    nufmt = {
+      url = "github:nushell/nufmt";
+
+      inputs.nixpkgs.follows = "os";
       inputs.flake-utils.follows = "flake-utils";
+      inputs.rust-overlay.follows = "rust-overlay";
+      inputs.treefmt-nix.follows = "treefmt";
     };
   };
 
@@ -273,6 +281,25 @@
                   "typos"
                 ];
               }
+              {
+                name = "nu";
+                auto-format = false;
+                formatter.command = "nufmt";
+                formatter.args = [
+                  "--config"
+                  "/home/jam/.config/nufmt/config.nuon"
+                  "--stdin"
+                ];
+                language-servers = [
+                  "nu"
+                  "nu-lint"
+                  "typos"
+                ];
+                indent = {
+                  tab-width = 3;
+                  unit = "   ";
+                };
+              }
               # I can't get this working right now.
               # {
               #   name               = "rust";
@@ -407,9 +434,21 @@
 
         # Nushell
         inputs.nu-lint.packages.${pkgs.stdenv.hostPlatform.system}.default
+        (inputs.nufmt.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
+          doCheck = false;
+        }))
 
         # Typos
         pkgs.typos-lsp
       ];
+
+      xdg.config.files."nufmt/config.nuon".text = # nuon
+        ''
+          {
+            indent: 3
+            line_length: 100
+            margin: 1
+          }
+        '';
     };
 }

@@ -250,6 +250,24 @@
         "type": "github"
       }
     },
+    "flake-utils_2": {
+      "inputs": {
+        "systems": "systems_3"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "gitignore": {
       "inputs": {
         "nixpkgs": [
@@ -494,9 +512,7 @@
     "nu-lint": {
       "inputs": {
         "crane": "crane_3",
-        "flake-utils": [
-          "flake-utils"
-        ],
+        "flake-utils": "flake-utils_2",
         "git-hooks": [],
         "nixpkgs": [
           "os"
@@ -517,6 +533,35 @@
       "original": {
         "type": "git",
         "url": "https://codeberg.org/wvhulle/nu-lint"
+      }
+    },
+    "nufmt": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "os"
+        ],
+        "rust-overlay": [
+          "rust-overlay"
+        ],
+        "treefmt-nix": [
+          "treefmt"
+        ]
+      },
+      "locked": {
+        "lastModified": 1767026547,
+        "narHash": "sha256-VZiRmo9/jxAFCSr2bHrf89qb6o1Obwt2+O3NrIrokZo=",
+        "owner": "nushell",
+        "repo": "nufmt",
+        "rev": "c03e166babe7b77f1a80a7916ab1e8e2437bba06",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nushell",
+        "repo": "nufmt",
+        "type": "github"
       }
     },
     "opencode": {
@@ -734,6 +779,7 @@
         "niri": "niri",
         "nix-auto-follow": "nix-auto-follow",
         "nu-lint": "nu-lint",
+        "nufmt": "nufmt",
         "opencode": "opencode",
         "os": "os",
         "os-darwin": "os-darwin",
@@ -843,6 +889,21 @@
       }
     },
     "systems_2": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "systems_3": {
       "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",

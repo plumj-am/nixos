@@ -88,12 +88,20 @@
     };
     nu-lint = {
       inputs = {
-        flake-utils.follows = "flake-utils";
         git-hooks.follows = "";
         nixpkgs.follows = "os";
         rust-overlay.follows = "rust-overlay";
       };
       url = "git+https://codeberg.org/wvhulle/nu-lint";
+    };
+    nufmt = {
+      inputs = {
+        flake-utils.follows = "flake-utils";
+        nixpkgs.follows = "os";
+        rust-overlay.follows = "rust-overlay";
+        treefmt-nix.follows = "treefmt";
+      };
+      url = "github:nushell/nufmt";
     };
     opencode = {
       inputs.nixpkgs.follows = "os";
