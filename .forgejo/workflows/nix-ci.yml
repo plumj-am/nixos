@@ -64,6 +64,6 @@ jobs:
         name: "Build: yuzu"
         runs-on: plum
         steps:
-            - uses: actions@checkout@v5
+            - uses: actions/checkout@v5
             - name: "Build configuration for yuzu"
               run: nix build .#nixosConfigurations.yuzu.config.system.build.toplevel --accept-flake-config --builders "" --print-build-logs
