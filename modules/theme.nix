@@ -607,6 +607,11 @@ in
           name = "Reload-Applications";
           exec = "tt reload";
         }
+        {
+          name = "Pick-Wallpaper";
+          exec = "pick-wallpaper";
+          terminal = true;
+        }
       ]);
     };
 }
