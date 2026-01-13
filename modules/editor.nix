@@ -132,6 +132,41 @@ let
 
         languages.language =
           let
+            denoFmtArgs = [
+              "fmt"
+              "--use-tabs"
+              "--no-semicolons"
+              "--indent-width"
+              "4"
+              "--unstable-component"
+            ];
+
+            denoJsTsLanguages = [
+              "javascript"
+              "jsx"
+              "typescript"
+              "tsx"
+            ];
+
+            languageConfig =
+              name: extension:
+              {
+                inherit name;
+                auto-format = true;
+                formatter.command = "deno";
+                formatter.args = denoFmtArgs ++ [
+                  "--ext"
+                  extension
+                  "-"
+                ];
+              }
+              // optionalAttrs (elem name denoJsTsLanguages) {
+                language-servers = [
+                  "deno"
+                  "typos"
+                ];
+              };
+
             denoFmtLanguages =
               {
                 astro = "astro";
@@ -149,124 +184,94 @@ let
                 vue = "vue";
                 yaml = "yaml";
               }
-              |> mapAttrs (
-                name: extension:
-                {
-                  inherit name;
-                  auto-format = true;
-                  formatter.command = "deno";
-                  formatter.args = [
-                    "fmt"
-                    "--use-tabs"
-                    "--no-semicolons"
-                    "--indent-width"
-                    "4"
-                    "--unstable-component"
-                    "--ext"
-                    extension
-                    "-"
-                  ];
-                }
-                //
-                  optionalAttrs
-                    (elem name [
-                      "javascript"
-                      "jsx"
-                      "typescript"
-                      "tsx"
-                    ])
-                    {
-                      language-servers = [
-                        "deno"
-                        "typos"
-                      ];
-                    }
-              )
+              |> mapAttrs languageConfig
               |> attrValues;
+
+            baseLanguages = [
+
+              {
+                name = "rust";
+                auto-format = true;
+                language-servers = [
+                  {
+                    name = "rust-analyzer";
+                    except-features = singleton "inlay-hints";
+                  }
+                  "typos"
+                ];
+                indent = {
+                  tab-width = 3;
+                  unit = "   ";
+                };
+              }
+              {
+                name = "nix";
+                auto-format = false;
+                formatter.command = "nixfmt";
+                language-servers = [
+                  "nixd"
+                  "typos"
+                ];
+              }
+              {
+                name = "toml";
+                auto-format = true;
+                formatter.command = "taplo";
+                formatter.args = [
+                  "fmt"
+                  "--option"
+                  "align_entries=true"
+                  "--option"
+                  "column_width=100"
+                  "--option"
+                  "compact_arrays=false"
+                  "--option"
+                  "reorder_inline_tables=true"
+                  "--option"
+                  "reorder_keys=true"
+                  "-"
+                ];
+                language-servers = [
+                  "taplo"
+                  "typos"
+                ];
+              }
+              {
+                name = "markdown";
+                auto-format = true;
+                language-servers = [
+                  "marksman"
+                  "typos"
+                ];
+              }
+              {
+                name = "just";
+                auto-format = true;
+                formatter.command = "just-formatter";
+                language-servers = [
+                  "just-lsp"
+                  "typos"
+                ];
+              }
+              # I can't get this working right now.
+              # {
+              #   name               = "rust";
+              #   debugger.name      = "lldb-dap";
+              #   debugger.transport = "stdio";
+              #   debugger.command   = "lldb-dap";
+              #   debugger.templates = [{
+              #     name         = "binary";
+              #     request      = "launch";
+              #     args.program = "{0}";
+              #     completion   = [{
+              #       name       = "binary";
+              #       completion = "filename";
+              #     }];
+              #   }];
+              # }
+            ];
           in
-          denoFmtLanguages
-          ++ [
-            {
-              name = "rust";
-              auto-format = true;
-              language-servers = [
-                {
-                  name = "rust-analyzer";
-                  except-features = singleton "inlay-hints";
-                }
-                "typos"
-              ];
-              indent = {
-                tab-width = 3;
-                unit = "   ";
-              };
-            }
-            {
-              name = "nix";
-              auto-format = false;
-              formatter.command = "nixfmt";
-              language-servers = [
-                "nixd"
-                "typos"
-              ];
-            }
-            {
-              name = "toml";
-              auto-format = true;
-              formatter.command = "taplo";
-              formatter.args = [
-                "fmt"
-                "--option"
-                "align_entries=true"
-                "--option"
-                "column_width=100"
-                "--option"
-                "compact_arrays=false"
-                "--option"
-                "reorder_inline_tables=true"
-                "--option"
-                "reorder_keys=true"
-                "-"
-              ];
-              language-servers = [
-                "taplo"
-                "typos"
-              ];
-            }
-            {
-              name = "markdown";
-              auto-format = true;
-              language-servers = [
-                "marksman"
-                "typos"
-              ];
-            }
-            {
-              name = "just";
-              auto-format = true;
-              formatter.command = "just-formatter";
-              language-servers = [
-                "just-lsp"
-                "typos"
-              ];
-            }
-            # I can't get this working right now.
-            # {
-            #   name               = "rust";
-            #   debugger.name      = "lldb-dap";
-            #   debugger.transport = "stdio";
-            #   debugger.command   = "lldb-dap";
-            #   debugger.templates = [{
-            #     name         = "binary";
-            #     request      = "launch";
-            #     args.program = "{0}";
-            #     completion   = [{
-            #       name       = "binary";
-            #       completion = "filename";
-            #     }];
-            #   }];
-            # }
-          ];
+          denoFmtLanguages ++ baseLanguages;
 
       };
       rum.programs.nushell.aliases = {
@@ -369,6 +374,7 @@ in
   config.flake.modules.nixos.disable-nano = {
     programs.nano.enable = false;
   };
+
   config.flake.modules.hjem.editor = commonModule;
   config.flake.modules.hjem.editor-extra = editorExtra;
 }
