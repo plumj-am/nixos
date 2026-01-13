@@ -84,25 +84,25 @@ jobs:
                         - modules/linux/**
                         - *shared
 
-    build-date:
-        name: "Build: date"
-        needs: changes
-        if: needs.changes.outputs.date == 'true'
-        runs-on: plum
-        steps:
-            - uses: actions/checkout@v5
-            - name: "Build configuration for date"
-              run: nix build .#nixosConfigurations.date.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
+    # build-date:
+    #     name: "Build: date"
+    #     needs: changes
+    #     if: needs.changes.outputs.date == 'true'
+    #     runs-on: plum
+    #     steps:
+    #         - uses: actions/checkout@v5
+    #         - name: "Build configuration for date"
+    #           run: nix build .#nixosConfigurations.date.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
 
-    build-kiwi:
-        name: "Build: kiwi"
-        needs: changes
-        if: needs.changes.outputs.kiwi == 'true'
-        runs-on: plum
-        steps:
-            - uses: actions/checkout@v5
-            - name: "Build configuration for kiwi"
-              run: nix build .#nixosConfigurations.kiwi.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
+    # build-kiwi:
+    #     name: "Build: kiwi"
+    #     needs: changes
+    #     if: needs.changes.outputs.kiwi == 'true'
+    #     runs-on: plum
+    #     steps:
+    #         - uses: actions/checkout@v5
+    #         - name: "Build configuration for kiwi"
+    #           run: nix build .#nixosConfigurations.kiwi.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
 
     # Until we setup a container for aarch64_darwin.
     # build-lime:
@@ -115,25 +115,25 @@ jobs:
     #         - name: "Build configuration for lime"
     #           run: nix build .#darwinConfigurations.lime.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
 
-    build-pear:
-        name: "Build: pear"
-        needs: changes
-        if: needs.changes.outputs.pear == 'true'
-        runs-on: plum
-        steps:
-            - uses: actions/checkout@v5
-            - name: "Build configuration for pear"
-              run: nix build .#nixosConfigurations.pear.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
+    # build-pear:
+    #     name: "Build: pear"
+    #     needs: changes
+    #     if: needs.changes.outputs.pear == 'true'
+    #     runs-on: plum
+    #     steps:
+    #         - uses: actions/checkout@v5
+    #         - name: "Build configuration for pear"
+    #           run: nix build .#nixosConfigurations.pear.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
 
-    build-plum:
-        name: "Build: plum"
-        needs: changes
-        if: needs.changes.outputs.plum == 'true'
-        runs-on: plum
-        steps:
-            - uses: actions/checkout@v5
-            - name: "Build configuration for plum"
-              run: nix build .#nixosConfigurations.plum.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
+    # build-plum:
+    #     name: "Build: plum"
+    #     needs: changes
+    #     if: needs.changes.outputs.plum == 'true'
+    #     runs-on: plum
+    #     steps:
+    #         - uses: actions/checkout@v5
+    #         - name: "Build configuration for plum"
+    #           run: nix build .#nixosConfigurations.plum.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
 
     build-yuzu:
         name: "Build: yuzu"
