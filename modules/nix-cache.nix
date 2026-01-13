@@ -27,10 +27,10 @@
       imports = singleton inputs.harmonia.nixosModules.harmonia;
 
       options.cache = {
-        subdomain = lib.mkOption {
+        fqdn = lib.mkOption {
           type = types.str;
-          example = "cache1";
-          description = "Subdomain where the cache will be served";
+          example = "cache1.plumj.am";
+          description = "Fully qualified domain where the cache will be served";
         };
       };
 
@@ -44,11 +44,9 @@
           signKeyPaths = singleton config.age.secrets.nixServeKey.path;
         };
 
-        services.nginx.virtualHosts."${config.cache.subdomain}.${domain}" =
-          merge config.services.nginx.sslTemplate
-            {
-              locations."/".proxyPass = "http://127.0.0.1:${toString port}";
-            };
+        services.nginx.virtualHosts.${config.cache.fqdn} = merge config.services.nginx.sslTemplate {
+          locations."/".proxyPass = "http://127.0.0.1:${toString port}";
+        };
       };
     };
 }

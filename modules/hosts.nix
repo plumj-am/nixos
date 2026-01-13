@@ -162,7 +162,7 @@
           };
 
           cache = {
-            subdomain = "cache1";
+            fqdn = "cache1.plumj.am";
           };
 
           forgejo-action-runner = {
