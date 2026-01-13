@@ -24,9 +24,13 @@
       url = "github:oddlama/agenix-rekey";
     };
     claude-code = {
-      inputs.nixpkgs.follows = "os";
+      inputs = {
+        flake-utils.follows = "flake-utils";
+        nixpkgs.follows = "os";
+      };
       url = "github:sadjow/claude-code-nix";
     };
+    crane.url = "github:ipetkov/crane";
     disko = {
       inputs.nixpkgs.follows = "os";
       url = "github:nix-community/disko";
@@ -36,6 +40,7 @@
       url = "github:nix-community/fenix";
     };
     flake-file.url = "github:vic/flake-file";
+    flake-utils.url = "github:numtide/flake-utils";
     harmonia = {
       inputs = {
         flake-parts.follows = "parts";
@@ -45,7 +50,10 @@
       url = "github:nix-community/harmonia";
     };
     helix = {
-      inputs.nixpkgs.follows = "os";
+      inputs = {
+        nixpkgs.follows = "os";
+        rust-overlay.follows = "rust-overlay";
+      };
       url = "github:helix-editor/helix";
     };
     hjem = {
@@ -77,6 +85,15 @@
     nix-auto-follow = {
       inputs.nixpkgs.follows = "os";
       url = "github:fzakaria/nix-auto-follow";
+    };
+    nu-lint = {
+      inputs = {
+        flake-utils.follows = "flake-utils";
+        git-hooks.follows = "";
+        nixpkgs.follows = "os";
+        rust-overlay.follows = "rust-overlay";
+      };
+      url = "git+https://codeberg.org/wvhulle/nu-lint";
     };
     opencode = {
       inputs.nixpkgs.follows = "os";

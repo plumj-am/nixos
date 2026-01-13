@@ -4,6 +4,16 @@
       url = "github:helix-editor/helix";
 
       inputs.nixpkgs.follows = "os";
+      inputs.rust-overlay.follows = "rust-overlay";
+    };
+
+    nu-lint = {
+      url = "git+https://codeberg.org/wvhulle/nu-lint";
+
+      inputs.nixpkgs.follows = "os";
+      inputs.rust-overlay.follows = "rust-overlay";
+      inputs.git-hooks.follows = "";
+      inputs.flake-utils.follows = "flake-utils";
     };
   };
 
@@ -293,6 +303,7 @@
 
   flake.modules.hjem.editor-extra =
     {
+      inputs,
       pkgs,
       lib,
       isDesktop,
@@ -393,6 +404,9 @@
         # Haskell
         pkgs.fourmolu
         pkgs.haskell-language-server
+
+        # Nushell
+        inputs.nu-lint.packages.${pkgs.stdenv.hostPlatform.system}.default
 
         # Typos
         pkgs.typos-lsp

@@ -10,6 +10,7 @@
       url = "github:sadjow/claude-code-nix";
 
       inputs.nixpkgs.follows = "os";
+      inputs.flake-utils.follows = "flake-utils";
     };
   };
 

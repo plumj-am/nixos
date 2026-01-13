@@ -36,6 +36,16 @@
         url = "github:numtide/treefmt-nix";
         inputs.nixpkgs.follows = "os";
       };
+
+      # Removes duplicate between `claude-code` and `nu-lint`.
+      flake-utils = {
+        url = "github:numtide/flake-utils";
+      };
+
+      # Removes duplicate between `harmonia` and `nu-lint`.
+      crane = {
+        url = "github:ipetkov/crane";
+      };
     };
   };
 }
