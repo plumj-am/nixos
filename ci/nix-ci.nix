@@ -42,6 +42,8 @@ in
       build-pear = job "Build: pear" "nixosConfigurations.pear" "plum";
       build-plum = job "Build: plum" "nixosConfigurations.plum" "plum";
       build-yuzu = job "Build: yuzu" "nixosConfigurations.yuzu" "plum";
+
+      build-blackwell = job "Build: blackwell" "nixosConfigurations.blackwell" "blackwell";
     };
   };
 }

@@ -7,6 +7,15 @@ concurrency:
   cancel-in-progress: false
   group: nix-ci-${{ forgejo.ref_name }}
 jobs:
+  build-blackwell:
+    name: 'Build: blackwell'
+    runs-on: blackwell
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5
+    - name: 'Build: blackwell'
+      run: nix build .#nixosConfigurations.blackwell.config.system.build.toplevel
+        --accept-flake-config --builders "" --no-link
   build-date:
     name: 'Build: date'
     runs-on: plum
