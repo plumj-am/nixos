@@ -11,7 +11,7 @@ let
         inherit name;
         run = # bash
           ''
-            nix build ${target}.config.system.build.toplevel --accept-flake-config --builders "" --no-link
+            nix build .#${target}.config.system.build.toplevel --accept-flake-config --builders "" --no-link
           '';
       }
     ];

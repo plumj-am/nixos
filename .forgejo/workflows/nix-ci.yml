@@ -14,7 +14,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: 'Build: date'
-      run: nix build nixosConfigurations.date.config.system.build.toplevel --accept-flake-config
+      run: nix build .#nixosConfigurations.date.config.system.build.toplevel --accept-flake-config
         --builders "" --no-link
   build-kiwi:
     name: 'Build: kiwi'
@@ -23,7 +23,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: 'Build: kiwi'
-      run: nix build nixosConfigurations.kiwi.config.system.build.toplevel --accept-flake-config
+      run: nix build .#nixosConfigurations.kiwi.config.system.build.toplevel --accept-flake-config
         --builders "" --no-link
   build-pear:
     name: 'Build: pear'
@@ -32,7 +32,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: 'Build: pear'
-      run: nix build nixosConfigurations.pear.config.system.build.toplevel --accept-flake-config
+      run: nix build .#nixosConfigurations.pear.config.system.build.toplevel --accept-flake-config
         --builders "" --no-link
   build-plum:
     name: 'Build: plum'
@@ -41,7 +41,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: 'Build: plum'
-      run: nix build nixosConfigurations.plum.config.system.build.toplevel --accept-flake-config
+      run: nix build .#nixosConfigurations.plum.config.system.build.toplevel --accept-flake-config
         --builders "" --no-link
   build-yuzu:
     name: 'Build: yuzu'
@@ -50,7 +50,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: 'Build: yuzu'
-      run: nix build nixosConfigurations.yuzu.config.system.build.toplevel --accept-flake-config
+      run: nix build .#nixosConfigurations.yuzu.config.system.build.toplevel --accept-flake-config
         --builders "" --no-link
 name: Nix CI
 'on':
