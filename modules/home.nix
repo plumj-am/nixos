@@ -35,32 +35,13 @@ in
       lib,
       inputs,
       config,
-      pkgs,
       ...
     }:
     let
       inherit (lib.attrsets) attrValues;
-      inherit (lib.modules) evalModules;
 
       hjemModule = inputs.hjem-rum.hjemModules.default;
       hjemModules = attrValues inputs.self.modules.hjem;
-
-      themeModule = inputs.self.modules.nixos.theme;
-      inherit
-        ((evalModules {
-          specialArgs = {
-            inherit
-              lib
-              pkgs
-              inputs
-              config
-              ;
-          };
-          modules = [ themeModule ];
-        }).config
-        )
-        theme
-        ;
     in
     {
       imports = [
@@ -69,7 +50,7 @@ in
           hjem.extraModules = [ hjemModule ] ++ hjemModules;
 
           hjem.specialArgs = commonSpecialArgs config inputs // {
-            inherit theme;
+            theme = config.theme;
           };
         }
       ];
