@@ -1,3 +1,4 @@
+# TODO: Deduplicate.
 { lib, ... }:
 let
   inherit (lib.options) mkEnableOption mkOption;
@@ -473,18 +474,7 @@ in
         def print-notify [message: string, progress: int = -1] {
           print $"(ansi purple)[Theme Switcher](ansi rst) ($message)"
 
-          let is_error = ($message | str downcase | str contains "error")
-          let urgency = if $is_error { "critical" } else { "normal" }
-
-          let timeout = 5000
-
-          let args = if $progress >= 0 and $progress < 100 {
-            ["--hint" $"int:value:($progress)"]
-          } else {
-            []
-          }
-
-          ^${pkgs.libnotify}/bin/notify-send ...$args --urgency=($urgency) --expire-time=($timeout) "Theme Switcher" $"($message)"
+          ^${pkgs.libnotify}/bin/notify-send "Theme Switcher" $"($message)"
         }
 
         def generate-pywal-colors [wallpaper: string, is_dark: bool] {
@@ -526,7 +516,7 @@ in
           print-notify $"Switching to ($new_theme) theme."
 
           if $using_pywal {
-            print-notify "Regenerating pywal colors..." 20
+            print-notify "Regenerating pywal colors..."
 
             let wallpaper = try {
               ^${pkgs.swww}/bin/swww query | lines | first | parse "{monitor}: image: {path}" | get path.0
@@ -537,24 +527,24 @@ in
             if $wallpaper != null and ($wallpaper | path exists) {
               try {
                 generate-pywal-colors $wallpaper ($new_theme == "dark")
-                print-notify $"Regenerated ($new_theme) mode pywal colors." 30
+                print-notify $"Regenerated ($new_theme) mode pywal colors."
               } catch { |e|
-                print-notify $"Warning: Failed to regenerate pywal colors: ($e.msg)" 30
+                print-notify $"Warning: Failed to regenerate pywal colors: ($e.msg)"
               }
             } else {
-              print-notify "Warning: Could not detect current wallpaper" 30
+              print-notify "Warning: Could not detect current wallpaper"
             }
           }
 
-          print-notify "Updating theme configuration..." 40
+          print-notify "Updating theme configuration..."
           $env.THEME_MODE = $new_theme
 
           let theme_json = $"($env.HOME)/nixos/modules/theme.json"
           { mode: $new_theme, scheme: $theme_config.scheme } | to json | save $theme_json --force
 
-          print-notify $"($new_theme | str capitalize) mode activated." 50
+          print-notify $"($new_theme | str capitalize) mode activated."
 
-          print-notify $"Rebuilding configuration to apply ($new_theme) theme." 75
+          print-notify $"Rebuilding configuration to apply ($new_theme) theme."
 
           try {
             ^rebuild --quiet
@@ -563,7 +553,7 @@ in
             exit 1
           }
 
-          print-notify $"Switch to the ($new_theme) theme completed!" 100
+          print-notify $"Switch to the ($new_theme) theme completed!"
         }
 
         def switch-scheme [scheme: string] {
@@ -581,7 +571,7 @@ in
           }
 
           if $scheme == "pywal" {
-            print-notify "Generating pywal colors from current wallpaper..." 25
+            print-notify "Generating pywal colors from current wallpaper..."
 
             let is_dark = $theme_config.mode == "dark"
 
@@ -594,12 +584,12 @@ in
             if $wallpaper != null and ($wallpaper | path exists) {
               try {
                 generate-pywal-colors $wallpaper $is_dark
-                print-notify "Generated pywal colors." 50
+                print-notify "Generated pywal colors."
               } catch { |e|
-                print-notify $"Warning: Failed to generate colors: ($e.msg)" 50
+                print-notify $"Warning: Failed to generate colors: ($e.msg)"
               }
             } else {
-              print-notify "Warning: Could not detect current wallpaper" 50
+              print-notify "Warning: Could not detect current wallpaper"
             }
           }
 
@@ -610,7 +600,7 @@ in
 
           print $"Updated THEME_SCHEME to ($scheme)"
 
-          print-notify $"Rebuilding configuration to apply ($scheme) scheme..." 75
+          print-notify $"Rebuilding configuration to apply ($scheme) scheme..."
 
           try {
             ^rebuild --quiet
@@ -619,7 +609,7 @@ in
             exit 1
           }
 
-          print-notify $"Switch to ($scheme) scheme completed!" 100
+          print-notify $"Switch to ($scheme) scheme completed!"
         }
 
         def --wrapped main [

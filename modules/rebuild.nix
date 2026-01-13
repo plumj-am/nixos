@@ -5,21 +5,10 @@
       rebuildScript = pkgs.writeScriptBin "rebuild" /* nu */ ''
         #!${pkgs.nushell}/bin/nu
 
-        def print-notify [message: string, progress: int = -1] {
+        def print-notify [message: string] {
           print $"(ansi purple)[Rebuilder](ansi rst) ($message)"
 
-          let is_error = ($message | str downcase | str contains "error")
-          let urgency = if $is_error { "critical" } else { "normal" }
-
-          let timeout = 5000
-
-          let args = if $progress >= 0 and $progress < 100 {
-            ["--hint" $"int:value:($progress)"]
-          } else {
-            []
-          }
-
-          ^${pkgs.libnotify}/bin/notify-send ...$args --urgency=($urgency) --expire-time=($timeout) "Rebuilder" $"($message)"
+          ^${pkgs.libnotify}/bin/notify-send "Rebuilder" $"($message)"
         }
 
         def --wrapped main [
@@ -78,7 +67,7 @@
           # Execute final command.
           let action = if $remote { $"Deploying to: ($host)" } else { "Building locally:" }
           let platform = if $os == "Darwin" { "Darwin" } else { "NixOS" }
-          if not $quiet { print-notify $"($action) ($platform). Configuration for: ($host)." 50 }
+          if not $quiet { print-notify $"($action) ($platform). Configuration for: ($host)." }
 
           if $remote {
             for attempts in 1..($try_attempts + 1) {
@@ -111,9 +100,9 @@
           }
 
           if $rollback {
-            if not $quiet { print-notify $"Rollback for ($host) succeeded." 100 }
+            if not $quiet { print-notify $"Rollback for ($host) succeeded." }
           } else {
-            if not $quiet { print-notify $"Rebuild for ($host) succeeded." 100 }
+            if not $quiet { print-notify $"Rebuild for ($host) succeeded." }
           }
         }
       '';
