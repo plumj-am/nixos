@@ -472,9 +472,9 @@
 
         # Nushell
         inputs.nu-lint.packages.${pkgs.stdenv.hostPlatform.system}.default
-        (inputs.nufmt.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
+        (inputs.nufmt.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs {
           doCheck = false;
-        }))
+        })
 
         # Typos
         pkgs.typos-lsp

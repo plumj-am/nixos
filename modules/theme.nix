@@ -239,7 +239,7 @@ let
 in
 {
   flake.modules.nixos.theme =
-    { pkgs, lib, ... }:
+    { pkgs, ... }:
     let
       theme = mkThemeConfig { inherit pkgs; };
     in
