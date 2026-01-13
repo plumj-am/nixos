@@ -60,8 +60,8 @@
               export AWS_ACCESS_KEY_ID=$(cat ${secrets.s3AccessKey.path})
               export AWS_SECRET_ACCESS_KEY=$(cat ${secrets.s3SecretKey.path})
 
-              # Minimum size to upload (512 KiB)
-              MIN_SIZE=524288
+              # Minimum size to upload (128 KiB)
+              MIN_SIZE=131072
 
               # Sign the output paths
               for output in $OUT_PATHS; do
