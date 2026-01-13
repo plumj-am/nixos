@@ -41,7 +41,7 @@
       keyboard
       keys
       locale
-      linux-kernel-desktop
+      linux-kernel-zen
       mouse
       netrc
       network

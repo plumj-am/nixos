@@ -146,7 +146,7 @@ in
       boot.kernelPackages = pkgs.linuxPackages_latest;
     };
 
-  config.flake.modules.nixos.linux-kernel-desktop =
+  config.flake.modules.nixos.linux-kernel-zen =
     { pkgs, ... }:
     {
       imports = [ commonModule ];
