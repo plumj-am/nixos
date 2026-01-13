@@ -255,7 +255,7 @@
 
     };
   config.flake.modules.nixos.window-manager =
-    { pkgs, ... }:
+    { inputs, pkgs, ... }:
     {
       xdg.portal = {
         enable = true;
@@ -282,6 +282,7 @@
 
       environment.systemPackages = [
         pkgs.xwayland-satellite
+        inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable
 
         (pkgs.writeTextFile {
           name = "screenshot";
