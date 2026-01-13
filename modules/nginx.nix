@@ -2,16 +2,13 @@
   config.flake.modules.nixos.nginx =
     {
       config,
-      lib,
       ...
     }:
     let
       inherit (config.networking) domain;
-      inherit (lib.modules) mkConst;
+      inherit (config.myLib) mkConst;
     in
     {
-      imports = [ ./acme.nix ];
-
       options.services.nginx.sslTemplate = mkConst {
         forceSSL = true;
         quic = true;
