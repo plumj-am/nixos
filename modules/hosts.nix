@@ -207,6 +207,85 @@
     ];
   };
 
+  flake.nixosConfigurations.pear = inputs.os.lib.nixosSystem {
+    specialArgs = { inherit inputs; };
+    system = "x86_64-linux";
+
+    modules = with inputs.self.modules.nixos; [
+      inputs.os-wsl.nixosModules.default
+
+      desktop-tools
+      disable-nano
+      disable-nix-documentation
+      dynamic-binaries
+      hjem
+      jujutsu-extra
+      keys
+      lib
+      locale
+      linux-kernel-zen
+      netrc
+      network
+      nix-settings
+      object-storage
+      openssh
+      packages
+      packages-extra-desktop
+      rebuild
+      rust-desktop
+      scratchpads
+      secret-manager
+      sudo-desktop
+      system-types
+      tailscale
+      theme
+      unfree
+      users
+      virtualisation
+      wsl-settings
+      yubikey
+      {
+        config = {
+          operatingSystem = "linux";
+          systemPlatform = "x86_64-linux";
+          systemType = "wsl";
+
+          network.hostName = "pear";
+
+          unfree.allowedNames = [
+            "nvidia-x11"
+            "nvidia-settings"
+            "steam"
+            "steam-unwrapped"
+          ];
+
+          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL2/Pg/5ohT3Dacnzjw9pvkeoQ1hEFwG5l1vRkr3v2sQ root@pear";
+
+          age.secrets = {
+            id.rekeyFile = ../secrets/pear-id.age;
+            password.rekeyFile = ../secrets/pear-password.age;
+            s3AccessKey.rekeyFile = ../secrets/s3-access-key.age;
+            s3SecretKey.rekeyFile = ../secrets/s3-secret-key.age;
+            # TODO
+            # nixStoreKey.rekeyFile = ../secrets/pear-nix-store-key.age;
+            context7Key = {
+              rekeyFile = ../secrets/context7-key.age;
+              owner = "jam";
+              mode = "400";
+            };
+            zaiKey = {
+              rekeyFile = ../secrets/z-ai-key.age;
+              owner = "jam";
+              mode = "400";
+            };
+          };
+
+          system.stateVersion = "26.05";
+        };
+      }
+    ];
+  };
+
   flake.nixosConfigurations.plum = inputs.os.lib.nixosSystem {
     specialArgs = { inherit inputs; };
     system = "x86_64-linux";
