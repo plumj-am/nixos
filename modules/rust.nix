@@ -40,7 +40,7 @@ let
     };
 in
 {
-  config.flake-file.inputs = {
+  flake-file.inputs = {
     fenix = {
       url = "github:nix-community/fenix";
 
@@ -48,7 +48,7 @@ in
     };
   };
 
-  config.flake.modules.nixos.rust =
+  flake.modules.nixos.rust =
     { pkgs, inputs, ... }:
     {
       imports = [
@@ -69,7 +69,7 @@ in
       ];
     };
 
-  config.flake.modules.nixos.rust-desktop =
+  flake.modules.nixos.rust-desktop =
     { pkgs, inputs, ... }:
     {
       imports = [
@@ -78,7 +78,7 @@ in
       ];
     };
 
-  config.flake.modules.darwin.rust-desktop =
+  flake.modules.darwin.rust-desktop =
     {
       lib,
       pkgs,

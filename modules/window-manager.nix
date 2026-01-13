@@ -1,5 +1,5 @@
 {
-  config.flake-file.inputs = {
+  flake-file.inputs = {
     niri = {
       url = "github:sodiboo/niri-flake";
 
@@ -11,7 +11,7 @@
     };
   };
 
-  config.flake.modules.hjem.window-manager =
+  flake.modules.hjem.window-manager =
     {
       inputs,
       pkgs,
@@ -292,7 +292,7 @@
       };
 
     };
-  config.flake.modules.nixos.window-manager =
+  flake.modules.nixos.window-manager =
     { inputs, pkgs, ... }:
     {
       xdg.portal = {
@@ -350,5 +350,5 @@
     };
 
   # TODO: MacOS scrolling window manager?
-  config.flake.modules.darwin.window-manager = { };
+  flake.modules.darwin.window-manager = { };
 }

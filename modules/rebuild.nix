@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.rebuild =
+  flake.modules.nixos.rebuild =
     { pkgs, ... }:
     let
       rebuildScript = pkgs.writeScriptBin "rebuild" /* nu */ ''

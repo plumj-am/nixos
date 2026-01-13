@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.prometheus-node-exporter = {
+  flake.modules.nixos.prometheus-node-exporter = {
     services.prometheus.exporters.node = {
       enable = true;
       enabledCollectors = [

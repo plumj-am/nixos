@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.power-menu =
+  flake.modules.nixos.power-menu =
     { pkgs, ... }:
     let
       powerMenu = pkgs.writeShellScriptBin "power-menu" ''

@@ -1,5 +1,5 @@
 {
-  config.flake.modules.hjem.mprocs =
+  flake.modules.hjem.mprocs =
     {
       pkgs,
       lib,

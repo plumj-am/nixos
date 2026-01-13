@@ -1,5 +1,5 @@
 {
-  config.flake-file.inputs = {
+  flake-file.inputs = {
     opencode = {
       url = "github:anomalyco/opencode";
 
@@ -13,7 +13,7 @@
     };
   };
 
-  config.flake.modules.hjem.ai =
+  flake.modules.hjem.ai =
     {
       lib,
       pkgs,

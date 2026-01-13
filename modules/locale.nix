@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.locale = {
+  flake.modules.nixos.locale = {
     time.timeZone = "Europe/Warsaw";
     i18n.defaultLocale = "en_US.UTF-8";
   };

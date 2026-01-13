@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.hardware-desktop =
+  flake.modules.nixos.hardware-desktop =
     { modulesPath, pkgs, ... }:
     {
       imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];

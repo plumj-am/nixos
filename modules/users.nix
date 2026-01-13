@@ -1,6 +1,10 @@
 {
-  config.flake.modules.nixos.users =
-    { pkgs, config, ... }:
+  flake.modules.nixos.users =
+    {
+      pkgs,
+      config,
+      ...
+    }:
     let
       inherit (config.flake) keys;
     in
@@ -42,7 +46,7 @@
       };
     };
 
-  config.flake.modules.darwin.users =
+  flake.modules.darwin.users =
     { pkgs, config, ... }:
     let
       inherit (config.flake) keys;

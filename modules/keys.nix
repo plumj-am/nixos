@@ -29,6 +29,6 @@ let
     };
 in
 {
-  config.flake.modules.nixos.keys = commonModule;
-  config.flake.modules.darwin.keys = commonModule;
+  flake.modules.nixos.keys = commonModule;
+  flake.modules.darwin.keys = commonModule;
 }

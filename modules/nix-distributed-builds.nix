@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.nix-distributed-builds =
+  flake.nixos.nix-distributed-builds =
     {
       inputs,
       config,
@@ -37,7 +37,7 @@
 
     };
 
-  config.flake.modules.nixos.nix-distributed-builder =
+  flake.modules.nixos.nix-distributed-builder =
     { config, lib, ... }:
     let
       inherit (config.flake) keys;

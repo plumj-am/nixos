@@ -1,5 +1,5 @@
 {
-  config.flake-file.inputs = {
+  flake-file.inputs = {
     quickshell = {
       url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
 
@@ -14,7 +14,7 @@
     };
   };
 
-  config.flake.modules.nixos.quickshell =
+  flake.modules.nixos.quickshell =
     { pkgs, inputs, ... }:
     {
       services.upower.enable = true;

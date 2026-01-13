@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.games =
+  flake.modules.nixos.games =
     { pkgs, ... }:
     let
       packages = [

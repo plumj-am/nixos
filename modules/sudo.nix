@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.sudo-desktop = {
+  flake.modules.nixos.sudo-desktop = {
     security.sudo-rs = {
       enable = true;
       execWheelOnly = true;
@@ -13,7 +13,7 @@
     };
   };
 
-  config.flake.modules.nixos.sudo-server = {
+  flake.modules.nixos.sudo-server = {
     security.sudo-rs = {
       enable = true;
       execWheelOnly = true;
@@ -28,7 +28,7 @@
     };
   };
 
-  config.flake.modules.darwin.sudo = {
+  flake.modules.darwin.sudo = {
     security.pam.services.sudo_local = {
       enable = true;
       touchIdAuth = true;

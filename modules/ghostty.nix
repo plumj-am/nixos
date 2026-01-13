@@ -1,5 +1,5 @@
 {
-  config.flake.modules.hjem.ghostty =
+  flake.modules.hjem.ghostty =
     {
       pkgs,
       lib,

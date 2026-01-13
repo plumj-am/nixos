@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.tailscale =
+  flake.modules.nixos.tailscale =
     let
       interface = "ts0";
       domains = [ "taild29fec.ts.net" ];
@@ -14,7 +14,7 @@
       };
     };
 
-  config.flake.modules.darwin.tailscale = {
+  flake.modules.darwin.tailscale = {
     services.tailscale.enable = true;
   };
 }

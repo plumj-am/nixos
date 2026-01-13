@@ -1,9 +1,9 @@
 {
-  config.flake.modules.nixos.waybar = {
+  flake.modules.nixos.waybar = {
     programs.waybar.enable = true;
   };
 
-  config.flake.modules.hjem.waybar =
+  flake.modules.hjem.waybar =
     {
       lib,
       theme,
@@ -220,7 +220,7 @@
         '';
     };
 
-  config.flake.modules.hjem.polybar =
+  flake.modules.hjem.polybar =
     {
       pkgs,
       lib,
@@ -409,7 +409,7 @@
         '';
     };
 
-  config.flake.modules.hjem.ashell =
+  flake.modules.hjem.ashell =
     {
       pkgs,
       lib,

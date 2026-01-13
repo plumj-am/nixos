@@ -231,7 +231,7 @@ let
 
 in
 {
-  config.flake.theme =
+  flake.theme =
     { pkgs, ... }:
     let
       theme = mkThemeConfig { inherit pkgs; };
@@ -312,7 +312,7 @@ in
       };
     };
 
-  config.flake.modules.nixos.theme =
+  flake.modules.nixos.theme =
     { pkgs, ... }:
     let
       theme = mkThemeConfig { inherit pkgs; };
@@ -369,7 +369,7 @@ in
       };
     };
 
-  config.flake.modules.nixos.theme-fonts =
+  flake.modules.nixos.theme-fonts =
     { config, pkgs, ... }:
     {
       console = {
@@ -390,7 +390,7 @@ in
       ];
     };
 
-  config.flake.modules.nixos.theme-scripts =
+  flake.modules.nixos.theme-scripts =
     { pkgs, ... }:
     let
       pickWallpaper = pkgs.writeTextFile {

@@ -1,5 +1,5 @@
 {
-  config.flake.modules.hjem.ssh =
+  flake.modules.hjem.ssh =
     { pkgs, ... }:
     {
       rum.programs.nushell.aliases.mosh = "mosh --no-init";
@@ -23,7 +23,7 @@
       ];
     };
 
-  config.flake.modules.nixos.openssh =
+  flake.modules.nixos.openssh =
     { config, ... }:
     {
       config = {
@@ -47,7 +47,7 @@
       };
     };
 
-  config.flake.modules.darwin.openssh = {
+  flake.modules.darwin.openssh = {
     config = {
       services.openssh.enable = true;
     };

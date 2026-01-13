@@ -1,5 +1,5 @@
 {
-  config.flake.modules.hjem.wsl-backup =
+  flake.modules.hjem.wsl-backup =
     { lib, isWsl, ... }:
     let
       inherit (lib.modules) mkIf;
@@ -95,7 +95,7 @@
       };
     };
 
-  config.flake.modules.nixos.wsl-backup =
+  flake.modules.nixos.wsl-backup =
     { pkgs, ... }:
     {
       systemd.services.nixos-wsl-backup = {

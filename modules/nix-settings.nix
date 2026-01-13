@@ -97,13 +97,13 @@ let
     };
 in
 {
-  config.flake.modules.nixos.nix-settings = {
+  flake.modules.nixos.nix-settings = {
     imports = [
       commonModule
     ];
   };
 
-  config.flake.modules.darwin.nix-settings = {
+  flake.modules.darwin.nix-settings = {
     imports = [
       commonModule
     ];

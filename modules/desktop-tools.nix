@@ -45,7 +45,7 @@ let
     '';
 in
 {
-  config.flake.modules.nixos.desktop-tools =
+  flake.modules.nixos.desktop-tools =
     { pkgs, ... }:
     {
       environment.systemPackages = [
@@ -68,7 +68,7 @@ in
       ];
     };
 
-  config.flake.modules.nixos.scratchpads =
+  flake.modules.nixos.scratchpads =
     { pkgs, ... }:
     let
       mkScratchpad' = mkScratchpad { inherit pkgs; };

@@ -139,14 +139,14 @@ let
 in
 {
 
-  config.flake.modules.nixos.linux-kernel =
+  flake.modules.nixos.linux-kernel =
     { pkgs, ... }:
     {
       imports = [ commonModule ];
       boot.kernelPackages = pkgs.linuxPackages_latest;
     };
 
-  config.flake.modules.nixos.linux-kernel-zen =
+  flake.modules.nixos.linux-kernel-zen =
     { pkgs, ... }:
     {
       imports = [ commonModule ];

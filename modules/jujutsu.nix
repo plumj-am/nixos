@@ -14,7 +14,7 @@ let
 
 in
 {
-  config.flake.modules.hjem.jujutsu =
+  flake.modules.hjem.jujutsu =
     { pkgs, config, ... }:
     let
       toml = pkgs.formats.toml { };
@@ -251,7 +251,7 @@ in
       };
     };
 
-  config.flake.modules.nixos.jujutsu-extra = commonModule;
+  flake.modules.nixos.jujutsu-extra = commonModule;
 
-  config.flake.modules.darwin.jujutsu-extra = commonModule;
+  flake.modules.darwin.jujutsu-extra = commonModule;
 }

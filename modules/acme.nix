@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.acme =
+  flake.modules.nixos.acme =
     { config, ... }:
     let
       inherit (config.network) domain;

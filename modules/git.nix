@@ -1,5 +1,5 @@
 {
-  config.flake.modules.hjem.git =
+  flake.modules.hjem.git =
     {
       pkgs,
       config,

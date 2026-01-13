@@ -63,7 +63,7 @@ let
 in
 {
 
-  config.flake.modules.nixos.packages =
+  flake.modules.nixos.packages =
     { pkgs, lib, ... }:
     let
       inherit (lib.lists) flatten;
@@ -78,7 +78,7 @@ in
         |> flatten;
     };
 
-  config.flake.modules.nixos.packages-extra-desktop =
+  flake.modules.nixos.packages-extra-desktop =
     { pkgs, lib, ... }:
     let
       inherit (lib.lists) flatten;
@@ -92,13 +92,13 @@ in
         |> flatten;
     };
 
-  config.flake.modules.nixos.packages-extra-wsl =
+  flake.modules.nixos.packages-extra-wsl =
     { pkgs, ... }:
     {
       environment.systemPackages = commonDevTools pkgs;
     };
 
-  config.flake.modules.darwin.packages =
+  flake.modules.darwin.packages =
     { pkgs, lib, ... }:
     let
       inherit (lib.lists) flatten;

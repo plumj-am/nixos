@@ -1,6 +1,6 @@
 { self, inputs, ... }:
 {
-  config.flake-file.inputs = {
+  flake-file.inputs = {
     age = {
       url = "github:ryantm/agenix";
 
@@ -19,12 +19,12 @@
     };
   };
 
-  config.flake.agenix-rekey = inputs.age-rekey.configure {
+  flake.agenix-rekey = inputs.age-rekey.configure {
     userFlake = self;
     inherit (self) nixosConfigurations;
   };
 
-  config.flake.modules.nixos.secret-manager =
+  flake.modules.nixos.secret-manager =
     { config, ... }:
     {
       imports = [
@@ -43,7 +43,7 @@
       };
     };
 
-  config.flake.modules.darwin.secret-manager = {
+  flake.modules.darwin.secret-manager = {
     imports = [
       inputs.age.darwinModules.default
     ];

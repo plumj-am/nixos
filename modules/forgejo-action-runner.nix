@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.forgejo-action-runner =
+  flake.modules.nixos.forgejo-action-runner =
     {
       config,
       lib,

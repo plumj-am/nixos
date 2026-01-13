@@ -1,5 +1,5 @@
 {
-  config.flake-file.inputs = {
+  flake-file.inputs = {
     rio = {
       url = "github:raphamorim/rio/main";
 
@@ -12,7 +12,7 @@
 
   # TODO: Configuration.
   # No point configuring yet because it still doesn't work for some reason.
-  # config.flake.modules.hjem.rio =
+  # flake.modules.hjem.rio =
   #   { pkgs, ... }:
   #   {
   #     packages = [

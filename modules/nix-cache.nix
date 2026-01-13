@@ -1,5 +1,5 @@
 {
-  config.flake-file.inputs = {
+  flake-file.inputs = {
     harmonia = {
       url = "github:nix-community/harmonia";
       inputs.nixpkgs.follows = "os";
@@ -8,7 +8,7 @@
     };
   };
 
-  config.flake.modules.nixos.nix-cache =
+  flake.modules.nixos.nix-cache =
     {
       inputs,
       config,

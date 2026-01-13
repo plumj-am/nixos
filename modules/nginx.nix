@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.nginx =
+  flake.modules.nixos.nginx =
     {
       config,
       ...

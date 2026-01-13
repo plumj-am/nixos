@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.audio =
+  flake.modules.nixos.audio =
     { pkgs, ... }:
     {
       services.pipewire = {

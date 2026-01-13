@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.keyboard =
+  flake.modules.nixos.keyboard =
     { pkgs, ... }:
     {
       environment.systemPackages = [ pkgs.vial ];
@@ -13,7 +13,7 @@
       '';
     };
 
-  config.flake.modules.nixos.mouse = {
+  flake.modules.nixos.mouse = {
     services.libinput = {
       enable = true;
       mouse.leftHanded = true;

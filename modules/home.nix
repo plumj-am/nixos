@@ -13,7 +13,7 @@ let
 
 in
 {
-  config.flake-file.inputs = {
+  flake-file.inputs = {
     hjem = {
       follows = "hjem-rum/hjem";
 
@@ -30,7 +30,7 @@ in
     };
   };
 
-  config.flake.modules.nixos.hjem =
+  flake.modules.nixos.hjem =
     {
       lib,
       inputs,
@@ -76,7 +76,7 @@ in
 
     };
 
-  config.flake.modules.darwin.hjem =
+  flake.modules.darwin.hjem =
     {
       lib,
       inputs,

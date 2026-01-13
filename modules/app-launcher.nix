@@ -1,5 +1,5 @@
 {
-  config.flake.modules.hjem.app-launcher =
+  flake.modules.hjem.app-launcher =
     {
       theme,
       lib,
@@ -43,7 +43,7 @@
       };
     };
 
-  config.flake.modules.darwin.app-launcher =
+  flake.modules.darwin.app-launcher =
     { pkgs, ... }:
     {
       environment.systemPackages = [

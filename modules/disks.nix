@@ -18,7 +18,7 @@ let
   };
 in
 {
-  config.flake-file.inputs = {
+  flake-file.inputs = {
     disko = {
       url = "github:nix-community/disko";
 
@@ -26,7 +26,7 @@ in
     };
   };
 
-  config.flake.modules.nixos.disks-server =
+  flake.modules.nixos.disks-server =
     { lib, inputs, ... }:
     let
       inherit (lib) mkDefault;
@@ -86,9 +86,9 @@ in
       };
     };
 
-  config.flake.modules.nixos.disks-desktop = commonModule;
+  flake.modules.nixos.disks-desktop = commonModule;
 
-  config.flake.modules.nixos.disks-desktop-swap = {
+  flake.modules.nixos.disks-desktop-swap = {
     imports = [ commonModule ];
 
     swapDevices = [
@@ -98,7 +98,7 @@ in
     ];
   };
 
-  config.flake.modules.nixos.disks-zram-swap = {
+  flake.modules.nixos.disks-zram-swap = {
     zramSwap.enable = true;
   };
 }

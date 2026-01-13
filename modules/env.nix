@@ -1,5 +1,5 @@
 {
-  config.flake.modules.hjem.env =
+  flake.modules.hjem.env =
     { pkgs, ... }:
     {
       environment.sessionVariables = {

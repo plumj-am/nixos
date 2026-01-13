@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.website-personal =
+  flake.modules.nixos.website-personal =
     { config, ... }:
     let
       inherit (config.networking) domain;

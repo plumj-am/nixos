@@ -74,7 +74,7 @@ let
     };
 in
 {
-  config.flake.modules.hjem.shell-tools =
+  flake.modules.hjem.shell-tools =
     { pkgs, lib, ... }:
     let
       inherit (lib.lists) flatten;

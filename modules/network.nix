@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.network =
+  flake.modules.nixos.network =
     { config, lib, ... }:
     let
       inherit (lib.modules) mkIf;
@@ -73,7 +73,7 @@
       };
     };
 
-  config.flake.modules.darwin.network =
+  flake.modules.darwin.network =
     { config, lib, ... }:
     let
       inherit (lib.types) str;

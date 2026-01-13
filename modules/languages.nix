@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.haskell =
+  flake.modules.nixos.haskell =
     { pkgs, ... }:
     {
       environment.systemPackages = [
@@ -10,7 +10,7 @@
       ];
     };
 
-  config.flake.modules.javascript =
+  flake.modules.nixos.javascript =
     { pkgs, ... }:
     {
       environment.systemPackages = [

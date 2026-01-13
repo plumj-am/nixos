@@ -23,6 +23,6 @@ let
 
 in
 {
-  config.flake.modules.nixos.unfree = commonModule;
-  config.flake.modules.darwin.unfree = commonModule;
+  flake.modules.nixos.unfree = commonModule;
+  flake.modules.darwin.unfree = commonModule;
 }

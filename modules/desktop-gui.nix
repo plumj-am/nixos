@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.desktop-gui =
+  flake.modules.nixos.desktop-gui =
     { pkgs, config, ... }:
     {
       qt = {
@@ -20,7 +20,7 @@
       };
     };
 
-  config.flake.modules.hjem.desktop-gui =
+  flake.modules.hjem.desktop-gui =
     {
       lib,
       theme,

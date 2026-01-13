@@ -66,6 +66,6 @@ let
     };
 in
 {
-  config.flake.modules.nixos.system-types = commonModule;
-  config.flake.modules.darwin.system-types = commonModule;
+  flake.modules.nixos.system-types = commonModule;
+  flake.modules.darwin.system-types = commonModule;
 }

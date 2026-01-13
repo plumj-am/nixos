@@ -1,5 +1,5 @@
 {
-  config.flake.modules.hjem.terminal-multiplexer =
+  flake.modules.hjem.terminal-multiplexer =
     {
       pkgs,
       config,

@@ -1,5 +1,5 @@
 {
-  config.flake.modules.hjem.notifications =
+  flake.modules.hjem.notifications =
     {
       pkgs,
       lib,

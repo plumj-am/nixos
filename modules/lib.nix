@@ -41,6 +41,6 @@ let
 
 in
 {
-  config.flake.modules.nixos.lib = commonModule;
-  config.flake.modules.darwin.lib = commonModule;
+  flake.modules.nixos.lib = commonModule;
+  flake.modules.darwin.lib = commonModule;
 }

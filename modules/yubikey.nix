@@ -1,5 +1,5 @@
 {
-  config.flake.modules.hjem.yubikey =
+  flake.modules.hjem.yubikey =
     {
       pkgs,
       lib,
@@ -18,7 +18,7 @@
       inherit packages;
     };
 
-  config.flake.modules.nixos.yubikey =
+  flake.modules.nixos.yubikey =
     { pkgs, ... }:
     {
       services.udev.packages = [
@@ -43,7 +43,7 @@
       };
     };
 
-  config.flake.modules.darwin.yubikey =
+  flake.modules.darwin.yubikey =
     { pkgs, ... }:
     {
       services.udev.packages = [

@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.netrc = {
+  flake.modules.nixos.netrc = {
     nix.settings.netrc-file = "/etc/.netrc";
 
     age.secrets.netrc = {

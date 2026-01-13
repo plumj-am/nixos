@@ -1,5 +1,5 @@
 {
-  config.flake.modules.hjem.yazi =
+  flake.modules.hjem.yazi =
     { lib, isDesktop, ... }:
     let
       inherit (lib.modules) mkIf;

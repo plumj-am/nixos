@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.goatcounter =
+  flake.modules.nixos.goatcounter =
     { config, ... }:
     let
       inherit (config.network) domain;

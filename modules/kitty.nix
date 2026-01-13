@@ -1,5 +1,5 @@
 {
-  config.flake.modules.hjem.kitty =
+  flake.modules.hjem.kitty =
     {
       pkgs,
       lib,

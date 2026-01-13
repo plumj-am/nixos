@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.process-management =
+  flake.modules.nixos.process-management =
     { pkgs, config, ... }:
     let
       processKiller = pkgs.writeScriptBin "process-killer" /* nu */ ''

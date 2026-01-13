@@ -1,5 +1,5 @@
 {
-  config.flake.modules.hjem.hyprlock =
+  flake.modules.hjem.hyprlock =
     {
       lib,
       theme,

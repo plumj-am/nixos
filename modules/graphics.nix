@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.graphics =
+  flake.modules.nixos.graphics =
     { config, ... }:
     {
       hardware.graphics = {

@@ -1,8 +1,8 @@
 {
-  config.flake.modules.nixos.gammastep = {
+  flake.modules.nixos.gammastep = {
     services.geoclue2.enable = true;
   };
-  config.flake.modules.hjem.gammastep =
+  flake.modules.hjem.gammastep =
     {
       lib,
       isDesktop,

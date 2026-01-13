@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.dr-radka-site =
+  flake.modules.nixos.dr-radka-site =
     {
       self,
       config,

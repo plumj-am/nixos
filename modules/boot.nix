@@ -15,7 +15,7 @@ let
   };
 in
 {
-  config.flake.modules.nixos.boot-desktop =
+  flake.modules.nixos.boot-desktop =
     { lib, ... }:
     let
       inherit (lib.lists) singleton;
@@ -32,7 +32,7 @@ in
     };
 
   # TODO?
-  config.flake.modules.nixos.boot-server =
+  flake.modules.nixos.boot-server =
     { modulesPath, ... }:
     {
       imports = [

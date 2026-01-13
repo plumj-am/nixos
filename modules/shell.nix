@@ -1,5 +1,5 @@
 {
-  config.flake.modules.hjem.shell =
+  flake.modules.hjem.shell =
     {
       pkgs,
       config,

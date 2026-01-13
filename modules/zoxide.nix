@@ -1,5 +1,5 @@
 {
-  config.flake.modules.hjem.zoxide = {
+  flake.modules.hjem.zoxide = {
     rum.programs.zoxide = {
       enable = true;
 

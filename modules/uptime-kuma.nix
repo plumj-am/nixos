@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixos.uptime-kuma =
+  flake.modules.nixos.uptime-kuma =
     { config, ... }:
     let
       inherit (config.networking) domain;
