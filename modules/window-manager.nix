@@ -22,169 +22,170 @@
         enable = true;
         package = inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable;
 
-        config = ''
-          window-rule {
-            match app-id=r#"^*$"#
-            opacity ${toString cfg.theme.opacity.opaque}
-            draw-border-with-background false
-            clip-to-geometry true
-            geometry-corner-radius ${toString (cfg.theme.radius.small * 1.0)}
-          }
-
-          window-rule {
-            match app-id=r#"^(zen-.*|org\.qutebrowser\.qutebrowser|brave-browser)$"#
-            opacity ${toString cfg.theme.opacity.opaque}
-          }
-
-          window-rule {
-            match title=r#"^.*YouTube|Picture-in-Picture.*"#
-            opacity ${toString cfg.theme.opacity.opaque}
-          }
-
-          window-rule {
-            match app-id=r#"kitty"#
-          }
-
-          window-rule {
-            match app-id=r#"^steam_app_*"#
-            opacity ${toString cfg.theme.opacity.opaque}
-            open-fullscreen true
-            border {
-              off
-            }
-            focus-ring {
-              off
-            }
-            shadow {
-              off
-            }
-            geometry-corner-radius 0
-            clip-to-geometry false
-          }
-
-          layer-rule {
-            match namespace=r#"waybar|notifications|launcher"#
-            shadow {
-              off
-              color "#${toString cfg.theme.colors.base09}33"
-              draw-behind-window true
-              softness 15
-              offset x=0 y=0
-            }
-          }
-
-          layer-rule {
-            match namespace=r#"waybar"#
-            opacity ${toString cfg.theme.opacity.opaque}
-          }
-
-          layer-rule {
-            match namespace=r#"notifications|launcher"#
-            opacity ${toString cfg.theme.opacity.opaque}
-          }
-
-          input {
-            focus-follows-mouse
-            warp-mouse-to-focus
-            disable-power-key-handling
-
-            mouse {
-              accel-profile "flat"
-              left-handed
+        config = # kdl
+          ''
+            window-rule {
+              match app-id=r#"^*$"#
+              opacity ${toString cfg.theme.opacity.opaque}
+              draw-border-with-background false
+              clip-to-geometry true
+              geometry-corner-radius ${toString (cfg.theme.radius.small * 1.0)}
             }
 
-            touchpad {
-              accel-profile "flat"
-              left-handed
+            window-rule {
+              match app-id=r#"^(zen-.*|org\.qutebrowser\.qutebrowser|brave-browser)$"#
+              opacity ${toString cfg.theme.opacity.opaque}
             }
 
-            trackball {
-              accel-profile "flat"
-              left-handed
+            window-rule {
+              match title=r#"^.*YouTube|Picture-in-Picture.*"#
+              opacity ${toString cfg.theme.opacity.opaque}
             }
 
-            trackpoint {
-              accel-profile "flat"
-              left-handed
-            }
-          }
-
-          layout {
-            always-center-single-column true
-            empty-workspace-above-first true
-            gaps ${toString cfg.theme.margin.small}
-            preset-column-widths {
-              proportion 0.20
-              proportion 0.25
-              proportion 0.33
-              proportion 0.50
-              proportion 0.66
-              proportion 0.75
-              proportion 0.80
-            }
-            preset-window-heights {
-              proportion 0.50
-              proportion 0.66
-              proportion 1.00
+            window-rule {
+              match app-id=r#"kitty"#
             }
 
-            border {
-              on
-              width ${toString cfg.theme.border.normal}
-              active-gradient from="${cfg.theme.colors.base0B}" to="${cfg.theme.colors.base09}" angle=45
-              inactive-color "#${cfg.theme.colors.base00}"
-              urgent-color "#${cfg.theme.colors.base08}"
+            window-rule {
+              match app-id=r#"^steam_app_*"#
+              opacity ${toString cfg.theme.opacity.opaque}
+              open-fullscreen true
+              border {
+                off
+              }
+              focus-ring {
+                off
+              }
+              shadow {
+                off
+              }
+              geometry-corner-radius 0
+              clip-to-geometry false
             }
-            shadow {
-              off
-              color "#${toString cfg.theme.colors.base09}DD"
-              draw-behind-window false
-              softness 10
-              offset x=0 y=0
+
+            layer-rule {
+              match namespace=r#"waybar|notifications|launcher"#
+              shadow {
+                off
+                color "#${toString cfg.theme.colors.base09}33"
+                draw-behind-window true
+                softness 15
+                offset x=0 y=0
+              }
             }
-            focus-ring {
-              off
+
+            layer-rule {
+              match namespace=r#"waybar"#
+              opacity ${toString cfg.theme.opacity.opaque}
             }
-          }
 
-          // animations {
-          //   slowdown 2.25
-
-          //   window-open {
-          //     curve "ease-out-cubic"
-          //     duration-ms ${toString cfg.theme.duration.ms.normal}
-          //   }
-
-          //   window-close {
-          //     curve "ease-out-expo"
-          //     duration-ms ${toString cfg.theme.duration.ms.short}
-          //   }
-
-          //   window-movement {
-          //     spring damping-ratio=1.0 stiffness=800 epsilon=0.0001
-          //   }
-
-          //   window-resize {
-          //     spring damping-ratio=1.0 stiffness=1200 epsilon=0.0001
-          //   }
-          // }
-
-          cursor {
-            hide-when-typing
-          }
-
-          hotkey-overlay {
-            skip-at-startup
-          }
-
-          gestures {
-            hot-corners {
-              off
+            layer-rule {
+              match namespace=r#"notifications|launcher"#
+              opacity ${toString cfg.theme.opacity.opaque}
             }
-          }
 
-          screenshot-path "/home/jam/Pictures/Screenshots/screenshot_%Y-%m-%d_%H-%M-%S.png"
-        '';
+            input {
+              focus-follows-mouse
+              warp-mouse-to-focus
+              disable-power-key-handling
+
+              mouse {
+                accel-profile "flat"
+                left-handed
+              }
+
+              touchpad {
+                accel-profile "flat"
+                left-handed
+              }
+
+              trackball {
+                accel-profile "flat"
+                left-handed
+              }
+
+              trackpoint {
+                accel-profile "flat"
+                left-handed
+              }
+            }
+
+            layout {
+              always-center-single-column true
+              empty-workspace-above-first true
+              gaps ${toString cfg.theme.margin.small}
+              preset-column-widths {
+                proportion 0.20
+                proportion 0.25
+                proportion 0.33
+                proportion 0.50
+                proportion 0.66
+                proportion 0.75
+                proportion 0.80
+              }
+              preset-window-heights {
+                proportion 0.50
+                proportion 0.66
+                proportion 1.00
+              }
+
+              border {
+                on
+                width ${toString cfg.theme.border.normal}
+                active-gradient from="${cfg.theme.colors.base0B}" to="${cfg.theme.colors.base09}" angle=45
+                inactive-color "#${cfg.theme.colors.base00}"
+                urgent-color "#${cfg.theme.colors.base08}"
+              }
+              shadow {
+                off
+                color "#${toString cfg.theme.colors.base09}DD"
+                draw-behind-window false
+                softness 10
+                offset x=0 y=0
+              }
+              focus-ring {
+                off
+              }
+            }
+
+            // animations {
+            //   slowdown 2.25
+
+            //   window-open {
+            //     curve "ease-out-cubic"
+            //     duration-ms ${toString cfg.theme.duration.ms.normal}
+            //   }
+
+            //   window-close {
+            //     curve "ease-out-expo"
+            //     duration-ms ${toString cfg.theme.duration.ms.short}
+            //   }
+
+            //   window-movement {
+            //     spring damping-ratio=1.0 stiffness=800 epsilon=0.0001
+            //   }
+
+            //   window-resize {
+            //     spring damping-ratio=1.0 stiffness=1200 epsilon=0.0001
+            //   }
+            // }
+
+            cursor {
+              hide-when-typing
+            }
+
+            hotkey-overlay {
+              skip-at-startup
+            }
+
+            gestures {
+              hot-corners {
+                off
+              }
+            }
+
+            screenshot-path "/home/jam/Pictures/Screenshots/screenshot_%Y-%m-%d_%H-%M-%S.png"
+          '';
 
         binds = {
           "Mod+slash".action = "show-hotkey-overlay";
@@ -246,7 +247,26 @@
           "Mod+P".spawn = [ "process-killer" ];
           "Mod+D".spawn = [ "todo-scratchpad" ];
           "Mod+S".spawn = [ "random-scratchpad" ];
-          "Mod+C".spawn = [ "nu -c cliphist list | fuzzel --dmenu | cliphist decode | wl-copy" ];
+          "Mod+C".spawn = [
+            "nu"
+            "-c"
+            "cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"
+          ];
+          "Mod+B".spawn = [
+            "nu"
+            "-c"
+            "niri msg action do-screen-transition --delay-ms 100 ; pkill -USR1 waybar"
+          ];
+          "Mod+N".spawn = [
+            "nu"
+            "-c"
+            "niri msg action do-screen-transition --delay-ms 100 ; makoctl mode -t do-not-disturb ; notify-send Mako Enabled"
+          ];
+          "Mod+Z".spawn = [
+            "nu"
+            "-c"
+            "niri msg action do-screen-transition --delay-ms 100 ; pkill -USR1 waybar ; makoctl mode -t do-not-disturb ; notify-send Mako Enabled"
+          ];
         };
 
         spawn-at-startup = [
@@ -284,6 +304,7 @@
       };
 
       environment.systemPackages = [
+        pkgs.cliphist
         pkgs.xwayland-satellite
         inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable
 
