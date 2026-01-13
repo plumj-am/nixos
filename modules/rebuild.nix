@@ -19,7 +19,6 @@
           --remote                     # Deploy to remote host using --target-host.
           --rollback                   # Rollback.
           --quiet (-q)                 # Run without output (for theme toggling).
-          --try_attempts (-t): int = 0 # How many times to try the same rebuild.
           ...arguments                 # Extra arguments to pass to rebuild commands.
         ]: nothing -> nothing {
           let host = if ($host | is-not-empty) {
@@ -72,33 +71,9 @@
           if not $quiet { print-notify $"($action) ($platform). Configuration for: ($host)." }
 
           if $remote {
-            for attempts in 1..($try_attempts + 1) {
-              try {
-                NH_BYPASS_ROOT_CHECK=true NH_NO_CHECKS=true nh $command ...$final_args
-                break
-              } catch { |e|
-                if $attempts < $try_attempts {
-                  print-notify $"First attempt failed, retrying... (attempt ($attempts) of ($try_attempts))"
-                } else {
-                  print-notify $"Error: Rebuild failed after ($try_attempts) attempts, run manually in a terminal."
-                  exit 1
-                }
-              }
-            }
+            NH_BYPASS_ROOT_CHECK=true NH_NO_CHECKS=true nh $command ...$final_args
           } else {
-            for attempts in 1..($try_attempts + 1) {
-              try {
-                sudo NH_BYPASS_ROOT_CHECK=true NH_NO_CHECKS=true nh $command ...$final_args
-                break
-              } catch { |e|
-                if $attempts < $try_attempts {
-                  print-notify $"First attempt failed, retrying... (attempt ($attempts) of ($try_attempts))"
-                } else {
-                  print-notify $"Error: Rebuild failed after ($try_attempts) attempts, run manually in a terminal."
-                  exit 1
-                }
-              }
-            }
+            sudo NH_BYPASS_ROOT_CHECK=true NH_NO_CHECKS=true nh $command ...$final_args
           }
 
           if $rollback {
