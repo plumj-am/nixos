@@ -116,7 +116,7 @@
           "kiwi-store.plumj.am:PMlO9Tv8jZf5huFRsKWBD7ejVASjUXnZS1o7xpsN5hw="
           # TODO date-store
           # TODO ?lime-store?
-          "blackwell-store.plumj.am:o9oPrcWuBcXiC0YJkf9pbxkITxc0qqS2aB8QKiYnzoo="
+          "blackwell-store.plumj.am:YmTvW2JngBUxfgWoKHJzxKu7Xhxt4VzK5u3D0Chudn4="
         ];
       }
       // optionalAttrs (secrets ? nixStoreKey) {

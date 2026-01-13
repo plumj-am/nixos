@@ -478,6 +478,93 @@
     ];
   };
 
+  flake.nixosConfigurations.blackwell = inputs.os.lib.nixosSystem {
+    specialArgs = { inherit inputs; };
+    system = "x86_64-linux";
+    modules = with inputs.self.modules.nixos; [
+      boot-server
+      disable-nano
+      disable-nix-documentation
+      disks-server
+      disks-zram-swap
+      dynamic-binaries
+      forgejo-action-runner
+      hjem
+      keys
+      locale
+      lib
+      linux-kernel
+      netrc
+      network
+      nix-distributed-builds
+      nix-distributed-builder
+      nix-settings
+      prometheus-node-exporter
+      object-storage
+      openssh
+      packages
+      rebuild
+      rust
+      secret-manager
+      sudo-server
+      system-types
+      tailscale
+      theme
+      unfree
+      users
+      virtualisation
+      yubikey
+      {
+        config = {
+          operatingSystem = "linux";
+          systemPlatform = "x86_64-linux";
+          systemType = "server";
+
+          network = {
+            hostName = "blackwell";
+            tcpPorts = [
+              22
+            ];
+          };
+
+          forgejo-action-runner = {
+            withDocker = true;
+            labels = [
+              "self-hosted:host"
+              "blackwell:host"
+              "docpad-infra:host"
+              "ubuntu-22.04:docker://docker.gitea.com/runner-images:ubuntu-22.04"
+            ];
+          };
+
+          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGSi4SKhqze7ZzhJFcUF9KW/4nXX1MfvZjUqrYWNDi9c root@blackwell";
+
+          age.secrets = {
+            id.rekeyFile = ../secrets/blackwell-id.age;
+            password.rekeyFile = ../secrets/blackwell-password.age;
+            s3AccessKey.rekeyFile = ../secrets/s3-access-key.age;
+            s3SecretKey.rekeyFile = ../secrets/s3-secret-key.age;
+            forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
+            nixStoreKey.rekeyFile = ../secrets/blackwell-nix-store-key.age;
+            acmeEnvironment.rekeyFile = ../secrets/acme-environment.age;
+            context7Key = {
+              rekeyFile = ../secrets/context7-key.age;
+              owner = "jam";
+              mode = "400";
+            };
+            zaiKey = {
+              rekeyFile = ../secrets/z-ai-key.age;
+              owner = "jam";
+              mode = "400";
+            };
+          };
+
+          system.stateVersion = "26.05";
+        };
+      }
+    ];
+  };
+
   flake.darwinConfigurations.lime = inputs.os-darwin.lib.darwinSystem {
     specialArgs = { inherit inputs; };
     system = "aarch64-darwin";
