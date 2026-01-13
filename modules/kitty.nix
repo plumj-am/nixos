@@ -28,6 +28,11 @@
         settings = with theme.withHash; {
           font_family = theme.font.mono.name;
           font_size = theme.font.size.term;
+          font_features = ''
+            MapleMono-NF-Regular +cv64 +ss03 +ss05 +ss07 +ss08 +ss09 +ss10 +ss11
+            MapleMono-NF-Italic +cv64 +ss03 +ss05 +ss07 +ss08 +ss09 +ss10 +ss11
+            MapleMono-NF-Bold +cv64 +ss03 +ss05 +ss07 +ss08 +ss09 +ss10 +ss11
+          '';
 
           allow_remote_control = "yes";
           confirm_os_window_close = 0;
