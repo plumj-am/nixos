@@ -9,6 +9,7 @@
     url = "github:nix-community/NixOS-WSL/main";
 
     inputs.nixpkgs.follows = "os";
+    inputs.flake-compat.follows = "";
   };
 
   inputs.os-darwin = {
@@ -29,12 +30,17 @@
 
   inputs.hjem = {
     follows = "hjem-rum/hjem";
+
+    inputs.nixpkgs.follows = "os";
+    inputs.nix-darwin.follows = "os-darwin";
   };
 
   inputs.hjem-rum = {
     url = "github:snugnug/hjem-rum";
 
     inputs.nixpkgs.follows = "os";
+    inputs.treefmt-nix.follows = "";
+    inputs.ndg.follows = "";
   };
 
   inputs.fenix = {
@@ -55,12 +61,14 @@
     inputs.nixpkgs.follows = "os";
     inputs.darwin.follows = "os-darwin";
     inputs.home-manager.follows = "";
+    inputs.systems.follows = "";
   };
 
   inputs.age-rekey = {
     url = "github:oddlama/agenix-rekey";
 
     inputs.nixpkgs.follows = "os";
+    inputs.flake-parts.follows = "parts";
   };
 
   inputs.helix = {
@@ -73,6 +81,10 @@
     url = "github:sodiboo/niri-flake";
 
     inputs.nixpkgs.follows = "os";
+    inputs.nixpkgs-stable.follows = "";
+    inputs.niri-stable.follows = "";
+    inputs.xwayland-satellite-stable.follows = "";
+    inputs.xwayland-satellite-unstable.follows = "";
   };
 
   inputs.opencode = {
@@ -91,6 +103,9 @@
     url = "github:raphamorim/rio/main";
 
     inputs.nixpkgs.follows = "os";
+    inputs.flake-parts.follows = "parts";
+    inputs.rust-overlay.follows = "";
+    inputs.systems.follows = "";
   };
 
   outputs = inputs: inputs.parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
