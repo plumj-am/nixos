@@ -7,7 +7,6 @@
     {
       users.mutableUsers = false;
 
-      # TODO: Add build user for servers.
       users.users = {
         root = {
           shell = pkgs.nushell;

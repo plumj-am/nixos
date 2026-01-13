@@ -9,7 +9,6 @@ let
     let
       inherit (lib.modules) mkIf;
       inherit (lib.attrsets)
-        attrsToList
         filterAttrs
         removeAttrs
         mapAttrs
@@ -20,35 +19,11 @@ let
       inherit (lib.trivial) const flip id;
       inherit (lib.types) isType;
       inherit (lib.lists) optionals;
-      inherit (builtins) filter;
+      inherit (config) isServer isDarwin;
 
       registryMap = inputs |> filterAttrs (const <| isType "flake");
     in
     {
-      nix.distributedBuilds = mkIf (config.networking.hostName != "yuzu") true; # No distributed builds for powerful desktop.
-      nix.buildMachines = mkIf (config.networking.hostName != "yuzu") (
-        inputs.self.nixosConfigurations
-        |> attrsToList
-        |> filter ({ name, value }: name != config.networking.hostName && value.config.users.users ? build)
-        |> map (
-          { name, value }:
-          {
-            hostName = name;
-            maxJobs = 25; # This is handled by remote anyway so not sure what difference it makes..
-            protocol = "ssh-ng";
-            sshUser = "build";
-            sshKey = "/root/.ssh/id";
-            supportedFeatures = [
-              "benchmark"
-              "big-parallel"
-              "kvm"
-              "nixos-test"
-            ];
-            system = value.config.nixpkgs.hostPlatform.system;
-          }
-        )
-      );
-
       nix.channel = {
         enable = false;
       };
@@ -65,7 +40,7 @@ let
       nix.nixPath =
         registryMap
         |> mapAttrsToList (name: value: "${name}=${value}")
-        |> (if config.isDarwin then concatStringsSep ":" else id);
+        |> (if isDarwin then concatStringsSep ":" else id);
 
       nix.registry = registryMap // { default = inputs.os; } |> mapAttrs (_: flake: { inherit flake; });
 
@@ -107,13 +82,13 @@ let
           warn-dirty = false;
         }
         |> flip removeAttrs (
-          optionals config.isDarwin [
+          optionals isDarwin [
             "use-cgroups"
             "cgroups"
           ]
         );
 
-      nix.extraOptions = mkIf config.isServer ''
+      nix.extraOptions = mkIf isServer ''
         min-free = ${toString (2 * 1024 * 1024 * 1024)} # 2G
         max-free = ${toString (1 * 1024 * 1024 * 1024)} # 1G
       '';

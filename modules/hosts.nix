@@ -108,6 +108,8 @@
       network
       nginx
       nix-cache
+      nix-distributed-builds
+      nix-distributed-builder
       nix-settings
       prometheus-node-exporter
       openssh
