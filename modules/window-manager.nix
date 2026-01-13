@@ -35,6 +35,7 @@
             window-rule {
               match app-id=r#"^(zen-.*|org\.qutebrowser\.qutebrowser|brave-browser)$"#
               opacity ${toString cfg.theme.opacity.opaque}
+              open-maximized true
             }
 
             window-rule {
@@ -64,7 +65,7 @@
             }
 
             layer-rule {
-              match namespace=r#"waybar|notifications|launcher"#
+              match namespace=r#"waybar|polybar|ashell|notifications|launcher"#
               shadow {
                 off
                 color "#${toString cfg.theme.colors.base09}33"
@@ -75,7 +76,7 @@
             }
 
             layer-rule {
-              match namespace=r#"waybar"#
+              match namespace=r#"waybar|polybar"#
               opacity ${toString cfg.theme.opacity.opaque}
             }
 
@@ -148,8 +149,9 @@
               }
             }
 
-            // animations {
-            //   slowdown 2.25
+            animations {
+              slowdown 0.75
+            }
 
             //   window-open {
             //     curve "ease-out-cubic"
@@ -271,6 +273,7 @@
 
         spawn-at-startup = [
           # [ "waybar" ] # Started by NixOS.
+          # [ "quickshell" ] # Not using yet.
           [ "swww-daemon" ]
           [ "mako" ]
         ];
