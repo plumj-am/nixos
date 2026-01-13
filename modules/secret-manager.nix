@@ -13,10 +13,14 @@
         inputs.age-rekey.nixosModules.default
       ];
 
-      config.age.rekey = {
-        storageMode = "local";
-        masterIdentities = [ ../yubikey.pub ];
-        localStorageDir = ../secrets/rekeyed/${config.networking.hostName};
+      config.age = {
+        identityPaths = [ "/root/.ssh/id" ];
+
+        rekey = {
+          storageMode = "local";
+          masterIdentities = [ ../yubikey.pub ];
+          localStorageDir = ../secrets/rekeyed/${config.networking.hostName};
+        };
       };
     };
 
