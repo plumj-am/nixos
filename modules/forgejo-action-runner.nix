@@ -8,21 +8,10 @@
       ...
     }:
     let
-      inherit (lib)
-        mkIf
-        mkOption
-        types
-        ;
+      inherit (lib) mkOption types;
     in
     {
       options.forgejo-action-runner = {
-        enable = lib.mkEnableOption "forgejo CI runner";
-
-        tokenFile = mkOption {
-          type = types.path;
-          description = "Path to the runner token file";
-        };
-
         url = mkOption {
           type = types.str;
           default = "https://git.plumj.am/";
@@ -48,9 +37,7 @@
         };
       };
 
-      config = mkIf config.forgejo-action-runner.enable {
-        age.secrets.forgejoRunnerToken.rekeyFile = config.forgejo-action-runner.tokenFile;
-
+      config = {
         users.groups.gitea-runner = { };
 
         users.users.gitea-runner = {
