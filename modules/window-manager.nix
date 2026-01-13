@@ -287,7 +287,7 @@
           # [ "waybar" ] # Started by NixOS.
           # [ "quickshell" ] # Not using yet.
           [ "swww-daemon" ]
-          [ "mako" ]
+          # [ "mako" ] # Started by NixOS.
         ];
       };
 
