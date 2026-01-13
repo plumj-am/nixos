@@ -16,10 +16,11 @@ let
       environment.sessionVariables = {
         MANPAGER = "${bat} --plain";
         PAGER = "${bat} --plain";
+        BAT_PAGER = "${less} --quit-if-one-screen --RAW-CONTROL-CHARS";
       };
 
       rum.programs.nushell.aliases = {
-        cat = "${bat} --pager=${less} --quit-if-one-screen --RAW-CONTROL-CHARS";
+        cat = "${bat}";
         less = "${bat} --plain";
       };
     };
