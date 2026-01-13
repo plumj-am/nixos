@@ -27,6 +27,7 @@
             "margin-top": ${toString theme.margin.small},
             "margin-left": ${toString theme.margin.small},
             "margin-right": ${toString theme.margin.small},
+            "margin-bottom": 0,
 
             "modules-left": ["niri/workspaces"],
             "modules-center": ["niri/window"],
@@ -166,17 +167,23 @@
               linear-gradient(225deg, ${base0B}, ${base09}) border-box;
             color: ${base07};
             border: ${toString theme.border.small}px solid transparent;
-            border-radius: ${toString theme.radius.normal}px;
+            border-radius: ${toString theme.radius.small}px;
           }
 
           #window {
             color: ${base07};
           }
 
+          #window > box {
+            margin: 0;
+            padding: 0;
+            border: none;
+          }
+
           #workspaces button {
             padding: 0 ${toString theme.padding.normal}px;
             border: ${toString theme.border.small}px solid transparent;
-            border-radius: ${toString theme.radius.normal}px;
+            border-radius: ${toString theme.radius.small}px;
           }
 
           #workspaces button.empty {
