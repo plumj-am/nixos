@@ -25,7 +25,7 @@
             opacity ${toString cfg.theme.opacity.opaque}
             draw-border-with-background false
             clip-to-geometry true
-            geometry-corner-radius ${toString (cfg.theme.radius.big * 1.0)}
+            geometry-corner-radius ${toString (cfg.theme.radius.small * 1.0)}
           }
 
           window-rule {
@@ -109,7 +109,7 @@
           layout {
             always-center-single-column true
             empty-workspace-above-first true
-            gaps ${toString cfg.theme.margin.normal}
+            gaps ${toString cfg.theme.margin.small}
             preset-column-widths {
               proportion 0.20
               proportion 0.25
@@ -127,7 +127,7 @@
 
             border {
               on
-              width ${toString cfg.theme.border.big}
+              width ${toString cfg.theme.border.normal}
               active-gradient from="${cfg.theme.colors.base0B}" to="${cfg.theme.colors.base09}" angle=45
               inactive-color "#${cfg.theme.colors.base00}"
               urgent-color "#${cfg.theme.colors.base08}"

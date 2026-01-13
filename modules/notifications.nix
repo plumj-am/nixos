@@ -27,8 +27,8 @@
           layer = "overlay";
           width = 400;
           height = 150;
-          margin = "${toString margin.normal}";
-          padding = "${toString padding.normal}";
+          margin = "${toString margin.small}";
+          padding = "${toString padding.small}";
 
           # output = mkIf (config.networking.hostName == "yuzu") "DP-1";
 

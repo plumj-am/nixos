@@ -15,9 +15,9 @@
           {
             "layer": "top",
             "height": ${toString theme.margin.big},
-            "margin-top": ${toString theme.margin.normal},
-            "margin-left": ${toString theme.margin.normal},
-            "margin-right": ${toString theme.margin.normal},
+            "margin-top": ${toString theme.margin.small},
+            "margin-left": ${toString theme.margin.small},
+            "margin-right": ${toString theme.margin.small},
 
             "modules-left": ["niri/workspaces"],
             "modules-center": ["niri/window"],
@@ -157,7 +157,7 @@
               linear-gradient(225deg, ${base0B}, ${base09}) border-box;
             color: ${base07};
             border: ${toString (theme.border.small)}px solid transparent;
-            border-radius: ${toString (theme.radius.big)}px;
+            border-radius: ${toString (theme.radius.normal)}px;
           }
 
           #window {

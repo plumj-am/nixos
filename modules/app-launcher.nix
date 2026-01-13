@@ -12,8 +12,8 @@
           prompt = ''"❯ "'';
           terminal = "kitty";
 
-          horizontal-pad = padding.normal;
-          vertical-pad = padding.normal;
+          horizontal-pad = padding.small;
+          vertical-pad = padding.small;
         };
 
         settings.colors = {
