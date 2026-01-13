@@ -34,6 +34,7 @@
       # Removes duplicate between `hjem-rum` and `age-rekey`.
       treefmt = {
         url = "github:numtide/treefmt-nix";
+        inputs.nixpkgs.follows = "os";
       };
     };
   };

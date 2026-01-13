@@ -122,7 +122,10 @@
       inputs.nixpkgs.follows = "os";
       url = "github:oxalica/rust-overlay";
     };
-    treefmt.url = "github:numtide/treefmt-nix";
+    treefmt = {
+      inputs.nixpkgs.follows = "os";
+      url = "github:numtide/treefmt-nix";
+    };
   };
 
 }
