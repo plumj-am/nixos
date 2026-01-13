@@ -1,6 +1,110 @@
-# PlumJam's NixOS Configuration Collection
+# PlumJam's Dendritic NixOS Configuration
 
-A collection of NixOS configurations for my personal machines.
+(WIP) NixOS configurations for 6 personal machines:
+
+- 2 desktops (NixOS)
+- 1 Macbook (Darwin)
+- 2 servers (NixOS)
+- 1 WSL (NixOS-WSL)
+
+## Features
+
+- Dendritic structure with flake-parts
+- Hjem for home management
+- Hjem Rum for home modules
+
+## How it works
+
+Everything lives under `modules/`.
+
+Each module (for the most part) is grouped by feature as opposed to individual
+applications/services. Using flake-parts, these modules live at
+`flake.modules.{nixos,darwin,hjem}`.
+
+Modules contains 1 or more of the following:
+
+```
+flake.modules.<class>.<feature> = {}
+```
+
+For example, our `modules/window-manager.nix` looks like this:
+
+```nix
+{
+  flake.modules.hjem.window-manager = { /* ... */ };
+  flake.modules.nixos.window-manager = { /* ... */ };
+  flake.modules.darwin.window-manager = { /* ... */ };
+}
+```
+
+> [!NOTE]
+> Note that `hjem` modules are automatically included in any host that uses the
+> `hjem` module.
+
+The `darwin` and `nixos` modules are then used in `modules/hosts.nix` like this:
+
+```nix
+{
+  # For NixOS systems:
+  flake.nixosConfigurations.hostName = inputs.os.lib.nixosSystem {
+    specialArgs = { inherit inputs; };
+    system = "x86_64-linux";
+    modules = with inputs.self.modules.nixos; [
+      # ... other packages
+      yubikey
+    ];
+  };
+
+  # Or for Darwin systems:
+  flake.darwinConfigurations.hostName = inputs.os-darwin.lib.darwinSystem {
+    specialArgs = { inherit inputs; };
+    system = "x86_64-linux";
+    modules = with inputs.self.modules.darwin; [
+      # ... other packages
+      yubikey
+    ];
+  };
+}
+```
+
+This gives us fine-grained control over which hosts have access to which
+features.
+
+Any additional configuration for the hosts is defined in an inline module inside
+the `modules = []` section of each host. This gives us the flexibility to define
+configurations that are exclusive to the host and can't trivially be made a
+module such as `hostName`, `operatingSystem` (for conditional modules) and
+`secrets` configuration.
+
+## myLib
+
+There may be unfamiliar functions/helpers in some files - these come from
+`modules/lib.nix`.
+
+## Theming
+
+I have a custom theming setup which can be seen in `modules/theme.nix`. It does
+rely on a rebuild but it's a simple toggle between light/dark and gruvbox/pywal
+modes by running shortcuts setup in Fuzzel. It automatically updates colour
+schemes and refreshes necessary applications to apply changes.
+
+The pywal mode generates colours from the current wallpaper.
+
+The gruvbox mode uses the defined themes in `modules/themes.nix` and some base16
+colours for applications that can make use of them.
+
+## Other comments
+
+If you're interested in learning more about dendritic Nix, feel free to learn
+from my config and consider checking the following links:
+
+- <https://dendrix.oeiuwq.com/Dendritic.html>
+- <https://github.com/Doc-Steve/dendritic-design-with-flake-parts>
+
+## Contributing
+
+If you're more experienced with this style of configuration, I'm happy to accept
+criticism or suggestions for improvements via an issue or pull request.
 
 ## License
 
