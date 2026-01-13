@@ -1,5 +1,5 @@
 {
-  flake.nixos.nix-distributed-builds =
+  flake.modules.nixos.nix-distributed-builds =
     {
       inputs,
       config,
