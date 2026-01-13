@@ -23,6 +23,30 @@ let
       pkgs.xh
     ];
 
+  commonDevTools =
+    { pkgs, ... }:
+    [
+      pkgs.bitwarden-cli
+      pkgs.deno
+      pkgs.docker
+      pkgs.docker-compose
+      pkgs.exercism
+      pkgs.moon
+      pkgs.pnpm
+      pkgs.proto
+    ];
+
+  desktopApps =
+    { pkgs, ... }:
+    [
+      pkgs.bitwarden-desktop
+      pkgs.brave
+      pkgs.obs-studio
+      pkgs.thunderbird
+      pkgs.vesktop
+      pkgs.wasistlos
+    ];
+
   darwinPackages =
     { pkgs, ... }:
     [
@@ -55,39 +79,23 @@ in
     };
 
   config.flake.modules.nixos.packages-extra-desktop =
-    { pkgs, ... }:
+    { pkgs, lib, ... }:
+    let
+      inherit (lib.lists) flatten;
+    in
     {
-      environment.systemPackages = [
-        pkgs.bitwarden-cli
-        pkgs.deno
-        pkgs.docker
-        pkgs.docker-compose
-        pkgs.exercism
-        pkgs.moon
-        pkgs.pnpm
-        pkgs.proto
-        pkgs.bitwarden-desktop
-        pkgs.brave
-        pkgs.obs-studio
-        pkgs.thunderbird
-        pkgs.vesktop
-        pkgs.wasistlos
-      ];
+      environment.systemPackages =
+        [
+          (desktopApps pkgs)
+          (commonDevTools pkgs)
+        ]
+        |> flatten;
     };
 
   config.flake.modules.nixos.packages-extra-wsl =
     { pkgs, ... }:
     {
-      environment.systemPackages = [
-        pkgs.bitwarden-cli
-        pkgs.deno
-        pkgs.docker
-        pkgs.docker-compose
-        pkgs.exercism
-        pkgs.moon
-        pkgs.pnpm
-        pkgs.proto
-      ];
+      environment.systemPackages = commonDevTools pkgs;
     };
 
   config.flake.modules.darwin.packages =
