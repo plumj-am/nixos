@@ -367,7 +367,7 @@
           forgejo-action-runner = {
             labels = [
               "self-hosted:host"
-              "plum:host"
+              "kiwi:host"
               "docpad-infra:host"
             ];
           };
