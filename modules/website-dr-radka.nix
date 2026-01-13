@@ -1,15 +1,13 @@
 {
-  flake.modules.nixos.dr-radka-site =
+  flake.modules.nixos.website-dr-radka =
     {
-      self,
       config,
-      lib,
       pkgs,
       ...
     }:
     let
       inherit (config.networking) domain;
-      inherit (lib) merge;
+      inherit (config.myLib) merge;
 
       app_port = 3000;
       app_user = "dr-radka";
@@ -18,8 +16,6 @@
       build_dir = "${app_dir}/build";
     in
     {
-      imports = [ (self + /modules/nginx.nix) ];
-
       users.users.${app_user} = {
         isSystemUser = true;
         group = app_group;
