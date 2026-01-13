@@ -3,27 +3,29 @@
     { config, ... }:
     let
       inherit (config.network) domain;
+      inherit (config.myLib) merge;
 
       fqdn = "analytics.${domain}";
       port = 8007;
+      address = "127.0.0.1";
     in
     {
       config = {
         services.goatcounter = {
-          inherit port;
+          inherit port address;
 
           enable = true;
           proxy = true;
-          address = "127.0.0.1";
         };
 
-        services.nginx.virtualHosts.${fqdn} = lib.merge config.services.nginx.sslTemplate {
+        services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
           locations."/" = {
-            proxyPass = "http://127.0.0.1:${toString port}";
+            proxyPass = "http://${address}:${toString port}";
             proxyWebsockets = true;
-            extraConfig = ''
-              proxy_hide_header X-Content-Type-Options;
-            '';
+            extraConfig = # nginx
+              ''
+                proxy_hide_header X-Content-Type-Options;
+              '';
           };
         };
       };
