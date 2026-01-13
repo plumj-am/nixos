@@ -311,77 +311,73 @@ in
   flake.modules.nixos.theme-scripts =
     { config, pkgs, ... }:
     let
-      pickWallpaper = pkgs.writeTextFile {
-        name = "pick-wallpaper";
-        text = /* nu */ ''
-          #!/usr/bin/env nu
-
-          def main [] {
-            let wallpaper_dir = $"($env.HOME)/wallpapers"
-            mkdir $wallpaper_dir
-
-            let wallpapers = (ls $wallpaper_dir | where type == file | where name =~ '\.(jpg|png|jpeg|webp|gif)$')
-
-            if ($wallpapers | is-empty) {
-              print $"No wallpapers found in ($wallpaper_dir)"
-              exit 1
       inherit (builtins) map;
       inherit (config.myLib) mkDesktopEntry;
+
+      pickWallpaper = pkgs.writeScriptBin "pick-wallpaper" /* nu */ ''
+        #!/usr/bin/env nu
+
+        def main [] {
+          let wallpaper_dir = $"($env.HOME)/wallpapers"
+          mkdir $wallpaper_dir
+
+          let wallpapers = (ls $wallpaper_dir | where type == file | where name =~ '\.(jpg|png|jpeg|webp|gif)$')
+
+          if ($wallpapers | is-empty) {
+            print $"No wallpapers found in ($wallpaper_dir)"
+            exit 1
+          }
+
+          let selected = (
+            $wallpapers
+            | get name
+            | str join "\n"
+            | ^${pkgs.fzf}/bin/fzf --preview $"${pkgs.chafa}/bin/chafa --size 40x20 {}" --preview-window=right:50% --prompt="Select wallpaper: "
+          )
+
+          if not ($selected | is-empty) {
+            ^${pkgs.swww}/bin/swww img $selected o+e>| ignore
+            print $"Wallpaper set: (($selected | path basename))"
+
+            let theme_config = try {
+              open $"($env.HOME)/nixos/modules/theme.json"
+            } catch {
+              { mode: "light", scheme: "pywal" }
             }
 
-            let selected = (
-              $wallpapers
-              | get name
-              | str join "\n"
-              | ^${pkgs.fzf}/bin/fzf --preview $"${pkgs.chafa}/bin/chafa --size 40x20 {}" --preview-window=right:50% --prompt="Select wallpaper: "
-            )
+            let using_pywal = $theme_config.scheme == "pywal"
 
-            if not ($selected | is-empty) {
-              ^${pkgs.swww}/bin/swww img $selected o+e>| ignore
-              print $"Wallpaper set: (($selected | path basename))"
+            if $using_pywal {
+              print "Regenerating pywal colors..."
 
-              let theme_config = try {
-                open $"($env.HOME)/nixos/modules/theme.json"
-              } catch {
-                { mode: "light", scheme: "pywal" }
-              }
+              let is_dark = $theme_config.mode == "dark"
 
-              let using_pywal = $theme_config.scheme == "pywal"
+              try {
+                ^rm -rf ~/.cache/wal
 
-              if $using_pywal {
-                print "Regenerating pywal colors..."
-
-                let is_dark = $theme_config.mode == "dark"
-
-                try {
-                  ^rm -rf ~/.cache/wal
-
-                  let base_args = ["-n" "--backend" "wal" "-i" $selected]
-                  let mode_args = if $is_dark {
-                    ["--saturate" "0.5"]
-                  } else {
-                    ["--saturate" "0.75" "-l"]
-                  }
-
-                  ^${pkgs.pywal}/bin/wal ...($base_args | append $mode_args) err> /dev/null
-                  ^cp ~/.cache/wal/colors.json $"($env.HOME)/nixos/modules/theme-pywal-colors.json"
-                  print "Colors regenerated!"
-                  try {
-                    ^rebuild --quiet
-                  } catch { |e|
-                    print "Failed to rebuild."
-                  }
-                  print "Rebuilt system to apply colors."
-                } catch { |e|
-                  print $"Warning: Failed to regenerate colors: ($e.msg)"
+                let base_args = ["-n" "--backend" "wal" "-i" $selected]
+                let mode_args = if $is_dark {
+                  ["--saturate" "0.5"]
+                } else {
+                  ["--saturate" "0.75" "-l"]
                 }
+
+                ^${pkgs.pywal}/bin/wal ...($base_args | append $mode_args) err> /dev/null
+                ^cp ~/.cache/wal/colors.json $"($env.HOME)/nixos/modules/theme-pywal-colors.json"
+                print "Colors regenerated!"
+                try {
+                  ^rebuild --quiet
+                } catch { |e|
+                  print "Failed to rebuild."
+                }
+                print "Rebuilt system to apply colors."
+              } catch { |e|
+                print $"Warning: Failed to regenerate colors: ($e.msg)"
               }
             }
           }
-        '';
-        executable = true;
-        destination = "/bin/pick-wallpaper";
-      };
+        }
+      '';
 
       # Theme toggle script
       themeToggleScript = pkgs.writeScriptBin "tt" /* nu */ ''
