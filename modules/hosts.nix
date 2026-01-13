@@ -72,7 +72,7 @@
               owner = "jam";
               mode = "400";
             };
-            z-ai-key = {
+            zaiKey = {
               rekeyFile = ../secrets/z-ai-key.age;
               owner = "jam";
               mode = "400";

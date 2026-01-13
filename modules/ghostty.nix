@@ -10,8 +10,10 @@
     let
       inherit (lib.attrsets) mapAttrsToList;
       inherit (lib.modules) mkIf;
+
+      enable = false;
     in
-    mkIf isDesktop {
+    mkIf (isDesktop && enable) {
       packages = [
         (pkgs.writeTextFile {
           name = "zellij-ghostty";
@@ -27,14 +29,14 @@
       ];
 
       rum.programs.ghostty = {
-        enable = false;
+        inherit enable;
 
         settings = with theme; {
           font-size = font.size.term;
           font-family = font.mono.name;
           font-feature = "+calt, +liga, +dlig";
 
-          theme = if theme.color_scheme == "pywal" then "custom" else theme.ghostty;
+          theme = if theme.colorScheme == "pywal" then "custom" else theme.ghostty;
 
           window-padding-x = padding.small;
           window-padding-y = padding.small;

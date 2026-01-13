@@ -176,7 +176,7 @@
             				$env.THEME_SCHEME = $theme.scheme
             			} else {
             				$env.THEME_MODE = "${theme.variant}"
-            				$env.THEME_SCHEME = "${theme.color_scheme}"
+            				$env.THEME_SCHEME = "${theme.colorScheme}"
             			}
 
             			# Custom Nushell prompt.

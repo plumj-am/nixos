@@ -42,7 +42,7 @@
           ExecStart = "${pkgs.bun}/bin/bun run ./index.js";
           Restart = "always";
           RestartSec = 5;
-          EnvironmentFile = config.age.secrets.dr-radka-environment.path;
+          EnvironmentFile = config.age.secrets.drRadkaEnvironment.path;
 
           # hardening
           NoNewPrivileges = true;

@@ -19,7 +19,7 @@
         postBuild = # sh
           ''
             wrapProgram $out/bin/claude \
-              --run 'export ANTHROPIC_AUTH_TOKEN=$(cat ${secrets.z-ai-key.path})'
+              --run 'export ANTHROPIC_AUTH_TOKEN=$(cat ${secrets.zaiKey.path})'
           '';
       };
 
@@ -189,7 +189,7 @@
             #   type    = "http";
             #   url     = "https://api.z.ai/api/mcp/web_reader/mcp";
             #   headers = {
-            #     Authorization = "Bearer {file:${secrets.z-ai-key.path}}";
+            #     Authorization = "Bearer {file:${secrets.zaiKey.path}}";
             #   };
             # };
             #
@@ -197,7 +197,7 @@
             #   type    = "http";
             #   url     = "https://api.z.ai/api/mcp/web_search_prime/mcp";
             #   headers = {
-            #     Authorization = "Bearer {file:${secrets.z-ai-key.path}}";
+            #     Authorization = "Bearer {file:${secrets.zaiKey.path}}";
             #   };
             # };
 
@@ -300,7 +300,7 @@
               type = "remote";
               url = "https://api.z.ai/api/mcp/web_reader/mcp";
               headers = {
-                Authorization = "Bearer {file:${secrets.z-ai-key.path}}";
+                Authorization = "Bearer {file:${secrets.zaiKey.path}}";
               };
             };
 
@@ -308,7 +308,7 @@
               type = "remote";
               url = "https://api.z.ai/api/mcp/web_search_prime/mcp";
               headers = {
-                Authorization = "Bearer {file:${secrets.z-ai-key.path}}";
+                Authorization = "Bearer {file:${secrets.zaiKey.path}}";
               };
             };
 
@@ -316,7 +316,7 @@
               type = "remote";
               url = "https://api.z.ai/api/mcp/zread/mcp";
               headers = {
-                Authorization = "Bearer {file:${secrets.z-ai-key.path}}";
+                Authorization = "Bearer {file:${secrets.zaiKey.path}}";
               };
             };
 
@@ -546,8 +546,8 @@
             #!/usr/bin/env bash
             # Run this once to add the MCP servers that need API keys
             claude mcp add -s user -t http context7 https://mcp.context7.com/mcp --header "CONTEXT7_API_KEY: $(cat ${secrets.context7Key.path})"
-            claude mcp add -s user -t http web-reader https://api.z.ai/api/mcp/web_reader/mcp --header "Authorization: Bearer $(cat ${secrets.z-ai-key.path})"
-            claude mcp add -s user -t http web-search-prime https://api.z.ai/api/mcp/web_search_prime/mcp --header "Authorization: Bearer $(cat ${secrets.z-ai-key.path})"
+            claude mcp add -s user -t http web-reader https://api.z.ai/api/mcp/web_reader/mcp --header "Authorization: Bearer $(cat ${secrets.zaiKey.path})"
+            claude mcp add -s user -t http web-search-prime https://api.z.ai/api/mcp/web_search_prime/mcp --header "Authorization: Bearer $(cat ${secrets.zaiKey.path})"
             claude mcp add -s user -t http zread https://api.z.ai/api/mcp/zread/mcp --header "Authorization: Bearer your_api_key"
           '';
         executable = true;

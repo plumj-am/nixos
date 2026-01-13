@@ -17,42 +17,42 @@ let
     { pkgs }:
     let
       themeConfig = fromJSON (readFile ./theme.json);
-      is_dark = themeConfig.mode == "dark";
-      color_scheme = themeConfig.scheme;
+      isDark = themeConfig.mode == "dark";
+      colorScheme = themeConfig.scheme;
 
-      pywal_cache = ./theme-pywal-colors.json;
+      pywalCache = ./theme-pywal-colors.json;
 
-      parse_pywal_colors =
+      parsePywalColors =
         json:
         let
           colors = fromJSON json;
-          strip_hash = s: substring 1 6 s;
+          stripHash = s: substring 1 6 s;
         in
         {
-          base00 = strip_hash colors.colors.color0;
-          base01 = strip_hash colors.colors.color1;
-          base02 = strip_hash colors.colors.color2;
-          base03 = strip_hash colors.colors.color3;
-          base04 = strip_hash colors.colors.color4;
-          base05 = strip_hash colors.colors.color5;
-          base06 = strip_hash colors.colors.color6;
-          base07 = strip_hash colors.colors.color7;
-          base08 = strip_hash colors.colors.color8;
-          base09 = strip_hash colors.colors.color9;
-          base0A = strip_hash colors.colors.color10;
-          base0B = strip_hash colors.colors.color11;
-          base0C = strip_hash colors.colors.color12;
-          base0D = strip_hash colors.colors.color13;
-          base0E = strip_hash colors.colors.color14;
-          base0F = strip_hash colors.colors.color15;
+          base00 = stripHash colors.colors.color0;
+          base01 = stripHash colors.colors.color1;
+          base02 = stripHash colors.colors.color2;
+          base03 = stripHash colors.colors.color3;
+          base04 = stripHash colors.colors.color4;
+          base05 = stripHash colors.colors.color5;
+          base06 = stripHash colors.colors.color6;
+          base07 = stripHash colors.colors.color7;
+          base08 = stripHash colors.colors.color8;
+          base09 = stripHash colors.colors.color9;
+          base0A = stripHash colors.colors.color10;
+          base0B = stripHash colors.colors.color11;
+          base0C = stripHash colors.colors.color12;
+          base0D = stripHash colors.colors.color13;
+          base0E = stripHash colors.colors.color14;
+          base0F = stripHash colors.colors.color15;
         };
 
-      pywal_colors_raw = if pathExists pywal_cache then readFile pywal_cache else null;
+      pywalColorsRaw = if pathExists pywalCache then readFile pywalCache else null;
 
-      pywal_colors =
-        if pywal_colors_raw != null then parse_pywal_colors pywal_colors_raw else gruvbox_colors.dark;
+      pywalColors =
+        if pywalColorsRaw != null then parsePywalColors pywalColorsRaw else gruvboxColors.dark;
 
-      gruvbox_colors = {
+      gruvboxColors = {
         dark = {
           base00 = "1d2021";
           base01 = "3c3836";
@@ -92,12 +92,12 @@ let
       };
 
       colors =
-        if color_scheme == "pywal" then
-          pywal_colors
+        if colorScheme == "pywal" then
+          pywalColors
         else
-          (if is_dark then gruvbox_colors.dark else gruvbox_colors.light);
+          (if isDark then gruvboxColors.dark else gruvboxColors.light);
 
-      variant = if is_dark then "dark" else "light";
+      variant = if isDark then "dark" else "light";
 
       hexToRgb =
         hex:
@@ -112,7 +112,7 @@ let
           b
         ];
 
-      design_system = {
+      designSystem = {
         radius = {
           small = 2;
           normal = 4;
@@ -213,17 +213,17 @@ let
         };
       };
 
-      get_theme = program: if is_dark then themes.${program}.dark else themes.${program}.light;
+      getTheme = program: if isDark then themes.${program}.dark else themes.${program}.light;
     in
     {
       inherit
-        is_dark
-        color_scheme
+        isDark
+        colorScheme
         variant
         colors
-        design_system
+        designSystem
         themes
-        get_theme
+        getTheme
         hexToRgb
         ;
     };
@@ -245,11 +245,11 @@ in
       options.useTheme = mkEnableOption "use theming";
 
       config = mkIf config.useTheme {
-        theme = theme.design_system // {
+        theme = theme.designSystem // {
           inherit (theme)
             themes
-            is_dark
-            color_scheme
+            isDark
+            colorScheme
             variant
             colors
             ;
@@ -258,17 +258,17 @@ in
           with0x = mapAttrs (_name: value: "0x${value}") theme.colors;
           withRgb = mapAttrs (_name: value: theme.hexToRgb value) theme.colors;
 
-          icons = theme.get_theme "icons";
-          alacritty = theme.get_theme "alacritty";
-          ghostty = theme.get_theme "ghostty";
-          rio = theme.get_theme "rio";
-          zellij = theme.get_theme "zellij";
-          starship = theme.get_theme "starship";
-          vivid = theme.get_theme "vivid";
-          nushell = theme.get_theme "nushell";
-          helix = theme.get_theme "helix";
-          gtk = theme.get_theme "gtk";
-          qt = theme.get_theme "qt";
+          icons = theme.getTheme "icons";
+          alacritty = theme.getTheme "alacritty";
+          ghostty = theme.getTheme "ghostty";
+          rio = theme.getTheme "rio";
+          zellij = theme.getTheme "zellij";
+          starship = theme.getTheme "starship";
+          vivid = theme.getTheme "vivid";
+          nushell = theme.getTheme "nushell";
+          helix = theme.getTheme "helix";
+          gtk = theme.getTheme "gtk";
+          qt = theme.getTheme "qt";
 
           font = {
             size.small = 12;
@@ -327,11 +327,11 @@ in
       options.useTheme = mkEnableOption "use theming";
 
       config = mkIf config.useTheme {
-        theme = theme.design_system // {
+        theme = theme.designSystem // {
           inherit (theme)
             themes
-            is_dark
-            color_scheme
+            isDark
+            colorScheme
             variant
             colors
             ;
@@ -340,17 +340,17 @@ in
           with0x = mapAttrs (_name: value: "0x${value}") theme.colors;
           withRgb = mapAttrs (_name: value: theme.hexToRgb value) theme.colors;
 
-          icons = theme.get_theme "icons";
-          alacritty = theme.get_theme "alacritty";
-          ghostty = theme.get_theme "ghostty";
-          rio = theme.get_theme "rio";
-          zellij = theme.get_theme "zellij";
-          starship = theme.get_theme "starship";
-          vivid = theme.get_theme "vivid";
-          nushell = theme.get_theme "nushell";
-          helix = theme.get_theme "helix";
-          gtk = theme.get_theme "gtk";
-          qt = theme.get_theme "qt";
+          icons = theme.getTheme "icons";
+          alacritty = theme.getTheme "alacritty";
+          ghostty = theme.getTheme "ghostty";
+          rio = theme.getTheme "rio";
+          zellij = theme.getTheme "zellij";
+          starship = theme.getTheme "starship";
+          vivid = theme.getTheme "vivid";
+          nushell = theme.getTheme "nushell";
+          helix = theme.getTheme "helix";
+          gtk = theme.getTheme "gtk";
+          qt = theme.getTheme "qt";
 
           font = {
             size.small = 12;

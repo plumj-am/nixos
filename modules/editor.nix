@@ -54,7 +54,7 @@ let
         enable = true;
         inherit package;
 
-        settings.theme = if theme.color_scheme == "pywal" then "base16_custom" else theme.helix;
+        settings.theme = if theme.colorScheme == "pywal" then "base16_custom" else theme.helix;
 
         # Pywal output doesn't have gradients like base16 needs.
         # So it's necessary to override a few colours.
@@ -63,29 +63,29 @@ let
           inherits = "base16_default";
         }
         # Comments.
-        // mkFgStyle [ "comment" ] (if theme.is_dark then "#909090" else "#C0C0C0")
+        // mkFgStyle [ "comment" ] (if theme.isDark then "#909090" else "#C0C0C0")
         # Selections.
         // mkBgStyle [ "ui.selection" "ui.selection.primary" ] (
-          if theme.is_dark then "#707070" else "#E0E0E0"
+          if theme.isDark then "#707070" else "#E0E0E0"
         )
         # Cursorline and popups.
         // mkBgStyle [ "ui.cursorline.primary" "ui.cursorline.secondary" "ui.popup" "ui.popup.info" ] (
-          if theme.is_dark then "#404040" else "#F0F0F0"
+          if theme.isDark then "#404040" else "#F0F0F0"
         )
         # Info.
         //
           mkFgStyle
             [ "hint" "info" "diagnostic" "diagnostic.hint" "diagnostic.info" "diagnostic.unnecessary" ]
             (
-              if theme.is_dark then "#2B83A6" else "#3A8C9A" # Muted teal.
+              if theme.isDark then "#2B83A6" else "#3A8C9A" # Muted teal.
             )
         # Warnings.
         // mkFgStyle [ "warning" "diagnostic.warning" "diagnostic.deprecated" ] (
-          if theme.is_dark then "#B58900" else "#9D8740" # Muted yellow.
+          if theme.isDark then "#B58900" else "#9D8740" # Muted yellow.
         )
         # Errors.
         // mkFgStyle [ "error" "diagnostic.error" ] (
-          if theme.is_dark then "#9D0006" else "#8F3F71" # Muted red/brown.
+          if theme.isDark then "#9D0006" else "#8F3F71" # Muted red/brown.
         );
 
         settings.editor = {
