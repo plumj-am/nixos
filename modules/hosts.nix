@@ -6,7 +6,7 @@
 
     modules = with inputs.self.modules.nixos; [
       audio
-      boot
+      boot-desktop
       desktop-gui
       desktop-tools
       disable-nano

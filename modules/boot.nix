@@ -1,10 +1,43 @@
-{
-  config.flake.modules.nixos.boot = {
-    boot.tmp.cleanOnBoot = true;
-
-    boot.loader.grub = {
-      efiSupport = true;
-      efiInstallAsRemovable = true;
+let
+  commonModule = {
+    boot.loader = {
+      systemd-boot.enable = true;
+      efi.canTouchEfiVariables = true;
+      grub.device = "nodev";
     };
+
+    boot.initrd.availableKernelModules = [
+      "ahci"
+      "nvme"
+      "xhci_pci"
+      "usb_storage"
+      "sd_mod"
+    ];
   };
+in
+{
+  config.flake.modules.nixos.boot-desktop =
+    { lib, ... }:
+    let
+      inherit (lib.lists) singleton;
+    in
+    {
+      imports = singleton commonModule;
+      boot.tmp.cleanOnBoot = true;
+
+      boot.loader.grub = {
+        efiSupport = true;
+        efiInstallAsRemovable = true;
+      };
+    };
+
+  # TODO?
+  config.flake.modules.nixos.boot-server =
+    { modulesPath, ... }:
+    {
+      imports = [
+        commonModule
+        (modulesPath + "/installer/scan/not-detected.nix")
+      ];
+    };
 }
