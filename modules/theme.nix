@@ -632,6 +632,7 @@ in
     in
     {
       environment.systemPackages = [
+        pkgs.swww
         themeToggleScript
         pickWallpaper
       ];
