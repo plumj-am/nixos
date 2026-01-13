@@ -3,14 +3,14 @@
     {
       pkgs,
       lib,
-      config,
+      myLib,
       theme,
       isDesktop,
       ...
     }:
     let
       inherit (lib.modules) mkIf;
-      inherit (config.myLib) mkDesktopEntry;
+      inherit (myLib) mkDesktopEntry;
 
       enable = true;
     in

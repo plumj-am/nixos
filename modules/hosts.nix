@@ -140,6 +140,7 @@
       sudo-server
       system-types
       tailscale
+      theme
       unfree
       uptime-kuma
       users

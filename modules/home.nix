@@ -3,6 +3,7 @@ let
     inherit inputs;
     inherit (config.age) secrets;
     inherit (config.network) hostName;
+    inherit (config) myLib;
 
     isDesktop = config.isDesktop or false;
     isServer = config.isServer or false;
@@ -42,6 +43,8 @@ in
 
       hjemModule = inputs.hjem-rum.hjemModules.default;
       hjemModules = attrValues inputs.self.modules.hjem;
+      # Perhaps we shouldn't do ^this^ and import the necessary modules per host?
+      # This would eliminate the need for a lot of conditional configs.
     in
     {
       imports = [
@@ -69,6 +72,8 @@ in
 
       hjemModule = inputs.hjem-modules.hjemModules.default;
       hjemModules = attrValues inputs.self.modules.hjem;
+      # Perhaps we shouldn't do ^this^ and import the necessary modules per host?
+      # This would eliminate the need for a lot of conditional configs.
     in
     {
       imports = [

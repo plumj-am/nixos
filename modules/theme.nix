@@ -231,7 +231,7 @@ let
 in
 {
   flake.modules.nixos.theme =
-    { pkgs, ... }:
+    { pkgs, lib, ... }:
     let
       theme = mkThemeConfig { inherit pkgs; };
     in
@@ -309,7 +309,7 @@ in
     };
 
   flake.modules.nixos.theme-scripts =
-    { pkgs, ... }:
+    { config, pkgs, ... }:
     let
       pickWallpaper = pkgs.writeTextFile {
         name = "pick-wallpaper";
@@ -325,6 +325,8 @@ in
             if ($wallpapers | is-empty) {
               print $"No wallpapers found in ($wallpaper_dir)"
               exit 1
+      inherit (builtins) map;
+      inherit (config.myLib) mkDesktopEntry;
             }
 
             let selected = (
