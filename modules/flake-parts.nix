@@ -11,6 +11,8 @@
   imports = [
     inputs.parts.flakeModules.modules
     {
+      debug = true; # For nixd.
+
       perSystem =
         { inputs', ... }:
         {
