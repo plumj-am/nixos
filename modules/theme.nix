@@ -415,15 +415,15 @@ in
           print-notify "Reloading applications to apply themes..."
 
           try {
-            ^niri msg action do-screen-transition --delay-ms 0
-            ^pkill waybar -USR2 # Better to do it here rather than relying on `reload_style_on_change` setting.
-            ^pkill -USR1 kitty
-            ^pkill -USR1 hx
-            ^systemctl --user restart mako
-            ^pkill -SIGTERM brave
+            niri msg action do-screen-transition --delay-ms 0 | complete
+            pkill waybar -USR2 | complete # Better to do it here rather than relying on `reload_style_on_change` setting.
+            pkill -USR1 kitty | complete
+            pkill -USR1 hx | complete
+            systemctl --user restart mako | complete
+            pkill -SIGTERM brave | complete
             sleep 1sec
-            ^niri msg action do-screen-transition --delay-ms 500
-            ^niri msg action spawn -- brave
+            niri msg action do-screen-transition --delay-ms 500 | complete
+            niri msg action spawn -- brave | complete
           } catch {|e|
              print $e.msg
           }
