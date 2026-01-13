@@ -1,16 +1,30 @@
 {
   config.flake.modules.hjem.kitty =
     {
+      pkgs,
       lib,
-      config,
       theme,
       isDesktop,
       ...
     }:
     let
-      inherit (lib) mkIf;
+      inherit (lib.modules) mkIf;
     in
     mkIf isDesktop {
+      packages = [
+        (pkgs.writeTextFile {
+          name = "zellij-kitty";
+          destination = "/share/applications/zellij-kitty.desktop";
+          text = ''
+            [Desktop Entry]
+            Name=Zellij kitty
+            Icon=kitty
+            Exec=kitty -e ${pkgs.zellij}/bin/zellij
+            Terminal=false
+          '';
+        })
+      ];
+
       rum.programs.kitty = {
         enable = true;
 

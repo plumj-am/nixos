@@ -9,18 +9,6 @@
     {
       packages = [
         pkgs.zellij
-
-        (pkgs.writeTextFile {
-          name = "zellij-kitty";
-          destination = "/share/applications/zellij-kitty.desktop";
-          text = ''
-            [Desktop Entry]
-            Name=Zellij kitty
-            Icon=kitty
-            Exec=kitty ${pkgs.zellij}/bin/zellij
-            Terminal=false
-          '';
-        })
       ];
 
       files."zellij/config.kdl".text =
