@@ -12,6 +12,8 @@
 
       inputs.nixpkgs.follows = "os";
       inputs.rust-overlay.follows = "rust-overlay";
+      inputs.flake-utils.follows = "flake-utils";
+      inputs.crane.follows = "crane";
       inputs.git-hooks.follows = "";
     };
 

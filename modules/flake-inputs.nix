@@ -20,6 +20,7 @@
       # Fix for `nix-auto-follow.inputs.nixpkgs` trying to follow "nixpkgs".
       nix-auto-follow = {
         url = "github:fzakaria/nix-auto-follow";
+
         inputs.nixpkgs.follows = "os";
       };
 
@@ -28,12 +29,14 @@
       # Removes duplicates between `hjem.inputs.smfh` and `helix`.
       rust-overlay = {
         url = "github:oxalica/rust-overlay";
+
         inputs.nixpkgs.follows = "os";
       };
 
       # Removes duplicate between `hjem-rum` and `age-rekey`.
       treefmt = {
         url = "github:numtide/treefmt-nix";
+
         inputs.nixpkgs.follows = "os";
       };
 
@@ -45,6 +48,13 @@
       # Removes duplicate between `harmonia` and `nu-lint`.
       crane = {
         url = "github:ipetkov/crane";
+      };
+
+      # Removes duplicate between `actions` and `helix`.
+      gitignore = {
+        url = "github:hercules-ci/gitignore.nix";
+
+        inputs.nixpkgs.follows = "os";
       };
     };
   };

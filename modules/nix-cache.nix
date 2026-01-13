@@ -5,6 +5,7 @@
       inputs.nixpkgs.follows = "os";
       inputs.flake-parts.follows = "parts";
       inputs.treefmt-nix.follows = "treefmt";
+      inputs.crane.follows = "crane";
     };
   };
 

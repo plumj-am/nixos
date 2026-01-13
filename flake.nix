@@ -6,6 +6,13 @@
   outputs = inputs: import ./outputs.nix inputs;
 
   inputs = {
+    actions = {
+      inputs = {
+        flake-parts.follows = "parts";
+        nixpkgs.follows = "os";
+      };
+      url = "github:nialov/actions.nix";
+    };
     age = {
       inputs = {
         darwin.follows = "os-darwin";
@@ -41,8 +48,13 @@
     };
     flake-file.url = "github:vic/flake-file";
     flake-utils.url = "github:numtide/flake-utils";
+    gitignore = {
+      inputs.nixpkgs.follows = "os";
+      url = "github:hercules-ci/gitignore.nix";
+    };
     harmonia = {
       inputs = {
+        crane.follows = "crane";
         flake-parts.follows = "parts";
         nixpkgs.follows = "os";
         treefmt-nix.follows = "treefmt";
@@ -88,6 +100,8 @@
     };
     nu-lint = {
       inputs = {
+        crane.follows = "crane";
+        flake-utils.follows = "flake-utils";
         git-hooks.follows = "";
         nixpkgs.follows = "os";
         rust-overlay.follows = "rust-overlay";
