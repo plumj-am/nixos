@@ -15,7 +15,7 @@
         ;
     in
     {
-      options.ci-runner = {
+      options.forgejo-action-runner = {
         enable = lib.mkEnableOption "forgejo CI runner";
 
         tokenFile = mkOption {
@@ -48,8 +48,8 @@
         };
       };
 
-      config = mkIf config.ci-runner.enable {
-        age.secrets.forgejoRunnerToken.rekeyFile = config.ci-runner.tokenFile;
+      config = mkIf config.forgejo-action-runner.enable {
+        age.secrets.forgejoRunnerToken.rekeyFile = config.forgejo-action-runner.tokenFile;
 
         users.groups.gitea-runner = { };
 
@@ -65,8 +65,8 @@
             enable = true;
             name = config.networking.hostName;
             tokenFile = config.age.secrets.forgejoRunnerToken.path;
-            inherit (config.ci-runner) url;
-            inherit (config.ci-runner) labels;
+            inherit (config.forgejo-action-runner) url;
+            inherit (config.forgejo-action-runner) labels;
 
             settings.cache.enabled = false;
 
@@ -82,8 +82,6 @@
                 "rust-src"
               ])
 
-              inputs.claude-code.packages.${pkgs.stdenv.hostPlatform.system}.default
-
               pkgs.bash
               pkgs.curl
               pkgs.forgejo-cli
@@ -96,7 +94,6 @@
               pkgs.nix
               pkgs.nodejs
               pkgs.nushell
-              pkgs.opencode
               pkgs.openssl
               pkgs.pkg-config
               pkgs.ripgrep
@@ -104,11 +101,11 @@
               pkgs.which
               pkgs.xz
             ]
-            ++ lib.optionals config.ci-runner.withDocker [
+            ++ lib.optionals config.forgejo-action-runner.withDocker [
               pkgs.docker
               pkgs.docker-compose
             ]
-            ++ config.ci-runner.extraHostPackages;
+            ++ config.forgejo-action-runner.extraHostPackages;
           };
         };
       };
