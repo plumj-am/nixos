@@ -1,6 +1,7 @@
 let
   commonModule =
     {
+      pkgs,
       config,
       inputs,
       lib,
@@ -24,17 +25,23 @@ let
       registryMap = inputs |> filterAttrs (const <| isType "flake");
     in
     {
+      nix.package = pkgs.nixVersions.latest; # Use latest (includes nice S3 changes).
       nix.channel = {
         enable = false;
       };
 
       nix.gc = {
         automatic = true;
-        options = "--delete-older-than 3d";
+        options = "--delete-older-than 7d";
       }
       // optionalAttrs config.isLinux {
         dates = "weekly";
         persistent = true;
+      }
+      // optionalAttrs isServer {
+        # Servers build and upload to S3 cache, so they can be more aggressive with GC.
+        dates = "daily";
+        options = "--delete-older-than 1d";
       };
 
       nix.nixPath =
