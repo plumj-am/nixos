@@ -29,6 +29,7 @@
       desktop-gui
       desktop-tools
       disable-nano
+      disable-nix-documentation
       disks-desktop-swap
       disks-zram-swap
       dynamic-binaries
@@ -122,6 +123,7 @@
       desktop-gui
       desktop-tools
       disable-nano
+      disable-nix-documentation
       disks-desktop-swap
       disks-zram-swap
       dynamic-binaries
@@ -212,7 +214,7 @@
       acme
       boot-server
       disable-nano
-      lib
+      disable-nix-documentation
       disks-server
       disks-zram-swap
       dynamic-binaries
@@ -222,6 +224,7 @@
       hjem
       keys
       locale
+      lib
       linux-kernel
       netrc
       network
@@ -311,7 +314,7 @@
       acme
       boot-server
       disable-nano
-      lib
+      disable-nix-documentation
       disks-server
       disks-zram-swap
       dynamic-binaries
@@ -319,6 +322,7 @@
       hjem
       keys
       locale
+      lib
       linux-kernel
       netrc
       network
@@ -407,6 +411,7 @@
 
     modules = with inputs.self.modules.darwin; [
       app-launcher
+      disable-nix-documentation
       hjem
       keys
       network
