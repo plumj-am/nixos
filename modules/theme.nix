@@ -251,9 +251,9 @@ in
           variant = theme.variant;
           colors = theme.colors;
 
-          withHash = mapAttrs (name: value: "#${value}") theme.colors;
-          with0x = mapAttrs (name: value: "0x${value}") theme.colors;
-          withRgb = mapAttrs (name: value: theme.hexToRgb value) theme.colors;
+          withHash = mapAttrs (_name: value: "#${value}") theme.colors;
+          with0x = mapAttrs (_name: value: "0x${value}") theme.colors;
+          withRgb = mapAttrs (_name: value: theme.hexToRgb value) theme.colors;
 
           icons = theme.get_theme "icons";
           alacritty = theme.get_theme "alacritty";
@@ -332,9 +332,9 @@ in
           variant = theme.variant;
           colors = theme.colors;
 
-          withHash = mapAttrs (name: value: "#${value}") theme.colors;
-          with0x = mapAttrs (name: value: "0x${value}") theme.colors;
-          withRgb = mapAttrs (name: value: theme.hexToRgb value) theme.colors;
+          withHash = mapAttrs (_name: value: "#${value}") theme.colors;
+          with0x = mapAttrs (_name: value: "0x${value}") theme.colors;
+          withRgb = mapAttrs (_name: value: theme.hexToRgb value) theme.colors;
 
           icons = theme.get_theme "icons";
           alacritty = theme.get_theme "alacritty";

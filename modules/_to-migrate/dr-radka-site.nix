@@ -9,7 +9,7 @@
     }:
     let
       inherit (config.networking) domain;
-      inherit (lib) enabled merge;
+      inherit (lib) merge;
 
       app_port = 3000;
       app_user = "dr-radka";

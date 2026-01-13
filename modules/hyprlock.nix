@@ -1,6 +1,6 @@
 {
   config.flake.modules.hjem.hyprlock =
-    { lib, theme, ... }:
+    { theme, ... }:
     let
       yuzuMonitor = # mkIf (config.networking.hostName == "yuzu")
         "DP-2";

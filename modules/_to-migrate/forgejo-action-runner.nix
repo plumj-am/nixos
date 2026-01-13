@@ -1,7 +1,6 @@
 {
   config.flake.modules.nixos.forgejo-action-runner =
     {
-      self,
       config,
       lib,
       pkgs,

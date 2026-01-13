@@ -34,6 +34,7 @@ let
       pkgs.moon
       pkgs.pnpm
       pkgs.proto
+      pkgs.deadnix
     ];
 
   desktopApps =
