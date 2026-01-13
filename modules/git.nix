@@ -72,9 +72,9 @@
         ''
           [credential]
             helper=!gh auth git-credential
-            helper=cache --timeout 21600 # 6 hours
             helper=oauth
             helper=oauth -device
+            helper=cache --timeout 21600 # 6 hours
         '';
     };
 }
