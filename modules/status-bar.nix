@@ -18,6 +18,7 @@
       inherit (builtins) concatStringsSep map toString;
 
       nu = "${getExe pkgs.nushell} -c";
+      bash = "${getExe pkgs.bash} -c";
       kitty = "${getExe pkgs.kitty} --hold";
       btop = getExe pkgs.btop;
 
@@ -119,7 +120,7 @@
             },
 
             "custom/gpu": {
-              "exec": "${nu} 'if command -v nvidia-smi >/dev/null; then nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits | head -1; elif command -v radeontop >/dev/null; then radeontop -d - -l 1 | grep -o \"gpu [0-9]*\" | cut -d\" \" -f2; else echo \"N/A\"; fi'",
+              "exec": "${bash} 'if command -v nvidia-smi >/dev/null; then nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits | head -1; elif command -v radeontop >/dev/null; then radeontop -d - -l 1 | grep -o \"gpu [0-9]*\" | cut -d\" \" -f2; else echo \"N/A\"; fi'",
               "format": "󰢮  {}%",
               "interval": 5,
               "tooltip": true,
