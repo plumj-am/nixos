@@ -1,11 +1,19 @@
 {
   config.flake.modules.hjem.hyprlock =
-    { theme, ... }:
-    let
-      yuzuMonitor = # mkIf (config.networking.hostName == "yuzu")
-        "DP-2";
-    in
     {
+      lib,
+      theme,
+      isDesktop,
+      isLinux,
+      hostName,
+      ...
+    }:
+    let
+      inherit (lib.modules) mkIf;
+
+      yuzuMonitor = mkIf (hostName == "yuzu") "DP-2";
+    in
+    mkIf (isDesktop && isLinux) {
       rum.programs.hyprlock = {
         enable = true;
         settings = {

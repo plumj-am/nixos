@@ -5,13 +5,14 @@
       lib,
       theme,
       isLinux,
+      isDesktop,
       hostName,
       ...
     }:
     let
       inherit (lib.modules) mkIf;
     in
-    mkIf isLinux {
+    mkIf (isDesktop && isLinux) {
       packages = [
         pkgs.libnotify
         pkgs.mako

@@ -39,10 +39,7 @@ in
               config
               ;
           };
-          modules = [
-            themeModule
-            { config.useTheme = true; }
-          ];
+          modules = [ themeModule ];
         }).config
         )
         theme

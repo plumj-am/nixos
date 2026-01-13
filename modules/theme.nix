@@ -1,8 +1,7 @@
 # TODO: Deduplicate.
 { lib, ... }:
 let
-  inherit (lib.options) mkEnableOption mkOption;
-  inherit (lib.modules) mkIf;
+  inherit (lib.options) mkOption;
   inherit (lib.attrsets) mapAttrs;
   inherit (lib.trivial) fromHexString;
   inherit (lib.types) attrs;
@@ -233,7 +232,7 @@ let
 in
 {
   config.flake.theme =
-    { config, pkgs, ... }:
+    { pkgs, ... }:
     let
       theme = mkThemeConfig { inherit pkgs; };
     in
@@ -244,9 +243,7 @@ in
         description = "Global theme configuration";
       };
 
-      options.useTheme = mkEnableOption "use theming";
-
-      config = mkIf config.useTheme {
+      config = {
         theme = theme.designSystem // {
           inherit (theme)
             themes
@@ -316,7 +313,7 @@ in
     };
 
   config.flake.modules.nixos.theme =
-    { config, pkgs, ... }:
+    { pkgs, ... }:
     let
       theme = mkThemeConfig { inherit pkgs; };
     in
@@ -327,9 +324,7 @@ in
         description = "Global theme configuration";
       };
 
-      options.useTheme = mkEnableOption "use theming";
-
-      config = mkIf config.useTheme {
+      config = {
         theme = theme.designSystem // {
           inherit (theme)
             themes

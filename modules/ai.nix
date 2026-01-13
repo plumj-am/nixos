@@ -25,7 +25,7 @@
 
       opencodePackage = inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
-      packages = mkIf isDesktop [
+      packages = [
         pkgs.codex
         pkgs.gemini-cli
         # pkgs.qwen-code
@@ -40,7 +40,7 @@
         opencodePackage
       ];
     in
-    {
+    mkIf isDesktop {
       inherit packages;
 
       # TODO: Add claude-code and opencode config files.

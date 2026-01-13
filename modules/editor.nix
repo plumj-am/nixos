@@ -279,11 +279,17 @@ let
     };
 
   editorExtra =
-    { pkgs, lib, ... }:
+    {
+      pkgs,
+      lib,
+      isDesktop,
+      ...
+    }:
     let
+      inherit (lib.modules) mkIf;
       inherit (lib.lists) singleton;
     in
-    {
+    mkIf isDesktop {
       rum.programs.helix.languages.language-server = {
 
         nixd.args = singleton "--inlay-hints";

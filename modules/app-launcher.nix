@@ -1,7 +1,17 @@
 {
   config.flake.modules.hjem.app-launcher =
-    { theme, ... }:
     {
+      theme,
+      lib,
+      isDesktop,
+      isLinux,
+      ...
+    }:
+    let
+      inherit (lib.modules) mkIf;
+
+    in
+    mkIf (isDesktop && isLinux) {
       rum.programs.fuzzel = with theme; {
         enable = true;
 

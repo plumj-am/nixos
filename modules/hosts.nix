@@ -79,9 +79,6 @@
             };
           };
 
-          openssh.enable = true;
-
-          useTheme = true;
 
           system.stateVersion = "26.05";
         };
@@ -116,8 +113,6 @@
         config.unfree.allowedNames = [
           "raycast"
         ];
-
-        config.openssh.enable = true;
 
         config.system.stateVersion = 6;
       }

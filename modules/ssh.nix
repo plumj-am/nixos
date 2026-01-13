@@ -24,17 +24,9 @@
     };
 
   config.flake.modules.nixos.openssh =
-    { config, lib, ... }:
-    let
-      inherit (lib.modules) mkIf;
-      inherit (lib.options) mkEnableOption;
-    in
+    { config, ... }:
     {
-      options.openssh = {
-        enable = mkEnableOption "openssh";
-      };
-
-      config = mkIf config.openssh.enable {
+      config = {
         services.openssh = {
           enable = true;
           hostKeys = [
@@ -55,19 +47,9 @@
       };
     };
 
-  config.flake.modules.darwin.openssh =
-    { config, lib, ... }:
-    let
-      inherit (lib.options) mkEnableOption;
-      inherit (lib.modules) mkIf;
-    in
-    {
-      options.openssh = {
-        enable = mkEnableOption "openssh";
-      };
-
-      config = mkIf config.openssh.enable {
-        services.openssh.enable = true;
-      };
+  config.flake.modules.darwin.openssh = {
+    config = {
+      services.openssh.enable = true;
     };
+  };
 }
