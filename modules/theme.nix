@@ -4,6 +4,8 @@ let
   inherit (lib.attrsets) mapAttrs;
   inherit (lib.trivial) fromHexString;
   inherit (lib.types) attrs;
+  inherit (lib.attrsets) listToAttrs elemAt;
+  inherit (lib.lists) genList;
   inherit (builtins)
     fromJSON
     readFile
@@ -26,25 +28,31 @@ let
         let
           colors = fromJSON json;
           stripHash = s: substring 1 6 s;
+          colorNames = [
+            "base00"
+            "base01"
+            "base02"
+            "base03"
+            "base04"
+            "base05"
+            "base06"
+            "base07"
+            "base08"
+            "base09"
+            "base0A"
+            "base0B"
+            "base0C"
+            "base0D"
+            "base0E"
+            "base0F"
+          ];
         in
-        {
-          base00 = stripHash colors.colors.color0;
-          base01 = stripHash colors.colors.color1;
-          base02 = stripHash colors.colors.color2;
-          base03 = stripHash colors.colors.color3;
-          base04 = stripHash colors.colors.color4;
-          base05 = stripHash colors.colors.color5;
-          base06 = stripHash colors.colors.color6;
-          base07 = stripHash colors.colors.color7;
-          base08 = stripHash colors.colors.color8;
-          base09 = stripHash colors.colors.color9;
-          base0A = stripHash colors.colors.color10;
-          base0B = stripHash colors.colors.color11;
-          base0C = stripHash colors.colors.color12;
-          base0D = stripHash colors.colors.color13;
-          base0E = stripHash colors.colors.color14;
-          base0F = stripHash colors.colors.color15;
-        };
+        listToAttrs (
+          genList (n: {
+            name = elemAt colorNames n;
+            value = stripHash (elemAt colors.colors.colors n);
+          }) 16
+        );
 
       pywalColorsRaw = if pathExists pywalCache then readFile pywalCache else null;
 
