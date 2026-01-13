@@ -10,7 +10,10 @@
       inherit (lib) mkDefault;
     in
     {
-      packages = [ pkgs.gh ];
+      packages = [
+        pkgs.gh
+        pkgs.git-credential-oauth
+      ];
       rum.programs.git = {
         enable = true;
 
