@@ -6,6 +6,9 @@ let
         pkgs.jujutsu
         pkgs.difftastic
         pkgs.mergiraf
+
+        pkgs.lazyjj
+        pkgs.jjui
       ];
     };
 
