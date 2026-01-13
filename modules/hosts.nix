@@ -203,6 +203,100 @@
     ];
   };
 
+  flake.nixosConfigurations.kiwi = inputs.os.lib.nixosSystem {
+    specialArgs = { inherit inputs; };
+    system = "x86_64-linux";
+    modules = with inputs.self.modules.nixos; [
+      acme
+      boot-server
+      disable-nano
+      lib
+      disks-server
+      disks-zram-swap
+      dynamic-binaries
+      forgejo-action-runner
+      hjem
+      keys
+      locale
+      linux-kernel
+      netrc
+      network
+      nginx
+      nix-cache
+      nix-distributed-builds
+      nix-distributed-builder
+      nix-settings
+      prometheus-node-exporter
+      openssh
+      packages
+      rebuild
+      rust
+      secret-manager
+      sudo-server
+      system-types
+      tailscale
+      theme
+      unfree
+      uptime-kuma
+      users
+      virtualisation
+      website-dr-radka
+      yubikey
+      {
+        config = {
+          operatingSystem = "linux";
+          systemPlatform = "x86_64-linux";
+          systemType = "server";
+
+          network = {
+            hostName = "kiwi";
+            domain = "dr-radka.pl";
+            tcpPorts = [
+              22
+              80
+              443
+            ];
+          };
+
+          cache = {
+            fqdn = "cache2.plumj.am";
+          };
+
+          forgejo-action-runner = {
+            labels = [
+              "self-hosted:host"
+              "plum:host"
+              "docpad-infra:host"
+            ];
+          };
+
+          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIElcSHxI64xqUUKEY83tKyzEH+fYT5JCWn3qCqtw16af root@kiwi";
+
+          age.secrets = {
+            id.rekeyFile = ../secrets/kiwi-id.age;
+            password.rekeyFile = ../secrets/kiwi-password.age;
+            forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
+            nixServeKey.rekeyFile = ../secrets/kiwi-cache-key.age;
+            acmeEnvironment.rekeyFile = ../secrets/acme-environment.age;
+            drRadkaEnvironment.rekeyFile = ../secrets/kiwi-dr-radka-environment.age;
+            context7Key = {
+              rekeyFile = ../secrets/context7-key.age;
+              owner = "jam";
+              mode = "400";
+            };
+            zaiKey = {
+              rekeyFile = ../secrets/z-ai-key.age;
+              owner = "jam";
+              mode = "400";
+            };
+          };
+
+          system.stateVersion = "26.05";
+        };
+      }
+    ];
+  };
+
   flake.darwinConfigurations.lime = inputs.os-darwin.lib.darwinSystem {
     specialArgs = { inherit inputs; };
     system = "aarch64-darwin";
@@ -223,6 +317,7 @@
       users
       {
         config.operatingSystem = "darwin";
+        config.systemPlatform = "aarch64-darwin";
         config.systemType = "desktop";
 
         config.network.hostName = "lime";
