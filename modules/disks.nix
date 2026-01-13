@@ -19,11 +19,13 @@ let
 in
 {
   config.flake.modules.nixos.disks-server =
-    { lib, ... }:
+    { lib, inputs, ... }:
     let
       inherit (lib) mkDefault;
     in
     {
+      imports = [ inputs.disko.nixosModules.disko ];
+
       disko.devices = {
         disk.disk1 = {
           device = mkDefault "/dev/sda";
