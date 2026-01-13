@@ -1,50 +1,38 @@
-let
-  commonModule =
-    { pkgs, ... }:
-    let
-      identityPath = "/home/jam/.ssh/id";
-    in
-    {
-      environment.systemPackages = [ pkgs.mosh ];
-
-      sshConfig = ''
-        strictHostKeyChecking accept-new
-        identitiesOnly yes
-
-        Match *
-        COLORTERM=truecolor
-        TERM=xterm-256color
-
-        controlMaster auto
-        controlPersist 60m
-        serverAliveCount 2
-        serverAliveInterval 60
-
-        IdentityFile ${identityPath}
-      '';
-    };
-
-in
 {
-  config.flake.modules.hjem.ssh = {
+  config.flake.modules.hjem.ssh =
+    { pkgs, ... }:
+    {
+      rum.programs.nushell.aliases.mosh = "mosh --no-init";
 
-  };
+      packages = [
+        pkgs.mosh
 
-  config.flake.modules.nixos.ssh = {
+        (pkgs.writeTextFile {
+          name = "ssh-config";
+          destination = "/home/jam/.ssh/config";
+          text = # ssh
+            ''
+              StrictHostKeyChecking accept-new
+              IdentitiesOnly yes
 
-  };
-
-  config.flake.modules.darwin.ssh = {
-
-  };
+              Host *
+                SetEnv COLORTERM="truecolor" TERM="xterm-256color"
+                ControlMaster auto
+                ControlPersist 60m
+                ServerAliveCountMax 2
+                ServerAliveInterval 60
+                IdentityFile /home/jam/.ssh/id
+            '';
+          # permissions = "644";
+        })
+      ];
+    };
 
   config.flake.modules.nixos.openssh =
     { config, lib, ... }:
     let
-      inherit (lib)
-        mkIf
-        mkEnableOption
-        ;
+      inherit (lib.modules) mkIf;
+      inherit (lib.options) mkEnableOption;
     in
     {
       options.openssh = {
@@ -75,10 +63,8 @@ in
   config.flake.modules.darwin.openssh =
     { config, lib, ... }:
     let
-      inherit (lib)
-        mkIf
-        mkEnableOption
-        ;
+      inherit (lib.options) mkEnableOption;
+      inherit (lib.modules) mkIf;
     in
     {
       options.openssh = {
