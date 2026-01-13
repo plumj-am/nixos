@@ -30,7 +30,6 @@
         inherit packages;
         enable = true;
         settings = {
-          application-prefers-dark-theme = true;
           font-name = "${theme.font.sans.name} ${toString theme.font.size.small}";
           theme-name = theme.gtk.name;
           icon-theme-name = theme.icons.name;

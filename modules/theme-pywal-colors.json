@@ -1,0 +1,28 @@
+{
+	"wallpaper": "/home/jam/wallpapers/044.jpg",
+	"alpha": "100",
+
+	"special": {
+		"background": "#211b29",
+		"foreground": "#f2ece1",
+		"cursor": "#f2ece1"
+	},
+	"colors": {
+		"color0": "#211b29",
+		"color1": "#c145ba",
+		"color2": "#d37d7d",
+		"color3": "#deb49c",
+		"color4": "#e7d2b8",
+		"color5": "#e1a5c5",
+		"color6": "#ebcec3",
+		"color7": "#f2ece1",
+		"color8": "#a9a59d",
+		"color9": "#c145ba",
+		"color10": "#d37d7d",
+		"color11": "#deb49c",
+		"color12": "#e7d2b8",
+		"color13": "#e1a5c5",
+		"color14": "#ebcec3",
+		"color15": "#f2ece1"
+	}
+}
