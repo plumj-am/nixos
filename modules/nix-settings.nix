@@ -86,6 +86,7 @@ let
             "gitea-runner"
           ];
           warn-dirty = false;
+          use-xdg-base-directories = true;
         }
         |> flip removeAttrs (
           optionals isDarwin [
