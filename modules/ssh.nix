@@ -4,27 +4,22 @@
     {
       rum.programs.nushell.aliases.mosh = "mosh --no-init";
 
+      files.".ssh/config".text = # ssh
+        ''
+          StrictHostKeyChecking accept-new
+          IdentitiesOnly yes
+
+          Host *
+            SetEnv COLORTERM="truecolor" TERM="xterm-256color"
+            ControlMaster auto
+            ControlPersist 60m
+            ServerAliveCountMax 2
+            ServerAliveInterval 60
+            IdentityFile /home/jam/.ssh/id
+        '';
+
       packages = [
         pkgs.mosh
-
-        (pkgs.writeTextFile {
-          name = "ssh-config";
-          destination = "/home/jam/.ssh/config";
-          text = # ssh
-            ''
-              StrictHostKeyChecking accept-new
-              IdentitiesOnly yes
-
-              Host *
-                SetEnv COLORTERM="truecolor" TERM="xterm-256color"
-                ControlMaster auto
-                ControlPersist 60m
-                ServerAliveCountMax 2
-                ServerAliveInterval 60
-                IdentityFile /home/jam/.ssh/id
-            '';
-          # permissions = "644";
-        })
       ];
     };
 

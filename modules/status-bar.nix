@@ -9,7 +9,7 @@
       inherit (builtins) concatStringsSep map toString;
     in
     {
-      files."waybar/config.jsonc".text =
+      xdg.config.files."waybar/config.jsonc".text =
         # jsonc
         ''
           {
@@ -139,7 +139,7 @@
           }
         '';
 
-      files."waybar/style.css".text =
+      xdg.config.files."waybar/style.css".text =
         with theme.withHash; # css
         ''
           * {

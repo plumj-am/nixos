@@ -14,12 +14,12 @@
     mkIf isDesktop {
       packages = [ package ];
 
-      files."mprocs/mprocs.yaml".text = # yaml
+      xdg.config.files."mprocs/mprocs.yaml".text = # yaml
         ''
-          hide_keymap_window = true;
-          proc_list_width = 18;
+          hide_keymap_window: true
+          proc_list_width: 18
 
-          keymap_procs = {
+          keymap_procs:
             <C-j>:
               c: batch
               cmds:
@@ -30,7 +30,6 @@
               cmds:
                 - { c: prev-proc }
                 - { c: focus-term }
-          }
 
           keymap_term:
             <C-j>:

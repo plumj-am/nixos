@@ -11,7 +11,7 @@
         pkgs.zellij
       ];
 
-      files."zellij/config.kdl".text =
+      xdg.config.files."zellij/config.kdl".text =
         with theme.withRgb; # kdl
         ''
           theme "${if theme.color_scheme == "pywal" then "custom" else theme.zellij}"
