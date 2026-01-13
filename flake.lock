@@ -196,15 +196,15 @@
     "flake-compat_2": {
       "flake": false,
       "locked": {
-        "lastModified": 1696426674,
-        "narHash": "sha256-kvjfFW7WAETZlt09AgDn1MrtKzP7t90Vf7vypd3OL1U=",
-        "owner": "edolstra",
+        "lastModified": 1767039857,
+        "narHash": "sha256-vNpUSpF5Nuw8xvDLj2KCwwksIbjua2LZCqhV1LNRDns=",
+        "owner": "NixOS",
         "repo": "flake-compat",
-        "rev": "0f9255e01c2351cc7d116c072cb317785dd33b33",
+        "rev": "5edf11c44bc78a0d334f6334cdaf7d60d732daab",
         "type": "github"
       },
       "original": {
-        "owner": "edolstra",
+        "owner": "NixOS",
         "repo": "flake-compat",
         "type": "github"
       }
@@ -286,17 +286,15 @@
     "gitignore": {
       "inputs": {
         "nixpkgs": [
-          "actions",
-          "git-hooks",
-          "nixpkgs"
+          "os"
         ]
       },
       "locked": {
-        "lastModified": 1709087332,
-        "narHash": "sha256-HG2cCnktfHsKV0s4XW83gU3F57gaTljL9KNSuG6bnQs=",
+        "lastModified": 1762808025,
+        "narHash": "sha256-XmjITeZNMTQXGhhww6ed/Wacy2KzD6svioyCX7pkUu4=",
         "owner": "hercules-ci",
         "repo": "gitignore.nix",
-        "rev": "637db329424fd7e46cf4185293b9cc8c88c95394",
+        "rev": "cb5e3fdca1de58ccbc3ef53de65bd372b48f567c",
         "type": "github"
       },
       "original": {
@@ -308,17 +306,15 @@
     "gitignore_2": {
       "inputs": {
         "nixpkgs": [
-          "age-rekey",
-          "pre-commit-hooks",
-          "nixpkgs"
+          "os"
         ]
       },
       "locked": {
-        "lastModified": 1709087332,
-        "narHash": "sha256-HG2cCnktfHsKV0s4XW83gU3F57gaTljL9KNSuG6bnQs=",
+        "lastModified": 1762808025,
+        "narHash": "sha256-XmjITeZNMTQXGhhww6ed/Wacy2KzD6svioyCX7pkUu4=",
         "owner": "hercules-ci",
         "repo": "gitignore.nix",
-        "rev": "637db329424fd7e46cf4185293b9cc8c88c95394",
+        "rev": "cb5e3fdca1de58ccbc3ef53de65bd372b48f567c",
         "type": "github"
       },
       "original": {
@@ -344,36 +340,6 @@
       "original": {
         "owner": "hercules-ci",
         "repo": "gitignore.nix",
-        "type": "github"
-      }
-    },
-    "harmonia": {
-      "inputs": {
-        "crane": [
-          "crane"
-        ],
-        "flake-parts": [
-          "parts"
-        ],
-        "nix": "nix",
-        "nixpkgs": [
-          "os"
-        ],
-        "treefmt-nix": [
-          "treefmt"
-        ]
-      },
-      "locked": {
-        "lastModified": 1768924040,
-        "narHash": "sha256-Pxu4ephz+eE89VQG34zdUnsZY1Yoq5RU8EIbmA0Ikns=",
-        "owner": "nix-community",
-        "repo": "harmonia",
-        "rev": "f99a6dcdc6e959e5640543b3049b5f5b4299084a",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "repo": "harmonia",
         "type": "github"
       }
     },
@@ -498,22 +464,6 @@
       "original": {
         "owner": "YaLTeR",
         "repo": "niri",
-        "type": "github"
-      }
-    },
-    "nix": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1768884656,
-        "narHash": "sha256-yfPH0kRErMLFgpfedlr28Hak8m0zgbDq8RnMJsDdtEU=",
-        "owner": "nixos",
-        "repo": "nix",
-        "rev": "67a99db5be960031040fa8dd0c412c7408137a75",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "repo": "nix",
         "type": "github"
       }
     },
@@ -736,11 +686,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1735882644,
-        "narHash": "sha256-3FZAG+pGt3OElQjesCAWeMkQ7C/nB1oTHLRQ8ceP110=",
+        "lastModified": 1769069492,
+        "narHash": "sha256-Efs3VUPelRduf3PpfPP2ovEB4CXT7vHf8W+xc49RL/U=",
         "owner": "cachix",
         "repo": "pre-commit-hooks.nix",
-        "rev": "a5a961387e75ae44cc20f0a57ae463da5e959656",
+        "rev": "a1ef738813b15cf8ec759bdff5761b027e3e1d23",
         "type": "github"
       },
       "original": {
@@ -833,7 +783,6 @@
         "flake-file": "flake-file",
         "flake-utils": "flake-utils",
         "gitignore": "gitignore_3",
-        "harmonia": "harmonia",
         "helix": "helix",
         "hjem": [
           "hjem-rum",

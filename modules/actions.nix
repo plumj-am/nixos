@@ -1,6 +1,6 @@
 { inputs, lib, ... }:
 {
-  flake-file.inputs.actions-nix = {
+  flake-file.inputs.actions = {
     url = "github:nialov/actions.nix";
 
     inputs.nixpkgs.follows = "os";

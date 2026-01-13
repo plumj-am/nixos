@@ -52,15 +52,6 @@
       inputs.nixpkgs.follows = "os";
       url = "github:hercules-ci/gitignore.nix";
     };
-    harmonia = {
-      inputs = {
-        crane.follows = "crane";
-        flake-parts.follows = "parts";
-        nixpkgs.follows = "os";
-        treefmt-nix.follows = "treefmt";
-      };
-      url = "github:nix-community/harmonia";
-    };
     helix = {
       inputs = {
         nixpkgs.follows = "os";
