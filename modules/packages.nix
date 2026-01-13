@@ -31,9 +31,7 @@ let
       pkgs.docker
       pkgs.docker-compose
       pkgs.exercism
-      pkgs.moon
       pkgs.pnpm
-      pkgs.proto
       pkgs.deadnix
       pkgs.statix
     ];
