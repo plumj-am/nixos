@@ -1,9 +1,18 @@
 {
-  flake.modules.nixos.wsl-settings =
-    { pkgs, lib, ... }:
+  flake.modules.nixos.wsl =
+    {
+      inputs,
+      pkgs,
+      lib,
+      ...
+    }:
     let
     in
     {
+      imports = [
+        inputs.os-wsl.nixosModules.default
+      ];
+
       wsl = {
         enable = true;
         defaultUser = "jam";
