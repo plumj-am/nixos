@@ -107,6 +107,95 @@
     ];
   };
 
+  # TODO: Reduce duplication.
+  flake.nixosConfigurations.date = inputs.os.lib.nixosSystem {
+    specialArgs = { inherit inputs; };
+    system = "x86_64-linux";
+
+    modules = with inputs.self.modules.nixos; [
+      audio
+      boot-desktop
+      desktop-gui
+      desktop-tools
+      disable-nano
+      disks-desktop-swap
+      disks-zram-swap
+      dynamic-binaries
+      games
+      gammastep
+      graphics
+      hardware-desktop
+      hjem
+      jujutsu-extra
+      keyboard
+      keys
+      lib
+      locale
+      linux-kernel-zen
+      mouse
+      netrc
+      network
+      nix-settings
+      openssh
+      packages
+      packages-extra-desktop
+      power-menu
+      process-management
+      quickshell
+      rebuild
+      rust-desktop
+      scratchpads
+      secret-manager
+      sudo-desktop
+      system-types
+      tailscale
+      theme
+      theme-fonts
+      theme-scripts
+      unfree
+      users
+      virtualisation
+      waybar
+      window-manager
+      yubikey
+      {
+        config = {
+          operatingSystem = "linux";
+          systemPlatform = "x86_64-linux";
+          systemType = "desktop";
+
+          network.hostName = "date";
+
+          unfree.allowedNames = [
+            "nvidia-x11"
+            "nvidia-settings"
+            "steam"
+            "steam-unwrapped"
+          ];
+
+          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEzfoVKZDyiyyMiX1JRFaaTELspG25MlLNq0kI2AANTa root@date";
+
+          age.secrets = {
+            id.rekeyFile = ../secrets/date-id.age;
+            password.rekeyFile = ../secrets/date-password.age;
+            context7Key = {
+              rekeyFile = ../secrets/context7-key.age;
+              owner = "jam";
+              mode = "400";
+            };
+            zaiKey = {
+              rekeyFile = ../secrets/z-ai-key.age;
+              owner = "jam";
+              mode = "400";
+            };
+          };
+
+          system.stateVersion = "26.05";
+        };
+      }
+    ];
+  };
+
   flake.nixosConfigurations.plum = inputs.os.lib.nixosSystem {
     specialArgs = { inherit inputs; };
     system = "x86_64-linux";
