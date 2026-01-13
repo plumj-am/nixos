@@ -1,7 +1,6 @@
 let
   commonModule = {
     boot.loader = {
-      systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
       grub.device = "nodev";
     };
@@ -25,6 +24,7 @@ in
       imports = singleton commonModule;
       boot.tmp.cleanOnBoot = true;
 
+      boot.loader.systemd-boot.enable = true;
       boot.loader.grub = {
         efiSupport = true;
         efiInstallAsRemovable = true;
