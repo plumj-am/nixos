@@ -1,6 +1,6 @@
 {
   config.flake.modules.hjem.git =
-    { lib, ... }:
+    { config, lib, ... }:
     let
       inherit (lib) mkDefault;
     in
@@ -49,8 +49,7 @@
 
           core.compression = 9;
           core.preloadindex = true;
-          # TODO
-          # core.editor       = config.environment.variables.EDITOR;
+          core.editor = "${config.environment.sessionVariables.EDITOR}";
           core.longpaths = true;
 
           diff.algorithm = "histogram";
@@ -61,19 +60,21 @@
           commit.gpgSign = true;
           tag.gpgSign = true;
           gpg.format = "ssh";
-          # TODO: Check how to use many. This doesn't work.
-          credential.helper = # .gitconfig
-            ''
-              "!gh auth git-credential"
-              "cache --timeout 21600" # 6 hours
-              "oauth"
-              "oauth -device"
-            '';
 
           core.sshCommand = "ssh -i ~/.ssh/id";
 
           url."ssh://git@github.com/".insteadOf = "gh:";
+
+          include.path = "credentials";
         };
       };
+      xdg.config.files."git/credentials".text = # ini
+        ''
+          [credential]
+            helper=!gh auth git-credential
+            helper=cache --timeout 21600 # 6 hours
+            helper=oauth
+            helper=oauth -device
+        '';
     };
 }
