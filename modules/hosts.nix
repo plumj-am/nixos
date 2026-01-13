@@ -40,6 +40,7 @@
       jujutsu-extra
       keyboard
       keys
+      lib
       locale
       linux-kernel-zen
       mouse

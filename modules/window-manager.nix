@@ -293,7 +293,15 @@
 
     };
   flake.modules.nixos.window-manager =
-    { inputs, pkgs, ... }:
+    {
+      inputs,
+      config,
+      pkgs,
+      ...
+    }:
+    let
+      inherit (config.myLib) mkDesktopEntry;
+    in
     {
       xdg.portal = {
         enable = true;
@@ -323,28 +331,13 @@
         pkgs.xwayland-satellite
         inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable
 
-        (pkgs.writeTextFile {
-          name = "screenshot";
-          destination = "/share/applications/screenshot.desktop";
-          text = ''
-            [Desktop Entry]
-            Name=Screenshot
-            Icon=camera-web
-            Exec=niri msg action screenshot
-            Terminal=false
-          '';
+        (mkDesktopEntry { inherit pkgs; } {
+          name = "Screenshot";
+          exec = "niri msg action screenshot";
         })
-
-        (pkgs.writeTextFile {
-          name = "screenshot-window";
-          destination = "/share/applications/screenshot-window.desktop";
-          text = ''
-            [Desktop Entry]
-            Name=Screenshot Window
-            Icon=camera-web
-            Exec=niri msg action screenshot-window --write-to-disk
-            Terminal=false
-          '';
+        (mkDesktopEntry { inherit pkgs; } {
+          name = "Screenshot-Window";
+          exec = "niri msg action screenshot-window --write-to-disk";
         })
       ];
     };

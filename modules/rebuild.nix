@@ -1,7 +1,10 @@
 {
   flake.modules.nixos.rebuild =
-    { pkgs, ... }:
+    { pkgs, config, ... }:
     let
+      inherit (config.myLib) mkDesktopEntry;
+      inherit (builtins) map;
+
       rebuildScript = pkgs.writeScriptBin "rebuild" /* nu */ ''
         #!${pkgs.nushell}/bin/nu
 
@@ -113,29 +116,16 @@
         pkgs.nix-output-monitor
         rebuildScript
 
-        (pkgs.writeTextFile {
-          name = "rebuild-system";
-          destination = "/share/applications/rebuild-system.desktop";
-          text = ''
-            [Desktop Entry]
-            Name=Rebuild
-            Icon=system-run
-            Exec=rebuild
-            Terminal=false
-          '';
-        })
-
-        (pkgs.writeTextFile {
-          name = "rollback-system";
-          destination = "/share/applications/rollback-system.desktop";
-          text = ''
-            [Desktop Entry]
-            Name=Rollback
-            Icon=system-run
-            Exec=rebuild --rollback
-            Terminal=false
-          '';
-        })
-      ];
+      ]
+      ++ (map (mkDesktopEntry { inherit pkgs; }) [
+        {
+          name = "Rebuild";
+          exec = "rebuild";
+        }
+        {
+          name = "Rollback";
+          exec = "rebuild --rollback";
+        }
+      ]);
     };
 }

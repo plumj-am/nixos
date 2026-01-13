@@ -3,6 +3,7 @@
     {
       pkgs,
       lib,
+      config,
       theme,
       isDesktop,
       ...
@@ -10,21 +11,15 @@
     let
       inherit (lib.attrsets) mapAttrsToList;
       inherit (lib.modules) mkIf;
+      inherit (config.myLib) mkDesktopEntry;
 
       enable = false;
     in
     mkIf (isDesktop && enable) {
       packages = [
-        (pkgs.writeTextFile {
-          name = "zellij-ghostty";
-          destination = "/share/applications/zellij-ghostty.desktop";
-          text = ''
-            [Desktop Entry]
-            Name=Zellij Ghostty
-            Icon=ghostty
-            Exec=ghostty -e ${pkgs.zellij}/bin/zellij
-            Terminal=false
-          '';
+        (mkDesktopEntry { inherit pkgs; } {
+          name = "Zellij-Ghostty";
+          exec = "ghostty -e ${pkgs.zellij}/bin/zellij";
         })
       ];
 

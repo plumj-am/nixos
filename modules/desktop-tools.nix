@@ -46,7 +46,10 @@ let
 in
 {
   flake.modules.nixos.desktop-tools =
-    { pkgs, ... }:
+    { pkgs, config, ... }:
+    let
+      inherit (config.myLib) mkDesktopEntry;
+    in
     {
       environment.systemPackages = [
         pkgs.thunar
@@ -54,16 +57,9 @@ in
 
         pkgs.hyprpicker
 
-        (pkgs.writeTextFile {
-          name = "colour-picker";
-          destination = "/share/applications/colour-picker.desktop";
-          text = ''
-            [Desktop Entry]
-            Name=Colour Picker
-            Icon=image-x-generic
-            Exec=hyprpicker --format=hex --autocopy
-            Terminal=false
-          '';
+        (mkDesktopEntry { inherit pkgs; } {
+          name = "Colour-Picker";
+          exec = "hyprpicker --format=hex --autocopy";
         })
       ];
     };

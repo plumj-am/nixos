@@ -579,66 +579,28 @@ in
         pkgs.swww
         themeToggleScript
         pickWallpaper
-
-        (pkgs.writeTextFile {
-          name = "theme-dark-mode";
-          destination = "/share/applications/theme-dark-mode.desktop";
-          text = ''
-            [Desktop Entry]
-            Name=Dark Mode
-            Icon=preferences-color-symbolic
-            Exec=tt dark
-            Terminal=false
-          '';
-        })
-
-        (pkgs.writeTextFile {
-          name = "theme-light-mode";
-          destination = "/share/applications/theme-light-mode.desktop";
-          text = ''
-            [Desktop Entry]
-            Name=Light Mode
-            Icon=preferences-color-symbolic
-            Exec=tt light
-            Terminal=false
-          '';
-        })
-
-        (pkgs.writeTextFile {
-          name = "theme-pywal-mode";
-          destination = "/share/applications/theme-pywal-mode.desktop";
-          text = ''
-            [Desktop Entry]
-            Name=Pywal Mode
-            Icon=preferences-color-symbolic
-            Exec=tt pywal
-            Terminal=false
-          '';
-        })
-
-        (pkgs.writeTextFile {
-          name = "theme-gruvbox-mode";
-          destination = "/share/applications/theme-gruvbox-mode.desktop";
-          text = ''
-            [Desktop Entry]
-            Name=Gruvbox Mode
-            Icon=preferences-color-symbolic
-            Exec=tt gruvbox
-            Terminal=false
-          '';
-        })
-
-        (pkgs.writeTextFile {
-          name = "theme-reload-applications";
-          destination = "/share/applications/theme-reload-applications.desktop";
-          text = ''
-            [Desktop Entry]
-            Name=Reload Themes
-            Icon=preferences-color-symbolic
-            Exec=tt reload
-            Terminal=false
-          '';
-        })
-      ];
+      ]
+      ++ (map (mkDesktopEntry { inherit pkgs; }) [
+        {
+          name = "Dark-Mode";
+          exec = "tt dark";
+        }
+        {
+          name = "Light-Mode";
+          exec = "tt light";
+        }
+        {
+          name = "Pywal-Mode";
+          exec = "tt pywal";
+        }
+        {
+          name = "Gruvbox-Mode";
+          exec = "tt gruvbox";
+        }
+        {
+          name = "Reload-Applications";
+          exec = "tt reload";
+        }
+      ]);
     };
 }

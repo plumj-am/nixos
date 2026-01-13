@@ -13,20 +13,16 @@
   # TODO: Configuration.
   # No point configuring yet because it still doesn't work for some reason.
   # flake.modules.hjem.rio =
-  #   { pkgs, ... }:
+  #   { pkgs, config, ... }:
+  #   let
+  #     inherit (config.myLib) mkDesktopEntry;
+  #   in
   #   {
   #     packages = [
   #       pkgs.rio
-  #       (pkgs.writeTextFile {
-  #         name = "zellij-rio";
-  #         destination = "/share/applications/zellij-rio.desktop";
-  #         text = ''
-  #           [Desktop Entry]
-  #           Name=Zellij Rio
-  #           Icon=rio
-  #           Exec=rio -e ${pkgs.zellij}/bin/zellij
-  #           Terminal=false
-  #         '';
+  #       (mkDesktopEntry { inherit pkgs; } {
+  #         name = "Zellij-Rio";
+  #         exec = "rio -c ${pkgs.zellij}/bin/zellij";
   #       })
   #     ];
   #   };

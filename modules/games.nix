@@ -1,7 +1,8 @@
 {
   flake.modules.nixos.games =
-    { pkgs, ... }:
+    { pkgs, config, ... }:
     let
+      inherit (config.myLib) mkDesktopEntry;
       packages = [
         pkgs.steam
         pkgs.gamemode
@@ -11,16 +12,9 @@
     in
     {
       environment.systemPackages = packages ++ [
-        (pkgs.writeTextFile {
-          name = "overwatch";
-          destination = "/share/applications/overwatch.desktop";
-          text = ''
-            [Desktop Entry]
-            Name=Overwatch
-            Icon=Overwatch
-            Exec=steam steam://rungameid/2357570
-            Terminal=false
-          '';
+        (mkDesktopEntry { inherit pkgs; } {
+          name = "Overwatch";
+          exec = "steam steam://rungameid/2357570";
         })
       ];
 

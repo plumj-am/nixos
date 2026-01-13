@@ -36,6 +36,27 @@ let
           mkOption {
             inherit default;
           };
+
+        # Create a .desktop file entry for app launchers.
+        mkDesktopEntry =
+          { pkgs }:
+          {
+            name,
+            exec,
+            terminal ? false,
+            icon ? "preferences-color-symbolic",
+          }:
+          pkgs.writeTextFile {
+            inherit name;
+            destination = "/share/applications/${name}.desktop";
+            text = ''
+              [Desktop Entry]
+              Name=${lib.strings.replaceStrings [ "-" ] [ " " ] name}
+              Icon=${icon}
+              Exec=${exec}
+              Terminal=${if terminal then "true" else "false"}
+            '';
+          };
       };
     };
 
