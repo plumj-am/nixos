@@ -2,10 +2,10 @@
 
 (WIP) NixOS configurations for 6 personal machines:
 
-- 2 desktops (NixOS)
-- 1 Macbook (Darwin)
-- 2 servers (NixOS)
-- 1 WSL (NixOS-WSL)
+- 2 desktops (nixos-unstable-small)
+- 3 servers (nixos-unstable-small)
+- 1 Macbook (nix-darwin)
+- 1 WSL (nixos-wsl)
 
 ## Features
 
@@ -39,7 +39,7 @@ For example, our `modules/window-manager.nix` looks like this:
 
 > [!NOTE]
 > Note that `hjem` modules are automatically included in any host that uses the
-> `hjem` module.
+> `hjem` module - this may change.
 
 The `darwin` and `nixos` modules are then used in `modules/hosts.nix` like this:
 
@@ -51,7 +51,7 @@ The `darwin` and `nixos` modules are then used in `modules/hosts.nix` like this:
     system = "x86_64-linux";
     modules = with inputs.self.modules.nixos; [
       # ... other packages
-      yubikey
+      window-manager
     ];
   };
 
@@ -61,7 +61,7 @@ The `darwin` and `nixos` modules are then used in `modules/hosts.nix` like this:
     system = "x86_64-linux";
     modules = with inputs.self.modules.darwin; [
       # ... other packages
-      yubikey
+      window-manager
     ];
   };
 }
@@ -71,10 +71,45 @@ This gives us fine-grained control over which hosts have access to which
 features.
 
 Any additional configuration for the hosts is defined in an inline module inside
-the `modules = []` section of each host. This gives us the flexibility to define
-configurations that are exclusive to the host and can't trivially be made a
-module such as `hostName`, `operatingSystem` (for conditional modules) and
-`secrets` configuration.
+the `modules = []` section of each host. There we define configurations that are
+exclusive to the host and can't trivially be made a module such as `hostName`,
+`operatingSystem` (for conditional modules) and `secrets` configuration.
+
+I would like to move some of these variable configs to modules at some point and
+group common modules to keep the hosts file cleaner.
+
+## Other tools
+
+### Secrets
+
+All secrets are handled by (r)agenix and agenix-rekey.
+
+(r)agenix: <https://github.com/ryantm/agenix>
+
+agenix-rekey: <https://github.com/oddlama/agenix-rekey>
+
+### Imports
+
+Imports are handled by import-tree in `modules/outputs.nix`. It automatically
+imports all nix files in the specified directory (`./modules` in my case).
+
+import-tree: <https://github.com/vic/import-tree>
+
+### Flake inputs
+
+Flake inputs are automatically managed by flake-file which allows me to
+use/define inputs closer to where they are used. For example,
+`modules/editor.nix` contains `flake-file.inputs.helix`. By running
+`nix run .#write-flake` the `flake.nix` file is automatically updated by
+flake-file.
+
+I also use nix-auto-follow to improve evaluation (and possibly build) times by
+checking for duplicate dependencies in our `flake.lock` and suggesting ways to
+improve it.
+
+flake-file: <https://github.com/vic/flake-file>
+
+nix-auto-follow: <https://github.com/fzakaria/nix-auto-follow>
 
 ## myLib
 
@@ -94,6 +129,12 @@ The gruvbox mode uses the defined themes in `modules/themes.nix` and some base16
 colours for applications that can make use of them.
 
 ## Other comments
+
+Inputs use different names to what you might expect:
+
+- nixpkgs -> os
+- nix-darwin -> os-darwin
+- nixos-wsl -> os-wsl
 
 If you're interested in learning more about dendritic Nix, feel free to learn
 from my config and consider checking the following links:
