@@ -34,6 +34,7 @@
   flake.modules.hjem.editor =
     {
       inputs,
+      myLib,
       lib,
       pkgs,
       theme,
@@ -49,6 +50,7 @@
         ;
       inherit (lib.lists) singleton;
       inherit (builtins) elem;
+      inherit (myLib) merge;
 
       yaziPickerScript =
         pkgs.writeShellScript "yazi-picker.sh" # bash
@@ -136,29 +138,63 @@
           true-color = true;
           lsp.display-inlay-hints = true;
           inline-diagnostics.cursor-line = "hint";
+          end-of-line-diagnostics = "hint";
+          jump-label-alphabet = "jfkdls;aurieowpqnvmcxz";
+          cursor-shape = {
+            normal = "block";
+            select = "underline";
+            insert = "bar";
+          };
+          indent-guides = {
+            character = "▏";
+            render = true;
+          };
+          whitespace = {
+            characters.tab = "→";
+            render.tab = "all";
+          };
+
+          auto-pairs = {
+            "\"" = "\"";
+            "'" = "'";
+            "`" = "`";
+            "(" = ")";
+            "{" = "}";
+            "[" = "]";
+            "<" = ">";
+          };
+
           # Nightly options:
           word-completion.trigger-length = 3;
-          # rainbow-brackets               = true;
-        };
-        settings.editor.cursor-shape = {
-          normal = "block";
-          select = "underline";
-          insert = "bar";
-        };
-        settings.editor.indent-guides = {
-          character = "▏";
-          render = true;
-        };
-        settings.editor.whitespace = {
-          characters.tab = "→";
-          render.tab = "all";
+          rainbow-brackets = false;
         };
 
-        settings.keys = genAttrs [ "normal" "select" ] (const {
-          "C-y" =
-            ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- ${yaziPickerScript} open ...%{buffer_name}";
-          D = "extend_to_line_end";
-        });
+        settings.keys =
+          merge {
+            normal = {
+              space = { };
+            };
+          }
+          <| genAttrs [ "normal" "select" ] (const {
+            "A-h" = "jump_view_left";
+            "A-j" = "jump_view_down";
+            "A-k" = "jump_view_up";
+            "A-l" = "jump_view_right";
+
+            "ret" = "goto_word";
+
+            "q" = "record_macro";
+            "@" = "replay_macro";
+
+            "X" = "select_line_above";
+
+            "C-y" =
+              ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- ${yaziPickerScript} open ...%{buffer_name}";
+
+            "C-a" = "@*%s<ret>";
+
+            "D" = "extend_to_line_end";
+          });
 
         languages.language =
           let
@@ -424,7 +460,7 @@
 
         # Markdown
         pkgs.marksman
-        pkgs.mdformat
+        # pkgs.mdformat  # Temporarily disabled due to markdown-it-py 4.0.0 incompatibility
 
         # Just
         pkgs.just-lsp
