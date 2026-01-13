@@ -491,6 +491,24 @@ in
           ^${pkgs.coreutils}/bin/cp ~/.cache/wal/colors.json $"($env.HOME)/nixos/modules/theme-pywal-colors.json"
         }
 
+        def reload-applications [] {
+          print-notify "Reloading applications to apply themes..."
+
+          try {
+            ^niri msg action do-screen-transition --delay-ms 0
+            ^pkill waybar -USR2 # Better to do it here rather than relying on `reload_style_on_change` setting.
+            ^pkill -USR1 kitty
+            ^pkill -USR1 hx
+            ^systemctl --user restart mako
+            ^pkill -SIGTERM brave
+            sleep 1sec
+            ^niri msg action do-screen-transition --delay-ms 500
+            ^niri msg action spawn -- brave
+          } catch {|e|
+             print $e.msg
+          }
+        }
+
         def toggle-theme [theme?: string] {
           let theme_config = try {
             open $"($env.HOME)/nixos/modules/theme.json"
@@ -554,6 +572,8 @@ in
           }
 
           print-notify $"Switch to the ($new_theme) theme completed!"
+
+          reload-applications
         }
 
         def switch-scheme [scheme: string] {
@@ -610,6 +630,8 @@ in
           }
 
           print-notify $"Switch to ($scheme) scheme completed!"
+
+          reload-applications
         }
 
         def --wrapped main [
