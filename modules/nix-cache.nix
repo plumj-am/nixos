@@ -36,12 +36,12 @@
 
       config = {
         services.harmonia-dev.daemon = {
-          enable = true;
+          enable = false;
         };
 
         services.harmonia-dev.cache = {
-          enable = true;
-          signKeyPaths = singleton config.age.secrets.nixServeKey.path;
+          enable = false;
+          signKeyPaths = singleton config.age.secrets.nixStoreKey.path;
         };
 
         services.nginx.virtualHosts.${config.cache.fqdn} = merge config.services.nginx.sslTemplate {

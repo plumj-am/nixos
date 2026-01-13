@@ -45,7 +45,6 @@
             $config_path
             "--hostname" $host
             "--accept-flake-config" # Avoid asking for y/n approval for all settings.
-            "--fallback" # Build locally if substituters fail.
           ] | append $arguments
 
           # Add target-host for remote deployments.

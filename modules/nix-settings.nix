@@ -38,9 +38,11 @@ let
       };
 
       nix.nixPath =
-        (registryMap
-        |> mapAttrsToList (name: value: "${name}=${value}")
-        |> (if isDarwin then concatStringsSep ":" else id))
+        (
+          registryMap
+          |> mapAttrsToList (name: value: "${name}=${value}")
+          |> (if isDarwin then concatStringsSep ":" else id)
+        )
         ++ [ "nixpkgs=${inputs.os}" ];
 
       nix.registry = registryMap // { default = inputs.os; } |> mapAttrs (_: flake: { inherit flake; });
@@ -48,15 +50,11 @@ let
       nix.settings =
         {
           extra-substituters = [
-            "https://cache1.plumj.am?priority=10"
-            "https://cache2.plumj.am?priority=10"
             "https://cache.garnix.io"
             "https://nix-community.cachix.org"
           ];
 
           extra-trusted-public-keys = [
-            "cache1.plumj.am:rFlt5V4tYjsyo3QMRsaoO9VGYISJR+45tT35/6BpKsA="
-            "cache2.plumj.am:IoMjbQ43lgHh8gMoEJj/VYK8c3Xbpc/TLRPKAaQSGas="
             "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
             "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
           ];

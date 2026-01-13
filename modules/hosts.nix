@@ -47,6 +47,7 @@
       netrc
       network
       nix-settings
+      object-storage
       openssh
       packages
       packages-extra-desktop
@@ -89,6 +90,9 @@
           age.secrets = {
             id.rekeyFile = ../secrets/yuzu-id.age;
             password.rekeyFile = ../secrets/yuzu-password.age;
+            s3AccessKey.rekeyFile = ../secrets/s3-access-key.age;
+            s3SecretKey.rekeyFile = ../secrets/s3-secret-key.age;
+            nixStoreKey.rekeyFile = ../secrets/yuzu-nix-store-key.age;
             context7Key = {
               rekeyFile = ../secrets/context7-key.age;
               owner = "jam";
@@ -136,6 +140,7 @@
       netrc
       network
       nix-settings
+      object-storage
       openssh
       packages
       packages-extra-desktop
@@ -178,6 +183,10 @@
           age.secrets = {
             id.rekeyFile = ../secrets/date-id.age;
             password.rekeyFile = ../secrets/date-password.age;
+            s3AccessKey.rekeyFile = ../secrets/s3-access-key.age;
+            s3SecretKey.rekeyFile = ../secrets/s3-secret-key.age;
+            # TODO
+            # nixStoreKey.rekeyFile = ../secrets/date-nix-store-key.age;
             context7Key = {
               rekeyFile = ../secrets/context7-key.age;
               owner = "jam";
@@ -222,6 +231,7 @@
       nix-distributed-builder
       nix-settings
       prometheus-node-exporter
+      object-storage
       openssh
       packages
       rebuild
@@ -270,9 +280,11 @@
           age.secrets = {
             id.rekeyFile = ../secrets/plum-id.age;
             password.rekeyFile = ../secrets/plum-password.age;
+            s3AccessKey.rekeyFile = ../secrets/s3-access-key.age;
+            s3SecretKey.rekeyFile = ../secrets/s3-secret-key.age;
+            nixStoreKey.rekeyFile = ../secrets/plum-nix-store-key.age;
             forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
             forgejoAdminPassword.rekeyFile = ../secrets/plum-forgejo-password.age;
-            nixServeKey.rekeyFile = ../secrets/plum-cache-key.age;
             acmeEnvironment.rekeyFile = ../secrets/acme-environment.age;
             context7Key = {
               rekeyFile = ../secrets/context7-key.age;
@@ -316,6 +328,7 @@
       nix-distributed-builder
       nix-settings
       prometheus-node-exporter
+      object-storage
       openssh
       packages
       rebuild
@@ -364,8 +377,10 @@
           age.secrets = {
             id.rekeyFile = ../secrets/kiwi-id.age;
             password.rekeyFile = ../secrets/kiwi-password.age;
+            s3AccessKey.rekeyFile = ../secrets/s3-access-key.age;
+            s3SecretKey.rekeyFile = ../secrets/s3-secret-key.age;
             forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
-            nixServeKey.rekeyFile = ../secrets/kiwi-cache-key.age;
+            nixStoreKey.rekeyFile = ../secrets/kiwi-nix-store-key.age;
             acmeEnvironment.rekeyFile = ../secrets/acme-environment.age;
             drRadkaEnvironment.rekeyFile = ../secrets/kiwi-dr-radka-environment.age;
             context7Key = {
@@ -396,6 +411,7 @@
       keys
       network
       openssh
+      object-storage
       packages
       rust-desktop
       secret-manager

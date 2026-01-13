@@ -26,7 +26,7 @@ jobs:
         steps:
             - uses: actions/checkout@v5
             - name: "Build configuration for date"
-              run: nix build .#nixosConfigurations.date.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
+              run: nix build .#nixosConfigurations.date.config.system.build.toplevel --accept-flake-config --builders "" --print-build-logs
 
     build-kiwi:
         name: "Build: kiwi"
@@ -34,7 +34,7 @@ jobs:
         steps:
             - uses: actions/checkout@v5
             - name: "Build configuration for kiwi"
-              run: nix build .#nixosConfigurations.kiwi.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
+              run: nix build .#nixosConfigurations.kiwi.config.system.build.toplevel --accept-flake-config --builders "" --print-build-logs
 
     # Until we setup a container for aarch64_darwin.
     # build-lime:
@@ -43,7 +43,7 @@ jobs:
     #     steps:
     #         - uses: actions/checkout@v5
     #         - name: "Build configuration for lime"
-    #           run: nix build .#darwinConfigurations.lime.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
+    #           run: nix build .#darwinConfigurations.lime.config.system.build.toplevel --accept-flake-config --builders "" --no-link
 
     # build-pear:
     #     name: "Build: pear"
@@ -51,19 +51,19 @@ jobs:
     #     steps:
     #         - uses: actions/checkout@v5
     #         - name: "Build configuration for pear"
-    #           run: nix build .#nixosConfigurations.pear.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
+    #           run: nix build .#nixosConfigurations.pear.config.system.build.toplevel --accept-flake-config --builders "" --no-link
     build-plum:
         name: "Build: plum"
         runs-on: plum
         steps:
             - uses: actions/checkout@v5
             - name: "Build configuration for plum"
-              run: nix build .#nixosConfigurations.plum.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
+              run: nix build .#nixosConfigurations.plum.config.system.build.toplevel --accept-flake-config --builders "" --print-build-logs
 
     build-yuzu:
         name: "Build: yuzu"
         runs-on: plum
         steps:
-            - uses: actions/checkout@v5
+            - uses: actions@checkout@v5
             - name: "Build configuration for yuzu"
-              run: nix build .#nixosConfigurations.yuzu.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
+              run: nix build .#nixosConfigurations.yuzu.config.system.build.toplevel --accept-flake-config --builders "" --print-build-logs
