@@ -271,6 +271,7 @@ in
           qt = theme.getTheme "qt";
 
           font = {
+            size.tiny = 10;
             size.small = 12;
             size.term = 12;
             size.normal = 16;
@@ -353,6 +354,7 @@ in
           qt = theme.getTheme "qt";
 
           font = {
+            size.tiny = 10;
             size.small = 12;
             size.term = 12;
             size.normal = 16;

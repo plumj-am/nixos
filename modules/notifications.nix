@@ -5,62 +5,11 @@
       lib,
       theme,
       isLinux,
+      hostName,
       ...
     }:
     let
       inherit (lib.modules) mkIf;
-
-      ini = pkgs.formats.ini { };
-
-      makoConfig = with theme; {
-        main = {
-          icons = true;
-          max-icon-size = 32;
-
-          font = "${font.sans.name} ${toString font.size.small}";
-
-          # Format: `bold app, bold summary, body`.
-          format = "<b>%s</b>\\n%b";
-          markup = true;
-
-          anchor = "top-right";
-          layer = "overlay";
-          width = 400;
-          height = 150;
-          margin = "${toString margin.small}";
-          padding = "${toString padding.small}";
-
-          # output = mkIf (config.networking.hostName == "yuzu") "DP-1";
-
-          sort = "-time";
-          max-visible = 10;
-          group-by = "app-name";
-
-          border-size = border.normal;
-          border-radius = radius.verybig;
-
-          background-color = "#${colors.base00}FF";
-          text-color = "#${colors.base07}FF";
-          border-color = "#${colors.base0A}BB";
-          progress-color = "over #${colors.base09}55";
-
-          default-timeout = 20000;
-        };
-        "urgency=low" = {
-          border-color = "#${colors.base0E}FF";
-          default-timeout = 10000;
-        };
-
-        "urgency=normal" = {
-          border-color = "#${colors.base0A}FF";
-          default-timeout = 20000;
-        };
-
-        "urgency=critical" = {
-          border-color = "#${colors.base08}FF";
-          default-timeout = 30000;
-        };
-      };
     in
     mkIf isLinux {
       packages = [
@@ -68,8 +17,52 @@
         pkgs.mako
       ];
 
-      xdg.config.files."mako/config" = {
-        source = ini.generate "config" makoConfig;
-      };
+      xdg.config.files."mako/config".text =
+        with theme; # ini
+        ''
+          icons=true
+          max-icon-size=32
+
+          font=${font.sans.name} ${toString font.size.tiny}
+
+          # Format: `bold app, bold summary, body`.
+          format=<b>%s</b>\n%b
+          markup=true
+
+          anchor=top-right
+          layer=top
+          width=340
+          height=200
+          margin=${toString margin.small}
+          padding=${toString padding.normal}
+          output=${if hostName == "yuzu" then "DP-2" else ""}
+          sort=+time
+          max-visible=10
+          # group-by=app-name
+          default-timeout=10000
+
+          border-size=${toString border.small}
+          border-radius=${toString radius.small}
+
+          background-color=#${colors.base00}FF
+          text-color=#${colors.base07}FF
+          border-color=#${colors.base0A}BB
+          progress-color=over #${colors.base09}55
+
+          [mode=do-not-disturb]
+          invisible=1
+
+          [urgency=low]
+            border-color=#${colors.base0E}FF
+            default-timeout=10000
+
+          [urgency=normal]
+            border-color=#${colors.base0A}FF
+            default-timeout=20000
+
+          [urgency=critical]
+            border-color=#${colors.base08}FF
+            default-timeout=30000
+        '';
     };
 }
