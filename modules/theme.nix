@@ -295,7 +295,7 @@ in
       };
     };
 
-  flake.modules.nixos.theme-fonts =
+  flake.modules.nixos.theme-extra-fonts =
     { config, pkgs, ... }:
     {
       console = {
@@ -316,7 +316,7 @@ in
       ];
     };
 
-  flake.modules.nixos.theme-scripts =
+  flake.modules.nixos.theme-extra-scripts =
     { config, pkgs, ... }:
     let
       inherit (builtins) map;

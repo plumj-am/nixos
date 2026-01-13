@@ -18,7 +18,7 @@ let
   };
 in
 {
-  flake.modules.nixos.boot-desktop = {
+  flake.modules.nixos.boot-systemd = {
     imports = [ commonModule ];
     boot.loader = {
       systemd-boot.enable = true;
@@ -26,7 +26,7 @@ in
     };
   };
 
-  flake.modules.nixos.boot-server =
+  flake.modules.nixos.boot-grub =
     { modulesPath, ... }:
     {
       imports = [

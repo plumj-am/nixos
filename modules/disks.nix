@@ -26,7 +26,7 @@ in
     };
   };
 
-  flake.modules.nixos.disks-server =
+  flake.modules.nixos.disks-disko =
     { lib, inputs, ... }:
     let
       inherit (lib) mkDefault;
@@ -86,9 +86,9 @@ in
       };
     };
 
-  flake.modules.nixos.disks-desktop = commonModule;
+  flake.modules.nixos.disks-normal = commonModule;
 
-  flake.modules.nixos.disks-desktop-swap = {
+  flake.modules.nixos.disks-extra-swap = {
     imports = [ commonModule ];
 
     swapDevices = [
@@ -98,7 +98,7 @@ in
     ];
   };
 
-  flake.modules.nixos.disks-zram-swap = {
+  flake.modules.nixos.disks-extra-zram-swap = {
     zramSwap.enable = true;
   };
 }

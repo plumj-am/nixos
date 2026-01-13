@@ -24,13 +24,14 @@
 
     modules = with inputs.self.modules.nixos; [
       audio
-      boot-desktop
+      boot-systemd
       desktop-gui
       desktop-tools
       disable-nano
       disable-nix-documentation
-      disks-desktop-swap
-      disks-zram-swap
+      disks-normal
+      disks-extra-swap
+      disks-extra-zram-swap
       dynamic-binaries
       games
       gammastep
@@ -62,8 +63,8 @@
       system
       tailscale
       theme
-      theme-fonts
-      theme-scripts
+      theme-extra-fonts
+      theme-extra-scripts
       unfree
       users
       virtualisation
@@ -117,13 +118,14 @@
 
     modules = with inputs.self.modules.nixos; [
       audio
-      boot-desktop
+      boot-systemd
       desktop-gui
       desktop-tools
       disable-nano
       disable-nix-documentation
-      disks-desktop-swap
-      disks-zram-swap
+      disks-normal
+      disks-extra-swap
+      disks-extra-zram-swap
       dynamic-binaries
       games
       gammastep
@@ -155,8 +157,8 @@
       system
       tailscale
       theme
-      theme-fonts
-      theme-scripts
+      theme-extra-fonts
+      theme-extra-scripts
       unfree
       users
       virtualisation
@@ -287,11 +289,11 @@
     specialArgs = { inherit inputs; };
     modules = with inputs.self.modules.nixos; [
       acme
-      boot-server
+      boot-grub
       disable-nano
       disable-nix-documentation
-      disks-server
-      disks-zram-swap
+      disks-disko
+      disks-extra-zram-swap
       dynamic-binaries
       forgejo
       forgejo-action-runner
@@ -384,11 +386,11 @@
     specialArgs = { inherit inputs; };
     modules = with inputs.self.modules.nixos; [
       acme
-      boot-server
+      boot-grub
       disable-nano
       disable-nix-documentation
-      disks-server
-      disks-zram-swap
+      disks-disko
+      disks-extra-zram-swap
       dynamic-binaries
       forgejo-action-runner
       hjem
@@ -478,11 +480,11 @@
   flake.nixosConfigurations.blackwell = inputs.os.lib.nixosSystem {
     specialArgs = { inherit inputs; };
     modules = with inputs.self.modules.nixos; [
-      boot-server
+      boot-grub
       disable-nano
       disable-nix-documentation
-      disks-server
-      disks-zram-swap
+      disks-disko
+      disks-extra-zram-swap
       dynamic-binaries
       forgejo-action-runner
       hjem
