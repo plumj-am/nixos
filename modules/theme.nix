@@ -115,6 +115,7 @@ let
 
       designSystem = {
         radius = {
+          off = 0;
           small = 2;
           normal = 4;
           big = 6;
@@ -639,14 +640,23 @@ in
           ...rest: string
         ]: nothing -> nothing {
           if $arg == null {
-            print "Usage: tt <dark|light|pywal|gruvbox>"
+            print "Usage: tt <dark|light|pywal|gruvbox|reload>"
             return
           }
 
           match $arg {
             "dark" | "light" => { toggle-theme $arg }
             "pywal" | "gruvbox" => { switch-scheme $arg }
-            _ => { print $"Invalid option: '($arg)'. Use: dark, light, pywal, or gruvbox." }
+            "reload" => {
+              reload-applications
+              try {
+                ^rebuild --quiet
+              } catch {
+                print-notify "Error: Rebuild failed, run manually in a terminal."
+                exit 1
+              }
+            }
+            _ => { print $"Invalid option: '($arg)'. Use: dark, light, pywal, gruvbox or reload." }
           }
         }
       '';
@@ -701,6 +711,18 @@ in
             Name=Gruvbox Mode
             Icon=preferences-color-symbolic
             Exec=tt gruvbox
+            Terminal=false
+          '';
+        })
+
+        (pkgs.writeTextFile {
+          name = "theme-reload-applications";
+          destination = "/share/applications/theme-reload-applications.desktop";
+          text = ''
+            [Desktop Entry]
+            Name=Reload Themes
+            Icon=preferences-color-symbolic
+            Exec=tt reload
             Terminal=false
           '';
         })
