@@ -61,6 +61,33 @@ jobs:
     - name: 'Build: yuzu'
       run: nix build .#nixosConfigurations.yuzu.config.system.build.toplevel --accept-flake-config
         --builders "" --no-link
+  check-deadnix:
+    name: 'Check: deadnix'
+    runs-on: plum
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5
+    - name: 'Check: deadnix'
+      run: nix build .#checks.x86_64-linux.deadnix --accept-flake-config --builders
+        "" --no-link
+  check-nix-paths:
+    name: 'Check: legacy imports'
+    runs-on: plum
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5
+    - name: 'Check: legacy imports'
+      run: nix build .#checks.x86_64-linux.nix-path --accept-flake-config --builders
+        "" --no-link
+  check-statix:
+    name: 'Check: statix'
+    runs-on: plum
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5
+    - name: 'Check: statix'
+      run: nix build .#checks.x86_64-linux.statix --accept-flake-config --builders
+        "" --no-link
 name: Nix CI
 'on':
   pull_request:
@@ -70,7 +97,7 @@ name: Nix CI
     - .forgejo/workflows/*
   push:
     branches:
-    - '**'
+    - dendritic
     paths-ignore:
     - README.md
     - LICENSE.md

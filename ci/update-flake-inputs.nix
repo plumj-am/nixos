@@ -6,10 +6,10 @@ in
   flake.actions-nix.workflows.".forgejo/workflows/update-flake-inputs.yml" = {
     name = "Update Flake Inputs";
     on = {
-      schedule = [
-        # See `./update-flake-inputs.nix` for more details.
-        { cron = "0 0 * * *"; } # Every day at 00:05. Keep ahead of `./update-flake-inputs.yml`.
-      ];
+      # schedule = [
+      #   # See `./update-flake-inputs.nix` for more details.
+      #   { cron = "0 0 * * *"; } # Every day at 00:05. Keep ahead of `./update-flake-inputs.yml`.
+      # ];
       workflow_dispatch = { };
     };
     concurrency = commonConcurrency "update-flake-inputs";
