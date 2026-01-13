@@ -160,6 +160,10 @@
             ];
           };
 
+          cache = {
+            subdomain = "cache1";
+          };
+
           forgejo-action-runner = {
             labels = [
               "self-hosted:host"

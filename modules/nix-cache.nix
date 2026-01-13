@@ -1,47 +1,54 @@
 {
+  config.flake-file.inputs = {
+    harmonia = {
+      url = "github:nix-community/harmonia";
+      inputs.nixpkgs.follows = "os";
+      inputs.flake-parts.follows = "parts";
+      inputs.treefmt-nix.follows = "treefmt";
+    };
+  };
+
   config.flake.modules.nixos.nix-cache =
     {
+      inputs,
       config,
       lib,
-      pkgs,
       ...
     }:
     let
-      inherit (lib.modules) mkIf;
       inherit (lib.types) types;
       inherit (config.myLib) merge;
       inherit (config.networking) domain;
+      inherit (lib.lists) singleton;
+
+      port = 5000;
     in
     {
+      imports = singleton inputs.harmonia.nixosModules.harmonia;
+
       options.cache = {
-        enable = lib.mkEnableOption "nix-serve cache server";
-
-        fqdn = lib.mkOption {
+        subdomain = lib.mkOption {
           type = types.str;
-          example = "cache1.example.com";
-          description = "Fully qualified domain name for the cache";
-        };
-
-        port = lib.mkOption {
-          type = types.port;
-          default = 8006;
-          description = "Port for nix-serve to listen on";
+          example = "cache1";
+          description = "Subdomain where the cache will be served";
         };
       };
 
-      config = mkIf config.cache.enable {
-        services.nix-serve = {
+      config = {
+        services.harmonia-dev.daemon = {
           enable = true;
-          package = pkgs.nix-serve-ng;
-          secretKeyFile = config.age.secrets.nixServeKey.path;
-          bindAddress = "127.0.0.1";
-          inherit (config.cache) port;
         };
 
-        services.nginx.virtualHosts.${config.cache.fqdn} = merge config.services.nginx.sslTemplate {
-          locations."= /".return = "301 https://${domain}/404";
-          locations."/".proxyPass = "http://127.0.0.1:${toString config.cache.port}";
+        services.harmonia-dev.cache = {
+          enable = true;
+          signKeyPaths = singleton config.age.secrets.nixServeKey.path;
         };
+
+        services.nginx.virtualHosts."${config.cache.subdomain}.${domain}" =
+          merge config.services.nginx.sslTemplate
+            {
+              locations."/".proxyPass = "http://127.0.0.1:${toString port}";
+            };
       };
     };
 }

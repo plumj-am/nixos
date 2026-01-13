@@ -36,6 +36,14 @@
       url = "github:nix-community/fenix";
     };
     flake-file.url = "github:vic/flake-file";
+    harmonia = {
+      inputs = {
+        flake-parts.follows = "parts";
+        nixpkgs.follows = "os";
+        treefmt-nix.follows = "treefmt";
+      };
+      url = "github:nix-community/harmonia";
+    };
     helix = {
       inputs.nixpkgs.follows = "os";
       url = "github:helix-editor/helix";
