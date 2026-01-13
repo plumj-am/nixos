@@ -80,7 +80,7 @@
               "format": "󰘚  {usage}%",
               "tooltip": true,
               "tooltip-format": "CPU Usage: {usage}%\nLoad: {load}",
-              "interval": 2,
+              "interval": 3,
               "on-click": "kitty btop",
               "states": {
                 "warning": 70,
@@ -92,7 +92,7 @@
               "format": "󰽘  {used:0.1f}G/{total:0.1f}G",
               "tooltip": true,
               "tooltip-format": "Memory: {used:0.1f}G/{total:0.1f}G ({percentage}%)\nAvailable: {avail:0.1f}G",
-              "interval": 2,
+              "interval": 3,
               "on-click": "kitty btop",
               "states": {
                 "warning": 70,
@@ -105,7 +105,7 @@
               "path": "/",
               "tooltip": true,
               "tooltip-format": "Disk: {used}/{total} ({percentage_used}%)\nAvailable: {free}",
-              "interval": 300,
+              "interval": 600,
               "states": {
                 "warning": 70,
                 "critical": 90
@@ -202,42 +202,20 @@
             color: ${base07}; /* Use highest contrast text */
           }
 
+          #clock {
+            min-width: 125px;
+          }
+
           #cpu, #memory, #disk, #custom-gpu {
-            min-width: 36px;
+            min-width: 42px;
           }
 
-
-          #battery.critical:not(.charging) {
-            animation-name: blink;
-            animation-duration: ${toString theme.duration.s.short}s;
-            animation-timing-function: linear;
-            animation-iteration-count: infinite;
-            animation-direction: alternate;
+          #battery.critical:not(.charging) #cpu.critical, #memory.critical, #disk.critical, #custom-gpu.critical {
             color: ${base08};
-          }
-
-          #cpu.warning, #memory.warning, #disk.warning {
-            color: ${base0A};
-          }
-
-          #cpu.critical, #memory.critical, #disk.critical, #custom-gpu.critical {
-            color: ${base08};
-            animation-name: blink;
-            animation-duration: ${toString theme.duration.s.normal}s;
-            animation-timing-function: linear;
-            animation-iteration-count: infinite;
-            animation-direction: alternate;
           }
 
           #cpu.warning, #memory.warning, #disk.warning, #custom-gpu.warning {
             color: ${base0A};
-          }
-
-
-          @keyframes blink {
-            to {
-              color: ${base05};
-            }
           }
         '';
     };
