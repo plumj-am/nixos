@@ -3,10 +3,15 @@
     {
       pkgs,
       config,
+      lib,
       theme,
+      isDesktop,
       ...
     }:
-    {
+    let
+      inherit (lib.modules) mkIf;
+    in
+    mkIf isDesktop {
       packages = [
         pkgs.zellij
       ];

@@ -21,15 +21,22 @@
     };
 
   config.flake.modules.hjem.desktop-gui =
-    { theme, ... }:
+    {
+      lib,
+      theme,
+      isDesktop,
+      ...
+    }:
     let
+      inherit (lib.modules) mkIf;
       packages = [ theme.gtk.package ];
     in
-    {
+    mkIf isDesktop {
       rum.misc.gtk = {
         inherit packages;
         enable = true;
         settings = {
+          prefer-dark = theme.isDark;
           font-name = "${theme.font.sans.name} ${toString theme.font.size.small}";
           theme-name = theme.gtk.name;
           icon-theme-name = theme.icons.name;

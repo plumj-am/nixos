@@ -9,8 +9,10 @@
     }:
     let
       inherit (lib.modules) mkIf;
+
+      enable = true;
     in
-    mkIf isDesktop {
+    mkIf (isDesktop && enable) {
       packages = [
         (pkgs.writeTextFile {
           name = "zellij-kitty";
@@ -26,13 +28,13 @@
       ];
 
       rum.programs.kitty = {
-        enable = true;
+        inherit enable;
 
         settings = with theme.withHash; {
           font_family = theme.font.mono.name;
           font_size = theme.font.size.term;
 
-          allow_remote_control = true;
+          allow_remote_control = "yes";
           confirm_os_window_close = 0;
 
           scrollback_lines = 100000;

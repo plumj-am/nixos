@@ -1,5 +1,5 @@
-{
-  config.flake.modules.nixos.nix-settings =
+let
+  commonModule =
     {
       self,
       config,
@@ -15,6 +15,7 @@
         removeAttrs
         mapAttrs
         mapAttrsToList
+        optionalAttrs
         ;
       inherit (lib.strings) concatStringsSep;
       inherit (lib.trivial)
@@ -60,10 +61,11 @@
       nix.gc = {
         automatic = true;
         options = "--delete-older-than 3d";
-      }; # // optionalAttrs config.isLinux {  TODO: Add darwin config
-      #   dates = "weekly";
-      #   persistent = true;
-      # };
+      }
+      // optionalAttrs config.isLinux {
+        dates = "weekly";
+        persistent = true;
+      };
 
       nix.nixPath =
         registryMap
@@ -123,4 +125,17 @@
 
       nix.optimise.automatic = true;
     };
+in
+{
+  config.flake.modules.nixos.nix-settings = {
+    imports = [
+      commonModule
+    ];
+  };
+
+  config.flake.modules.darwin.nix-settings = {
+    imports = [
+      commonModule
+    ];
+  };
 }

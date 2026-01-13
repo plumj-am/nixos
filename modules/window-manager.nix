@@ -4,15 +4,18 @@
       inputs,
       pkgs,
       config,
+      lib,
       theme,
+      isDesktop,
       ...
     }:
     let
+      inherit (lib.modules) mkIf;
       cfg = config // {
         inherit theme;
       };
     in
-    {
+    mkIf isDesktop {
       rum.programs.nushell.aliases.ns = "niri-session";
 
       rum.desktops.niri = {

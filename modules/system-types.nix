@@ -21,6 +21,7 @@ let
         type = enum [
           "desktop"
           "server"
+          "wsl"
         ];
         default = "server";
         example = "server";
@@ -51,10 +52,17 @@ let
         description = "Whether the system is a server";
       };
 
+      options.isWsl = mkOption {
+        type = bool;
+        default = false;
+        description = "Whether the system is a wsl";
+      };
+
       config.isLinux = mkIf (config.operatingSystem == "linux") true;
       config.isDarwin = mkIf (config.operatingSystem == "darwin") true;
       config.isDesktop = mkIf (config.systemType == "desktop") true;
       config.isServer = mkIf (config.systemType == "server") true;
+      config.isWsl = mkIf (config.systemType == "wsl") true;
     };
 in
 {

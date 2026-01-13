@@ -1,14 +1,20 @@
 {
   config.flake.modules.hjem.yubikey =
-    { pkgs, ... }:
+    {
+      pkgs,
+      lib,
+      isDesktop,
+      ...
+    }:
     let
+      inherit (lib.modules) mkIf;
       packages = [
         pkgs.yubikey-personalization
         pkgs.yubioath-flutter
         pkgs.age-plugin-yubikey
       ];
     in
-    {
+    mkIf isDesktop {
       inherit packages;
     };
 

@@ -1,3 +1,17 @@
+let
+  commonSpecialArgs = config: inputs: {
+    inherit inputs;
+    inherit (config.age) secrets;
+    inherit (config.network) hostName;
+
+    isDesktop = config.isDesktop or false;
+    isServer = config.isServer or false;
+    isWsl = config.isWsl or false;
+    isLinux = config.isLinux or false;
+    isDarwin = config.isDarwin or false;
+  };
+
+in
 {
   config.flake.modules.nixos.hjem =
     {
@@ -40,15 +54,8 @@
         {
           hjem.extraModules = [ hjemModule ] ++ hjemModules;
 
-          hjem.specialArgs = {
-            inherit inputs theme;
-            inherit (config.age) secrets;
-            inherit (config.network) hostName;
-            isDesktop = config.isDesktop or false;
-            isServer = config.isServer or false;
-
-            isLinux = config.isLinux or false;
-            isDarwin = config.isDarwin or false;
+          hjem.specialArgs = commonSpecialArgs config inputs // {
+            inherit theme;
           };
         }
       ];
@@ -74,13 +81,7 @@
         {
           hjem.extraModules = [ hjemModule ] ++ hjemModules;
 
-          hjem.specialArgs = {
-            isDesktop = config.isDesktop or false;
-            isServer = config.isServer or false;
-
-            isLinux = config.isLinux or false;
-            isDarwin = config.isDarwin or false;
-          };
+          hjem.specialArgs = commonSpecialArgs config inputs;
         }
       ];
     };

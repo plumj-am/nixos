@@ -4,11 +4,20 @@
   };
 
   config.flake.modules.hjem.waybar =
-    { theme, ... }:
-    let
-      inherit (builtins) concatStringsSep map toString;
-    in
     {
+      lib,
+      theme,
+      isDesktop,
+      isLinux,
+      ...
+    }:
+    let
+      inherit (lib.modules) mkIf;
+      inherit (builtins) concatStringsSep map toString;
+
+      enable = true;
+    in
+    mkIf (isDesktop && isLinux && enable) {
       xdg.config.files."waybar/config.jsonc".text =
         # jsonc
         ''
