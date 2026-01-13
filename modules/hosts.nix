@@ -44,6 +44,7 @@
       theme-scripts
       unfree
       users
+      virtualisation
       waybar
       window-manager
       yubikey

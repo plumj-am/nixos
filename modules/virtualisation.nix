@@ -1,5 +1,5 @@
 {
-  config.flake.modules.nixosModules.virtualisation = {
+  config.flake.modules.nixos.virtualisation = {
     virtualisation.docker.rootless = {
       enable = true;
       setSocketVariable = true; # Doesn't seem to work?
