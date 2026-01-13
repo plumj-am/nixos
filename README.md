@@ -1,24 +1,43 @@
 # PlumJam's Dendritic NixOS Configuration
 
-(WIP) NixOS configurations for 6 personal machines:
+> [!WARN]
+> Subject to major changes. This is not a finished state and some things are
+> still being migrated from my old config.
 
-- 2 desktops (nixos-unstable-small)
-- 3 servers (nixos-unstable-small)
-- 1 Macbook (nix-darwin)
-- 1 WSL (nixos-wsl)
+NixOS configurations for 8 personal machines:
+
+| Name      | System  | Platform       | Follows                  | Active |
+| --------- | ------- | -------------- | ------------------------ | :----: |
+| Blackwell | Server  | x86_64-linux   | nixos-unstable-small[^1] |   ✔    |
+| Date      | Laptop  | x86_64-linux   | nixos-unstable-small[^1] |   ✔    |
+| Kiwi      | Server  | x86_64-linux   | nixos-unstable-small[^1] |   ✔    |
+| Lime      | Macbook | aarch64-darwin | nix-darwin[^2]           |        |
+| Pear      | WSL     | x86_64-linux   | nixos-wsl[^3]            |   ✔    |
+| Plum      | Server  | x86_64-linux   | nixos-unstable-small[^1] |   ✔    |
+| Sloe      | Server  | x86_64-linux   | nixos-unstable-small[^1] |        |
+| Yuzu      | Desktop | x86_64-linux   | nixos-unstable-small[^1] |   ✔    |
+
+[^1]: [nixos-unstable-small](https://nixos.wiki/wiki/Nix_channels#:~:text=nixos%2Dunstable%2Dsmall)
+
+[^2]: [nix-darwin](https://github.com/nix-darwin/nix-darwin)
+
+[^3]: [nixos-wsl](https://github.com/nix-community/NixOS-WSL)
 
 ## Features
 
-- Dendritic structure with flake-parts
-- Hjem for home management
-- Hjem Rum for home modules
+- Multiple hosts
+- Dendritic structure with
+  [flake-parts](https://github.com/hercules-ci/flake-parts)
+- [Hjem](https://github.com/feel-co/hjem) for home management
+- [Hjem Rum](https://github.com/snugnug/hjem-rum) for home modules
 
 ## How it works
 
 Everything lives under `modules/`.
 
 Each module (for the most part) is grouped by feature as opposed to individual
-applications/services. Using flake-parts, these modules live at
+applications/services. Using
+[flake-parts](https://github.com/hercules-ci/flake-parts), these modules live at
 `flake.modules.{nixos,darwin,hjem}`.
 
 Modules contains 1 or more of the following:
@@ -41,14 +60,16 @@ For example, our `modules/window-manager.nix` looks like this:
 > Note that `hjem` modules are automatically included in any host that uses the
 > `hjem` module - this may change.
 
-The `darwin` and `nixos` modules are then used in `modules/hosts.nix` like this:
+The `darwin` and `nixos` modules are then used in `modules/hosts.nix`. Modules
+are grouped by type at the top of the file to avoid repeated configs and a
+`mkConfig` helper is used to simplify the inline config module of each host,
+again to reduce repetition. An example of what this could look like:
 
 ```nix
 {
   # For NixOS systems:
   flake.nixosConfigurations.hostName = inputs.os.lib.nixosSystem {
-    specialArgs = { inherit inputs; };
-    system = "x86_64-linux";
+    inherit specialArgs;
     modules = with inputs.self.modules.nixos; [
       # ... other packages
       window-manager
@@ -57,8 +78,7 @@ The `darwin` and `nixos` modules are then used in `modules/hosts.nix` like this:
 
   # Or for Darwin systems:
   flake.darwinConfigurations.hostName = inputs.os-darwin.lib.darwinSystem {
-    specialArgs = { inherit inputs; };
-    system = "x86_64-linux";
+    inherit specialArgs;
     modules = with inputs.self.modules.darwin; [
       # ... other packages
       window-manager
@@ -67,16 +87,10 @@ The `darwin` and `nixos` modules are then used in `modules/hosts.nix` like this:
 }
 ```
 
-This gives us fine-grained control over which hosts have access to which
-features.
-
-Any additional configuration for the hosts is defined in an inline module inside
-the `modules = []` section of each host. There we define configurations that are
-exclusive to the host and can't trivially be made a module such as `hostName`,
-`operatingSystem` (for conditional modules) and `secrets` configuration.
-
-I would like to move some of these variable configs to modules at some point and
-group common modules to keep the hosts file cleaner.
+As mentioned before, additional configuration for the hosts is defined in an
+inline module inside the `modules = []` section of each host. There we define
+configurations that are exclusive to the host and can't trivially be made a
+module such as unique `secrets` configuration.
 
 ## Other tools
 
@@ -84,7 +98,9 @@ group common modules to keep the hosts file cleaner.
 
 All secrets are handled by (r)agenix and agenix-rekey.
 
-(r)agenix: <https://github.com/ryantm/agenix>
+agenix: <https://github.com/ryantm/agenix>
+
+ragenix: <https://github.com/yaxitech/ragenix>
 
 agenix-rekey: <https://github.com/oddlama/agenix-rekey>
 
@@ -105,18 +121,29 @@ flake-file.
 
 I also use nix-auto-follow to improve evaluation (and possibly build) times by
 checking for duplicate dependencies in our `flake.lock` and suggesting ways to
-improve it.
+improve it. I'm not quite sold on how valuable this is yet.
 
 flake-file: <https://github.com/vic/flake-file>
 
 nix-auto-follow: <https://github.com/fzakaria/nix-auto-follow>
 
-## myLib
+### CI
+
+Forgejo workflows are generated with actions.nix in `ci/`. On every push, each
+host is built and cached automatically in an S3 bucket using self-hosted runners
+(see `modules/forgejo-action-runner.nix`).
+
+actions.nix is really nice, it gives you the power and flexibility of Nix for
+creating workflows. See `ci/nix-ci.nix` and `ci/lib.nix` for some examples.
+
+actions.nix: <https://github.com/nialov/actions.nix>
+
+### myLib
 
 There may be unfamiliar functions/helpers in some files - these come from
 `modules/lib.nix`.
 
-## Theming
+### Theming
 
 I have a custom theming setup which can be seen in `modules/theme.nix`. It does
 rely on a rebuild but it's a simple toggle between light/dark and gruvbox/pywal
@@ -130,6 +157,10 @@ colours for applications that can make use of them.
 
 ## Other comments
 
+Modules that are yet to be migrated live in `modules/_to-migrate/`. The
+underscore prefix tells import-tree to ignore this directory so we can easily
+migrate them gradually without breaking builds.
+
 Inputs use different names to what you might expect:
 
 - nixpkgs -> os
@@ -142,10 +173,48 @@ from my config and consider checking the following links:
 - <https://dendrix.oeiuwq.com/Dendritic.html>
 - <https://github.com/Doc-Steve/dendritic-design-with-flake-parts>
 
+Sites I found helpful for Nix settings/options/lib:
+
+- <https://mynixos.com>
+- <https://nix-darwin.github.io/nix-darwin/manual>
+- <https://teu5us.github.io/nix-lib.html>
+
+Documentation for flake-parts:
+
+- <https://flake.parts>
+
 ## Contributing
 
 If you're more experienced with this style of configuration, I'm happy to accept
 criticism or suggestions for improvements via an issue or pull request.
+
+## Map
+
+The structure of the repository and a few key files are highlighted below:
+
+```sh
+.
+├── ci/                # CI with actions.nix (generates .forgejo/workflows/*)
+│   └── ...
+├── modules/           # All modules live in here
+│   ├── inputs.nix     # flake-file configs
+│   ├── outputs.nix    # Flake outputs
+│   ├── hosts.nix      # Host definitions
+│   ├── actions.nix    # Generates CI workflows from `ci/`
+│   ├── theme.nix      # System-wide theming
+│   ├── ...
+│   ├── _to-migrate/   # Modules waiting for migration to new dendritic setup
+│   │   └── ...
+│   └── quickshell/    # Quickshell configs (not currently used)
+│       └── ...
+├── secrets/           # Secrets managed by agenix
+│   ├── ...
+│   └── rekeyed/       # Rekeyed secrets from agenix-rekey
+│       └── ...
+├── flake.lock
+├── flake.nix          # Contents generated by flake-file
+└── ...
+```
 
 ## License
 
