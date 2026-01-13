@@ -8,7 +8,11 @@
       ...
     }:
     let
-      inherit (lib) mkOption types;
+      inherit (lib.types) types;
+      inherit (lib.options) mkOption;
+      inherit (lib.modules) mkIf;
+
+      hostName = config.networking.hostName;
     in
     {
       options.forgejo-action-runner = {
@@ -48,14 +52,16 @@
 
         services.gitea-actions-runner = {
           package = pkgs.forgejo-runner;
-          instances.${config.networking.hostName} = {
+          instances.${hostName} = {
             enable = true;
-            name = config.networking.hostName;
+            name = hostName;
             tokenFile = config.age.secrets.forgejoRunnerToken.path;
-            inherit (config.forgejo-action-runner) url;
-            inherit (config.forgejo-action-runner) labels;
+            inherit (config.forgejo-action-runner) url labels;
 
-            settings.cache.enabled = false;
+            settings = {
+              timeout = "6h";
+              cache.enabled = true;
+            };
 
             hostPackages = [
               (inputs.fenix.packages.${pkgs.stdenv.hostPlatform.system}.complete.withComponents [
@@ -84,6 +90,7 @@
               pkgs.openssl
               pkgs.pkg-config
               pkgs.ripgrep
+              pkgs.sccache
               pkgs.sqlx-cli
               pkgs.which
               pkgs.xz
@@ -95,6 +102,7 @@
             ++ config.forgejo-action-runner.extraHostPackages;
           };
         };
+        virtualisation.docker.enable = mkIf config.forgejo-action-runner.withDocker true;
       };
     };
 }
