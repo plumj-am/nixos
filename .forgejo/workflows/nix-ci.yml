@@ -52,14 +52,14 @@ jobs:
     #         - uses: actions/checkout@v5
     #         - name: "Build configuration for pear"
     #           run: nix build .#nixosConfigurations.pear.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
+    build-plum:
+        name: "Build: plum"
+        runs-on: plum
+        steps:
+            - uses: actions/checkout@v5
+            - name: "Build configuration for plum"
+              run: nix build .#nixosConfigurations.plum.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
 
-    # build-plum:
-    #     name: "Build: plum"
-    #     runs-on: plum
-    #     steps:
-    #         - uses: actions/checkout@v5
-    #         - name: "Build configuration for plum"
-    #           run: nix build .#nixosConfigurations.plum.config.system.build.toplevel --accept-flake-config --builders "" --fallback --no-link
     build-yuzu:
         name: "Build: yuzu"
         runs-on: plum
