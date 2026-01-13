@@ -308,7 +308,6 @@
       netrc
       network
       nginx
-      nix-cache
       nix-distributed-builds
       nix-distributed-builder
       nix-settings
@@ -343,10 +342,6 @@
               80
               443
             ];
-          };
-
-          cache = {
-            fqdn = "cache1.plumj.am";
           };
 
           forgejo-action-runner = {
@@ -406,7 +401,6 @@
       netrc
       network
       nginx
-      nix-cache
       nix-distributed-builds
       nix-distributed-builder
       nix-settings
@@ -441,10 +435,6 @@
               80
               443
             ];
-          };
-
-          cache = {
-            fqdn = "cache2.plumj.am";
           };
 
           forgejo-action-runner = {
