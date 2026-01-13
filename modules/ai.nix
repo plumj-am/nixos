@@ -1,4 +1,18 @@
 {
+  config.flake-file.inputs = {
+    opencode = {
+      url = "github:anomalyco/opencode";
+
+      inputs.nixpkgs.follows = "os";
+    };
+
+    claude-code = {
+      url = "github:sadjow/claude-code-nix";
+
+      inputs.nixpkgs.follows = "os";
+    };
+  };
+
   config.flake.modules.hjem.ai =
     {
       lib,

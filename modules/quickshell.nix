@@ -1,4 +1,19 @@
 {
+  config.flake-file.inputs = {
+    quickshell = {
+      url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
+
+      inputs.nixpkgs.follows = "os";
+    };
+
+    qml-niri = {
+      url = "github:imiric/qml-niri/main";
+
+      inputs.nixpkgs.follows = "os";
+      inputs.quickshell.follows = "quickshell";
+    };
+  };
+
   config.flake.modules.nixos.quickshell =
     { pkgs, inputs, ... }:
     {

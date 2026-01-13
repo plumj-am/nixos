@@ -18,6 +18,14 @@ let
   };
 in
 {
+  config.flake-file.inputs = {
+    disko = {
+      url = "github:nix-community/disko";
+
+      inputs.nixpkgs.follows = "os";
+    };
+  };
+
   config.flake.modules.nixos.disks-server =
     { lib, inputs, ... }:
     let

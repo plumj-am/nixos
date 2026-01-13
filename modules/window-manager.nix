@@ -1,4 +1,16 @@
 {
+  config.flake-file.inputs = {
+    niri = {
+      url = "github:sodiboo/niri-flake";
+
+      inputs.nixpkgs.follows = "os";
+      inputs.nixpkgs-stable.follows = "";
+      inputs.niri-stable.follows = "";
+      inputs.xwayland-satellite-stable.follows = "";
+      inputs.xwayland-satellite-unstable.follows = "";
+    };
+  };
+
   config.flake.modules.hjem.window-manager =
     {
       inputs,

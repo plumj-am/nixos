@@ -1,5 +1,17 @@
-let
-  commonModule =
+{
+  flake-file.inputs = {
+    helix = {
+      url = "github:helix-editor/helix";
+
+      inputs.nixpkgs.follows = "os";
+    };
+  };
+
+  flake.modules.nixos.disable-nano = {
+    programs.nano.enable = false;
+  };
+
+  flake.modules.hjem.editor =
     {
       inputs,
       lib,
@@ -276,9 +288,10 @@ let
         h = "hx";
         e = "hx"; # editor
       };
+
     };
 
-  editorExtra =
+  flake.modules.hjem.editor-extra =
     {
       pkgs,
       lib,
@@ -370,12 +383,4 @@ let
         pkgs.typos-lsp
       ];
     };
-in
-{
-  config.flake.modules.nixos.disable-nano = {
-    programs.nano.enable = false;
-  };
-
-  config.flake.modules.hjem.editor = commonModule;
-  config.flake.modules.hjem.editor-extra = editorExtra;
 }

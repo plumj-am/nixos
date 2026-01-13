@@ -13,6 +13,23 @@ let
 
 in
 {
+  config.flake-file.inputs = {
+    hjem = {
+      follows = "hjem-rum/hjem";
+
+      inputs.nixpkgs.follows = "os";
+      inputs.nix-darwin.follows = "os-darwin";
+    };
+
+    hjem-rum = {
+      url = "github:snugnug/hjem-rum";
+
+      inputs.nixpkgs.follows = "os";
+      inputs.treefmt-nix.follows = "";
+      inputs.ndg.follows = "";
+    };
+  };
+
   config.flake.modules.nixos.hjem =
     {
       lib,

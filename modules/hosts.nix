@@ -1,5 +1,24 @@
 { inputs, ... }:
 {
+  flake-file.inputs = {
+    os = {
+      url = "github:NixOS/nixpkgs/nixos-unstable-small";
+    };
+
+    os-wsl = {
+      url = "github:nix-community/NixOS-WSL/main";
+
+      inputs.nixpkgs.follows = "os";
+      inputs.flake-compat.follows = "";
+    };
+
+    os-darwin = {
+      url = "github:nix-darwin/nix-darwin/master";
+
+      inputs.nixpkgs.follows = "os";
+    };
+  };
+
   flake.nixosConfigurations.yuzu = inputs.os.lib.nixosSystem {
     specialArgs = { inherit inputs; };
     system = "x86_64-linux";

@@ -1,4 +1,15 @@
 {
+  config.flake-file.inputs = {
+    rio = {
+      url = "github:raphamorim/rio/main";
+
+      inputs.nixpkgs.follows = "os";
+      inputs.flake-parts.follows = "parts";
+      inputs.rust-overlay.follows = "";
+      inputs.systems.follows = "";
+    };
+  };
+
   # TODO: Configuration.
   # No point configuring yet because it still doesn't work for some reason.
   # config.flake.modules.hjem.rio =

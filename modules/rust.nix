@@ -40,6 +40,14 @@ let
     };
 in
 {
+  config.flake-file.inputs = {
+    fenix = {
+      url = "github:nix-community/fenix";
+
+      inputs.nixpkgs.follows = "os";
+    };
+  };
+
   config.flake.modules.nixos.rust =
     { pkgs, inputs, ... }:
     {
