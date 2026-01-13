@@ -345,10 +345,12 @@
           };
 
           forgejo-action-runner = {
+            withDocker = true;
             labels = [
               "self-hosted:host"
               "plum:host"
               "docpad-infra:host"
+              "ubuntu-22.04:docker://docker.gitea.com/runner-images:ubuntu-22.04"
             ];
           };
 
@@ -438,10 +440,12 @@
           };
 
           forgejo-action-runner = {
+            withDocker = true;
             labels = [
               "self-hosted:host"
               "kiwi:host"
               "docpad-infra:host"
+              "ubuntu-22.04:docker://docker.gitea.com/runner-images:ubuntu-22.04"
             ];
           };
 
