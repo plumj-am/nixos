@@ -72,6 +72,7 @@
       {
         config = {
           operatingSystem = "linux";
+          systemPlatform = "x86_64-linux";
           systemType = "desktop";
 
           network.hostName = "yuzu";
@@ -150,6 +151,7 @@
       {
         config = {
           operatingSystem = "linux";
+          systemPlatform = "x86_64-linux";
           systemType = "server";
 
           network = {
@@ -173,13 +175,6 @@
               "docpad-infra:host"
             ];
           };
-
-          unfree.allowedNames = [
-            "nvidia-x11"
-            "nvidia-settings"
-            "steam"
-            "steam-unwrapped"
-          ];
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBH1S3dhOYCCltqrseHc3YZFHc9XU90PsvDo7frzUGrr root@plum";
 

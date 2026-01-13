@@ -17,6 +17,15 @@ let
         description = "The host system operating system";
       };
 
+      options.systemPlatform = mkOption {
+        type = enum [
+          "x86_64-linux"
+          "aarch64-darwin"
+        ];
+        example = "x86_64-linux";
+        description = "The host platform";
+      };
+
       options.systemType = mkOption {
         type = enum [
           "desktop"
@@ -63,6 +72,8 @@ let
       config.isDesktop = mkIf (config.systemType == "desktop") true;
       config.isServer = mkIf (config.systemType == "server") true;
       config.isWsl = mkIf (config.systemType == "wsl") true;
+
+      config.nixpkgs.hostPlatform.system = config.systemPlatform;
     };
 in
 {
