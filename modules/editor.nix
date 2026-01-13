@@ -122,11 +122,9 @@ let
           render.tab = "all";
         };
 
-        settings.keys = {
-          normal."C-y" =
+        settings.keys = genAttrs [ "normal" "select" ] (const {
+          "C-y" =
             ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- ${yaziPickerScript} open ...%{buffer_name}";
-        }
-        // genAttrs [ "normal" "select" ] (const {
           D = "extend_to_line_end";
         });
 
@@ -206,7 +204,7 @@ let
               }
               {
                 name = "nix";
-                auto-format = false;
+                auto-format = true;
                 formatter.command = "nixfmt";
                 language-servers = [
                   "nixd"
