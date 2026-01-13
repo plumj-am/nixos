@@ -14,6 +14,7 @@
       disks-zram-swap
       dynamic-binaries
       games
+      gammastep
       graphics
       hardware-desktop
       hjem

@@ -1,23 +1,16 @@
 {
-  config.flake.modules.hjem.gammastep =
-    { pkgs, ... }:
-    let
-      packages = [
-        pkgs.gammastep
-        pkgs.geoclue2
-      ];
-    in
-    {
-      inherit packages;
+  config.flake.modules.nixos.gammastep = {
+    services.geoclue2.enable = true;
+  };
+  config.flake.modules.hjem.gammastep = {
+    rum.programs.gammastep = {
+      enable = true;
 
-      rum.programs.gammastep = {
-        enable = true;
-
-        settings.general = {
-          location-provider = "geoclue2";
-          temp-day = 4500;
-          temp-night = 3500;
-        };
+      settings.general = {
+        location-provider = "geoclue2";
+        temp-day = 4500;
+        temp-night = 3500;
       };
     };
+  };
 }
