@@ -223,7 +223,7 @@
 
             				let jj_info = if (which jj | is-not-empty) {
             					try {
-            						let jj_output = (^jj --quiet --color always --ignore-working-copy log --no-graph --revisions @ --template '
+            						let jj_output = (jj --quiet --color always --ignore-working-copy log --no-graph --revisions @ --template '
             							separate(
             								" ",
             								bookmarks.join(", "),
@@ -231,9 +231,9 @@
             								coalesce(
             									surround("\"", "\"",
             										if(
-            											description.first_line().substr(0, 22).starts_with(description.first_line()),
-            											description.first_line().substr(0, 22),
-            											description.first_line().substr(0, 21) ++ "…"
+            											description.first_line().substr(0, 26).starts_with(description.first_line()),
+            											description.first_line().substr(0, 26),
+            											description.first_line().substr(0, 25) ++ "…"
             								  	)
             								  ),
             									label(if(empty, "empty"), "")
@@ -246,9 +246,25 @@
             								if(immutable, label("immutable", "(immutable)")),
             							)
             						' err> /dev/null | str trim)
-            						if ($jj_output | is-not-empty) {
+
+            						# Only show parent bookmark if current change has no bookmarks.
+            						let jj_has_bookmark = (jj --quiet --color always log --no-graph --revisions @ --template 'bookmarks.len() > 0' err> /dev/null | str trim) == "true"
+            						let jj_parent = if not $jj_has_bookmark {
+            							(jj --quiet --color always --ignore-working-copy log --no-graph --revisions 'heads(::@ & bookmarks())' --template 'bookmarks.join(", ")' err> /dev/null | str trim)
+            						} else { "" }
+
+            						let jj_parent_display = if ($jj_parent | is-not-empty) {
+            							$"tug ← ($jj_parent)"
+            						} else { "" }
+
+            						let combined = if ($jj_parent_display | is-not-empty) and ($jj_output | is-not-empty) {
+            							$" ($jj_parent_display) ($jj_output)"
+            						} else if ($jj_parent_display | is-not-empty) {
+            							$" ($jj_parent_display)"
+            						} else if ($jj_output | is-not-empty) {
             							$" ($jj_output)"
             						} else { "" }
+            						$combined
             					} catch { "" }
             				} else { "" }
 
