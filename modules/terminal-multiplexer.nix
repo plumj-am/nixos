@@ -119,7 +119,7 @@
                 SwitchToMode "locked";
               }
               bind "Ctrl p" {
-                LaunchOrFocusPlugin "https://github.com/laperlej/zellij-sessionizer/releases/latest/download/zellij-sessionizer.wasm" {
+                LaunchOrFocusPlugin "https://github.com/plumj-am/zellij-sessionizer/releases/download/v0.4.5/zellij-sessionizer.wasm" {
                   floating true
                   move_to_focused_tab true
                   cwd "/"
@@ -202,7 +202,7 @@
 
           load_plugins {
             "https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm"
-            "https://github.com/laperlej/zellij-sessionizer/releases/latest/download/zellij-sessionizer.wasm"
+            "https://github.com/plumj-am/zellij-sessionizer/releases/download/v0.4.5/zellij-sessionizer.wasm"
           };
 
           plugins {
