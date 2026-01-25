@@ -71,7 +71,7 @@
               # Upload to S3 cache (only paths larger than MIN_SIZE)
               for output in $OUT_PATHS; do
                 # Get the size of the store path using du
-                size=$(du -sb "$output" 2>/dev/null | awk '{print $1}' || echo "0")
+                size=$(du -sb "$output" 2>/dev/null | ${getExe pkgs.gawk} '{print $1}' || echo "0")
 
                 # Only upload if larger than minimum size
                 if [ "$size" -ge "$MIN_SIZE" ]; then
