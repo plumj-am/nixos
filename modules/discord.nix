@@ -43,7 +43,7 @@
         pkgs.discordo
       ];
 
-      programs.nushell.aliases.dc = "discordo";
+      rum.programs.nushell.aliases.dc = "discordo";
 
       xdg.config.files."discordo/config.toml".source = toml.generate "config.toml" discordoConfig;
     };
