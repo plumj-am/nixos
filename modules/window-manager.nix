@@ -330,6 +330,7 @@
       environment.systemPackages = [
         pkgs.cliphist
         pkgs.xwayland-satellite
+        pkgs.xdg-utils
         inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable
 
         (mkDesktopEntry { inherit pkgs; } {

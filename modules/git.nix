@@ -80,10 +80,14 @@
       xdg.config.files."git/credentials".text = # ini
         ''
           [credential]
-            helper=!gh auth git-credential
+            helper=cache --timeout 21600
             helper=oauth
             helper=oauth -device
-            helper=cache --timeout 21600 # 6 hours
+            helper=!gh auth git-credential
+          [credential "https://git.plumj.am"]
+            oauthClientId=a4792ccc-144e-407e-86c9-5e7d8d9c3269
+            oauthAuthURL=/login/oauth/authorize
+            oauthTokenURL=/login/oauth/access_token
         '';
     };
 }
