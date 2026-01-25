@@ -251,6 +251,14 @@ in
             age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBH1S3dhOYCCltqrseHc3YZFHc9XU90PsvDo7frzUGrr root@plum";
 
             age.secrets = {
+              forgejoSigningKey = {
+                rekeyFile = ../secrets/plum-forgejo-signing-key.age;
+                owner = "forgejo";
+              };
+              forgejoSigningKeyPub = {
+                rekeyFile = ../secrets/plum-forgejo-signing-key-pub.age;
+                owner = "forgejo";
+              };
               forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
               forgejoAdminPassword.rekeyFile = ../secrets/plum-forgejo-password.age;
               acmeEnvironment.rekeyFile = ../secrets/acme-environment.age;

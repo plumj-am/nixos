@@ -15,6 +15,24 @@
       port = 8001;
     in
     {
+      # Create symlinks for Forgejo signing keys with correct SSH naming convention.
+      systemd.services.forgejo-setup-keys = {
+        description = "Setup Forgejo signing key symlinks";
+        wantedBy = [ "forgejo.service" ];
+        before = [ "forgejo.service" ];
+
+        script = ''
+          ln -sf ${config.age.secrets.forgejoSigningKey.path} /run/agenix/forgejo-signing-key
+
+          ln -sf ${config.age.secrets.forgejoSigningKeyPub.path} /run/agenix/forgejo-signing-key.pub
+        '';
+
+        serviceConfig = {
+          Type = "oneshot";
+          User = "root";
+        };
+      };
+
       # combine AcceptEnv settings for SSH and Git protocol
       services.openssh.settings.AcceptEnv = mkForce [
         "SHELLS"
@@ -73,6 +91,8 @@
 
             cache.ENABLED = true;
 
+            admin.DISABLE_REGULAR_ORG_CREATION = true;
+
             # archive cleanup cron job
             "cron.archive_cleanup" =
               let
@@ -95,11 +115,18 @@
               DEFAULT_MERGE_STYLE = "rebase-merge";
               DEFAULT_REPO_UNITS = "repo.code, repo.issues, repo.pulls";
 
+              DEFAULT_CLOSE_ISSUES_VIA_COMMITS_IN_ANY_BRANCH = true;
               DEFAULT_PUSH_CREATE_PRIVATE = false;
               ENABLE_PUSH_CREATE_ORG = true;
               ENABLE_PUSH_CREATE_USER = true;
 
               DISABLE_STARS = true;
+            };
+
+            "repository.signing" = {
+              FORMAT = "ssh";
+              SIGNING_KEY = "/run/agenix/forgejo-signing-key.pub";
+              MERGES = "always";
             };
 
             "repository.upload" = {
