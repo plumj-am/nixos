@@ -77,9 +77,11 @@
                 config.forgejo-action-runner.labels;
 
             settings = {
-              inherit (config.forgejo-action-runner) capacity;
-              timeout = "6h";
-              cache.enabled = true;
+              runner = {
+                inherit (config.forgejo-action-runner) capacity;
+                timeout = "6h";
+                cache.enabled = true;
+              };
             };
 
             hostPackages = [
