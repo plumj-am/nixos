@@ -250,7 +250,7 @@
             						# Only show parent bookmark if current change has no bookmarks.
             						let jj_has_bookmark = (jj --quiet --color always log --no-graph --revisions @ --template 'bookmarks.len() > 0' err> /dev/null | str trim) == "true"
             						let jj_parent = if not $jj_has_bookmark {
-            							(jj --quiet --color always --ignore-working-copy log --no-graph --revisions 'heads(::@ & bookmarks())' --template 'bookmarks.join(", ")' err> /dev/null | str trim)
+            							(jj --quiet --color always --ignore-working-copy log --no-graph --revisions 'heads(::@ & bookmarks())' --template 'bookmarks ++ "\n"' err> /dev/null | lines | str join ",")
             						} else { "" }
 
             						let jj_parent_display = if ($jj_parent | is-not-empty) {
