@@ -212,5 +212,35 @@
             compact-bar location="zellij:compact-bar"
           }
         '';
+
+      xdg.config.files."zellij/layouts/plumjam.kdl".text =
+        with theme.withHash; # kdl
+        ''
+          layout {
+            pane
+            pane size=1 borderless=true {
+              plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
+          			hide_frame_for_single_pane "true"
+
+          			format_left "{mode} #[fg=gray,bold]{session}"
+          			format_center "{tabs}"
+          			format_right ""
+          			format_space ""
+
+          			mode_normal "#[fg=${base00},bg=${base0B}] NOR "
+          			mode_locked "#[fg=${base00},bg=${base08}] LOC "
+          			mode_pane "#[fg=${base00},bg=${base0D}] PAN "
+          			mode_tab "#[fg=${base00},bg=${base0E}] TAB "
+          			mode_rename "#[fg=${base00},bg=${base0A}] REN "
+          			mode_resize "#[fg=${base00},bg=${base0C}] RES "
+          			mode_scroll "#[fg=${base00},bg=${base09}] SCR "
+          			mode_session "#[fg=${base00},bg=${base0F}] SES "
+
+          			tab_normal "#[fg=${base05}] {index}:{name} "
+          			tab_active "#[fg=${base0D},bold] {index}:{name} "
+          		}
+            }
+          }
+        '';
     };
 }
