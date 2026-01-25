@@ -15,7 +15,12 @@ let
 in
 {
   flake.modules.hjem.jujutsu =
-    { pkgs, config, ... }:
+    {
+      pkgs,
+      config,
+      theme,
+      ...
+    }:
     let
       toml = pkgs.formats.toml { };
       jjConfig = {
@@ -37,13 +42,13 @@ in
           "$right"
         ];
         ui.editor = config.environment.sessionVariables.EDITOR;
-        ui.graph-style = "square";
+        ui.graph.style = "curved";
         ui.movement.edit = true;
         ui.pager = ":builtin";
 
         snapshot.max-new-file-size = "10MiB";
 
-        lazyjj.highlight-color = "#f2e5bc";
+        lazyjj.highlight-color = "#${theme.colors.base02}";
 
         git.sign-on-push = true; # sign in bulk on push
 
@@ -243,6 +248,16 @@ in
       xdg.config.files."jj/config.toml" = {
         source = toml.generate "config.toml" jjConfig;
       };
+
+      # TODO: Fix sub-menu selection bg colour (press "l" on revision to view files)
+      xdg.config.files."jjui/config.toml".text = # toml
+        ''
+          [preview]
+          show_at_start = true
+
+          [ui.colors]
+          "selected".bg = "#${theme.colors.base01}"
+        '';
 
       rum.programs.nushell.aliases = {
         j = "jj";

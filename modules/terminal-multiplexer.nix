@@ -10,6 +10,7 @@
     }:
     let
       inherit (lib.modules) mkIf;
+      inherit (lib.meta) getExe;
     in
     mkIf isDesktop {
       packages = [
@@ -109,6 +110,17 @@
               }
               bind "Ctrl n" {
                 Run "nu" {
+                  close_on_exit true
+                  floating true
+                  x "5%"
+                  y "5%"
+                  width "90%"
+                  height "90%"
+                };
+                SwitchToMode "locked";
+              }
+              bind "Ctrl j" {
+                Run "${getExe pkgs.jjui}" {
                   close_on_exit true
                   floating true
                   x "5%"
