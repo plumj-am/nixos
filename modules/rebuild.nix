@@ -71,9 +71,19 @@
           if not $quiet { print-notify $"($action) ($platform). Configuration for: ($host)." }
 
           if $remote {
-            NH_BYPASS_ROOT_CHECK=true NH_NO_CHECKS=true nh $command ...$final_args
+            try {
+              NH_BYPASS_ROOT_CHECK=true NH_NO_CHECKS=true nh $command ...$final_args
+            } catch {
+              print-notify "Rebuild failed. Try again in a terminal."
+              exit 1
+            }
           } else {
-            sudo NH_BYPASS_ROOT_CHECK=true NH_NO_CHECKS=true nh $command ...$final_args
+            try {
+              sudo NH_BYPASS_ROOT_CHECK=true NH_NO_CHECKS=true nh $command ...$final_args
+            } catch {
+              print-notify "Rebuild failed. Try again in a terminal."
+              exit 1
+            }
           }
 
           if $rollback {

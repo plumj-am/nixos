@@ -340,11 +340,11 @@ in
             $wallpapers
             | get name
             | str join "\n"
-            | ^${pkgs.fzf}/bin/fzf --preview $"${pkgs.chafa}/bin/chafa --size 40x20 {}" --preview-window=right:50% --prompt="Select wallpaper: "
+            | ${pkgs.fzf}/bin/fzf --preview $"${pkgs.chafa}/bin/chafa --size 40x20 {}" --preview-window=right:50% --prompt="Select wallpaper: "
           )
 
           if not ($selected | is-empty) {
-            ^${pkgs.swww}/bin/swww img $selected o+e>| ignore
+            ${pkgs.swww}/bin/swww img $selected o+e>| ignore
             print $"Wallpaper set: (($selected | path basename))"
 
             let theme_config = try {
@@ -361,7 +361,7 @@ in
               let is_dark = $theme_config.mode == "dark"
 
               try {
-                ^rm -rf ~/.cache/wal
+                rm -rf ~/.cache/wal
 
                 let base_args = ["-n" "--backend" "wal" "-i" $selected]
                 let mode_args = if $is_dark {
@@ -370,14 +370,10 @@ in
                   ["--saturate" "0.75" "-l"]
                 }
 
-                ^${pkgs.pywal}/bin/wal ...($base_args | append $mode_args) err> /dev/null
-                ^cp ~/.cache/wal/colors.json $"($env.HOME)/nixos/modules/theme-pywal-colors.json"
+                ${pkgs.pywal}/bin/wal ...($base_args | append $mode_args) err> /dev/null
+                cp ~/.cache/wal/colors.json $"($env.HOME)/nixos/modules/theme-pywal-colors.json"
                 print "Colors regenerated!"
-                try {
-                  ^rebuild --quiet
-                } catch { |e|
-                  print "Failed to rebuild."
-                }
+                try { rebuild --quiet } catch { exit 1 }
                 print "Rebuilt system to apply colors."
               } catch { |e|
                 print $"Warning: Failed to regenerate colors: ($e.msg)"
@@ -394,11 +390,11 @@ in
         def print-notify [message: string, progress: int = -1] {
           print $"(ansi purple)[Theme Switcher](ansi rst) ($message)"
 
-          ^${pkgs.libnotify}/bin/notify-send "Theme Switcher" $"($message)"
+          ${pkgs.libnotify}/bin/notify-send "Theme Switcher" $"($message)"
         }
 
         def generate-pywal-colors [wallpaper: string, is_dark: bool] {
-          ^${pkgs.coreutils}/bin/rm -rf ~/.cache/wal
+          ${pkgs.coreutils}/bin/rm -rf ~/.cache/wal
 
           let base_args = ["-n" "--backend" "wal" "-i" $wallpaper]
           let mode_args = if $is_dark {
@@ -407,8 +403,8 @@ in
             ["--saturate" "0.75" "-l"]
           }
 
-          ^${pkgs.pywal}/bin/wal ...($base_args | append $mode_args) err> /dev/null
-          ^${pkgs.coreutils}/bin/cp ~/.cache/wal/colors.json $"($env.HOME)/nixos/modules/theme-pywal-colors.json"
+          ${pkgs.pywal}/bin/wal ...($base_args | append $mode_args) err> /dev/null
+          ${pkgs.coreutils}/bin/cp ~/.cache/wal/colors.json $"($env.HOME)/nixos/modules/theme-pywal-colors.json"
         }
 
         def reload-applications [] {
@@ -418,6 +414,7 @@ in
             niri msg action do-screen-transition --delay-ms 0 | complete
             pkill waybar -USR2 | complete # Better to do it here rather than relying on `reload_style_on_change` setting.
             pkill -USR1 kitty | complete
+            pkill -USR2 ghostty | complete
             pkill -USR1 hx | complete
             systemctl --user restart mako | complete
             pkill -SIGTERM brave | complete
@@ -457,7 +454,7 @@ in
             print-notify "Regenerating pywal colors..."
 
             let wallpaper = try {
-              ^${pkgs.swww}/bin/swww query | lines | first | parse "{monitor}: image: {path}" | get path.0
+              ${pkgs.swww}/bin/swww query | lines | first | parse "{monitor}: image: {path}" | get path.0
             } catch {
               null
             }
@@ -484,12 +481,7 @@ in
 
           print-notify $"Rebuilding configuration to apply ($new_theme) theme."
 
-          try {
-            ^rebuild --quiet
-          } catch { |e|
-            print-notify "Error: Rebuild failed, run manually in a terminal."
-            exit 1
-          }
+          try { rebuild --quiet } catch { exit 1 }
 
           print-notify $"Switch to the ($new_theme) theme completed!"
 
@@ -516,7 +508,7 @@ in
             let is_dark = $theme_config.mode == "dark"
 
             let wallpaper = try {
-              ^${pkgs.swww}/bin/swww query | lines | first | parse "{monitor}: image: {path}" | get path.0
+              ${pkgs.swww}/bin/swww query | lines | first | parse "{monitor}: image: {path}" | get path.0
             } catch {
               null
             }
@@ -542,12 +534,7 @@ in
 
           print-notify $"Rebuilding configuration to apply ($scheme) scheme..."
 
-          try {
-            ^rebuild --quiet
-          } catch { |e|
-            print-notify "Error: Rebuild failed, run manually in a terminal."
-            exit 1
-          }
+          try { rebuild --quiet } catch { exit 1 }
 
           print-notify $"Switch to ($scheme) scheme completed!"
 
@@ -568,12 +555,7 @@ in
             "pywal" | "gruvbox" => { switch-scheme $arg }
             "reload" => {
               reload-applications
-              try {
-                ^rebuild --quiet
-              } catch {
-                print-notify "Error: Rebuild failed, run manually in a terminal."
-                exit 1
-              }
+              try { rebuild --quiet } catch { exit 1 }
             }
             _ => { print $"Invalid option: '($arg)'. Use: dark, light, pywal, gruvbox or reload." }
           }
