@@ -45,6 +45,12 @@
           default = 1;
           description = "How many jobs this runner can handle concurrently";
         };
+
+        strong = mkOption {
+          type = types.bool;
+          default = false;
+          description = "If the system is powerful enough to handle heavier workloads";
+        };
       };
 
       config = {
@@ -62,7 +68,13 @@
             enable = true;
             name = hostName;
             tokenFile = config.age.secrets.forgejoRunnerToken.path;
-            inherit (config.forgejo-action-runner) url labels;
+            inherit (config.forgejo-action-runner) url;
+
+            labels =
+              if config.forgejo-action-runner.strong then
+                config.forgejo-action-runner.labels ++ [ "strong:host" ]
+              else
+                config.forgejo-action-runner.labels;
 
             settings = {
               inherit (config.forgejo-action-runner) capacity;

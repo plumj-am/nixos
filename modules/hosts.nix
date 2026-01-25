@@ -245,6 +245,10 @@ in
               ];
             };
 
+            forgejo-action-runner = {
+              strong = true;
+            };
+
             age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBH1S3dhOYCCltqrseHc3YZFHc9XU90PsvDo7frzUGrr root@plum";
 
             age.secrets = {
@@ -326,7 +330,10 @@ in
         {
           config = mkConfig "sloe" "x86_64-linux" "server" {
 
-            forgejo-action-runner.capacity = 4;
+            forgejo-action-runner = {
+              strong = true;
+              capacity = 4;
+            };
 
             age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK42xzC/vWHZC9SiU/8IBBd2pn7mggBYFQ8themKAic/ root@sloe";
             age.secrets = {

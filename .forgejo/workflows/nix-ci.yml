@@ -18,7 +18,7 @@ jobs:
         --accept-flake-config --builders "" --no-link
   build-date:
     name: 'Build: date'
-    runs-on: plum
+    runs-on: strong
     steps:
     - name: Checkout
       uses: actions/checkout@v5
@@ -36,7 +36,7 @@ jobs:
         --builders "" --no-link
   build-pear:
     name: 'Build: pear'
-    runs-on: plum
+    runs-on: strong
     steps:
     - name: Checkout
       uses: actions/checkout@v5
@@ -52,9 +52,18 @@ jobs:
     - name: 'Build: plum'
       run: nix build .#nixosConfigurations.plum.config.system.build.toplevel --accept-flake-config
         --builders "" --no-link
+  build-sloe:
+    name: 'Build: sloe'
+    runs-on: sloe
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5
+    - name: 'Build: sloe'
+      run: nix build .#nixosConfigurations.sloe.config.system.build.toplevel --accept-flake-config
+        --builders "" --no-link
   build-yuzu:
     name: 'Build: yuzu'
-    runs-on: plum
+    runs-on: strong
     steps:
     - name: Checkout
       uses: actions/checkout@v5
@@ -63,7 +72,7 @@ jobs:
         --builders "" --no-link
   check-deadnix:
     name: 'Check: deadnix'
-    runs-on: plum
+    runs-on: strong
     steps:
     - name: Checkout
       uses: actions/checkout@v5
@@ -72,7 +81,7 @@ jobs:
         "" --no-link
   check-nix-paths:
     name: 'Check: legacy imports'
-    runs-on: plum
+    runs-on: strong
     steps:
     - name: Checkout
       uses: actions/checkout@v5
@@ -81,7 +90,7 @@ jobs:
         "" --no-link
   check-statix:
     name: 'Check: statix'
-    runs-on: plum
+    runs-on: strong
     steps:
     - name: Checkout
       uses: actions/checkout@v5

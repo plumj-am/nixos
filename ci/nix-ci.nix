@@ -18,7 +18,7 @@ let
 
   checkJob = name: target: {
     inherit name;
-    runs-on = "plum";
+    runs-on = "strong";
     steps = stepsWithCheckout [
       {
         inherit name;
@@ -50,13 +50,14 @@ in
     };
     concurrency = commonConcurrency "nix-ci";
     jobs = {
-      build-date = buildJob "Build: date" "nixosConfigurations.date" "plum";
+      build-blackwell = buildJob "Build: blackwell" "nixosConfigurations.blackwell" "blackwell";
+      build-date = buildJob "Build: date" "nixosConfigurations.date" "strong";
       build-kiwi = buildJob "Build: kiwi" "nixosConfigurations.kiwi" "kiwi";
       # build-lime = job "Build: lime" "darwinConfigurations.lime";
-      build-pear = buildJob "Build: pear" "nixosConfigurations.pear" "plum";
+      build-pear = buildJob "Build: pear" "nixosConfigurations.pear" "strong";
       build-plum = buildJob "Build: plum" "nixosConfigurations.plum" "plum";
-      build-yuzu = buildJob "Build: yuzu" "nixosConfigurations.yuzu" "plum";
-      build-blackwell = buildJob "Build: blackwell" "nixosConfigurations.blackwell" "blackwell";
+      build-sloe = buildJob "Build: sloe" "nixosConfigurations.sloe" "sloe";
+      build-yuzu = buildJob "Build: yuzu" "nixosConfigurations.yuzu" "strong";
 
       check-deadnix = checkJob "Check: deadnix" "deadnix";
       check-statix = checkJob "Check: statix" "statix";
