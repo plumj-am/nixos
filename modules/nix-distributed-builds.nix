@@ -12,7 +12,7 @@
     in
     {
       nix.distributedBuilds = true;
-      nix.buildMachines = (
+      nix.buildMachines =
         inputs.self.nixosConfigurations
         |> attrsToList
         |> filter ({ name, value }: name != config.networking.hostName && value.config.users.users ? build)
@@ -32,8 +32,7 @@
             ];
             system = value.config.nixpkgs.hostPlatform.system;
           }
-        )
-      );
+        );
 
     };
 

@@ -6,8 +6,6 @@
       lib,
       ...
     }:
-    let
-    in
     {
       imports = [
         inputs.os-wsl.nixosModules.default

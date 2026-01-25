@@ -83,7 +83,7 @@ in
 
       listeners = [
         {
-          port = port;
+          inherit port;
           bind_addresses = [ "::1" ];
           type = "http";
           tls = false;

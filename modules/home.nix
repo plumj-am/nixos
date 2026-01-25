@@ -3,13 +3,14 @@ let
     inherit inputs;
     inherit (config.age) secrets;
     inherit (config.network) hostName;
-    inherit (config) myLib;
-
-    isDesktop = config.isDesktop or false;
-    isServer = config.isServer or false;
-    isWsl = config.isWsl or false;
-    isLinux = config.isLinux or false;
-    isDarwin = config.isDarwin or false;
+    inherit (config)
+      myLib
+      isDesktop
+      isServer
+      isWsl
+      isLinux
+      isDarwin
+      ;
   };
 
 in
@@ -51,7 +52,7 @@ in
           hjem.extraModules = [ hjemModule ] ++ hjemModules;
 
           hjem.specialArgs = commonSpecialArgs config inputs // {
-            theme = config.theme;
+            inherit (config) theme;
           };
         }
       ];

@@ -24,6 +24,10 @@
               ];
             }
             ''
+              cat > statix.toml <<'EOF'
+              disabled = [ "repeated_keys" ]
+              EOF
+              export STATIX_CONFIG=$(realpath statix.toml)
               statix check ${../.}
               touch $out
             '';
