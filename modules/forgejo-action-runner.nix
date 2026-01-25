@@ -107,6 +107,7 @@
               pkgs.just
               pkgs.jq
               pkgs.nix
+              pkgs.nix-fast-build
               pkgs.nodejs
               pkgs.nushell
               pkgs.openssl
