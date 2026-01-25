@@ -2,7 +2,7 @@
 let
   inherit (config.ciLib) commonPathsIgnore commonConcurrency stepsWithCheckout;
 
-  commonArgs = ''--skip-cached --no-nom --option builders "" --option accept-flake-config true'';
+  commonArgs = ''--accept-flake-config --builders "" --no-link'';
 
   typeHelper =
     type: target:
@@ -18,7 +18,7 @@ let
     steps = stepsWithCheckout [
       {
         inherit name;
-        run = "nix-fast-build --flake ${typeHelper type target} ${commonArgs}";
+        run = "nix build ${typeHelper type target} ${commonArgs}";
       }
     ];
   };

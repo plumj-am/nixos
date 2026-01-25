@@ -14,8 +14,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: 'Build: blackwell'
-      run: nix-fast-build --flake .#nixosConfigurations.blackwell.config.system.build.toplevel
-        --skip-cached --no-nom --option builders "" --option accept-flake-config true
+      run: nix build .#nixosConfigurations.blackwell.config.system.build.toplevel
+        --accept-flake-config --builders "" --no-link
   build-date:
     name: 'Build: date'
     runs-on: strong
@@ -23,8 +23,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: 'Build: date'
-      run: nix-fast-build --flake .#nixosConfigurations.date.config.system.build.toplevel
-        --skip-cached --no-nom --option builders "" --option accept-flake-config true
+      run: nix build .#nixosConfigurations.date.config.system.build.toplevel --accept-flake-config
+        --builders "" --no-link
   build-kiwi:
     name: 'Build: kiwi'
     runs-on: kiwi
@@ -32,8 +32,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: 'Build: kiwi'
-      run: nix-fast-build --flake .#nixosConfigurations.kiwi.config.system.build.toplevel
-        --skip-cached --no-nom --option builders "" --option accept-flake-config true
+      run: nix build .#nixosConfigurations.kiwi.config.system.build.toplevel --accept-flake-config
+        --builders "" --no-link
   build-pear:
     name: 'Build: pear'
     runs-on: strong
@@ -41,8 +41,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: 'Build: pear'
-      run: nix-fast-build --flake .#nixosConfigurations.pear.config.system.build.toplevel
-        --skip-cached --no-nom --option builders "" --option accept-flake-config true
+      run: nix build .#nixosConfigurations.pear.config.system.build.toplevel --accept-flake-config
+        --builders "" --no-link
   build-plum:
     name: 'Build: plum'
     runs-on: plum
@@ -50,8 +50,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: 'Build: plum'
-      run: nix-fast-build --flake .#nixosConfigurations.plum.config.system.build.toplevel
-        --skip-cached --no-nom --option builders "" --option accept-flake-config true
+      run: nix build .#nixosConfigurations.plum.config.system.build.toplevel --accept-flake-config
+        --builders "" --no-link
   build-sloe:
     name: 'Build: sloe'
     runs-on: sloe
@@ -59,8 +59,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: 'Build: sloe'
-      run: nix-fast-build --flake .#nixosConfigurations.sloe.config.system.build.toplevel
-        --skip-cached --no-nom --option builders "" --option accept-flake-config true
+      run: nix build .#nixosConfigurations.sloe.config.system.build.toplevel --accept-flake-config
+        --builders "" --no-link
   build-yuzu:
     name: 'Build: yuzu'
     runs-on: strong
@@ -68,8 +68,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: 'Build: yuzu'
-      run: nix-fast-build --flake .#nixosConfigurations.yuzu.config.system.build.toplevel
-        --skip-cached --no-nom --option builders "" --option accept-flake-config true
+      run: nix build .#nixosConfigurations.yuzu.config.system.build.toplevel --accept-flake-config
+        --builders "" --no-link
   check-deadnix:
     name: 'Check: deadnix'
     runs-on: strong
@@ -77,8 +77,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: 'Check: deadnix'
-      run: nix-fast-build --flake .#checks.x86_64-linux.deadnix --skip-cached --no-nom
-        --option builders "" --option accept-flake-config true
+      run: nix build .#checks.x86_64-linux.deadnix --accept-flake-config --builders
+        "" --no-link
   check-nix-paths:
     name: 'Check: legacy imports'
     runs-on: strong
@@ -86,8 +86,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: 'Check: legacy imports'
-      run: nix-fast-build --flake .#checks.x86_64-linux.nix-path --skip-cached --no-nom
-        --option builders "" --option accept-flake-config true
+      run: nix build .#checks.x86_64-linux.nix-path --accept-flake-config --builders
+        "" --no-link
   check-statix:
     name: 'Check: statix'
     runs-on: strong
@@ -95,8 +95,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v5
     - name: 'Check: statix'
-      run: nix-fast-build --flake .#checks.x86_64-linux.statix --skip-cached --no-nom
-        --option builders "" --option accept-flake-config true
+      run: nix build .#checks.x86_64-linux.statix --accept-flake-config --builders
+        "" --no-link
 name: Nix CI
 'on':
   pull_request:
