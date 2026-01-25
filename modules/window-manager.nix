@@ -265,17 +265,22 @@
           "Mod+B".spawn = [
             "nu"
             "-c"
-            "niri msg action do-screen-transition --delay-ms 100 ; pkill -USR1 waybar"
+            "niri msg action do-screen-transition --delay-ms 100 ; notify-send bar_toggle ; pkill -USR1 waybar"
           ];
           "Mod+N".spawn = [
             "nu"
             "-c"
-            "niri msg action do-screen-transition --delay-ms 100 ; makoctl mode -t do-not-disturb ; notify-send Mako Enabled"
+            "niri msg action do-screen-transition --delay-ms 100 ; notify-send hidden_toggle ; makoctl mode -t mute ; makoctl mode -t do-not-disturb"
+          ];
+          "Mod+M".spawn = [
+            "nu"
+            "-c"
+            "niri msg action do-screen-transition --delay-ms 100 ; makoctl mode -t mute ; notify-send mute_toggle"
           ];
           "Mod+Z".spawn = [
             "nu"
             "-c"
-            "niri msg action do-screen-transition --delay-ms 100 ; pkill -USR1 waybar ; makoctl mode -t do-not-disturb ; notify-send Mako Enabled"
+            "niri msg action do-screen-transition --delay-ms 100 ; notify-send zen_toggle ; pkill -USR1 waybar ; makoctl mode -t mute ; makoctl mode -t do-not-disturb"
           ];
         };
 

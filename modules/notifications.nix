@@ -11,12 +11,18 @@
     }:
     let
       inherit (lib.modules) mkIf;
+      sound-theme = pkgs.sound-theme-freedesktop;
     in
     mkIf (isDesktop && isLinux) {
       packages = [
         pkgs.libnotify
         pkgs.mako
+        pkgs.pulseaudio # for paplay
+        sound-theme
       ];
+
+      # Symlink sounds to a consistent location for mako
+      xdg.data.files."sounds/freedesktop".source = "${sound-theme}/share/sounds/freedesktop";
 
       xdg.config.files."mako/config".text =
         with theme; # ini
@@ -42,6 +48,9 @@
           # group-by=app-name
           default-timeout=10000
 
+          # 75% volume - max (and default) = 65536
+          on-notify=exec paplay --volume 49152 ~/.local/share/sounds/freedesktop/stereo/message.oga
+
           border-size=${toString border.small}
           border-radius=${toString radius.small}
 
@@ -52,6 +61,9 @@
 
           [mode=do-not-disturb]
           invisible=1
+
+          [mode=mute]
+          on-notify=exec nu -c "null"
 
           [urgency=low]
             border-color=#${colors.base0E}FF
