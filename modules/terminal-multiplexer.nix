@@ -130,6 +130,17 @@
                 };
                 SwitchToMode "locked";
               }
+              bind "Ctrl d" {
+                Run "${getExe pkgs.discordo}" {
+                  close_on_exit true
+                  floating true
+                  x "5%"
+                  y "5%"
+                  width "90%"
+                  height "90%"
+                };
+                SwitchToMode "locked";
+              }
               bind "Ctrl p" {
                 LaunchOrFocusPlugin "https://github.com/plumj-am/zellij-sessionizer/releases/download/v0.4.5/zellij-sessionizer.wasm" {
                   floating true
