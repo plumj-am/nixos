@@ -26,8 +26,6 @@ in
       url = "github:snugnug/hjem-rum";
 
       inputs.nixpkgs.follows = "os";
-      inputs.treefmt-nix.follows = "";
-      inputs.ndg.follows = "";
     };
   };
 

@@ -6,8 +6,6 @@
 
       inputs.nixpkgs.follows = "os";
       inputs.darwin.follows = "os-darwin";
-      inputs.home-manager.follows = "";
-      inputs.systems.follows = "";
     };
 
     age-rekey = {
@@ -15,7 +13,6 @@
 
       inputs.nixpkgs.follows = "os";
       inputs.flake-parts.follows = "parts";
-      inputs.treefmt-nix.follows = "treefmt";
     };
   };
 

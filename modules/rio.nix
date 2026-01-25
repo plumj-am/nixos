@@ -5,8 +5,6 @@
 
       inputs.nixpkgs.follows = "os";
       inputs.flake-parts.follows = "parts";
-      inputs.rust-overlay.follows = "";
-      inputs.systems.follows = "";
     };
   };
 

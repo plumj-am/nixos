@@ -119,13 +119,7 @@ use/define inputs closer to where they are used. For example,
 `nix run .#write-flake` the `flake.nix` file is automatically updated by
 flake-file.
 
-I also use nix-auto-follow to improve evaluation (and possibly build) times by
-checking for duplicate dependencies in our `flake.lock` and suggesting ways to
-improve it. I'm not quite sold on how valuable this is yet.
-
 flake-file: <https://github.com/vic/flake-file>
-
-nix-auto-follow: <https://github.com/fzakaria/nix-auto-follow>
 
 ### CI
 

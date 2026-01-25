@@ -4,26 +4,18 @@
       url = "github:helix-editor/helix";
 
       inputs.nixpkgs.follows = "os";
-      inputs.rust-overlay.follows = "rust-overlay";
     };
 
     nu-lint = {
       url = "git+https://codeberg.org/wvhulle/nu-lint";
 
       inputs.nixpkgs.follows = "os";
-      inputs.rust-overlay.follows = "rust-overlay";
-      inputs.flake-utils.follows = "flake-utils";
-      inputs.crane.follows = "crane";
-      inputs.git-hooks.follows = "";
     };
 
     nufmt = {
       url = "github:nushell/nufmt";
 
       inputs.nixpkgs.follows = "os";
-      inputs.flake-utils.follows = "flake-utils";
-      inputs.rust-overlay.follows = "rust-overlay";
-      inputs.treefmt-nix.follows = "treefmt";
     };
   };
 

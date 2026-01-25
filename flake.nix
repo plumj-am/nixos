@@ -16,9 +16,7 @@
     age = {
       inputs = {
         darwin.follows = "os-darwin";
-        home-manager.follows = "";
         nixpkgs.follows = "os";
-        systems.follows = "";
       };
       url = "github:ryantm/agenix";
     };
@@ -26,18 +24,13 @@
       inputs = {
         flake-parts.follows = "parts";
         nixpkgs.follows = "os";
-        treefmt-nix.follows = "treefmt";
       };
       url = "github:oddlama/agenix-rekey";
     };
     claude-code = {
-      inputs = {
-        flake-utils.follows = "flake-utils";
-        nixpkgs.follows = "os";
-      };
+      inputs.nixpkgs.follows = "os";
       url = "github:sadjow/claude-code-nix";
     };
-    crane.url = "github:ipetkov/crane";
     disko = {
       inputs.nixpkgs.follows = "os";
       url = "github:nix-community/disko";
@@ -47,16 +40,8 @@
       url = "github:nix-community/fenix";
     };
     flake-file.url = "github:vic/flake-file";
-    flake-utils.url = "github:numtide/flake-utils";
-    gitignore = {
-      inputs.nixpkgs.follows = "os";
-      url = "github:hercules-ci/gitignore.nix";
-    };
     helix = {
-      inputs = {
-        nixpkgs.follows = "os";
-        rust-overlay.follows = "rust-overlay";
-      };
+      inputs.nixpkgs.follows = "os";
       url = "github:helix-editor/helix";
     };
     hjem = {
@@ -67,45 +52,20 @@
       };
     };
     hjem-rum = {
-      inputs = {
-        ndg.follows = "";
-        nixpkgs.follows = "os";
-        treefmt-nix.follows = "";
-      };
+      inputs.nixpkgs.follows = "os";
       url = "github:snugnug/hjem-rum";
     };
     import-tree.url = "github:vic/import-tree";
     niri = {
-      inputs = {
-        niri-stable.follows = "";
-        nixpkgs.follows = "os";
-        nixpkgs-stable.follows = "";
-        xwayland-satellite-stable.follows = "";
-        xwayland-satellite-unstable.follows = "";
-      };
+      inputs.nixpkgs.follows = "os";
       url = "github:sodiboo/niri-flake";
     };
-    nix-auto-follow = {
-      inputs.nixpkgs.follows = "os";
-      url = "github:fzakaria/nix-auto-follow";
-    };
     nu-lint = {
-      inputs = {
-        crane.follows = "crane";
-        flake-utils.follows = "flake-utils";
-        git-hooks.follows = "";
-        nixpkgs.follows = "os";
-        rust-overlay.follows = "rust-overlay";
-      };
+      inputs.nixpkgs.follows = "os";
       url = "git+https://codeberg.org/wvhulle/nu-lint";
     };
     nufmt = {
-      inputs = {
-        flake-utils.follows = "flake-utils";
-        nixpkgs.follows = "os";
-        rust-overlay.follows = "rust-overlay";
-        treefmt-nix.follows = "treefmt";
-      };
+      inputs.nixpkgs.follows = "os";
       url = "github:nushell/nufmt";
     };
     opencode = {
@@ -143,18 +103,8 @@
       inputs = {
         flake-parts.follows = "parts";
         nixpkgs.follows = "os";
-        rust-overlay.follows = "";
-        systems.follows = "";
       };
       url = "github:raphamorim/rio/main";
-    };
-    rust-overlay = {
-      inputs.nixpkgs.follows = "os";
-      url = "github:oxalica/rust-overlay";
-    };
-    treefmt = {
-      inputs.nixpkgs.follows = "os";
-      url = "github:numtide/treefmt-nix";
     };
   };
 
