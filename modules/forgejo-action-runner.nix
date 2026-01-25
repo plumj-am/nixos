@@ -39,6 +39,12 @@
           default = false;
           description = "Include docker and docker-compose";
         };
+
+        capacity = mkOption {
+          type = types.int;
+          default = 1;
+          description = "How many jobs this runner can handle concurrently";
+        };
       };
 
       config = {
@@ -59,6 +65,7 @@
             inherit (config.forgejo-action-runner) url labels;
 
             settings = {
+              inherit (config.forgejo-action-runner) capacity;
               timeout = "6h";
               cache.enabled = true;
             };
@@ -89,6 +96,7 @@
               pkgs.nodejs
               pkgs.nushell
               pkgs.openssl
+              pkgs.opencode
               pkgs.pkg-config
               pkgs.ripgrep
               pkgs.sccache

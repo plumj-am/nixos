@@ -14,7 +14,7 @@ NixOS configurations for 8 personal machines:
 | Lime      | Macbook | aarch64-darwin | nix-darwin[^2]           |        |
 | Pear      | WSL     | x86_64-linux   | nixos-wsl[^3]            |   ✔    |
 | Plum      | Server  | x86_64-linux   | nixos-unstable-small[^1] |   ✔    |
-| Sloe      | Server  | x86_64-linux   | nixos-unstable-small[^1] |        |
+| Sloe      | Server  | x86_64-linux   | nixos-unstable-small[^1] |   ✔    |
 | Yuzu      | Desktop | x86_64-linux   | nixos-unstable-small[^1] |   ✔    |
 
 [^1]: [nixos-unstable-small](https://nixos.wiki/wiki/Nix_channels#:~:text=nixos%2Dunstable%2Dsmall)

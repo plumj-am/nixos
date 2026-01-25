@@ -61,7 +61,6 @@ let
     nix-distributed-builder
     prometheus-node-exporter
     sudo-server
-
   ];
 
   mkConfig =
@@ -197,7 +196,6 @@ in
         linux-kernel-zen
         object-storage
         packages-extra-desktop
-        rebuild
         rust-desktop
         scratchpads
         sudo-desktop
@@ -233,7 +231,6 @@ in
         goatcounter
         nginx
         object-storage
-        rebuild
         rust
         uptime-kuma
         website-personal
@@ -285,9 +282,7 @@ in
         disks-extra-zram-swap
         nginx
         object-storage
-        rebuild
         rust
-        uptime-kuma
         website-dr-radka
         {
           config = mkConfig "kiwi" "x86_64-linux" "server" {
@@ -315,6 +310,36 @@ in
       ];
   };
 
+  flake.nixosConfigurations.sloe = inputs.os.lib.nixosSystem {
+    inherit specialArgs;
+
+    modules =
+      with inputs.self.modules.nixos;
+      commonModules
+      ++ serverModules
+      ++ [
+        boot-grub
+        disks-disko
+        disks-extra-zram-swap
+        object-storage
+        rust
+        {
+          config = mkConfig "sloe" "x86_64-linux" "server" {
+
+            forgejo-action-runner.capacity = 4;
+
+            age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK42xzC/vWHZC9SiU/8IBBd2pn7mggBYFQ8themKAic/ root@sloe";
+            age.secrets = {
+              forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
+              nixStoreKey.rekeyFile = ../secrets/sloe-nix-store-key.age;
+            };
+
+            system.stateVersion = "26.05";
+          };
+        }
+      ];
+  };
+
   flake.nixosConfigurations.blackwell = inputs.os.lib.nixosSystem {
     inherit specialArgs;
 
@@ -327,7 +352,6 @@ in
         disks-disko
         disks-extra-zram-swap
         object-storage
-        rebuild
         rust
         {
           config = mkConfig "blackwell" "x86_64-linux" "server" {
