@@ -47,9 +47,16 @@
       };
     };
 
-  flake.modules.darwin.openssh = {
-    config = {
-      services.openssh.enable = true;
+  flake.modules.darwin.openssh = { config, ... }: {
+    services.openssh = {
+      enable = true;
+      extraConfig = # sshd_config
+        ''
+          HostKey ${config.age.secrets.id.path}
+          PasswordAuthentication no
+          KbdInteractiveAuthentication no
+          AcceptEnv SHELLS COLORTERM
+        '';
     };
   };
 }

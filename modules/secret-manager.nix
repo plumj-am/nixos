@@ -18,7 +18,7 @@
 
   flake.agenix-rekey = inputs.age-rekey.configure {
     userFlake = self;
-    inherit (self) nixosConfigurations;
+    nixosConfigurations = self.nixosConfigurations // self.darwinConfigurations;
   };
 
   flake.modules.nixos.secret-manager =
@@ -40,9 +40,27 @@
       };
     };
 
-  flake.modules.darwin.secret-manager = {
-    imports = [
-      inputs.age.darwinModules.default
-    ];
-  };
+  flake.modules.darwin.secret-manager =
+    { config, pkgs, ... }:
+    let
+      # Import the agenix-rekey module without the _class attribute.
+      # We need to import it with a wrapper that makes it compatible with darwin.
+      agenixRekeyModule = import (inputs.age-rekey + /modules/agenix-rekey.nix) pkgs;
+    in
+    {
+      imports = [
+        inputs.age.darwinModules.default
+        agenixRekeyModule
+      ];
+
+      config.age = {
+        identityPaths = [ "/Users/jam/.ssh/id" ];
+
+        rekey = {
+          storageMode = "local";
+          masterIdentities = [ ../yubikey.pub ];
+          localStorageDir = ../secrets/rekeyed/${config.networking.hostName};
+        };
+      };
+    };
 }

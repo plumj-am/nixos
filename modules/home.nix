@@ -70,7 +70,7 @@ in
     let
       inherit (lib.attrsets) attrValues;
 
-      hjemModule = inputs.hjem-modules.hjemModules.default;
+      hjemModule = inputs.hjem-rum.hjemModules.default;
       hjemModules = attrValues inputs.self.modules.hjem;
       # Perhaps we shouldn't do ^this^ and import the necessary modules per host?
       # This would eliminate the need for a lot of conditional configs.
@@ -81,7 +81,9 @@ in
         {
           hjem.extraModules = [ hjemModule ] ++ hjemModules;
 
-          hjem.specialArgs = commonSpecialArgs config inputs;
+          hjem.specialArgs = commonSpecialArgs config inputs // {
+            inherit (config) theme;
+          };
         }
       ];
     };

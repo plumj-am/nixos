@@ -1,26 +1,14 @@
 {
-  flake.modules.hjem.yubikey =
-    {
-      pkgs,
-      lib,
-      isDesktop,
-      ...
-    }:
-    let
-      inherit (lib.modules) mkIf;
-      packages = [
-        pkgs.yubikey-personalization
-        pkgs.yubioath-flutter
-        pkgs.age-plugin-yubikey
-      ];
-    in
-    mkIf isDesktop {
-      inherit packages;
-    };
-
   flake.modules.nixos.yubikey =
     { pkgs, ... }:
     {
+      environment.systemPackages = [
+        pkgs.yubikey-personalization
+        pkgs.yubioath-flutter
+        pkgs.age-plugin-yubikey
+
+      ];
+
       services.udev.packages = [
         pkgs.yubikey-personalization
       ];
@@ -46,6 +34,11 @@
   flake.modules.darwin.yubikey =
     { pkgs, ... }:
     {
+      environment.systemPackages = [
+        pkgs.yubikey-personalization
+        pkgs.age-plugin-yubikey
+      ];
+
       services.udev.packages = [
         pkgs.yubikey-personalization
       ];

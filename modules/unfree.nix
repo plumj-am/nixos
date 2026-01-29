@@ -1,5 +1,5 @@
-let
-  commonModule =
+{
+  flake.modules.nixos.unfree =
     { config, lib, ... }:
     let
       inherit (lib.lists) elem;
@@ -21,8 +21,7 @@ let
       config.nixpkgs.config.allowUnfreePredicate = pkg: elem (getName pkg) config.unfree.allowedNames;
     };
 
-in
-{
-  flake.modules.nixos.unfree = commonModule;
-  flake.modules.darwin.unfree = commonModule;
+  flake.modules.darwin.unfree = {
+    config.nixpkgs.config.allowUnfree = true; # Only blanket allow is possible on nix-darwin.
+  };
 }

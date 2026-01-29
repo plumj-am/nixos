@@ -15,6 +15,7 @@
       lib,
       theme,
       isDesktop,
+      isLinux,
       ...
     }:
     let
@@ -23,7 +24,7 @@
         inherit theme;
       };
     in
-    mkIf isDesktop {
+    mkIf (isDesktop && isLinux) {
       rum.programs.nushell.aliases.ns = "niri-session";
 
       rum.desktops.niri = {

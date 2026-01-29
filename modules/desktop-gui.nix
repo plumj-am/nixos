@@ -25,13 +25,14 @@
       lib,
       theme,
       isDesktop,
+      isLinux,
       ...
     }:
     let
       inherit (lib.modules) mkIf;
       packages = [ theme.gtk.package ];
     in
-    mkIf isDesktop {
+    mkIf (isDesktop && isLinux) {
       rum.misc.gtk = {
         inherit packages;
         enable = true;

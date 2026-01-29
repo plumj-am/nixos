@@ -238,6 +238,63 @@ let
 
 in
 {
+  flake.modules.darwin.theme =
+    { pkgs, ... }:
+    let
+      theme = mkThemeConfig { inherit pkgs; };
+    in
+    {
+      options.theme = mkOption {
+        type = attrs;
+        default = { };
+        description = "Global theme configuration";
+      };
+
+      config = {
+        theme = theme.designSystem // {
+          inherit (theme)
+            themes
+            isDark
+            colorScheme
+            variant
+            colors
+            ;
+
+          withHash = mapAttrs (_name: value: "#${value}") theme.colors;
+          with0x = mapAttrs (_name: value: "0x${value}") theme.colors;
+          withRgb = mapAttrs (_name: value: theme.hexToRgb value) theme.colors;
+
+          icons = theme.getTheme "icons";
+          alacritty = theme.getTheme "alacritty";
+          ghostty = theme.getTheme "ghostty";
+          rio = theme.getTheme "rio";
+          zellij = theme.getTheme "zellij";
+          starship = theme.getTheme "starship";
+          vivid = theme.getTheme "vivid";
+          nushell = theme.getTheme "nushell";
+          helix = theme.getTheme "helix";
+          gtk = theme.getTheme "gtk";
+          qt = theme.getTheme "qt";
+
+          font = {
+            size.tiny = 10;
+            size.small = 12;
+            size.term = 12;
+            size.normal = 16;
+            size.big = 20;
+
+            mono.name = "Maple Mono NF";
+            mono.family = "Maple Mono";
+            mono.package = pkgs.maple-mono.NF;
+
+            sans.name = "Lexend";
+            sans.family = "Lexend";
+            sans.package = pkgs.lexend;
+          };
+        };
+      };
+    };
+
   flake.modules.nixos.theme =
     { pkgs, ... }:
     let
