@@ -17,6 +17,70 @@
       endpoint = "fsn1.your-objectstorage.com";
       s3Args = "&priority=10&multipart-upload=true&multipart-threshold=50M&multipart-chunk-size=10M";
       s3Cache = "s3://${bucket}?endpoint=${endpoint}${s3Args}";
+
+      # Upload queue processor script.
+      uploadProcessor = pkgs.writeShellScriptBin "nix-upload-processor" ''
+        #!/usr/bin/env bash
+        set -eu
+
+        QUEUE_DIR=/var/cache/nix/upload-queue
+        QUEUE_FILE="$QUEUE_DIR/pending"
+        PROCESSING="$QUEUE_DIR/processing"
+        DONE="$QUEUE_DIR/done"
+        PIDFILE="$QUEUE_DIR/processor.pid"
+
+        mkdir -p "$QUEUE_DIR"
+        touch "$QUEUE_FILE" "$PROCESSING" "$DONE"
+
+        echo $$ > "$PIDFILE"
+        echo "Started (PID: $$)"
+
+        # Use env set by systemd.
+        export AWS_ACCESS_KEY_ID=$(cat "$AWS_ACCESS_KEY_ID_PATH")
+        export AWS_SECRET_ACCESS_KEY=$(cat "$AWS_SECRET_ACCESS_KEY_PATH")
+
+        while true; do
+          # Move pending to processing.
+          if [ -s "$QUEUE_FILE" ]; then
+            count=$(wc -l < "$QUEUE_FILE")
+            echo "Processing $count new path(s)"
+            cat "$QUEUE_FILE" >> "$PROCESSING"
+            > "$QUEUE_FILE"
+          fi
+
+          # Process each path.
+          while IFS= read -r path || [ -n "$path" ]; do
+            [ -z "$path" ] && continue
+            [ -d "$path" ] || continue
+
+            size=$(du -sb "$path" 2>/dev/null | ${getExe pkgs.gawk} '{print $1}' || echo "0")
+
+            # Check if done previously (avoid duplicates).
+            if grep -qx "$path" "$DONE" 2>/dev/null; then
+              echo "Skipping $path (already uploaded)"
+              continue
+            fi
+
+            echo "Uploading $path ($((size / 1024)) KiB)"
+            if /run/current-system/sw/bin/nix copy --to "${s3Cache}" "$path" 2>&1; then
+              echo "Uploaded $path successfully"
+              echo "$path" >> "$DONE"
+            else
+              echo "Failed to upload $path"
+            fi
+          done < "$PROCESSING"
+
+          > "$PROCESSING"
+
+          # Trim done file.
+          if [ -s "$DONE" ]; then
+            tail -n 1000 "$DONE" > "$DONE.tmp" || true
+            mv "$DONE.tmp" "$DONE" || true
+          fi
+
+          sleep 5
+        done
+      '';
       setupScript = pkgs.writeShellScriptBin "s3-setup" ''
         #!/usr/bin/env bash
         set -euo pipefail
@@ -56,28 +120,16 @@
               cat > /etc/nix/post-build-hook.sh <<'HOOK'
               #!/bin/sh
               set -e
-              # Read AWS credentials from agenix
-              export AWS_ACCESS_KEY_ID=$(cat ${secrets.s3AccessKey.path})
-              export AWS_SECRET_ACCESS_KEY=$(cat ${secrets.s3SecretKey.path})
 
-              # Minimum size to upload (128 KiB)
-              MIN_SIZE=131072
+              # Add outputs to upload queue.
+              QUEUE_DIR=/var/cache/nix/upload-queue
+              mkdir -p "$QUEUE_DIR"
 
-              # Sign the output paths
               for output in $OUT_PATHS; do
-                /run/current-system/sw/bin/nix store sign --recursive --key-file ${secrets.nixStoreKey.path} "$output" 2>/dev/null || true
+                echo "$output" >> "$QUEUE_DIR/pending"
               done
 
-              # Upload to S3 cache (only paths larger than MIN_SIZE)
-              for output in $OUT_PATHS; do
-                # Get the size of the store path using du
-                size=$(du -sb "$output" 2>/dev/null | ${getExe pkgs.gawk} '{print $1}' || echo "0")
-
-                # Only upload if larger than minimum size
-                if [ "$size" -ge "$MIN_SIZE" ]; then
-                  /run/current-system/sw/bin/nix copy --to "${s3Cache}" "$output"
-                fi
-              done
+              exit 0
               HOOK
               chmod +x /etc/nix/post-build-hook.sh
               echo "Post-build hook configured at /etc/nix/post-build-hook.sh"
@@ -97,6 +149,7 @@
       environment.systemPackages = [
         pkgs.minio-client
         setupScript
+        uploadProcessor
       ];
 
       system.activationScripts.s3-setup = {
@@ -105,6 +158,34 @@
           echo "Setting up S3 credentials..."
           ${getExe setupScript}
         '';
+      };
+
+      # Systemd service for continuous upload queue processing
+      systemd.services.nix-upload-processor = {
+        description = "Nix binary cache upload queue processor";
+        after = [
+          "network.target"
+          "nix-daemon.socket"
+        ];
+        wantedBy = [ "multi-user.target" ];
+
+        serviceConfig = {
+          ExecStart = "${getExe uploadProcessor}";
+          LoadCredential = [
+            "s3-access-key:${secrets.s3AccessKey.path}"
+            "s3-secret-key:${secrets.s3SecretKey.path}"
+          ];
+          Restart = "on-failure";
+          RestartSec = "10s";
+          StateDirectory = "nix-upload-queue";
+          StateDirectoryMode = "0755";
+          CPUQuota = "25%";
+        };
+
+        environment = {
+          AWS_ACCESS_KEY_ID_PATH = "${secrets.s3AccessKey.path}";
+          AWS_SECRET_ACCESS_KEY_PATH = "${secrets.s3SecretKey.path}";
+        };
       };
 
       nix.settings = {
