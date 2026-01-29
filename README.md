@@ -1,10 +1,10 @@
 # PlumJam's Dendritic NixOS Configuration
 
-> [!WARN]
+> [!WARNING]
 > Subject to major changes. This is not a finished state and some things are
 > still being migrated from my old config.
 
-NixOS configurations for 8 personal machines:
+Dendritic NixOS configurations for 8 personal machines:
 
 | Name      | System  | Platform       | Follows                  | Active |
 | --------- | ------- | -------------- | ------------------------ | :----: |
@@ -150,6 +150,13 @@ The gruvbox mode uses the defined themes in `modules/themes.nix` and some base16
 colours for applications that can make use of them.
 
 ## Other comments
+
+The previous version of my configurations can be seen on the
+[pre-dendritic](https://git.plumj.am/plumjam/nixos/src/branch/pre-dendritic)
+branch if you are interested. The dendritic version was merged from pull request
+[#1](https://git.plumj.am/plumjam/nixos/pulls/1) in commit
+[#750cdc5fba](https://git.plumj.am/plumjam/nixos/commit/750cdc5fba89d8d29961cf9255bf6029d0bb8465)
+on 2026-01-29.
 
 Modules that are yet to be migrated live in `modules/_to-migrate/`. The
 underscore prefix tells import-tree to ignore this directory so we can easily
