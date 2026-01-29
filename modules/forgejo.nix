@@ -15,23 +15,10 @@
       port = 8001;
     in
     {
-      # Create symlinks for Forgejo signing keys with correct SSH naming convention.
-      systemd.services.forgejo-setup-keys = {
-        description = "Setup Forgejo signing key symlinks";
-        wantedBy = [ "forgejo.service" ];
-        before = [ "forgejo.service" ];
-
-        script = ''
-          ln -sf ${config.age.secrets.forgejoSigningKey.path} /run/agenix/forgejo-signing-key
-
-          ln -sf ${config.age.secrets.forgejoSigningKeyPub.path} /run/agenix/forgejo-signing-key.pub
-        '';
-
-        serviceConfig = {
-          Type = "oneshot";
-          User = "root";
-        };
-      };
+      system.activationScripts.forgejo-setup-keys = lib.stringAfter [ "agenix" ] ''
+        ln --symbolic --force ${config.age.secrets.forgejoSigningKey.path} /run/agenix/forgejo-signing-key
+        ln --symbolic --force ${config.age.secrets.forgejoSigningKeyPub.path} /run/agenix/forgejo-signing-key.pub
+      '';
 
       # combine AcceptEnv settings for SSH and Git protocol
       services.openssh.settings.AcceptEnv = mkForce [
