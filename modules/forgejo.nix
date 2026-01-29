@@ -75,8 +75,9 @@
 
             repository = {
               DEFAULT_BRANCH = "master";
-              DEFAULT_MERGE_STYLE = "rebase-merge";
-              DEFAULT_REPO_UNITS = "repo.code, repo.issues, repo.pulls";
+              DEFAULT_MERGE_STYLE = "merge";
+              DEFAULT_UPDATE_STYLE = "merge";
+              DEFAULT_REPO_UNITS = "repo.code,repo.issues,repo.pulls,repo.actions";
 
               DEFAULT_CLOSE_ISSUES_VIA_COMMITS_IN_ANY_BRANCH = true;
               DEFAULT_PUSH_CREATE_PRIVATE = false;
