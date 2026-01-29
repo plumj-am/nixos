@@ -47,8 +47,8 @@
         pkgs.uv
 
         # claude-code sandboxing deps.
-        pkgs.socat
-        pkgs.bubblewrap
+        # pkgs.socat
+        # pkgs.bubblewrap
 
         claudeCodePackage
         opencodePackage
@@ -71,7 +71,7 @@
           };
 
           sandbox = {
-            enabled = true;
+            enabled = false;
             autoAllowBashIfSandboxed = true;
             excludedCommands = [
               "git"
