@@ -8,7 +8,7 @@
     }:
     let
       inherit (config.networking) domain;
-      inherit (config.myLib) merge;
+      inherit (config.myLib) merge mkResticBackup;
       inherit (lib) mkForce;
 
       fqdn = "git.${domain}";
@@ -27,33 +27,9 @@
         "GIT_PROTOCOL"
       ];
 
-      # backup configuration for sqlite database and data
-      systemd.services.forgejo-backup = {
-        description = "Backup Forgejo data and database";
-        after = [ "forgejo.service" ];
-
-        script = ''
-          mkdir -p /var/backup/forgejo
-          cp -r /var/lib/forgejo /var/backup/forgejo/$(date +%Y%m%d_%H%M%S)
-
-          # keep only last 7 backups
-          ls -1t /var/backup/forgejo/ | tail -n +8 | xargs -r rm -rf
-        '';
-
-        serviceConfig = {
-          Type = "oneshot";
-          User = "forgejo";
-        };
-      };
-
-      systemd.timers.forgejo-backup = {
-        description = "Run Forgejo backup daily";
-        wantedBy = [ "timers.target" ];
-
-        timerConfig = {
-          OnCalendar = "daily";
-          Persistent = true;
-        };
+      services.restic.backups.forgejo = mkResticBackup "forgejo" {
+        paths = [ "/var/lib/forgejo" ];
+        exclude = [ "/var/lib/forgejo/data/repo-archive" ];
       };
 
       services.forgejo = {

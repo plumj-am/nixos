@@ -1,9 +1,11 @@
 # Custom library functions and such.
 let
   commonModule =
-    { lib, ... }:
+    { lib, config, ... }:
     let
       inherit (lib.options) mkOption;
+      inherit (config.age) secrets;
+      inherit (config.networking) hostName;
     in
     {
       options.myLib = lib.mkOption {
@@ -57,6 +59,23 @@ let
               Terminal=${if terminal then "true" else "false"}
             '';
           };
+
+        # Backup creation helper with restic to keep constants consistent.
+        # Can be used like so:
+        # `services.restic.backups.<service> = mkResticBackup "<service>" { <rest> }`
+        mkResticBackup =
+          name: rest:
+          {
+            repository = "s3:https://fsn1.your-objectstorage.com/plumjam/backups/${hostName}/${name}";
+            passwordFile = secrets.resticPassword.path;
+            initialize = true;
+            pruneOpts = [
+              "--keep-daily 8"
+              "--keep-weekly 5"
+              "--keep-monthly 3"
+            ];
+          }
+          // rest;
       };
     };
 

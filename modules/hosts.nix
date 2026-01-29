@@ -264,6 +264,7 @@ in
               forgejoAdminPassword.rekeyFile = ../secrets/plum-forgejo-password.age;
               acmeEnvironment.rekeyFile = ../secrets/acme-environment.age;
               nixStoreKey.rekeyFile = ../secrets/plum-nix-store-key.age;
+              resticPassword.rekeyFile = ../secrets/plum-restic-password.age;
             };
 
             system.stateVersion = "26.05";
