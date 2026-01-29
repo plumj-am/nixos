@@ -332,7 +332,6 @@ in
 
             forgejo-action-runner = {
               strong = true;
-              capacity = 4;
             };
 
             age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK42xzC/vWHZC9SiU/8IBBd2pn7mggBYFQ8themKAic/ root@sloe";

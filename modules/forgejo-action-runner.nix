@@ -40,12 +40,6 @@
           description = "Include docker and docker-compose";
         };
 
-        capacity = mkOption {
-          type = types.int;
-          default = 1;
-          description = "How many jobs this runner can handle concurrently";
-        };
-
         strong = mkOption {
           type = types.bool;
           default = false;
@@ -78,7 +72,6 @@
 
             settings = {
               runner = {
-                inherit (config.forgejo-action-runner) capacity;
                 timeout = "6h";
                 cache.enabled = true;
               };
