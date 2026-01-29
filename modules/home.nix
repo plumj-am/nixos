@@ -17,7 +17,8 @@ in
 {
   flake-file.inputs = {
     hjem = {
-      follows = "hjem-rum/hjem";
+      # follows = "hjem-rum/hjem"; # Recommended to avoid breaking.
+      url = "github:feel-co/hjem"; # But I want latest hjem :]
 
       inputs.nixpkgs.follows = "os";
       inputs.nix-darwin.follows = "os-darwin";

@@ -45,11 +45,11 @@
       url = "github:helix-editor/helix";
     };
     hjem = {
-      follows = "hjem-rum/hjem";
       inputs = {
         nix-darwin.follows = "os-darwin";
         nixpkgs.follows = "os";
       };
+      url = "github:feel-co/hjem";
     };
     hjem-rum = {
       inputs.nixpkgs.follows = "os";
