@@ -34,7 +34,7 @@
         mkdir -p /etc/nix
         accessKey=$(cat ${secrets.s3AccessKey.path})
         secretKey=$(cat ${secrets.s3SecretKey.path})
-        tee /etc/nix/s3-credentials > /dev/null <<EOF
+        cat > /etc/nix/s3-credentials <<EOF
         AWS_ACCESS_KEY_ID=$accessKey
         AWS_SECRET_ACCESS_KEY=$secretKey
         EOF
@@ -42,7 +42,7 @@
 
         # AWS credentials file for AWS SDK credential chain.
         mkdir -p /root/.aws
-        tee /root/.aws/credentials > /dev/null <<EOF
+        cat > /root/.aws/credentials <<EOF
         [default]
         aws_access_key_id=$accessKey
         aws_secret_access_key=$secretKey
@@ -53,7 +53,7 @@
         ${
           if secrets ? nixStoreKey then # sh
             ''
-              tee /etc/nix/post-build-hook.sh > /dev/null <<'HOOK'
+              cat > /etc/nix/post-build-hook.sh <<'HOOK'
               #!/bin/sh
               set -e
               # Read AWS credentials from agenix
