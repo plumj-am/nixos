@@ -56,6 +56,7 @@
 
       users.users = {
         jam = {
+          home = "/Users/jam";
           description = "Jam";
           shell = pkgs.nushell;
           openssh.authorizedKeys.keys = keys.admins;
@@ -66,7 +67,7 @@
         clobberByDefault = true;
         users.jam = {
           user = "jam";
-          directory = "/home/jam";
+          directory = "/Users/jam";
         };
       };
     };
