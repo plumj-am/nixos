@@ -29,7 +29,10 @@
 
       services.restic.backups.forgejo = mkResticBackup "forgejo" {
         paths = [ "/var/lib/forgejo" ];
-        exclude = [ "/var/lib/forgejo/data/repo-archive" ];
+        timerConfig = {
+          OnCalendar = "hourly";
+          Persistent = true;
+        };
       };
 
       services.forgejo = {
