@@ -258,12 +258,6 @@ in
           [ui.colors]
           "selected".bg = "#${theme.colors.base01}"
         '';
-
-      rum.programs.nushell.aliases = {
-        j = "jj";
-        lj = "lazyjj";
-        ju = "jjui";
-      };
     };
 
   flake.modules.nixos.jujutsu-extra = commonModule;

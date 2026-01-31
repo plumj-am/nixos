@@ -2,8 +2,6 @@
   flake.modules.hjem.ssh =
     { pkgs, ... }:
     {
-      rum.programs.nushell.aliases.mosh = "mosh --no-init";
-
       files.".ssh/config".text = # ssh
         ''
           StrictHostKeyChecking accept-new

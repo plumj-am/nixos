@@ -18,11 +18,6 @@ let
         PAGER = "${bat} --plain";
         BAT_PAGER = "${less} --quit-if-one-screen --RAW-CONTROL-CHARS";
       };
-
-      rum.programs.nushell.aliases = {
-        cat = "${bat}";
-        less = "${bat} --plain";
-      };
     };
 
   ripgrepConfig =
@@ -45,15 +40,6 @@ let
   ezaConfig =
     { pkgs, ... }:
     {
-      rum.programs.nushell.aliases = {
-        ls = "eza";
-        sl = "eza";
-        ll = "eza -la";
-        la = "eza -a";
-        lsa = "eza -a";
-        lsl = "eza -l -a";
-      };
-
       packages = [
         pkgs.eza
       ];
@@ -96,8 +82,6 @@ in
 
       environment.sessionVariables =
         bat.environment.sessionVariables // ripgrep.environment.sessionVariables;
-
-      rum.programs.nushell.aliases = bat.rum.programs.nushell.aliases // eza.rum.programs.nushell.aliases;
 
       xdg.config.files = ripgrep.xdg.config.files;
     };
