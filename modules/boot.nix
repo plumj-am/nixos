@@ -30,8 +30,10 @@ in
     { modulesPath, ... }:
     {
       imports = [
-        commonModule
         (modulesPath + "/installer/scan/not-detected.nix")
+        commonModule
       ];
+
+      boot.loader.systemd-boot.enable = false;
     };
 }

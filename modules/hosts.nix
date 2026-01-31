@@ -234,6 +234,7 @@ in
         rust
         uptime-kuma
         website-personal
+        { hardware.facter.reportPath = ./facter/plum.json; }
         {
           config = mkConfig "plum" "x86_64-linux" "server" {
             network = {
