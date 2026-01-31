@@ -429,19 +429,21 @@
       inherit (lib.modules) mkIf;
 
       enable = false;
+      toml = pkgs.formats.toml { };
+
+      settings = {
+        modules = {
+          shutdown_cmd = "systemctl poweroff";
+          suspend_cmd = "hyprlock --quiet & systemctl suspend";
+          hibernate_cmd = "hyprlock --quiet & systemctl hibernate";
+          reboot_cmd = "systemctl reboot";
+          logout_cmd = "hyprlock --quiet --grace 60";
+        };
+      };
     in
     mkIf (isDesktop && isLinux && enable) {
       packages = [ pkgs.ashell ];
 
-      xdg.config.files."ashell/config.toml".text =
-        with theme; # toml
-        ''
-          [modules]
-          shutdown_cmd = "systemctl poweroff"
-          suspend_cmd = "hyprlock --quiet & systemctl suspend"
-          hibernate_cmd = "hyprlock --quiet & systemctl hibernate"
-          reboot_cmd = "systemctl reboot"
-          logout_cmd = "hyprlock --quiet --grace 60"
-        '';
+      xdg.config.files."ashell/config.toml".source = toml.generate "ashell.toml" settings;
     };
 }

@@ -24,6 +24,7 @@
       # Symlink sounds to a consistent location for mako
       xdg.data.files."sounds/freedesktop".source = "${sound-theme}/share/sounds/freedesktop";
 
+      # Can't use a generator here for some reason.
       xdg.config.files."mako/config".text =
         with theme; # ini
         ''

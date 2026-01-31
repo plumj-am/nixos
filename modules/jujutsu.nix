@@ -243,21 +243,19 @@ in
           "change/PlumJam-" ++ change_id.short()
         '';
       };
-    in
-    {
-      xdg.config.files."jj/config.toml" = {
-        source = toml.generate "config.toml" jjConfig;
-      };
 
       # TODO: Fix sub-menu selection bg colour (press "l" on revision to view files)
-      xdg.config.files."jjui/config.toml".text = # toml
-        ''
-          [preview]
-          show_at_start = true
+      jjuiConfig = {
+        preview.show_at_start = true;
 
-          [ui.colors]
-          "selected".bg = "#${theme.colors.base01}"
-        '';
+        ui.colors."selected".bg = "#${theme.colors.base01}";
+
+      };
+    in
+    {
+      xdg.config.files."jj/config.toml".source = toml.generate "jj-config.toml" jjConfig;
+
+      xdg.config.files."jjui/config.toml".source = toml.generate "jjui-config.toml" jjuiConfig;
     };
 
   flake.modules.nixos.jujutsu-extra = commonModule;
