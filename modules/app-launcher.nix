@@ -1,6 +1,7 @@
 {
   flake.modules.hjem.app-launcher =
     {
+      pkgs,
       theme,
       lib,
       isDesktop,
@@ -9,13 +10,10 @@
     }:
     let
       inherit (lib.modules) mkIf;
+      inherit (lib.lists) singleton;
 
-    in
-    mkIf (isDesktop && isLinux) {
-      rum.programs.fuzzel = with theme; {
-        enable = true;
-
-        settings.main = {
+      settings = with theme; {
+        main = {
           icon-theme = icons.name;
           font = "${font.sans.name}:size=${toString font.size.small}";
           layer = "overlay";
@@ -26,7 +24,7 @@
           vertical-pad = padding.small;
         };
 
-        settings.colors = {
+        colors = {
           background = colors.base00 + "FF";
           text = colors.base07 + "FF";
           match = colors.base0A + "FF";
@@ -36,11 +34,18 @@
           border = colors.base0A + "FF";
         };
 
-        settings.border = {
+        border = {
           radius = radius.verybig;
           width = border.small;
         };
       };
+
+      ini = pkgs.formats.ini { };
+    in
+    mkIf (isDesktop && isLinux) {
+      packages = singleton pkgs.fuzzel;
+
+      xdg.config.files."fuzzel/fuzzel.ini".source = ini.generate "fuzzel.ini" settings;
     };
 
   flake.modules.darwin.app-launcher =
