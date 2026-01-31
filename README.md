@@ -29,7 +29,6 @@ Dendritic NixOS configurations for 8 personal machines:
 - Dendritic structure with
   [flake-parts](https://github.com/hercules-ci/flake-parts)
 - [Hjem](https://github.com/feel-co/hjem) for home management
-- [Hjem Rum](https://github.com/snugnug/hjem-rum) for home modules
 
 ## How it works
 
