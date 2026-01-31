@@ -157,6 +157,15 @@ branch if you are interested. The dendritic version was merged from pull request
 [#750cdc5fba](https://git.plumj.am/plumjam/nixos/commit/750cdc5fba89d8d29961cf9255bf6029d0bb8465)
 on 2026-01-29.
 
+A version using [Hjem Rum](https://github.com/snugnug/hjem-rum) can be seen on
+the [hjem-rum](https://git.plumj.am/plumjam/nixos/src/branch/hjem-rum) branch.
+Hjem Rum was removed in pull request
+[#2](https://git.plumj.am/plumjam/nixos/pulls/2) in commit
+[962048fa7a](https://git.plumj.am/plumjam/nixos/commit/962048fa7a385d7663ee7a007d23e857586e1136)
+on 2026-02-01. I'd like to mention that it is an excellent tool! I just didn't
+really need it and I already use generators or write config files directly for
+the most part anyway.
+
 Modules that are yet to be migrated live in `modules/_to-migrate/`. The
 underscore prefix tells import-tree to ignore this directory so we can easily
 migrate them gradually without breaking builds.
