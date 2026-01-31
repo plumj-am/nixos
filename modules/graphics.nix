@@ -25,7 +25,7 @@
         # Enable nvidia-settings menu.
         nvidiaSettings = true;
 
-        package = config.boot.kernelPackages.nvidiaPackages.beta;
+        package = config.boot.kernelPackages.nvidiaPackages.stable;
       };
 
       # Environment variables for NVIDIA on Wayland.
