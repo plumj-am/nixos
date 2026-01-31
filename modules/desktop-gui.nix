@@ -30,18 +30,31 @@
     }:
     let
       inherit (lib.modules) mkIf;
-      packages = [ theme.gtk.package ];
+      inherit (lib.lists) singleton;
+
+      settingsGtk3 = # ini
+        ''
+          [Settings]
+          gtk-prefer-dark=${toString theme.isDark}
+          gtk-font-name=${theme.font.sans.name} ${toString theme.font.size.small}
+          gtk-theme-name=${theme.gtk.name}
+          gtk-icon-theme-name=${theme.icons.name}
+        '';
+
+      settingsGtk2 = # ini
+        ''
+          gtk-prefer-dark=${toString theme.isDark}
+          gtk-font-name=${theme.font.sans.name} ${toString theme.font.size.small}
+          gtk-theme-name=${theme.gtk.name}
+          gtk-icon-theme-name=${theme.icons.name}
+        '';
+
     in
     mkIf (isDesktop && isLinux) {
-      rum.misc.gtk = {
-        inherit packages;
-        enable = true;
-        settings = {
-          prefer-dark = theme.isDark;
-          font-name = "${theme.font.sans.name} ${toString theme.font.size.small}";
-          theme-name = theme.gtk.name;
-          icon-theme-name = theme.icons.name;
-        };
-      };
+      packages = singleton theme.gtk.package;
+
+      files.".gtkrc-2.0".text = settingsGtk2;
+      xdg.config.files."gtk-3.0/settings.ini".text = settingsGtk3;
+      xdg.config.files."gtk-4.0/settings.ini".text = settingsGtk3;
     };
 }
