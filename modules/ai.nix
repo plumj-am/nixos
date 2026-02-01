@@ -355,12 +355,6 @@
         };
       };
 
-      rum.programs.nushell.aliases = {
-        claude = "claude --continue --fork-session";
-        codex = "codex resume --ask-for-approval untrusted";
-        oc = "opencode --continue";
-      };
-
       # Create hooks with home-manager to avoid permissions issues.
       files.".claude/hooks/format-files" = {
         text = # nu

@@ -51,10 +51,6 @@
       };
       url = "github:feel-co/hjem";
     };
-    hjem-rum = {
-      inputs.nixpkgs.follows = "os";
-      url = "github:snugnug/hjem-rum";
-    };
     import-tree.url = "github:vic/import-tree";
     niri = {
       inputs.nixpkgs.follows = "os";

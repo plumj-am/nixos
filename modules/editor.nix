@@ -26,13 +26,13 @@
   flake.modules.hjem.editor =
     {
       inputs,
-      myLib,
       lib,
       pkgs,
       theme,
       ...
     }:
     let
+      inherit (lib.attrsets) mapAttrs' nameValuePair;
       inherit (lib.trivial) const;
       inherit (lib.attrsets)
         genAttrs
@@ -42,7 +42,6 @@
         ;
       inherit (lib.lists) singleton;
       inherit (builtins) elem;
-      inherit (myLib) merge;
 
       yaziPickerScript =
         pkgs.writeShellScript "yazi-picker.sh" # bash
@@ -73,48 +72,19 @@
           bg = color;
         });
 
-      package = inputs.helix.packages.${pkgs.stdenv.hostPlatform.system}.helix; # `.helix` follows the master branch.
-    in
-    {
-      rum.programs.helix = {
-        enable = true;
-        inherit package;
+      mkThemes =
+        themes:
+        mapAttrs' (
+          name: value:
+          nameValuePair "helix/themes/${name}.toml" {
+            source = toml.generate "helix-theme-${name}.toml" value;
+          }
+        ) themes;
 
-        settings.theme = if theme.colorScheme == "pywal" then "base16_custom" else theme.helix;
+      settings = {
+        theme = if theme.colorScheme == "pywal" then "base16_custom" else theme.helix;
 
-        # Pywal output doesn't have gradients like base16 needs.
-        # So it's necessary to override a few colours.
-        # Also added overrides for diagnostic colours which don't work well from Pywal.
-        themes.base16_custom = {
-          inherits = "base16_default";
-        }
-        # Comments.
-        // mkFgStyle [ "comment" ] (if theme.isDark then "#909090" else "#C0C0C0")
-        # Selections.
-        // mkBgStyle [ "ui.selection" "ui.selection.primary" ] (
-          if theme.isDark then "#707070" else "#E0E0E0"
-        )
-        # Cursorline and popups.
-        // mkBgStyle [ "ui.cursorline.primary" "ui.cursorline.secondary" "ui.popup" "ui.popup.info" ] (
-          if theme.isDark then "#404040" else "#F0F0F0"
-        )
-        # Info.
-        //
-          mkFgStyle
-            [ "hint" "info" "diagnostic" "diagnostic.hint" "diagnostic.info" "diagnostic.unnecessary" ]
-            (
-              if theme.isDark then "#2B83A6" else "#3A8C9A" # Muted teal.
-            )
-        # Warnings.
-        // mkFgStyle [ "warning" "diagnostic.warning" "diagnostic.deprecated" ] (
-          if theme.isDark then "#B58900" else "#9D8740" # Muted yellow.
-        )
-        # Errors.
-        // mkFgStyle [ "error" "diagnostic.error" ] (
-          if theme.isDark then "#9D0006" else "#8F3F71" # Muted red/brown.
-        );
-
-        settings.editor = {
+        editor = {
           bufferline = "multiple";
           completion-timeout = 5;
           completion-replace = true;
@@ -161,34 +131,64 @@
           rainbow-brackets = false;
         };
 
-        settings.keys =
-          merge {
-            normal = {
-              space = { };
-            };
-          }
-          <| genAttrs [ "normal" "select" ] (const {
-            "A-h" = "jump_view_left";
-            "A-j" = "jump_view_down";
-            "A-k" = "jump_view_up";
-            "A-l" = "jump_view_right";
+        keys = genAttrs [ "normal" "select" ] (const {
+          "A-h" = "jump_view_left";
+          "A-j" = "jump_view_down";
+          "A-k" = "jump_view_up";
+          "A-l" = "jump_view_right";
 
-            "ret" = "goto_word";
+          "ret" = "goto_word";
 
-            "q" = "record_macro";
-            "@" = "replay_macro";
+          "q" = "record_macro";
+          "@" = "replay_macro";
 
-            "X" = "select_line_above";
+          "X" = "select_line_above";
 
-            "C-y" =
-              ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- ${yaziPickerScript} open ...%{buffer_name}";
+          "C-y" =
+            ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- ${yaziPickerScript} open ...%{buffer_name}";
 
-            "C-a" = "@*%s<ret>";
+          "C-a" = "@*%s<ret>";
 
-            "D" = "extend_to_line_end";
-          });
+          "D" = "extend_to_line_end";
+        });
+      };
 
-        languages.language =
+      # Pywal output doesn't have gradients like base16 needs.
+      # So it's necessary to override a few colours.
+      # Also added overrides for diagnostic colours which don't work well from Pywal.
+      themes = {
+        base16_custom = {
+          inherits = "base16_default";
+        }
+        # Comments.
+        // mkFgStyle [ "comment" ] (if theme.isDark then "#909090" else "#C0C0C0")
+        # Selections.
+        // mkBgStyle [ "ui.selection" "ui.selection.primary" ] (
+          if theme.isDark then "#707070" else "#E0E0E0"
+        )
+        # Cursorline and popups.
+        // mkBgStyle [ "ui.cursorline.primary" "ui.cursorline.secondary" "ui.popup" "ui.popup.info" ] (
+          if theme.isDark then "#404040" else "#F0F0F0"
+        )
+        # Info.
+        //
+          mkFgStyle
+            [ "hint" "info" "diagnostic" "diagnostic.hint" "diagnostic.info" "diagnostic.unnecessary" ]
+            (
+              if theme.isDark then "#2B83A6" else "#3A8C9A" # Muted teal.
+            )
+        # Warnings.
+        // mkFgStyle [ "warning" "diagnostic.warning" "diagnostic.deprecated" ] (
+          if theme.isDark then "#B58900" else "#9D8740" # Muted yellow.
+        )
+        # Errors.
+        // mkFgStyle [ "error" "diagnostic.error" ] (
+          if theme.isDark then "#9D0006" else "#8F3F71" # Muted red/brown.
+        );
+      };
+
+      languages = {
+        language =
           let
             denoFmtArgs = [
               "fmt"
@@ -350,11 +350,80 @@
           in
           denoFmtLanguages ++ baseLanguages;
 
+        language-servers = {
+          nixd = {
+            command = "nixd";
+            args = singleton "--inlay-hints";
+            config.nixd = {
+              nixpkgs.expr = ''import (builtins.getFlake "/home/jam/nixos").inputs.os { }'';
+              options = {
+                yuzu.expr = ''(builtins.getFlake "/home/jam/nixos").nixosConfigurations.yuzu.options'';
+                plum.expr = ''(builtins.getFlake "/home/jam/nixos").nixosConfigurations.plum.options'';
+                kiwi.expr = ''(builtins.getFlake "/home/jam/nixos").nixosConfigurations.kiwi.options'';
+                # date.expr = ''(builtins.getFlake "/home/jam/nixos").nixosConfigurations.date.options'';
+                # pear.expr = ''(builtins.getFlake "/home/jam/nixos").nixosConfigurations.pear.options'';
+                lime.expr = ''(builtins.getFlake "/home/jam/nixos").darwinConfigurations.lime.options'';
+                flake-parts.expr = ''(builtins.getFlake "/home/jam/nixos").debug.options'';
+                flake-parts2.expr = ''(builtins.getFlake "/home/jam/nixos").currentSystem.options'';
+              };
+            };
+          };
+
+          typos.command = "typos-lsp";
+
+          deno = {
+            command = "deno";
+            args = singleton "lsp";
+
+            config.javascript = {
+              enable = true;
+              lint = true;
+              unstable = true;
+
+              suggest.imports.hosts."https://deno.land" = true;
+
+              inlayHints.enumMemberValues.enabled = true;
+              inlayHints.functionLikeReturnTypes.enabled = true;
+              inlayHints.parameterNames.enabled = "all";
+              inlayHints.parameterTypes.enabled = true;
+              inlayHints.propertyDeclarationTypes.enabled = true;
+              inlayHints.variableTypes.enabled = true;
+            };
+          };
+
+          rust-analyzer = {
+            except-features = singleton "inlay-hints";
+
+            config = {
+              cargo.features = "all";
+              check.command = "clippy";
+              completion.callable.snippets = "add_parentheses";
+            };
+          };
+        };
       };
-      rum.programs.nushell.aliases = {
-        h = "hx";
-        e = "hx"; # editor
-      };
+
+      toml = pkgs.formats.toml { };
+    in
+    {
+      packages = singleton inputs.helix.packages.${pkgs.stdenv.hostPlatform.system}.helix; # `.helix` follows the master branch.
+
+      xdg.config.files = {
+        "helix/config.toml".source = toml.generate "helix-config.toml" settings;
+
+        "helix/languages.toml".source = toml.generate "helix-languages.toml" languages;
+
+        "nufmt/config.nuon".text = # nuon
+          ''
+            {
+              indent: 3
+              line_length: 100
+              margin: 1
+            }
+          '';
+
+      }
+      // mkThemes themes;
 
     };
 
@@ -368,61 +437,8 @@
     }:
     let
       inherit (lib.modules) mkIf;
-      inherit (lib.lists) singleton;
     in
     mkIf isDesktop {
-      rum.programs.helix.languages.language-server = {
-        nixd = {
-          command = "nixd";
-          args = singleton "--inlay-hints";
-          config.nixd = {
-            nixpkgs.expr = ''import (builtins.getFlake "/home/jam/nixos").inputs.os { }'';
-            options = {
-              yuzu.expr = ''(builtins.getFlake "/home/jam/nixos").nixosConfigurations.yuzu.options'';
-              plum.expr = ''(builtins.getFlake "/home/jam/nixos").nixosConfigurations.plum.options'';
-              kiwi.expr = ''(builtins.getFlake "/home/jam/nixos").nixosConfigurations.kiwi.options'';
-              # date.expr = ''(builtins.getFlake "/home/jam/nixos").nixosConfigurations.date.options'';
-              # pear.expr = ''(builtins.getFlake "/home/jam/nixos").nixosConfigurations.pear.options'';
-              lime.expr = ''(builtins.getFlake "/home/jam/nixos").darwinConfigurations.lime.options'';
-              flake-parts.expr = ''(builtins.getFlake "/home/jam/nixos").debug.options'';
-              flake-parts2.expr = ''(builtins.getFlake "/home/jam/nixos").currentSystem.options'';
-            };
-          };
-        };
-
-        typos.command = "typos-lsp";
-
-        deno = {
-          command = "deno";
-          args = singleton "lsp";
-
-          config.javascript = {
-            enable = true;
-            lint = true;
-            unstable = true;
-
-            suggest.imports.hosts."https://deno.land" = true;
-
-            inlayHints.enumMemberValues.enabled = true;
-            inlayHints.functionLikeReturnTypes.enabled = true;
-            inlayHints.parameterNames.enabled = "all";
-            inlayHints.parameterTypes.enabled = true;
-            inlayHints.propertyDeclarationTypes.enabled = true;
-            inlayHints.variableTypes.enabled = true;
-          };
-        };
-
-        rust-analyzer = {
-          except-features = singleton "inlay-hints";
-
-          config = {
-            cargo.features = "all";
-            check.command = "clippy";
-            completion.callable.snippets = "add_parentheses";
-          };
-        };
-      };
-
       packages = [
         # Rust
         # rust-analyzer is in modules/common/rust.nix
@@ -472,13 +488,5 @@
         pkgs.typos-lsp
       ];
 
-      xdg.config.files."nufmt/config.nuon".text = # nuon
-        ''
-          {
-            indent: 3
-            line_length: 100
-            margin: 1
-          }
-        '';
     };
 }

@@ -17,17 +17,10 @@ in
 {
   flake-file.inputs = {
     hjem = {
-      # follows = "hjem-rum/hjem"; # Recommended to avoid breaking.
-      url = "github:feel-co/hjem"; # But I want latest hjem :]
+      url = "github:feel-co/hjem";
 
       inputs.nixpkgs.follows = "os";
       inputs.nix-darwin.follows = "os-darwin";
-    };
-
-    hjem-rum = {
-      url = "github:snugnug/hjem-rum";
-
-      inputs.nixpkgs.follows = "os";
     };
   };
 
@@ -41,7 +34,6 @@ in
     let
       inherit (lib.attrsets) attrValues;
 
-      hjemModule = inputs.hjem-rum.hjemModules.default;
       hjemModules = attrValues inputs.self.modules.hjem;
       # Perhaps we shouldn't do ^this^ and import the necessary modules per host?
       # This would eliminate the need for a lot of conditional configs.
@@ -50,7 +42,7 @@ in
       imports = [
         inputs.hjem.nixosModules.default
         {
-          hjem.extraModules = [ hjemModule ] ++ hjemModules;
+          hjem.extraModules = hjemModules;
 
           hjem.specialArgs = commonSpecialArgs config inputs // {
             inherit (config) theme;
@@ -70,7 +62,6 @@ in
     let
       inherit (lib.attrsets) attrValues;
 
-      hjemModule = inputs.hjem-rum.hjemModules.default;
       hjemModules = attrValues inputs.self.modules.hjem;
       # Perhaps we shouldn't do ^this^ and import the necessary modules per host?
       # This would eliminate the need for a lot of conditional configs.
@@ -79,7 +70,7 @@ in
       imports = [
         inputs.hjem.darwinModules.default
         {
-          hjem.extraModules = [ hjemModule ] ++ hjemModules;
+          hjem.extraModules = hjemModules;
 
           hjem.specialArgs = commonSpecialArgs config inputs // {
             inherit (config) theme;
