@@ -420,7 +420,6 @@
     {
       pkgs,
       lib,
-      theme,
       isDesktop,
       isLinux,
       ...
