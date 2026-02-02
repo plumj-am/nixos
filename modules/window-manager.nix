@@ -21,6 +21,7 @@
     let
       inherit (lib.modules) mkIf;
       inherit (lib.lists) singleton;
+
       cfg = config // {
         inherit theme;
       };
@@ -248,17 +249,17 @@
             Mod+P { spawn "process-killer"; }
             Mod+D { spawn "todo-scratchpad"; }
             Mod+S { spawn "random-scratchpad"; }
-            Mod+C { spawn "nu" "-c" "cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"; }
-            Mod+B { spawn "nu" "-c" "niri msg do-screen-transition --delay-ms 100 ; notify-send bar_toggle ; pkill -USR1 waybar"; }
-            Mod+N { spawn "nu" "-c" "niri msg do-screen-transition --delay-ms 100 ; notify-send hidden_toggle ; makoctl mode -t mute ; makoctl mode -t do-not-disturb"; }
-            Mod+M { spawn "nu" "-c" "niri msg do-screen-transition --delay-ms 100 ; makoctl mode -t mute ; notify-send mute_toggle"; }
-            Mod+Z { spawn "nu" "-c" "niri msg do-screen-transition --delay-ms 100 ; notify-send zen_toggle ; pkill -USR1 waybar ; makoctl mode -t mute ; makoctl mode -t do-not-disturb"; }
+            Mod+C { spawn-sh "cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"; }
+            Mod+B { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && notify-send bar_toggle && pkill -USR1 waybar"; }
+            Mod+N { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && notify-send hidden_toggle && makoctl mode -t mute && makoctl mode -t do-not-disturb"; }
+            Mod+M { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && makoctl mode -t mute && notify-send mute_toggle"; }
+            Mod+Z { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && notify-send zen_toggle && pkill -USR1 waybar && makoctl mode -t mute && makoctl mode -t do-not-disturb"; }
           }
 
-          spawn-at-startup "waybar";
-            // spawn-at-startup "quickshell" // Not using yet.
+          // spawn-at-startup "waybar"; // Started by NixOS.
+          // spawn-at-startup "quickshell" // Not using yet.
           spawn-at-startup "swww-daemon"
-            // spawn-at-startup "mako" // Started by NixOS.
+          // spawn-at-startup "mako" // Started by NixOS.
         '';
 
     };
