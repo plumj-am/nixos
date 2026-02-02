@@ -35,6 +35,7 @@ let
         pkgs.cargo-machete
         pkgs.cargo-workspaces
         pkgs.cargo-outdated
+        pkgs.evcxr
         pkgs.kondo
       ];
     };
