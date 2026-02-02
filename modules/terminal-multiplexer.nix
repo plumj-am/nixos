@@ -236,8 +236,10 @@
           }
         '';
 
-      xdg.config.files."zellij/layouts/plumjam.kdl".text =
-        with theme.withHash; # kdl
+      xdg.config.files."zellij/layouts/plumjam.kdl".text = # kdl
+        let
+          modeTemplate = mode: modeFg: "#[fg=gray][#[fg=${modeFg}]${mode}#[fg=gray]] ";
+        in
         ''
           layout {
             pane
@@ -245,22 +247,23 @@
               plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
           			hide_frame_for_single_pane "true"
 
-          			format_left "{mode} #[fg=gray,bold]{session}"
+          			format_left "{mode}#[fg=gray]{session}"
           			format_center "{tabs}"
           			format_right ""
           			format_space ""
 
-          			mode_normal "#[fg=${base00},bg=${base0B}] NOR "
-          			mode_locked "#[fg=${base00},bg=${base08}] LOC "
-          			mode_pane "#[fg=${base00},bg=${base0D}] PAN "
-          			mode_tab "#[fg=${base00},bg=${base0E}] TAB "
-          			mode_rename "#[fg=${base00},bg=${base0A}] REN "
-          			mode_resize "#[fg=${base00},bg=${base0C}] RES "
-          			mode_scroll "#[fg=${base00},bg=${base09}] SCR "
-          			mode_session "#[fg=${base00},bg=${base0F}] SES "
+          			// Gives gray [ ] and coloured mode.
+          			mode_normal "${modeTemplate "NOR" "#b8bb26"}"
+          			mode_locked "${modeTemplate "LOC" "#fb4934"}"
+          			mode_pane "${modeTemplate "PAN" "#83a598"}"
+          			mode_tab "${modeTemplate "TAB" "#d3869b"}"
+          			mode_rename "${modeTemplate "REN" "#fabd2f"}"
+          			mode_resize "${modeTemplate "RES" "#8ec07c"}"
+          			mode_scroll "${modeTemplate "SCR" "#fe8019"}"
+          			mode_session "${modeTemplate "SES" "#d65d0e"}"
 
-          			tab_normal "#[fg=${base05}] {index}:{name} "
-          			tab_active "#[fg=${base0D},bold] {index}:{name} "
+          			tab_normal "#[fg=#d5c4a1]{index}:{name} "
+          			tab_active "#[fg=#83a598,bold]{index}:{name}* "
           		}
             }
           }
