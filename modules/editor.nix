@@ -360,8 +360,9 @@
                 yuzu.expr = ''(builtins.getFlake "/home/jam/nixos").nixosConfigurations.yuzu.options'';
                 plum.expr = ''(builtins.getFlake "/home/jam/nixos").nixosConfigurations.plum.options'';
                 kiwi.expr = ''(builtins.getFlake "/home/jam/nixos").nixosConfigurations.kiwi.options'';
-                # date.expr = ''(builtins.getFlake "/home/jam/nixos").nixosConfigurations.date.options'';
-                # pear.expr = ''(builtins.getFlake "/home/jam/nixos").nixosConfigurations.pear.options'';
+                sloe.expr = ''(builtins.getFlake "/home/jam/nixos").nixosConfigurations.sloe.options'';
+                date.expr = ''(builtins.getFlake "/home/jam/nixos").nixosConfigurations.date.options'';
+                pear.expr = ''(builtins.getFlake "/home/jam/nixos").nixosConfigurations.pear.options'';
                 lime.expr = ''(builtins.getFlake "/home/jam/nixos").darwinConfigurations.lime.options'';
                 flake-parts.expr = ''(builtins.getFlake "/home/jam/nixos").debug.options'';
                 flake-parts2.expr = ''(builtins.getFlake "/home/jam/nixos").currentSystem.options'';
