@@ -468,7 +468,6 @@
 
         # Markdown
         pkgs.marksman
-        # pkgs.mdformat  # Temporarily disabled due to markdown-it-py 4.0.0 incompatibility
 
         # Just
         pkgs.just-lsp
