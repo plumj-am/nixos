@@ -32,6 +32,8 @@
 
         tree = "eza --tree --git-ignore --group-directories-first";
 
+        git-graph = ''git log --graph --full-history --pretty=format:"%h%  %d%x20%s"'';
+
         swarm = "mprocs claude claude claude claude claude";
 
         fj = "fj --host https://git.plumj.am";
