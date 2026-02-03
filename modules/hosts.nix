@@ -183,6 +183,7 @@ in
       goatcounter
       nginx
       object-storage
+      opengist
       rust
       uptime-kuma
       website-personal
