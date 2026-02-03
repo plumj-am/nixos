@@ -147,7 +147,7 @@ def --wrapped main [ # nu-lint-ignore: max_function_body_length
 
       let results = $HOSTS | par-each --keep-order {|h|
          let remote = $h != $hostname
-         if $is_remote {
+         if $remote {
             let result = remote-build --quiet $h
             {host: $h, success: ($result.exit_code == 0), stderr: $result.stderr}
          } else {
