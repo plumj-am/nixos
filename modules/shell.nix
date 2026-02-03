@@ -59,6 +59,8 @@
         claude = "claude --continue --fork-session";
         codex = "codex resume --ask-for-approval untrusted";
         oc = "opencode --continue";
+
+        rebuild = "/home/jam/nixos/rebuild.nu";
       };
 
       zoxideNushellIntegration = # nu

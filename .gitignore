@@ -4,7 +4,3 @@ result-*
 
 # annoying files
 .claude/
-
-# generated files
-rebuild.nu
-rollback.nu

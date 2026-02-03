@@ -18,6 +18,7 @@ let
     nix-settings
     openssh
     packages
+    rebuild
     secret-manager
     system
     tailscale
@@ -44,7 +45,6 @@ let
     power-menu
     process-management
     quickshell
-    rebuild
     rust-desktop
     scratchpads
     sudo-desktop
