@@ -11,13 +11,18 @@
   # TODO: Configuration.
   # No point configuring yet because it still doesn't work for some reason.
   # flake.modules.hjem.rio =
-  #   { pkgs, config, ... }:
+  #   {
+  #     pkgs,
+  #     myLib,
+  #     inputs,
+  #     ...
+  #   }:
   #   let
-  #     inherit (config.myLib) mkDesktopEntry;
+  #     inherit (myLib) mkDesktopEntry;
   #   in
   #   {
   #     packages = [
-  #       pkgs.rio
+  #       inputs.rio.packages.${pkgs.stdenv.hostPlatform.system}.rio
   #       (mkDesktopEntry { inherit pkgs; } {
   #         name = "Zellij-Rio";
   #         exec = "rio -c ${pkgs.zellij}/bin/zellij";
