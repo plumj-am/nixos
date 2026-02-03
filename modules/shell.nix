@@ -61,6 +61,8 @@
         oc = "opencode --continue";
 
         rebuild = "/home/jam/nixos/rebuild.nu";
+
+        nu-config-reference = "nu -c 'config nu --doc | nu-highlight | bat'";
       };
 
       zoxideNushellIntegration = # nu
@@ -92,9 +94,10 @@
           $env.config.buffer_editor = "${config.environment.sessionVariables.EDITOR}"
           $env.config.show_banner = false
           $env.config.footer_mode = "auto"
+          $env.config.use_kitty_protocol = true
 
           $env.config.recursion_limit = 100
-          $env.config.error_style = "fancy"
+          $env.config.error_style = "nested"
 
           $env.config.completions.algorithm = "substring"
           $env.config.completions.sort = "smart"
