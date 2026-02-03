@@ -245,6 +245,7 @@ in
         goatcounter
         nginx
         object-storage
+        opengist
         rust
         uptime-kuma
         website-personal
@@ -273,6 +274,10 @@ in
               };
               forgejoSigningKeyPub = {
                 rekeyFile = ../secrets/plum-forgejo-signing-key-pub.age;
+                owner = "forgejo";
+              };
+              opengistEnvironment = {
+                rekeyFile = ../secrets/plum-opengist-environment.age;
                 owner = "forgejo";
               };
               forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
