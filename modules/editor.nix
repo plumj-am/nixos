@@ -246,7 +246,6 @@
               |> attrValues;
 
             baseLanguages = [
-
               {
                 name = "rust";
                 auto-format = true;
@@ -321,7 +320,7 @@
                   "--stdin"
                 ];
                 language-servers = [
-                  "nu"
+                  "nu-lsp"
                   "nu-lint"
                   "typos"
                 ];
