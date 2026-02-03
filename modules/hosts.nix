@@ -129,6 +129,7 @@ in
 
       acme
       boot-grub
+      cgit
       disks-disko
       disks-extra-zram-swap
       forgejo
