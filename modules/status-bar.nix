@@ -169,12 +169,12 @@
           }
 
           #waybar {
-            background:
-              linear-gradient(rgba(${concatStringsSep ", " (map toString theme.withRgb.base00)}, ${toString theme.opacity.verylow}), rgba(${concatStringsSep ", " (map toString theme.withRgb.base00)}, ${toString theme.opacity.verylow})) padding-box,
-              linear-gradient(225deg, ${base0B}, ${base09}) border-box;
+            background: rgba(${concatStringsSep ", " (map toString theme.withRgb.base00)}, 1.0);
             color: ${base07};
             border: ${toString theme.border.small}px solid transparent;
             border-radius: ${toString theme.radius.small}px;
+            border-image: linear-gradient(225deg, ${base0B}, ${base09}) ${toString theme.border.small};
+            border-image-slice: 1;
           }
 
           #window {
