@@ -50,11 +50,16 @@ in
 
         lazyjj.highlight-color = "#${theme.colors.base02}";
 
-        git.sign-on-push = true; # sign in bulk on push
+        git = {
+          sign-on-push = true; # Sign in bulk on push.
+          subprocess = true;
+          private-commits = # python
+            ''
+              description('wip:*') | description('private:*')
+            ''; # Prevent pushing WIP commits.
+        };
 
         remotes.origin.auto-track-bookmarks = "glob:*";
-
-        git.subprocess = true;
 
         git.fetch = [ "origin" ];
         git.push = "origin";
@@ -227,21 +232,23 @@ in
 
         revsets.log = "present(@) | present(trunk()) | ancestors(remote_bookmarks().. | @.., 8)";
 
-        templates.draft_commit_description = /* python */ ''
-          concat(
-            coalesce(description, "\n"),
-            surround(
-              "\nJJ: This commit contains the following changes:\n", "",
-              indent("JJ:     ", diff.stat(72)),
-            ),
-            "\nJJ: ignore-rest\n",
-            diff.git(),
-          )
-        '';
+        templates.draft_commit_description = # python
+          ''
+            concat(
+              coalesce(description, "\n"),
+              surround(
+                "\nJJ: This commit contains the following changes:\n", "",
+                indent("JJ:     ", diff.stat(72)),
+              ),
+              "\nJJ: ignore-rest\n",
+              diff.git(),
+            )
+          '';
 
-        templates.git_push_bookmark = /* python */ ''
-          "change/PlumJam-" ++ change_id.short()
-        '';
+        templates.git_push_bookmark = # python
+          ''
+            "patch/PlumJam-" ++ change_id.short()
+          '';
       };
 
       # TODO: Fix sub-menu selection bg colour (press "l" on revision to view files)
