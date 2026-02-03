@@ -466,12 +466,14 @@
         # Svelte
         pkgs.svelte-language-server
 
+        # SQL
+        pkgs.sqruff
+
         # Markdown
         pkgs.marksman
 
         # Just
         pkgs.just-lsp
-        pkgs.just-formatter
 
         # Haskell
         pkgs.fourmolu
