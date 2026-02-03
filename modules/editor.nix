@@ -480,7 +480,9 @@
         # Nushell
         inputs.nu-lint.packages.${pkgs.stdenv.hostPlatform.system}.default
         (inputs.nufmt.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs {
+          # Fix various random build errors.
           doCheck = false;
+          patches = [ ];
         })
 
         # Typos
