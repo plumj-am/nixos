@@ -96,7 +96,7 @@ let
         ];
       }
 
-      (optionalAttrs (type == "server") {
+      (optionalAttrs (type == "server" || host == "date") {
         forgejo-action-runner = {
           withDocker = true;
           labels = [
@@ -166,16 +166,30 @@ in
       ++ desktopModules
       ++ [
         disks-normal
-        disks-extra-swap
         disks-extra-zram-swap
+        forgejo-action-runner
+        nix-distributed-builds
+        nix-distributed-builder
         object-storage
         {
           config = mkConfig "date" "x86_64-linux" "desktop" {
             age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEzfoVKZDyiyyMiX1JRFaaTELspG25MlLNq0kI2AANTa root@date";
 
+            forgejo-action-runner = {
+              strong = true;
+            };
+
             age.secrets = {
-              # TODO
-              # nixStoreKey.rekeyFile = ../secrets/yuzu-nix-store-key.age;
+              forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
+              nixStoreKey.rekeyFile = ../secrets/date-nix-store-key.age;
+            };
+
+            # Used as a server when not used as a laptop.
+            services.logind.settings.Login = {
+              HandleLidSwitch = "ignore";
+              HandleLidSwitchDocked = "ignore";
+              HandleLidSwitchExternalPower = "ignore";
+              IdleAction = "ignore";
             };
 
             system.stateVersion = "26.05";
