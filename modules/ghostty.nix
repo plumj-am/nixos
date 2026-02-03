@@ -1,9 +1,17 @@
 {
+  flake-file.inputs = {
+    ghostty = {
+      url = "github:ghostty-org/ghostty";
+
+      inputs.nixpkgs.follows = "os";
+    };
+  };
   flake.modules.hjem.ghostty =
     {
+      inputs,
       pkgs,
       lib,
-      config,
+      myLib,
       theme,
       isDesktop,
       ...
@@ -11,13 +19,13 @@
     let
       inherit (lib.attrsets) mapAttrsToList mapAttrs' nameValuePair;
       inherit (lib.modules) mkIf;
-      inherit (config.myLib) mkDesktopEntry;
+      inherit (myLib) mkDesktopEntry;
       inherit (lib.generators) mkKeyValueDefault;
       inherit (pkgs.formats) keyValue;
 
       # Thank you to: <https://github.com/snugnug/hjem-rum/blob/main/modules/collection/programs/ghostty.nix>
       # for `mkTheme`.
-      ghosttyKeyValueGen = keyValue {
+      ghosttyKeyValue = keyValue {
         listsAsDuplicateKeys = true;
         mkKeyValue = mkKeyValueDefault { } " = ";
       };
@@ -27,7 +35,7 @@
         mapAttrs' (
           name: value:
           nameValuePair "ghostty/themes/${name}" {
-            source = keyValue.generate "ghostty-${name}-theme" value;
+            source = ghosttyKeyValue.generate "ghostty-${name}-theme" value;
           }
         ) themes;
 
@@ -89,11 +97,11 @@
         };
       };
 
-      enable = false;
+      enable = true;
     in
     mkIf (isDesktop && enable) {
       packages = [
-        pkgs.ghostty
+        inputs.ghostty.packages.${pkgs.stdenv.hostPlatform.system}.ghostty
 
         (mkDesktopEntry { inherit pkgs; } {
           name = "Zellij-Ghostty";
@@ -102,7 +110,7 @@
       ];
 
       xdg.config.files = {
-        "ghostty/config".source = ghosttyKeyValueGen "ghostty-config" settings;
+        "ghostty/config".source = ghosttyKeyValue.generate "ghostty-config" settings;
       }
       // mkThemes themes;
     };

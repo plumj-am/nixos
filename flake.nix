@@ -40,6 +40,10 @@
       url = "github:nix-community/fenix";
     };
     flake-file.url = "github:vic/flake-file";
+    ghostty = {
+      inputs.nixpkgs.follows = "os";
+      url = "github:ghostty-org/ghostty";
+    };
     helix = {
       inputs.nixpkgs.follows = "os";
       url = "github:helix-editor/helix";
