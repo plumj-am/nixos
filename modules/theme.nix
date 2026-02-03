@@ -459,6 +459,7 @@ in
             pkill -USR2 ghostty | complete
             pkill -USR1 hx | complete
             systemctl --user restart mako | complete
+            makoctl reload | complete
             pkill -SIGTERM brave | complete
             sleep 1sec
             niri msg action do-screen-transition --delay-ms 500 | complete
