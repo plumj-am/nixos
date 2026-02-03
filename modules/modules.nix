@@ -60,10 +60,6 @@ let
 in
 {
   flake.modules.nixos.commonModules = commonModules;
-  flake.modules.darwin.commonModules = commonModules;
   flake.modules.nixos.serverModules = serverModules;
-  flake.modules.darwin.serverModules = serverModules;
   flake.modules.nixos.desktopModules = desktopModules;
-  flake.modules.darwin.desktopModules = desktopModules;
-
 }
