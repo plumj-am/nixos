@@ -7,7 +7,7 @@
       ...
     }:
     let
-      inherit (config.networking) domain;
+      inherit (config.networking) domain hostName;
       inherit (config.myLib) merge mkResticBackup;
       inherit (lib) mkForce;
 
@@ -15,6 +15,13 @@
       port = 8001;
     in
     {
+      assertions = [
+        {
+          assertion = hostName == "plum";
+          message = "The forgejo module should only be used on the 'plum' host, but you're trying to enable it on '${hostName}'.";
+        }
+      ];
+
       system.activationScripts.forgejo-setup-keys = lib.stringAfter [ "agenix" ] ''
         ln --symbolic --force ${config.age.secrets.forgejoSigningKey.path} /run/agenix/forgejo-signing-key
         ln --symbolic --force ${config.age.secrets.forgejoSigningKeyPub.path} /run/agenix/forgejo-signing-key.pub
