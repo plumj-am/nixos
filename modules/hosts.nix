@@ -1,56 +1,8 @@
 { inputs, ... }:
 let
-  inherit (inputs.os.lib) mkMerge;
-  inherit (inputs.os.lib.attrsets) optionalAttrs;
+  inherit (inputs.self) mkConfig;
 
   specialArgs = { inherit inputs; };
-
-  mkConfig =
-    host: platform: type: rest:
-    mkMerge [
-      {
-        network.hostName = host;
-        inherit type platform;
-
-        age.secrets = {
-          id.rekeyFile = ../secrets/${host}-id.age;
-          password.rekeyFile = ../secrets/${host}-password.age;
-          s3AccessKey.rekeyFile = ../secrets/s3-access-key.age;
-          s3SecretKey.rekeyFile = ../secrets/s3-secret-key.age;
-          context7Key = {
-            rekeyFile = ../secrets/context7-key.age;
-            owner = "jam";
-            mode = "400";
-          };
-          zaiKey = {
-            rekeyFile = ../secrets/z-ai-key.age;
-            owner = "jam";
-            mode = "400";
-          };
-        };
-
-        unfree.allowedNames = [
-          "claude-code"
-          "nvidia-x11"
-          "nvidia-settings"
-          "steam"
-          "steam-unwrapped"
-        ];
-      }
-
-      (optionalAttrs (type == "server" || host == "date") {
-        forgejo-action-runner = {
-          withDocker = true;
-          labels = [
-            "self-hosted:host"
-            "${host}:host"
-            "docpad-infra:host"
-            "ubuntu-22.04:docker://docker.gitea.com/runner-images:ubuntu-22.04"
-          ];
-        };
-      })
-      rest
-    ];
 in
 {
   flake-file.inputs = {
@@ -85,7 +37,7 @@ in
       games
       object-storage
       {
-        config = mkConfig "yuzu" "x86_64-linux" "desktop" {
+        config = mkConfig inputs "yuzu" "x86_64-linux" "desktop" {
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFDLlddona4PlORWd+QpR/7F5H46/Dic9vV23/YSrZl0 root@yuzu";
 
           age.secrets = {
@@ -112,7 +64,7 @@ in
       nix-distributed-builder
       object-storage
       {
-        config = mkConfig "date" "x86_64-linux" "desktop" {
+        config = mkConfig inputs "date" "x86_64-linux" "desktop" {
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEzfoVKZDyiyyMiX1JRFaaTELspG25MlLNq0kI2AANTa root@date";
 
           forgejo-action-runner = {
@@ -154,7 +106,7 @@ in
       sudo-desktop
       wsl
       {
-        config = mkConfig "pear" "x86_64-linux" "wsl" {
+        config = mkConfig inputs "pear" "x86_64-linux" "wsl" {
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL2/Pg/5ohT3Dacnzjw9pvkeoQ1hEFwG5l1vRkr3v2sQ root@pear";
 
           age.secrets = {
@@ -189,7 +141,7 @@ in
       website-personal
       { hardware.facter.reportPath = ./facter/plum.json; }
       {
-        config = mkConfig "plum" "x86_64-linux" "server" {
+        config = mkConfig inputs "plum" "x86_64-linux" "server" {
           network = {
             domain = "plumj.am";
             tcpPorts = [
@@ -247,7 +199,7 @@ in
       rust
       website-dr-radka
       {
-        config = mkConfig "kiwi" "x86_64-linux" "server" {
+        config = mkConfig inputs "kiwi" "x86_64-linux" "server" {
           network = {
             domain = "dr-radka.pl";
             tcpPorts = [
@@ -285,7 +237,7 @@ in
       object-storage
       rust
       {
-        config = mkConfig "sloe" "x86_64-linux" "server" {
+        config = mkConfig inputs "sloe" "x86_64-linux" "server" {
 
           forgejo-action-runner = {
             strong = true;
@@ -316,7 +268,7 @@ in
       object-storage
       rust
       {
-        config = mkConfig "blackwell" "x86_64-linux" "server" {
+        config = mkConfig inputs "blackwell" "x86_64-linux" "server" {
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGSi4SKhqze7ZzhJFcUF9KW/4nXX1MfvZjUqrYWNDi9c root@blackwell";
 

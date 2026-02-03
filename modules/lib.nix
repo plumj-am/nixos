@@ -118,6 +118,58 @@ let
 
 in
 {
+  flake.mkConfig =
+    inputs: host: platform: type: rest:
+    let
+      lib = inputs.os.lib;
+      inherit (lib) mkMerge;
+      inherit (lib.attrsets) optionalAttrs;
+    in
+    mkMerge [
+      {
+        network.hostName = host;
+        inherit type platform;
+
+        age.secrets = {
+          id.rekeyFile = ../secrets/${host}-id.age;
+          password.rekeyFile = ../secrets/${host}-password.age;
+          s3AccessKey.rekeyFile = ../secrets/s3-access-key.age;
+          s3SecretKey.rekeyFile = ../secrets/s3-secret-key.age;
+          context7Key = {
+            rekeyFile = ../secrets/context7-key.age;
+            owner = "jam";
+            mode = "400";
+          };
+          zaiKey = {
+            rekeyFile = ../secrets/z-ai-key.age;
+            owner = "jam";
+            mode = "400";
+          };
+        };
+
+        unfree.allowedNames = [
+          "claude-code"
+          "nvidia-x11"
+          "nvidia-settings"
+          "steam"
+          "steam-unwrapped"
+        ];
+      }
+
+      (optionalAttrs (type == "server" || host == "date") {
+        forgejo-action-runner = {
+          withDocker = true;
+          labels = [
+            "self-hosted:host"
+            "${host}:host"
+            "docpad-infra:host"
+            "ubuntu-22.04:docker://docker.gitea.com/runner-images:ubuntu-22.04"
+          ];
+        };
+      })
+      rest
+    ];
+
   flake.modules.nixos.lib = commonModule;
   flake.modules.darwin.lib = commonModule;
 }
