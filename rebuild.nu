@@ -162,10 +162,7 @@ def --wrapped main [ # nu-lint-ignore: max_function_body_length
          if $r.success {
             print-notify $"✓ ($r.host)"
          } else {
-            print-notify $"✗ ($r.host) failed"
-            if $r.stderr != null {
-               print-notify $" stderr: ($r.stderr)"
-            }
+            print-notify $"✗ ($r.host) failed (if $r.stderr != null { $"\(($r.stderr)\)" })"
          }
       }
       return
