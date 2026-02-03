@@ -120,6 +120,22 @@ let
         ];
 
       designSystem = {
+        font = {
+          size.tiny = 10;
+          size.small = 12;
+          size.term = 12;
+          size.normal = 16;
+          size.big = 20;
+
+          mono.name = "Maple Mono NF";
+          mono.family = "Maple Mono";
+          mono.package = pkgs.maple-mono.NF;
+
+          sans.name = "Lexend";
+          sans.family = "Lexend";
+          sans.package = pkgs.lexend;
+        };
+
         radius = {
           off = 0;
           small = 2;
@@ -276,21 +292,6 @@ in
           gtk = theme.getTheme "gtk";
           qt = theme.getTheme "qt";
 
-          font = {
-            size.tiny = 10;
-            size.small = 12;
-            size.term = 12;
-            size.normal = 16;
-            size.big = 20;
-
-            mono.name = "Maple Mono NF";
-            mono.family = "Maple Mono";
-            mono.package = pkgs.maple-mono.NF;
-
-            sans.name = "Lexend";
-            sans.family = "Lexend";
-            sans.package = pkgs.lexend;
-          };
         };
       };
     };
@@ -332,22 +333,6 @@ in
           helix = theme.getTheme "helix";
           gtk = theme.getTheme "gtk";
           qt = theme.getTheme "qt";
-
-          font = {
-            size.tiny = 10;
-            size.small = 12;
-            size.term = 12;
-            size.normal = 16;
-            size.big = 20;
-
-            mono.name = "Maple Mono NF";
-            mono.family = "Maple Mono";
-            mono.package = pkgs.maple-mono.NF;
-
-            sans.name = "Lexend";
-            sans.family = "Lexend";
-            sans.package = pkgs.lexend;
-          };
         };
       };
     };
@@ -430,7 +415,7 @@ in
                 ${pkgs.pywal}/bin/wal ...($base_args | append $mode_args) err> /dev/null
                 cp ~/.cache/wal/colors.json $"($env.HOME)/nixos/modules/theme-pywal-colors.json"
                 print "Colors regenerated!"
-                try { rebuild --quiet } catch { exit 1 }
+                try { /home/jam/nixos/rebuild.nu } catch { exit 1 }
                 print "Rebuilt system to apply colors."
               } catch { |e|
                 print $"Warning: Failed to regenerate colors: ($e.msg)"
@@ -538,7 +523,7 @@ in
 
           print-notify $"Rebuilding configuration to apply ($new_theme) theme."
 
-          try { rebuild --quiet } catch { exit 1 }
+          try { /home/jam/nixos/rebuild.nu } catch { exit 1 }
 
           print-notify $"Switch to the ($new_theme) theme completed!"
 
@@ -591,7 +576,7 @@ in
 
           print-notify $"Rebuilding configuration to apply ($scheme) scheme..."
 
-          try { rebuild --quiet } catch { exit 1 }
+          try { /home/jam/nixos/rebuild.nu } catch { exit 1 }
 
           print-notify $"Switch to ($scheme) scheme completed!"
 
@@ -612,7 +597,7 @@ in
             "pywal" | "gruvbox" => { switch-scheme $arg }
             "reload" => {
               reload-applications
-              try { rebuild --quiet } catch { exit 1 }
+              try { /home/jam/nixos/rebuild.nu } catch { exit 1 }
             }
             _ => { print $"Invalid option: '($arg)'. Use: dark, light, pywal, gruvbox or reload." }
           }
