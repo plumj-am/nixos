@@ -36,7 +36,7 @@ def "cargo update-all" [--force]: nothing -> nothing {
 }
 
 def pwd []: any -> string {
-   $env.PWD | str replace $nu.home-path '~'
+   $env.PWD | str replace $nu.home-dir '~'
 }
 
 # nu-lint-ignore: print_and_return_data
