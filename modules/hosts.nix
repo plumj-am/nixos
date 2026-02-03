@@ -5,64 +5,6 @@ let
 
   specialArgs = { inherit inputs; };
 
-  commonModules = with inputs.self.modules.nixos; [
-    disable-nano
-    disable-nix-documentation
-    dynamic-binaries
-    hjem
-    keys
-    lib
-    locale
-    netrc
-    network
-    nix-settings
-    openssh
-    packages
-    rebuild
-    secret-manager
-    system
-    tailscale
-    theme
-    unfree
-    users
-    virtualisation
-    yubikey
-  ];
-
-  desktopModules = with inputs.self.modules.nixos; [
-    audio
-    boot-systemd
-    desktop-gui
-    desktop-tools
-    gammastep
-    graphics
-    hardware-desktop
-    jujutsu-extra
-    keyboard
-    linux-kernel-zen
-    mouse
-    packages-extra-desktop
-    power-menu
-    process-management
-    quickshell
-    rust-desktop
-    scratchpads
-    sudo-desktop
-    theme-extra-fonts
-    theme-extra-scripts
-    waybar
-    window-manager
-  ];
-
-  serverModules = with inputs.self.modules.nixos; [
-    forgejo-action-runner
-    linux-kernel
-    nix-distributed-builds
-    nix-distributed-builder
-    prometheus-node-exporter
-    sudo-server
-  ];
-
   mkConfig =
     host: platform: type: rest:
     mkMerge [
@@ -133,268 +75,260 @@ in
   flake.nixosConfigurations.yuzu = inputs.os.lib.nixosSystem {
     inherit specialArgs;
 
-    modules =
-      with inputs.self.modules.nixos;
+    modules = with inputs.self.modules.nixos; [
       commonModules
-      ++ desktopModules
-      ++ [
-        disks-normal
-        disks-extra-swap
-        disks-extra-zram-swap
-        games
-        object-storage
-        {
-          config = mkConfig "yuzu" "x86_64-linux" "desktop" {
-            age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFDLlddona4PlORWd+QpR/7F5H46/Dic9vV23/YSrZl0 root@yuzu";
+      desktopModules
 
-            age.secrets = {
-              nixStoreKey.rekeyFile = ../secrets/yuzu-nix-store-key.age;
-            };
+      disks-normal
+      disks-extra-swap
+      disks-extra-zram-swap
+      games
+      object-storage
+      {
+        config = mkConfig "yuzu" "x86_64-linux" "desktop" {
+          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFDLlddona4PlORWd+QpR/7F5H46/Dic9vV23/YSrZl0 root@yuzu";
 
-            system.stateVersion = "26.05";
+          age.secrets = {
+            nixStoreKey.rekeyFile = ../secrets/yuzu-nix-store-key.age;
           };
-        }
-      ];
+
+          system.stateVersion = "26.05";
+        };
+      }
+    ];
   };
 
   flake.nixosConfigurations.date = inputs.os.lib.nixosSystem {
     inherit specialArgs;
 
-    modules =
-      with inputs.self.modules.nixos;
+    modules = with inputs.self.modules.nixos; [
       commonModules
-      ++ desktopModules
-      ++ [
-        disks-normal
-        disks-extra-zram-swap
-        forgejo-action-runner
-        nix-distributed-builds
-        nix-distributed-builder
-        object-storage
-        {
-          config = mkConfig "date" "x86_64-linux" "desktop" {
-            age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEzfoVKZDyiyyMiX1JRFaaTELspG25MlLNq0kI2AANTa root@date";
+      desktopModules
 
-            forgejo-action-runner = {
-              strong = true;
-            };
+      disks-normal
+      disks-extra-zram-swap
+      forgejo-action-runner
+      nix-distributed-builds
+      nix-distributed-builder
+      object-storage
+      {
+        config = mkConfig "date" "x86_64-linux" "desktop" {
+          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEzfoVKZDyiyyMiX1JRFaaTELspG25MlLNq0kI2AANTa root@date";
 
-            age.secrets = {
-              forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
-              nixStoreKey.rekeyFile = ../secrets/date-nix-store-key.age;
-            };
-
-            # Used as a server when not used as a laptop.
-            services.logind.settings.Login = {
-              HandleLidSwitch = "ignore";
-              HandleLidSwitchDocked = "ignore";
-              HandleLidSwitchExternalPower = "ignore";
-              IdleAction = "ignore";
-            };
-
-            system.stateVersion = "26.05";
+          forgejo-action-runner = {
+            strong = true;
           };
-        }
-      ];
+
+          age.secrets = {
+            forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
+            nixStoreKey.rekeyFile = ../secrets/date-nix-store-key.age;
+          };
+
+          # Used as a server when not used as a laptop.
+          services.logind.settings.Login = {
+            HandleLidSwitch = "ignore";
+            HandleLidSwitchDocked = "ignore";
+            HandleLidSwitchExternalPower = "ignore";
+            IdleAction = "ignore";
+          };
+
+          system.stateVersion = "26.05";
+        };
+      }
+    ];
   };
 
   flake.nixosConfigurations.pear = inputs.os.lib.nixosSystem {
     inherit specialArgs;
 
-    modules =
-      with inputs.self.modules.nixos;
+    modules = with inputs.self.modules.nixos; [
       commonModules
-      ++ [
-        desktop-tools
-        jujutsu-extra
-        linux-kernel-zen
-        object-storage
-        packages-extra-desktop
-        rust-desktop
-        scratchpads
-        sudo-desktop
-        wsl
-        {
-          config = mkConfig "pear" "x86_64-linux" "wsl" {
-            age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL2/Pg/5ohT3Dacnzjw9pvkeoQ1hEFwG5l1vRkr3v2sQ root@pear";
 
-            age.secrets = {
-              # TODO
-              # nixStoreKey.rekeyFile = ../secrets/yuzu-nix-store-key.age;
-            };
+      desktop-tools
+      jujutsu-extra
+      linux-kernel-zen
+      object-storage
+      packages-extra-desktop
+      rust-desktop
+      scratchpads
+      sudo-desktop
+      wsl
+      {
+        config = mkConfig "pear" "x86_64-linux" "wsl" {
+          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL2/Pg/5ohT3Dacnzjw9pvkeoQ1hEFwG5l1vRkr3v2sQ root@pear";
 
-            system.stateVersion = "26.05";
+          age.secrets = {
+            # TODO
+            # nixStoreKey.rekeyFile = ../secrets/yuzu-nix-store-key.age;
           };
-        }
-      ];
+
+          system.stateVersion = "26.05";
+        };
+      }
+    ];
   };
 
   flake.nixosConfigurations.plum = inputs.os.lib.nixosSystem {
     inherit specialArgs;
 
-    modules =
-      with inputs.self.modules.nixos;
+    modules = with inputs.self.modules.nixos; [
       commonModules
-      ++ serverModules
-      ++ [
-        acme
-        boot-grub
-        disks-disko
-        disks-extra-zram-swap
-        forgejo
-        goatcounter
-        nginx
-        object-storage
-        opengist
-        rust
-        uptime-kuma
-        website-personal
-        { hardware.facter.reportPath = ./facter/plum.json; }
-        {
-          config = mkConfig "plum" "x86_64-linux" "server" {
-            network = {
-              domain = "plumj.am";
-              tcpPorts = [
-                22
-                80
-                443
-              ];
-            };
+      serverModules
 
-            forgejo-action-runner = {
-              strong = true;
-            };
-
-            age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBH1S3dhOYCCltqrseHc3YZFHc9XU90PsvDo7frzUGrr root@plum";
-
-            age.secrets = {
-              forgejoSigningKey = {
-                rekeyFile = ../secrets/plum-forgejo-signing-key.age;
-                owner = "forgejo";
-              };
-              forgejoSigningKeyPub = {
-                rekeyFile = ../secrets/plum-forgejo-signing-key-pub.age;
-                owner = "forgejo";
-              };
-              opengistEnvironment = {
-                rekeyFile = ../secrets/plum-opengist-environment.age;
-                owner = "forgejo";
-              };
-              forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
-              forgejoAdminPassword.rekeyFile = ../secrets/plum-forgejo-password.age;
-              acmeEnvironment.rekeyFile = ../secrets/acme-environment.age;
-              nixStoreKey.rekeyFile = ../secrets/plum-nix-store-key.age;
-              resticPassword.rekeyFile = ../secrets/plum-restic-password.age;
-            };
-
-            system.stateVersion = "26.05";
+      acme
+      boot-grub
+      disks-disko
+      disks-extra-zram-swap
+      forgejo
+      goatcounter
+      nginx
+      object-storage
+      rust
+      uptime-kuma
+      website-personal
+      { hardware.facter.reportPath = ./facter/plum.json; }
+      {
+        config = mkConfig "plum" "x86_64-linux" "server" {
+          network = {
+            domain = "plumj.am";
+            tcpPorts = [
+              22
+              80
+              443
+            ];
           };
-        }
-      ];
+
+          forgejo-action-runner = {
+            strong = true;
+          };
+
+          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBH1S3dhOYCCltqrseHc3YZFHc9XU90PsvDo7frzUGrr root@plum";
+
+          age.secrets = {
+            forgejoSigningKey = {
+              rekeyFile = ../secrets/plum-forgejo-signing-key.age;
+              owner = "forgejo";
+            };
+            forgejoSigningKeyPub = {
+              rekeyFile = ../secrets/plum-forgejo-signing-key-pub.age;
+              owner = "forgejo";
+            };
+            opengistEnvironment = {
+              rekeyFile = ../secrets/plum-opengist-environment.age;
+              owner = "forgejo";
+            };
+            forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
+            forgejoAdminPassword.rekeyFile = ../secrets/plum-forgejo-password.age;
+            acmeEnvironment.rekeyFile = ../secrets/acme-environment.age;
+            nixStoreKey.rekeyFile = ../secrets/plum-nix-store-key.age;
+            resticPassword.rekeyFile = ../secrets/plum-restic-password.age;
+          };
+
+          system.stateVersion = "26.05";
+        };
+      }
+    ];
   };
 
   flake.nixosConfigurations.kiwi = inputs.os.lib.nixosSystem {
     inherit specialArgs;
 
-    modules =
-      with inputs.self.modules.nixos;
+    modules = with inputs.self.modules.nixos; [
       commonModules
-      ++ serverModules
-      ++ [
-        acme
-        boot-grub
-        disks-disko
-        disks-extra-zram-swap
-        nginx
-        object-storage
-        rust
-        website-dr-radka
-        {
-          config = mkConfig "kiwi" "x86_64-linux" "server" {
-            network = {
-              domain = "dr-radka.pl";
-              tcpPorts = [
-                22
-                80
-                443
-              ];
-            };
+      serverModules
 
-            age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIElcSHxI64xqUUKEY83tKyzEH+fYT5JCWn3qCqtw16af root@kiwi";
-
-            age.secrets = {
-              forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
-              acmeEnvironment.rekeyFile = ../secrets/acme-environment.age;
-              drRadkaEnvironment.rekeyFile = ../secrets/kiwi-dr-radka-environment.age;
-              nixStoreKey.rekeyFile = ../secrets/kiwi-nix-store-key.age;
-            };
-
-            system.stateVersion = "26.05";
+      acme
+      boot-grub
+      disks-disko
+      disks-extra-zram-swap
+      nginx
+      object-storage
+      rust
+      website-dr-radka
+      {
+        config = mkConfig "kiwi" "x86_64-linux" "server" {
+          network = {
+            domain = "dr-radka.pl";
+            tcpPorts = [
+              22
+              80
+              443
+            ];
           };
-        }
-      ];
+
+          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIElcSHxI64xqUUKEY83tKyzEH+fYT5JCWn3qCqtw16af root@kiwi";
+
+          age.secrets = {
+            forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
+            acmeEnvironment.rekeyFile = ../secrets/acme-environment.age;
+            drRadkaEnvironment.rekeyFile = ../secrets/kiwi-dr-radka-environment.age;
+            nixStoreKey.rekeyFile = ../secrets/kiwi-nix-store-key.age;
+          };
+
+          system.stateVersion = "26.05";
+        };
+      }
+    ];
   };
 
   flake.nixosConfigurations.sloe = inputs.os.lib.nixosSystem {
     inherit specialArgs;
 
-    modules =
-      with inputs.self.modules.nixos;
+    modules = with inputs.self.modules.nixos; [
       commonModules
-      ++ serverModules
-      ++ [
-        boot-grub
-        disks-disko
-        disks-extra-zram-swap
-        object-storage
-        rust
-        {
-          config = mkConfig "sloe" "x86_64-linux" "server" {
+      serverModules
 
-            forgejo-action-runner = {
-              strong = true;
-            };
+      boot-grub
+      disks-disko
+      disks-extra-zram-swap
+      object-storage
+      rust
+      {
+        config = mkConfig "sloe" "x86_64-linux" "server" {
 
-            age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK42xzC/vWHZC9SiU/8IBBd2pn7mggBYFQ8themKAic/ root@sloe";
-            age.secrets = {
-              forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
-              nixStoreKey.rekeyFile = ../secrets/sloe-nix-store-key.age;
-            };
-
-            system.stateVersion = "26.05";
+          forgejo-action-runner = {
+            strong = true;
           };
-        }
-      ];
+
+          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK42xzC/vWHZC9SiU/8IBBd2pn7mggBYFQ8themKAic/ root@sloe";
+          age.secrets = {
+            forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
+            nixStoreKey.rekeyFile = ../secrets/sloe-nix-store-key.age;
+          };
+
+          system.stateVersion = "26.05";
+        };
+      }
+    ];
   };
 
   flake.nixosConfigurations.blackwell = inputs.os.lib.nixosSystem {
     inherit specialArgs;
 
-    modules =
-      with inputs.self.modules.nixos;
+    modules = with inputs.self.modules.nixos; [
       commonModules
-      ++ serverModules
-      ++ [
-        boot-grub
-        disks-disko
-        disks-extra-zram-swap
-        object-storage
-        rust
-        {
-          config = mkConfig "blackwell" "x86_64-linux" "server" {
+      serverModules
 
-            age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGSi4SKhqze7ZzhJFcUF9KW/4nXX1MfvZjUqrYWNDi9c root@blackwell";
+      boot-grub
+      disks-disko
+      disks-extra-zram-swap
+      object-storage
+      rust
+      {
+        config = mkConfig "blackwell" "x86_64-linux" "server" {
 
-            age.secrets = {
-              forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
-              acmeEnvironment.rekeyFile = ../secrets/acme-environment.age;
-              nixStoreKey.rekeyFile = ../secrets/blackwell-nix-store-key.age;
-            };
+          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGSi4SKhqze7ZzhJFcUF9KW/4nXX1MfvZjUqrYWNDi9c root@blackwell";
 
-            system.stateVersion = "26.05";
+          age.secrets = {
+            forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
+            acmeEnvironment.rekeyFile = ../secrets/acme-environment.age;
+            nixStoreKey.rekeyFile = ../secrets/blackwell-nix-store-key.age;
           };
-        }
-      ];
+
+          system.stateVersion = "26.05";
+        };
+      }
+    ];
   };
 
   flake.darwinConfigurations.lime = inputs.os-darwin.lib.darwinSystem {
