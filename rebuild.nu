@@ -5,9 +5,7 @@ def print-notify [
    message: string
 ]: nothing -> nothing {
    print $"(ansi purple)[Rebuilder](ansi rst) ($message)\r"
-   if (which notify-send | is-not-empty) {
-     notify-send Rebuilder $message
-   }
+   try { notify-send Rebuilder $message }
 }
 
 def --wrapped rsync-files [
@@ -31,12 +29,13 @@ def remote-build [
    print-notify $"Attempting to start remote build process on ($target)."
 
    if not $quiet { print-notify $"Removing old configuration files on ($target)." }
-   (ssh -qtt $"jam@($target)" "rm --recursive --force nixos" | complete)
+   ssh -qtt $"jam@($target)" "rm --recursive --force nixos" | complete
 
    if not $quiet { print-notify $"Copying new configuration files to ($target)." }
-   (jj file list | rsync-files --files-from - ./ $"jam@($target):nixos" | complete)
+   jj file list | rsync-files --files-from - ./ $"jam@($target):nixos" | complete
 
-   (ssh -qtt $"jam@($target)" ./nixos/rebuild.nu | complete)
+   if not $quiet { print-notify $"Starting rebuild on ($target)." }
+   ssh -qtt $"jam@($target)" ./nixos/rebuild.nu | complete
 }
 
 def build [
