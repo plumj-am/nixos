@@ -31,6 +31,8 @@ in
       commonModules
       desktopModules
 
+      ai
+      ai-extra
       app-launcher
       boot-systemd
       desktop-gui
@@ -39,6 +41,7 @@ in
       disks-extra-swap
       env
       games
+      gammastep
       helix
       helix-extra
       hyprlock
