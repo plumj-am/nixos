@@ -36,6 +36,7 @@ in
       app-launcher
       boot-systemd
       desktop-gui
+      disable-nano
       discord-gui
       discord-tui
       disks-extra-swap
@@ -54,6 +55,7 @@ in
       object-storage
       openssh
       jujutsu
+      rss-tui
       shell
       shell-tools
       ssh
