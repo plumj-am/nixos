@@ -53,10 +53,7 @@ in
         git = {
           sign-on-push = true; # Sign in bulk on push.
           subprocess = true;
-          private-commits = # python
-            ''
-              description('wip:*') | description('private:*')
-            ''; # Prevent pushing WIP commits.
+          private-commits = "description('wip:*') | description('private:*')"; # Prevent pushing WIP commits.
         };
 
         remotes.origin.auto-track-bookmarks = "glob:*";
