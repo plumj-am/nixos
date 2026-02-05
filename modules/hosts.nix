@@ -49,6 +49,7 @@ in
       kitty
       mprocs
       notifications
+      niri
       # nix-distributed-builds
       object-storage
       openssh
@@ -58,6 +59,7 @@ in
       ssh
       waybar
       yazi
+      zellij
       {
         config = mkConfig inputs "yuzu" "x86_64-linux" "desktop" {
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFDLlddona4PlORWd+QpR/7F5H46/Dic9vV23/YSrZl0 root@yuzu";

@@ -47,7 +47,6 @@ let
     theme-extra-fonts
     theme-extra-scripts
     waybar
-    window-manager
   ];
 
   serverModules.imports = with inputs.self.modules.nixos; [
