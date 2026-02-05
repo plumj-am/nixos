@@ -33,6 +33,7 @@ let
       pkgs.exercism
       pkgs.pnpm
       pkgs.deadnix
+      pkgs.treefmt
       # For experimental pipe-operators support.
       (pkgs.statix.overrideAttrs rec {
         src = pkgs.fetchFromGitHub {
