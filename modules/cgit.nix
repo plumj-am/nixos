@@ -72,9 +72,9 @@
           enable-log-linecount = 1;
           enable-tree-linenumbers = 1;
           enable-subject-links = 1;
-          max-commit-count = "200";
-          max-message-length = "120";
-          max-repo-count = "1000";
+          max-commit-count = 200;
+          max-message-length = 120;
+          max-repo-count = 1000;
           max-stats = "year";
           side-by-side-diffs = 1;
 
@@ -85,10 +85,10 @@
           source-filter = "${pkgs.cgit}/lib/cgit/filters/syntax-highlighting.py";
 
           auth-filter = "${cgitSimpleAuth}/bin/cgit-simple-authentication";
-          cgit-simple-auth-cookie-ttl = "86400";
-          cgit-simple-auth-database = authDbPath;
-          cgit-simple-auth-bypass-root = "false";
-          cgit-simple-auth-protect = "full";
+          "cgit-simple-auth-cookie-ttl" = 86400;
+          "cgit-simple-auth-database" = authDbPath;
+          "cgit-simple-auth-bypass-root" = false;
+          "cgit-simple-auth-protect" = "full";
         };
       };
 
