@@ -36,7 +36,7 @@
                 opacity 1.0
                 draw-border-with-background false
                 clip-to-geometry true
-                geometry-corner-radius ${toString (cfg.theme.radius.small * 1.0)}
+                geometry-corner-radius ${toString (cfg.theme.radius.tiny * 1.0)}
               }
 
               window-rule {

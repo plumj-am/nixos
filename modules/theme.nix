@@ -132,6 +132,7 @@ let
         };
 
         radius = {
+          tiny = 1;
           small = 2;
           normal = 4;
           big = 8;
