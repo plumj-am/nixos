@@ -139,6 +139,7 @@ in
       nix-distributed-builder
       object-storage
       opengist
+      freshrss-server
       uptime-kuma
       website-personal
       { hardware.facter.reportPath = ./facter/plum.json; }
@@ -171,6 +172,11 @@ in
             opengistEnvironment = {
               rekeyFile = ../secrets/plum-opengist-environment.age;
               owner = "forgejo";
+            };
+            rssAdminPassword = {
+              rekeyFile = ../secrets/plum-rss-password.age;
+              owner = "freshrss";
+              mode = "400";
             };
             forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
             forgejoAdminPassword.rekeyFile = ../secrets/plum-forgejo-password.age;
