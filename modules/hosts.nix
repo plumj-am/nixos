@@ -33,6 +33,9 @@ in
 
       app-launcher
       boot-systemd
+      desktop-gui
+      discord-gui
+      discord-tui
       disks-extra-swap
       env
       games
