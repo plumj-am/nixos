@@ -6,6 +6,8 @@ let
 
       bat = getExe pkgs.bat;
       less = getExe pkgs.less;
+
+      pager = "${bat} --plain";
     in
     {
       packages = [
@@ -14,8 +16,10 @@ let
       ];
 
       environment.sessionVariables = {
-        MANPAGER = "${bat} --plain";
-        PAGER = "${bat} --plain";
+        BAT_THEME_LIGHT = "gruvbox-light";
+        BAT_THEME_DARK = "gruvbox-dark";
+        MANPAGER = pager;
+        PAGER = pager;
         BAT_PAGER = "${less} --quit-if-one-screen --RAW-CONTROL-CHARS";
       };
     };
