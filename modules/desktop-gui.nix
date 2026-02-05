@@ -36,7 +36,7 @@
         ''
           [Settings]
           gtk-prefer-dark=${toString theme.isDark}
-          gtk-font-name=${theme.font.sans.name} ${toString theme.font.size.small}
+          gtk-font-name=${theme.font.sans.name} ${toString theme.font.size.normal}
           gtk-theme-name=${theme.gtk.name}
           gtk-icon-theme-name=${theme.icons.name}
         '';
@@ -44,7 +44,7 @@
       settingsGtk2 = # ini
         ''
           gtk-prefer-dark=${toString theme.isDark}
-          gtk-font-name=${theme.font.sans.name} ${toString theme.font.size.small}
+          gtk-font-name=${theme.font.sans.name} ${toString theme.font.size.normal}
           gtk-theme-name=${theme.gtk.name}
           gtk-icon-theme-name=${theme.icons.name}
         '';

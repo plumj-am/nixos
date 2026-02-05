@@ -21,7 +21,7 @@
 
       settings = with theme.withHash; {
         font_family = theme.font.mono.name;
-        font_size = theme.font.size.term;
+        font_size = theme.font.size.normal;
         font_features = ''
           MapleMono-NF-Regular +cv64 +ss03 +ss05 +ss07 +ss08 +ss09 +ss10 +ss11
           MapleMono-NF-Italic +cv64 +ss03 +ss05 +ss07 +ss08 +ss09 +ss10 +ss11

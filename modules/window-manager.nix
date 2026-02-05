@@ -33,7 +33,7 @@
         ''
               window-rule {
                 match app-id=r#"^*$"#
-                opacity ${toString cfg.theme.opacity.opaque}
+                opacity 1.0
                 draw-border-with-background false
                 clip-to-geometry true
                 geometry-corner-radius ${toString (cfg.theme.radius.small * 1.0)}
@@ -41,13 +41,13 @@
 
               window-rule {
                 match app-id=r#"^(zen-.*|org\.qutebrowser\.qutebrowser|brave-browser)$"#
-                opacity ${toString cfg.theme.opacity.opaque}
+                opacity 1.0
                 open-maximized true
               }
 
               window-rule {
                 match title=r#"^.*YouTube|Picture-in-Picture.*"#
-                opacity ${toString cfg.theme.opacity.opaque}
+                opacity 1.0
               }
 
               window-rule {
@@ -56,7 +56,7 @@
 
               window-rule {
                 match app-id=r#"^steam_app_*"#
-                opacity ${toString cfg.theme.opacity.opaque}
+                opacity 1.0
                 open-fullscreen true
                 border {
                   off
@@ -84,12 +84,12 @@
 
               layer-rule {
                 match namespace=r#"waybar|polybar"#
-                opacity ${toString cfg.theme.opacity.opaque}
+                opacity 1.0
               }
 
               layer-rule {
                 match namespace=r#"notifications|launcher"#
-                opacity ${toString cfg.theme.opacity.opaque}
+                opacity 1.0
               }
 
               input {
@@ -162,12 +162,12 @@
 
               //   window-open {
               //     curve "ease-out-cubic"
-              //     duration-ms ${toString cfg.theme.duration.ms.normal}
+              //     duration-ms 150
               //   }
 
               //   window-close {
               //     curve "ease-out-expo"
-              //     duration-ms ${toString cfg.theme.duration.ms.short}
+              //     duration-ms 150
               //   }
 
               //   window-movement {

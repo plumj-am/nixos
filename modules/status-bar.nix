@@ -30,7 +30,7 @@
         ''
           {
             "layer": "top",
-            "height": ${toString theme.margin.big},
+            "height": 32,
             "margin-top": ${toString theme.margin.small},
             "margin-left": ${toString theme.margin.small},
             "margin-right": ${toString theme.margin.small},
@@ -163,7 +163,7 @@
             border: none;
             border-radius: 0;
             font-family: "${theme.font.sans.name}";
-            font-size: ${toString theme.font.size.small}px;
+            font-size: ${toString theme.font.size.normal}px;
             margin: 0;
             padding: 0;
           }

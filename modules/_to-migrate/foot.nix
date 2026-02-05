@@ -8,7 +8,7 @@ mkIf config.isDesktopNotWsl {
       programs.foot = disabled {
         settings = {
           main = with config.theme.font; {
-            font = "${mono.name}:size=${toString size.term}";
+            font = "${mono.name}:size=${toString size.normal}";
             dpi-aware = "yes";
           };
           colors = with config.theme.colors; {

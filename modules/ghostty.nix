@@ -40,7 +40,7 @@
         ) themes;
 
       settings = with theme; {
-        font-size = font.size.term;
+        font-size = font.size.normal;
         font-family = font.mono.name;
         font-feature = "+calt, +liga, +dlig";
 

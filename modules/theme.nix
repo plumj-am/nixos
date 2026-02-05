@@ -1,10 +1,9 @@
 { lib, ... }:
 let
   inherit (lib.options) mkOption;
-  inherit (lib.attrsets) mapAttrs;
+  inherit (lib.attrsets) mapAttrs listToAttrs elemAt;
   inherit (lib.trivial) fromHexString;
   inherit (lib.types) attrs;
-  inherit (lib.attrsets) listToAttrs elemAt;
   inherit (lib.lists) genList;
   inherit (builtins)
     fromJSON
@@ -54,10 +53,8 @@ let
           }) 16
         );
 
-      pywalColorsRaw = if pathExists pywalCache then readFile pywalCache else null;
-
       pywalColors =
-        if pywalColorsRaw != null then parsePywalColors pywalColorsRaw else gruvboxColors.dark;
+        if pathExists pywalCache then parsePywalColors (readFile pywalCache) else gruvboxColors.dark;
 
       gruvboxColors = {
         dark = {
@@ -122,10 +119,8 @@ let
       designSystem = {
         font = {
           size.tiny = 10;
-          size.small = 12;
-          size.term = 12;
-          size.normal = 16;
-          size.big = 20;
+          size.normal = 12;
+          size.big = 16;
 
           mono.name = "Maple Mono NF";
           mono.family = "Maple Mono";
@@ -137,50 +132,24 @@ let
         };
 
         radius = {
-          off = 0;
           small = 2;
           normal = 4;
-          big = 6;
-          verybig = 8;
+          big = 8;
         };
 
         border = {
           small = 2;
           normal = 4;
-          big = 6;
         };
 
         margin = {
           small = 4;
           normal = 8;
-          big = 32;
         };
 
         padding = {
           small = 4;
           normal = 8;
-        };
-
-        opacity = {
-          opaque = 1.00;
-          veryhigh = 0.99;
-          high = 0.97;
-          medium = 0.94;
-          low = 0.90;
-          verylow = 0.80;
-        };
-
-        duration = {
-          s = {
-            short = 0.5;
-            normal = 1.0;
-            long = 1.5;
-          };
-          ms = {
-            short = 150;
-            normal = 200;
-            long = 300;
-          };
         };
       };
 
@@ -252,90 +221,61 @@ let
         ;
     };
 
+  # Shared theme module configuration (used by both nixos and darwin)
+  themeModule =
+    { pkgs, ... }:
+    let
+      theme = mkThemeConfig { inherit pkgs; };
+      themedApps = [
+        "icons"
+        "alacritty"
+        "ghostty"
+        "rio"
+        "zellij"
+        "starship"
+        "vivid"
+        "nushell"
+        "helix"
+        "gtk"
+        "qt"
+      ];
+    in
+    {
+      options.theme = mkOption {
+        type = attrs;
+        default = { };
+        description = "Global theme configuration";
+      };
+
+      config = {
+        theme =
+          theme.designSystem
+          // {
+            inherit (theme)
+              themes
+              isDark
+              colorScheme
+              variant
+              colors
+              ;
+
+            withHash = mapAttrs (_: v: "#${v}") theme.colors;
+            with0x = mapAttrs (_: v: "0x${v}") theme.colors;
+            withRgb = mapAttrs (_: v: theme.hexToRgb v) theme.colors;
+          }
+          // (listToAttrs (
+            map (app: {
+              name = app;
+              value = theme.getTheme app;
+            }) themedApps
+          ));
+      };
+    };
+
 in
 {
-  flake.modules.darwin.theme =
-    { pkgs, ... }:
-    let
-      theme = mkThemeConfig { inherit pkgs; };
-    in
-    {
-      options.theme = mkOption {
-        type = attrs;
-        default = { };
-        description = "Global theme configuration";
-      };
-
-      config = {
-        theme = theme.designSystem // {
-          inherit (theme)
-            themes
-            isDark
-            colorScheme
-            variant
-            colors
-            ;
-
-          withHash = mapAttrs (_name: value: "#${value}") theme.colors;
-          with0x = mapAttrs (_name: value: "0x${value}") theme.colors;
-          withRgb = mapAttrs (_name: value: theme.hexToRgb value) theme.colors;
-
-          icons = theme.getTheme "icons";
-          alacritty = theme.getTheme "alacritty";
-          ghostty = theme.getTheme "ghostty";
-          rio = theme.getTheme "rio";
-          zellij = theme.getTheme "zellij";
-          starship = theme.getTheme "starship";
-          vivid = theme.getTheme "vivid";
-          nushell = theme.getTheme "nushell";
-          helix = theme.getTheme "helix";
-          gtk = theme.getTheme "gtk";
-          qt = theme.getTheme "qt";
-
-        };
-      };
-    };
-
-  flake.modules.nixos.theme =
-    { pkgs, ... }:
-    let
-      theme = mkThemeConfig { inherit pkgs; };
-    in
-    {
-      options.theme = mkOption {
-        type = attrs;
-        default = { };
-        description = "Global theme configuration";
-      };
-
-      config = {
-        theme = theme.designSystem // {
-          inherit (theme)
-            themes
-            isDark
-            colorScheme
-            variant
-            colors
-            ;
-
-          withHash = mapAttrs (_name: value: "#${value}") theme.colors;
-          with0x = mapAttrs (_name: value: "0x${value}") theme.colors;
-          withRgb = mapAttrs (_name: value: theme.hexToRgb value) theme.colors;
-
-          icons = theme.getTheme "icons";
-          alacritty = theme.getTheme "alacritty";
-          ghostty = theme.getTheme "ghostty";
-          rio = theme.getTheme "rio";
-          zellij = theme.getTheme "zellij";
-          starship = theme.getTheme "starship";
-          vivid = theme.getTheme "vivid";
-          nushell = theme.getTheme "nushell";
-          helix = theme.getTheme "helix";
-          gtk = theme.getTheme "gtk";
-          qt = theme.getTheme "qt";
-        };
-      };
-    };
+  flake.modules.darwin.theme = themeModule;
+  flake.modules.nixos.theme = themeModule;
 
   flake.modules.nixos.theme-extra-fonts =
     { config, pkgs, ... }:

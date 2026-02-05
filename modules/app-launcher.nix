@@ -15,7 +15,7 @@
       settings = with theme; {
         main = {
           icon-theme = icons.name;
-          font = "${font.sans.name}:size=${toString font.size.small}";
+          font = "${font.sans.name}:size=${toString font.size.normal}";
           layer = "overlay";
           prompt = ''"❯ "'';
           terminal = "kitty";
@@ -35,7 +35,7 @@
         };
 
         border = {
-          radius = radius.verybig;
+          radius = radius.big;
           width = border.small;
         };
       };
