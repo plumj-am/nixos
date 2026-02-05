@@ -27,6 +27,7 @@
     {
       inputs,
       lib,
+      myLib,
       pkgs,
       theme,
       ...
@@ -42,6 +43,7 @@
         ;
       inherit (lib.lists) singleton;
       inherit (builtins) elem;
+      inherit (myLib) merge;
 
       yaziPickerScript =
         pkgs.writeShellScript "yazi-picker.sh" # bash
@@ -131,26 +133,79 @@
           rainbow-brackets = false;
         };
 
-        keys = genAttrs [ "normal" "select" ] (const {
-          "A-h" = "jump_view_left";
-          "A-j" = "jump_view_down";
-          "A-k" = "jump_view_up";
-          "A-l" = "jump_view_right";
+        keys = {
+          select = {
+            "A-h" = "jump_view_left";
+            "A-j" = "jump_view_down";
+            "A-k" = "jump_view_up";
+            "A-l" = "jump_view_right";
 
-          "ret" = "goto_word";
+            "C-j" = "@X*dp";
+            "C-k" = "@X*dkP";
 
-          "q" = "record_macro";
-          "@" = "replay_macro";
+            "ret" = "goto_word";
 
-          "X" = "select_line_above";
+            "q" = "record_macro";
+            "@" = "replay_macro";
 
-          "C-y" =
-            ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- ${yaziPickerScript} open ...%{buffer_name}";
+            "C-X" = "select_line_above";
 
-          "C-a" = "@*%s<ret>";
+            "C-y" =
+              ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- ${yaziPickerScript} open ...%{buffer_name}";
 
-          "D" = "extend_to_line_end";
-        });
+            "C-a" = "@*%s<ret>";
+
+            "D" = "extend_to_line_end";
+          };
+
+          normal = {
+            # Hack to have a custom popup helper with a title.
+            "A-h" = "jump_view_left";
+            "A-j" = "jump_view_down";
+            "A-k" = "jump_view_up";
+            "A-l" = "jump_view_right";
+
+            # Move lines up and down. Use `z` register to avoid clobbering system or primary clipboard.
+            "C-j" = "@X\"zd\"zp";
+            "C-k" = "@X\"zdk\"zP";
+
+            "ret" = "goto_word";
+
+            "q" = "record_macro";
+            "@" = "replay_macro";
+
+            "C-X" = "select_line_above";
+
+            "C-y" =
+              ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- ${yaziPickerScript} open ...%{buffer_name}";
+
+            "C-a" = "@*%s<ret>";
+
+            "D" = "extend_to_line_end";
+
+            "'" = {
+              _ = "@ File Management\n";
+
+              t = "@:sh touch <C-r>%";
+              r = "@:sh rm <C-r>%";
+              k = "@:sh mkdir <C-r>%";
+              m = "@:sh mv <C-r>% <C-r>%";
+              c = "@:sh cp <C-r>% <C-r>%";
+            };
+
+            # Like `ci<char>` in vim.
+            m = {
+              "(" = "@lf)hmi)";
+              ")" = "@lf)hmi)";
+              "{" = "@lf}hmi}";
+              "}" = "@lf}hmi}";
+              "[" = "@lf]hmi]";
+              "]" = "@lf]hmi]";
+              "'" = "@lf'lmi'";
+              "\"" = "@lf\"lmi\"";
+            };
+          };
+        };
       };
 
       # Pywal output doesn't have gradients like base16 needs.
