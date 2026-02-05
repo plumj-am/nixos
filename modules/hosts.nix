@@ -37,6 +37,8 @@ in
       games
       nix-distributed-builds
       kitty
+      helix
+      helix-extra
       object-storage
       jujutsu
       {
