@@ -1,5 +1,5 @@
-{
-  flake.modules.nixos.freshrss-server =
+let
+  freshrssServerBase =
     { config, ... }:
     let
       inherit (config.networking) domain;
@@ -29,3 +29,33 @@
         '';
       };
     };
+  rssTuiBase =
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
+    let
+      inherit (lib.lists) singleton;
+      inherit (config.age) secrets;
+    in
+    {
+      hjem.extraModules = singleton {
+        packages = singleton pkgs.newsboat;
+
+        xdg.config.files.".newsboat/config".text = ''
+          urls-source "freshrss"
+          freshrss-url "https://rss.plumj.am/api/greader.php"
+          freshrss-login "plumjam"
+          freshrss-password-file ${secrets.rssApiPassword.path}
+        '';
+      };
+    };
+in
+{
+  flake.modules.nixos.freshrss-server = freshrssServerBase;
+
+  flake.modules.nixos.rss-tui = rssTuiBase;
+  flake.modules.darwin.rss-tui = rssTuiBase;
+}
