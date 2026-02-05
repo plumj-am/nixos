@@ -98,10 +98,17 @@
         '';
       };
 
-      systemd.tmpfiles.rules = [
-        "d /etc/cgit 0750 forgejo forgejo -"
-        "d /var/cache/cgit 0750 forgejo forgejo - - -"
-      ];
+      # The following 2 are needed to keep cgit-simple-authentication happy for some reason.
+      environment.etc."cgitrc".text = # ini
+        ''
+          include=/etc/cgit/repo-protect.conf
+        '';
+
+      environment.etc."cgit/repo-protect.conf".text = # ini
+        ''
+          # Add repos with: repo.url=reponame
+          # Set protection: repo.protect=true|false
+        '';
 
       environment.systemPackages = singleton (
         pkgs.runCommand "cgit-auth" { } ''
