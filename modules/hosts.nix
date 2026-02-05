@@ -40,6 +40,7 @@ in
       hyprlock
       kitty
       mprocs
+      notifications
       # nix-distributed-builds
       object-storage
       openssh
