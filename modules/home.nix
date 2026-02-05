@@ -34,9 +34,7 @@ in
     let
       inherit (lib.attrsets) attrValues;
 
-      hjemModules = attrValues inputs.self.modules.hjem;
-      # Perhaps we shouldn't do ^this^ and import the necessary modules per host?
-      # This would eliminate the need for a lot of conditional configs.
+      hjemModules = inputs.self.modules.hjem |> attrValues;
     in
     {
       imports = [
@@ -62,9 +60,7 @@ in
     let
       inherit (lib.attrsets) attrValues;
 
-      hjemModules = attrValues inputs.self.modules.hjem;
-      # Perhaps we shouldn't do ^this^ and import the necessary modules per host?
-      # This would eliminate the need for a lot of conditional configs.
+      hjemModules = inputs.self.modules.hjem |> attrValues;
     in
     {
       imports = [
