@@ -32,21 +32,20 @@
       inherit (lib.modules) mkIf;
       inherit (lib.lists) singleton;
 
-      settingsGtk3 = # ini
+      commonGtk = # ini
         ''
-          [Settings]
           gtk-prefer-dark=${toString theme.isDark}
           gtk-font-name=${theme.font.sans.name} ${toString theme.font.size.normal}
           gtk-theme-name=${theme.gtk.name}
           gtk-icon-theme-name=${theme.icons.name}
         '';
 
-      settingsGtk2 = # ini
+      settingsGtk2 = commonGtk;
+
+      settingsGtk3 = # ini
         ''
-          gtk-prefer-dark=${toString theme.isDark}
-          gtk-font-name=${theme.font.sans.name} ${toString theme.font.size.normal}
-          gtk-theme-name=${theme.gtk.name}
-          gtk-icon-theme-name=${theme.icons.name}
+          [Settings]
+          ${commonGtk}
         '';
 
     in
