@@ -35,10 +35,11 @@ in
       disks-extra-swap
       env
       games
-      nix-distributed-builds
-      kitty
       helix
       helix-extra
+      hyprlock
+      kitty
+      mprocs
       # nix-distributed-builds
       object-storage
       openssh
@@ -46,6 +47,7 @@ in
       shell
       shell-tools
       ssh
+      yazi
       {
         config = mkConfig inputs "yuzu" "x86_64-linux" "desktop" {
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFDLlddona4PlORWd+QpR/7F5H46/Dic9vV23/YSrZl0 root@yuzu";

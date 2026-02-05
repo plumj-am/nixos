@@ -1,13 +1,11 @@
-{
-  flake.modules.hjem.yazi =
+let
+  yaziBase =
     {
       pkgs,
       lib,
-      isDesktop,
       ...
     }:
     let
-      inherit (lib.modules) mkIf;
       inherit (lib.lists) singleton;
 
       toml = pkgs.formats.toml { };
@@ -35,9 +33,15 @@
         input.cursor_blink = false;
       };
     in
-    mkIf isDesktop {
-      packages = singleton pkgs.yazi;
+    {
+      hjem.extraModules = singleton {
+        packages = singleton pkgs.yazi;
 
-      xdg.config.files."yazi/yazi.toml".source = toml.generate "yazi-config.toml" settings;
+        xdg.config.files."yazi/yazi.toml".source = toml.generate "yazi-config.toml" settings;
+      };
     };
+in
+{
+  flake.modules.nixos.yazi = yaziBase;
+  flake.modules.darwin.yazi = yaziBase;
 }
