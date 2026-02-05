@@ -42,6 +42,7 @@ in
       env
       games
       gammastep
+      git
       helix
       helix-extra
       hyprlock
@@ -55,6 +56,7 @@ in
       shell
       shell-tools
       ssh
+      waybar
       yazi
       {
         config = mkConfig inputs "yuzu" "x86_64-linux" "desktop" {

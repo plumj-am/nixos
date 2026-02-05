@@ -1,5 +1,5 @@
-{
-  flake.modules.hjem.git =
+let
+  gitBase =
     {
       pkgs,
       config,
@@ -8,6 +8,9 @@
     }:
     let
       inherit (lib.meta) getExe;
+      inherit (lib.lists) singleton;
+
+      gitIni = pkgs.formats.gitIni { };
 
       settings = {
         user.name = "PlumJam";
@@ -41,7 +44,7 @@
 
         core.compression = 9;
         core.preloadindex = true;
-        core.editor = "${config.environment.sessionVariables.EDITOR}";
+        core.editor = "${config.environment.variables.EDITOR}";
         core.longpaths = true;
 
         diff.algorithm = "histogram";
@@ -62,36 +65,40 @@
 
         include.path = "credentials";
       };
-
-      gitIni = pkgs.formats.gitIni { };
     in
     {
-      packages = [
-        pkgs.gh
-        pkgs.git
-        pkgs.difftastic
-        pkgs.git-credential-oauth
-      ];
+      hjem.extraModules = singleton {
+        packages = [
+          pkgs.gh
+          pkgs.git
+          pkgs.difftastic
+          pkgs.git-credential-oauth
+        ];
 
-      xdg.config.files."git/ignore".text = # .gitignore
-        ''
-          .claude/
-          mprocs.log
-        '';
+        xdg.config.files."git/ignore".text = # .gitignore
+          ''
+            .claude/
+            mprocs.log
+          '';
 
-      xdg.config.files."git/config".source = gitIni.generate "config" settings;
+        xdg.config.files."git/config".source = gitIni.generate "config" settings;
 
-      xdg.config.files."git/credentials".text = # ini
-        ''
-          [credential]
-            helper=cache --timeout 21600
-            helper=oauth
-            helper=oauth -device
-            helper=!gh auth git-credential
-          [credential "https://git.plumj.am"]
-            oauthClientId=a4792ccc-144e-407e-86c9-5e7d8d9c3269
-            oauthAuthURL=/login/oauth/authorize
-            oauthTokenURL=/login/oauth/access_token
-        '';
+        xdg.config.files."git/credentials".text = # ini
+          ''
+            [credential]
+              helper=cache --timeout 21600
+              helper=oauth
+              helper=oauth -device
+              helper=!gh auth git-credential
+            [credential "https://git.plumj.am"]
+              oauthClientId=a4792ccc-144e-407e-86c9-5e7d8d9c3269
+              oauthAuthURL=/login/oauth/authorize
+              oauthTokenURL=/login/oauth/access_token
+          '';
+      };
     };
+in
+{
+  flake.modules.nixos.git = gitBase;
+  flake.modules.darwin.git = gitBase;
 }
