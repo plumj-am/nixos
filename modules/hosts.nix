@@ -52,6 +52,8 @@ in
       notifications
       niri
       # nix-distributed-builds
+      nix-settings
+      nix-settings-extra-desktop
       object-storage
       openssh
       jujutsu

@@ -11,7 +11,6 @@ let
     locale
     netrc
     network
-    nix-settings
     openssh
     packages
     rebuild
