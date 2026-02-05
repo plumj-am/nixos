@@ -75,6 +75,28 @@
         "type": "github"
       }
     },
+    "ashell": {
+      "inputs": {
+        "crane": "crane",
+        "nixpkgs": [
+          "os"
+        ],
+        "rust-overlay": "rust-overlay"
+      },
+      "locked": {
+        "lastModified": 1770310936,
+        "narHash": "sha256-xcS2po25b/6jOMw+F7v/yNoznVcDICIpUeQCLYG8UB8=",
+        "owner": "malpenzibo",
+        "repo": "ashell",
+        "rev": "38d2f368f4081527e65e645646933affe00c211e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "malpenzibo",
+        "repo": "ashell",
+        "type": "github"
+      }
+    },
     "claude-code": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -83,11 +105,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1770168651,
-        "narHash": "sha256-SxzTEu49iaAA/nAT28Rsr4BmjC3eCkiaM4/ZYBVhhNQ=",
+        "lastModified": 1770315205,
+        "narHash": "sha256-yOYprNUvMHRBC7EfmhNOYYLqNm43cLtydV39ITnCfZk=",
         "owner": "sadjow",
         "repo": "claude-code-nix",
-        "rev": "f256f48c037a6e54afa332795328f753f2fafbaf",
+        "rev": "b774ffcdcd9987f4a2e6e3809130d04438e29a13",
         "type": "github"
       },
       "original": {
@@ -97,6 +119,21 @@
       }
     },
     "crane": {
+      "locked": {
+        "lastModified": 1770169865,
+        "narHash": "sha256-iPiy13xzDQ9GjpOez+NNIjh/qjl7i4RDf9dF2x5mF9I=",
+        "owner": "ipetkov",
+        "repo": "crane",
+        "rev": "8254ccf3b5b5131890ee073776f2e61c6d1e55d4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ipetkov",
+        "repo": "crane",
+        "type": "github"
+      }
+    },
+    "crane_2": {
       "locked": {
         "lastModified": 1768319649,
         "narHash": "sha256-VFkNyxHxkqGp8gf8kfFMW1j6XeBy609kv6TE9uF/0Js=",
@@ -354,11 +391,11 @@
         "zon2nix": "zon2nix"
       },
       "locked": {
-        "lastModified": 1770303757,
-        "narHash": "sha256-DVET2kl7KY7SE8O3xOu5uEcPIJz+h/o23MP4sUo5xiU=",
+        "lastModified": 1770319677,
+        "narHash": "sha256-K2T07Lro9TBPZmWDet72HWG4doAO9w9JlIP9HsJh6CE=",
         "owner": "ghostty-org",
         "repo": "ghostty",
-        "rev": "ca07f8c3f775fe437d46722db80a755c2b6e6399",
+        "rev": "3cc01155bf3c903d533e6896aa378e36357bd278",
         "type": "github"
       },
       "original": {
@@ -484,7 +521,7 @@
         "nixpkgs": [
           "os"
         ],
-        "rust-overlay": "rust-overlay"
+        "rust-overlay": "rust-overlay_2"
       },
       "locked": {
         "lastModified": 1770278505,
@@ -688,20 +725,20 @@
     },
     "nu-lint": {
       "inputs": {
-        "crane": "crane",
+        "crane": "crane_2",
         "flake-utils": "flake-utils_3",
         "git-hooks": "git-hooks_2",
         "nixpkgs": [
           "os"
         ],
-        "rust-overlay": "rust-overlay_3"
+        "rust-overlay": "rust-overlay_4"
       },
       "locked": {
-        "lastModified": 1770307695,
-        "narHash": "sha256-O30Yd1FNOY24zDVUcHnlamZNKRgWyrYUvKRHeOb7OQk=",
+        "lastModified": 1770318204,
+        "narHash": "sha256-kVadmvMPxfAOvE1WGKWZvwJAOX05erpaABIE4z+BKjw=",
         "ref": "refs/heads/main",
-        "rev": "d28cae0d6a6637d7b30543ceac1cc4e8f00d6966",
-        "revCount": 347,
+        "rev": "150224652c6ea68eb6f7bba1c5a5a72de5f9d8e1",
+        "revCount": 348,
         "type": "git",
         "url": "https://codeberg.org/wvhulle/nu-lint"
       },
@@ -716,7 +753,7 @@
         "nixpkgs": [
           "os"
         ],
-        "rust-overlay": "rust-overlay_4",
+        "rust-overlay": "rust-overlay_5",
         "treefmt-nix": "treefmt-nix_2"
       },
       "locked": {
@@ -740,11 +777,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1770309941,
-        "narHash": "sha256-pDu7WuUUVe6telbTjrKFcA+zmN5T9Ncwr8NtxumlMeU=",
+        "lastModified": 1770320311,
+        "narHash": "sha256-ATR3mUOasPLLjLAW4lMrplodACnh+dkUPzpzVPvQEiQ=",
         "owner": "anomalyco",
         "repo": "opencode",
-        "rev": "dbde377ab0a5bef51b3814c13b4cf6605ffbfbcb",
+        "rev": "b1c44c7e5c70d567404ee0ee3111cd74871c7f20",
         "type": "github"
       },
       "original": {
@@ -909,7 +946,7 @@
         "nixpkgs": [
           "os"
         ],
-        "rust-overlay": "rust-overlay_5",
+        "rust-overlay": "rust-overlay_6",
         "systems": "systems_7"
       },
       "locked": {
@@ -932,6 +969,7 @@
         "actions": "actions",
         "age": "age",
         "age-rekey": "age-rekey",
+        "ashell": "ashell",
         "claude-code": "claude-code",
         "disko": "disko",
         "fenix": "fenix",
@@ -973,6 +1011,27 @@
     "rust-overlay": {
       "inputs": {
         "nixpkgs": [
+          "ashell",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1770174315,
+        "narHash": "sha256-GUaMxDmJB1UULsIYpHtfblskVC6zymAaQ/Zqfo+13jc=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "095c394bb91342882f27f6c73f64064fb9de9f2a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
+      }
+    },
+    "rust-overlay_2": {
+      "inputs": {
+        "nixpkgs": [
           "helix",
           "nixpkgs"
         ]
@@ -991,7 +1050,7 @@
         "type": "github"
       }
     },
-    "rust-overlay_2": {
+    "rust-overlay_3": {
       "inputs": {
         "nixpkgs": [
           "hjem",
@@ -1013,7 +1072,7 @@
         "type": "github"
       }
     },
-    "rust-overlay_3": {
+    "rust-overlay_4": {
       "inputs": {
         "nixpkgs": [
           "nu-lint",
@@ -1034,7 +1093,7 @@
         "type": "github"
       }
     },
-    "rust-overlay_4": {
+    "rust-overlay_5": {
       "inputs": {
         "nixpkgs": [
           "nufmt",
@@ -1055,7 +1114,7 @@
         "type": "github"
       }
     },
-    "rust-overlay_5": {
+    "rust-overlay_6": {
       "inputs": {
         "nixpkgs": [
           "rio",
@@ -1082,7 +1141,7 @@
           "hjem",
           "nixpkgs"
         ],
-        "rust-overlay": "rust-overlay_2",
+        "rust-overlay": "rust-overlay_3",
         "systems": "systems_4"
       },
       "locked": {

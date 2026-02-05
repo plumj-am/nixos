@@ -1,4 +1,12 @@
 {
+  flake-file.inputs = {
+    ashell = {
+      url = "github:malpenzibo/ashell";
+
+      inputs.nixpkgs.follows = "os";
+    };
+  };
+
   flake.modules.nixos.waybar = {
     programs.waybar.enable = true;
   };
@@ -418,6 +426,7 @@
 
   flake.modules.hjem.ashell =
     {
+      inputs,
       pkgs,
       lib,
       isDesktop,
@@ -426,6 +435,7 @@
     }:
     let
       inherit (lib.modules) mkIf;
+      inherit (lib.lists) singleton;
 
       enable = false;
       toml = pkgs.formats.toml { };
@@ -441,7 +451,7 @@
       };
     in
     mkIf (isDesktop && isLinux && enable) {
-      packages = [ pkgs.ashell ];
+      packages = singleton inputs.ashell.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
       xdg.config.files."ashell/config.toml".source = toml.generate "ashell.toml" settings;
     };

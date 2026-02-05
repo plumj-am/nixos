@@ -27,6 +27,10 @@
       };
       url = "github:oddlama/agenix-rekey";
     };
+    ashell = {
+      inputs.nixpkgs.follows = "os";
+      url = "github:malpenzibo/ashell";
+    };
     claude-code = {
       inputs.nixpkgs.follows = "os";
       url = "github:sadjow/claude-code-nix";
