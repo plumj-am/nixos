@@ -3,6 +3,7 @@ let
   commonModules.imports = with inputs.self.modules.nixos; [
     disable-nano
     disable-nix-documentation
+    disks-extra-zram-swap
     dynamic-binaries
     hjem
     keys
@@ -26,9 +27,9 @@ let
 
   desktopModules.imports = with inputs.self.modules.nixos; [
     audio
-    boot-systemd
     desktop-gui
     desktop-tools
+    disks-normal
     gammastep
     graphics
     hardware-desktop
@@ -50,11 +51,9 @@ let
   ];
 
   serverModules.imports = with inputs.self.modules.nixos; [
-    forgejo-action-runner
     linux-kernel
-    nix-distributed-builds
-    nix-distributed-builder
     prometheus-node-exporter
+    rust
     sudo-server
   ];
 in

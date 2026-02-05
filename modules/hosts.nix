@@ -31,10 +31,10 @@ in
       commonModules
       desktopModules
 
-      disks-normal
+      boot-systemd
       disks-extra-swap
-      disks-extra-zram-swap
       games
+      nix-distributed-builds
       object-storage
       {
         config = mkConfig inputs "yuzu" "x86_64-linux" "desktop" {
@@ -57,8 +57,7 @@ in
       commonModules
       desktopModules
 
-      disks-normal
-      disks-extra-zram-swap
+      boot-systemd
       forgejo-action-runner
       nix-distributed-builds
       nix-distributed-builder
@@ -99,9 +98,10 @@ in
       desktop-tools
       jujutsu-extra
       linux-kernel-zen
-      object-storage
       packages-extra-desktop
-      rust-desktop
+      nix-distributed-builds
+      nix-distributed-builder
+      # object-storage
       scratchpads
       sudo-desktop
       wsl
@@ -131,13 +131,14 @@ in
       boot-grub
       cgit
       disks-disko
-      disks-extra-zram-swap
       forgejo
+      forgejo-action-runner
       goatcounter
       nginx
+      nix-distributed-builds
+      nix-distributed-builder
       object-storage
       opengist
-      rust
       uptime-kuma
       website-personal
       { hardware.facter.reportPath = ./facter/plum.json; }
@@ -194,10 +195,11 @@ in
       acme
       boot-grub
       disks-disko
-      disks-extra-zram-swap
+      forgejo-action-runner
       nginx
+      nix-distributed-builds
+      nix-distributed-builder
       object-storage
-      rust
       website-dr-radka
       {
         config = mkConfig inputs "kiwi" "x86_64-linux" "server" {
@@ -234,9 +236,10 @@ in
 
       boot-grub
       disks-disko
-      disks-extra-zram-swap
+      forgejo-action-runner
+      nix-distributed-builds
+      nix-distributed-builder
       object-storage
-      rust
       {
         config = mkConfig inputs "sloe" "x86_64-linux" "server" {
 
@@ -265,9 +268,10 @@ in
 
       boot-grub
       disks-disko
-      disks-extra-zram-swap
+      forgejo-action-runner
+      nix-distributed-builds
+      nix-distributed-builder
       object-storage
-      rust
       {
         config = mkConfig inputs "blackwell" "x86_64-linux" "server" {
 
