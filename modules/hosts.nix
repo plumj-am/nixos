@@ -31,6 +31,7 @@ in
       commonModules
       desktopModules
 
+      app-launcher
       boot-systemd
       disks-extra-swap
       env
