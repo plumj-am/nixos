@@ -55,5 +55,19 @@
       files.".gtkrc-2.0".text = settingsGtk2;
       xdg.config.files."gtk-3.0/settings.ini".text = settingsGtk3;
       xdg.config.files."gtk-4.0/settings.ini".text = settingsGtk3;
+
+      # Disable rounded corners in GTK
+      xdg.config.files."gtk-3.0/gtk.css".text = # css
+        ''
+          * {
+            border-radius: 0;
+          }
+        '';
+      xdg.config.files."gtk-4.0/gtk.css".text = # css
+        ''
+          * {
+            border-radius: 0;
+          }
+        '';
     };
 }
