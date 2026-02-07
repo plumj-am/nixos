@@ -28,19 +28,24 @@ def remote-build [
 ]: nothing -> record {
    print-notify $"Attempting to start remote build process on ($target)."
 
-   if not $quiet { print-notify $"Removing old configuration files on ($target)." }
-   ssh -qtt $"jam@($target)" "rm --recursive --force nixos" | complete
+   try {
+      if not $quiet { print-notify $"Removing old configuration files on ($target)." }
+      ssh -qtt $"jam@($target)" "rm --recursive --force nixos" | complete
 
-   if not $quiet { print-notify $"Copying new configuration files to ($target)." }
-   jj file list | rsync-files --files-from - ./ $"jam@($target):nixos" | complete
+      if not $quiet { print-notify $"Copying new configuration files to ($target)." }
+      jj file list | rsync-files --files-from - ./ $"jam@($target):nixos" | complete
 
-   if not $quiet { print-notify $"Starting rebuild on ($target)." }
-   ssh -qtt $"jam@($target)" ./nixos/rebuild.nu | complete
+      if not $quiet { print-notify $"Starting rebuild on ($target)." }
+      ssh -qtt $"jam@($target)" ./nixos/rebuild.nu | complete
+
+      true
+   } catch { false }
 }
 
 def build [
    cmd: string
    ...args: string
+   --all
 ]: nothing -> record {
    let nh = if (which nh | is-not-empty) {
       [ nh ]
@@ -51,7 +56,11 @@ def build [
 
    print-notify $"Rebuilding (sys host | get hostname)."
 
-   sudo ...$nh $cmd ...$args | complete
+   if $all {
+      try { sudo ...$nh $cmd ...$args | complete } catch { false }
+   } else {
+      try { sudo ...$nh $cmd ...$args; true } catch { false }
+   }
 }
 
 # nu-lint-ignore: max_function_body_length
@@ -150,7 +159,7 @@ def --wrapped main [ # nu-lint-ignore: max_function_body_length
             let result = remote-build --quiet $h
             {host: $h, success: ($result.exit_code == 0), stderr: $result.stderr}
          } else {
-            let result = build $config.cmd ...$nh_args
+            let result = build $config.cmd ...$nh_args --all
             {host: $h, success: ($result.exit_code == 0), stderr: $result.stderr}
          }
       }
@@ -168,23 +177,15 @@ def --wrapped main [ # nu-lint-ignore: max_function_body_length
       return
    }
 
-   $env.REBUILD_IN_PROGRESS = true
-
-   start-progress-bar
-
    let result = if $is_remote {
       remote-build $target
    } else {
       build $config.cmd ...$nh_args
    }
 
-   $env.REBUILD_IN_PROGRESS = false
-
-   match $result.exit_code {
-      0 => { print-notify $"Rebuild for ($target) succeeded." }
-      _ => {
-         print-notify $"Rebuild for ($target) failed."
-         print-notify $"Error: ($result)"
-      }
+   if $result {
+      print-notify $"Rebuild for ($target) succeeded."
+   } else {
+      print-notify $"Rebuild for ($target) failed."
    }
 }
