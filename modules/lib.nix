@@ -158,18 +158,6 @@ in
           "steam-unwrapped"
         ];
       }
-
-      (optionalAttrs (type == "server" || host == "date") {
-        forgejo-action-runner = {
-          withDocker = true;
-          labels = [
-            "self-hosted:host"
-            "${host}:host"
-            "docpad-infra:host"
-            "ubuntu-22.04:docker://docker.gitea.com/runner-images:ubuntu-22.04"
-          ];
-        };
-      })
       rest
     ];
 

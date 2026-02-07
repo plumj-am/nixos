@@ -1,5 +1,5 @@
-{
-  flake.modules.nixos.forgejo-action-runner =
+let
+  forgejoActionRunner =
     {
       config,
       lib,
@@ -10,36 +10,19 @@
     let
       inherit (lib.types) types;
       inherit (lib.options) mkOption;
-      inherit (lib.modules) mkIf;
+      inherit (config.networking) hostName;
 
-      hostName = config.networking.hostName;
+      name = hostName;
+      url = "https://git.plumj.am/";
+      defaultLabels = [
+        "self-hosted:host"
+        "${name}:host"
+        "docpad-infra:host"
+        "ubuntu-22.04:docker://docker.gitea.com/runner-images:ubuntu-22.04"
+      ];
     in
     {
       options.forgejo-action-runner = {
-        url = mkOption {
-          type = types.str;
-          default = "https://git.plumj.am/";
-          description = "Forgejo instance URL";
-        };
-
-        labels = mkOption {
-          type = types.listOf types.str;
-          default = [ "self-hosted:host" ];
-          description = "Runner labels";
-        };
-
-        extraHostPackages = mkOption {
-          type = types.listOf types.package;
-          default = [ ];
-          description = "Extra packages to add to the runner";
-        };
-
-        withDocker = mkOption {
-          type = types.bool;
-          default = false;
-          description = "Include docker and docker-compose";
-        };
-
         strong = mkOption {
           type = types.bool;
           default = false;
@@ -48,27 +31,22 @@
       };
 
       config = {
-        users.groups.gitea-runner = { };
-
         users.users.gitea-runner = {
           description = "gitea-runner";
           isSystemUser = true;
           group = "gitea-runner";
         };
 
+        users.groups.gitea-runner = { };
+
         services.gitea-actions-runner = {
           package = pkgs.forgejo-runner;
-          instances.${hostName} = {
+          instances.${name} = {
             enable = true;
-            name = hostName;
             tokenFile = config.age.secrets.forgejoRunnerToken.path;
-            inherit (config.forgejo-action-runner) url;
+            inherit name url;
 
-            labels =
-              if config.forgejo-action-runner.strong then
-                config.forgejo-action-runner.labels ++ [ "strong:host" ]
-              else
-                config.forgejo-action-runner.labels;
+            labels = defaultLabels ++ lib.optionals config.forgejo-action-runner.strong [ "strong:host" ];
 
             settings = {
               runner = {
@@ -111,15 +89,15 @@
               pkgs.sqlx-cli
               pkgs.which
               pkgs.xz
-            ]
-            ++ lib.optionals config.forgejo-action-runner.withDocker [
               pkgs.docker
               pkgs.docker-compose
-            ]
-            ++ config.forgejo-action-runner.extraHostPackages;
+            ];
           };
         };
-        virtualisation.docker.enable = mkIf config.forgejo-action-runner.withDocker true;
+        virtualisation.docker.enable = true;
       };
     };
+in
+{
+  flake.modules.nixos.forgejo-action-runner = forgejoActionRunner;
 }
