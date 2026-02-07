@@ -219,6 +219,7 @@ in
       nginx
       nix-distributed-builds
       nix-distributed-builder
+      nix-settings-extra-server
       object-storage
       opengist
       prometheus-node-exporter
@@ -290,6 +291,7 @@ in
       nginx
       nix-distributed-builds
       nix-distributed-builder
+      nix-settings-extra-server
       object-storage
       prometheus-node-exporter
       rust
@@ -334,6 +336,7 @@ in
       linux-kernel-latest
       nix-distributed-builds
       nix-distributed-builder
+      nix-settings-extra-server
       object-storage
       prometheus-node-exporter
       rust
@@ -370,6 +373,7 @@ in
       linux-kernel-latest
       nix-distributed-builds
       nix-distributed-builder
+      nix-settings-extra-server
       object-storage
       prometheus-node-exporter
       rust
@@ -399,6 +403,7 @@ in
       aspectsBase
 
       app-launcher
+      nix-settings-extra-darwin
       rust-desktop
       {
         config = {
