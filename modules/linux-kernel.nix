@@ -139,7 +139,7 @@ let
 in
 {
 
-  flake.modules.nixos.linux-kernel =
+  flake.modules.nixos.linux-kernel-latest =
     { pkgs, ... }:
     {
       imports = [ commonModule ];
