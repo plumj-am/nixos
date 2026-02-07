@@ -49,24 +49,7 @@ in
     { pkgs, config, ... }:
     let
       inherit (config.myLib) mkDesktopEntry;
-    in
-    {
-      environment.systemPackages = [
-        pkgs.thunar
-        pkgs.tumbler
 
-        pkgs.hyprpicker
-
-        (mkDesktopEntry { inherit pkgs; } {
-          name = "Colour-Picker";
-          exec = "hyprpicker --format=hex --autocopy";
-        })
-      ];
-    };
-
-  flake.modules.nixos.scratchpads =
-    { pkgs, ... }:
-    let
       mkScratchpad' = mkScratchpad { inherit pkgs; };
 
       todoScratchpad = mkScratchpad' {
@@ -82,6 +65,16 @@ in
     in
     {
       environment.systemPackages = [
+        pkgs.thunar
+        pkgs.tumbler
+
+        pkgs.hyprpicker
+
+        (mkDesktopEntry { inherit pkgs; } {
+          name = "Colour-Picker";
+          exec = "hyprpicker --format=hex --autocopy";
+        })
+
         todoScratchpad
         randomScratchpad
       ];
