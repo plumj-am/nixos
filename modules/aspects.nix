@@ -24,7 +24,7 @@ let
     shell-tools
     sudo
     ssh
-    system
+    systems
     tailscale
     theme
     unfree
@@ -50,7 +50,7 @@ let
     shell-tools
     sudo
     ssh
-    system
+    systems
     tailscale
     theme
     unfree

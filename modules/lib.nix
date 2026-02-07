@@ -127,7 +127,10 @@ in
     in
     mkMerge [
       {
-        inherit type platform;
+        inherit type;
+
+        nixpkgs.hostPlatform = platform;
+
         networking.hostName = host;
 
         age.secrets = {

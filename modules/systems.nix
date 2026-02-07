@@ -1,9 +1,8 @@
 let
-  commonModule =
+  systemsBase =
     {
       config,
       lib,
-      pkgs,
       ...
     }:
     let
@@ -17,18 +16,6 @@ let
     {
       options = {
         os = mkConst <| last <| splitString "-" config.nixpkgs.hostPlatform.system;
-
-        platform = mkOption {
-          type = enum [
-            "x86_64-linux"
-            "aarch64-linux"
-            "aarch64-darwin"
-            "x86_64-darwin"
-          ];
-          default = pkgs.system;
-          example = "x86_64-linux";
-          description = "The host platform (inferred from pkgs.system)";
-        };
 
         type = mkOption {
           type = enum [
@@ -47,8 +34,6 @@ let
         isDesktop = mkConst <| config.type == "desktop";
         isServer = mkConst <| config.type == "server";
       };
-
-      config.nixpkgs.hostPlatform = config.platform;
     };
 in
 {
@@ -57,6 +42,6 @@ in
     "aarch64-darwin"
   ];
 
-  flake.modules.nixos.system = commonModule;
-  flake.modules.darwin.system = commonModule;
+  flake.modules.nixos.systems = systemsBase;
+  flake.modules.darwin.systems = systemsBase;
 }
