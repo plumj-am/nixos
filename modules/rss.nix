@@ -29,6 +29,7 @@ let
         '';
       };
     };
+
   rssTuiBase =
     {
       pkgs,
@@ -44,11 +45,11 @@ let
       hjem.extraModules = singleton {
         packages = singleton pkgs.newsboat;
 
-        xdg.config.files.".newsboat/config".text = ''
+        xdg.config.files."newsboat/config".text = ''
           urls-source "freshrss"
           freshrss-url "https://rss.plumj.am/api/greader.php"
           freshrss-login "plumjam"
-          freshrss-password-file ${secrets.rssApiPassword.path}
+          freshrss-passwordfile "${secrets.rssApiPassword.path}"
         '';
       };
     };

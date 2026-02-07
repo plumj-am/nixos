@@ -70,7 +70,10 @@ in
 
           age.secrets = {
             nixStoreKey.rekeyFile = ../secrets/yuzu-nix-store-key.age;
-            rssApiPassword.rekeyFile = ../secrets/plum-rss-api-password.age;
+            rssApiPassword = {
+              rekeyFile = ../secrets/plum-rss-api-password.age;
+              owner = "jam";
+            };
           };
 
           system.stateVersion = "26.05";
@@ -102,7 +105,10 @@ in
           age.secrets = {
             forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
             nixStoreKey.rekeyFile = ../secrets/date-nix-store-key.age;
-            rssApiPassword.rekeyFile = ../secrets/plum-rss-api-password.age;
+            rssApiPassword = {
+              rekeyFile = ../secrets/plum-rss-api-password.age;
+              owner = "jam";
+            };
           };
 
           # Used as a server when not used as a laptop.
