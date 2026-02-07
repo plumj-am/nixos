@@ -1,6 +1,6 @@
 { inputs, ... }:
 let
-  modulesBaseLinux.imports = with inputs.self.modules.nixos; [
+  aspectsBaseLinux.imports = with inputs.self.modules.nixos; [
     disable-nano
     disable-nix-documentation
     disks-extra-zram-swap
@@ -33,7 +33,7 @@ let
     yubikey
   ];
 
-  modulesBaseDarwin.imports = with inputs.self.modules.darwin; [
+  aspectsBaseDarwin.imports = with inputs.self.modules.darwin; [
     disable-nix-documentation
     git
     env
@@ -59,6 +59,6 @@ let
   ];
 in
 {
-  flake.modules.nixos.modulesBase = modulesBaseLinux;
-  flake.modules.darwin.modulesBase = modulesBaseDarwin;
+  flake.modules.nixos.aspectsBase = aspectsBaseLinux;
+  flake.modules.darwin.aspectsBase = aspectsBaseDarwin;
 }
