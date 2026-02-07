@@ -390,15 +390,17 @@ let
 
           try {
             niri msg action do-screen-transition --delay-ms 0 | complete
-            pkill waybar -USR2 | complete # Better to do it here rather than relying on `reload_style_on_change` setting.
+            # pkill -USR2 waybar | complete
             pkill -USR1 kitty | complete
             pkill -USR2 ghostty | complete
             pkill -USR1 hx | complete
             systemctl --user restart mako | complete
             makoctl reload | complete
+            # pkill -SIGTERM ashell | complete # Need to check if necessary for reloading.
             pkill -SIGTERM brave | complete
             sleep 1sec
             niri msg action do-screen-transition --delay-ms 500 | complete
+            # niri msg action spawn -- ashell | complete
             niri msg action spawn -- brave | complete
           } catch {|e|
              print $e.msg

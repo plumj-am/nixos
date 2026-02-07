@@ -64,6 +64,12 @@ let
                   draw-border-with-background false
                   clip-to-geometry true
                   geometry-corner-radius ${toString (theme.radius.tiny * 1.0)}
+                  shadow {
+                    off
+                  }
+                  focus-ring {
+                    off
+                  }
                 }
 
                 window-rule {
@@ -88,34 +94,12 @@ let
                   border {
                     off
                   }
-                  focus-ring {
-                    off
-                  }
-                  shadow {
-                    off
-                  }
                   geometry-corner-radius 0
                   clip-to-geometry false
                 }
 
                 layer-rule {
-                  match namespace=r#"waybar|polybar|ashell|notifications|launcher"#
-                  shadow {
-                    off
-                    color "#${toString theme.colors.base09}33"
-                    draw-behind-window true
-                    softness 15
-                    offset x=0 y=0
-                  }
-                }
-
-                layer-rule {
-                  match namespace=r#"waybar|polybar"#
-                  opacity 1.0
-                }
-
-                layer-rule {
-                  match namespace=r#"notifications|launcher"#
+                  match namespace=r#"ashell|notifications|launcher"#
                   opacity 1.0
                 }
 
@@ -277,14 +261,16 @@ let
               Mod+D { spawn "todo-scratchpad"; }
               Mod+S { spawn "random-scratchpad"; }
               Mod+C { spawn-sh "cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"; }
-              Mod+B { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && notify-send bar_toggle && pkill -USR1 waybar"; }
+              // TODO: Adapt for ashell.
+              // Mod+B { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && notify-send bar_toggle && pkill -USR1 waybar"; }
               Mod+N { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && notify-send hidden_toggle && makoctl mode -t mute && makoctl mode -t do-not-disturb"; }
               Mod+M { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && makoctl mode -t mute && notify-send mute_toggle"; }
-              Mod+Z { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && notify-send zen_toggle && pkill -USR1 waybar && makoctl mode -t mute && makoctl mode -t do-not-disturb"; }
+              // TODO: Adapt for ashell.
+              // Mod+Z { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && notify-send zen_toggle && pkill -USR1 waybar && makoctl mode -t mute && makoctl mode -t do-not-disturb"; }
             }
 
-            // spawn-at-startup "waybar"; // Started by NixOS.
             // spawn-at-startup "quickshell" // Not using yet.
+            spawn-at-startup "ashell"
             spawn-at-startup "swww-daemon"
             // spawn-at-startup "mako" // Started by NixOS.
           '';

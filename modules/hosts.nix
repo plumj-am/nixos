@@ -31,8 +31,9 @@ in
 
       ai
       ai-extra
-      audio
       app-launcher
+      ashell
+      audio
       boot-systemd
       desktop-gui
       desktop-tools
@@ -67,7 +68,6 @@ in
       sudo-extra-desktop
       theme-extra-fonts
       theme-extra-scripts
-      waybar
       yazi
       zellij
       {
@@ -98,6 +98,7 @@ in
       ai
       ai-extra
       app-launcher
+      ashell
       audio
       boot-systemd
       desktop-gui
@@ -136,7 +137,6 @@ in
       sudo-extra-desktop
       theme-extra-fonts
       theme-extra-scripts
-      waybar
       yazi
       zellij
       {
