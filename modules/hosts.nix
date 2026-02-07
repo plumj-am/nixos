@@ -406,12 +406,7 @@ in
       nix-settings-extra-darwin
       rust-desktop
       {
-        config = {
-          platform = "aarch64-darwin";
-          type = "desktop";
-
-          network.hostName = "lime";
-
+        config = mkConfig "lime" "aarch64-darwin" "desktop" {
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPeG5tRLj+z0LlAhH60rQuvRarHWuYE+fYMEgPvGbMrW jam@lime";
 
           age.secrets = {

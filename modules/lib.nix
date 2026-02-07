@@ -123,6 +123,7 @@ in
     let
       lib = inputs.os.lib;
       inherit (lib) mkMerge;
+      inherit (lib.strings) hasSuffix;
       inherit (lib.attrsets) optionalAttrs;
     in
     mkMerge [
@@ -150,7 +151,7 @@ in
           };
         };
 
-        unfree.allowedNames = [
+        unfree.allowedNames = optionalAttrs (hasSuffix "linux" platform) [
           "claude-code"
           "nvidia-x11"
           "nvidia-settings"
