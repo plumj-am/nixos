@@ -1,27 +1,33 @@
 let
-  commonModule =
-    { pkgs, ... }:
+  jujutsuExtra =
+    { pkgs, lib, ... }:
+    let
+      inherit (lib.lists) singleton;
+    in
     {
-      environment.systemPackages = [
-        pkgs.jujutsu
-        pkgs.difftastic
-        pkgs.mergiraf
+      hjem.extraModules = singleton {
+        packages = [
+          pkgs.jujutsu
+          pkgs.difftastic
+          pkgs.mergiraf
 
-        pkgs.lazyjj
-        pkgs.jjui
-      ];
+          pkgs.lazyjj
+          pkgs.jjui
+        ];
+      };
     };
 
-in
-{
-  flake.modules.hjem.jujutsu =
+  jujutsuBase =
     {
       pkgs,
+      lib,
       config,
-      theme,
       ...
     }:
     let
+      inherit (lib.lists) singleton;
+      inherit (config) theme;
+
       toml = pkgs.formats.toml { };
       jjConfig = {
         user.name = "PlumJam";
@@ -41,7 +47,7 @@ in
           "$left"
           "$right"
         ];
-        ui.editor = config.environment.sessionVariables.EDITOR;
+        ui.editor = config.environment.variables.EDITOR;
         ui.graph.style = "curved";
         ui.movement.edit = true;
         ui.pager = ":builtin";
@@ -257,12 +263,16 @@ in
       };
     in
     {
-      xdg.config.files."jj/config.toml".source = toml.generate "jj-config.toml" jjConfig;
-
-      xdg.config.files."jjui/config.toml".source = toml.generate "jjui-config.toml" jjuiConfig;
+      hjem.extraModules = singleton {
+        xdg.config.files."jj/config.toml".source = toml.generate "jj-config.toml" jjConfig;
+        xdg.config.files."jjui/config.toml".source = toml.generate "jjui-config.toml" jjuiConfig;
+      };
     };
+in
+{
+  flake.modules.nixos.jujutsu = jujutsuBase;
+  flake.modules.darwin.jujutsu = jujutsuBase;
 
-  flake.modules.nixos.jujutsu-extra = commonModule;
-
-  flake.modules.darwin.jujutsu-extra = commonModule;
+  flake.modules.nixos.jujutsu-extra = jujutsuExtra;
+  flake.modules.darwin.jujutsu-extra = jujutsuExtra;
 }

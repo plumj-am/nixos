@@ -1,18 +1,17 @@
-{
-  flake.modules.hjem.kitty =
+let
+  kittyBase =
     {
       pkgs,
       lib,
-      myLib,
-      theme,
-      isDesktop,
+      config,
       ...
     }:
     let
-      inherit (lib.modules) mkIf;
-      inherit (myLib) mkDesktopEntry;
       inherit (lib.generators) mkKeyValueDefault;
+      inherit (lib.lists) singleton;
       inherit (pkgs.formats) keyValue;
+      inherit (config) theme;
+      inherit (config.myLib) mkDesktopEntry;
 
       kittyKeyValueGen = keyValue {
         listsAsDuplicateKeys = true;
@@ -84,19 +83,23 @@
         color20 = base04;
         color21 = base06;
       };
-
-      enable = true;
     in
-    mkIf (isDesktop && enable) {
-      packages = [
-        pkgs.kitty
+    {
+      hjem.extraModules = singleton {
+        packages = [
+          pkgs.kitty
 
-        (mkDesktopEntry { inherit pkgs; } {
-          name = "Zellij-kitty";
-          exec = "kitty -e ${pkgs.zellij}/bin/zellij";
-        })
-      ];
+          (mkDesktopEntry { inherit pkgs; } {
+            name = "Zellij-kitty";
+            exec = "kitty -e ${pkgs.zellij}/bin/zellij";
+          })
+        ];
 
-      xdg.config.files."kitty/kitty.conf".source = kittyKeyValueGen.generate "kitty.conf" settings;
+        xdg.config.files."kitty/kitty.conf".source = kittyKeyValueGen.generate "kitty.conf" settings;
+      };
     };
+in
+{
+  flake.modules.nixos.kitty = kittyBase;
+  flake.modules.darwin.kitty = kittyBase;
 }

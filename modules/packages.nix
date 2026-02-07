@@ -1,7 +1,19 @@
+{ lib, ... }:
 let
-  commonPackages =
+  inherit (lib.lists) singleton;
+
+  mkHjemPackages = packages: {
+    hjem.extraModules = singleton {
+      inherit packages;
+    };
+  };
+
+  packagesBase =
     { pkgs, ... }:
-    [
+    {
+      environment.defaultPackages = [ ];
+    }
+    // mkHjemPackages [
       pkgs.ast-grep
       pkgs.comma
       pkgs.curl
@@ -14,7 +26,6 @@ let
       pkgs.rsync
       pkgs.tokei
       pkgs.tree
-      pkgs.turso-cli
       pkgs.typos
       pkgs.uutils-coreutils-noprefix
       pkgs.sqld
@@ -23,9 +34,9 @@ let
       pkgs.xh
     ];
 
-  commonDevTools =
+  packagesExtraCli =
     { pkgs, ... }:
-    [
+    mkHjemPackages [
       pkgs.bitwarden-cli
       pkgs.deno
       pkgs.docker
@@ -50,9 +61,9 @@ let
       })
     ];
 
-  desktopApps =
+  packagesExtraGui =
     { pkgs, ... }:
-    [
+    mkHjemPackages [
       pkgs.bitwarden-desktop
       pkgs.brave
       pkgs.obs-studio
@@ -60,69 +71,19 @@ let
       pkgs.wasistlos
     ];
 
-  darwinPackages =
+  packagesExtraLinux =
     { pkgs, ... }:
-    [
-      pkgs.karabiner-elements
-    ];
-
-  linuxPackages =
-    { pkgs, ... }:
-    [
+    mkHjemPackages [
       pkgs.gcc
       pkgs.gnumake
       pkgs.wget
     ];
 in
 {
+  flake.modules.nixos.packages = packagesBase;
+  flake.modules.darwin.packages = packagesBase;
 
-  flake.modules.nixos.packages =
-    { pkgs, lib, ... }:
-    let
-      inherit (lib.lists) flatten;
-    in
-    {
-      environment.defaultPackages = [ ];
-      environment.systemPackages =
-        [
-          (commonPackages pkgs)
-          (linuxPackages pkgs)
-        ]
-        |> flatten;
-    };
-
-  flake.modules.nixos.packages-extra-desktop =
-    { pkgs, lib, ... }:
-    let
-      inherit (lib.lists) flatten;
-    in
-    {
-      environment.systemPackages =
-        [
-          (desktopApps pkgs)
-          (commonDevTools pkgs)
-        ]
-        |> flatten;
-    };
-
-  flake.modules.nixos.packages-extra-wsl =
-    { pkgs, ... }:
-    {
-      environment.systemPackages = commonDevTools pkgs;
-    };
-
-  flake.modules.darwin.packages =
-    { pkgs, lib, ... }:
-    let
-      inherit (lib.lists) flatten;
-    in
-    {
-      environment.defaultPackages = [ ];
-      environment.systemPackages =
-        [
-          (commonPackages pkgs)
-          (darwinPackages pkgs)
-        ]
-        |> flatten;
-    };
+  flake.modules.nixos.packages-extra-linux = packagesExtraLinux;
+  flake.modules.nixos.packages-extra-gui = packagesExtraGui;
+  flake.modules.nixos.packages-extra-cli = packagesExtraCli;
 }

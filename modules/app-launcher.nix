@@ -1,16 +1,14 @@
-{
-  flake.modules.hjem.app-launcher =
+let
+  fuzzelBase =
     {
       pkgs,
-      theme,
+      config,
       lib,
-      isDesktop,
-      isLinux,
       ...
     }:
     let
-      inherit (lib.modules) mkIf;
       inherit (lib.lists) singleton;
+      inherit (config) theme;
 
       settings = with theme; {
         main = {
@@ -42,17 +40,24 @@
 
       ini = pkgs.formats.ini { };
     in
-    mkIf (isDesktop && isLinux) {
-      packages = singleton pkgs.fuzzel;
+    {
+      hjem.extraModules = singleton {
+        packages = singleton pkgs.fuzzel;
 
-      xdg.config.files."fuzzel/fuzzel.ini".source = ini.generate "fuzzel.ini" settings;
+        xdg.config.files."fuzzel/fuzzel.ini".source = ini.generate "fuzzel.ini" settings;
+      };
     };
 
-  flake.modules.darwin.app-launcher =
+  raycastBase =
     { pkgs, ... }:
     {
       environment.systemPackages = [
         pkgs.raycast
       ];
     };
+
+in
+{
+  flake.modules.nixos.app-launcher = fuzzelBase;
+  flake.modules.darwin.app-launcher = raycastBase;
 }

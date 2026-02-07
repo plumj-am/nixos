@@ -1,35 +1,14 @@
-{
-  flake-file.inputs = {
-    helix = {
-      url = "github:helix-editor/helix";
-
-      inputs.nixpkgs.follows = "os";
-    };
-
-    nu-lint = {
-      url = "git+https://codeberg.org/wvhulle/nu-lint";
-
-      inputs.nixpkgs.follows = "os";
-    };
-
-    nufmt = {
-      url = "github:nushell/nufmt";
-
-      inputs.nixpkgs.follows = "os";
-    };
-  };
-
-  flake.modules.nixos.disable-nano = {
+let
+  disableNano = {
     programs.nano.enable = false;
   };
 
-  flake.modules.hjem.editor =
+  helixBase =
     {
       inputs,
       lib,
-      myLib,
       pkgs,
-      theme,
+      config,
       ...
     }:
     let
@@ -43,7 +22,9 @@
         ;
       inherit (lib.lists) singleton;
       inherit (builtins) elem;
-      inherit (myLib) merge;
+      inherit (config) theme;
+
+      toml = pkgs.formats.toml { };
 
       yaziPickerScript =
         pkgs.writeShellScript "yazi-picker.sh" # bash
@@ -457,94 +438,122 @@
           };
         };
       };
-
-      toml = pkgs.formats.toml { };
     in
     {
-      packages = singleton inputs.helix.packages.${pkgs.stdenv.hostPlatform.system}.helix; # `.helix` follows the master branch.
+      hjem.extraModules = singleton {
+        packages = singleton inputs.helix.packages.${pkgs.stdenv.hostPlatform.system}.helix; # `.helix` follows the master branch.
 
-      xdg.config.files = {
-        "helix/config.toml".source = toml.generate "helix-config.toml" settings;
+        xdg.config.files = {
+          "helix/config.toml".source = toml.generate "helix-config.toml" settings;
 
-        "helix/languages.toml".source = toml.generate "helix-languages.toml" languages;
+          "helix/languages.toml".source = toml.generate "helix-languages.toml" languages;
 
-        "nufmt/config.nuon".text = # nuon
-          ''
-            {
-              indent: 3
-              line_length: 100
-              margin: 1
-            }
-          '';
-
-      }
-      // mkThemes themes;
-
+          "nufmt/config.nuon".text = # nuon
+            ''
+              {
+                indent: 3
+                line_length: 100
+                margin: 1
+              }
+            '';
+        }
+        // mkThemes themes;
+      };
     };
 
-  flake.modules.hjem.editor-extra =
+  helixExtra =
     {
       inputs,
       pkgs,
       lib,
-      isDesktop,
       ...
     }:
     let
-      inherit (lib.modules) mkIf;
+      inherit (lib.lists) singleton;
     in
-    mkIf isDesktop {
-      packages = [
-        # Rust
-        # rust-analyzer is in modules/common/rust.nix
-        pkgs.lldb
+    {
+      hjem.extraModules = singleton {
+        packages = [
+          # Rust
+          # rust-analyzer is in modules/common/rust.nix
+          pkgs.lldb
 
-        # Assembler
-        pkgs.asm-lsp
+          # Assembler
+          pkgs.asm-lsp
 
-        # TypeScript etc.
-        pkgs.deno
+          # TypeScript etc.
+          pkgs.deno
 
-        # Nix
-        pkgs.nixd
-        pkgs.nixfmt
+          # Nix
+          pkgs.nixd
+          pkgs.nixfmt
 
-        # YAML
-        pkgs.yaml-language-server
+          # YAML
+          pkgs.yaml-language-server
 
-        # JSON
-        pkgs.vscode-json-languageserver
+          # JSON
+          pkgs.vscode-json-languageserver
 
-        # TOML
-        pkgs.taplo
+          # TOML
+          pkgs.taplo
 
-        # Svelte
-        pkgs.svelte-language-server
+          # Svelte
+          pkgs.svelte-language-server
 
-        # SQL
-        pkgs.sqruff
+          # SQL
+          pkgs.sqruff
 
-        # Markdown
-        pkgs.marksman
+          # Markdown
+          pkgs.marksman
 
-        # Just
-        pkgs.just-lsp
+          # Just
+          pkgs.just-lsp
 
-        # Haskell
-        pkgs.fourmolu
-        pkgs.haskell-language-server
+          # Haskell
+          pkgs.fourmolu
+          pkgs.haskell-language-server
 
-        # Nushell
-        inputs.nu-lint.packages.${pkgs.stdenv.hostPlatform.system}.default
-        (inputs.nufmt.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs {
-          # Fix various random build errors.
-          doCheck = false;
-          patches = [ ];
-        })
+          # Nushell
+          inputs.nu-lint.packages.${pkgs.stdenv.hostPlatform.system}.default
+          (inputs.nufmt.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs {
+            # Fix various random build errors.
+            doCheck = false;
+            patches = [ ];
+          })
 
-        # Typos
-        pkgs.typos-lsp
-      ];
-
+          # Typos
+          pkgs.typos-lsp
+        ];
+      };
     };
+in
+{
+  flake-file.inputs = {
+    helix = {
+      url = "github:helix-editor/helix";
+
+      inputs.nixpkgs.follows = "os";
+    };
+
+    nu-lint = {
+      url = "git+https://codeberg.org/wvhulle/nu-lint";
+
+      inputs.nixpkgs.follows = "os";
+    };
+
+    nufmt = {
+      url = "github:nushell/nufmt";
+
+      inputs.nixpkgs.follows = "os";
+    };
+  };
+
+  flake.modules.nixos.helix = helixBase;
+  flake.modules.darwin.helix = helixBase;
+
+  flake.modules.nixos.helix-extra = helixExtra;
+  flake.modules.darwin.helix-extra = helixExtra;
+
+  flake.modules.nixos.disable-nano = disableNano;
+  flake.modules.darwin.disable-nano = disableNano;
 }

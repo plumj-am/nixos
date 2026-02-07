@@ -1,18 +1,10 @@
-{
-  flake.modules.nixos.gammastep = {
-    services.geoclue2.enable = true;
-  };
-
-  flake.modules.hjem.gammastep =
-    {
-      pkgs,
-      lib,
-      isDesktop,
-      ...
-
-    }:
+let
+  gammastepBase =
+    { pkgs, lib, ... }:
     let
-      inherit (lib.modules) mkIf;
+      inherit (lib.lists) singleton;
+
+      ini = pkgs.formats.ini { };
 
       settings = {
         general = {
@@ -21,12 +13,18 @@
           temp-night = 3500;
         };
       };
-
-      ini = pkgs.formats.ini { };
     in
-    mkIf isDesktop {
-      packages = [ pkgs.gammastep ];
+    {
+      services.geoclue2.enable = true;
 
-      xdg.config.files."gammastep/config.ini".source = ini.generate "gammastep-config.ini" settings;
+      hjem.extraModules = singleton {
+        packages = singleton pkgs.gammastep;
+
+        xdg.config.files."gammastep/config.ini".source = ini.generate "gammastep-config.ini" settings;
+      };
     };
+
+in
+{
+  flake.modules.nixos.gammastep = gammastepBase;
 }

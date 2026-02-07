@@ -1,8 +1,6 @@
 { inputs, ... }:
 let
   inherit (inputs.self) mkConfig;
-
-  specialArgs = { inherit inputs; };
 in
 {
   flake-file.inputs = {
@@ -24,24 +22,64 @@ in
     };
   };
 
+  # Yuzu | desktop | x86_64-linux | NixOS
   flake.nixosConfigurations.yuzu = inputs.os.lib.nixosSystem {
-    inherit specialArgs;
+    specialArgs = { inherit inputs; };
 
     modules = with inputs.self.modules.nixos; [
-      commonModules
-      desktopModules
+      aspectsBase
 
+      ai
+      ai-extra
+      audio
+      app-launcher
       boot-systemd
+      desktop-gui
+      desktop-tools
+      discord-gui
+      discord-tui
+      disks-normal
       disks-extra-swap
+      disks-extra-zram-swap
       games
-      nix-distributed-builds
+      gammastep
+      graphics
+      hardware-desktop
+      helix-extra
+      hyprlock
+      jujutsu-extra
+      kitty
+      linux-kernel-zen
+      mprocs
+      niri
+      notifications
+      nix-settings-extra-desktop
       object-storage
+      packages-extra-linux
+      packages-extra-gui
+      packages-extra-cli
+      peripherals
+      power-menu
+      process-management
+      quickshell
+      rust-desktop
+      rss-tui
+      sudo-extra-desktop
+      theme-extra-fonts
+      theme-extra-scripts
+      waybar
+      yazi
+      zellij
       {
         config = mkConfig inputs "yuzu" "x86_64-linux" "desktop" {
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFDLlddona4PlORWd+QpR/7F5H46/Dic9vV23/YSrZl0 root@yuzu";
 
           age.secrets = {
             nixStoreKey.rekeyFile = ../secrets/yuzu-nix-store-key.age;
+            rssApiPassword = {
+              rekeyFile = ../secrets/plum-rss-api-password.age;
+              owner = "jam";
+            };
           };
 
           system.stateVersion = "26.05";
@@ -50,18 +88,57 @@ in
     ];
   };
 
+  # Date | laptop/server | x86_64-linux | NixOS
   flake.nixosConfigurations.date = inputs.os.lib.nixosSystem {
-    inherit specialArgs;
+    specialArgs = { inherit inputs; };
 
     modules = with inputs.self.modules.nixos; [
-      commonModules
-      desktopModules
+      aspectsBase
 
+      ai
+      ai-extra
+      app-launcher
+      audio
       boot-systemd
+      desktop-gui
+      desktop-tools
+      discord-gui
+      discord-tui
+      disks-normal
+      disks-extra-swap
+      disks-extra-zram-swap
       forgejo-action-runner
-      nix-distributed-builds
+      games
+      gammastep
+      graphics
+      hardware-desktop
+      helix-extra
+      hyprlock
+      jujutsu-extra
+      kitty
+      linux-kernel-zen
+      mprocs
+      niri
+      notifications
+      nix-settings-extra-desktop
       nix-distributed-builder
+      nix-distributed-builds
       object-storage
+      packages-extra-linux
+      packages-extra-gui
+      packages-extra-cli
+      peripherals
+      power-menu
+      process-management
+      quickshell
+      rust-desktop
+      rss-tui
+      sudo-extra-desktop
+      theme-extra-fonts
+      theme-extra-scripts
+      waybar
+      yazi
+      zellij
       {
         config = mkConfig inputs "date" "x86_64-linux" "desktop" {
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEzfoVKZDyiyyMiX1JRFaaTELspG25MlLNq0kI2AANTa root@date";
@@ -73,6 +150,10 @@ in
           age.secrets = {
             forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
             nixStoreKey.rekeyFile = ../secrets/date-nix-store-key.age;
+            rssApiPassword = {
+              rekeyFile = ../secrets/plum-rss-api-password.age;
+              owner = "jam";
+            };
           };
 
           # Used as a server when not used as a laptop.
@@ -89,21 +170,20 @@ in
     ];
   };
 
+  # Pear | WSL | x86_64-linux | NixOS-WSL
   flake.nixosConfigurations.pear = inputs.os.lib.nixosSystem {
-    inherit specialArgs;
+    specialArgs = { inherit inputs; };
 
     modules = with inputs.self.modules.nixos; [
-      commonModules
+      aspectsBase
 
       desktop-tools
       jujutsu-extra
       linux-kernel-zen
-      packages-extra-desktop
       nix-distributed-builds
       nix-distributed-builder
       # object-storage
-      scratchpads
-      sudo-desktop
+      sudo-extra-desktop
       wsl
       {
         config = mkConfig inputs "pear" "x86_64-linux" "wsl" {
@@ -120,26 +200,30 @@ in
     ];
   };
 
+  # Plum | server | x86_64-linux | NixOS
   flake.nixosConfigurations.plum = inputs.os.lib.nixosSystem {
-    inherit specialArgs;
+    specialArgs = { inherit inputs; };
 
     modules = with inputs.self.modules.nixos; [
-      commonModules
-      serverModules
+      aspectsBase
 
       acme
       boot-grub
       cgit
       disks-disko
       forgejo
+      freshrss-server
       forgejo-action-runner
       goatcounter
+      linux-kernel-latest
       nginx
       nix-distributed-builds
       nix-distributed-builder
       object-storage
       opengist
-      freshrss-server
+      prometheus-node-exporter
+      rust
+      sudo-extra-server
       uptime-kuma
       website-personal
       { hardware.facter.reportPath = ./facter/plum.json; }
@@ -191,21 +275,25 @@ in
     ];
   };
 
+  # Kiwi | server | x86_64-linux | NixOS
   flake.nixosConfigurations.kiwi = inputs.os.lib.nixosSystem {
-    inherit specialArgs;
+    specialArgs = { inherit inputs; };
 
     modules = with inputs.self.modules.nixos; [
-      commonModules
-      serverModules
+      aspectsBase
 
       acme
       boot-grub
       disks-disko
       forgejo-action-runner
+      linux-kernel-latest
       nginx
       nix-distributed-builds
       nix-distributed-builder
       object-storage
+      prometheus-node-exporter
+      rust
+      sudo-extra-server
       website-dr-radka
       {
         config = mkConfig inputs "kiwi" "x86_64-linux" "server" {
@@ -233,19 +321,23 @@ in
     ];
   };
 
+  # Sloe | server | x86_64-linux | NixOS
   flake.nixosConfigurations.sloe = inputs.os.lib.nixosSystem {
-    inherit specialArgs;
+    specialArgs = { inherit inputs; };
 
     modules = with inputs.self.modules.nixos; [
-      commonModules
-      serverModules
+      aspectsBase
 
       boot-grub
       disks-disko
       forgejo-action-runner
+      linux-kernel-latest
       nix-distributed-builds
       nix-distributed-builder
       object-storage
+      prometheus-node-exporter
+      rust
+      sudo-extra-server
       {
         config = mkConfig inputs "sloe" "x86_64-linux" "server" {
 
@@ -265,19 +357,23 @@ in
     ];
   };
 
+  # Blackwell | server | x86_64-linux | NixOS
   flake.nixosConfigurations.blackwell = inputs.os.lib.nixosSystem {
-    inherit specialArgs;
+    specialArgs = { inherit inputs; };
 
     modules = with inputs.self.modules.nixos; [
-      commonModules
-      serverModules
+      aspectsBase
 
       boot-grub
       disks-disko
       forgejo-action-runner
+      linux-kernel-latest
       nix-distributed-builds
       nix-distributed-builder
       object-storage
+      prometheus-node-exporter
+      rust
+      sudo-extra-server
       {
         config = mkConfig inputs "blackwell" "x86_64-linux" "server" {
 
@@ -295,26 +391,15 @@ in
     ];
   };
 
+  # Lime | Macbook | x86_64-linux | nix-darwin
   flake.darwinConfigurations.lime = inputs.os-darwin.lib.darwinSystem {
-    inherit specialArgs;
+    specialArgs = { inherit inputs; };
 
     modules = with inputs.self.modules.darwin; [
+      aspectsBase
+
       app-launcher
-      disable-nix-documentation
-      hjem
-      keys
-      lib
-      network
-      openssh
-      packages
       rust-desktop
-      secret-manager
-      sudo
-      system
-      tailscale
-      theme
-      unfree
-      users
       {
         config = {
           platform = "aarch64-darwin";

@@ -5,7 +5,7 @@ let
   inherit (lib.trivial) fromHexString;
   inherit (lib.types) attrs;
   inherit (lib.lists) genList;
-  inherit (builtins)
+  inherit (lib)
     fromJSON
     readFile
     substring
@@ -223,7 +223,7 @@ let
     };
 
   # Shared theme module configuration (used by both nixos and darwin)
-  themeModule =
+  themeBase =
     { pkgs, ... }:
     let
       theme = mkThemeConfig { inherit pkgs; };
@@ -273,12 +273,7 @@ let
       };
     };
 
-in
-{
-  flake.modules.darwin.theme = themeModule;
-  flake.modules.nixos.theme = themeModule;
-
-  flake.modules.nixos.theme-extra-fonts =
+  themeExtraFonts =
     { config, pkgs, ... }:
     {
       console = {
@@ -299,10 +294,10 @@ in
       ];
     };
 
-  flake.modules.nixos.theme-extra-scripts =
+  themeExtraScripts =
     { config, pkgs, ... }:
     let
-      inherit (builtins) map;
+      inherit (lib) map;
       inherit (config.myLib) mkDesktopEntry;
 
       pickWallpaper = pkgs.writeScriptBin "pick-wallpaper" /* nu */ ''
@@ -580,4 +575,11 @@ in
         }
       ]);
     };
+in
+{
+  flake.modules.darwin.theme = themeBase;
+  flake.modules.nixos.theme = themeBase;
+
+  flake.modules.nixos.theme-extra-fonts = themeExtraFonts;
+  flake.modules.nixos.theme-extra-scripts = themeExtraScripts;
 }

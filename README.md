@@ -28,7 +28,11 @@ Dendritic NixOS configurations for 8 personal machines:
 - Multiple hosts
 - Dendritic structure with
   [flake-parts](https://github.com/hercules-ci/flake-parts)
-- [Hjem](https://github.com/feel-co/hjem) for home management
+- [Hjem](https://github.com/feel-co/hjem) for $HOME management
+- No `specialArgs` or janky passing around of configs between layers[^4]
+
+[^4]: Apart from inherit `specialArgs = { inherit inputs; };` for each host. It
+    is necessary for any host configuration.
 
 ## How it works
 
@@ -37,30 +41,58 @@ Everything lives under `modules/`.
 Each module (for the most part) is grouped by feature as opposed to individual
 applications/services. Using
 [flake-parts](https://github.com/hercules-ci/flake-parts), these modules live at
-`flake.modules.{nixos,darwin,hjem}`.
+`flake.modules.{nixos,darwin}`.
 
 Modules contains 1 or more of the following:
 
 ```
-flake.modules.<class>.<feature> = {}
+flake.modules.<class>.<aspect> = {}
 ```
 
 For example, our `modules/window-manager.nix` looks like this:
 
 ```nix
 {
-  flake.modules.hjem.window-manager = { /* ... */ };
   flake.modules.nixos.window-manager = { /* ... */ };
   flake.modules.darwin.window-manager = { /* ... */ };
 }
 ```
 
-> [!NOTE]
-> Note that `hjem` modules are automatically included in any host that uses the
-> `hjem` module - this may change.
+`hjem` modules are included within the `nixos` and `darwin` classes via
+`hjem.extraModules` as can be seen below.
 
-The `darwin` and `nixos` modules are then used in `modules/hosts.nix`. Modules
-are grouped by type at the top of the file to avoid repeated configs and a
+I tend to write most configuration inside a `let...in` block and then assign a
+single variable to the `<class>.<aspect>` like this:
+
+```nix
+let
+  zellijBase =
+    {
+      pkgs,
+      config,
+      lib,
+      ...
+    }:
+    let
+      inherit (lib.meta) getExe;
+      inherit (lib.lists) singleton;
+      inherit (config) theme;
+    in
+    {
+      hjem.extraModules = singleton {
+        # ... hjem specific config
+      };
+      # ... rest of config
+    }
+in
+{
+  flake.modules.nixos.zellij = zellijBase;
+  flake.modules.darwin.zellij = zellijBase;
+}
+```
+
+The `darwin` and `nixos` classes are then used in `modules/hosts.nix`. Some
+aspects are grouped in `modules/aspects.nix` to avoid repeated configs and a
 `mkConfig` helper is used to simplify the inline config module of each host,
 again to reduce repetition. An example of what this could look like:
 
@@ -68,7 +100,7 @@ again to reduce repetition. An example of what this could look like:
 {
   # For NixOS systems:
   flake.nixosConfigurations.hostName = inputs.os.lib.nixosSystem {
-    inherit specialArgs;
+    specialArgs = { inherit inputs; };
     modules = with inputs.self.modules.nixos; [
       # ... other packages
       window-manager
@@ -77,7 +109,7 @@ again to reduce repetition. An example of what this could look like:
 
   # Or for Darwin systems:
   flake.darwinConfigurations.hostName = inputs.os-darwin.lib.darwinSystem {
-    inherit specialArgs;
+    specialArgs = { inherit inputs; };
     modules = with inputs.self.modules.darwin; [
       # ... other packages
       window-manager

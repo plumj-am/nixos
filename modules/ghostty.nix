@@ -1,27 +1,19 @@
-{
-  flake-file.inputs = {
-    ghostty = {
-      url = "github:ghostty-org/ghostty";
-
-      inputs.nixpkgs.follows = "os";
-    };
-  };
-  flake.modules.hjem.ghostty =
+let
+  ghosttyBase =
     {
       inputs,
       pkgs,
       lib,
-      myLib,
-      theme,
-      isDesktop,
+      config,
       ...
     }:
     let
-      inherit (lib.attrsets) mapAttrsToList mapAttrs' nameValuePair;
-      inherit (lib.modules) mkIf;
-      inherit (myLib) mkDesktopEntry;
-      inherit (lib.generators) mkKeyValueDefault;
       inherit (pkgs.formats) keyValue;
+      inherit (lib.attrsets) mapAttrsToList mapAttrs' nameValuePair;
+      inherit (lib.lists) singleton;
+      inherit (lib.generators) mkKeyValueDefault;
+      inherit (config) theme;
+      inherit (config.myLib) mkDesktopEntry;
 
       # Thank you to: <https://github.com/snugnug/hjem-rum/blob/main/modules/collection/programs/ghostty.nix>
       # for `mkTheme`.
@@ -96,22 +88,34 @@
           };
         };
       };
-
-      enable = true;
     in
-    mkIf (isDesktop && enable) {
-      packages = [
-        inputs.ghostty.packages.${pkgs.stdenv.hostPlatform.system}.ghostty
+    {
+      hjem.extraModules = singleton {
+        packages = [
+          inputs.ghostty.packages.${pkgs.stdenv.hostPlatform.system}.ghostty
 
-        (mkDesktopEntry { inherit pkgs; } {
-          name = "Zellij-Ghostty";
-          exec = "ghostty -e ${pkgs.zellij}/bin/zellij";
-        })
-      ];
+          (mkDesktopEntry { inherit pkgs; } {
+            name = "Zellij-Ghostty";
+            exec = "ghostty -e ${pkgs.zellij}/bin/zellij";
+          })
+        ];
 
-      xdg.config.files = {
-        "ghostty/config".source = ghosttyKeyValue.generate "ghostty-config" settings;
-      }
-      // mkThemes themes;
+        xdg.config.files = {
+          "ghostty/config".source = ghosttyKeyValue.generate "ghostty-config" settings;
+        }
+        // mkThemes themes;
+      };
     };
+in
+{
+  flake-file.inputs = {
+    ghostty = {
+      url = "github:ghostty-org/ghostty";
+
+      inputs.nixpkgs.follows = "os";
+    };
+  };
+
+  flake.modules.nixos.ghostty = ghosttyBase;
+  flake.modules.darwin.ghostty = ghosttyBase;
 }

@@ -1,36 +1,14 @@
-{
-  flake.modules.nixos.desktop-gui =
-    { pkgs, config, ... }:
+let
+  desktopGuiBase =
     {
-      qt = {
-        enable = true;
-
-        style = config.theme.qt.name;
-      };
-
-      programs.dconf.enable = true;
-
-      environment.systemPackages = [
-        pkgs.bibata-cursors
-      ];
-
-      environment.sessionVariables = {
-        XCURSOR_THEME = "Bibata-Modern-Classic";
-        XCURSOR_SIZE = "24";
-      };
-    };
-
-  flake.modules.hjem.desktop-gui =
-    {
+      pkgs,
       lib,
-      theme,
-      isDesktop,
-      isLinux,
+      config,
       ...
     }:
     let
-      inherit (lib.modules) mkIf;
       inherit (lib.lists) singleton;
+      inherit (config) theme;
 
       commonGtk = # ini
         ''
@@ -49,25 +27,48 @@
         '';
 
     in
-    mkIf (isDesktop && isLinux) {
-      packages = singleton theme.gtk.package;
+    {
+      qt = {
+        enable = true;
 
-      files.".gtkrc-2.0".text = settingsGtk2;
-      xdg.config.files."gtk-3.0/settings.ini".text = settingsGtk3;
-      xdg.config.files."gtk-4.0/settings.ini".text = settingsGtk3;
+        style = config.theme.qt.name;
+      };
 
-      # Disable rounded corners in GTK
-      xdg.config.files."gtk-3.0/gtk.css".text = # css
-        ''
-          * {
-            border-radius: 0;
-          }
-        '';
-      xdg.config.files."gtk-4.0/gtk.css".text = # css
-        ''
-          * {
-            border-radius: 0;
-          }
-        '';
+      programs.dconf.enable = true;
+
+      environment.systemPackages = [
+        pkgs.bibata-cursors
+      ];
+
+      environment.sessionVariables = {
+        XCURSOR_THEME = "Bibata-Modern-Classic";
+        XCURSOR_SIZE = "24";
+      };
+
+      hjem.extraModules = singleton {
+        packages = singleton theme.gtk.package;
+
+        files.".gtkrc-2.0".text = settingsGtk2;
+        xdg.config.files."gtk-3.0/settings.ini".text = settingsGtk3;
+        xdg.config.files."gtk-4.0/settings.ini".text = settingsGtk3;
+
+        # Disable rounded corners in GTK
+        xdg.config.files."gtk-3.0/gtk.css".text = # css
+          ''
+            * {
+              border-radius: 0;
+            }
+          '';
+        xdg.config.files."gtk-4.0/gtk.css".text = # css
+          ''
+            * {
+              border-radius: 0;
+            }
+          '';
+      };
     };
+
+in
+{
+  flake.modules.nixos.desktop-gui = desktopGuiBase;
 }

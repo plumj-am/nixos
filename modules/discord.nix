@@ -1,13 +1,12 @@
-{
-  flake.modules.hjem.discord-tui =
+let
+  discordTuiBase =
     {
       pkgs,
       lib,
-      isDesktop,
       ...
     }:
     let
-      inherit (lib.modules) mkIf;
+      inherit (lib.lists) singleton;
 
       toml = pkgs.formats.toml { };
       discordoConfig = {
@@ -35,30 +34,32 @@
           logout = "";
           picker.toggle = "Ctrl+F";
         };
-
       };
     in
-    mkIf isDesktop {
-      packages = [
-        pkgs.discordo
-      ];
-
-      xdg.config.files."discordo/config.toml".source = toml.generate "config.toml" discordoConfig;
-    };
-
-  flake.modules.hjem.discord-gui =
     {
-      pkgs,
-      lib,
-      isDesktop,
-      ...
-    }:
-    let
-      inherit (lib.modules) mkIf;
-    in
-    mkIf isDesktop {
-      packages = [
-        pkgs.vesktop
-      ];
+      hjem.extraModules = singleton {
+        packages = singleton pkgs.discordo;
+
+        xdg.config.files."discordo/config.toml".source = toml.generate "config.toml" discordoConfig;
+      };
     };
+
+  discordGuiBase =
+    { pkgs, lib, ... }:
+    let
+      inherit (lib.lists) singleton;
+    in
+    {
+      hjem.extraModules = singleton {
+        packages = singleton pkgs.vesktop;
+      };
+    };
+
+in
+{
+  flake.modules.nixos.discord-tui = discordTuiBase;
+  flake.modules.darwin.discord-tui = discordTuiBase;
+
+  flake.modules.nixos.discord-gui = discordGuiBase;
+  flake.modules.darwin.discord-gui = discordGuiBase;
 }

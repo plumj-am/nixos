@@ -1,15 +1,9 @@
-{
-  flake.modules.hjem.mprocs =
-    {
-      pkgs,
-      lib,
-      isDesktop,
-      ...
-    }:
+let
+  mprocsBase =
+    { pkgs, lib, ... }:
     let
-      inherit (lib.modules) mkIf;
+      inherit (lib.lists) singleton;
 
-      package = pkgs.mprocs;
       yaml = pkgs.formats.yaml { };
 
       settings = {
@@ -53,9 +47,15 @@
         };
       };
     in
-    mkIf isDesktop {
-      packages = [ package ];
+    {
+      hjem.extraModules = singleton {
+        packages = singleton pkgs.mprocs;
 
-      xdg.config.files."mprocs/mprocs.yaml".source = yaml.generate "mprocs.yaml" settings;
+        xdg.config.files."mprocs/mprocs.yaml".source = yaml.generate "mprocs.yaml" settings;
+      };
     };
+in
+{
+  flake.modules.nixos.mprocs = mprocsBase;
+  flake.modules.darwin.mprocs = mprocsBase;
 }
