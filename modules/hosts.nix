@@ -53,8 +53,9 @@ in
       linux-kernel-zen
       mprocs
       niri
-      notifications
+      nix-cache-proxy
       nix-settings-extra-desktop
+      notifications
       object-storage
       packages-extra-linux
       packages-extra-gui
@@ -72,8 +73,9 @@ in
       zellij
       {
         config = mkConfig inputs "yuzu" "x86_64-linux" "desktop" {
-          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFDLlddona4PlORWd+QpR/7F5H46/Dic9vV23/YSrZl0 root@yuzu";
+          nix-cache-proxy.publicKey = "cache-proxy-yuzu:6dj2bWMTi/ScnDAilNuo/xERm5VZIa1/OUeBm0fUO3g=";
 
+          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFDLlddona4PlORWd+QpR/7F5H46/Dic9vV23/YSrZl0 root@yuzu";
           age.secrets = {
             nixStoreKey.rekeyFile = ../secrets/yuzu-nix-store-key.age;
             rssApiPassword = {
@@ -106,7 +108,6 @@ in
       discord-gui
       discord-tui
       disks-normal
-      disks-extra-swap
       disks-extra-zram-swap
       forgejo-action-runner
       games
@@ -121,6 +122,7 @@ in
       mprocs
       niri
       notifications
+      nix-cache-proxy
       nix-settings-extra-desktop
       nix-distributed-builder
       nix-distributed-builds
@@ -141,12 +143,13 @@ in
       zellij
       {
         config = mkConfig inputs "date" "x86_64-linux" "desktop" {
-          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEzfoVKZDyiyyMiX1JRFaaTELspG25MlLNq0kI2AANTa root@date";
+          nix-cache-proxy.publicKey = "cache-proxy-date:3oT4ugNS3aoKKedKbX3QtDbiI3+IOjhJ/Ka8kZeNEzc=";
 
           forgejo-action-runner = {
             strong = true;
           };
 
+          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEzfoVKZDyiyyMiX1JRFaaTELspG25MlLNq0kI2AANTa root@date";
           age.secrets = {
             forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
             nixStoreKey.rekeyFile = ../secrets/date-nix-store-key.age;
@@ -334,6 +337,7 @@ in
       disks-disko
       forgejo-action-runner
       linux-kernel-latest
+      nix-cache-proxy
       nix-distributed-builds
       nix-distributed-builder
       nix-settings-extra-server
@@ -343,6 +347,7 @@ in
       sudo-extra-server
       {
         config = mkConfig inputs "sloe" "x86_64-linux" "server" {
+          nix-cache-proxy.publicKey = "cache-proxy-sloe:naaLkMoioaUUujHWdn8QUwnjxlI7XiJEZkGqPRffPPw=";
 
           forgejo-action-runner = {
             strong = true;

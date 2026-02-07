@@ -189,7 +189,7 @@
       };
 
       nix.settings = {
-        extra-substituters = mkBefore [ s3Cache ];
+        substituters = mkBefore [ s3Cache ];
 
         extra-trusted-public-keys = [
           "yuzu-store.plumj.am:p6zQw/rR/i1GxTNYE9nNMgReiy2PuDwpq6aXW0DKfoo="
