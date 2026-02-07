@@ -229,9 +229,9 @@ in
       { hardware.facter.reportPath = ./facter/plum.json; }
       {
         config = mkConfig inputs "plum" "x86_64-linux" "server" {
-          network = {
+          networking = {
             domain = "plumj.am";
-            tcpPorts = [
+            firewall.allowedTCPPorts = [
               22
               80
               443
@@ -297,9 +297,9 @@ in
       website-dr-radka
       {
         config = mkConfig inputs "kiwi" "x86_64-linux" "server" {
-          network = {
+          networking = {
             domain = "dr-radka.pl";
-            tcpPorts = [
+            firewall.allowedTCPPorts = [
               22
               80
               443

@@ -127,8 +127,8 @@ in
     in
     mkMerge [
       {
-        network.hostName = host;
         inherit type platform;
+        networking.hostName = host;
 
         age.secrets = {
           id.rekeyFile = ../secrets/${host}-id.age;

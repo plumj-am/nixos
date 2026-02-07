@@ -2,7 +2,7 @@
   flake.modules.nixos.goatcounter =
     { config, ... }:
     let
-      inherit (config.network) domain;
+      inherit (config.networking) domain;
       inherit (config.myLib) merge;
 
       fqdn = "analytics.${domain}";

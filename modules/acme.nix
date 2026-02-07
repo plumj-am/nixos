@@ -2,7 +2,7 @@
   flake.modules.nixos.acme =
     { config, ... }:
     let
-      inherit (config.network) domain;
+      inherit (config.networking) domain;
       inherit (config.myLib) mkValue;
     in
     {

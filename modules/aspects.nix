@@ -14,7 +14,7 @@ let
     lib
     locale
     netrc
-    network
+    networking
     nix-settings
     openssh
     packages
@@ -42,7 +42,6 @@ let
     jujutsu
     keys
     lib
-    network
     nix-settings
     openssh
     packages
