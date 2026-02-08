@@ -67,7 +67,7 @@ let
       };
 
       settings = with theme; {
-        width = "66%";
+        width = "50%";
         height = 26;
         anchor = "top-left";
 
@@ -81,18 +81,18 @@ let
         drun-launch = false;
         hide-input = true;
         hidden-character = ''""'';
-        prompt-text = ''""'';
+        prompt-text = "[run]";
 
         outline-width = 0;
         border-width = 0;
         result-spacing = margin.normal * 2;
-        padding-top = 5;
-        padding-bottom = 5;
-        padding-left = 0;
+        padding-top = 4;
+        padding-bottom = 0;
+        padding-left = 10;
         padding-right = 0;
 
         background-color = "#00000000";
-        prompt-color = theme.withHash.base00;
+        prompt-color = theme.withHash.base06;
         text-color = theme.withHash.base04;
         selection-color = theme.withHash.base08;
       };
