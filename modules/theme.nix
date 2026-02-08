@@ -118,7 +118,8 @@ let
 
       designSystem = {
         font = {
-          size.tiny = 10;
+          size.tiny = 9;
+          size.small = 10;
           size.normal = 12;
           size.big = 16;
 

@@ -32,7 +32,7 @@ let
             icons=true
             max-icon-size=32
 
-            font=${font.sans.name} ${toString font.size.tiny}
+            font=${font.sans.name} ${toString font.size.small}
 
             # Format: `bold app, bold summary, body`.
             format=<b>%s</b>\n%b
