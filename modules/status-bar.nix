@@ -34,6 +34,8 @@ let
             [
               "Privacy"
               "Settings"
+            ]
+            [
               "Tempo"
             ]
           ];
