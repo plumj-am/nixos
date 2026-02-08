@@ -51,13 +51,14 @@ let
           pkgs.writeTextFile {
             inherit name;
             destination = "/share/applications/${name}.desktop";
-            text = ''
-              [Desktop Entry]
-              Name=${lib.strings.replaceStrings [ "-" ] [ " " ] name}
-              Icon=${icon}
-              Exec=${exec}
-              Terminal=${if terminal then "true" else "false"}
-            '';
+            text = # ini
+              ''
+                [Desktop Entry]
+                Name=${lib.strings.replaceStrings [ "-" ] [ " " ] name}
+                Icon=${icon}
+                Exec=${exec}
+                Terminal=${if terminal then "true" else "false"}
+              '';
           };
 
         # Backup creation helper with restic to keep constants consistent.
