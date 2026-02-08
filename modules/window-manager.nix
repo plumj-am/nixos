@@ -291,6 +291,6 @@ in
     };
   };
 
-  flake.modules.nixos.niri = niriBase;
-  flake.modules.darwin.wm = wmBase;
+  flake.modules.nixos.window-manager = niriBase;
+  flake.modules.darwin.window-manager = wmBase;
 }

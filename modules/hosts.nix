@@ -52,7 +52,6 @@ in
       kitty
       linux-kernel-zen
       mprocs
-      niri
       nix-cache-proxy
       nix-settings-extra-desktop
       notifications
@@ -69,6 +68,7 @@ in
       sudo-extra-desktop
       theme-extra-fonts
       theme-extra-scripts
+      window-manager
       yazi
       zellij
       {
@@ -120,7 +120,6 @@ in
       kitty
       linux-kernel-zen
       mprocs
-      niri
       notifications
       nix-cache-proxy
       nix-settings-extra-desktop
@@ -139,6 +138,7 @@ in
       sudo-extra-desktop
       theme-extra-fonts
       theme-extra-scripts
+      window-manager
       yazi
       zellij
       {
