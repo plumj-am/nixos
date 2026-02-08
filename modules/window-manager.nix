@@ -150,7 +150,7 @@ let
 
                   border {
                     on
-                    width ${toString theme.border.normal}
+                    width ${toString theme.border.small}
                     active-gradient from="${theme.colors.base0B}" to="${theme.colors.base09}" angle=45
                     inactive-color "#${theme.colors.base00}"
                     urgent-color "#${theme.colors.base08}"
