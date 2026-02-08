@@ -260,7 +260,7 @@ let
               Mod+P { spawn "process-killer"; }
               Mod+D { spawn "todo-scratchpad"; }
               Mod+S { spawn "random-scratchpad"; }
-              Mod+C { spawn-sh "cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"; }
+              Mod+C { spawn-sh "cliphist list | tofi --prompt-text '[cliphist]' | cliphist decode | wl-copy"; }
               // TODO: Adapt for ashell.
               // Mod+B { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && notify-send bar_toggle && pkill -USR1 waybar"; }
               Mod+N { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && notify-send hidden_toggle && makoctl mode -t mute && makoctl mode -t do-not-disturb"; }
