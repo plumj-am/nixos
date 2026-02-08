@@ -48,6 +48,63 @@ let
       };
     };
 
+  tofiBase =
+    {
+      pkgs,
+      config,
+      lib,
+      ...
+    }:
+    let
+      inherit (lib.lists) singleton;
+      inherit (pkgs.formats) keyValue;
+      inherit (lib.generators) mkKeyValueDefault;
+      inherit (config) theme;
+
+      tofiKeyValue = keyValue {
+        listsAsDuplicateKeys = true;
+        mkKeyValue = mkKeyValueDefault { } " = ";
+      };
+
+      settings = with theme; {
+        width = "66%";
+        height = 26;
+        anchor = "top-left";
+
+        font = "${font.sans.package}/share/fonts/truetype/lexend/lexend/Lexend-Medium.ttf";
+        font-size = font.size.small;
+        hint-font = false;
+        ascii-input = true;
+
+        horizontal = true;
+        num-results = 20;
+        drun-launch = false;
+        hide-input = true;
+        hidden-character = ''""'';
+        prompt-text = ''""'';
+
+        outline-width = 0;
+        border-width = 0;
+        result-spacing = margin.normal * 2;
+        padding-top = 5;
+        padding-bottom = 5;
+        padding-left = 0;
+        padding-right = 0;
+
+        background-color = "#00000000";
+        prompt-color = theme.withHash.base00;
+        text-color = theme.withHash.base04;
+        selection-color = theme.withHash.base08;
+      };
+    in
+    {
+      hjem.extraModules = singleton {
+        packages = singleton pkgs.tofi;
+
+        xdg.config.files."tofi/config".source = tofiKeyValue.generate "tofi-config" settings;
+      };
+    };
+
   raycastBase =
     { pkgs, ... }:
     {
@@ -58,6 +115,6 @@ let
 
 in
 {
-  flake.modules.nixos.app-launcher = fuzzelBase;
+  flake.modules.nixos.app-launcher = tofiBase;
   flake.modules.darwin.app-launcher = raycastBase;
 }
