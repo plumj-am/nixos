@@ -46,9 +46,15 @@ let
 in
 {
   flake.modules.nixos.desktop-tools =
-    { pkgs, config, ... }:
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
     let
       inherit (config.myLib) mkDesktopEntry;
+      inherit (lib) readFile;
 
       mkScratchpad' = mkScratchpad { inherit pkgs; };
 
@@ -62,6 +68,8 @@ in
         file = "random.md";
         title = "Random";
       };
+
+      powerMenu = pkgs.writeScriptBin "power-menu" (readFile ./nushell.power-menu.nu);
     in
     {
       environment.systemPackages = [
@@ -77,6 +85,8 @@ in
 
         todoScratchpad
         randomScratchpad
+
+        powerMenu
       ];
     };
 }

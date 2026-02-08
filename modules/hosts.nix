@@ -60,7 +60,6 @@ in
       packages-extra-gui
       packages-extra-cli
       peripherals
-      power-menu
       process-management
       quickshell
       rust-desktop
@@ -130,7 +129,6 @@ in
       packages-extra-gui
       packages-extra-cli
       peripherals
-      power-menu
       process-management
       quickshell
       rust-desktop
