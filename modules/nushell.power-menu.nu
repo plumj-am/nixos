@@ -5,8 +5,8 @@ let choice = echo "Shutdown\nReboot\nSleep\nHibernate\nLock"
 match $choice {
    "Shutdown" => { systemctl poweroff }
    "Reboot" => { systemctl reboot }
-   "Sleep" => { hyprlock --quiet & systemctl suspend }
-   "Hibernate" => { hyprlock --quiet & systemctl hibernate }
+   "Sleep" => { job spawn { hyprlock --quiet }; systemctl suspend }
+   "Hibernate" => { job spawn { hyprlock --quiet }; systemctl hibernate }
    "Lock" => { hyprlock --quiet --grace 5 }
    _ => { }
 }
