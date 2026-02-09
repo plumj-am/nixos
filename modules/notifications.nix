@@ -42,7 +42,7 @@ let
             layer=top
             width=340
             height=200
-            margin=${toString margin.small}
+            margin=0,0,${toString margin.small},0
             padding=${toString padding.normal}
             output=${if hostName == "yuzu" then "DP-2" else ""}
             sort=+time
