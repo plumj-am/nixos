@@ -129,7 +129,7 @@ let
                 }
 
                 output "ASUSTek COMPUTER INC VG259QM M1LMQS084030" {
-                  mode "1920x1080 @ 279.857"
+                  mode "1920x1080@279.857"
                   position x=0 y=0
                 }
 
@@ -159,14 +159,14 @@ let
 
                   border {
                     on
-                    width ${toString theme.border.small}
-                    active-gradient from="${theme.colors.base0B}" to="${theme.colors.base09}" angle=45
-                    inactive-color "#${theme.colors.base01}"
-                    urgent-color "#${theme.colors.base08}"
+                    width ${toString border.small}
+                    active-gradient from="${colors.base0B}" to="${colors.base09}" angle=45
+                    inactive-color "#${colors.base01}"
+                    urgent-color "#${colors.base08}"
                   }
                   shadow {
                     off
-                    color "#${toString theme.colors.base09}DD"
+                    color "#${toString colors.base09}DD"
                     draw-behind-window false
                     softness 10
                     offset x=0 y=0
