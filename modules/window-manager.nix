@@ -40,7 +40,6 @@ let
         pkgs.cliphist
         pkgs.xwayland-satellite
         pkgs.xdg-utils
-        inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable
 
         (mkDesktopEntry { inherit pkgs; } {
           name = "Screenshot";
@@ -63,7 +62,7 @@ let
                   opacity 1.0
                   draw-border-with-background false
                   clip-to-geometry true
-                  geometry-corner-radius ${toString (theme.radius.tiny * 1.0)}
+                  geometry-corner-radius 0
                   shadow {
                     off
                   }
@@ -129,10 +128,20 @@ let
                   }
                 }
 
+                output "ASUSTek COMPUTER INC VG259QM M1LMQS084030" {
+                  mode "1920x1080 @ 279.857"
+                  position x=0 y=0
+                }
+
+                output "Dell Inc. DELL U3415W F1T1W92E116L" {
+                  mode custom=true "3440x1440@79"
+                  position x=1920 y=0
+                }
+
                 layout {
                   always-center-single-column true
                   empty-workspace-above-first true
-                  gaps ${toString theme.margin.small}
+                  gaps 0
                   preset-column-widths {
                     proportion 0.20
                     proportion 0.25
@@ -152,7 +161,7 @@ let
                     on
                     width ${toString theme.border.small}
                     active-gradient from="${theme.colors.base0B}" to="${theme.colors.base09}" angle=45
-                    inactive-color "#${theme.colors.base00}"
+                    inactive-color "#${theme.colors.base01}"
                     urgent-color "#${theme.colors.base08}"
                   }
                   shadow {
