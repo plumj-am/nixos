@@ -7,12 +7,16 @@ const REBUILD_SCRIPT = "/home/jam/nixos/rebuild.nu"
 const HIGH_SAT = 0.75
 const MID_SAT = 0.5
 
-def print-notify [message: string]: nothing -> nothing {
+def print-notify [message: string] {
    print $"(ansi purple)[Theme Switcher](ansi rst) ($message)"
    try { notify-send "Theme Switcher" $message }
 }
 
-def get-current-wallpaper []: nothing -> string {
+def attempt-rebuild [] {
+   try { nu $REBUILD_SCRIPT } catch { exit 1 }
+}
+
+def get-current-wallpaper [] {
    let wallpaper = swww query
    | lines
    | first
@@ -32,12 +36,20 @@ def save-theme-config [mode: string, scheme: string] {
    | save --force $THEME_CONFIG
 }
 
-def load-theme-config []: nothing -> nothing {
+def get-current-theme [] {
    try {
       open $THEME_CONFIG
    } catch {
       print-notify "Failed to load default config, falling back to light/gruvbox"
       {mode: light, scheme: gruvbox}
+   }
+}
+
+def is-current [mode_or_scheme: string] {
+   let current = get-current-theme
+   if (($current.mode == $mode_or_scheme) or ($current.scheme == $mode_or_scheme)) {
+      print-notify "Current theme and scheme already matches the desired settings."
+      exit 0
    }
 
 }
@@ -62,7 +74,7 @@ def generate-pywal-colors [
 }
 
 def toggle-theme [theme: string] {
-   let theme_config = load-theme-config
+   let theme_config = get-current-theme
 
    print-notify $"Switching to ($theme) theme."
 
@@ -85,15 +97,13 @@ def toggle-theme [theme: string] {
 
    print-notify $"Rebuilding configuration to apply ($theme) theme."
 
-   do { $REBUILD_SCRIPT }
-
    print-notify $"Switch to the ($theme) theme completed!"
 }
 
 def switch-scheme [scheme: string] {
    print-notify $"Switching to ($scheme) color scheme."
 
-   let theme_config = load-theme-config
+   let theme_config = get-current-theme
 
    if $scheme == pywal {
       print-notify "Generating pywal colors from current wallpaper..."
@@ -112,12 +122,10 @@ def switch-scheme [scheme: string] {
 
    print-notify $"Rebuilding configuration to apply ($scheme) scheme..."
 
-   do { $REBUILD_SCRIPT }
-
    print-notify $"Switch to ($scheme) scheme completed!"
 }
 
-def reload-applications []: nothing -> nothing {
+def reload-applications [] {
    print-notify "Reloading applications..."
    niri msg action do-screen-transition --delay-ms 0 | ignore
    pkill -USR1 kitty | ignore
@@ -131,24 +139,41 @@ def reload-applications []: nothing -> nothing {
    niri msg action spawn -- brave | ignore
 }
 
-def main [
-   arg: string, # Theme-related action.
-]: nothing -> nothing {
-   match $arg {
-      "dark" | "light" => {
-         toggle-theme $arg
-         reload-applications
-      }
-      "pywal" | "gruvbox" => {
-         switch-scheme $arg
-         reload-applications
-      }
-      "reload" => {
-         do { $REBUILD_SCRIPT }
-         reload-applications
-      }
-      _ => {
-         print $"Invalid option: '($arg)'. Use: dark, light, pywal, gruvbox or reload."
-      }
-   }
+def main [] {
+   print $"Usage: tt <dark|light|pywal|gruvbox|reload>
+
+      dark    - Switch to dark mode
+      light   - Switch to light mode
+      pywal   - Use generated pywal colours from wallpaper
+      gruvbox - Use the gruvbox theme
+      reload  - Reload applications"
+}
+
+def "main dark" [--force] {
+   if not $force { is-current dark }
+   toggle-theme dark
+   main reload
+}
+
+def "main light" [--force] {
+   if not $force { is-current light }
+   toggle-theme light
+   main reload
+}
+
+def "main gruvbox" [--force] {
+   if not $force { is-current gruvbox }
+   toggle-theme gruvbox
+   main reload
+}
+
+def "main pywal" [--force] {
+   if not $force { is-current pywal }
+   toggle-theme pywal
+   main reload
+}
+
+def "main reload" [] {
+   attempt-rebuild
+   reload-applications
 }
