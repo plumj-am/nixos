@@ -204,6 +204,19 @@ let
 
             ${zoxideNushellIntegration}
 
+            # TODO: $env.XDG_CONFIG_HOME via hjem
+            let topiary_dir = $env.HOME | path join .config topiary
+            if not ($topiary_dir | path exists) {
+              mkdir $topiary_dir
+              mkdir ($topiary_dir | path join queries)
+              http get https://raw.githubusercontent.com/blindFS/topiary-nushell/main/languages.ncl
+              | save ($topiary_dir | path join languages.ncl)
+              http get https://raw.githubusercontent.com/blindFS/topiary-nushell/main/queries/nu.scm
+              | save ($topiary_dir | path join queries nu.scm)
+            }
+            $env.TOPIARY_CONFIG_FILE = ($topiary_dir | path join languages.ncl)
+            $env.TOPIARY_LANGUAGE_DIR = ($topiary_dir | path join queries)
+
             source $"($nu.cache-dir)/carapace.nu"
             source $"($nu.cache-dir)/jj.nu"
           '';

@@ -349,15 +349,21 @@ let
               {
                 name = "nu";
                 auto-format = false;
-                formatter.command = "nufmt";
+                # formatter.command = "nufmt"; # Not good enough yet.
+                # formatter.args = [
+                #   "--config"
+                #   "/home/jam/.config/nufmt/config.nuon"
+                #   "--stdin"
+                # ];
+                formatter.command = "topiary";
                 formatter.args = [
-                  "--config"
-                  "/home/jam/.config/nufmt/config.nuon"
-                  "--stdin"
+                  "format"
+                  "--language"
+                  "nu"
                 ];
                 language-servers = [
                   "nu-lsp"
-                  "nu-lint"
+                  # "nu-lint" # Waiting for <https://codeberg.org/wvhulle/nu-lint/pulls/96>
                   "typos"
                 ];
                 indent = {
@@ -514,12 +520,13 @@ let
           pkgs.haskell-language-server
 
           # Nushell
+          pkgs.topiary
           inputs.nu-lint.packages.${pkgs.stdenv.hostPlatform.system}.default
-          (inputs.nufmt.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs {
-            # Fix various random build errors.
-            doCheck = false;
-            patches = [ ];
-          })
+          # (inputs.nufmt.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs {
+          #   # Fix various random build errors.
+          #   doCheck = false;
+          #   patches = [ ];
+          # })
 
           # Typos
           pkgs.typos-lsp
