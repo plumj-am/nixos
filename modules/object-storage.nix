@@ -38,6 +38,7 @@
         # Use env set by systemd.
         export AWS_ACCESS_KEY_ID=$(cat "$AWS_ACCESS_KEY_ID_PATH")
         export AWS_SECRET_ACCESS_KEY=$(cat "$AWS_SECRET_ACCESS_KEY_PATH")
+        export AWS_EC2_METADATA_DISABLED=true
 
         while true; do
           # Move pending to processing.
@@ -101,6 +102,7 @@
         cat > /etc/nix/s3-credentials <<EOF
         AWS_ACCESS_KEY_ID=$accessKey
         AWS_SECRET_ACCESS_KEY=$secretKey
+        AWS_EC2_METADATA_DISABLED=true
         EOF
         chmod 600 /etc/nix/s3-credentials
 
@@ -185,6 +187,7 @@
         environment = {
           AWS_ACCESS_KEY_ID_PATH = "${secrets.s3AccessKey.path}";
           AWS_SECRET_ACCESS_KEY_PATH = "${secrets.s3SecretKey.path}";
+          AWS_EC2_METADATA_DISABLED = "true";
         };
       };
 
