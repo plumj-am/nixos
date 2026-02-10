@@ -43,7 +43,7 @@ let
 
         oops = "nix run nixpkgs#sqlite -- ${homeDir}/.config/nushell/history.sqlite3 'DELETE FROM history WHERE rowid IN (SELECT rowid FROM history ORDER BY rowid DESC LIMIT 5);'";
 
-        cat = "${getExe pkgs.bat}";
+        cat = "${getExe pkgs.bat} --theme ${theme.bat}";
         less = "${getExe pkgs.bat} --plain";
 
         mosh = "mosh --no-init";

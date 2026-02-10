@@ -3,15 +3,17 @@ let
     {
       pkgs,
       lib,
+      config,
       ...
     }:
     let
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
+      inherit (config) theme;
 
       bat = getExe pkgs.bat;
       less = getExe pkgs.less;
-      pager = "${bat} --plain";
+      pager = "${bat} --plain --theme ${theme.bat}";
     in
     {
       hjem.extraModules = singleton {
@@ -30,8 +32,6 @@ let
         ];
 
         environment.sessionVariables = {
-          BAT_THEME_LIGHT = "gruvbox-light";
-          BAT_THEME_DARK = "gruvbox-dark";
           MANPAGER = pager;
           PAGER = pager;
           BAT_PAGER = "${less} --quit-if-one-screen --RAW-CONTROL-CHARS";

@@ -180,6 +180,9 @@ let
         helix.dark = "gruvbox_dark_hard";
         helix.light = "gruvbox_light_hard";
 
+        bat.dark = "gruvbox-dark";
+        bat.light = "gruvbox-light";
+
         gtk.dark = {
           name = "Gruvbox-Dark";
           package = pkgs.gruvbox-gtk-theme;
@@ -238,6 +241,7 @@ let
         "vivid"
         "nushell"
         "helix"
+        "bat"
         "gtk"
         "qt"
       ];
