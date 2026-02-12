@@ -71,9 +71,9 @@ let
               ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
               API_TIMEOUT_MS = 3000000;
 
-              ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.5-air";
-              ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-4.7";
-              ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-4.7";
+              ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.7-flash";
+              ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-5";
+              ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-5";
 
               CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR = 1;
               CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = 1;
@@ -224,7 +224,7 @@ let
 
             theme = "gruvbox";
             autoupdate = false;
-            model = "zai-coding-plan/glm-4.7";
+            model = "zai-coding-plan/glm-5";
 
             agent.build = {
               type = "primary";
@@ -271,7 +271,7 @@ let
             };
 
             provider.zai-coding-plan.models = {
-              "glm-4.7".options = {
+              "glm-5".options = {
                 # do_sample     = false;
                 stream = true;
                 thinking.type = "enabled";
