@@ -53,6 +53,7 @@ in
       linux-kernel-zen
       mprocs
       nix-cache-proxy
+      nix-distributed-builds
       nix-settings-extra-desktop
       notifications
       object-storage
@@ -182,7 +183,6 @@ in
       jujutsu-extra
       linux-kernel-zen
       nix-distributed-builds
-      nix-distributed-builder
       # object-storage
       sudo-extra-desktop
       wsl
@@ -219,7 +219,6 @@ in
       linux-kernel-latest
       nginx
       nix-distributed-builds
-      nix-distributed-builder
       nix-settings-extra-server
       object-storage
       opengist
@@ -291,7 +290,6 @@ in
       linux-kernel-latest
       nginx
       nix-distributed-builds
-      nix-distributed-builder
       nix-settings-extra-server
       object-storage
       prometheus-node-exporter
@@ -375,7 +373,6 @@ in
       forgejo-action-runner
       linux-kernel-latest
       nix-distributed-builds
-      nix-distributed-builder
       nix-settings-extra-server
       object-storage
       prometheus-node-exporter
