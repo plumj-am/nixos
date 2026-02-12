@@ -36,6 +36,11 @@ def save-theme-config [mode: string, scheme: string] {
    | save --force $THEME_CONFIG
 }
 
+def update-gsettings [is_dark: bool] {
+   let scheme = if $is_dark { "prefer-dark" } else { "default" }
+   try { dconf write /org/gnome/desktop/interface/color-scheme $"'($scheme)'" }
+}
+
 def get-current-theme [] {
    try {
       open $THEME_CONFIG
@@ -94,6 +99,8 @@ def toggle-theme [theme: string] {
    $env.THEME_MODE = $theme
 
    save-theme-config $theme $theme_config.scheme
+
+   update-gsettings ($theme == dark)
 
    print-notify $"Switch to the ($theme) theme completed!"
 }
