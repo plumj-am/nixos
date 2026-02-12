@@ -14,6 +14,8 @@ let
       toml = pkgs.formats.toml { };
 
       settings = with theme.withHash; {
+        renderer = "gl";
+
         layer = "Bottom";
         enable_esc_key = true;
 
