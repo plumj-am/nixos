@@ -53,6 +53,7 @@ let
         flake-registry = "";
         http-connections = 0;
         max-jobs = "auto";
+        cores = 0;
         use-cgroups = true;
         show-trace = true;
         trusted-users = [
@@ -66,6 +67,12 @@ let
       };
 
       nix.optimise.automatic = true;
+
+      systemd.services.nix-daemon.serviceConfig = {
+        MemoryAccounting = true;
+        MemoryMax = "90%";
+        OOMScoreAdjust = 500;
+      };
     };
 
   nixosNixPath = (registryMap |> mapAttrsToList (name: value: "${name}=${value}")) ++ [
@@ -97,8 +104,7 @@ let
     };
 
     nix.extraOptions = ''
-      min-free = ${toString (2 * 1024 * 1024 * 1024)} # 2G
-      max-free = ${toString (1 * 1024 * 1024 * 1024)} # 1G
+      min-free = 2G
     '';
   };
 
