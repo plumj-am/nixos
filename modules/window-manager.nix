@@ -134,7 +134,7 @@ let
                 }
 
                 output "Dell Inc. DELL U3415W F1T1W92E116L" {
-                  mode custom=true "3440x1440@79"
+                  mode "3440x1440@49.987" // On Windows I could get 80hz but not here for some reason...
                   position x=1920 y=0
                 }
 
