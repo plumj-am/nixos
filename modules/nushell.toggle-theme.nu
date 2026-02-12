@@ -95,8 +95,6 @@ def toggle-theme [theme: string] {
 
    save-theme-config $theme $theme_config.scheme
 
-   print-notify $"Rebuilding configuration to apply ($theme) theme."
-
    print-notify $"Switch to the ($theme) theme completed!"
 }
 
@@ -119,8 +117,6 @@ def switch-scheme [scheme: string] {
    $env.THEME_SCHEME = $scheme
 
    save-theme-config $theme_config.mode $scheme
-
-   print-notify $"Rebuilding configuration to apply ($scheme) scheme..."
 
    print-notify $"Switch to ($scheme) scheme completed!"
 }
@@ -163,13 +159,13 @@ def "main light" [--force] {
 
 def "main gruvbox" [--force] {
    if not $force { is-current gruvbox }
-   toggle-theme gruvbox
+   toggle-scheme gruvbox
    main reload
 }
 
 def "main pywal" [--force] {
    if not $force { is-current pywal }
-   toggle-theme pywal
+   toggle-scheme pywal
    main reload
 }
 
