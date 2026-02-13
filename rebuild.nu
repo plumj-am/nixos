@@ -28,18 +28,16 @@ def remote-build [
 ]: nothing -> record {
    print-notify $"Attempting to start remote build process on ($target)."
 
-   try {
-      if not $quiet { print-notify $"Removing old configuration files on ($target)." }
-      ssh -qtt $"jam@($target)" "rm --recursive --force nixos" | complete
+   if not $quiet { print-notify $"Removing old configuration files on ($target)." }
+   let result = ssh -qtt $"jam@($target)" "rm --recursive --force nixos" | complete
 
-      if not $quiet { print-notify $"Copying new configuration files to ($target)." }
-      jj file list | rsync-files --files-from - ./ $"jam@($target):nixos" | complete
+   if not $quiet { print-notify $"Copying new configuration files to ($target)." }
+   let result = jj file list | rsync-files --files-from - ./ $"jam@($target):nixos" | complete
 
-      if not $quiet { print-notify $"Starting rebuild on ($target)." }
-      ssh -qtt $"jam@($target)" ./nixos/rebuild.nu | complete
+   if not $quiet { print-notify $"Starting rebuild on ($target)." }
+   let result = ssh -qtt $"jam@($target)" ./nixos/rebuild.nu | complete
 
-      true
-   } catch { false }
+   $result
 }
 
 def build [
