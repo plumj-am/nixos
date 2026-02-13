@@ -31,10 +31,6 @@
       inputs.nixpkgs.follows = "os";
       url = "github:malpenzibo/ashell";
     };
-    claude-code = {
-      inputs.nixpkgs.follows = "os";
-      url = "github:sadjow/claude-code-nix";
-    };
     disko = {
       inputs.nixpkgs.follows = "os";
       url = "github:nix-community/disko";
