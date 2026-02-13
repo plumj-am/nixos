@@ -64,6 +64,10 @@
       inputs.nixpkgs.follows = "os";
       url = "github:sodiboo/niri-flake";
     };
+    nix-index = {
+      inputs.nixpkgs.follows = "os";
+      url = "github:nix-community/nix-index-database";
+    };
     nu-lint = {
       inputs.nixpkgs.follows = "os";
       url = "git+https://codeberg.org/wvhulle/nu-lint";

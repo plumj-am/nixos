@@ -26,7 +26,6 @@ let
           pkgs.fzf
           pkgs.jq
           pkgs.less
-          pkgs.nix-index
           pkgs.ripgrep
           pkgs.vivid
         ];

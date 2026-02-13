@@ -676,6 +676,26 @@
         "type": "github"
       }
     },
+    "nix-index": {
+      "inputs": {
+        "nixpkgs": [
+          "os"
+        ]
+      },
+      "locked": {
+        "lastModified": 1770315571,
+        "narHash": "sha256-hy0gcAgAcxrnSWKGuNO+Ob0x6jQ2xkR6hoaR0qJBHYs=",
+        "owner": "nix-community",
+        "repo": "nix-index-database",
+        "rev": "2684bb8080a6f2ca5f9d494de5ef875bc1c4ecdb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "nix-index-database",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1761236834,
@@ -979,6 +999,7 @@
         "hjem": "hjem",
         "import-tree": "import-tree",
         "niri": "niri",
+        "nix-index": "nix-index",
         "nu-lint": "nu-lint",
         "nufmt": "nufmt",
         "opencode": "opencode",

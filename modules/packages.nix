@@ -15,7 +15,6 @@ let
     }
     // mkHjemPackages [
       pkgs.ast-grep
-      pkgs.comma
       pkgs.curl
       pkgs.forgejo-cli
       pkgs.hyperfine
