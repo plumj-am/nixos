@@ -68,7 +68,6 @@ let
               ])
 
               pkgs.bash
-              pkgs.claude-code
               pkgs.curl
               pkgs.forgejo-cli
               pkgs.gcc

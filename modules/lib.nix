@@ -153,7 +153,6 @@ in
         };
 
         unfree.allowedNames = optionalAttrs (hasSuffix "linux" platform) [
-          "claude-code"
           "nvidia-x11"
           "nvidia-settings"
           "steam"

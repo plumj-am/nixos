@@ -37,8 +37,6 @@ let
 
         git-graph = ''git log --graph --full-history --pretty=format:"%h%  %d%x20%s"'';
 
-        swarm = "mprocs claude claude claude claude claude";
-
         fj = "fj --host https://git.plumj.am";
 
         oops = "nix run nixpkgs#sqlite -- ${homeDir}/.config/nushell/history.sqlite3 'DELETE FROM history WHERE rowid IN (SELECT rowid FROM history ORDER BY rowid DESC LIMIT 5);'";
@@ -59,7 +57,6 @@ let
         lj = "lazyjj";
         ju = "jjui";
 
-        claude = "claude --continue --fork-session";
         codex = "codex resume --ask-for-approval untrusted";
         oc = "opencode --continue";
 
