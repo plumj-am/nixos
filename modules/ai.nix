@@ -236,6 +236,23 @@ let
             autoupdate = false;
             model = "zai-coding-plan/glm-5";
 
+            permissions = {
+              list = "allow";
+              lsp = "allow";
+              glob = "allow";
+              grep = "allow";
+              question = "allow";
+              read = "allow";
+              webfetch = "ask";
+              websearch = "allow";
+
+              "context7_*" = "allow";
+              "gh_grep_*" = "allow";
+              "web-reader_*" = "allow";
+              "web-search-prime_*" = "allow";
+              "nixos_*" = "allow";
+            };
+
             agent.build = {
               type = "primary";
 
@@ -282,11 +299,17 @@ let
 
             provider.zai-coding-plan.models = {
               "glm-5".options = {
-                # do_sample     = false;
                 stream = true;
                 thinking.type = "enabled";
-                # temperature   = 0.3;
-                # max_tokens    = 32768;
+                tool_stream = true;
+                max_tokens = 128000;
+              };
+              "glm-4.7".options = {
+                stream = true;
+                thinking.type = "enabled";
+              };
+              "glm-4.7-flash".options = {
+                stream = true;
               };
             };
 
