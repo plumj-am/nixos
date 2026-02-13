@@ -10,6 +10,7 @@ let
     let
       inherit (lib.lists) singleton;
       inherit (lib.generators) toJSON;
+      inherit (lib.meta) getExe getExe';
       inherit (config.age) secrets;
 
       claudeCodePackage = pkgs.symlinkJoin {
@@ -23,7 +24,16 @@ let
           '';
       };
 
-      opencodePackage = inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.default;
+      opencodePackage = pkgs.symlinkJoin {
+        name = "opencode-wrapped";
+        paths = [ inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.default ];
+        buildInputs = [ pkgs.makeWrapper ];
+        postBuild = # sh
+          ''
+            wrapProgram $out/bin/opencode \
+              --run 'export OPENCODE_EXPERIMENTAL=true export OPENCODE_ENABLE_EXA=1'
+          '';
+      };
 
     in
     {
@@ -321,7 +331,7 @@ let
               nixos = {
                 type = "local";
                 command = [
-                  "/run/current-system/sw/bin/nix"
+                  "${getExe pkgs.nix}"
                   "run"
                   "github:utensils/mcp-nixos"
                   "--"
@@ -331,7 +341,7 @@ let
               playwriter = {
                 type = "local";
                 command = [
-                  "/run/current-system/sw/bin/npx"
+                  "${getExe' pkgs.nodejs "npx"}"
                   "playwriter@latest"
                 ];
               };
