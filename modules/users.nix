@@ -2,10 +2,13 @@
   flake.modules.nixos.users =
     {
       pkgs,
+      lib,
       config,
       ...
     }:
     let
+      inherit (lib.attrsets) optionalAttrs;
+      inherit (config.networking) hostName;
       inherit (config.flake) keys;
     in
     {
@@ -27,6 +30,18 @@
           extraGroups = [
             "wheel"
             "networkmanager"
+          ];
+        };
+      }
+      // optionalAttrs (hostName == "blackwell") {
+        anamana = {
+          description = "Anamana";
+          isNormalUser = true;
+          shell = pkgs.bash;
+          openssh.authorizedKeys.keys = [ keys.anamana ] ++ keys.admins;
+          packages = [
+            pkgs.git
+            pkgs.direnv
           ];
         };
       };
