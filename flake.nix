@@ -110,6 +110,10 @@
       };
       url = "github:raphamorim/rio/main";
     };
+    run0-sudo-shim = {
+      inputs.nixpkgs.follows = "os";
+      url = "github:lordgrimmauld/run0-sudo-shim";
+    };
   };
 
 }
