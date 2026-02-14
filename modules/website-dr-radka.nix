@@ -37,7 +37,7 @@
           User = app_user;
           Group = app_group;
           WorkingDirectory = build_dir;
-          ExecStart = "${getExe pkgs.deno} run --allow-all ./index.js";
+          ExecStart = "${getExe pkgs.nodejs-slim_24} ./index.js";
           Restart = "always";
           RestartSec = 5;
           EnvironmentFile = config.age.secrets.drRadkaEnvironment.path;
@@ -55,11 +55,9 @@
 
         environment = {
           NODE_ENV = "production";
-          PORT = toString app_port;
-          HOST = "127.0.0.1";
           ORIGIN = "https://${domain}";
         };
-        path = [ pkgs.deno ];
+        path = [ pkgs.nodejs-slim_24 ];
       };
 
       services.nginx = {
@@ -75,16 +73,9 @@
           '';
 
           locations."/" = {
-            proxyPass = "http://127.0.0.1:${toString app_port}";
-            proxyWebsockets = true;
+            proxyPass = "http://0.0.0.0:${toString app_port}";
             extraConfig = # nginx
               ''
-                proxy_set_header Host $host;
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_set_header X-Forwarded-Proto $scheme;
-                proxy_cache_bypass $http_upgrade;
-
                 # override csp for built app requirements and maintain security headers
                 proxy_hide_header Content-Security-Policy;
                 add_header Content-Security-Policy "script-src 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain} cdn.jsdelivr.net unpkg.com *.posthog.com *.googletagmanager.com *.google-analytics.com analytics.plumj.am; object-src 'self' ${domain} *.${domain}; base-uri 'self'; frame-ancestors 'self'; form-action 'self' ${domain} *.${domain}; font-src 'self' ${domain} *.${domain} cdn.jsdelivr.net; connect-src 'self' ${domain} *.${domain} unpkg.com *.posthog.com *.googletagmanager.com *.google-analytics.com analytics.plumj.am; img-src 'self' ${domain} *.${domain} unpkg.com *.tile.openstreetmap.org www.googletagmanager.com data:;" always;
@@ -98,9 +89,6 @@
         };
       };
 
-      environment.systemPackages = [
-        pkgs.nodejs_25
-        pkgs.deno
-      ];
+      environment.systemPackages = [ pkgs.nodejs-slim_24 ];
     };
 }
