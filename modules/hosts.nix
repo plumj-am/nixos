@@ -61,6 +61,7 @@ in
       packages-extra-gui
       packages-extra-cli
       peripherals
+      pijul
       process-management
       quickshell
       rust-desktop
