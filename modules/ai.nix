@@ -58,21 +58,27 @@ let
               "nixos_*" = "allow";
             };
 
-            agent.build = {
-              type = "primary";
+            agent = {
+              build = {
+                type = "primary";
 
-              permission = {
-                write."*" = "allow";
-                bash."*" = "allow";
-                read."*" = "allow";
+                permission = {
+                  write."*" = "allow";
+                  bash."*" = "allow";
+                  read."*" = "allow";
 
-                bash."curl*" = "ask";
+                  bash."curl*" = "ask";
 
-                read."*.env" = "deny";
-                read."*.envrc" = "deny";
-                bash."git push*" = "deny";
-                bash."git commit*" = "deny";
-                bash."jj*" = "deny";
+                  read."*.env" = "deny";
+                  read."*.envrc" = "deny";
+                  bash."git push*" = "deny";
+                  bash."git commit*" = "deny";
+                  bash."jj*" = "deny";
+                };
+              };
+
+              explore = {
+                model = "z-ai-coding-plan/glm-4.7-flash";
               };
             };
 
