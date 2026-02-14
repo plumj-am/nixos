@@ -211,12 +211,14 @@ in
       acme
       boot-grub
       cgit
+      cinny
       disks-disko
       forgejo
       freshrss-server
       forgejo-action-runner
       goatcounter
       linux-kernel-latest
+      matrix
       nginx
       nix-distributed-builds
       nix-settings-extra-server
@@ -262,6 +264,16 @@ in
               rekeyFile = ../secrets/plum-rss-password.age;
               owner = "freshrss";
               mode = "400";
+            };
+            matrixSigningKey = {
+              rekeyFile = ../secrets/plum-matrix-signing-key.age;
+              owner = "matrix-synapse";
+              group = "matrix-synapse";
+            };
+            matrixRegistrationSecret = {
+              rekeyFile = ../secrets/plum-matrix-registration-secret.age;
+              owner = "matrix-synapse";
+              group = "matrix-synapse";
             };
             forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
             forgejoAdminPassword.rekeyFile = ../secrets/plum-forgejo-password.age;
