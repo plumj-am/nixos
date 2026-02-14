@@ -46,7 +46,7 @@ def get-current-theme [] {
       open $THEME_CONFIG
    } catch {
       print-notify "Failed to load default config, falling back to light/gruvbox"
-      {mode: light, scheme: gruvbox}
+      {mode: dark, scheme: gruvbox}
    }
 }
 
