@@ -2,9 +2,12 @@ let
   hardwareDesktop =
     { pkgs, ... }:
     {
-      hardware.bluetooth = {
-        enable = true;
-        powerOnBoot = true;
+      hardware = {
+        enableRedistributableFirmware = true; # Fixes iwlwifi firmware.
+        bluetooth = {
+          enable = true;
+          powerOnBoot = true;
+        };
       };
       services.blueman.enable = true;
 
