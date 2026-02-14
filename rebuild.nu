@@ -1,16 +1,15 @@
 #!/usr/bin/env nu
 
-# nu-lint-ignore: print_and_return_data
-def print-notify [
-   message: string
-]: nothing -> nothing {
-   print $"(ansi purple)[Rebuilder](ansi rst) ($message)\r"
+def print-notify [message: string, --error (-e)] {
+   if $error {
+      print $"(ansi red)[Rebuilder](ansi rst) ($message)"
+   } else {
+      print $"(ansi purple)[Rebuilder](ansi rst) ($message)"
+   }
    try { notify-send Rebuilder $message }
 }
 
-def --wrapped rsync-files [
-   ...rest: string
-]: string -> string {
+def --wrapped rsync-files [...rest: string] {
       (rsync
       --archive
       --compress
@@ -22,83 +21,17 @@ def --wrapped rsync-files [
       ...$rest)
 }
 
-def remote-build [
-   target: string
-   --quiet
-]: nothing -> record {
-   print-notify $"Attempting to start remote build process on ($target)."
-
-   if not $quiet { print-notify $"Removing old configuration files on ($target)." }
-   let result = ssh -qtt $"jam@($target)" "rm --recursive --force nixos" | complete
-
-   if not $quiet { print-notify $"Copying new configuration files to ($target)." }
-   let result = jj file list | rsync-files --files-from - ./ $"jam@($target):nixos" | complete
-
-   if not $quiet { print-notify $"Starting rebuild on ($target)." }
-   let result = ssh -qtt $"jam@($target)" ./nixos/rebuild.nu | complete
-
-   $result
-}
-
-def build [
-   cmd: string
-   ...args: string
-   --all
-]: nothing -> record {
-   let nh = if (which nh | is-not-empty) {
-      [ nh ]
-   } else {
-      print-notify "Command 'nh' not found, falling back to 'nix run nixpkgs#nh'."
-      [ nix run nixpkgs#nh -- ]
-   }
-
-   print-notify $"Rebuilding (sys host | get hostname)."
-
-   if $all {
-      try { sudo ...$nh $cmd ...$args | complete } catch { false }
-   } else {
-      try { sudo ...$nh $cmd ...$args; true } catch { false }
-   }
-}
-
-# nu-lint-ignore: max_function_body_length
-def start-progress-bar []: nothing -> int { # nu-lint-ignore: print_and_return_data
-   job spawn {
-      sleep 100ms # Give time to spawn before starting animation.
-
-      const WIDTH = 10
-
-      mut s = 1.0
-      mut m = 0
-      mut pos = 0
-      mut dir = 1
-
-      while $env.REBUILD_IN_PROGRESS {
-         $s += 0.1
-
-         $pos += $dir
-         if $pos >= $WIDTH or $pos <= 0 { $dir *= -1 }
-
-         let l = ('' | fill --width $pos --character ' ')
-         let r = ('' | fill --width ($WIDTH - $pos) --character ' ')
-
-         if $s == 60.0 { $m += 1 }
-
-         let s = $s | into int
-
-         let msg = $"(ansi p)($l)█($r)(ansi rst) Elapsed: ($s)s\r"
-         print --no-newline $msg
-         job send 0
-         sleep 100ms
-      }
-   }
-}
-
-def --wrapped main [ # nu-lint-ignore: max_function_body_length
-   --remote: string = "" # Build a remote host
-   --all                 # Attempt to rebuild all hosts
-   ...rest: string       # Extra arguments to pass to nh
+# Rebuild the current or a remote NixOS/nix-darwin host
+@example "Rebuild the current host" rebuild
+@example "Rebuild a remote host" { rebuild plum }
+@example "Rebuild all hosts sequentially" { rebuild all }
+def --wrapped main [
+   target: string = "" # The host to build (defaults to current)
+   --help (-h)         # Show this help message
+   ...rest: string     # Extra arguments to pass to nh
 ]: nothing -> nothing {
+   if $help { help main; exit 0 }
+
    let os = uname | get kernel-name | str downcase
    let config = if $os == darwin {
       {path: /Users/jam/nixos, cmd: $os}
@@ -106,27 +39,7 @@ def --wrapped main [ # nu-lint-ignore: max_function_body_length
       {path: /home/jam/nixos, cmd: os}
    }
    let hostname = sys host | get hostname
-   let remote = $remote | str trim | str downcase
-   let is_remote = $remote | is-not-empty
-
-   const HOSTS = [
-      blackwell
-      date
-      kiwi
-      lime
-      pear
-      plum
-      sloe
-      yuzu
-   ]
-
-   let target = if $is_remote {
-      if $remote == $hostname {
-         print-notify "Error: Attempting to build the current systems configuration as a remote system."
-         exit 1
-      }
-      $remote
-   } else { $hostname }
+   let remote = ($target | is-not-empty) and ($target != $hostname)
 
    let nix_args = [
       --
@@ -142,48 +55,65 @@ def --wrapped main [ # nu-lint-ignore: max_function_body_length
       ...$rest
    ]
 
-   if $all {
-      print-notify $"Rebuilding all hosts in parallel: ($HOSTS)."
-      print-notify "Results will be collected and shown upon completion."
-      print-notify "This will take some time."
+   let result = if $remote {
+      print-notify $"Attempting to start remote build process on ($target)."
 
-      $env.REBUILD_IN_PROGRESS = true
+      try {
+         print-notify $"Removing old configuration files on ($target)."
+         ssh -o ConnectTimeout=10 -tt $"jam@($target)" "rm --recursive --force nixos"
 
-      start-progress-bar
+         print-notify $"Copying new configuration files to ($target)."
+         jj file list | rsync-files --files-from - ./ $"jam@($target):nixos"
 
-      let results = $HOSTS | par-each --keep-order {|h|
-         let remote = $h != $hostname
-         if $remote {
-            let result = remote-build --quiet $h
-            {host: $h, success: ($result.exit_code == 0), stderr: $result.stderr}
-         } else {
-            let result = build $config.cmd ...$nh_args --all
-            {host: $h, success: ($result.exit_code == 0), stderr: $result.stderr}
-         }
+         print-notify $"Starting rebuild on ($target)."
+         ssh -o ConnectTimeout=10 -qtt $"jam@($target)" ./nixos/rebuild.nu
+
+         true
+      } catch {|e|
+         print-notify --error $"Something went wrong: ($e.msg)"
+         print-notify --error "See above for more information."
+         false
+      }
+   } else {
+      print-notify $"Rebuilding (sys host | get hostname)."
+
+      let nh = if (which nh | is-not-empty) {
+         [ nh ]
+      } else {
+         print-notify "Command 'nh' not found, falling back to 'nix run nixpkgs#nh'."
+         [ nix run nixpkgs#nh -- ]
       }
 
-      $env.REBUILD_IN_PROGRESS = false
+      try { sudo ...$nh $config.cmd ...$nh_args; true } catch { false }
+   }
 
-      print-notify "All builds complete."
-      for r in $results {
-         if $r.success {
-            print-notify $"✓ ($r.host)"
-         } else {
-            print-notify $"✗ ($r.host) failed (if $r.stderr != null { $"\(($r.stderr)\)" })"
-         }
+   if not $remote {
+      if $result {
+         print-notify $"Rebuild for ($target) succeeded."
+      } else {
+         print-notify $"Rebuild for ($target) failed."
       }
-      return
    }
+}
 
-   let result = if $is_remote {
-      remote-build $target
-   } else {
-      build $config.cmd ...$nh_args
-   }
+# Rebuild all hosts sequentially
+def "main all" [] {
+   const HOSTS = [
+      blackwell
+      date
+      kiwi
+      lime
+      pear
+      plum
+      sloe
+      yuzu
+   ]
 
-   if $result {
-      print-notify $"Rebuild for ($target) succeeded."
-   } else {
-      print-notify $"Rebuild for ($target) failed."
+   for h in $HOSTS {
+      if ($h == (sys host | get hostname)) {
+         main
+      } else {
+         main $h
+      }
    }
 }
