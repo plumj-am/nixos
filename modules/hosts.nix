@@ -308,6 +308,7 @@ in
       rust
       sudo-extra-server
       website-dr-radka
+      { hardware.facter.reportPath = ./facter/kiwi.json; }
       {
         config = mkConfig inputs "kiwi" "x86_64-linux" "server" {
           networking = {
