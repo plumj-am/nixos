@@ -126,6 +126,8 @@ in
       inherit (lib) mkMerge;
       inherit (lib.strings) hasSuffix;
       inherit (lib.attrsets) optionalAttrs;
+
+      isLinux = hasSuffix "linux" platform;
     in
     mkMerge [
       {
@@ -137,7 +139,6 @@ in
 
         age.secrets = {
           id.rekeyFile = ../secrets/${host}-id.age;
-          password.rekeyFile = ../secrets/${host}-password.age;
           s3AccessKey.rekeyFile = ../secrets/s3-access-key.age;
           s3SecretKey.rekeyFile = ../secrets/s3-secret-key.age;
           context7Key = {
@@ -150,15 +151,19 @@ in
             owner = "jam";
             mode = "400";
           };
+        }
+        // optionalAttrs isLinux {
+          password.rekeyFile = ../secrets/${host}-password.age;
         };
-
-        unfree.allowedNames = optionalAttrs (hasSuffix "linux" platform) [
+      }
+      (optionalAttrs isLinux {
+        unfree.allowedNames = [
           "nvidia-x11"
           "nvidia-settings"
           "steam"
           "steam-unwrapped"
         ];
-      }
+      })
       rest
     ];
 

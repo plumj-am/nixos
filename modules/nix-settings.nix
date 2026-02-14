@@ -67,12 +67,6 @@ let
       };
 
       nix.optimise.automatic = true;
-
-      systemd.services.nix-daemon.serviceConfig = {
-        MemoryAccounting = true;
-        MemoryMax = "90%";
-        OOMScoreAdjust = 500;
-      };
     };
 
   nixosNixPath = (registryMap |> mapAttrsToList (name: value: "${name}=${value}")) ++ [
@@ -101,6 +95,12 @@ let
       # Servers build and upload to S3 cache, so they can be more aggressive with GC.
       dates = "daily";
       persistent = true;
+    };
+
+    systemd.services.nix-daemon.serviceConfig = {
+      MemoryAccounting = true;
+      MemoryMax = "90%";
+      OOMScoreAdjust = 500;
     };
 
     nix.extraOptions = ''
