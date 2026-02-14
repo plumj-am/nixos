@@ -75,7 +75,7 @@ def --wrapped main [
          false
       }
    } else {
-      print-notify $"Rebuilding (sys host | get hostname)."
+      print-notify $"Rebuilding ($hostname)."
 
       let nh = if (which nh | is-not-empty) {
          [ nh ]
@@ -89,9 +89,9 @@ def --wrapped main [
 
    if not $remote {
       if $result {
-         print-notify $"Rebuild for ($target) succeeded."
+         print-notify $"Rebuild for ($target | default --empty $hostname) succeeded."
       } else {
-         print-notify $"Rebuild for ($target) failed."
+         print-notify $"Rebuild for ($target | default --empty $hostname) failed."
       }
    }
 }
