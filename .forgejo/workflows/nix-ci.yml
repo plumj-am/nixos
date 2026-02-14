@@ -15,7 +15,7 @@ jobs:
       uses: actions/checkout@v5
     - name: 'Build: blackwell'
       run: nix build .#nixosConfigurations.blackwell.config.system.build.toplevel
-        --accept-flake-config --builders "" --no-link
+        --accept-flake-config --builders "" --no-link --print-build-logs
   build-date:
     name: 'Build: date'
     runs-on: strong
@@ -24,7 +24,7 @@ jobs:
       uses: actions/checkout@v5
     - name: 'Build: date'
       run: nix build .#nixosConfigurations.date.config.system.build.toplevel --accept-flake-config
-        --builders "" --no-link
+        --builders "" --no-link --print-build-logs
   build-kiwi:
     name: 'Build: kiwi'
     runs-on: kiwi
@@ -33,7 +33,7 @@ jobs:
       uses: actions/checkout@v5
     - name: 'Build: kiwi'
       run: nix build .#nixosConfigurations.kiwi.config.system.build.toplevel --accept-flake-config
-        --builders "" --no-link
+        --builders "" --no-link --print-build-logs
   build-pear:
     name: 'Build: pear'
     runs-on: strong
@@ -42,7 +42,7 @@ jobs:
       uses: actions/checkout@v5
     - name: 'Build: pear'
       run: nix build .#nixosConfigurations.pear.config.system.build.toplevel --accept-flake-config
-        --builders "" --no-link
+        --builders "" --no-link --print-build-logs
   build-plum:
     name: 'Build: plum'
     runs-on: plum
@@ -51,7 +51,7 @@ jobs:
       uses: actions/checkout@v5
     - name: 'Build: plum'
       run: nix build .#nixosConfigurations.plum.config.system.build.toplevel --accept-flake-config
-        --builders "" --no-link
+        --builders "" --no-link --print-build-logs
   build-sloe:
     name: 'Build: sloe'
     runs-on: sloe
@@ -60,7 +60,7 @@ jobs:
       uses: actions/checkout@v5
     - name: 'Build: sloe'
       run: nix build .#nixosConfigurations.sloe.config.system.build.toplevel --accept-flake-config
-        --builders "" --no-link
+        --builders "" --no-link --print-build-logs
   build-yuzu:
     name: 'Build: yuzu'
     runs-on: strong
@@ -69,7 +69,7 @@ jobs:
       uses: actions/checkout@v5
     - name: 'Build: yuzu'
       run: nix build .#nixosConfigurations.yuzu.config.system.build.toplevel --accept-flake-config
-        --builders "" --no-link
+        --builders "" --no-link --print-build-logs
   check-deadnix:
     name: 'Check: deadnix'
     runs-on: strong
@@ -78,7 +78,7 @@ jobs:
       uses: actions/checkout@v5
     - name: 'Check: deadnix'
       run: nix build .#checks.x86_64-linux.deadnix --accept-flake-config --builders
-        "" --no-link
+        "" --no-link --print-build-logs
   check-nix-paths:
     name: 'Check: legacy imports'
     runs-on: strong
@@ -87,7 +87,7 @@ jobs:
       uses: actions/checkout@v5
     - name: 'Check: legacy imports'
       run: nix build .#checks.x86_64-linux.nix-path --accept-flake-config --builders
-        "" --no-link
+        "" --no-link --print-build-logs
   check-statix:
     name: 'Check: statix'
     runs-on: strong
@@ -96,7 +96,7 @@ jobs:
       uses: actions/checkout@v5
     - name: 'Check: statix'
       run: nix build .#checks.x86_64-linux.statix --accept-flake-config --builders
-        "" --no-link
+        "" --no-link --print-build-logs
 name: Nix CI
 'on':
   pull_request:

@@ -2,7 +2,7 @@
 let
   inherit (config.ciLib) commonPathsIgnore commonConcurrency stepsWithCheckout;
 
-  commonArgs = ''--accept-flake-config --builders "" --no-link'';
+  commonArgs = ''--accept-flake-config --builders "" --no-link --print-build-logs'';
 
   typeHelper =
     type: target:
