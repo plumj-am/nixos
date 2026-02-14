@@ -27,10 +27,6 @@
           shell = pkgs.nushell;
           hashedPasswordFile = config.age.secrets.password.path;
           openssh.authorizedKeys.keys = keys.admins;
-          extraGroups = [
-            "wheel"
-            "networkmanager"
-          ];
         };
       }
       // optionalAttrs (hostName == "blackwell") {
