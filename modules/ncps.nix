@@ -1,6 +1,7 @@
 let
   ncpsBase =
     {
+      pkgs,
       lib,
       config,
       ...
@@ -41,6 +42,7 @@ let
 
         services.ncps = {
           enable = true;
+          package = pkgs.ncps;
           cache = {
             inherit hostName;
             upstream = {
