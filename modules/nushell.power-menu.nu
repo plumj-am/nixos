@@ -5,8 +5,8 @@ let choice = echo "Shutdown\nReboot\nSleep\nHibernate\nLock"
 match $choice {
    "Shutdown" => { systemctl poweroff }
    "Reboot" => { systemctl reboot }
-   "Sleep" => { job spawn { hyprlock --quiet }; systemctl suspend }
-   "Hibernate" => { job spawn { hyprlock --quiet }; systemctl hibernate }
-   "Lock" => { hyprlock --quiet --grace 5 }
+   "Sleep" => { bash -c "hyprlock --quiet &"; systemctl suspend } # `job spawn` doesn't work for some reason.
+   "Hibernate" => { bash -c "hyprlock --quiet &"; systemctl hibernate }
+   "Lock" => { hyprlock --quiet }
    _ => { }
 }
