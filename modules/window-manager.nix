@@ -281,9 +281,9 @@ let
 
             // spawn-at-startup "quickshell" // Not using yet.
             spawn-at-startup "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
-            spawn-at-startup "ashell"
             spawn-at-startup "swww-daemon"
             // spawn-at-startup "mako" // Started by NixOS.
+            spawn-sh-at-startup "WGPU_BACKEND=gl ashell"
           '';
       };
 
