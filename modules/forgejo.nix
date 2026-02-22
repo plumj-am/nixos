@@ -140,6 +140,7 @@
       services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
         extraConfig = ''
           ${config.services.nginx.goatCounterTemplate}
+          client_max_body_size 75M;
         '';
         locations."/".proxyPass = "http://[::1]:${toString port}";
       };
