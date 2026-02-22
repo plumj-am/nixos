@@ -20,14 +20,12 @@ let selected = $wallpapers
    | get name
    | str join "\n"
    | (fzf
-      --preview
-      "chafa --size 40x20 {}"
-      --preview-window=right:50%
+      --bind "focus:execute-silent(bash -c 'nohup swww img --transition-type none {} >/dev/null 2>&1 &')"
+      --preview-window hidden
       --prompt="Select wallpaper: ")
 
 if ($selected | is-not-empty) {
-   swww img $selected | ignore # nu-lint-ignore: redundant_ignore
-
+   swww img --transition-type none $selected | ignore
    print $"Wallpaper set: \(($selected | path basename)\)"
 
    let theme_config = try {
