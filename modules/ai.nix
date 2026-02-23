@@ -33,7 +33,7 @@ let
           opencodePackage
         ];
 
-        files."opencode/opencode.jsonc" = {
+        xdg.config.files."opencode/opencode.jsonc" = {
           generator = toJSON { };
           value = {
 
@@ -41,7 +41,7 @@ let
             autoupdate = false;
             model = "zai-coding-plan/glm-5";
 
-            permissions = {
+            permission = {
               list = "allow";
               lsp = "allow";
               glob = "allow";
@@ -60,7 +60,8 @@ let
 
             agent = {
               build = {
-                type = "primary";
+                mode = "primary";
+                model = "zai-coding-plan/glm-5";
 
                 permission = {
                   write."*" = "allow";
@@ -77,8 +78,28 @@ let
                 };
               };
 
+              researcher = {
+                mode = "primary";
+                model = "zai-coding-plan/glm-5";
+                description = "Read-only research primarily using the web";
+
+                tools = {
+                  read = true;
+                  bash = false;
+                  write = false;
+                  edit = false;
+                  list = true;
+                  glob = true;
+                  grep = true;
+                  webfetch = false;
+                  task = true;
+                  todowrite = true;
+                  todoread = true;
+                };
+              };
+
               explore = {
-                model = "z-ai-coding-plan/glm-4.7-flash";
+                model = "zai-coding-plan/glm-4.7-flash";
               };
             };
 
