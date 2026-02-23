@@ -16,7 +16,7 @@ let
       settings = with theme.withHash; {
         renderer.backend = "egl";
 
-        layer = "Bottom";
+        layer = "Top";
         enable_esc_key = true;
 
         modules = {
