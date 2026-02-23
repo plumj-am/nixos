@@ -62,7 +62,7 @@
     };
     niri = {
       inputs.nixpkgs.follows = "os";
-      url = "github:sodiboo/niri-flake";
+      url = "github:niri-wm/niri";
     };
     nix-index = {
       inputs.nixpkgs.follows = "os";

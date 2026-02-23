@@ -53,7 +53,7 @@ let
       ];
 
       hjem.extraModules = singleton {
-        packages = singleton inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable;
+        packages = singleton inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri;
 
         xdg.config.files."niri/config.kdl".text =
           with theme; # kdl
@@ -296,7 +296,7 @@ in
 {
   flake-file.inputs = {
     niri = {
-      url = "github:sodiboo/niri-flake";
+      url = "github:niri-wm/niri";
 
       inputs.nixpkgs.follows = "os";
     };
