@@ -21,6 +21,8 @@ let
       hostName = "cache-proxy-${networking.hostName}";
       localUrl = "http://localhost:${port}";
       port = "8501";
+
+      ncpsPkg = inputs.ncps.packages.${pkgs.stdenv.hostPlatform.system};
     in
     {
 
@@ -43,7 +45,19 @@ let
 
         services.ncps = {
           enable = true;
-          package = inputs.ncps.packages.${pkgs.stdenv.hostPlatform.system}.ncps;
+          package = pkgs.symlinkJoin {
+            name = "ncps";
+            paths = [ ncpsPkg.ncps ];
+            nativeBuildInputs = [ pkgs.makeWrapper ];
+            postBuild = ''
+              makeWrapper ${ncpsPkg.dbmate-wrapper}/bin/dbmate-wrapper \
+                $out/bin/dbmate-ncps \
+                --set NCPS_DB_MIGRATIONS_DIR ${ncpsPkg.ncps}/share/ncps/db/migrations
+
+              wrapProgram $out/bin/ncps --add-flags "--analytics-reporting-enabled=false"
+            '';
+            meta.mainProgram = "ncps";
+          };
           cache = {
             inherit hostName;
             upstream = {
@@ -51,6 +65,8 @@ let
             };
           };
         };
+
+        systemd.services.ncps.environment.OTEL_ENABLED = "false";
       };
     };
 in
