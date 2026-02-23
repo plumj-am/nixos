@@ -271,12 +271,10 @@ let
               Mod+D { spawn "todo-scratchpad"; }
               Mod+S { spawn "random-scratchpad"; }
               Mod+C { spawn-sh "cliphist list | tofi --prompt-text '[cliphist]' | cliphist decode | wl-copy"; }
-              // TODO: Adapt for ashell.
-              // Mod+B { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && notify-send bar_toggle && pkill -USR1 waybar"; }
+              Mod+B { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && notify-send bar_toggle && pkill -USR1 ashell"; }
               Mod+N { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && notify-send hidden_toggle && makoctl mode -t mute && makoctl mode -t do-not-disturb"; }
               Mod+M { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && makoctl mode -t mute && notify-send mute_toggle"; }
-              // TODO: Adapt for ashell.
-              // Mod+Z { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && notify-send zen_toggle && pkill -USR1 waybar && makoctl mode -t mute && makoctl mode -t do-not-disturb"; }
+              Mod+Z { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && notify-send zen_toggle && pkill -USR1 ashell && makoctl mode -t mute && makoctl mode -t do-not-disturb"; }
             }
 
             // spawn-at-startup "quickshell" // Not using yet.
