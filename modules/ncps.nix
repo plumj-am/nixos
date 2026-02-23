@@ -1,6 +1,7 @@
 let
   ncpsBase =
     {
+      inputs,
       pkgs,
       lib,
       config,
@@ -42,7 +43,7 @@ let
 
         services.ncps = {
           enable = true;
-          package = pkgs.ncps;
+          package = inputs.ncps.packages.${pkgs.stdenv.hostPlatform.system}.ncps;
           cache = {
             inherit hostName;
             upstream = {
@@ -54,6 +55,14 @@ let
     };
 in
 {
+  flake-file.inputs = {
+    ncps = {
+      url = "github:kalbasit/ncps";
+
+      inputs.nixpkgs.follows = "os";
+    };
+  };
+
   flake.modules.nixos.nix-cache-proxy = ncpsBase;
   flake.modules.darwin.nix-cache-proxy = ncpsBase;
 }
