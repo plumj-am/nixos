@@ -10,6 +10,7 @@ let
         pkgs.cargo-binstall
         pkgs.cargo-nextest
         pkgs.dioxus-cli
+        pkgs.sccache
       ];
     };
 
