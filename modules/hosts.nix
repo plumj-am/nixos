@@ -146,6 +146,8 @@ in
         config = mkConfig inputs "date" "x86_64-linux" "desktop" {
           nix-cache-proxy.publicKey = "cache-proxy-date:3oT4ugNS3aoKKedKbX3QtDbiI3+IOjhJ/Ka8kZeNEzc=";
 
+          nixBuildMachineSpeedFactor = 4;
+
           forgejo-action-runner = {
             strong = true;
           };
@@ -222,6 +224,7 @@ in
       linux-kernel-latest
       matrix
       nginx
+      nix-distributed-builder
       nix-distributed-builds
       nix-settings-extra-server
       object-storage
@@ -242,6 +245,8 @@ in
               443
             ];
           };
+
+          nixBuildMachineSpeedFactor = 3;
 
           forgejo-action-runner = {
             strong = true;
@@ -303,6 +308,7 @@ in
       forgejo-action-runner
       linux-kernel-latest
       nginx
+      nix-distributed-builder
       nix-distributed-builds
       nix-settings-extra-server
       object-storage
@@ -321,6 +327,8 @@ in
               443
             ];
           };
+
+          nixBuildMachineSpeedFactor = 2;
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIElcSHxI64xqUUKEY83tKyzEH+fYT5JCWn3qCqtw16af root@kiwi";
 
@@ -353,8 +361,8 @@ in
       forgejo-action-runner
       linux-kernel-latest
       nix-cache-proxy
-      nix-distributed-builds
       nix-distributed-builder
+      nix-distributed-builds
       nix-settings-extra-server
       object-storage
       prometheus-node-exporter
@@ -363,6 +371,8 @@ in
       {
         config = mkConfig inputs "sloe" "x86_64-linux" "server" {
           nix-cache-proxy.publicKey = "cache-proxy-sloe:naaLkMoioaUUujHWdn8QUwnjxlI7XiJEZkGqPRffPPw=";
+
+          nixBuildMachineSpeedFactor = 5;
 
           forgejo-action-runner = {
             strong = true;
@@ -391,6 +401,7 @@ in
       disks-disko
       forgejo-action-runner
       linux-kernel-latest
+      nix-distributed-builder
       nix-distributed-builds
       nix-settings-extra-server
       object-storage
@@ -399,6 +410,8 @@ in
       sudo-extra-server
       {
         config = mkConfig inputs "blackwell" "x86_64-linux" "server" {
+
+          nixBuildMachineSpeedFactor = 1;
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGSi4SKhqze7ZzhJFcUF9KW/4nXX1MfvZjUqrYWNDi9c root@blackwell";
 
