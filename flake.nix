@@ -56,10 +56,6 @@
       url = "github:feel-co/hjem";
     };
     import-tree.url = "github:vic/import-tree";
-    ncps = {
-      inputs.nixpkgs.follows = "os";
-      url = "github:kalbasit/ncps";
-    };
     niri = {
       inputs.nixpkgs.follows = "os";
       url = "github:niri-wm/niri";

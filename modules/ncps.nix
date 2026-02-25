@@ -1,7 +1,6 @@
 let
   ncpsBase =
     {
-      inputs,
       pkgs,
       lib,
       config,
@@ -21,8 +20,6 @@ let
       hostName = "cache-proxy-${networking.hostName}";
       localUrl = "http://localhost:${port}";
       port = "8501";
-
-      ncpsPkg = inputs.ncps.packages.${pkgs.stdenv.hostPlatform.system};
     in
     {
 
@@ -45,21 +42,15 @@ let
 
         services.ncps = {
           enable = true;
-          package = pkgs.symlinkJoin {
-            name = "ncps";
-            paths = [ ncpsPkg.ncps ];
-            nativeBuildInputs = [ pkgs.makeWrapper ];
-            postBuild = ''
-              makeWrapper ${ncpsPkg.dbmate-wrapper}/bin/dbmate-wrapper \
-                $out/bin/dbmate-ncps \
-                --set NCPS_DB_MIGRATIONS_DIR ${ncpsPkg.ncps}/share/ncps/db/migrations
+          package = pkgs.ncps;
 
-              wrapProgram $out/bin/ncps --add-flags "--analytics-reporting-enabled=false"
-            '';
-            meta.mainProgram = "ncps";
-          };
+          analytics.reporting.enable = false;
+
           cache = {
             inherit hostName;
+
+            cdc.enabled = true;
+
             upstream = {
               inherit urls publicKeys;
             };
@@ -71,14 +62,6 @@ let
     };
 in
 {
-  flake-file.inputs = {
-    ncps = {
-      url = "github:kalbasit/ncps";
-
-      inputs.nixpkgs.follows = "os";
-    };
-  };
-
   flake.modules.nixos.nix-cache-proxy = ncpsBase;
   flake.modules.darwin.nix-cache-proxy = ncpsBase;
 }
