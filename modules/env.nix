@@ -9,6 +9,7 @@ let
         SHELL = "${pkgs.nushell}/bin/nu";
         TERMINAL = "zellij";
         TERM_PROGRAM = "zellij";
+        WGPU_BACKEND = "gl";
       };
     in
     {
