@@ -183,6 +183,9 @@ let
         bat.dark = "gruvbox-dark";
         bat.light = "gruvbox-light";
 
+        zed.dark = "Gruvbox Dark Hard";
+        zed.light = "Gruvbox Light Hard";
+
         gtk.dark = {
           name = "Gruvbox-Dark";
           package = pkgs.gruvbox-gtk-theme;
@@ -242,6 +245,7 @@ let
         "nushell"
         "helix"
         "bat"
+        "zed"
         "gtk"
         "qt"
       ];
@@ -315,7 +319,7 @@ let
         themeToggleScript
         pickWallpaper
       ]
-      ++ (map (mkDesktopEntry { inherit pkgs; }) [
+      ++ (map mkDesktopEntry [
         {
           name = "Dark-Mode";
           exec = "tt dark";

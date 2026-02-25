@@ -750,7 +750,7 @@ let
 
           YAML = {
             language_servers = [
-
+              "typos"
               "yamlls"
             ];
 
@@ -801,31 +801,31 @@ let
 
       zedKeymaps = [
         (mkZedKeymap null {
-          "ctrl-W" = null;
-          "ctrl-q" = null;
-          "ctrl-F" = null;
-          "ctrl-P" = null;
-          "ctrl-H" = null;
+          ctrl-W = null;
+          ctrl-q = null;
+          ctrl-F = null;
+          ctrl-P = null;
+          ctrl-H = null;
           "ctrl-=" = "zed::ResetAllZoom";
-          "alt-h" = "workspace::ActivatePaneLeft";
-          "alt-j" = "workspace::ActivatePaneDown";
-          "alt-k" = "workspace::ActivatePaneUp";
-          "alt-l" = "workspace::ActivatePaneRight";
-          "alt-H" = "vim::ResizePaneLeft";
-          "alt-J" = "vim::ResizePaneDown";
-          "alt-K" = "vim::ResizePaneUp";
-          "alt-L" = "vim::ResizePaneRight";
+          alt-h = "workspace::ActivatePaneLeft";
+          alt-j = "workspace::ActivatePaneDown";
+          alt-k = "workspace::ActivatePaneUp";
+          alt-l = "workspace::ActivatePaneRight";
+          alt-H = "vim::ResizePaneLeft";
+          alt-J = "vim::ResizePaneDown";
+          alt-K = "vim::ResizePaneUp";
+          alt-L = "vim::ResizePaneRight";
         })
         (mkZedKeymap "Editor||Terminal||ProjectPanel||DebugPanel||Agent" {
-          "ctrl-p" = "workspace::Open";
-          "ctrl-S" = "project_panel::Toggle";
-          "ctrl-s" = "project_panel::ToggleFocus";
-          "ctrl-T" = "terminal_panel::Toggle";
-          "ctrl-t" = "terminal_panel::ToggleFocus";
-          "ctrl-D" = "debug_panel::Toggle";
-          "ctrl-A" = "agent::ToggleFocus";
-          "alt-t" = "task::Spawn";
-          "alt-T" = "task::Rerun";
+          ctrl-p = "workspace::Open";
+          ctrl-S = "project_panel::Toggle";
+          ctrl-s = "project_panel::ToggleFocus";
+          ctrl-T = "terminal_panel::Toggle";
+          ctrl-t = "terminal_panel::ToggleFocus";
+          ctrl-D = "debug_panel::Toggle";
+          ctrl-A = "agent::ToggleFocus";
+          alt-t = "task::Spawn";
+          alt-T = "task::Rerun";
           "ctrl-g ctrl-g" = [
             "task::Spawn"
             {
@@ -842,20 +842,20 @@ let
           ];
         })
         (mkZedKeymap "AgentPanel" {
-          "alt-q" = "workspace::CloseActiveDock";
-          "alt-s" = "agent::OpenHistory";
-          "alt-n" = [
+          alt-q = "workspace::CloseActiveDock";
+          alt-s = "agent::OpenHistory";
+          alt-n = [
             "agent::NewExternalAgentThread"
             { agent.custom.name = "opencode"; }
           ];
         })
         (mkZedKeymap "VimControl" {
-          "ctrl-b" = null;
-          "space" = null;
+          ctrl-b = null;
+          space = null;
         })
         (mkZedKeymap "Pane" {
-          "ctrl-w" = null;
-          "alt-q" = "pane::CloseActiveItem";
+          ctrl-w = null;
+          alt-q = "pane::CloseActiveItem";
         })
         (mkZedKeymap "Editor && (vim_mode == helix_normal || vim_mode == helix_select)" {
           "space F" = [
@@ -864,9 +864,9 @@ let
           ];
           "space B" = "editor::BlameHover";
           "space b" = "tab_switcher::ToggleAll";
-          "D" = "editor::SelectToEndOfLine";
-          "ctrl-j" = "editor::MoveLineDown";
-          "ctrl-k" = "editor::MoveLineUp";
+          D = "editor::SelectToEndOfLine";
+          ctrl-j = "editor::MoveLineDown";
+          ctrl-k = "editor::MoveLineUp";
           # "' t" = "";
           # "' r" = "";
           # "' k" = "";
@@ -874,11 +874,11 @@ let
           # "' c" = "";
         })
         (mkZedKeymap "Terminal" {
-          "alt-q" = "pane::CloseActiveItem";
-          "alt-w h" = "pane::SplitLeft";
-          "alt-w l" = "pane::SplitRight";
-          "alt-w w" = "workspace::ActivateNextPane";
-          "alt-w n" = "workspace::NewTerminal";
+          alt-q = "pane::CloseActiveItem";
+          alt-H = "pane::SplitLeft";
+          alt-L = "pane::SplitRight";
+          alt-w = "workspace::ActivateNextPane";
+          alt-n = "workspace::NewTerminal";
         })
       ];
 
