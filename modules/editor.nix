@@ -355,12 +355,6 @@ let
                 #   "/home/jam/.config/nufmt/config.nuon"
                 #   "--stdin"
                 # ];
-                formatter.command = "topiary";
-                formatter.args = [
-                  "format"
-                  "--language"
-                  "nu"
-                ];
                 language-servers = [
                   "nu-lsp"
                   # "nu-lint" # Waiting for <https://codeberg.org/wvhulle/nu-lint/pulls/96>
@@ -514,7 +508,6 @@ let
           pkgs.haskell-language-server
 
           # Nushell
-          pkgs.topiary
           inputs.nu-lint.packages.${pkgs.stdenv.hostPlatform.system}.default
           # (inputs.nufmt.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs {
           #   # Fix various random build errors.
