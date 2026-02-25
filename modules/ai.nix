@@ -20,7 +20,7 @@ let
         postBuild = # sh
           ''
             wrapProgram $out/bin/opencode \
-              --run 'export OPENCODE_EXPERIMENTAL=true export OPENCODE_ENABLE_EXA=1'
+              --set 'OPENCODE_EXPERIMENTAL=true OPENCODE_ENABLE_EXA=1'
           '';
       };
 
