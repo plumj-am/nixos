@@ -114,6 +114,10 @@
       inputs.nixpkgs.follows = "os";
       url = "github:plumj-am/run0-sudo-shim";
     };
+    zed = {
+      inputs.nixpkgs.follows = "os";
+      url = "github:zed-industries/zed";
+    };
   };
 
 }

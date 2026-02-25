@@ -455,7 +455,479 @@ let
       };
     };
 
-  helixExtra =
+  zedBase =
+    {
+      inputs,
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
+    let
+      inherit (lib.lists) singleton;
+      inherit (lib.attrsets) mapAttrs;
+      inherit (config.myLib) mkDesktopEntry;
+      inherit (config) theme;
+
+      json = pkgs.formats.json { };
+
+      mkZedKeymap =
+        context: bindings: if context == null then { inherit bindings; } else { inherit context bindings; };
+
+      mkDenoFmt = ext: {
+        external = {
+          command = "deno";
+          arguments = [
+            "fmt"
+            "--use-tabs"
+            "--no-semicolons"
+            "--indent-width=4"
+            "--unstable-component"
+            "--ext"
+            ext
+          ];
+        };
+      };
+
+      denoJsTsLanguages = {
+        JavaScript = "js";
+        JSX = "jsx";
+        TSX = "tsx";
+        TypeScript = "ts";
+      };
+
+      zedConfig = with theme; {
+        base_keymap = "VSCode";
+        helix_mode = true;
+        load_direnv = "direct";
+        cursor_blink = false;
+        show_edit_predictions = false; # Annoying spam popups.
+        vertical_scroll_margin = 6;
+        horizontal_scroll_margin = 12;
+        use_system_path_prompts = false;
+
+        active_pane_modifiers = {
+          inactive_opacity = 0.85;
+          border_size = 2;
+        };
+
+        terminal = {
+          shell.program = "nu";
+        };
+
+        vim = {
+          highlight_on_yank_duration = 500;
+          use_smartcase_find = true;
+          cursor_shape = {
+            normal = "block";
+            insert = "bar";
+            replace = "underline";
+            visual = "underline";
+          };
+        };
+
+        command_aliases = {
+          bc = "pane::CloseActiveItem";
+          rl = "editor::ReloadFile";
+          lspr = "editor::RestartLanguageServer";
+          wn = "workspace::SaveWithoutFormat";
+        };
+
+        inlay_hints = {
+          enabled = true;
+          show_type_hints = true;
+          show_parameter_hints = true;
+          show_other_hints = true;
+        };
+
+        diagnostics = {
+          inline.enabled = true;
+        };
+
+        tab_bar.show_nav_history.buttons = false;
+
+        tabs = {
+          file_icons = true;
+          show_diagnostics = "all";
+        };
+
+        git = {
+          inline_blame.enabled = true;
+        };
+
+        which_key = {
+          enabled = true;
+          delay_ms = 0;
+        };
+
+        ui_font_family = font.sans.name;
+        ui_font_size = font.size.big;
+
+        buffer_font_family = font.mono.name;
+        buffer_font_size = font.size.big;
+
+        agent_ui_font_size = font.size.big;
+        agent_buffer_font_size = font.size.big;
+
+        theme = {
+          mode = "system";
+          dark = themes.zed.dark;
+          light = themes.zed.light;
+        };
+
+        auto_install_extensions = {
+          astro = true;
+          cargotom = true;
+          deno = true;
+          haskell = true;
+          ini = true;
+          justfile = true;
+          kdl = true;
+          nix = true;
+          nu = true;
+          qml = false;
+          rust = true;
+          svelte = true;
+          typos = true;
+
+          opencode = true;
+
+          jj-conflict-resolver = true;
+        };
+
+        search = {
+          regex = true;
+          center_on_match = true;
+        };
+
+        use_smartcase_search = true;
+
+        seed_search_query_from_cursor = "selection";
+
+        document_folding_ranges = "on";
+
+        agent_servers = { };
+
+        language_models = { };
+
+        languages = {
+          Nix = {
+            language_servers = [
+              "typos"
+              "nixd"
+              "!nil"
+            ];
+
+            formatter.external.command = "nixfmt";
+          };
+
+          Rust = {
+            tab_size = 3;
+            language_servers = [
+              "typos"
+              "rust-analyzer"
+            ];
+          };
+
+          TOML = {
+            language_servers = [
+              "taplo"
+              "typos"
+            ];
+
+            formatter.external = {
+              command = "taplo";
+              arguments = [
+                "fmt"
+                "--option"
+                "align_entries=true"
+                "--option"
+                "column_width=100"
+                "--option"
+                "compact_arrays=false"
+                "--option"
+                "reorder_inline_tables=true"
+                "--option"
+                "reorder_keys=true"
+                "{buffer_path}"
+              ];
+            };
+          };
+
+          Markdown = {
+            language_servers = [
+              "marksman"
+              "typos"
+            ];
+            formatter = mkDenoFmt "md";
+          };
+
+          Just = {
+            language_servers = [
+              "just-lsp"
+              "typos"
+            ];
+
+            formatter.external.command = "just-formatter";
+          };
+
+          Nu = {
+            tab_size = 3;
+            language_servers = [
+              "nu-lsp"
+              "typos"
+            ];
+          };
+
+          Astro = {
+            language_servers = [
+              "typos"
+              "astrols"
+            ];
+
+            formatter = mkDenoFmt "astro";
+          };
+
+          CSS = {
+            language_servers = [
+              "typos"
+            ];
+
+            formatter = mkDenoFmt "css";
+          };
+
+          SCSS = {
+            language_servers = [
+              "typos"
+            ];
+
+            formatter = mkDenoFmt "scss";
+          };
+
+          HTML = {
+            language_servers = [
+              "typos"
+            ];
+
+            formatter = mkDenoFmt "html";
+          };
+
+          JSON = {
+            language_servers = [
+              "typos"
+              "jsonls"
+            ];
+
+            formatter = mkDenoFmt "json";
+          };
+
+          JSONC = {
+            language_servers = [
+              "typos"
+              "jsonls"
+            ];
+
+            formatter = mkDenoFmt "jsonc";
+          };
+
+          Svelte = {
+            language_servers = [
+              "typos"
+              "svelte-language-server"
+            ];
+
+            formatter = mkDenoFmt "svelte";
+          };
+
+          Vue = {
+            language_servers = [
+              "typos"
+              "vuels"
+            ];
+
+            formatter = mkDenoFmt "vue";
+          };
+
+          YAML = {
+            language_servers = [
+
+              "yamlls"
+            ];
+
+            formatter = mkDenoFmt "yaml";
+          };
+        }
+        // mapAttrs (_name: ext: {
+          language_servers = [
+            "deno"
+            "!typescript-language-server"
+            "!vtsls"
+            "!eslint"
+          ];
+
+          formatter = mkDenoFmt ext;
+        }) denoJsTsLanguages;
+
+        lsp = {
+          rust-analyzer = {
+            initialization_options = {
+              cargo.features = "all";
+              procMacro.enable = true;
+              check.command = "clippy";
+              inlayHints.enable = null;
+            };
+          };
+
+          nixd.binary.arguments = singleton "--inlay-hints";
+
+          deno = {
+            settings.javascript = {
+              enable = true;
+              lint = true;
+              unstable = true;
+
+              suggest.imports.hosts."https://deno.land" = true;
+
+              inlayHints.enumMemberValues.enabled = true;
+              inlayHints.functionLikeReturnTypes.enabled = true;
+              inlayHints.parameterNames.enabled = "all";
+              inlayHints.parameterTypes.enabled = true;
+              inlayHints.propertyDeclarationTypes.enabled = true;
+              inlayHints.variableTypes.enabled = true;
+            };
+          };
+        };
+      };
+
+      zedKeymaps = [
+        (mkZedKeymap null {
+          "ctrl-W" = null;
+          "ctrl-q" = null;
+          "ctrl-F" = null;
+          "ctrl-P" = null;
+          "ctrl-H" = null;
+          "ctrl-=" = "zed::ResetAllZoom";
+          "alt-h" = "workspace::ActivatePaneLeft";
+          "alt-j" = "workspace::ActivatePaneDown";
+          "alt-k" = "workspace::ActivatePaneUp";
+          "alt-l" = "workspace::ActivatePaneRight";
+          "alt-H" = "vim::ResizePaneLeft";
+          "alt-J" = "vim::ResizePaneDown";
+          "alt-K" = "vim::ResizePaneUp";
+          "alt-L" = "vim::ResizePaneRight";
+        })
+        (mkZedKeymap "Editor||Terminal||ProjectPanel||DebugPanel||Agent" {
+          "ctrl-p" = "workspace::Open";
+          "ctrl-S" = "project_panel::Toggle";
+          "ctrl-s" = "project_panel::ToggleFocus";
+          "ctrl-T" = "terminal_panel::Toggle";
+          "ctrl-t" = "terminal_panel::ToggleFocus";
+          "ctrl-D" = "debug_panel::Toggle";
+          "ctrl-A" = "agent::ToggleFocus";
+          "alt-t" = "task::Spawn";
+          "alt-T" = "task::Rerun";
+          "ctrl-g ctrl-g" = [
+            "task::Spawn"
+            {
+              task_name = "jjui";
+              reveal_target = "center";
+            }
+          ];
+          "ctrl-g ctrl-n" = [
+            "task::Spawn"
+            {
+              task_name = "nushell";
+              reveal_target = "center";
+            }
+          ];
+        })
+        (mkZedKeymap "AgentPanel" {
+          "alt-q" = "workspace::CloseActiveDock";
+          "alt-s" = "agent::OpenHistory";
+          "alt-n" = [
+            "agent::NewExternalAgentThread"
+            { agent.custom.name = "opencode"; }
+          ];
+        })
+        (mkZedKeymap "VimControl" {
+          "ctrl-b" = null;
+          "space" = null;
+        })
+        (mkZedKeymap "Pane" {
+          "ctrl-w" = null;
+          "alt-q" = "pane::CloseActiveItem";
+        })
+        (mkZedKeymap "Editor && (vim_mode == helix_normal || vim_mode == helix_select)" {
+          "space F" = [
+            "pane::DeploySearch"
+            { replace_enabled = true; }
+          ];
+          "space B" = "editor::BlameHover";
+          "space b" = "tab_switcher::ToggleAll";
+          "D" = "editor::SelectToEndOfLine";
+          "ctrl-j" = "editor::MoveLineDown";
+          "ctrl-k" = "editor::MoveLineUp";
+          # "' t" = "";
+          # "' r" = "";
+          # "' k" = "";
+          # "' m" = "";
+          # "' c" = "";
+        })
+        (mkZedKeymap "Terminal" {
+          "alt-q" = "pane::CloseActiveItem";
+          "alt-w h" = "pane::SplitLeft";
+          "alt-w l" = "pane::SplitRight";
+          "alt-w w" = "workspace::ActivateNextPane";
+          "alt-w n" = "workspace::NewTerminal";
+        })
+      ];
+
+      zedTasks = [
+        {
+          label = "jjui";
+          command = "kitty --class 'jj_float' -e 'jjui'";
+          reveal_target = "center";
+          use_new_terminal = true;
+          allow_concurrent_runs = false;
+          working_directory = "$ZED_WORKTREE_ROOT";
+          hide = "on_success";
+          reveal = "always";
+        }
+        {
+          label = "nushell";
+          command = "kitty --class 'jj_float' -e 'nu'";
+          reveal_target = "center";
+          use_new_terminal = true;
+          allow_concurrent_runs = false;
+          working_directory = "$ZED_WORKTREE_ROOT";
+          hide = "on_success";
+          reveal = "always";
+        }
+      ];
+
+      zedDebug = [ ];
+    in
+    {
+      environment.systemPackages =
+        singleton
+          inputs.zed.packages.${pkgs.stdenv.hostPlatform.system}.default;
+
+      hjem.extraModules = singleton {
+        packages = singleton (mkDesktopEntry {
+          name = "Zed";
+          exec = "/run/current-system/sw/bin/zed";
+        });
+
+        xdg.config.files = {
+          "zed/settings.json".source = json.generate "zed-settings.json" zedConfig;
+          "zed/keymap.json".source = json.generate "zed-keymap.json" zedKeymaps;
+          "zed/tasks.json".source = json.generate "zed-tasks.json" zedTasks;
+          "zed/debug.json".source = json.generate "zed-debug.json" zedDebug;
+        };
+      };
+    };
+
+  editorExtra =
     {
       inputs,
       pkgs,
@@ -529,6 +1001,12 @@ in
       inputs.nixpkgs.follows = "os";
     };
 
+    zed = {
+      url = "github:zed-industries/zed";
+
+      inputs.nixpkgs.follows = "os";
+    };
+
     nu-lint = {
       url = "git+https://codeberg.org/wvhulle/nu-lint";
 
@@ -545,8 +1023,11 @@ in
   flake.modules.nixos.helix = helixBase;
   flake.modules.darwin.helix = helixBase;
 
-  flake.modules.nixos.helix-extra = helixExtra;
-  flake.modules.darwin.helix-extra = helixExtra;
+  flake.modules.nixos.editor-extra = editorExtra;
+  flake.modules.darwin.editor-extra = editorExtra;
+
+  flake.modules.nixos.zed = zedBase;
+  flake.modules.darwin.zed = zedBase;
 
   flake.modules.nixos.disable-nano = disableNano;
   flake.modules.darwin.disable-nano = disableNano;

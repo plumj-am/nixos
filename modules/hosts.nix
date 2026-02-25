@@ -42,11 +42,11 @@ in
       disks-normal
       disks-extra-swap
       disks-extra-zram-swap
+      editor-extra
       games
       gammastep
       graphics
       hardware-desktop
-      helix-extra
       hyprlock
       jujutsu-extra
       kitty
@@ -71,6 +71,7 @@ in
       theme-extra-scripts
       window-manager
       yazi
+      zed
       zellij
       {
         config = mkConfig inputs "yuzu" "x86_64-linux" "desktop" {
@@ -110,12 +111,12 @@ in
       discord-tui
       disks-normal
       disks-extra-zram-swap
+      editor-extra
       forgejo-action-runner
       games
       gammastep
       graphics
       hardware-desktop
-      helix-extra
       hyprlock
       jujutsu-extra
       kitty

@@ -88,6 +88,11 @@ let
                 }
 
                 window-rule {
+                  match app-id=r#"jj_float"#
+                  open-floating true
+                }
+
+                window-rule {
                   match app-id=r#"^steam_app_*"#
                   opacity 1.0
                   open-fullscreen true
