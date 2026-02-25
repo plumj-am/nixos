@@ -8,11 +8,16 @@ let
     }:
     let
       inherit (config) theme;
-      inherit (lib.strings) readFile;
+      inherit (lib.strings) readFile concatStringsSep;
       inherit (lib.meta) getExe;
       inherit (lib.lists) singleton;
+      inherit (lib.attrsets) mapAttrsToList;
 
       homeDir = "($env.HOME)";
+
+      nuLoadEnv = vars: ''
+        load-env {${concatStringsSep ", " (mapAttrsToList (n: v: "${n}: \"${v}\"") vars)}}
+      '';
 
       aliases = {
         mp = "mprocs";
@@ -91,6 +96,7 @@ let
         xdg.config.files."nushell/config.nu".text =
           # nu
           ''
+            ${lib.optionalString (config.environment.variables != { }) (nuLoadEnv config.environment.variables)}
             ${lib.concatStringsSep "\n" (lib.mapAttrsToList (name: val: "alias ${name} = ${val}") aliases)}
             $env.config.edit_mode = "vi"
             $env.config.buffer_editor = "${config.environment.variables.EDITOR}"
