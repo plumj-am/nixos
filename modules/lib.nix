@@ -1,7 +1,12 @@
 # Custom library functions and such.
 let
   commonModule =
-    { lib, config, ... }:
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
     let
       inherit (lib.options) mkOption;
       inherit (config.age) secrets;
@@ -41,7 +46,6 @@ let
 
         # Create a .desktop file entry for app launchers.
         mkDesktopEntry =
-          { pkgs }:
           {
             name,
             exec,

@@ -78,7 +78,7 @@ in
 
         pkgs.hyprpicker
 
-        (mkDesktopEntry { inherit pkgs; } {
+        (mkDesktopEntry {
           name = "Colour-Picker";
           exec = "hyprpicker --format=hex --autocopy";
         })

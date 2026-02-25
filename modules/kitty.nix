@@ -89,7 +89,7 @@ let
         packages = [
           pkgs.kitty
 
-          (mkDesktopEntry { inherit pkgs; } {
+          (mkDesktopEntry {
             name = "Zellij-kitty";
             exec = "kitty -e ${pkgs.zellij}/bin/zellij";
           })

@@ -19,7 +19,7 @@ let
         packages = [
           inputs.rio.packages.${pkgs.stdenv.hostPlatform.system}.rio
 
-          (mkDesktopEntry { inherit pkgs; } {
+          (mkDesktopEntry {
             name = "Zellij-Rio";
             exec = "rio -c ${pkgs.zellij}/bin/zellij";
           })

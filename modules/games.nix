@@ -12,7 +12,7 @@
     in
     {
       environment.systemPackages = packages ++ [
-        (mkDesktopEntry { inherit pkgs; } {
+        (mkDesktopEntry {
           name = "Overwatch";
           exec = "steam steam://rungameid/2357570";
         })

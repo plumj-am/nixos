@@ -42,11 +42,11 @@ let
         pkgs.xwayland-satellite
         pkgs.xdg-utils
 
-        (mkDesktopEntry { inherit pkgs; } {
+        (mkDesktopEntry {
           name = "Screenshot";
           exec = "niri msg action screenshot";
         })
-        (mkDesktopEntry { inherit pkgs; } {
+        (mkDesktopEntry {
           name = "Screenshot-Window";
           exec = "niri msg action screenshot-window --write-to-disk";
         })

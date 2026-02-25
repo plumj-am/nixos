@@ -94,7 +94,7 @@ let
         packages = [
           inputs.ghostty.packages.${pkgs.stdenv.hostPlatform.system}.ghostty
 
-          (mkDesktopEntry { inherit pkgs; } {
+          (mkDesktopEntry {
             name = "Zellij-Ghostty";
             exec = "ghostty -e ${pkgs.zellij}/bin/zellij";
           })

@@ -9,7 +9,7 @@
         pkgs.nh
         pkgs.nix-output-monitor
 
-        (mkDesktopEntry { inherit pkgs; } {
+        (mkDesktopEntry {
           name = "Rebuild";
           exec = "/home/jam/nixos/rebuild.nu";
         })
