@@ -116,7 +116,7 @@
     };
     run0-sudo-shim = {
       inputs.nixpkgs.follows = "os";
-      url = "github:lordgrimmauld/run0-sudo-shim";
+      url = "github:plumj-am/run0-sudo-shim";
     };
   };
 

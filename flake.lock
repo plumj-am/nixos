@@ -1138,15 +1138,15 @@
         "treefmt-nix": "treefmt-nix_5"
       },
       "locked": {
-        "lastModified": 1769894065,
-        "narHash": "sha256-u8hioiUsIxUsjHhgA59ADaYWKNf5PcFAlY6/T0G1JtE=",
-        "owner": "lordgrimmauld",
+        "lastModified": 1772014225,
+        "narHash": "sha256-lK8Dvq/87MYJ/auGG7kguEKi9FLpAmIy6JEdDBdQ9Tw=",
+        "owner": "plumj-am",
         "repo": "run0-sudo-shim",
-        "rev": "8b2946a8c150766648ec89d5df780822b888775e",
+        "rev": "cc6b4078c03009b2e19a4bfca42e526d8d55701c",
         "type": "github"
       },
       "original": {
-        "owner": "lordgrimmauld",
+        "owner": "plumj-am",
         "repo": "run0-sudo-shim",
         "type": "github"
       }

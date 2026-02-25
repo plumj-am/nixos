@@ -15,8 +15,19 @@ let
     }:
     let
       inherit (lib.lists) singleton;
+
+      package = pkgs.symlinkJoin {
+        name = "sudo";
+        paths = singleton inputs.run0-sudo-shim.packages.${pkgs.stdenv.hostPlatform.system}.run0-sudo-shim;
+        nativeBuildInputs = singleton pkgs.makeWrapper;
+        postBuild = ''
+          wrapProgram $out/bin/sudo --add-flags "--run0-extra-arg=--background="
+        '';
+      };
     in
     {
+      environment.systemPackages = singleton package;
+
       users.users.jam.extraGroups = [ "wheel" ];
 
       security = {
@@ -28,10 +39,6 @@ let
           pamMount = false;
         };
       };
-
-      environment.systemPackages =
-        singleton
-          inputs.run0-sudo-shim.packages.${pkgs.stdenv.hostPlatform.system}.run0-sudo-shim;
     };
 
   sudoBaseDarwin = {
@@ -77,7 +84,7 @@ in
 {
   flake-file.inputs = {
     run0-sudo-shim = {
-      url = "github:lordgrimmauld/run0-sudo-shim";
+      url = "github:plumj-am/run0-sudo-shim";
 
       inputs.nixpkgs.follows = "os";
     };
