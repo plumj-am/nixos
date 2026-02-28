@@ -9,7 +9,7 @@ let
       settings = {
         general = {
           location-provider = "geoclue2";
-          temp-day = 4500;
+          temp-day = 5500;
           temp-night = 3500;
         };
       };
