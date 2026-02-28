@@ -74,8 +74,20 @@ let
 
                 window-rule {
                   match app-id=r#"^(zen-.*|org\.qutebrowser\.qutebrowser|brave-browser)$"#
-                  opacity 1.0
                   open-maximized true
+                  open-on-workspace "browser"
+                }
+
+                window-rule {
+                  match app-id=r#"^.*zed.*"#
+                  open-fullscreen true
+                  open-on-workspace "editor"
+                }
+
+                window-rule {
+                  match app-id=r#"^vesktop$"#
+                  open-fullscreen true
+                  open-on-workspace "chat"
                 }
 
                 window-rule {
@@ -93,9 +105,15 @@ let
                 }
 
                 window-rule {
+                  match app-id=r#"^steam$"#
+                  open-fullscreen true
+                  open-on-workspace "games"
+                }
+
+                window-rule {
                   match app-id=r#"^steam_app_*"#
                   opacity 1.0
-                  open-fullscreen true
+                  open-on-workspace "games"
                   border {
                     off
                   }
@@ -139,9 +157,30 @@ let
                   position x=0 y=0
                 }
 
-                output "Dell Inc. DELL U3415W F1T1W92E116L" {
-                  mode "3440x1440@49.987" // On Windows I could get 80hz but not here for some reason...
+                output "PNP(BNQ) BenQ xl2411t PAD00133SL0" {
+                  mode "1920x1080@60.000"
                   position x=1920 y=0
+                }
+
+                // output "Dell Inc. DELL U3415W F1T1W92E116L" {
+                //   mode "3440x1440@49.987" // On Windows I could get 80hz but not here for some reason...
+                //   position x=1920 y=0
+                // }
+
+                workspace "games" {
+                  open-on-output "DP-2"
+                }
+
+                workspace "browser" {
+                  open-on-output "DP-2"
+                }
+
+                workspace "chat" {
+                  open-on-output "DP-2"
+                }
+
+                workspace "editor" {
+                  open-on-output "DP-1"
                 }
 
                 layout {
