@@ -37,6 +37,7 @@ in
       boot-systemd
       desktop-gui
       desktop-tools
+      determinate-systems
       discord-gui
       discord-tui
       disks-normal
@@ -107,6 +108,7 @@ in
       boot-systemd
       desktop-gui
       desktop-tools
+      determinate-systems
       discord-gui
       discord-tui
       disks-normal
@@ -184,6 +186,7 @@ in
       aspectsBase
 
       desktop-tools
+      determinate-systems
       jujutsu-extra
       linux-kernel-zen
       nix-distributed-builds
@@ -217,6 +220,7 @@ in
       cgit
       cinny
       disks-disko
+      determinate-systems
       forgejo
       freshrss-server
       forgejo-action-runner
@@ -305,6 +309,7 @@ in
       acme
       boot-grub
       disks-disko
+      determinate-systems
       forgejo-action-runner
       linux-kernel-latest
       nginx
@@ -358,6 +363,7 @@ in
 
       boot-grub
       disks-disko
+      determinate-systems
       forgejo-action-runner
       linux-kernel-latest
       nix-cache-proxy
@@ -399,6 +405,7 @@ in
 
       boot-grub
       disks-disko
+      determinate-systems
       forgejo-action-runner
       linux-kernel-latest
       nix-distributed-builder
@@ -435,6 +442,7 @@ in
       aspectsBase
 
       app-launcher
+      determinate-systems
       nix-settings-extra-darwin
       rust-desktop
       {

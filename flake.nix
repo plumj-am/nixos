@@ -31,6 +31,10 @@
       inputs.nixpkgs.follows = "os";
       url = "github:malpenzibo/ashell";
     };
+    determinate = {
+      inputs.nixpkgs.follows = "os";
+      url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
+    };
     disko = {
       inputs.nixpkgs.follows = "os";
       url = "github:nix-community/disko";

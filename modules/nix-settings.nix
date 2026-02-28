@@ -10,7 +10,6 @@ let
 
   nixSettingsBase =
     {
-      pkgs,
       inputs,
       lib,
       ...
@@ -19,7 +18,7 @@ let
       inherit (lib.attrsets) mapAttrs;
     in
     {
-      nix.package = pkgs.nixVersions.latest; # Use latest (includes nice S3 changes).
+      # nix.package = pkgs.nixVersions.latest; # Using determinate-nix which sets this.
       nix.channel = {
         enable = false;
       };
@@ -64,6 +63,10 @@ let
         ];
         warn-dirty = false;
         use-xdg-base-directories = true;
+
+        # determinate-nix
+        eval-cores = 0;
+        lazy-trees = true;
       };
 
       nix.optimise.automatic = true;
