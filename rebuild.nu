@@ -51,6 +51,7 @@ def --wrapped main [
       $config.path
       --accept-flake-config
       --bypass-root-check
+      --builders ""
       ...$nix_args
       ...$rest
    ]
