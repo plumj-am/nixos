@@ -873,16 +873,16 @@ let
           alt-K = "vim::ResizePaneUp";
           alt-L = "vim::ResizePaneRight";
         })
-        (mkZedKeymap "(Editor||Terminal||ProjectPanel||DebugPanel||Agent) && not_editing" {
+        (mkZedKeymap "Editor||Terminal||ProjectPanel||DebugPanel||Agent" {
           ctrl-p = "workspace::Open";
-          ctrl-S = "project_panel::Toggle";
-          ctrl-s = "project_panel::ToggleFocus";
-          ctrl-T = "terminal_panel::Toggle";
-          ctrl-t = "terminal_panel::ToggleFocus";
+          alt-S = "project_panel::Toggle";
+          alt-s = "project_panel::ToggleFocus";
+          alt-T = "terminal_panel::Toggle";
+          alt-t = "terminal_panel::ToggleFocus";
           ctrl-D = "debug_panel::Toggle";
           ctrl-A = "agent::ToggleFocus";
-          alt-t = "task::Spawn";
-          alt-T = "task::Rerun";
+          ctrl-t = "task::Spawn";
+          ctrl-T = "task::Rerun";
           "ctrl-g ctrl-g" = [
             "task::Spawn"
             {
