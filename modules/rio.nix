@@ -3,7 +3,7 @@ let
   # No point configuring yet because it still doesn't work for some reason.
   rioBase =
     {
-      inputs,
+      # inputs,
       pkgs,
       lib,
       config,
@@ -17,7 +17,7 @@ let
 
       hjem.extraModules = singleton {
         packages = [
-          inputs.rio.packages.${pkgs.stdenv.hostPlatform.system}.rio
+          # inputs.rio.packages.${pkgs.stdenv.hostPlatform.system}.rio
 
           (mkDesktopEntry {
             name = "Zellij-Rio";
@@ -29,12 +29,12 @@ let
 in
 {
   flake-file.inputs = {
-    rio = {
-      url = "github:raphamorim/rio/main";
+    # rio = {
+    #   url = "github:raphamorim/rio/main";
 
-      inputs.nixpkgs.follows = "os";
-      inputs.flake-parts.follows = "parts";
-    };
+    #   inputs.nixpkgs.follows = "os";
+    #   inputs.flake-parts.follows = "parts";
+    # };
   };
 
   flake.modules.nixos.rio = rioBase;

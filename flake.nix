@@ -68,10 +68,6 @@
       inputs.nixpkgs.follows = "os";
       url = "git+https://codeberg.org/wvhulle/nu-lint";
     };
-    nufmt = {
-      inputs.nixpkgs.follows = "os";
-      url = "github:nushell/nufmt";
-    };
     opencode = {
       inputs.nixpkgs.follows = "os";
       url = "github:anomalyco/opencode";
@@ -91,24 +87,6 @@
     parts = {
       inputs.nixpkgs-lib.follows = "os";
       url = "github:hercules-ci/flake-parts";
-    };
-    qml-niri = {
-      inputs = {
-        nixpkgs.follows = "os";
-        quickshell.follows = "quickshell";
-      };
-      url = "github:imiric/qml-niri/main";
-    };
-    quickshell = {
-      inputs.nixpkgs.follows = "os";
-      url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
-    };
-    rio = {
-      inputs = {
-        flake-parts.follows = "parts";
-        nixpkgs.follows = "os";
-      };
-      url = "github:raphamorim/rio/main";
     };
     run0-sudo-shim = {
       inputs.nixpkgs.follows = "os";
