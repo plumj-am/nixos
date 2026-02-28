@@ -79,14 +79,14 @@ let
                 }
 
                 window-rule {
-                  match app-id=r#"^.*zed.*"#
-                  open-fullscreen true
+                  match app-id=r#"zed"#
+                  open-maximized false
                   open-on-workspace "editor"
                 }
 
                 window-rule {
                   match app-id=r#"^vesktop$"#
-                  open-fullscreen true
+                  open-maximized true
                   open-on-workspace "chat"
                 }
 
@@ -106,7 +106,7 @@ let
 
                 window-rule {
                   match app-id=r#"^steam$"#
-                  open-fullscreen true
+                  open-maximized true
                   open-on-workspace "games"
                 }
 
