@@ -22,27 +22,47 @@
   };
 
   flake.modules.nixos.secret-manager =
-    { config, ... }:
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
+    let
+      inherit (lib.lists) singleton;
+    in
     {
       imports = [
         inputs.age.nixosModules.default
         inputs.age-rekey.nixosModules.default
       ];
 
-      config.age = {
-        identityPaths = [ "/root/.ssh/id" ];
+      config = {
+        environment.systemPackages =
+          singleton
+            inputs.age-rekey.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
-        rekey = {
-          storageMode = "local";
-          masterIdentities = [ ../yubikey.pub ];
-          localStorageDir = ../secrets/rekeyed/${config.networking.hostName};
+        age = {
+          identityPaths = [ "/root/.ssh/id" ];
+
+          rekey = {
+            storageMode = "local";
+            masterIdentities = [ ../yubikey.pub ];
+            localStorageDir = ../secrets/rekeyed/${config.networking.hostName};
+          };
         };
       };
     };
 
   flake.modules.darwin.secret-manager =
-    { config, pkgs, ... }:
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
     let
+      inherit (lib.lists) singleton;
       # Import the agenix-rekey module without the _class attribute.
       # We need to import it with a wrapper that makes it compatible with darwin.
       agenixRekeyModule = import (inputs.age-rekey + /modules/agenix-rekey.nix) pkgs;
@@ -53,13 +73,18 @@
         agenixRekeyModule
       ];
 
-      config.age = {
-        identityPaths = [ "/Users/jam/.ssh/id" ];
+      config = {
+        environment.systemPackages =
+          singleton
+            inputs.age-rekey.packages.${pkgs.stdenv.hostPlatform.system}.default;
+        age = {
+          identityPaths = [ "/Users/jam/.ssh/id" ];
 
-        rekey = {
-          storageMode = "local";
-          masterIdentities = [ ../yubikey.pub ];
-          localStorageDir = ../secrets/rekeyed/${config.networking.hostName};
+          rekey = {
+            storageMode = "local";
+            masterIdentities = [ ../yubikey.pub ];
+            localStorageDir = ../secrets/rekeyed/${config.networking.hostName};
+          };
         };
       };
     };
