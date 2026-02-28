@@ -507,6 +507,11 @@ let
         horizontal_scroll_margin = 12;
         use_system_path_prompts = false;
 
+        telemetry = {
+          diagnostics = false;
+          metrics = false;
+        };
+
         active_pane_modifiers = {
           inactive_opacity = 0.85;
           border_size = border.small;
@@ -593,8 +598,9 @@ let
           kdl = true;
           nix = true;
           nu = true;
-          qml = false;
+          qml = true;
           rust = true;
+          sql = true;
           svelte = true;
           typos = true;
 
@@ -617,6 +623,11 @@ let
 
         auto_signature_help = true;
 
+        file_finder = {
+          file_icons = true;
+          modal_max_width = "large";
+        };
+
         preview_tabs = {
           enable_preview_from_file_finder = true;
           enable_preview_from_project_panel = true;
@@ -625,7 +636,10 @@ let
 
         document_folding_ranges = "on";
 
-        gutter.runnables = false;
+        gutter = {
+          code_actions = false;
+          runnables = false;
+        };
 
         agent.default_model = {
           provider = "zai";
@@ -1080,11 +1094,11 @@ in
       inputs.nixpkgs.follows = "os";
     };
 
-    nufmt = {
-      url = "github:nushell/nufmt";
+    # nufmt = {
+    #   url = "github:nushell/nufmt";
 
-      inputs.nixpkgs.follows = "os";
-    };
+    #   inputs.nixpkgs.follows = "os";
+    # };
   };
 
   flake.modules.nixos.helix = helixBase;
