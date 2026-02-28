@@ -91,7 +91,7 @@ let
         padding-left = 10;
         padding-right = 0;
 
-        background-color = "#00000000";
+        background-color = theme.withHash.base00;
         prompt-color = theme.withHash.base06;
         text-color = theme.withHash.base04;
         selection-color = theme.withHash.base08;
