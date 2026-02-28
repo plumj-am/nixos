@@ -121,6 +121,7 @@ let
           size.tiny = 9;
           size.small = 10;
           size.normal = 12;
+          size.medium = 14;
           size.big = 16;
 
           mono.name = "Maple Mono NF";

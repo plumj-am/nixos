@@ -497,6 +497,7 @@ let
       };
 
       zedConfig = with theme; {
+        auto_update = false;
         base_keymap = "VSCode";
         helix_mode = true;
         load_direnv = "direct";
@@ -508,7 +509,7 @@ let
 
         active_pane_modifiers = {
           inactive_opacity = 0.85;
-          border_size = 2;
+          border_size = border.small;
         };
 
         terminal = {
@@ -544,7 +545,7 @@ let
           inline.enabled = true;
         };
 
-        tab_bar.show_nav_history.buttons = false;
+        tab_bar.show = false;
 
         tabs = {
           file_icons = true;
@@ -555,19 +556,26 @@ let
           inline_blame.enabled = true;
         };
 
+        project_panel = {
+          default_width = 300;
+          indent_size = 16;
+          entry_spacing = "standard";
+          starts_open = false;
+        };
+
         which_key = {
           enabled = true;
           delay_ms = 0;
         };
 
         ui_font_family = font.sans.name;
-        ui_font_size = font.size.big;
+        ui_font_size = font.size.medium;
 
         buffer_font_family = font.mono.name;
-        buffer_font_size = font.size.big;
+        buffer_font_size = font.size.medium;
 
-        agent_ui_font_size = font.size.big;
-        agent_buffer_font_size = font.size.big;
+        agent_ui_font_size = font.size.medium;
+        agent_buffer_font_size = font.size.medium;
 
         theme = {
           mode = "system";
@@ -591,6 +599,7 @@ let
           typos = true;
 
           opencode = true;
+          context7 = true;
 
           jj-conflict-resolver = true;
         };
@@ -606,11 +615,57 @@ let
 
         seed_search_query_from_cursor = "selection";
 
+        auto_signature_help = true;
+
+        preview_tabs = {
+          enable_preview_from_file_finder = true;
+          enable_preview_from_project_panel = true;
+          enabled = true;
+        };
+
         document_folding_ranges = "on";
 
-        agent_servers = { };
+        gutter.runnables = false;
 
-        language_models = { };
+        agent.default_model = {
+          provider = "zai";
+          model = "glm-5";
+
+        };
+
+        language_models = {
+          openai_compatible.zai = {
+            api_url = "https://api.z.ai/api/coding/paas/v4";
+            available_models = [
+              {
+                name = "glm-5";
+                display_name = "GLM-5";
+                max_tokens = 200000;
+                max_output_tokens = 128000;
+                max_completion_tokens = 128000;
+                capabilities = {
+                  tools = true;
+                  images = false;
+                  parallel_tool_calls = true;
+                  prompt_cache_key = true;
+                };
+              }
+              {
+                name = "glm-4.7-flash";
+                display_name = "GLM-4.7-FlashX";
+                max_tokens = 200000;
+                max_output_tokens = 128000;
+                max_completion_tokens = 128000;
+                capabilities = {
+                  tools = true;
+                  images = false;
+                  parallel_tool_calls = true;
+                  prompt_cache_key = true;
+                };
+              }
+            ];
+          };
+        };
 
         languages = {
           Nix = {
@@ -818,7 +873,7 @@ let
           alt-K = "vim::ResizePaneUp";
           alt-L = "vim::ResizePaneRight";
         })
-        (mkZedKeymap "Editor||Terminal||ProjectPanel||DebugPanel||Agent" {
+        (mkZedKeymap "(Editor||Terminal||ProjectPanel||DebugPanel||Agent) && not_editing" {
           ctrl-p = "workspace::Open";
           ctrl-S = "project_panel::Toggle";
           ctrl-s = "project_panel::ToggleFocus";
@@ -828,7 +883,6 @@ let
           ctrl-A = "agent::ToggleFocus";
           alt-t = "task::Spawn";
           alt-T = "task::Rerun";
-          "space f" = "file_finder::Toggle";
           "ctrl-g ctrl-g" = [
             "task::Spawn"
             {
@@ -844,9 +898,14 @@ let
             }
           ];
         })
+        (mkZedKeymap "not_editing" {
+          "space f" = "file_finder::Toggle";
+        })
         (mkZedKeymap "AgentPanel" {
           alt-q = "workspace::CloseActiveDock";
           alt-s = "agent::OpenHistory";
+          shift-tab = "agent::CycleModeSelector";
+          tab = "agent::CycleModeSelector";
           alt-n = [
             "agent::NewExternalAgentThread"
             { agent.custom.name = "opencode"; }
@@ -878,12 +937,13 @@ let
           alt-L = "pane::SplitRight";
           alt-w = "workspace::ActivateNextPane";
           alt-n = "workspace::NewTerminal";
+          alt-u = "terminal::ScrollHalfPageUp";
+          alt-d = "terminal::ScrollHalfPageDown";
         })
-        (mkZedKeymap "ProjectPanel" {
+        (mkZedKeymap "ProjectPanel && not_editing" {
           "/" = null;
           alt-q = "workspace::CloseActiveDock";
-          t = "project_panel::NewFile";
-          k = "project_panel::NewDirectory";
+          n = "project_panel::NewFile";
           r = "project_panel::Rename";
           "z a" = "project_panel::FoldDirectory";
         })
