@@ -2,18 +2,18 @@ let
   commonModule = {
     fileSystems = {
       "/" = {
-        device = "/dev/disk/by-label/nixos";
+        device = "/dev/disk/by-label/root";
         fsType = "ext4";
       };
 
-      "/boot" = {
-        device = "/dev/disk/by-label/BOOT";
-        fsType = "vfat";
-        options = [
-          "fmask=0077"
-          "dmask=0077"
-        ];
-      };
+      # "/boot" = {
+      #   device = "/dev/disk/by-label/BOOT";
+      #   fsType = "vfat";
+      #   options = [
+      #     "fmask=0077"
+      #     "dmask=0077"
+      #   ];
+      # };
     };
   };
 in
@@ -93,7 +93,7 @@ in
 
     swapDevices = [
       {
-        device = "/dev/disk/by-label/SWAP";
+        device = "/dev/disk/by-label/swap";
       }
     ];
   };
