@@ -602,6 +602,8 @@ let
 
         use_smartcase_search = true;
 
+        search_on_input = true;
+
         seed_search_query_from_cursor = "selection";
 
         document_folding_ranges = "on";
@@ -826,6 +828,7 @@ let
           ctrl-A = "agent::ToggleFocus";
           alt-t = "task::Spawn";
           alt-T = "task::Rerun";
+          "space f" = "file_finder::Toggle";
           "ctrl-g ctrl-g" = [
             "task::Spawn"
             {
@@ -858,10 +861,6 @@ let
           alt-q = "pane::CloseActiveItem";
         })
         (mkZedKeymap "Editor && (vim_mode == helix_normal || vim_mode == helix_select)" {
-          "space F" = [
-            "pane::DeploySearch"
-            { replace_enabled = true; }
-          ];
           "space B" = "editor::BlameHover";
           "space b" = "tab_switcher::ToggleAll";
           D = "editor::SelectToEndOfLine";
@@ -879,6 +878,14 @@ let
           alt-L = "pane::SplitRight";
           alt-w = "workspace::ActivateNextPane";
           alt-n = "workspace::NewTerminal";
+        })
+        (mkZedKeymap "ProjectPanel" {
+          "/" = null;
+          alt-q = "workspace::CloseActiveDock";
+          t = "project_panel::NewFile";
+          k = "project_panel::NewDirectory";
+          r = "project_panel::Rename";
+          "z a" = "project_panel::FoldDirectory";
         })
       ];
 
