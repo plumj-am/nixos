@@ -873,7 +873,7 @@ let
           alt-K = "vim::ResizePaneUp";
           alt-L = "vim::ResizePaneRight";
         })
-        (mkZedKeymap "Editor||Terminal||ProjectPanel||DebugPanel||Agent" {
+        (mkZedKeymap "(Editor||Terminal||ProjectPanel||DebugPanel||Agent) && !Picker" {
           ctrl-p = "workspace::Open";
           alt-S = "project_panel::Toggle";
           alt-s = "project_panel::ToggleFocus";
