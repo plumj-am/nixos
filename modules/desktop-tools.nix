@@ -69,7 +69,7 @@ in
         title = "Random";
       };
 
-      powerMenu = pkgs.writeScriptBin "power-menu" (readFile ./nushell.power-menu.nu);
+      powerMenu = pkgs.writeScriptBin "power-menu" <| readFile ./nushell.power-menu.nu;
     in
     {
       environment.systemPackages = [

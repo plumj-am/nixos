@@ -46,12 +46,11 @@ let
             "base0F"
           ];
         in
-        listToAttrs (
-          genList (n: {
-            name = elemAt colorNames n;
-            value = stripHash (elemAt colors.colors.colors n);
-          }) 16
-        );
+        listToAttrs
+        <| genList (n: {
+          name = elemAt colorNames n;
+          value = stripHash (elemAt colors.colors.colors n);
+        }) 16;
 
       pywalColors =
         if pathExists pywalCache then parsePywalColors (readFile pywalCache) else gruvboxColors.dark;
@@ -274,12 +273,13 @@ let
             with0x = mapAttrs (_: v: "0x${v}") theme.colors;
             withRgb = mapAttrs (_: v: theme.hexToRgb v) theme.colors;
           }
-          // (listToAttrs (
-            map (app: {
+          // (
+            listToAttrs
+            <| map (app: {
               name = app;
               value = theme.getTheme app;
             }) themedApps
-          ));
+          );
       };
     };
 
@@ -310,9 +310,9 @@ let
       inherit (lib) map;
       inherit (config.myLib) mkDesktopEntry;
 
-      pickWallpaper = pkgs.writeScriptBin "pick-wallpaper" (readFile ./nushell.pick-wallpaper.nu);
+      pickWallpaper = pkgs.writeScriptBin "pick-wallpaper" <| readFile ./nushell.pick-wallpaper.nu;
 
-      themeToggleScript = pkgs.writeScriptBin "tt" (readFile ./nushell.toggle-theme.nu);
+      themeToggleScript = pkgs.writeScriptBin "tt" <| readFile ./nushell.toggle-theme.nu;
     in
     {
       environment.systemPackages = [

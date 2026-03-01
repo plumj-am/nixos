@@ -44,15 +44,17 @@ let
 
       mkFgStyle =
         colors: color:
-        genAttrs colors (const {
+        genAttrs colors
+        <| const {
           fg = color;
-        });
+        };
 
       mkBgStyle =
         colors: color:
-        genAttrs colors (const {
+        genAttrs colors
+        <| const {
           bg = color;
-        });
+        };
 
       mkThemes =
         themes:
@@ -994,10 +996,12 @@ let
           inputs.zed.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
       hjem.extraModules = singleton {
-        packages = singleton (mkDesktopEntry {
-          name = "Zed";
-          exec = "/run/current-system/sw/bin/zed";
-        });
+        packages =
+          singleton
+          <| mkDesktopEntry {
+            name = "Zed";
+            exec = "/run/current-system/sw/bin/zed";
+          };
 
         xdg.config.files = {
           "zed/settings.json".source = json.generate "zed-settings.json" zedConfig;

@@ -96,7 +96,9 @@ let
         xdg.config.files."nushell/config.nu".text =
           # nu
           ''
-            ${lib.optionalString (config.environment.variables != { }) (nuLoadEnv config.environment.variables)}
+            ${
+              lib.optionalString (config.environment.variables != { }) <| nuLoadEnv config.environment.variables
+            }
             ${lib.concatStringsSep "\n" (lib.mapAttrsToList (name: val: "alias ${name} = ${val}") aliases)}
             $env.config.edit_mode = "vi"
             $env.config.buffer_editor = "${config.environment.variables.EDITOR}"

@@ -10,7 +10,7 @@ let
       inherit (lib) readFile;
       inherit (lib.lists) singleton;
 
-      processKiller = pkgs.writeScriptBin "process-killer" (readFile ./nushell.process-killer.nu);
+      processKiller = pkgs.writeScriptBin "process-killer" <| readFile ./nushell.process-killer.nu;
 
       processMonitorConfig = pkgs.writeText "btop-popup.conf" /* conf */ ''
         tty_mode = True
