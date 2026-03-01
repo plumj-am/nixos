@@ -1,4 +1,6 @@
 let
+  withTypos = lsps: lsps ++ [ "typos" ];
+
   denoJsTsLanguages = {
     JavaScript = "js";
     JSX = "jsx";
@@ -280,12 +282,11 @@ let
               {
                 name = "rust";
                 auto-format = true;
-                language-servers = [
+                language-servers = withTypos [
                   {
                     name = "rust-analyzer";
                     except-features = singleton "inlay-hints";
                   }
-                  "typos"
                 ];
                 indent = {
                   tab-width = 3;
@@ -296,10 +297,7 @@ let
                 name = "nix";
                 auto-format = true;
                 formatter.command = "nixfmt";
-                language-servers = [
-                  "nixd"
-                  "typos"
-                ];
+                language-servers = withTypos [ "nixd" ];
               }
               {
                 name = "toml";
@@ -319,27 +317,18 @@ let
                   "reorder_keys=true"
                   "-"
                 ];
-                language-servers = [
-                  "taplo"
-                  "typos"
-                ];
+                language-servers = withTypos [ "typos" ];
               }
               {
                 name = "markdown";
                 auto-format = true;
-                language-servers = [
-                  "marksman"
-                  "typos"
-                ];
+                language-servers = withTypos [ "marksman" ];
               }
               {
                 name = "just";
                 auto-format = true;
                 formatter.command = "just-formatter";
-                language-servers = [
-                  "just-lsp"
-                  "typos"
-                ];
+                language-servers = withTypos [ "just-lsp" ];
               }
               {
                 name = "nu";
@@ -350,10 +339,9 @@ let
                 #   "/home/jam/.config/nufmt/config.nuon"
                 #   "--stdin"
                 # ];
-                language-servers = [
+                language-servers = withTypos [
                   "nu-lsp"
                   # "nu-lint" # Waiting for <https://codeberg.org/wvhulle/nu-lint/pulls/96>
-                  "typos"
                 ];
                 indent = {
                   tab-width = 3;
@@ -663,8 +651,7 @@ let
 
         languages = {
           Nix = {
-            language_servers = [
-              "typos"
+            language_servers = withTypos [
               "nixd"
               "!nil"
             ];
@@ -674,17 +661,11 @@ let
 
           Rust = {
             tab_size = 3;
-            language_servers = [
-              "typos"
-              "rust-analyzer"
-            ];
+            language_servers = withTypos [ "rust-analyzer" ];
           };
 
           TOML = {
-            language_servers = [
-              "taplo"
-              "typos"
-            ];
+            language_servers = withTypos [ "taplo" ];
 
             formatter.external = {
               command = "taplo";
@@ -706,110 +687,77 @@ let
           };
 
           Markdown = {
-            language_servers = [
-              "marksman"
-              "typos"
-            ];
+            language_servers = withTypos [ "marksman" ];
             formatter = mkDenoFmt "md";
           };
 
           Just = {
-            language_servers = [
-              "just-lsp"
-              "typos"
-            ];
+            language_servers = withTypos [ "just-lsp" ];
 
             formatter.external.command = "just-formatter";
           };
 
           Nu = {
             tab_size = 3;
-            language_servers = [
-              "nu-lsp"
-              "typos"
-            ];
+            language_servers = withTypos [ "nu-lsp" ];
           };
 
           Astro = {
-            language_servers = [
-              "typos"
-              "astrols"
-            ];
+            language_servers = withTypos [ "astrols" ];
 
             formatter = mkDenoFmt "astro";
           };
 
           CSS = {
-            language_servers = [
-              "typos"
-            ];
+            language_servers = withTypos [ ];
 
             formatter = mkDenoFmt "css";
           };
 
           SCSS = {
-            language_servers = [
-              "typos"
-            ];
+            language_servers = withTypos [ ];
 
             formatter = mkDenoFmt "scss";
           };
 
           HTML = {
-            language_servers = [
-              "typos"
-            ];
+            language_servers = withTypos [ ];
 
             formatter = mkDenoFmt "html";
           };
 
           JSON = {
-            language_servers = [
-              "typos"
-              "jsonls"
-            ];
+            language_servers = withTypos [ "jsonls" ];
 
             formatter = mkDenoFmt "json";
           };
 
           JSONC = {
-            language_servers = [
-              "typos"
-              "jsonls"
-            ];
+            language_servers = withTypos [ "jsonls" ];
 
             formatter = mkDenoFmt "jsonc";
           };
 
           Svelte = {
-            language_servers = [
-              "typos"
-              "svelte-language-server"
-            ];
+            language_servers = withTypos [ "svelte-language-server" ];
 
             formatter = mkDenoFmt "svelte";
           };
 
           Vue = {
-            language_servers = [
-              "typos"
-              "vuels"
-            ];
+            language_servers = withTypos [ "vuels" ];
 
             formatter = mkDenoFmt "vue";
           };
 
           YAML = {
-            language_servers = [
-              "typos"
-              "yamlls"
-            ];
+            language_servers = withTypos [ "yamlls" ];
 
             formatter = mkDenoFmt "yaml";
           };
         }
         // mapAttrs (_name: ext: {
-          language_servers = [
+          language_servers = withTypos [
             "deno"
             "!typescript-language-server"
             "!vtsls"
@@ -873,8 +821,10 @@ let
           alt-s = "project_panel::ToggleFocus";
           alt-T = "terminal_panel::Toggle";
           alt-t = "terminal_panel::ToggleFocus";
-          ctrl-D = "debug_panel::Toggle";
-          ctrl-A = "agent::ToggleFocus";
+          alt-D = "debug_panel::Toggle";
+          alt-d = "debug_panel::ToggleFocus";
+          alt-A = "agent::Toggle";
+          alt-a = "agent::ToggleFocus";
           ctrl-t = "task::Spawn";
           ctrl-T = "task::Rerun";
           "ctrl-g ctrl-g" = [
@@ -940,6 +890,9 @@ let
           n = "project_panel::NewFile";
           r = "project_panel::Rename";
           "z a" = "project_panel::FoldDirectory";
+        })
+        (mkZedKeymap "multibuffer" {
+          "z z" = "editor::ToggleFoldAll";
         })
       ];
 
@@ -1054,6 +1007,9 @@ let
           #   doCheck = false;
           #   patches = [ ];
           # })
+
+          # QML
+          pkgs.qt6Packages.qtlanguageserver
 
           # Typos
           pkgs.typos-lsp
