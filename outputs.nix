@@ -9,7 +9,9 @@ let
       inherit (lib.filesystem) listFilesRecursive;
     in
     {
-      imports = filter (f: hasSuffix ".nix" f && !hasInfix "/_" f) (listFilesRecursive path);
+      imports = filter (f: hasSuffix ".nix" (toString f) && !hasInfix "/_" (toString f)) (
+        listFilesRecursive path
+      );
     };
 in
 inputs.parts.lib.mkFlake { inherit inputs; } {
