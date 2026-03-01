@@ -45,10 +45,6 @@
       url = "github:ghostty-org/ghostty";
       inputs.nixpkgs.follows = "os";
     };
-    helix = {
-      url = "github:helix-editor/helix";
-      inputs.nixpkgs.follows = "os";
-    };
     hjem = {
       url = "github:feel-co/hjem";
       inputs = {

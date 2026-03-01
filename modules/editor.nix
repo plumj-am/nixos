@@ -5,7 +5,6 @@ let
 
   helixBase =
     {
-      inputs,
       lib,
       pkgs,
       config,
@@ -108,10 +107,6 @@ let
             "[" = "]";
             "<" = ">";
           };
-
-          # Nightly options:
-          word-completion.trigger-length = 3;
-          rainbow-brackets = false;
         };
 
         keys = {
@@ -435,7 +430,7 @@ let
     in
     {
       hjem.extraModules = singleton {
-        packages = singleton inputs.helix.packages.${pkgs.stdenv.hostPlatform.system}.helix; # `.helix` follows the master branch.
+        packages = singleton pkgs.helix;
 
         xdg.config.files = {
           "helix/config.toml".source = toml.generate "helix-config.toml" settings;
