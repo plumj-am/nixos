@@ -474,6 +474,7 @@ let
         vertical_scroll_margin = 6;
         horizontal_scroll_margin = 12;
         use_system_path_prompts = false;
+        restore_on_startup = "launchpad";
 
         telemetry = {
           diagnostics = false;
@@ -485,9 +486,7 @@ let
           border_size = border.small;
         };
 
-        terminal = {
-          shell.program = "nu";
-        };
+        terminal.shell.program = "nu";
 
         vim = {
           highlight_on_yank_duration = 500;
@@ -514,9 +513,7 @@ let
           show_other_hints = true;
         };
 
-        diagnostics = {
-          inline.enabled = true;
-        };
+        diagnostics.inline.enabled = true;
 
         tab_bar.show = false;
 
@@ -525,9 +522,7 @@ let
           show_diagnostics = "all";
         };
 
-        git = {
-          inline_blame.enabled = true;
-        };
+        git.inline_blame.enabled = true;
 
         project_panel = {
           default_width = 300;
@@ -591,10 +586,8 @@ let
 
         auto_signature_help = true;
 
-        file_finder = {
-          file_icons = true;
-          modal_max_width = "large";
-        };
+        expand_excerpt_lines = 10;
+        excerpt_context_lines = 6;
 
         preview_tabs = {
           enable_preview_from_file_finder = true;
@@ -612,7 +605,6 @@ let
         agent.default_model = {
           provider = "zai";
           model = "glm-5";
-
         };
 
         language_models = {
