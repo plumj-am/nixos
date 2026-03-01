@@ -984,6 +984,11 @@ let
       zedDebug = [ ];
     in
     {
+      nix.settings = {
+        extra-substituters = singleton "https://zed.cachix.org";
+        extra-trusted-public-keys = singleton "zed.cachix.org-1:/pHQ6dpMsAZk2DiP4WCL0p9YDNKWj2Q5FL20bNmw1cU=";
+      };
+
       environment.systemPackages =
         singleton
           inputs.zed.packages.${pkgs.stdenv.hostPlatform.system}.default;
