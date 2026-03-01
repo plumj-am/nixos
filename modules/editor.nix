@@ -1,4 +1,21 @@
 let
+  denoJsTsLanguages = {
+    JavaScript = "js";
+    JSX = "jsx";
+    TSX = "tsx";
+    TypeScript = "ts";
+  };
+
+  denoFmtArgs = [
+    "fmt"
+    "--use-tabs"
+    "--no-semicolons"
+    "--indent-width"
+    "4"
+    "--unstable-component"
+    "--ext"
+  ];
+
   disableNano = {
     programs.nano.enable = false;
   };
@@ -223,39 +240,20 @@ let
       languages = {
         language =
           let
-            denoFmtArgs = [
-              "fmt"
-              "--use-tabs"
-              "--no-semicolons"
-              "--indent-width"
-              "4"
-              "--unstable-component"
-            ];
-
-            denoJsTsLanguages = [
-              "javascript"
-              "jsx"
-              "typescript"
-              "tsx"
-            ];
-
             languageConfig =
-              name: extension:
+              name: ext:
               {
                 inherit name;
                 auto-format = true;
                 formatter.command = "deno";
                 formatter.args = denoFmtArgs ++ [
                   "--ext"
-                  extension
+                  ext
                   "-"
                 ];
               }
-              // optionalAttrs (elem name denoJsTsLanguages) {
-                language-servers = [
-                  "deno"
-                  "typos"
-                ];
+              // optionalAttrs (elem ext (attrValues denoJsTsLanguages)) {
+                language-servers = withTypos [ "deno" ];
               };
 
             denoFmtLanguages =
@@ -474,23 +472,8 @@ let
       mkDenoFmt = ext: {
         external = {
           command = "deno";
-          arguments = [
-            "fmt"
-            "--use-tabs"
-            "--no-semicolons"
-            "--indent-width=4"
-            "--unstable-component"
-            "--ext"
-            ext
-          ];
+          arguments = denoFmtArgs ++ [ ext ];
         };
-      };
-
-      denoJsTsLanguages = {
-        JavaScript = "js";
-        JSX = "jsx";
-        TSX = "tsx";
-        TypeScript = "ts";
       };
 
       zedConfig = with theme; {
