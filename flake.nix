@@ -59,7 +59,7 @@
       };
       url = "github:feel-co/hjem";
     };
-    import-tree.url = "github:vic/import-tree";
+
     niri = {
       inputs.nixpkgs.follows = "os";
       url = "github:niri-wm/niri";
