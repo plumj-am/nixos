@@ -4,7 +4,7 @@ let
     path:
     { lib, ... }:
     let
-      inherit (builtins) filter;
+      inherit (lib) filter;
       inherit (lib.strings) hasSuffix hasInfix;
       inherit (lib.filesystem) listFilesRecursive;
     in

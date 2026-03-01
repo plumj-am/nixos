@@ -1,6 +1,6 @@
 { inputs, lib, ... }:
 let
-  inherit (builtins) filter;
+  inherit (lib) filter;
   inherit (lib.strings) hasSuffix;
   inherit (lib.filesystem) listFilesRecursive;
 in

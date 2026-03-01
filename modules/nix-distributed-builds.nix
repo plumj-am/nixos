@@ -8,7 +8,7 @@
     }:
     let
       inherit (lib.attrsets) attrsToList;
-      inherit (builtins) filter;
+      inherit (lib) filter;
     in
     {
       config = {

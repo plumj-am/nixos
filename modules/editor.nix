@@ -20,7 +20,7 @@ let
         mapAttrs
         ;
       inherit (lib.lists) singleton;
-      inherit (builtins) elem;
+      inherit (lib) elem;
       inherit (config) theme;
 
       toml = pkgs.formats.toml { };
@@ -385,11 +385,11 @@ let
             command = "nixd";
             args = singleton "--inlay-hints";
             config.nixd = {
-              nixpkgs.expr = ''import (builtins.getFlake "/home/jam/nixos").inputs.os { }'';
+              nixpkgs.expr = ''import (lib.getFlake "/home/jam/nixos").inputs.os { }'';
               options = {
-                current-host.expr = ''(builtins.getFlake "/home/jam/nixos").nixosConfigurations.${config.networking.hostName}.options'';
-                flake-parts.expr = ''(builtins.getFlake "/home/jam/nixos").debug.options'';
-                flake-parts2.expr = ''(builtins.getFlake "/home/jam/nixos").currentSystem.options'';
+                current-host.expr = ''(lib.getFlake "/home/jam/nixos").nixosConfigurations.${config.networking.hostName}.options'';
+                flake-parts.expr = ''(lib.getFlake "/home/jam/nixos").debug.options'';
+                flake-parts2.expr = ''(lib.getFlake "/home/jam/nixos").currentSystem.options'';
               };
             };
           };
