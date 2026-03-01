@@ -69,9 +69,14 @@ let
                   read."*" = "allow";
 
                   bash."curl*" = "ask";
+                  bash."git stash*" = "ask";
 
                   read."*.env" = "deny";
                   read."*.envrc" = "deny";
+                  bash."git reset*" = "deny";
+                  bash."git checkout*" = "deny";
+                  bash."git restore*" = "deny";
+                  bash."git switch*" = "deny";
                   bash."git push*" = "deny";
                   bash."git commit*" = "deny";
                   bash."jj*" = "deny";
