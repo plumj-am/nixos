@@ -1,5 +1,3 @@
-# DO-NOT-EDIT. This file was auto-generated using github:vic/flake-file.
-# Use `nix run .#write-flake` to regenerate it.
 {
   description = "PlumJam's NixOS Configuration Collection";
 
@@ -7,99 +5,119 @@
 
   inputs = {
     actions = {
+      url = "github:nialov/actions.nix";
       inputs = {
         flake-parts.follows = "parts";
         nixpkgs.follows = "os";
       };
-      url = "github:nialov/actions.nix";
     };
     age = {
+      url = "github:ryantm/agenix";
       inputs = {
         darwin.follows = "os-darwin";
         nixpkgs.follows = "os";
       };
-      url = "github:ryantm/agenix";
     };
     age-rekey = {
+      url = "github:oddlama/agenix-rekey";
       inputs = {
         flake-parts.follows = "parts";
         nixpkgs.follows = "os";
       };
-      url = "github:oddlama/agenix-rekey";
     };
     ashell = {
-      inputs.nixpkgs.follows = "os";
       url = "github:malpenzibo/ashell";
+      inputs.nixpkgs.follows = "os";
     };
     determinate = {
-      inputs.nixpkgs.follows = "os";
       url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
+      inputs.nixpkgs.follows = "os";
     };
     disko = {
-      inputs.nixpkgs.follows = "os";
       url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "os";
     };
     fenix = {
-      inputs.nixpkgs.follows = "os";
       url = "github:nix-community/fenix";
-    };
-    flake-file.url = "github:vic/flake-file";
-    ghostty = {
       inputs.nixpkgs.follows = "os";
+    };
+    ghostty = {
       url = "github:ghostty-org/ghostty";
+      inputs.nixpkgs.follows = "os";
     };
     helix = {
-      inputs.nixpkgs.follows = "os";
       url = "github:helix-editor/helix";
+      inputs.nixpkgs.follows = "os";
     };
     hjem = {
+      url = "github:feel-co/hjem";
       inputs = {
         nix-darwin.follows = "os-darwin";
         nixpkgs.follows = "os";
       };
-      url = "github:feel-co/hjem";
     };
 
     niri = {
-      inputs.nixpkgs.follows = "os";
       url = "github:niri-wm/niri";
+      inputs.nixpkgs.follows = "os";
     };
     nix-index = {
-      inputs.nixpkgs.follows = "os";
       url = "github:nix-community/nix-index-database";
-    };
-    nu-lint = {
       inputs.nixpkgs.follows = "os";
+    };
+    # nufmt = {
+    #   inputs.nixpkgs.follows = "os";
+    #   url = "github:nushell/nufmt";
+    # };
+    nu-lint = {
       url = "git+https://codeberg.org/wvhulle/nu-lint";
+      inputs.nixpkgs.follows = "os";
     };
     opencode = {
-      inputs.nixpkgs.follows = "os";
       url = "github:anomalyco/opencode";
+      inputs.nixpkgs.follows = "os";
     };
     os.url = "github:NixOS/nixpkgs/nixos-unstable-small";
     os-darwin = {
-      inputs.nixpkgs.follows = "os";
       url = "github:nix-darwin/nix-darwin/master";
+      inputs.nixpkgs.follows = "os";
     };
     os-wsl = {
+      url = "github:nix-community/NixOS-WSL/main";
       inputs = {
         flake-compat.follows = "";
         nixpkgs.follows = "os";
       };
-      url = "github:nix-community/NixOS-WSL/main";
     };
     parts = {
-      inputs.nixpkgs-lib.follows = "os";
       url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "os";
     };
+    # qml-niri = {
+    #   url = "github:imiric/qml-niri/main";
+    #   inputs = {
+    #     nixpkgs.follows = "os";
+    #     quickshell.follows = "quickshell";
+    #   };
+    # };
+    # quickshell = {
+    #   url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
+    #   inputs.nixpkgs.follows = "os";
+    # };
+    # rio = {
+    #   url = "github:raphamorim/rio/main";
+    #   inputs = {
+    #     flake-parts.follows = "parts";
+    #     nixpkgs.follows = "os";
+    #   };
+    # };
     run0-sudo-shim = {
-      inputs.nixpkgs.follows = "os";
       url = "github:plumj-am/run0-sudo-shim";
+      inputs.nixpkgs.follows = "os";
     };
     zed = {
-      inputs.nixpkgs.follows = "os";
       url = "github:zed-industries/zed";
+      inputs.nixpkgs.follows = "os";
     };
   };
-
 }

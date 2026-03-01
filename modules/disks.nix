@@ -18,14 +18,6 @@ let
   };
 in
 {
-  flake-file.inputs = {
-    disko = {
-      url = "github:nix-community/disko";
-
-      inputs.nixpkgs.follows = "os";
-    };
-  };
-
   flake.modules.nixos.disks-disko =
     { lib, inputs, ... }:
     let

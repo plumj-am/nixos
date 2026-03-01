@@ -343,21 +343,6 @@
         "type": "github"
       }
     },
-    "flake-file": {
-      "locked": {
-        "lastModified": 1771942188,
-        "narHash": "sha256-ZdoHkOnbh9mQziLhWnOkQhf60ySnDU04jwU6iAW6B0Q=",
-        "owner": "vic",
-        "repo": "flake-file",
-        "rev": "2af65923b1ef5de7a395d2935d3cc53c9bf0f73f",
-        "type": "github"
-      },
-      "original": {
-        "owner": "vic",
-        "repo": "flake-file",
-        "type": "github"
-      }
-    },
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": [
@@ -1000,7 +985,6 @@
         "determinate": "determinate",
         "disko": "disko",
         "fenix": "fenix",
-        "flake-file": "flake-file",
         "ghostty": "ghostty",
         "helix": "helix",
         "hjem": "hjem",

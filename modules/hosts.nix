@@ -3,25 +3,6 @@ let
   inherit (inputs.self) mkConfig;
 in
 {
-  flake-file.inputs = {
-    os = {
-      url = "github:NixOS/nixpkgs/nixos-unstable-small";
-    };
-
-    os-wsl = {
-      url = "github:nix-community/NixOS-WSL/main";
-
-      inputs.nixpkgs.follows = "os";
-      inputs.flake-compat.follows = "";
-    };
-
-    os-darwin = {
-      url = "github:nix-darwin/nix-darwin/master";
-
-      inputs.nixpkgs.follows = "os";
-    };
-  };
-
   # Yuzu | desktop | x86_64-linux | NixOS
   flake.nixosConfigurations.yuzu = inputs.os.lib.nixosSystem {
     specialArgs = { inherit inputs; };

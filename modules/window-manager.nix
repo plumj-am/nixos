@@ -337,14 +337,6 @@ let
 
 in
 {
-  flake-file.inputs = {
-    niri = {
-      url = "github:niri-wm/niri";
-
-      inputs.nixpkgs.follows = "os";
-    };
-  };
-
   flake.modules.nixos.window-manager = niriBase;
   flake.modules.darwin.window-manager = wmBase;
 }

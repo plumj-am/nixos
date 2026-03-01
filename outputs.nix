@@ -16,7 +16,6 @@ let
 in
 inputs.parts.lib.mkFlake { inherit inputs; } {
   imports = [
-    ./modules/flake-inputs.nix
     (importTree ./modules)
   ];
 }

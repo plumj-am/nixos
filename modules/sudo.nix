@@ -82,14 +82,6 @@ let
 
 in
 {
-  flake-file.inputs = {
-    run0-sudo-shim = {
-      url = "github:plumj-am/run0-sudo-shim";
-
-      inputs.nixpkgs.follows = "os";
-    };
-  };
-
   flake.modules.nixos.sudo = sudoBaseLinux;
   flake.modules.darwin.sudo = sudoBaseDarwin;
 

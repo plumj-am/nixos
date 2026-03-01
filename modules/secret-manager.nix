@@ -1,21 +1,5 @@
 { self, inputs, ... }:
 {
-  flake-file.inputs = {
-    age = {
-      url = "github:ryantm/agenix";
-
-      inputs.nixpkgs.follows = "os";
-      inputs.darwin.follows = "os-darwin";
-    };
-
-    age-rekey = {
-      url = "github:oddlama/agenix-rekey";
-
-      inputs.nixpkgs.follows = "os";
-      inputs.flake-parts.follows = "parts";
-    };
-  };
-
   flake.agenix-rekey = inputs.age-rekey.configure {
     userFlake = self;
     nixosConfigurations = self.nixosConfigurations // self.darwinConfigurations;

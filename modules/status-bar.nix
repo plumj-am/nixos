@@ -94,13 +94,5 @@ let
     };
 in
 {
-  flake-file.inputs = {
-    ashell = {
-      url = "github:malpenzibo/ashell";
-
-      inputs.nixpkgs.follows = "os";
-    };
-  };
-
   flake.modules.nixos.ashell = ashellBase;
 }

@@ -222,14 +222,6 @@ let
     };
 in
 {
-  flake-file.inputs = {
-    opencode = {
-      url = "github:anomalyco/opencode";
-
-      inputs.nixpkgs.follows = "os";
-    };
-  };
-
   flake.modules.nixos.ai = aiBase;
   flake.modules.darwin.ai = aiBase;
 

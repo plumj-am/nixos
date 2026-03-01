@@ -108,14 +108,6 @@ let
     };
 in
 {
-  flake-file.inputs = {
-    ghostty = {
-      url = "github:ghostty-org/ghostty";
-
-      inputs.nixpkgs.follows = "os";
-    };
-  };
-
   flake.modules.nixos.ghostty = ghosttyBase;
   flake.modules.darwin.ghostty = ghosttyBase;
 }

@@ -3,15 +3,6 @@ let
   inherit (lib.lists) singleton;
 in
 {
-  flake-file.inputs = {
-    hjem = {
-      url = "github:feel-co/hjem";
-
-      inputs.nixpkgs.follows = "os";
-      inputs.nix-darwin.follows = "os-darwin";
-    };
-  };
-
   flake.modules.nixos.hjem =
     { inputs, ... }:
     {

@@ -28,15 +28,6 @@ let
     };
 in
 {
-  flake-file.inputs = {
-    # rio = {
-    #   url = "github:raphamorim/rio/main";
-
-    #   inputs.nixpkgs.follows = "os";
-    #   inputs.flake-parts.follows = "parts";
-    # };
-  };
-
   flake.modules.nixos.rio = rioBase;
   flake.modules.darwin.rio = rioBase;
 }

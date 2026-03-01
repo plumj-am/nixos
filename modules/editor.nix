@@ -1075,32 +1075,6 @@ let
     };
 in
 {
-  flake-file.inputs = {
-    helix = {
-      url = "github:helix-editor/helix";
-
-      inputs.nixpkgs.follows = "os";
-    };
-
-    zed = {
-      url = "github:zed-industries/zed";
-
-      inputs.nixpkgs.follows = "os";
-    };
-
-    nu-lint = {
-      url = "git+https://codeberg.org/wvhulle/nu-lint";
-
-      inputs.nixpkgs.follows = "os";
-    };
-
-    # nufmt = {
-    #   url = "github:nushell/nufmt";
-
-    #   inputs.nixpkgs.follows = "os";
-    # };
-  };
-
   flake.modules.nixos.helix = helixBase;
   flake.modules.darwin.helix = helixBase;
 

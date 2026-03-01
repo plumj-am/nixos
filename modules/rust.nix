@@ -42,14 +42,6 @@ let
     };
 in
 {
-  flake-file.inputs = {
-    fenix = {
-      url = "github:nix-community/fenix";
-
-      inputs.nixpkgs.follows = "os";
-    };
-  };
-
   flake.modules.nixos.rust =
     { pkgs, inputs, ... }:
     {
