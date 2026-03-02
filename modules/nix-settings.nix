@@ -64,9 +64,6 @@ let
         warn-dirty = false;
         use-xdg-base-directories = true;
 
-        # determinate-nix
-        eval-cores = 0;
-        lazy-trees = true;
       };
 
       nix.optimise.automatic = true;

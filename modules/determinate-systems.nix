@@ -8,6 +8,9 @@ let
       nix.settings = {
         extra-substituters = singleton "https://install.determinate.systems";
         extra-trusted-public-keys = singleton "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM=";
+
+        eval-cores = 0;
+        lazy-trees = true;
       };
     };
 
