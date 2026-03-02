@@ -448,7 +448,7 @@ let
     }:
     let
       inherit (lib.lists) singleton;
-      inherit (lib.attrsets) mapAttrs;
+      inherit (lib.attrsets) mapAttrs genAttrs;
       inherit (config.myLib) mkDesktopEntry;
       inherit (config.age) secrets;
       inherit (config) theme;
@@ -563,27 +563,28 @@ let
           light = themes.zed.light;
         };
 
-        auto_install_extensions = {
-          astro = true;
-          cargotom = true;
-          deno = true;
-          haskell = true;
-          ini = true;
-          justfile = true;
-          kdl = true;
-          nix = true;
-          nu = true;
-          qml = true;
-          rust = true;
-          sql = true;
-          svelte = true;
-          typos = true;
+        auto_install_extensions = genAttrs [
+          "astro"
+          "cargotom"
+          "deno"
+          "haskell"
+          "ini"
+          "justfile"
+          "kdl"
+          "nix"
+          "nu"
+          "nu-lint"
+          "qml"
+          "rust"
+          "sql"
+          "svelte"
+          "typos"
 
-          opencode = true;
-          context7 = true;
+          "opencode"
+          "context7"
 
-          jj-conflict-resolver = true;
-        };
+          "jj-conflict-resolver"
+        ] (_: true);
 
         search = {
           regex = true;
