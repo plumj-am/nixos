@@ -476,10 +476,19 @@ let
         horizontal_scroll_margin = 12;
         use_system_path_prompts = false;
         restore_on_startup = "launchpad";
+        confirm_quit = true;
+        selection_highlight = false;
+        scrollbar.show = "never";
 
         telemetry = {
           diagnostics = false;
           metrics = false;
+        };
+
+        git_hosting_providers = singleton {
+          provider = "forgejo";
+          name = "git.plumj.am";
+          base_url = "https://git.plumj.am";
         };
 
         active_pane_modifiers = {
@@ -492,6 +501,7 @@ let
         vim = {
           highlight_on_yank_duration = 500;
           use_smartcase_find = true;
+          use_system_clipboard = "never";
           cursor_shape = {
             normal = "block";
             insert = "bar";
@@ -514,6 +524,7 @@ let
           show_other_hints = true;
         };
 
+        diagnostics_max_severity = "hint";
         diagnostics.inline.enabled = true;
 
         tab_bar.show = false;
