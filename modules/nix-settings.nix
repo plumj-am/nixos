@@ -11,11 +11,21 @@ let
   nixSettingsBase =
     {
       inputs,
+      pkgs,
       lib,
       ...
     }:
     let
       inherit (lib.attrsets) mapAttrs;
+      inherit (lib.meta) getExe;
+
+      dixHook =
+        pkgs.writeShellScript "dix-hook" # sh
+          ''
+            exec >&2
+            echo "For derivation $3:"
+            ${getExe pkgs.dix} "$1" "$2"
+          '';
     in
     {
       # nix.package = pkgs.nixVersions.latest; # Using determinate-nix which sets this.
@@ -64,6 +74,8 @@ let
         warn-dirty = false;
         use-xdg-base-directories = true;
 
+        run-diff-hook = true;
+        diff-hook = dixHook;
       };
 
       nix.optimise.automatic = true;
