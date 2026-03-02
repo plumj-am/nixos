@@ -449,6 +449,7 @@ let
     let
       inherit (lib.lists) singleton;
       inherit (lib.attrsets) mapAttrs genAttrs;
+      inherit (lib.meta) getExe;
       inherit (config.myLib) mkDesktopEntry;
       inherit (config.age) secrets;
       inherit (config) theme;
@@ -457,13 +458,6 @@ let
 
       mkZedKeymap =
         context: bindings: if context == null then { inherit bindings; } else { inherit context bindings; };
-
-      mkDenoFmt = ext: {
-        external = {
-          command = "deno";
-          arguments = denoFmtArgs ++ [ ext ];
-        };
-      };
 
       zedConfig = with theme; {
         auto_update = false;
@@ -658,123 +652,140 @@ let
           };
         };
 
-        languages = {
-          Nix = {
-            language_servers = withTypos [
-              "nixd"
-              "!nil"
-            ];
+        languages =
+          let
+            mkDenoFmt = ext: {
+              external = {
+                command = "deno";
+                arguments = denoFmtArgs ++ singleton ext;
+              };
+            };
+          in
+          {
+            Nix = {
+              language_servers = withTypos [
+                "nixd"
+                "!nil"
+              ];
 
-            formatter.external.command = "nixfmt";
-          };
+              formatter.external.command = "nixfmt";
+            };
 
-          Rust = {
-            tab_size = 3;
-            language_servers = withTypos [ "rust-analyzer" ];
-          };
-
-          TOML = {
-            language_servers = withTypos [ "taplo" ];
-
-            formatter.external = {
-              command = "taplo";
-              arguments = [
-                "fmt"
-                "--option"
-                "align_entries=true"
-                "--option"
-                "column_width=100"
-                "--option"
-                "compact_arrays=false"
-                "--option"
-                "reorder_inline_tables=true"
-                "--option"
-                "reorder_keys=true"
-                "{buffer_path}"
+            Nushell = {
+              tab_size = 3;
+              language_servers = withTypos [
+                "nu-lsp"
+                "nu-lint"
               ];
             };
-          };
 
-          Markdown = {
-            language_servers = withTypos [ "marksman" ];
-            formatter = mkDenoFmt "md";
-          };
+            Rust = {
+              tab_size = 3;
+              language_servers = withTypos [ "rust-analyzer" ];
+            };
 
-          Just = {
-            language_servers = withTypos [ "just-lsp" ];
+            TOML = {
+              language_servers = withTypos [ "taplo" ];
 
-            formatter.external.command = "just-formatter";
-          };
+              formatter.external = {
+                command = "taplo";
+                arguments = [
+                  "fmt"
+                  "--option"
+                  "align_entries=true"
+                  "--option"
+                  "column_width=100"
+                  "--option"
+                  "compact_arrays=false"
+                  "--option"
+                  "reorder_inline_tables=true"
+                  "--option"
+                  "reorder_keys=true"
+                  "{buffer_path}"
+                ];
+              };
+            };
 
-          Nu = {
-            tab_size = 3;
-            language_servers = withTypos [ "nu-lsp" ];
-          };
+            Markdown = {
+              language_servers = withTypos [ "marksman" ];
+              formatter = mkDenoFmt "md";
+            };
 
-          Astro = {
-            language_servers = withTypos [ "astrols" ];
+            Just = {
+              language_servers = withTypos [ "just-lsp" ];
 
-            formatter = mkDenoFmt "astro";
-          };
+              formatter.external.command = "just-formatter";
+            };
 
-          CSS = {
-            language_servers = withTypos [ ];
+            Nu = {
+              tab_size = 3;
+              language_servers = withTypos [ "nu-lsp" ];
+            };
 
-            formatter = mkDenoFmt "css";
-          };
+            Astro = {
+              language_servers = withTypos [ "astrols" ];
 
-          SCSS = {
-            language_servers = withTypos [ ];
+              formatter = mkDenoFmt "astro";
+            };
 
-            formatter = mkDenoFmt "scss";
-          };
+            CSS = {
+              language_servers = withTypos [ ];
 
-          HTML = {
-            language_servers = withTypos [ ];
+              formatter = mkDenoFmt "css";
+            };
 
-            formatter = mkDenoFmt "html";
-          };
+            SCSS = {
+              language_servers = withTypos [ ];
 
-          JSON = {
-            language_servers = withTypos [ "jsonls" ];
+              formatter = mkDenoFmt "scss";
+            };
 
-            formatter = mkDenoFmt "json";
-          };
+            HTML = {
+              language_servers = withTypos [ ];
 
-          JSONC = {
-            language_servers = withTypos [ "jsonls" ];
+              formatter = mkDenoFmt "html";
+            };
 
-            formatter = mkDenoFmt "jsonc";
-          };
+            JSON = {
+              language_servers = withTypos [ "jsonls" ];
 
-          Svelte = {
-            language_servers = withTypos [ "svelte-language-server" ];
+              formatter = mkDenoFmt "json";
+            };
 
-            formatter = mkDenoFmt "svelte";
-          };
+            JSONC = {
+              language_servers = withTypos [ "jsonls" ];
 
-          Vue = {
-            language_servers = withTypos [ "vuels" ];
+              formatter = mkDenoFmt "jsonc";
+            };
 
-            formatter = mkDenoFmt "vue";
-          };
+            Svelte = {
+              language_servers = withTypos [ "svelte-language-server" ];
 
-          YAML = {
-            language_servers = withTypos [ "yamlls" ];
+              formatter = mkDenoFmt "svelte";
+            };
 
-            formatter = mkDenoFmt "yaml";
-          };
-        }
-        // mapAttrs (_name: ext: {
-          language_servers = withTypos [
-            "deno"
-            "!typescript-language-server"
-            "!vtsls"
-            "!eslint"
-          ];
+            Vue = {
+              language_servers = withTypos [ "vuels" ];
 
-          formatter = mkDenoFmt ext;
-        }) denoJsTsLanguages;
+              formatter = mkDenoFmt "vue";
+            };
+
+            YAML = {
+              language_servers = withTypos [ "yamlls" ];
+
+              formatter = mkDenoFmt "yaml";
+            };
+          }
+          // mapAttrs (_name: ext: {
+            language_servers = withTypos [
+              "deno"
+              "!typescript-language-server"
+              "!vtsls"
+              "!eslint"
+            ];
+
+            formatter = mkDenoFmt ext;
+          }) denoJsTsLanguages;
 
         lsp = {
           rust-analyzer = {
