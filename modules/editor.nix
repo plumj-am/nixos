@@ -837,15 +837,41 @@ let
           ctrl-T = "task::Rerun";
           "ctrl-g ctrl-g" = [
             "task::Spawn"
+
+      zedTasks =
+        let
+          tv = getExe pkgs.television;
+          tvArgs = "--no-remote --no-help-panel --keybindings 'enter=\"confirm_selection\"'";
+
+          fastSh = {
+            with_arguments = {
+              program = "sh";
+              args = [
+                "--noediting"
+                "--norc"
+                "--noprofile"
+              ];
+            };
+          };
+
+          mkFloat =
+            { label, command }:
             {
-              task_name = "jjui";
+              inherit label;
+              command = "kitty --class 'zed_float' -e '${command}'";
               reveal_target = "center";
-            }
-          ];
-          "ctrl-g ctrl-n" = [
-            "task::Spawn"
+              use_new_terminal = true;
+              allow_concurrent_runs = false;
+              cwd = "$ZED_WORKTREE_ROOT";
+              hide = "on_success";
+              reveal = "never";
+              shell = fastSh;
+            };
+
+          mkFinder =
+            { label, command }:
             {
-              task_name = "nushell";
+              inherit label command;
               reveal_target = "center";
             }
           ];
@@ -903,29 +929,32 @@ let
           "z z" = "editor::ToggleFoldAll";
         })
       ];
-
-      zedTasks = [
-        {
-          label = "jjui";
-          command = "kitty --class 'jj_float' -e 'jjui'";
-          reveal_target = "center";
-          use_new_terminal = true;
-          allow_concurrent_runs = false;
-          working_directory = "$ZED_WORKTREE_ROOT";
-          hide = "on_success";
-          reveal = "always";
-        }
-        {
-          label = "nushell";
-          command = "kitty --class 'jj_float' -e 'nu'";
-          reveal_target = "center";
-          use_new_terminal = true;
-          allow_concurrent_runs = false;
-          working_directory = "$ZED_WORKTREE_ROOT";
-          hide = "on_success";
-          reveal = "always";
-        }
-      ];
+              use_new_terminal = true;
+              allow_concurrent_runs = true;
+              cwd = "$ZED_WORKTREE_ROOT";
+              hide = "always";
+              reveal = "never";
+              shell = fastSh;
+            };
+        in
+        [
+          (mkFloat {
+            label = "jjui";
+            command = "jjui";
+          })
+          (mkFloat {
+            label = "nushell";
+            command = "nu";
+          })
+          (mkFinder {
+            label = "find_file";
+            command = "${tv} files ${tvArgs}";
+          })
+          (mkFinder {
+            label = "live_grep";
+            command = "raw=$(${tv} text --input '\${ZED_SELECTED_TEXT:-}' ${tvArgs}) && [ -n \"$raw\" ] && result=$(echo \"$raw\" | cut -d: -f1,2) && zed \"$result\"";
+          })
+        ];
 
       zedDebug = [ ];
 

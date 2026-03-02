@@ -100,8 +100,10 @@ let
                 }
 
                 window-rule {
-                  match app-id=r#"jj_float"#
+                  match app-id=r#"zed_float"#
                   open-floating true
+                  default-column-width { proportion 0.66; }
+                  default-window-height { proportion 0.9; }
                 }
 
                 window-rule {
