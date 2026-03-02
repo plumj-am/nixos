@@ -52,7 +52,6 @@
         nixpkgs.follows = "os";
       };
     };
-
     niri = {
       url = "github:niri-wm/niri";
       inputs.nixpkgs.follows = "os";
@@ -112,7 +111,7 @@
       inputs.nixpkgs.follows = "os";
     };
     zed = {
-      url = "github:zed-industries/zed";
+      url = "github:zed-industries/zed/nightly";
       inputs.nixpkgs.follows = "os";
     };
   };
