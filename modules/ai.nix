@@ -20,7 +20,8 @@ let
         postBuild = # sh
           ''
             wrapProgram $out/bin/opencode \
-              --set 'OPENCODE_EXPERIMENTAL=true OPENCODE_ENABLE_EXA=1'
+              --set OPENCODE_EXPERIMENTAL true \
+              --set OPENCODE_ENABLE_EXA 1
           '';
       };
 
@@ -40,6 +41,7 @@ let
             theme = "gruvbox";
             autoupdate = false;
             model = "zai-coding-plan/glm-5";
+            small_model = "zai-coding-plan/glm-4.7-flash";
 
             permission = {
               list = "allow";
@@ -134,19 +136,21 @@ let
               };
             };
 
-            provider.zai-coding-plan.models = {
-              "glm-5".options = {
-                stream = true;
-                thinking.type = "enabled";
-                tool_stream = true;
-                max_tokens = 128000;
-              };
-              "glm-4.7".options = {
-                stream = true;
-                thinking.type = "enabled";
-              };
-              "glm-4.7-flash".options = {
-                stream = true;
+            provider.zai-coding-plan = {
+              options.timeout = 600000;
+              models = {
+                "glm-5".options = {
+                  stream = true;
+                  thinking.type = "enabled";
+                  tool_stream = true;
+                };
+                "glm-4.7".options = {
+                  stream = true;
+                  thinking.type = "enabled";
+                };
+                "glm-4.7-flash".options = {
+                  stream = true;
+                };
               };
             };
 
