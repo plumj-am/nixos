@@ -450,6 +450,7 @@ let
       inherit (lib.lists) singleton;
       inherit (lib.attrsets) mapAttrs;
       inherit (config.myLib) mkDesktopEntry;
+      inherit (config.age) secrets;
       inherit (config) theme;
 
       json = pkgs.formats.json { };
@@ -912,6 +913,17 @@ let
       ];
 
       zedDebug = [ ];
+
+      zedPackage = pkgs.symlinkJoin {
+        name = "zed-wrapped";
+        paths = singleton inputs.zed.packages.${pkgs.stdenv.hostPlatform.system}.default;
+        buildInputs = singleton pkgs.makeWrapper;
+        postBuild = # sh
+          ''
+            wrapProgram $out/bin/zed \
+              --run 'export ZAI_API_KEY="$(cat ${secrets.zaiKey.path})"'
+          '';
+      };
     in
     {
       nix.settings = {
@@ -919,9 +931,7 @@ let
         extra-trusted-public-keys = singleton "zed.cachix.org-1:/pHQ6dpMsAZk2DiP4WCL0p9YDNKWj2Q5FL20bNmw1cU=";
       };
 
-      environment.systemPackages =
-        singleton
-          inputs.zed.packages.${pkgs.stdenv.hostPlatform.system}.default;
+      environment.systemPackages = singleton zedPackage;
 
       hjem.extraModules = singleton {
         packages =
