@@ -138,20 +138,33 @@ let
 
             provider.zai-coding-plan = {
               options.timeout = 600000;
-              models = {
-                "glm-5".options = {
-                  stream = true;
-                  thinking.type = "enabled";
-                  tool_stream = true;
-                };
-                "glm-4.7".options = {
-                  stream = true;
-                  thinking.type = "enabled";
-                };
-                "glm-4.7-flash".options = {
-                  stream = true;
-                };
-              };
+              models =
+                let
+                  inherit (lib.attrsets) genAttrs;
+                  inherit (lib) elem;
+
+                  models = [
+                    "glm-5"
+                    "glm-4.7"
+                    "glm-4.7-flashx"
+                    "glm-4.7-flash"
+                    "glm-4.6"
+                    "glm-4.5"
+                    "glm-4.5-x"
+                    "glm-4.5-air"
+                    "glm-4.5-airx"
+                    "glm-4.5-flash"
+                  ];
+
+                  supportsToolStreaming = [ "glm-5" ];
+                in
+                genAttrs models (name: {
+                  options = {
+                    tool_stream = elem name supportsToolStreaming;
+                    stream = true;
+                    thinking.type = "enabled";
+                  };
+                });
             };
 
             mcp = {
