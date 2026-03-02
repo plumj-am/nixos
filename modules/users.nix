@@ -1,14 +1,11 @@
-{
-  flake.modules.nixos.users =
+let
+  linuxUsersBase =
     {
       pkgs,
-      lib,
       config,
       ...
     }:
     let
-      inherit (lib.attrsets) optionalAttrs;
-      inherit (config.networking) hostName;
       inherit (config.flake) keys;
     in
     {
@@ -28,18 +25,6 @@
           hashedPasswordFile = config.age.secrets.password.path;
           openssh.authorizedKeys.keys = keys.admins;
         };
-      }
-      // optionalAttrs (hostName == "blackwell") {
-        anamana = {
-          description = "Anamana";
-          isNormalUser = true;
-          shell = pkgs.bash;
-          openssh.authorizedKeys.keys = [ keys.anamana ] ++ keys.admins;
-          packages = [
-            pkgs.git
-            pkgs.direnv
-          ];
-        };
       };
 
       hjem = {
@@ -57,7 +42,35 @@
       };
     };
 
-  flake.modules.darwin.users =
+  linuxUsersExtra =
+    { pkgs, config, ... }:
+    let
+      inherit (config.flake) keys;
+    in
+    {
+      users.users = {
+        anamana = {
+          description = "Anamana";
+          isNormalUser = true;
+          shell = pkgs.bash;
+          openssh.authorizedKeys.keys = [ keys.anamana ] ++ keys.admins;
+        };
+      };
+
+      hjem.users = {
+        anamana = {
+          user = "anamana";
+          directory = "/home/anamana";
+          packages = [
+            pkgs.sccache
+            pkgs.git
+            pkgs.direnv
+          ];
+        };
+      };
+    };
+
+  darwinUsersBase =
     { pkgs, config, ... }:
     let
       inherit (config.flake) keys;
@@ -82,4 +95,10 @@
         };
       };
     };
+in
+{
+  flake.modules.nixos.users = linuxUsersBase;
+  flake.modules.darwin.users = darwinUsersBase;
+
+  flake.modules.nixos.users-extra = linuxUsersExtra;
 }

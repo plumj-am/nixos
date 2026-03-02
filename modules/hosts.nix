@@ -355,6 +355,7 @@ in
       prometheus-node-exporter
       rust
       sudo-extra-server
+      users-extra
       {
         config = mkConfig inputs "sloe" "x86_64-linux" "server" {
           nix-cache-proxy.publicKey = "cache-proxy-sloe:naaLkMoioaUUujHWdn8QUwnjxlI7XiJEZkGqPRffPPw=";
