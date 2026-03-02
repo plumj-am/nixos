@@ -611,34 +611,38 @@ let
         language_models = {
           openai_compatible.zai = {
             api_url = "https://api.z.ai/api/coding/paas/v4";
-            available_models = [
-              {
-                name = "glm-5";
-                display_name = "GLM-5";
-                max_tokens = 200000;
-                max_output_tokens = 128000;
-                max_completion_tokens = 128000;
-                capabilities = {
-                  tools = true;
-                  images = false;
-                  parallel_tool_calls = true;
-                  prompt_cache_key = true;
+            available_models =
+              let
+                inherit (lib.strings) toLower;
+
+                models = [
+                  "GLM-5"
+                  "GLM-4.7"
+                  "GLM-4.7-FlashX"
+                  "GLM-4.7-Flash"
+                  "GLM-4.6"
+                  "GLM-4.5"
+                  "GLM-4.5-X"
+                  "GLM-4.5-Air"
+                  "GLM-4.5-AirX"
+                  "GLM-4.5-Flash"
+                ];
+
+                mkGlmModel = display_name: {
+                  inherit display_name;
+                  name = toLower display_name;
+                  max_tokens = 200000;
+                  max_output_tokens = 128000;
+                  max_completion_tokens = 128000;
+                  capabilities = {
+                    tools = true;
+                    images = false;
+                    parallel_tool_calls = true;
+                    prompt_cache_key = true;
+                  };
                 };
-              }
-              {
-                name = "glm-4.7-flash";
-                display_name = "GLM-4.7-FlashX";
-                max_tokens = 200000;
-                max_output_tokens = 128000;
-                max_completion_tokens = 128000;
-                capabilities = {
-                  tools = true;
-                  images = false;
-                  parallel_tool_calls = true;
-                  prompt_cache_key = true;
-                };
-              }
-            ];
+              in
+              map mkGlmModel models;
           };
         };
 
