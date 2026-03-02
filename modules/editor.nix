@@ -456,9 +456,6 @@ let
 
       json = pkgs.formats.json { };
 
-      mkZedKeymap =
-        context: bindings: if context == null then { inherit bindings; } else { inherit context bindings; };
-
       zedConfig = with theme; {
         auto_update = false;
         base_keymap = "VSCode";
@@ -818,37 +815,117 @@ let
         };
       };
 
-      zedKeymaps = [
-        (mkZedKeymap null {
-          ctrl-W = null;
-          ctrl-q = null;
-          ctrl-F = null;
-          ctrl-P = null;
-          ctrl-H = null;
-          "ctrl-=" = "zed::ResetAllZoom";
-          alt-h = "workspace::ActivatePaneLeft";
-          alt-j = "workspace::ActivatePaneDown";
-          alt-k = "workspace::ActivatePaneUp";
-          alt-l = "workspace::ActivatePaneRight";
-          alt-H = "vim::ResizePaneLeft";
-          alt-J = "vim::ResizePaneDown";
-          alt-K = "vim::ResizePaneUp";
-          alt-L = "vim::ResizePaneRight";
-        })
-        (mkZedKeymap "(Editor||Terminal||ProjectPanel||DebugPanel||Agent) && !Picker" {
-          ctrl-p = "workspace::Open";
-          alt-S = "project_panel::Toggle";
-          alt-s = "project_panel::ToggleFocus";
-          alt-T = "terminal_panel::Toggle";
-          alt-t = "terminal_panel::ToggleFocus";
-          alt-D = "debug_panel::Toggle";
-          alt-d = "debug_panel::ToggleFocus";
-          alt-A = "agent::Toggle";
-          alt-a = "agent::ToggleFocus";
-          ctrl-t = "task::Spawn";
-          ctrl-T = "task::Rerun";
-          "ctrl-g ctrl-g" = [
-            "task::Spawn"
+      zedKeymaps =
+        let
+          mkZedKeymap = context: bindings: { inherit context bindings; };
+        in
+        [
+          {
+            bindings = {
+              ctrl-W = null;
+              ctrl-q = null;
+              ctrl-F = null;
+              ctrl-P = null;
+              ctrl-H = null;
+              ctrl-n = null;
+              "ctrl-=" = "zed::ResetAllZoom";
+              alt-h = "workspace::ActivatePaneLeft";
+              alt-j = "workspace::ActivatePaneDown";
+              alt-k = "workspace::ActivatePaneUp";
+              alt-l = "workspace::ActivatePaneRight";
+              alt-H = "vim::ResizePaneLeft";
+              alt-J = "vim::ResizePaneDown";
+              alt-K = "vim::ResizePaneUp";
+              alt-L = "vim::ResizePaneRight";
+            };
+          }
+          (mkZedKeymap "(Editor||Terminal||ProjectPanel||DebugPanel||Agent) && !Picker" {
+            ctrl-p = "workspace::Open";
+            alt-S = "project_panel::Toggle";
+            alt-s = "project_panel::ToggleFocus";
+            alt-T = "terminal_panel::Toggle";
+            alt-t = "terminal_panel::ToggleFocus";
+            alt-D = "debug_panel::Toggle";
+            alt-d = "debug_panel::ToggleFocus";
+            alt-A = "agent::Toggle";
+            alt-a = "agent::ToggleFocus";
+            ctrl-t = "task::Spawn";
+            ctrl-T = "task::Rerun";
+            "ctrl-g ctrl-g" = [
+              "task::Spawn"
+              {
+                task_name = "jjui";
+                reveal_target = "center";
+              }
+            ];
+            "ctrl-g ctrl-n" = [
+              "task::Spawn"
+              { task_name = "nushell"; }
+            ];
+          })
+          (mkZedKeymap "not_editing" {
+            "space f" = [
+              "task::Spawn"
+              { task_name = "find_file"; }
+            ];
+            "space /" = [
+              "task::Spawn"
+              { task_name = "live_grep"; }
+            ];
+          })
+          (mkZedKeymap "AgentPanel" {
+            alt-q = "workspace::CloseActiveDock";
+            ctrl-h = "agent::OpenHistory";
+            ctrl-n = "agent::RejectOnce";
+            ctrl-y = "agent::Keep";
+            shift-tab = "agent::CycleModeSelector";
+            tab = "agent::CycleModeSelector";
+            alt-n = [
+              "agent::NewExternalAgentThread"
+              { agent.custom.name = "opencode"; }
+            ];
+          })
+          (mkZedKeymap "VimControl" {
+            ctrl-b = null;
+            space = null;
+          })
+          (mkZedKeymap "Pane" {
+            ctrl-w = null;
+            alt-q = "pane::CloseCleanItems";
+          })
+          (mkZedKeymap "BufferSearchBar" {
+            "ctrl-w" = [
+              "editor::DeleteToPreviousWordStart"
+              { ignore_newlines = false; }
+            ];
+          })
+          (mkZedKeymap "Editor && (vim_mode == helix_normal || vim_mode == helix_select)" {
+            "space B" = "editor::BlameHover";
+            "space b" = "tab_switcher::ToggleAll";
+            D = "editor::SelectToEndOfLine";
+            ctrl-j = "editor::MoveLineDown";
+            ctrl-k = "editor::MoveLineUp";
+          })
+          (mkZedKeymap "Terminal" {
+            alt-q = "pane::CloseActiveItem";
+            alt-H = "pane::SplitLeft";
+            alt-L = "pane::SplitRight";
+            alt-w = "workspace::ActivateNextPane";
+            alt-n = "workspace::NewTerminal";
+            alt-u = "terminal::ScrollHalfPageUp";
+            alt-d = "terminal::ScrollHalfPageDown";
+          })
+          (mkZedKeymap "ProjectPanel && not_editing" {
+            "/" = null;
+            alt-q = "workspace::CloseActiveDock";
+            n = "project_panel::NewFile";
+            r = "project_panel::Rename";
+            "z a" = "project_panel::FoldDirectory";
+          })
+          (mkZedKeymap "multibuffer" {
+            "z z" = "editor::ToggleFoldAll";
+          })
+        ];
 
       zedTasks =
         let
@@ -885,62 +962,6 @@ let
             {
               inherit label command;
               reveal_target = "center";
-            }
-          ];
-        })
-        (mkZedKeymap "not_editing" {
-          "space f" = "file_finder::Toggle";
-        })
-        (mkZedKeymap "AgentPanel" {
-          alt-q = "workspace::CloseActiveDock";
-          alt-s = "agent::OpenHistory";
-          shift-tab = "agent::CycleModeSelector";
-          tab = "agent::CycleModeSelector";
-          alt-n = [
-            "agent::NewExternalAgentThread"
-            { agent.custom.name = "opencode"; }
-          ];
-        })
-        (mkZedKeymap "VimControl" {
-          ctrl-b = null;
-          space = null;
-        })
-        (mkZedKeymap "Pane" {
-          ctrl-w = null;
-          alt-q = "pane::CloseActiveItem";
-        })
-        (mkZedKeymap "Editor && (vim_mode == helix_normal || vim_mode == helix_select)" {
-          "space B" = "editor::BlameHover";
-          "space b" = "tab_switcher::ToggleAll";
-          D = "editor::SelectToEndOfLine";
-          ctrl-j = "editor::MoveLineDown";
-          ctrl-k = "editor::MoveLineUp";
-          # "' t" = "";
-          # "' r" = "";
-          # "' k" = "";
-          # "' m" = "";
-          # "' c" = "";
-        })
-        (mkZedKeymap "Terminal" {
-          alt-q = "pane::CloseActiveItem";
-          alt-H = "pane::SplitLeft";
-          alt-L = "pane::SplitRight";
-          alt-w = "workspace::ActivateNextPane";
-          alt-n = "workspace::NewTerminal";
-          alt-u = "terminal::ScrollHalfPageUp";
-          alt-d = "terminal::ScrollHalfPageDown";
-        })
-        (mkZedKeymap "ProjectPanel && not_editing" {
-          "/" = null;
-          alt-q = "workspace::CloseActiveDock";
-          n = "project_panel::NewFile";
-          r = "project_panel::Rename";
-          "z a" = "project_panel::FoldDirectory";
-        })
-        (mkZedKeymap "multibuffer" {
-          "z z" = "editor::ToggleFoldAll";
-        })
-      ];
               use_new_terminal = true;
               allow_concurrent_runs = true;
               cwd = "$ZED_WORKTREE_ROOT";
