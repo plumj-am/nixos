@@ -33,6 +33,7 @@ in
       jujutsu-extra
       kitty
       linux-kernel-zen
+      # lix
       mprocs
       nix-cache-proxy
       nix-distributed-builds
