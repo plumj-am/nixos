@@ -20,7 +20,7 @@ let
 
       settings = with theme.withHash; {
         font_family = theme.font.mono.name;
-        font_size = theme.font.size.normal;
+        font_size = theme.font.size.small;
         font_features = "MapleMono-NF +cv64 +ss03 +ss05 +ss07 +ss08 +ss09 +ss10 +ss11";
 
         allow_remote_control = "yes";
