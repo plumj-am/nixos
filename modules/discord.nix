@@ -40,7 +40,8 @@ let
       hjem.extraModules = singleton {
         packages = singleton pkgs.discordo;
 
-        xdg.config.files."discordo/config.toml".source = toml.generate "config.toml" discordoConfig;
+        xdg.config.files."discordo/config.toml".source =
+          toml.generate "discordo-config.toml" discordoConfig;
       };
     };
 
