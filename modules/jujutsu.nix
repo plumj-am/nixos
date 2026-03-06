@@ -11,8 +11,12 @@ let
           pkgs.difftastic
           pkgs.mergiraf
 
+          # TUI
           pkgs.lazyjj
           pkgs.jjui
+
+          # GUI
+          pkgs.gg-jj
         ];
       };
     };
