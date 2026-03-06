@@ -1,0 +1,63 @@
+{ pkgs, lib, ... }:
+let
+  inherit (lib.meta) getExe;
+
+  tv = getExe pkgs.television;
+  tvArgs = "--no-remote --no-help-panel --keybindings 'enter=\"confirm_selection\"'";
+
+  fastSh = {
+    with_arguments = {
+      program = "sh";
+      args = [
+        "--noediting"
+        "--norc"
+        "--noprofile"
+      ];
+    };
+  };
+
+  mkFloat =
+    { label, command }:
+    {
+      inherit label;
+      command = "kitty --class 'zed_float' -e '${command}'";
+      reveal_target = "center";
+      use_new_terminal = true;
+      allow_concurrent_runs = false;
+      cwd = "$ZED_WORKTREE_ROOT";
+      hide = "on_success";
+      reveal = "never";
+      shell = fastSh;
+    };
+
+  mkFinder =
+    { label, command }:
+    {
+      inherit label command;
+      reveal_target = "center";
+      use_new_terminal = true;
+      allow_concurrent_runs = true;
+      cwd = "$ZED_WORKTREE_ROOT";
+      hide = "always";
+      reveal = "never";
+      shell = fastSh;
+    };
+in
+[
+  (mkFloat {
+    label = "jjui";
+    command = "jjui";
+  })
+  (mkFloat {
+    label = "nushell";
+    command = "nu";
+  })
+  (mkFinder {
+    label = "find_file";
+    command = "${tv} files ${tvArgs}";
+  })
+  (mkFinder {
+    label = "live_grep";
+    command = "raw=$(${tv} text --input '\${ZED_SELECTED_TEXT:-}' ${tvArgs}) && [ -n \"$raw\" ] && result=$(echo \"$raw\" | cut -d: -f1,2) && zed \"$result\"";
+  })
+]
