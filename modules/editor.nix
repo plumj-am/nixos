@@ -440,7 +440,6 @@ let
 
   zedBase =
     {
-      inputs,
       pkgs,
       lib,
       config,
@@ -993,11 +992,11 @@ let
 
       zedPackage = pkgs.symlinkJoin {
         name = "zed-wrapped";
-        paths = singleton inputs.zed.packages.${pkgs.stdenv.hostPlatform.system}.default;
+        paths = singleton pkgs.zed-editor;
         buildInputs = singleton pkgs.makeWrapper;
         postBuild = # sh
           ''
-            wrapProgram $out/bin/zed \
+            wrapProgram $out/bin/zeditor \
               --run 'export ZAI_API_KEY="$(cat ${secrets.zaiKey.path})"'
           '';
       };

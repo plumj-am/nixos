@@ -1,7 +1,6 @@
 let
   ashellBase =
     {
-      inputs,
       pkgs,
       lib,
       config,
@@ -76,8 +75,9 @@ let
             "Cpu"
             "Memory"
             {
-              "Disk" = "/";
-              Name = "";
+              Disk = "/";
+              # NOTE: Needs v0.8
+              # Name = "";
             }
             "Temperature"
           ];
@@ -87,7 +87,7 @@ let
     in
     {
       hjem.extraModules = singleton {
-        packages = singleton inputs.ashell.packages.${pkgs.stdenv.hostPlatform.system}.default;
+        packages = singleton pkgs.ashell;
 
         xdg.config.files."ashell/config.toml".source = toml.generate "ashell.toml" settings;
       };

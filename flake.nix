@@ -25,10 +25,6 @@
         nixpkgs.follows = "os";
       };
     };
-    ashell = {
-      url = "github:malpenzibo/ashell";
-      inputs.nixpkgs.follows = "os";
-    };
     determinate = {
       url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
       inputs.nixpkgs.follows = "os";
@@ -39,10 +35,6 @@
     };
     fenix = {
       url = "github:nix-community/fenix";
-      inputs.nixpkgs.follows = "os";
-    };
-    ghostty = {
-      url = "github:ghostty-org/ghostty";
       inputs.nixpkgs.follows = "os";
     };
     hjem = {
@@ -60,16 +52,8 @@
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "os";
     };
-    # nufmt = {
-    #   inputs.nixpkgs.follows = "os";
-    #   url = "github:nushell/nufmt";
-    # };
     nu-lint = {
       url = "git+https://codeberg.org/wvhulle/nu-lint";
-      inputs.nixpkgs.follows = "os";
-    };
-    opencode = {
-      url = "github:anomalyco/opencode";
       inputs.nixpkgs.follows = "os";
     };
     os.url = "github:NixOS/nixpkgs/nixos-unstable-small";
@@ -99,19 +83,8 @@
     #   url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
     #   inputs.nixpkgs.follows = "os";
     # };
-    # rio = {
-    #   url = "github:raphamorim/rio/main";
-    #   inputs = {
-    #     flake-parts.follows = "parts";
-    #     nixpkgs.follows = "os";
-    #   };
-    # };
     run0-sudo-shim = {
       url = "github:plumj-am/run0-sudo-shim";
-      inputs.nixpkgs.follows = "os";
-    };
-    zed = {
-      url = "github:zed-industries/zed/nightly";
       inputs.nixpkgs.follows = "os";
     };
   };

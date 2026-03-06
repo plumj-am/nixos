@@ -3,7 +3,6 @@ let
   # No point configuring yet because it still doesn't work for some reason.
   rioBase =
     {
-      # inputs,
       pkgs,
       lib,
       config,
@@ -17,7 +16,7 @@ let
 
       hjem.extraModules = singleton {
         packages = [
-          # inputs.rio.packages.${pkgs.stdenv.hostPlatform.system}.rio
+          pkgs.rio
 
           (mkDesktopEntry {
             name = "Zellij-Rio";

@@ -1,7 +1,6 @@
 let
   aiBase =
     {
-      inputs,
       pkgs,
       lib,
       config,
@@ -15,8 +14,8 @@ let
 
       opencodePackage = pkgs.symlinkJoin {
         name = "opencode-wrapped";
-        paths = [ inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.default ];
-        buildInputs = [ pkgs.makeWrapper ];
+        paths = singleton pkgs.opencode;
+        buildInputs = singleton pkgs.makeWrapper;
         postBuild = # sh
           ''
             wrapProgram $out/bin/opencode \

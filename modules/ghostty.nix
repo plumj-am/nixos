@@ -1,7 +1,6 @@
 let
   ghosttyBase =
     {
-      inputs,
       pkgs,
       lib,
       config,
@@ -92,7 +91,7 @@ let
     {
       hjem.extraModules = singleton {
         packages = [
-          inputs.ghostty.packages.${pkgs.stdenv.hostPlatform.system}.ghostty
+          pkgs.ghostty
 
           (mkDesktopEntry {
             name = "Zellij-Ghostty";
