@@ -21,7 +21,7 @@
       '';
 
       environment.systemPackages = [
-        pkgs.helvum # PipeWire patchbay GUI.
+        pkgs.crosspipe # PipeWire patchbay GUI. <- `pkgs.helvum` removed - unmaintained and vulnerable, nix recommends crosspipe.
         pkgs.pwvucontrol # PipeWire volume control.
         pkgs.pulsemixer # Terminal-based audio mixer.
       ];

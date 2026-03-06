@@ -134,12 +134,19 @@ let
     '';
   };
 
-  nixSettingsDarwinExtra = {
-    nix.nixPath =
-      (registryMap |> mapAttrsToList (name: value: "${name}=${value}") |> concatStringsSep ":")
-      ++ [ "nixpkgs=${inputs.os}" ];
+  nixSettingsDarwinExtra =
+    { lib, ... }:
+    let
+      inherit (lib) mkForce;
+    in
+    {
+      nix.optimise.automatic = mkForce false;
+      nix.gc.automatic = mkForce false;
+      nix.nixPath =
+        (registryMap |> mapAttrsToList (name: value: "${name}=${value}") |> concatStringsSep ":")
+        ++ [ "nixpkgs=${inputs.os}" ];
 
-  };
+    };
 in
 {
   flake.modules.nixos.nix-settings = nixSettingsBase;
