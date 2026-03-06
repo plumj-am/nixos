@@ -2,6 +2,8 @@ when:
   - event: [ "push", "pull_request", "manual" ]
     branch: master
 engine: nixery
+environment:
+  NIX_CONFIG: "experimental-features = nix-command flakes pipe-operators cgroups"
 steps:
   - name: "Build: blackwell"
     command: |
