@@ -130,7 +130,10 @@ in
         config = mkConfig inputs "date" "x86_64-linux" "desktop" {
           nix-cache-proxy.publicKey = "cache-proxy-date:3oT4ugNS3aoKKedKbX3QtDbiI3+IOjhJ/Ka8kZeNEzc=";
 
-          nixBuildMachineSpeedFactor = 4;
+          nix-builder = {
+            cores = 8;
+            speedFactor = 4;
+          };
 
           forgejo-action-runner = {
             strong = true;
@@ -232,7 +235,10 @@ in
             ];
           };
 
-          nixBuildMachineSpeedFactor = 3;
+          nix-builder = {
+            cores = 4;
+            speedFactor = 3;
+          };
 
           forgejo-action-runner = {
             strong = true;
@@ -315,7 +321,10 @@ in
             ];
           };
 
-          nixBuildMachineSpeedFactor = 2;
+          nix-builder = {
+            cores = 2;
+            speedFactor = 2;
+          };
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIElcSHxI64xqUUKEY83tKyzEH+fYT5JCWn3qCqtw16af root@kiwi";
 
@@ -361,7 +370,10 @@ in
         config = mkConfig inputs "sloe" "x86_64-linux" "server" {
           nix-cache-proxy.publicKey = "cache-proxy-sloe:naaLkMoioaUUujHWdn8QUwnjxlI7XiJEZkGqPRffPPw=";
 
-          nixBuildMachineSpeedFactor = 5;
+          nix-builder = {
+            cores = 12;
+            speedFactor = 5;
+          };
 
           forgejo-action-runner = {
             strong = true;
@@ -401,7 +413,10 @@ in
       {
         config = mkConfig inputs "blackwell" "x86_64-linux" "server" {
 
-          nixBuildMachineSpeedFactor = 1;
+          nix-builder = {
+            cores = 2;
+            speedFactor = 1;
+          };
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGSi4SKhqze7ZzhJFcUF9KW/4nXX1MfvZjUqrYWNDi9c root@blackwell";
 

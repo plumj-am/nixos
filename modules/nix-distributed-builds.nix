@@ -12,6 +12,7 @@
     in
     {
       config = {
+        nix.settings.max-silent-time = 60;
         nix.distributedBuilds = true;
         nix.buildMachines =
           inputs.self.nixosConfigurations
@@ -21,11 +22,11 @@
             { name, value }:
             {
               hostName = name;
-              maxJobs = 25; # This is handled by remote anyway so not sure what difference it makes..
+              maxJobs = value.config.nix-builder.cores;
               protocol = "ssh-ng";
               sshUser = "build";
               sshKey = "/root/.ssh/id";
-              speedFactor = value.config.nixBuildMachineSpeedFactor;
+              speedFactor = value.config.nix-builder.speedFactor;
               supportedFeatures = [
                 "benchmark"
                 "big-parallel"
@@ -46,10 +47,18 @@
       inherit (lib.types) ints;
     in
     {
-      options.nixBuildMachineSpeedFactor = mkOption {
-        type = ints.between 1 5;
-        default = null;
-        description = "Speed factor for this machine when used as a distributed build machine";
+      options.nix-builder = {
+        speedFactor = mkOption {
+          type = ints.between 1 5;
+          default = null;
+          description = "Speed factor for this machine when used as a distributed build machine";
+        };
+
+        cores = mkOption {
+          type = ints.between 1 25;
+          default = 25;
+          description = "Number of cores for the distributed build machine";
+        };
       };
 
       config = {
