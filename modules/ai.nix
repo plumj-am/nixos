@@ -23,7 +23,6 @@ let
               --set OPENCODE_ENABLE_EXA 1
           '';
       };
-
     in
     {
       hjem.extraModules = singleton {
@@ -228,15 +227,33 @@ let
     };
 
   aiExtra =
-    { pkgs, lib, ... }:
+    {
+      pkgs,
+      lib,
+      ...
+    }:
     let
       inherit (lib.lists) singleton;
+
+      opencodeDesktopPackage = pkgs.symlinkJoin {
+        name = "opencode-wrapped";
+        paths = singleton pkgs.opencode-desktop;
+        buildInputs = singleton pkgs.makeWrapper;
+        postBuild = # sh
+          ''
+            wrapProgram $out/bin/OpenCode \
+              --prefix GST_PLUGIN_PATH : "${pkgs.gst_all_1.gst-plugins-base}/lib/gstreamer-1.0:${pkgs.gst_all_1.gst-plugins-good}/lib/gstreamer-1.0" \
+              --set OPENCODE_EXPERIMENTAL true \
+              --set OPENCODE_ENABLE_EXA 1
+          '';
+      };
     in
     {
       hjem.extraModules = singleton {
         packages = [
           pkgs.codex
           pkgs.gemini-cli
+          opencodeDesktopPackage
           pkgs.qwen-code
         ];
       };
