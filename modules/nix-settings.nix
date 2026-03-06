@@ -77,6 +77,8 @@ let
         cores = 0;
         use-cgroups = true;
         show-trace = true;
+        eval-cache = true;
+        pure-eval = true;
         trusted-users = [
           "root"
           "@wheel"
