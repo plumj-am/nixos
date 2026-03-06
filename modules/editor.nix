@@ -469,15 +469,15 @@ let
         extra-trusted-public-keys = singleton "zed.cachix.org-1:/pHQ6dpMsAZk2DiP4WCL0p9YDNKWj2Q5FL20bNmw1cU=";
       };
 
-      environment.systemPackages = singleton zedPackage;
-
       hjem.extraModules = singleton {
-        packages =
-          singleton
-          <| mkDesktopEntry {
+        packages = [
+          zedPackage
+
+          (mkDesktopEntry {
             name = "Zed";
             exec = "/run/current-system/sw/bin/zed";
-          };
+          })
+        ];
 
         xdg.config.files = {
           "zed/settings.json".source =

@@ -35,6 +35,7 @@ let
   ];
 
   aspectsBaseDarwin.imports = with inputs.self.modules.darwin; [
+    fixes
     disable-nix-documentation
     git
     env

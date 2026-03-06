@@ -106,11 +106,14 @@ let
     };
 
   raycastBase =
-    { pkgs, ... }:
+    { pkgs, lib, ... }:
+    let
+      inherit (lib.lists) singleton;
+    in
     {
-      environment.systemPackages = [
-        pkgs.raycast
-      ];
+      hjem.extraModules = singleton {
+        packages = [ pkgs.raycast ];
+      };
     };
 
 in

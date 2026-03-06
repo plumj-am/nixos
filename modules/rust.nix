@@ -43,14 +43,25 @@ let
 in
 {
   flake.modules.nixos.rust =
-    { pkgs, inputs, ... }:
     {
-      imports = [
-        (commonModule { inherit pkgs; })
-      ];
+      inputs,
+      pkgs,
+      lib,
+      ...
+    }:
+    let
+      inherit (lib.lists) singleton;
+    in
+    {
+      imports =
+        singleton
+        <| commonModule {
+          inherit pkgs;
+        };
 
-      environment.systemPackages = [
-        (inputs.fenix.packages.${pkgs.stdenv.hostPlatform.system}.complete.withComponents [
+      environment.systemPackages =
+        singleton
+        <| inputs.fenix.packages.${pkgs.stdenv.hostPlatform.system}.complete.withComponents [
           # Nightly.
           "cargo"
           "clippy"
@@ -59,8 +70,7 @@ in
           "rustfmt"
           "rust-std"
           "rust-src"
-        ])
-      ];
+        ];
     };
 
   flake.modules.nixos.rust-desktop =
