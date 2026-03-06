@@ -221,6 +221,8 @@ in
       prometheus-node-exporter
       rust
       sudo-extra-server
+      tangled-knot
+      tangled-spindle
       uptime-kuma
       website-personal
       { hardware.facter.reportPath = ./facter/plum.json; }

@@ -39,6 +39,14 @@ let
           inherit (config.age.secrets.id) path;
         };
         settings = {
+          AllowUsers = [
+            "root"
+            "jam"
+          ];
+          AllowGroups = [
+            "root"
+            "wheel"
+          ];
           PasswordAuthentication = false;
           KbdInteractiveAuthentication = false;
           AcceptEnv = [
