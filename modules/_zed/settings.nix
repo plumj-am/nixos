@@ -1,7 +1,27 @@
 { lib, config, ... }:
 let
+  inherit (lib.attrsets) genAttrs mapAttrs;
   inherit (lib.lists) singleton;
   inherit (config) theme;
+
+  denoJsTsLanguages = {
+    JavaScript = "js";
+    JSX = "jsx";
+    TSX = "tsx";
+    TypeScript = "ts";
+  };
+
+  denoFmtArgs = [
+    "fmt"
+    "--use-tabs"
+    "--no-semicolons"
+    "--indent-width"
+    "4"
+    "--unstable-component"
+    "--ext"
+  ];
+
+  withTypos = lsps: lsps ++ [ "typos" ];
 in
 with theme;
 {
