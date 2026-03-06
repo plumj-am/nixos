@@ -1,9 +1,6 @@
 let
   lixBase =
-    { pkgs, lib, ... }:
-    let
-      inherit (lib.lists) remove;
-    in
+    { pkgs, ... }:
     {
       nixpkgs.overlays = [
         (_final: prev: {
@@ -18,9 +15,9 @@ let
       ];
 
       nix = {
-        settings.experimental-features = [ "pipe-operator" ] |> remove [ "pipe-operators" ];
-
         package = pkgs.lixPackageSets.latest.lix;
+
+        settings.max-connect-timeout = 30;
       };
     };
 in

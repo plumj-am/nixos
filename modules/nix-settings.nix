@@ -13,11 +13,15 @@ let
       inputs,
       pkgs,
       lib,
+      config,
       ...
     }:
     let
       inherit (lib.attrsets) mapAttrs;
       inherit (lib.meta) getExe;
+      inherit (lib.lists) optionals;
+
+      isLix = config.nix.package == pkgs.lixPackageSets.latest.lix;
 
       dixHook =
         pkgs.writeShellScript "dix-hook" # sh
@@ -55,7 +59,15 @@ let
           "cgroups"
           "flakes"
           "nix-command"
+        ]
+        ++ optionals (!isLix) [
           "pipe-operators"
+        ]
+        ++ optionals isLix [
+          "pipe-operator"
+          "auto-allocate-uids"
+          "coerce-integers"
+          "lix-custom-sub-commands"
         ];
 
         builders-use-substitutes = true;
