@@ -11,6 +11,17 @@ let
     let
       inherit (config.myLib) mkDesktopEntry;
       inherit (lib.lists) singleton;
+
+      toml = pkgs.formats.toml { };
+
+      rioConfig = {
+        shell.program = "nu";
+        renderer = {
+          performance = "High";
+          backend = "GL";
+          target_fps = 280;
+        };
+      };
     in
     {
 
@@ -23,6 +34,8 @@ let
             exec = "rio -c ${pkgs.zellij}/bin/zellij";
           })
         ];
+
+        xdg.config.files."rio/config.toml".source = toml.generate "rio-config.toml" rioConfig;
       };
     };
 in
