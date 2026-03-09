@@ -30,7 +30,7 @@ with theme;
   helix_mode = true;
   load_direnv = "direct";
   cursor_blink = false;
-  show_edit_predictions = false; # Annoying spam popups.
+  show_edit_predictions = true;
   vertical_scroll_margin = 6;
   horizontal_scroll_margin = 12;
   use_system_path_prompts = false;
