@@ -80,6 +80,16 @@
               add_header Cache-Control $cache_header always;
             '';
 
+          locations."/public/" = {
+            extraConfig = # nginx
+              ''
+                expires max;
+                ${config.services.nginx.headers}
+                add_header Cache-Control $cache_header always;
+                add_header Access-Control-Allow-Origin * always;
+              '';
+          };
+
           extraConfig = # nginx
             ''
               error_page 404 /404.html;
