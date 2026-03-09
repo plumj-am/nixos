@@ -1,18 +1,20 @@
 {
   flake.modules.nixos.nginx =
     {
+      lib,
       config,
       ...
     }:
     let
+      inherit (lib) mkForce;
       inherit (config.networking) domain;
       inherit (config.myLib) mkConst;
     in
     {
       options.services.nginx.sslTemplate = mkConst {
-        forceSSL = true;
+        forceSSL = mkForce true;
         quic = true;
-        useACMEHost = domain;
+        useACMEHost = mkForce domain;
       };
 
       options.services.nginx.goatCounterTemplate =

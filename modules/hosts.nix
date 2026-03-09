@@ -47,6 +47,9 @@ in
       pijul
       process-management
       quickshell
+      radicle-gui
+      radicle-node
+      radicle-tui
       rust-desktop
       rss-tui
       sudo-extra-desktop
@@ -219,6 +222,8 @@ in
       object-storage
       opengist
       prometheus-node-exporter
+      radicle-explorer
+      radicle-node
       rust
       sudo-extra-server
       tangled-knot
@@ -308,6 +313,7 @@ in
       nix-settings-extra-server
       object-storage
       prometheus-node-exporter
+      radicle-node
       rust
       sudo-extra-server
       website-dr-radka
@@ -366,6 +372,7 @@ in
       object-storage
       openssh-extra-users
       prometheus-node-exporter
+      radicle-node
       rust
       sudo-extra-server
       users-extra
@@ -411,11 +418,11 @@ in
       nix-settings-extra-server
       object-storage
       prometheus-node-exporter
+      radicle-node
       rust
       sudo-extra-server
       {
         config = mkConfig inputs "blackwell" "x86_64-linux" "server" {
-
           nix-builder = {
             cores = 2;
             speedFactor = 1;
