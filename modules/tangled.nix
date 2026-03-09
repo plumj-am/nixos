@@ -41,7 +41,13 @@ let
         extraConfig = ''
           ${config.services.nginx.goatCounterTemplate}
         '';
-        locations."/".proxyPass = "http://${host}:${knotPort}";
+        locations = {
+          "/".proxyPass = "http://${host}:${knotPort}";
+          "/events" = {
+            proxyPass = "http://${host}:${knotPort}";
+            proxyWebsockets = true;
+          };
+        };
       };
 
       services.openssh.settings = {
@@ -87,7 +93,13 @@ let
         extraConfig = ''
           ${config.services.nginx.goatCounterTemplate}
         '';
-        locations."/".proxyPass = "http://${host}:${spindlePort}";
+        locations = {
+          "/".proxyPass = "http://${host}:${spindlePort}";
+          "/events" = {
+            proxyPass = "http://${host}:${spindlePort}";
+            proxyWebsockets = true;
+          };
+        };
       };
     };
 in
