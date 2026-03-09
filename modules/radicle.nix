@@ -63,6 +63,8 @@ let
         settings = {
           web = {
             name = fqdn;
+            description = "Public-facing node for PlumJam";
+            imageUrl = "https://plumj.am/public/plumjam.png"; # Doesn't work for some reason.
             pinned.repositories = [
               "rad:z2FHgLfWUnYBXMpqFRTjciK7vAVjR" # plumjam/nixos
               "rad:z5MipPXTdCWp87hUwvyY1DLgiBgS" # plumjam/plumj.am
@@ -80,6 +82,8 @@ let
               <|
                 singleton "${fqdn}:${toString nodePort}" # First because it is highlighted in the radicle-explorer.
                 ++ singleton "${hostName}.taild29fec.ts.net:${toString nodePort}";
+            workers = 16;
+            relay = "always";
             seedingPolicy = {
               scope = "followed";
               default = "allow";
