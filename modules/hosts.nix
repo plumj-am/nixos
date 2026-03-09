@@ -364,6 +364,7 @@ in
       nix-distributed-builds
       nix-settings-extra-server
       object-storage
+      openssh-extra-users
       prometheus-node-exporter
       rust
       sudo-extra-server

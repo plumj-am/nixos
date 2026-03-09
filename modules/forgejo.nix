@@ -7,9 +7,10 @@
       ...
     }:
     let
+      inherit (lib.lists) singleton;
+      inherit (lib) mkForce;
       inherit (config.networking) domain hostName;
       inherit (config.myLib) merge mkResticBackup;
-      inherit (lib) mkForce;
 
       fqdn = "git.${domain}";
       port = 8001;
@@ -27,12 +28,16 @@
         ln --symbolic --force ${config.age.secrets.forgejoSigningKeyPub.path} /run/agenix/forgejo-signing-key.pub
       '';
 
-      # combine AcceptEnv settings for SSH and Git protocol
-      services.openssh.settings.AcceptEnv = mkForce [
-        "SHELLS"
-        "COLORTERM"
-        "GIT_PROTOCOL"
-      ];
+      services.openssh.settings = {
+        AllowUsers = singleton "forgejo";
+        AllowGroups = singleton "forgejo";
+
+        AcceptEnv = mkForce [
+          "SHELLS"
+          "COLORTERM"
+          "GIT_PROTOCOL"
+        ];
+      };
 
       services.restic.backups.forgejo = mkResticBackup "forgejo" {
         paths = [ "/var/lib/forgejo" ];

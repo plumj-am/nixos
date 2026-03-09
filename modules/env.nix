@@ -3,13 +3,16 @@ let
     { pkgs, lib, ... }:
     let
       inherit (lib.lists) singleton;
+      inherit (lib.meta) getExe;
 
+      # TODO: Make an option.
       variables = {
         EDITOR = "hx";
-        SHELL = "${pkgs.nushell}/bin/nu";
+        SHELL = "${getExe pkgs.nushell}/bin/nu";
         TERMINAL = "zellij";
         TERM_PROGRAM = "zellij";
         WGPU_BACKEND = "gl";
+        SSH_AUTH_SOCK = "/run/user/1000/ssh-agent";
       };
     in
     {

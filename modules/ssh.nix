@@ -1,10 +1,17 @@
 let
   sshConfigBase =
-    { pkgs, lib, ... }:
+    {
+      pkgs,
+      lib,
+      ...
+    }:
     let
       inherit (lib.lists) singleton;
     in
     {
+      # TODO: Handle ssh agent on darwin.
+      programs.ssh.startAgent = true;
+
       hjem.extraModules = singleton {
         files.".ssh/config".text = # ssh
           ''
@@ -20,9 +27,7 @@ let
               IdentityFile /home/jam/.ssh/id
           '';
 
-        packages = [
-          pkgs.mosh
-        ];
+        packages = singleton pkgs.mosh;
       };
     };
 
@@ -32,6 +37,8 @@ let
       inherit (lib.lists) singleton;
     in
     {
+      services.sshguard.enable = true;
+
       services.openssh = {
         enable = true;
         hostKeys = singleton {
@@ -46,6 +53,7 @@ let
           AllowGroups = [
             "root"
             "wheel"
+            "ssh"
           ];
           PasswordAuthentication = false;
           KbdInteractiveAuthentication = false;
@@ -64,6 +72,18 @@ let
         plum.publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBH1S3dhOYCCltqrseHc3YZFHc9XU90PsvDo7frzUGrr";
         sloe.publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK42xzC/vWHZC9SiU/8IBBd2pn7mggBYFQ8themKAic/";
         yuzu.publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFDLlddona4PlORWd+QpR/7F5H46/Dic9vV23/YSrZl0";
+      };
+    };
+
+  nixosOpensshExtraUsers =
+    { lib, ... }:
+    let
+      inherit (lib.lists) singleton;
+    in
+    {
+      services.openssh.settings = {
+        AllowUsers = singleton "anamana";
+        AllowGroups = singleton "ssh";
       };
     };
 
@@ -87,5 +107,6 @@ in
   flake.modules.darwin.ssh = sshConfigBase;
 
   flake.modules.nixos.openssh = nixosOpensshBase;
+  flake.modules.nixos.openssh-extra-users = nixosOpensshExtraUsers;
   flake.modules.darwin.openssh = darwinOpensshBase;
 }

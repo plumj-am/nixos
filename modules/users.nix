@@ -7,6 +7,8 @@ let
     }:
     let
       inherit (config.flake) keys;
+
+      cfg = config.hjem.users;
     in
     {
       users.mutableUsers = false;
@@ -32,40 +34,57 @@ let
         users = {
           root = {
             user = "root";
-            directory = "/home/root";
+            directory = "/home/${cfg.root.user}";
           };
           jam = {
             user = "jam";
-            directory = "/home/jam";
+            directory = "/home/${cfg.jam.user}";
           };
         };
       };
     };
 
   linuxUsersExtra =
-    { pkgs, config, ... }:
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
     let
+      inherit (lib) mkForce;
+      inherit (lib.lists) singleton;
       inherit (config.flake) keys;
+
+      cfg = config.hjem.users;
     in
     {
+      users.groups.ssh = { };
+
       users.users = {
         anamana = {
           description = "Anamana";
           isNormalUser = true;
           shell = pkgs.bash;
-          openssh.authorizedKeys.keys = [ keys.anamana ] ++ keys.admins;
+          openssh.authorizedKeys.keys = singleton keys.anamana ++ keys.admins;
+          extraGroups = singleton "ssh";
         };
       };
 
       hjem.users = {
         anamana = {
           user = "anamana";
-          directory = "/home/anamana";
+          directory = "/home/${cfg.anamana.user}";
           packages = [
             pkgs.sccache
             pkgs.git
             pkgs.direnv
           ];
+          xdg.cache.files = mkForce { };
+          xdg.config.files = mkForce { };
+          xdg.data.files = mkForce { };
+          xdg.state.files = mkForce { };
+          files = mkForce { };
         };
       };
     };
@@ -74,13 +93,15 @@ let
     { pkgs, config, ... }:
     let
       inherit (config.flake) keys;
+
+      home = "/User/jam";
     in
     {
       system.primaryUser = "jam";
 
       users.users = {
         jam = {
-          home = "/Users/jam";
+          inherit home;
           description = "Jam";
           shell = pkgs.nushell;
           openssh.authorizedKeys.keys = keys.admins;
@@ -91,7 +112,7 @@ let
         clobberByDefault = true;
         users.jam = {
           user = "jam";
-          directory = "/Users/jam";
+          directory = home;
         };
       };
     };
