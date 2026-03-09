@@ -111,7 +111,7 @@ with theme;
   ui_font_size = font.size.medium;
 
   buffer_font_family = font.mono.name;
-  buffer_font_size = font.size.medium;
+  buffer_font_size = font.size.normal;
 
   agent_ui_font_size = font.size.medium;
   agent_buffer_font_size = font.size.medium;
@@ -229,9 +229,10 @@ with theme;
     in
     {
       Nix = {
+        inlay_hints.enabled = true;
         language_servers = withTypos [
           "nixd"
-          "!nil"
+          "nil"
         ];
 
         formatter.external.command = "nixfmt";
@@ -363,7 +364,21 @@ with theme;
       };
     };
 
-    nixd.binary.arguments = singleton "--inlay-hints";
+    nixd = {
+      binary.arguments = singleton "--inlay-hints";
+    };
+
+    nil = {
+      settings.nix = {
+        maxMemoryMB = 8192;
+
+        flake = {
+          autoArchive = true;
+          autoEvalInputs = true;
+          nixpkgsInputName = "os";
+        };
+      };
+    };
 
     deno = {
       settings.javascript = {
