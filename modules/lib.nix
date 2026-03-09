@@ -58,6 +58,7 @@ let
             text = # ini
               ''
                 [Desktop Entry]
+                Type=Application
                 Name=${lib.strings.replaceStrings [ "-" ] [ " " ] name}
                 Icon=${icon}
                 Exec=${exec}
