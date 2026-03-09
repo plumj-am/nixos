@@ -12,23 +12,33 @@ let
       # TODO: Handle ssh agent on darwin.
       programs.ssh.startAgent = true;
 
-      hjem.extraModules = singleton {
-        files.".ssh/config".text = # ssh
-          ''
-            StrictHostKeyChecking accept-new
-            IdentitiesOnly yes
+      hjem.extraModules = singleton (
+        { config, ... }:
+        {
+          # HACK: Use copy type to prevent permissions issues on the resulting symlink.
+          # Otherwise we get this error:
+          # "Bad owner or permissions on /home/jam/.ssh/config"
+          files.".ssh/config" = {
+            permissions = "0600";
+            type = "copy";
+            text = # ssh
+              ''
+                StrictHostKeyChecking accept-new
+                IdentitiesOnly yes
 
-            Host *
-              SetEnv COLORTERM="truecolor" TERM="xterm-256color"
-              ControlMaster auto
-              ControlPersist 60m
-              ServerAliveCountMax 2
-              ServerAliveInterval 60
-              IdentityFile /home/jam/.ssh/id
-          '';
+                Host *
+                  SetEnv COLORTERM="truecolor" TERM="xterm-256color"
+                  ControlMaster auto
+                  ControlPersist 60m
+                  ServerAliveCountMax 2
+                  ServerAliveInterval 60
+                  IdentityFile ${config.directory}/.ssh/id
+              '';
+          };
 
-        packages = singleton pkgs.mosh;
-      };
+          packages = singleton pkgs.mosh;
+        }
+      );
     };
 
   nixosOpensshBase =
