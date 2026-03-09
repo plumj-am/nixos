@@ -44,13 +44,13 @@ in
   })
   (mkZedKeymap "Workspace && !Picker" {
     ctrl-p = "workspace::Open";
-    alt-S = "project_panel::Toggle";
+    alt-S = "workspace::ToggleLeftDock";
     alt-s = "project_panel::ToggleFocus";
-    alt-T = "terminal_panel::Toggle";
+    alt-T = "workspace::ToggleBottomDock";
     alt-t = "terminal_panel::ToggleFocus";
-    alt-D = "debug_panel::Toggle";
+    alt-D = "workspace::ToggleBottomDock";
     alt-d = "debug_panel::ToggleFocus";
-    alt-A = "agent::Toggle";
+    alt-A = "workspace::ToggleRightDock";
     alt-a = "agent::ToggleFocus";
     ctrl-t = "task::Spawn";
     ctrl-T = "task::Rerun";
