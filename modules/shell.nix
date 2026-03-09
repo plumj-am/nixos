@@ -12,6 +12,8 @@ let
       inherit (lib.meta) getExe;
       inherit (lib.lists) singleton;
       inherit (lib.attrsets) mapAttrsToList;
+      inherit (lib.options) mkOption;
+      inherit (lib.types) attrsOf str;
 
       homeDir = "($env.HOME)";
 
@@ -19,7 +21,7 @@ let
         load-env {${concatStringsSep ", " (mapAttrsToList (n: v: "${n}: \"${v}\"") vars)}}
       '';
 
-      aliases = {
+      defaultAliases = {
         mp = "mprocs";
 
         todo = "hx ${homeDir}/notes/todo.md";
@@ -77,9 +79,17 @@ let
             pkgs.runCommand "zoxide-init-nu" { } ''${getExe pkgs.zoxide} init nushell --cmd=cd >> "$out"''
           }
         '';
+
+      aliases = defaultAliases // config.shellAliases;
     in
     {
-      hjem.extraModules = singleton {
+      options.shellAliases = mkOption {
+        type = attrsOf str;
+        default = { };
+        description = "Additional shell aliases to be merged with defaults";
+      };
+
+      config.hjem.extraModules = singleton {
         packages = [
           pkgs.bash
           pkgs.carapace
