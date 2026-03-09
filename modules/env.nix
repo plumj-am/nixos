@@ -8,7 +8,7 @@ let
       # TODO: Make an option.
       variables = {
         EDITOR = "hx";
-        SHELL = "${getExe pkgs.nushell}/bin/nu";
+        SHELL = getExe pkgs.nushell;
         TERMINAL = "zellij";
         TERM_PROGRAM = "zellij";
         WGPU_BACKEND = "gl";
