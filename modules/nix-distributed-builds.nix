@@ -42,9 +42,10 @@
   flake.modules.nixos.nix-distributed-builder =
     { config, lib, ... }:
     let
-      inherit (config.flake) keys;
       inherit (lib.options) mkOption;
+      inherit (lib.lists) singleton;
       inherit (lib.types) ints;
+      inherit (config.flake) keys;
     in
     {
       options.nix-builder = {
@@ -62,6 +63,11 @@
       };
 
       config = {
+        services.openssh.settings = {
+          AllowUsers = singleton "build";
+          AllowGroups = singleton "build";
+        };
+
         users.groups.build = { };
 
         users.users.build = {

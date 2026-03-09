@@ -112,7 +112,7 @@ in
       notifications
       nix-cache-proxy
       nix-settings-extra-desktop
-      nix-distributed-builder
+      # nix-distributed-builder
       nix-distributed-builds
       object-storage
       packages-extra-linux
@@ -133,10 +133,10 @@ in
         config = mkConfig inputs "date" "x86_64-linux" "desktop" {
           nix-cache-proxy.publicKey = "cache-proxy-date:3oT4ugNS3aoKKedKbX3QtDbiI3+IOjhJ/Ka8kZeNEzc=";
 
-          nix-builder = {
-            cores = 8;
-            speedFactor = 4;
-          };
+          # nix-builder = {
+          #   cores = 8;
+          #   speedFactor = 4;
+          # };
 
           forgejo-action-runner = {
             strong = true;
