@@ -1,18 +1,29 @@
 {
   flake.modules.nixos.rebuild =
-    { pkgs, config, ... }:
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
     let
+      inherit (lib.lists) singleton;
       inherit (config.myLib) mkDesktopEntry;
     in
     {
       environment.systemPackages = [
         pkgs.nh
         pkgs.nix-output-monitor
-
-        (mkDesktopEntry {
-          name = "Rebuild";
-          exec = "/home/jam/nixos/rebuild.nu";
-        })
       ];
+
+      hjem.extraModules = singleton (
+        { config, ... }:
+        {
+          packages = singleton (mkDesktopEntry {
+            name = "Rebuild";
+            exec = "${config.directory}/nixos/rebuild.nu";
+          });
+        }
+      );
     };
 }
