@@ -134,6 +134,7 @@ def reload-applications [] {
    pkill -USR1 kitty | ignore
    pkill -USR2 ghostty | ignore
    pkill -USR1 hx | ignore
+   pkill -USR2 opencode | ignore
    makoctl reload | ignore
    pkill -SIGTERM brave | ignore
    sleep 1sec
