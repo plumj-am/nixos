@@ -454,7 +454,7 @@ let
 
       zedPackage = pkgs.symlinkJoin {
         name = "zed-wrapped";
-        paths = singleton pkgs.zed-editor;
+        paths = singleton pkgs.zed-editor-fhs;
         buildInputs = singleton pkgs.makeWrapper;
         postBuild = # sh
           ''
@@ -470,14 +470,7 @@ let
       };
 
       hjem.extraModules = singleton {
-        packages = [
-          zedPackage
-
-          (mkDesktopEntry {
-            name = "Zed";
-            exec = "/etc/profiles/per-user/jam/bin/zeditor";
-          })
-        ];
+        packages = singleton zedPackage;
 
         xdg.config.files = {
           "zed/settings.json".source =
