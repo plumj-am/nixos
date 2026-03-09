@@ -1,4 +1,5 @@
 let
+  # Credit to https://github.com/rgbcube/ncc for most of this.
   fixesBase =
     # { lib, ... }:
     # let
