@@ -475,7 +475,7 @@ let
 
           (mkDesktopEntry {
             name = "Zed";
-            exec = "/run/current-system/sw/bin/zed";
+            exec = "/etc/profiles/per-user/jam/bin/zeditor";
           })
         ];
 
@@ -518,6 +518,7 @@ let
 
           # Nix
           pkgs.nixd
+          pkgs.nil
           pkgs.nixfmt
 
           # YAML
