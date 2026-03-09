@@ -1,17 +1,88 @@
 let
   fqdn = "rad.plumj.am";
 
+  personalNodes = [
+    "z6MkmE6sDg87jysA5F6toYZDE795Nkcv2KfbVaqRLRQFFt6X@blackwell.taild29fec.ts.net:8776"
+    # "...@date.taild29fec.ts.net:8776"
+    "z6MkjPdRVZGSoMnFXL7FtgR7xvdrque51TMRspJ9WAK2gde6@kiwi.taild29fec.ts.net:8776"
+    "z6MkffMv6gHyhQQWT1NH8p3X9hiMdxsAnUhtxXTfx2xZSqzz@plum.taild29fec.ts.net:8776"
+    "z6MkrBKRwq3ADkck29xhyxSvjWiPs9XXoCLxNCZ2egYSNWCv@sloe.taild29fec.ts.net:8776"
+    "z6MkjteiKR9kqhLXnU3oVDDNf3zpoQPnLfMeqZXGsbVJVKeT@yuzu.taild29fec.ts.net:8776"
+  ];
+
+  personalDIDs = [
+    "did:key:z6MkhQJuAftpcYts9YXwY2GH9ig48ke9BN8QyhTZ4C7gU2Un" # jam@yuzu
+  ];
+
   radicleUserBase =
     {
-      pkgs,
       lib,
       config,
       ...
     }:
     let
+      inherit (lib.generators) toJSON;
+      inherit (lib.lists) singleton;
+      inherit (config.networking) hostName;
+
+      radicleUserConfig = {
+        publicExplorer = "https://rad.plumj.am/nodes/$host/$rid$path";
+        preferredSeeds = personalNodes;
+        web = {
+          pinned = {
+            repositories = [ ];
+          };
+        };
+        cli = {
+          hints = true;
+        };
+        node = {
+          alias = "jam@${hostName}.plumj.am";
+          listen = [ ];
+          peers = {
+            type = "dynamic";
+          };
+          connect = personalNodes;
+          externalAddresses = [ ];
+          network = "main";
+          log = "INFO";
+          relay = "auto";
+          limits = {
+            routingMaxSize = 1000;
+            routingMaxAge = 604800;
+            gossipMaxAge = 1209600;
+            fetchConcurrency = 1;
+            maxOpenFiles = 4096;
+            rate = {
+              inbound = {
+                fillRate = 5.0;
+                capacity = 1024;
+              };
+              outbound = {
+                fillRate = 10.0;
+                capacity = 2048;
+              };
+            };
+            connection = {
+              inbound = 128;
+              outbound = 16;
+            };
+            fetchPackReceive = "500.0 MiB";
+          };
+          workers = 16;
+          seedingPolicy = {
+            default = "block";
+          };
+        };
+      };
     in
     {
-
+      hjem.extraModules = singleton {
+        files.".radicle/config.json" = {
+          generator = toJSON { };
+          value = radicleUserConfig;
+        };
+      };
     };
 
   radicleNodeBase =
@@ -28,19 +99,6 @@ let
 
       nodeServePort = 8005;
       nodePort = 8776;
-
-      personalNodes = [
-        "z6MkmE6sDg87jysA5F6toYZDE795Nkcv2KfbVaqRLRQFFt6X@blackwell.taild29fec.ts.net:8776"
-        # "...@date.taild29fec.ts.net:8776"
-        "z6MkjPdRVZGSoMnFXL7FtgR7xvdrque51TMRspJ9WAK2gde6@kiwi.taild29fec.ts.net:8776"
-        "z6MkffMv6gHyhQQWT1NH8p3X9hiMdxsAnUhtxXTfx2xZSqzz@plum.taild29fec.ts.net:8776"
-        "z6MkrBKRwq3ADkck29xhyxSvjWiPs9XXoCLxNCZ2egYSNWCv@sloe.taild29fec.ts.net:8776"
-        "z6MkjteiKR9kqhLXnU3oVDDNf3zpoQPnLfMeqZXGsbVJVKeT@yuzu.taild29fec.ts.net:8776"
-      ];
-
-      personalDIDs = [
-        "did:key:z6MkhQJuAftpcYts9YXwY2GH9ig48ke9BN8QyhTZ4C7gU2Un" # jam@yuzu
-      ];
     in
     {
       environment.systemPackages = singleton pkgs.radicle-node;
@@ -197,6 +255,7 @@ let
     };
 in
 {
+  flake.modules.nixos.radicle = radicleUserBase;
   flake.modules.nixos.radicle-node = radicleNodeBase;
   flake.modules.nixos.radicle-explorer = radicleExplorerBase;
 
