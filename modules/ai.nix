@@ -235,7 +235,6 @@ let
     }:
     let
       inherit (lib.lists) singleton;
-      inherit (config.myLib) mkDesktopEntry;
 
       opencodeDesktopPackage = pkgs.symlinkJoin {
         name = "opencode-wrapped";
@@ -257,12 +256,6 @@ let
           pkgs.gemini-cli
           opencodeDesktopPackage
           pkgs.qwen-code
-
-          (mkDesktopEntry {
-            name = "OpenCode-Desktop";
-            exec = "OpenCode";
-            icon = "opencode";
-          })
         ];
       };
     };
