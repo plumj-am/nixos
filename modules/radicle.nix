@@ -8,10 +8,12 @@ let
     "z6MkffMv6gHyhQQWT1NH8p3X9hiMdxsAnUhtxXTfx2xZSqzz@plum.taild29fec.ts.net:8776"
     "z6MkrBKRwq3ADkck29xhyxSvjWiPs9XXoCLxNCZ2egYSNWCv@sloe.taild29fec.ts.net:8776"
     "z6MkjteiKR9kqhLXnU3oVDDNf3zpoQPnLfMeqZXGsbVJVKeT@yuzu.taild29fec.ts.net:8776"
+    "z6MkjTz9sd1wn5HXvNb2YVnYWjSfkYieWwutoUeo24cSGQns@lime.taild29fec.ts.net:8776"
   ];
 
   personalDIDs = [
     "did:key:z6MkhQJuAftpcYts9YXwY2GH9ig48ke9BN8QyhTZ4C7gU2Un" # jam@yuzu
+    "did:key:z6MkjTz9sd1wn5HXvNb2YVnYWjSfkYieWwutoUeo24cSGQns" # jam@lime
   ];
 
   radicleUserBase =
