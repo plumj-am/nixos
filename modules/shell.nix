@@ -413,8 +413,37 @@ let
       );
     };
 
+  shellExtraDarwin =
+    { pkgs, lib, ... }:
+    let
+      inherit (lib.lists) singleton;
+      inherit (lib.modules) mkAfter;
+      inherit (lib.meta) getExe;
+    in
+    {
+      hjem.extraModules = singleton (
+        { config, ... }:
+        {
+          xdg.config.files."zsh/.zshrc" = {
+            text =
+              # zsh
+              mkAfter ''
+                SHELL=${getExe pkgs.nushell} exec ${getExe pkgs.nushell} --config '${config.directory}/.config/nushell/config.nu'
+              '';
+          };
+
+        }
+      );
+
+    };
+
 in
 {
   flake.modules.nixos.shell = shellBase;
-  flake.modules.darwin.shell = shellBase;
+  flake.modules.darwin.shell = {
+    imports = [
+      shellBase
+      shellExtraDarwin
+    ];
+  };
 }
