@@ -2,6 +2,10 @@ let
   fqdn = "rad.plumj.am";
 
   personalNodes = [
+    # User nodes.
+    "z6MkhQJuAftpcYts9YXwY2GH9ig48ke9BN8QyhTZ4C7gU2Un@yuzu.taild29fec.ts.net:8775"
+
+    # System nodes.
     "z6MkmE6sDg87jysA5F6toYZDE795Nkcv2KfbVaqRLRQFFt6X@blackwell.taild29fec.ts.net:8776"
     # "...@date.taild29fec.ts.net:8776"
     "z6MkjPdRVZGSoMnFXL7FtgR7xvdrque51TMRspJ9WAK2gde6@kiwi.taild29fec.ts.net:8776"
@@ -18,6 +22,7 @@ let
 
   radicleUserBase =
     {
+      pkgs,
       lib,
       config,
       ...
@@ -26,6 +31,8 @@ let
       inherit (lib.generators) toJSON;
       inherit (lib.lists) singleton;
       inherit (config.networking) hostName;
+
+      userNodePort = 8775;
 
       radicleUserConfig = {
         publicExplorer = "https://rad.plumj.am/nodes/$host/$rid$path";
@@ -40,12 +47,12 @@ let
         };
         node = {
           alias = "jam@${hostName}.plumj.am";
-          listen = [ ];
+          listen = singleton "[::]:${toString userNodePort}";
           peers = {
             type = "dynamic";
           };
           connect = personalNodes;
-          externalAddresses = [ ];
+          externalAddresses = singleton "${hostName}.taild29fec.ts.net:${toString userNodePort}";
           network = "main";
           log = "INFO";
           relay = "auto";
@@ -80,11 +87,28 @@ let
       };
     in
     {
+      networking.firewall.allowedTCPPorts = singleton userNodePort;
+
+      systemd.user.services.radicle-user-node = {
+        description = "Radicle User Node";
+        wantedBy = [ "default.target" ];
+        after = [ "network-online.target" ];
+        wants = [ "network-online.target" ];
+        unitConfig.ConditionUser = "jam";
+        serviceConfig = {
+          Type = "simple";
+          ExecStart = "${pkgs.radicle-node}/bin/rad node start";
+          Restart = "on-failure";
+          RestartSec = "5";
+        };
+      };
+
       hjem.extraModules = singleton {
         files.".radicle/config.json" = {
           generator = toJSON { };
           value = radicleUserConfig;
         };
+        packages = singleton pkgs.radicle-node;
       };
     };
 
