@@ -126,6 +126,15 @@ let
               "fetch"
             ];
 
+            aliases.fr = [
+              "new"
+              "trunk()"
+            ];
+            aliases.fresh = [
+              "new"
+              "trunk()"
+            ];
+
             aliases.r = [ "rebase" ];
 
             aliases.res = [ "resolve" ];
@@ -254,12 +263,35 @@ let
             revset-aliases."closest_pushable(to)" =
               "heads(::to & ~description(exact:\"\") & (~empty() | merges()))";
 
-            revsets.log = "present(@) | present(trunk()) | ancestors(remote_bookmarks().. | @.., 8)";
+            revsets.log = "ancestors(reachable(@, mutable()), 2)";
+
+            template-aliases."in_branch(commit)" = # python
+              ''
+                commit.contained_in("immutable_heads()..bookmarks()")
+              '';
+
+            templates.log_node = # python
+              ''
+                label("node",
+                  coalesce(
+                    if(!self, label("elided", "⇋")),
+                    if(current_working_copy, label("working_copy", "◉")),
+                    if(conflict, label("conflict", "x")),
+                    if(immutable, label("immutable", "◆")),
+                    if(description.starts_with("wip: "), label("wip", "!")),
+                    label("normal", "○")
+                  )
+                )
+              '';
 
             templates.draft_commit_description = # python
               ''
                 concat(
                   coalesce(description, "\n"),
+                  if(
+                    !description.contains("Signed-off-by: " ++ author.name()),
+                    "\nSigned-off-by: " ++ author.name() ++ " <" ++ author.email() ++ ">",
+                  ),
                   surround(
                     "\nJJ: This commit contains the following changes:\n", "",
                     indent("JJ:     ", diff.stat(72)),
