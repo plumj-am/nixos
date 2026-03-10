@@ -9,9 +9,6 @@ let
       inherit (lib.lists) singleton;
     in
     {
-      # TODO: Handle ssh agent on darwin.
-      programs.ssh.startAgent = true;
-
       hjem.extraModules = singleton (
         { config, ... }:
         {
@@ -40,6 +37,11 @@ let
         }
       );
     };
+
+  sshAgentBase = {
+    # TODO: Handle ssh agent on darwin.
+    programs.ssh.startAgent = true;
+  };
 
   nixosOpensshBase =
     { config, lib, ... }:
@@ -113,7 +115,12 @@ let
     };
 in
 {
-  flake.modules.nixos.ssh = sshConfigBase;
+  flake.modules.nixos.ssh = {
+    imports = [
+      sshConfigBase
+      sshAgentBase
+    ];
+  };
   flake.modules.darwin.ssh = sshConfigBase;
 
   flake.modules.nixos.openssh = nixosOpensshBase;
