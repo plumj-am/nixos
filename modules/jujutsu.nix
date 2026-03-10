@@ -44,7 +44,7 @@ let
     in
     {
       hjem.extraModules = singleton (
-        { config, ... }:
+        { osConfig, config, ... }:
         {
           xdg.config.files."jj/config.toml".source = toml.generate "jj-config.toml" {
             user.name = "PlumJam";
@@ -64,7 +64,7 @@ let
               "$left"
               "$right"
             ];
-            ui.editor = config.environment.variables.EDITOR;
+            ui.editor = osConfig.environment.variables.EDITOR;
             ui.graph.style = "curved";
             ui.movement.edit = true;
             ui.pager = ":builtin";
