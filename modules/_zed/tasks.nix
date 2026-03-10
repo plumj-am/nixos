@@ -30,7 +30,7 @@ let
       shell = fastSh;
     };
 
-  mkFinder =
+  mkPane =
     { label, command }:
     {
       inherit label command;
@@ -45,18 +45,18 @@ let
 in
 [
   (mkFloat {
-    label = "jjui";
-    command = "jjui";
-  })
-  (mkFloat {
     label = "nushell";
     command = "nu";
   })
-  (mkFinder {
+  (mkPane {
+    label = "jjui";
+    command = "jjui";
+  })
+  (mkPane {
     label = "find_file";
     command = "${tv} files ${tvArgs}";
   })
-  (mkFinder {
+  (mkPane {
     label = "live_grep";
     command = "raw=$(${tv} text --input '\${ZED_SELECTED_TEXT:-}' ${tvArgs}) && [ -n \"$raw\" ] && result=$(echo \"$raw\" | cut -d: -f1,2) && zed \"$result\"";
   })
