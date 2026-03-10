@@ -81,7 +81,7 @@ let
                   }
 
                   window-rule {
-                    match app-id=r#"zed"#
+                    match app-id=r#"^dev.zed.Zed$"#
                     open-maximized false
                     open-on-workspace "editor"
                   }
@@ -102,7 +102,7 @@ let
                   }
 
                   window-rule {
-                    match app-id=r#"zed_float"#
+                    match app-id=r#"^zed_float$"#
                     open-floating true
                     default-column-width { proportion 0.66; }
                     default-window-height { proportion 0.9; }
