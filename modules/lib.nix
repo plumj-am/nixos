@@ -9,6 +9,7 @@ let
     }:
     let
       inherit (lib.options) mkOption;
+      inherit (lib.modules) mkIf;
       inherit (config.age) secrets;
       inherit (config.networking) hostName;
     in
@@ -52,19 +53,22 @@ let
             terminal ? false,
             icon ? "preferences-color-symbolic",
           }:
-          pkgs.writeTextFile {
-            inherit name;
-            destination = "/share/applications/${name}.desktop";
-            text = # ini
-              ''
-                [Desktop Entry]
-                Type=Application
-                Name=${lib.strings.replaceStrings [ "-" ] [ " " ] name}
-                Icon=${icon}
-                Exec=${exec}
-                Terminal=${if terminal then "true" else "false"}
-              '';
-          };
+          if config.nixpkgs.hostPlatform.isLinux then
+            pkgs.writeTextFile {
+              inherit name;
+              destination = "/share/applications/${name}.desktop";
+              text = # ini
+                ''
+                  [Desktop Entry]
+                  Type=Application
+                  Name=${lib.strings.replaceStrings [ "-" ] [ " " ] name}
+                  Icon=${icon}
+                  Exec=${exec}
+                  Terminal=${if terminal then "true" else "false"}
+                '';
+            }
+          else
+            { };
 
         # Backup creation helper with restic to keep constants consistent.
         # Can be used like so:
