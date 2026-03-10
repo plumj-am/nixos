@@ -77,6 +77,7 @@ let
               sign-on-push = true; # Sign in bulk on push.
               subprocess = true;
               private-commits = "description('wip:*') | description('private:*')"; # Prevent pushing WIP commits.
+              write-change-id-header = true;
             };
 
             remotes.origin.auto-track-bookmarks = "glob:*";

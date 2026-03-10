@@ -21,6 +21,10 @@ let
         log.date = "iso";
         column.ui = "auto";
 
+        aliases = {
+          patch = "push rad HEAD:refs/patches";
+        };
+
         commit.verbose = true;
 
         status.branch = true;
