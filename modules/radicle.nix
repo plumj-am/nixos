@@ -256,9 +256,13 @@ let
 in
 {
   flake.modules.nixos.radicle = radicleUserBase;
+  flake.modules.darwin.radicle = radicleUserBase;
   flake.modules.nixos.radicle-node = radicleNodeBase;
+  flake.modules.darwin.radicle-node = radicleNodeBase;
   flake.modules.nixos.radicle-explorer = radicleExplorerBase;
 
   flake.modules.nixos.radicle-tui = radicleTUI;
+  flake.modules.darwin.radicle-tui = radicleTUI;
   flake.modules.nixos.radicle-gui = radicleGUI;
+  flake.modules.darwin.radicle-gui = radicleGUI;
 }
