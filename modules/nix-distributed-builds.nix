@@ -12,7 +12,6 @@
     in
     {
       config = {
-        nix.settings.max-silent-time = 60;
         nix.distributedBuilds = true;
         nix.buildMachines =
           inputs.self.nixosConfigurations
