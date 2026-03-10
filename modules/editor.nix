@@ -447,7 +447,6 @@ let
     }:
     let
       inherit (lib.lists) singleton;
-      inherit (config.myLib) mkDesktopEntry;
       inherit (config.age) secrets;
 
       json = pkgs.formats.json { };
@@ -469,21 +468,26 @@ let
         extra-trusted-public-keys = singleton "zed.cachix.org-1:/pHQ6dpMsAZk2DiP4WCL0p9YDNKWj2Q5FL20bNmw1cU=";
       };
 
-      hjem.extraModules = singleton {
-        packages = singleton zedPackage;
+      hjem.extraModules = singleton (
+        { osConfig, ... }:
+        {
+          packages = singleton (
+            if osConfig.nixpkgs.hostPlatform.isDarwin then pkgs.zed-editor else zedPackage
+          );
 
-        xdg.config.files = {
-          "zed/settings.json".source =
-            json.generate "zed-settings.json" <| import ./_zed/settings.nix { inherit lib config; };
+          xdg.config.files = {
+            "zed/settings.json".source =
+              json.generate "zed-settings.json" <| import ./_zed/settings.nix { inherit lib config; };
 
-          "zed/keymap.json".source = json.generate "zed-keymap.json" <| import ./_zed/keymap.nix;
+            "zed/keymap.json".source = json.generate "zed-keymap.json" <| import ./_zed/keymap.nix;
 
-          "zed/tasks.json".source =
-            json.generate "zed-tasks.json" <| import ./_zed/tasks.nix { inherit pkgs lib; };
+            "zed/tasks.json".source =
+              json.generate "zed-tasks.json" <| import ./_zed/tasks.nix { inherit pkgs lib; };
 
-          "zed/debug.json".source = json.generate "zed-debug.json" <| import ./_zed/debug.nix;
-        };
-      };
+            "zed/debug.json".source = json.generate "zed-debug.json" <| import ./_zed/debug.nix;
+          };
+        }
+      );
     };
 
   editorExtra =
