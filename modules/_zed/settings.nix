@@ -38,6 +38,7 @@ with theme;
   confirm_quit = true;
   selection_highlight = false;
   scrollbar.show = "never";
+  file_scan_exclusion = [ ];
 
   telemetry = {
     diagnostics = false;
