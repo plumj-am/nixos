@@ -73,6 +73,7 @@ let
           };
           workers = 16;
           seedingPolicy = {
+            scope = "all";
             default = "block";
           };
         };
@@ -123,7 +124,7 @@ let
         settings = {
           web = {
             name = fqdn;
-            description = "Public-facing node for PlumJam";
+            description = "PlumJam's public seeding node | Xitter: @plumj_am";
             imageUrl = "https://plumj.am/public/plumjam.png"; # Doesn't work for some reason.
             pinned.repositories = [
               "rad:z2FHgLfWUnYBXMpqFRTjciK7vAVjR" # plumjam/nixos
@@ -145,8 +146,8 @@ let
             workers = 16;
             relay = "always";
             seedingPolicy = {
-              scope = "followed";
-              default = "allow";
+              scope = "all";
+              default = if hostName == "plum" then "allow" else "block";
             };
           };
         };
