@@ -76,7 +76,7 @@ let
       imports = singleton inputs.tangled.nixosModules.spindle;
 
       services.tangled.spindle = {
-        enable = true;
+        enable = false; # Will investigate more in the future once private repos are possible.
 
         server = {
           listenAddr = "${host}:${spindlePort}";
