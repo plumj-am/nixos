@@ -52,7 +52,6 @@ let
         ];
 
         experimental-features = [
-          "cgroups"
           "flakes"
           "nix-command"
           "pipe-operators"
@@ -63,7 +62,6 @@ let
         http-connections = 0;
         max-jobs = "auto";
         cores = 0;
-        use-cgroups = true;
         show-trace = true;
         eval-cache = true;
         pure-eval = true;
@@ -140,10 +138,9 @@ let
     {
       nix.optimise.automatic = mkForce false;
       nix.gc.automatic = mkForce false;
-      nix.nixPath =
-        (registryMap |> mapAttrsToList (name: value: "${name}=${value}") |> concatStringsSep ":")
-        ++ [ "nixpkgs=${inputs.os}" ];
-
+      nix.nixPath = (
+        registryMap |> mapAttrsToList (name: value: "${name}=${value}") |> concatStringsSep ":"
+      );
     };
 in
 {
