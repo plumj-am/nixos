@@ -23,6 +23,7 @@ in
       # radicle-node
       rust-desktop
       sudo
+      theme-extra-fonts
       zed
       zellij
       {

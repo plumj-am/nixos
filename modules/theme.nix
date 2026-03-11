@@ -295,7 +295,7 @@ let
       };
     };
 
-  themeExtraFonts =
+  themeExtraFontsLinux =
     { config, pkgs, ... }:
     {
       console = {
@@ -310,6 +310,19 @@ let
         config.theme.font.mono.package
         config.theme.font.sans.package
         pkgs.nerd-fonts.symbols-only
+        pkgs.noto-fonts
+        pkgs.noto-fonts-cjk-sans
+        pkgs.noto-fonts-lgc-plus
+        pkgs.noto-fonts-color-emoji
+      ];
+    };
+
+  themeExtraFontsDarwin =
+    { config, pkgs, ... }:
+    {
+      fonts.packages = [
+        config.theme.font.mono.package
+        config.theme.font.sans.package
         pkgs.noto-fonts
         pkgs.noto-fonts-cjk-sans
         pkgs.noto-fonts-lgc-plus
@@ -366,6 +379,8 @@ in
   flake.modules.darwin.theme = themeBase;
   flake.modules.nixos.theme = themeBase;
 
-  flake.modules.nixos.theme-extra-fonts = themeExtraFonts;
+  flake.modules.nixos.theme-extra-fonts = themeExtraFontsLinux;
+  flake.modules.darwin.theme-extra-fonts = themeExtraFontsDarwin;
+
   flake.modules.nixos.theme-extra-scripts = themeExtraScripts;
 }
