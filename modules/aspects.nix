@@ -14,6 +14,7 @@ let
     "nix-settings"
     "openssh"
     "packages"
+    "rebuild"
     "secret-manager"
     "shell"
     "shell-tools"

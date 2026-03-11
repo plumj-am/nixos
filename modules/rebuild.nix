@@ -37,4 +37,16 @@
         }
       );
     };
+
+  flake.modules.darwin.rebuild =
+    {
+      pkgs,
+      ...
+    }:
+    {
+      environment.systemPackages = [
+        pkgs.nh
+        pkgs.nix-output-monitor
+      ];
+    };
 }
