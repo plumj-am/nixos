@@ -5,8 +5,6 @@
       inherit (lib.lists) singleton;
     in
     {
-      hjem.extraModules = singleton {
-        packages = [ pkgs.raycast ];
-      };
+      environment.systemPackages = singleton pkgs.raycast;
     };
 }
