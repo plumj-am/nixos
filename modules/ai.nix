@@ -819,7 +819,8 @@ let
               })
 
               # claude-code sandbox deps.
-            ] ++ optionals (!osConfig.nixpkgs.hostPlatform.isDarwin) [
+            ]
+            ++ optionals (!osConfig.nixpkgs.hostPlatform.isDarwin) [
               pkgs.socat
               pkgs.bubblewrap
             ];
@@ -850,14 +851,16 @@ let
       };
     in
     {
-      hjem.extraModule = { osConfig, ... }:
+      hjem.extraModule =
+        { osConfig, ... }:
         {
           packages = [
             inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.agentfs
             pkgs.codex
             pkgs.gemini-cli
             pkgs.qwen-code
-          ] ++ optional (!osConfig.nixpkgs.hostPlatform.isDarwin) opencodeDesktopPackage;
+          ]
+          ++ optional (!osConfig.nixpkgs.hostPlatform.isDarwin) opencodeDesktopPackage;
         };
     };
 in
