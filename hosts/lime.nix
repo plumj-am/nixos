@@ -10,11 +10,17 @@ in
     modules = with inputs.self.modules.darwin; [
       aspectsBase
 
+      ai-extra
       app-launcher
+      claude-code
       editor-extra
       jujutsu-extra
       kitty
       nix-settings-extra-darwin
+      opencode
+      peripherals
+      radicle
+      # radicle-node
       rust-desktop
       sudo
       zed
