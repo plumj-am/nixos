@@ -33,6 +33,17 @@
         nixpkgs.follows = "os";
       };
     };
+    homebrew = {
+      url = "github:zhaofengli/nix-homebrew";
+    };
+    homebrew-core = {
+      url = "github:homebrew/homebrew-core";
+      flake = false;
+    };
+    homebrew-cask = {
+      url = "github:homebrew/homebrew-cask";
+      flake = false;
+    };
     niri = {
       url = "github:niri-wm/niri";
       inputs.nixpkgs.follows = "os";

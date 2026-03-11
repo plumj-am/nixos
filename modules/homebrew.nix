@@ -1,0 +1,27 @@
+{
+  flake.modules.darwin.homebrew =
+    {
+      inputs,
+      lib,
+      config,
+      ...
+    }:
+    let
+      inherit (lib.lists) singleton;
+    in
+    {
+      imports = singleton inputs.homebrew.darwinModules.nix-homebrew;
+      homebrew.enable = true;
+
+      nix-homebrew = {
+        enable = true;
+
+        user = config.system.primaryUser;
+
+        taps."homebrew/homebrew-core" = inputs.homebrew-core;
+        taps."homebrew/homebrew-cask" = inputs.homebrew-cask;
+
+        mutableTaps = false;
+      };
+    };
+}

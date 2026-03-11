@@ -44,6 +44,7 @@ let
     getCommon inputs.self.modules.darwin
     ++ (with inputs.self.modules.darwin; [
       fixes
+      homebrew
     ]);
 in
 {
