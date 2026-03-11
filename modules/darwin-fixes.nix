@@ -1,10 +1,10 @@
-let
-  # Credit to https://github.com/rgbcube/ncc for most of this.
-  fixesBase =
-    # { lib, ... }:
-    # let
-    #   inherit (lib.lists) singleton;
-    # in
+# Credit to https://github.com/rgbcube/ncc for most of this.
+{
+  flake.modules.darwin.fixes =
+    { lib, ... }:
+    let
+      inherit (lib.lists) singleton;
+    in
     {
       system.defaults = {
 
@@ -65,17 +65,14 @@ let
           enable-spring-load-actions-on-all-items = true;
 
           persistent-apps = [
-            { app = "/Applications/Zed.app"; }
-            { app = "/Applications/Kitty.app"; }
+            { app = "/Applications/Nix\ User\ Apps/Zed.app"; }
+            { app = "/Applications/Nix\ User\ Apps/kitty.app"; }
           ];
         };
       };
       # FIXME: Doesn't work for some reason.
-      # hjem.extraModules = singleton {
-      #   files.".hushlogin".text = "";
-      # };
+      hjem.extraModules = singleton {
+        files.".hushlogin".text = "";
+      };
     };
-in
-{
-  flake.modules.darwin.fixes = fixesBase;
 }
