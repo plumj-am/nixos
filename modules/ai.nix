@@ -310,7 +310,7 @@ let
       ...
     }:
     let
-      inherit (lib.lists) singleton;
+      inherit (lib.lists) singleton optionals;
       inherit (lib.attrsets) genAttrs;
       inherit (lib.meta) getExe;
       inherit (lib.strings) toJSON replaceStrings;
@@ -819,6 +819,7 @@ let
               })
 
               # claude-code sandbox deps.
+            ] ++ optionals (!osConfig.nixpkgs.hostPlatform.isDarwin) [
               pkgs.socat
               pkgs.bubblewrap
             ];
@@ -833,7 +834,7 @@ let
       ...
     }:
     let
-      inherit (lib.lists) singleton;
+      inherit (lib.lists) singleton optional;
 
       opencodeDesktopPackage = pkgs.symlinkJoin {
         name = "opencode-desktop-wrapped";
@@ -849,15 +850,15 @@ let
       };
     in
     {
-      hjem.extraModules = singleton {
-        packages = [
-          inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.agentfs
-          pkgs.codex
-          pkgs.gemini-cli
-          opencodeDesktopPackage
-          pkgs.qwen-code
-        ];
-      };
+      hjem.extraModule = { osConfig, ... }:
+        {
+          packages = [
+            inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.agentfs
+            pkgs.codex
+            pkgs.gemini-cli
+            pkgs.qwen-code
+          ] ++ optional (!osConfig.nixpkgs.hostPlatform.isDarwin) opencodeDesktopPackage;
+        };
     };
 in
 {
