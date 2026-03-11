@@ -426,7 +426,7 @@ let
       hjem.extraModules = singleton (
         { config, ... }:
         {
-          xdg.config.files."zsh/.zshrc" = {
+          files.".zshrc" = {
             text =
               # zsh
               mkAfter ''
