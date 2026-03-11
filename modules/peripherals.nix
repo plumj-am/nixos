@@ -26,10 +26,37 @@ let
     };
 
   peripheralsDarwin =
-    { pkgs, ... }:
+    { pkgs, lib, ... }:
+    let
+      inherit (lib.generators) toJSON;
+    in
     {
       hjem.extraModules = singleton {
-        packages = [ pkgs.karabiner-elements ];
+        packages = singleton pkgs.karabiner-elements;
+
+        xdg.config.files."karabiner/karabiner.json" = {
+          generator = toJSON { };
+          value = {
+            profiles = singleton {
+              # Disable built-in keyboard when Corne v4 connected.
+              devices = [
+                {
+                  disable_built_in_keyboard_if_exists = true;
+                  identifiers = {
+                    is_keyboard = true;
+                    product_id = 4;
+                    vendor_id = 18003;
+                  };
+                }
+              ];
+              name = "Default profile";
+              selected = true;
+              virtual_hid_keyboard = {
+                keyboard_type_v2 = "ansi";
+              };
+            };
+          };
+        };
       };
     };
 in
