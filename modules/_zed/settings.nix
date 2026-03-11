@@ -64,6 +64,7 @@ with theme;
       [
         "date"
         "kiwi"
+        "lime"
         "pear"
         "plum"
         "sloe"

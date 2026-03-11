@@ -84,6 +84,7 @@ let
             "blackwell"
             "date"
             "kiwi"
+            "lime"
             "pear"
             "plum"
             "sloe"
