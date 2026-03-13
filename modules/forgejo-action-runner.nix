@@ -19,7 +19,7 @@ let
         "self-hosted:host"
         "${name}:host"
         "docpad-infra:host"
-        "ubuntu-22.04:docker://docker.gitea.com/runner-images:ubuntu-22.04"
+        "ubuntu-latest-slim:docker://docker.gitea.com/runner-images:ubuntu-latest-slim"
       ];
     in
     {
