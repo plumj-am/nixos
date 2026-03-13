@@ -160,7 +160,8 @@ let
           web = {
             name = fqdn;
             description = "PlumJam's public seeding node | Xitter: @plumj_am";
-            imageUrl = "https://plumj.am/public/plumjam.png"; # Doesn't work for some reason.
+            avatarUrl = "https://plumj.am/public/plumjam.png";
+            bannerUrl = "https://plumj.am/public/plumjam-banner4.png";
             pinned.repositories = [
               "rad:z2FHgLfWUnYBXMpqFRTjciK7vAVjR" # plumjam/nixos
               "rad:z5MipPXTdCWp87hUwvyY1DLgiBgS" # plumjam/plumj.am
