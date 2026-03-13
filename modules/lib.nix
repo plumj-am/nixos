@@ -9,7 +9,6 @@ let
     }:
     let
       inherit (lib.options) mkOption;
-      inherit (lib.modules) mkIf;
       inherit (config.age) secrets;
       inherit (config.networking) hostName;
     in
