@@ -1,5 +1,10 @@
 let
-  fqdn = "rad.plumj.am";
+  domain = "plumj.am";
+  fqdn = "rad.${domain}";
+
+  systemNodePort = 8776;
+  userNodePort = 8775;
+  nodeHttpdPort = 8005;
 
   personalNodes = [
     # User nodes.
@@ -22,105 +27,86 @@ let
 
   radicleUserBase =
     {
-      pkgs,
       lib,
-      config,
       ...
     }:
     let
-      inherit (lib.generators) toJSON;
       inherit (lib.lists) singleton;
-      inherit (config.networking) hostName;
-      inherit (config.flake) keys;
-      inherit (config.age) secrets;
-
-      userNodePort = 8775;
-
-      radicleUserConfig = {
-        publicExplorer = "https://rad.plumj.am/nodes/$host/$rid$path";
-        preferredSeeds = personalNodes;
-        web = {
-          pinned = {
-            repositories = [ ];
-          };
-        };
-        cli = {
-          hints = true;
-        };
-        node = {
-          alias = "jam@${hostName}.plumj.am";
-          listen = singleton "[::]:${toString userNodePort}";
-          peers = {
-            type = "dynamic";
-          };
-          connect = personalNodes;
-          externalAddresses = singleton "${hostName}.taild29fec.ts.net:${toString userNodePort}";
-          network = "main";
-          log = "INFO";
-          relay = "auto";
-          limits = {
-            routingMaxSize = 1000;
-            routingMaxAge = 604800;
-            gossipMaxAge = 1209600;
-            fetchConcurrency = 1;
-            maxOpenFiles = 4096;
-            rate = {
-              inbound = {
-                fillRate = 5.0;
-                capacity = 1024;
-              };
-              outbound = {
-                fillRate = 10.0;
-                capacity = 2048;
-              };
-            };
-            connection = {
-              inbound = 128;
-              outbound = 16;
-            };
-            fetchPackReceive = "500.0 MiB";
-          };
-          workers = 16;
-          seedingPolicy = {
-            scope = "followed";
-            default = "block";
-          };
-        };
-      };
     in
     {
-      networking.firewall.allowedTCPPorts = singleton userNodePort;
+      hjem.extraModules = singleton (
+        { pkgs, osConfig, ... }:
+        let
+          inherit (osConfig.flake) keys;
+          inherit (osConfig.age) secrets;
+          inherit (osConfig.networking) hostName;
 
-      systemd.user.services.radicle-user-node = {
-        description = "Radicle User Node";
-        wantedBy = [ "default.target" ];
-        after = [ "network-online.target" ];
-        wants = [ "network-online.target" ];
-        unitConfig.ConditionUser = "jam";
-        serviceConfig = {
-          Type = "simple";
-          ExecStart = "${pkgs.radicle-node}/bin/rad node start";
-          Restart = "on-failure";
-          RestartSec = "5";
-        };
-      };
+          json = pkgs.formats.json { };
+        in
+        {
+          packages = singleton pkgs.radicle-node;
 
-      hjem.extraModules = singleton {
-        files = {
-          ".radicle/keys/radicle.pub".text = keys."${hostName}-jam-radicle";
-          ".radicle/keys/radicle".source = secrets.radicleUserKey.path;
+          files = {
+            ".radicle/keys/radicle.pub".text = keys."${hostName}-jam-radicle";
+            ".radicle/keys/radicle".source = secrets.radicleUserKey.path;
+            # TODO: Need to figure out if ^this^ will be a problem when it is not set.
+            # TODO: I don't want it to overwrite the generated key.
+            # TODO: Overall bootstrapping is weak for new/reset hosts...
 
-          ".radicle/config.json" = {
-            generator = toJSON { };
-            value = radicleUserConfig;
+            ".radicle/config.json".source = json.generate "radicle-config.json" {
+              publicExplorer = "https://rad.plumj.am/nodes/$host/$rid$path";
+              preferredSeeds = personalNodes;
+              web = {
+                pinned = {
+                  repositories = [ ];
+                };
+              };
+              cli = {
+                hints = true;
+              };
+              node = {
+                alias = "jam@${hostName}.plumj.am";
+                listen = singleton "[::]:${toString userNodePort}";
+                peers = {
+                  type = "dynamic";
+                };
+                connect = personalNodes;
+                externalAddresses = singleton "${hostName}.taild29fec.ts.net:${toString userNodePort}";
+                network = "main";
+                log = "INFO";
+                relay = "auto";
+                limits = {
+                  routingMaxSize = 1000;
+                  routingMaxAge = 604800;
+                  gossipMaxAge = 1209600;
+                  fetchConcurrency = 1;
+                  maxOpenFiles = 4096;
+                  rate = {
+                    inbound = {
+                      fillRate = 5.0;
+                      capacity = 1024;
+                    };
+                    outbound = {
+                      fillRate = 10.0;
+                      capacity = 2048;
+                    };
+                  };
+                  connection = {
+                    inbound = 128;
+                    outbound = 16;
+                  };
+                  fetchPackReceive = "500.0 MiB";
+                };
+                workers = 16;
+                seedingPolicy = {
+                  scope = "followed";
+                  default = "block";
+                };
+              };
+            };
           };
-          # TODO: Need to figure out if ^this^ will be a problem when it is not set.
-          # TODO: I don't want it to overwrite the generated key.
-          # TODO: Overall bootstrapping is weak for new/reset hosts...
-        };
-
-        packages = singleton pkgs.radicle-node;
-      };
+        }
+      );
     };
 
   radicleNodeBase =
@@ -134,14 +120,11 @@ let
       inherit (lib.lists) singleton optional;
       inherit (config.myLib) merge;
       inherit (config.networking) hostName;
-
-      nodeServePort = 8005;
-      nodePort = 8776;
     in
     {
       environment.systemPackages = singleton pkgs.radicle-node;
 
-      networking.firewall.allowedTCPPorts = singleton nodePort;
+      networking.firewall.allowedTCPPorts = singleton systemNodePort;
 
       services.radicle = {
         enable = true;
@@ -152,7 +135,7 @@ let
 
         httpd = {
           enable = true;
-          listenPort = nodeServePort;
+          listenPort = nodeHttpdPort;
         };
 
         # <https://app.radicle.xyz/nodes/seed.radicle.garden/rad:z3gqcJUoA1n9HaHKufZs5FCSGazv5/tree/crates/radicle/src/node/config.rs>
@@ -175,8 +158,8 @@ let
             connect = personalNodes;
             follow = personalDIDs;
             externalAddresses =
-              optional (hostName == "plum") "${fqdn}:${toString nodePort}" # First because it is highlighted in the radicle-explorer.
-              ++ singleton "${hostName}.taild29fec.ts.net:${toString nodePort}";
+              optional (hostName == "plum") "${fqdn}:${toString systemNodePort}" # First because it is highlighted in the radicle-explorer.
+              ++ singleton "${hostName}.taild29fec.ts.net:${toString systemNodePort}";
             workers = 16;
             relay = "always";
             seedingPolicy = {
@@ -192,26 +175,92 @@ let
         '';
 
         locations."/api/" = {
-          proxyPass = "http://127.0.0.1:${toString nodeServePort}";
+          proxyPass = "http://127.0.0.1:${toString nodeHttpdPort}";
         };
 
         locations."/raw/" = {
-          proxyPass = "http://127.0.0.1:${toString nodeServePort}";
+          proxyPass = "http://127.0.0.1:${toString nodeHttpdPort}";
         };
 
         locations."~ ^/rad:" = {
-          proxyPass = "http://127.0.0.1:${toString nodeServePort}";
+          proxyPass = "http://127.0.0.1:${toString nodeHttpdPort}";
         };
       };
     };
 
-  radicleExplorerBase =
-    { pkgs, config, ... }:
+  radicleTUI =
+    { pkgs, lib, ... }:
     let
+      inherit (lib.lists) singleton;
+    in
+    {
+      config = {
+        shellAliases.rad = "rad-tui";
+
+        hjem.extraModules = singleton {
+          packages = singleton pkgs.radicle-tui;
+        };
+      };
+    };
+
+  radicleGUI =
+    {
+      pkgs,
+      lib,
+      ...
+    }:
+    let
+      inherit (lib.lists) singleton;
+    in
+    {
+      hjem.extraModules = singleton {
+        packages = singleton pkgs.radicle-desktop;
+      };
+    };
+in
+{
+  flake.modules.nixos.radicle =
+    { pkgs, lib, ... }:
+    let
+      inherit (lib.lists) singleton;
+    in
+    radicleUserBase { inherit lib; }
+    // {
+      networking.firewall.allowedTCPPorts = singleton userNodePort;
+
+      systemd.user.services.radicle-user-node = {
+        description = "Radicle User Node";
+        wantedBy = [ "default.target" ];
+        after = [ "network-online.target" ];
+        wants = [ "network-online.target" ];
+        unitConfig.ConditionUser = "jam";
+        serviceConfig = {
+          Type = "simple";
+          ExecStart = "${pkgs.radicle-node}/bin/rad node start";
+          Restart = "on-failure";
+          RestartSec = "5";
+        };
+      };
+    };
+
+  flake.modules.darwin.radicle = radicleUserBase;
+
+  flake.modules.nixos.radicle-node = radicleNodeBase;
+  flake.modules.darwin.radicle-node = radicleNodeBase;
+
+  flake.modules.nixos.radicle-explorer =
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
+    let
+      inherit (lib.generators) toJSON;
       inherit (config.myLib) merge;
 
       # <https://app.radicle.xyz/nodes/seed.radicle.xyz/rad:z4V1sjrXqjvFdnCUbxPFqd5p4DtH5/tree/config/default.json>
-      radicalExplorerConfig = builtins.toJSON {
+      radicalExplorerConfig = toJSON {
         nodes = {
           fallbackPublicExplorer = "https://app.radicle.xyz/nodes/$host/$rid$path";
           requiredApiVersion = "~0.18.0";
@@ -240,6 +289,10 @@ let
     in
     {
       services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
+        serverAliases = [
+          "radicle.${domain}"
+          "seed.${domain}"
+        ];
         locations."/" = {
           index = "index.html";
           inherit root;
@@ -251,55 +304,9 @@ let
       };
     };
 
-  radicleTUI =
-    { pkgs, lib, ... }:
-    let
-      inherit (lib.lists) singleton;
-    in
-    {
-      config = {
-        shellAliases.rad = "rad-tui";
-
-        hjem.extraModules = singleton {
-          packages = singleton pkgs.radicle-tui;
-        };
-      };
-    };
-
-  radicleGUI =
-    {
-      pkgs,
-      lib,
-      config,
-      ...
-    }:
-    let
-      inherit (lib.lists) singleton;
-      inherit (config.myLib) mkDesktopEntry;
-    in
-    {
-      hjem.extraModules = singleton {
-        packages = [
-          pkgs.radicle-desktop
-
-          (mkDesktopEntry {
-            name = "Radicle-Desktop";
-            exec = "radicle-desktop";
-            icon = "radicle";
-          })
-        ];
-      };
-    };
-in
-{
-  flake.modules.nixos.radicle = radicleUserBase;
-  flake.modules.darwin.radicle = radicleUserBase;
-  flake.modules.nixos.radicle-node = radicleNodeBase;
-  flake.modules.darwin.radicle-node = radicleNodeBase;
-  flake.modules.nixos.radicle-explorer = radicleExplorerBase;
-
   flake.modules.nixos.radicle-tui = radicleTUI;
   flake.modules.darwin.radicle-tui = radicleTUI;
+
   flake.modules.nixos.radicle-gui = radicleGUI;
   flake.modules.darwin.radicle-gui = radicleGUI;
 }
