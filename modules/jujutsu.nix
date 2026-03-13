@@ -40,7 +40,7 @@ let
 
         custom_commands = {
           tug = {
-            key = [ "ctrl+t" ];
+            key = singleton "T";
             args = [
               "bookmark"
               "move"
