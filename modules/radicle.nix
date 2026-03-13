@@ -310,4 +310,78 @@ in
 
   flake.modules.nixos.radicle-gui = radicleGUI;
   flake.modules.darwin.radicle-gui = radicleGUI;
+
+  flake.modules.nixos.radicle-ci =
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
+    let
+      inherit (lib.lists) singleton;
+      inherit (config.myLib) merge;
+      fqdn = "ci.${domain}";
+    in
+    {
+      services.radicle.ci = {
+        broker.enable = true;
+        broker.settings = {
+          adapters.native = {
+            command = lib.getExe pkgs.radicle-native-ci;
+            config = { };
+            config_env = "RADICLE_NATIVE_CI";
+          };
+          triggers = singleton {
+            adapter = "native";
+            filters = singleton {
+              And = [
+                { HasFile = ".radicle/native.yaml"; }
+                { Or = personalDIDs; }
+                {
+                  Or = [
+                    "DefaultBranch"
+                    "PatchCreated"
+                    "PatchUpdated"
+                  ];
+                }
+              ];
+            };
+          };
+        };
+        adapters.native.instances.native = {
+          enable = true;
+          settings.base_url = "/adapters/native/native/";
+          runtimePackages = with pkgs; [
+            bash
+            coreutils
+            curl
+            gawk
+            gitMinimal
+            gnused
+            nix
+            wget
+          ];
+        };
+      };
+
+      services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
+        extraConfig = ''
+          ${config.services.nginx.goatCounterTemplate}
+        '';
+        locations = {
+          "/" = {
+            root = "/var/lib/radicle-ci/reports";
+          };
+          "/adapters/" = {
+            root = "/var/lib/radicle-ci";
+          };
+        };
+      };
+
+      # systemd.tmpfiles.rules = [
+      #   "d /var/lib/radicle-ci/reports 0755 radicle-ci radicle-ci -"
+      #   "d /var/lib/radicle-ci/adapters/native/native 0755 radicle-ci radicle-ci -"
+      # ];
+    };
 }

@@ -1,0 +1,2 @@
+shell: |
+  bash -c 'echo "Testing native Radicle CI."'
