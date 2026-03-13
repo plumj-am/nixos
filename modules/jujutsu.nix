@@ -275,7 +275,8 @@ let
 
             revset-aliases = {
               "closest(to)" = "heads(::to & bookmarks())";
-              "closest_pushable(to)" = "heads(::to & ~description(exact:\"\") & (~empty() | merges()))";
+              "closest_pushable(to)" =
+                "heads(::to & ~description(exact:\"\") & (~empty() | merges()) & ~private())";
               "pending()" = ".. ~ ::tags() ~ ::remote_bookmarks() ~ @ ~ private()";
               "private()" = ''
                 description(glob:'wip:*') |
