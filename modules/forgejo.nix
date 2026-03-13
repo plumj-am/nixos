@@ -126,6 +126,7 @@
               START_SSH_SERVER = false;
 
               DISABLE_ROUTER_LOG = true;
+              OFFLINE_MODE = false; # For Gravatar.
             };
 
             service.DISABLE_REGISTRATION = true;
