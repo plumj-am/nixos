@@ -38,19 +38,20 @@ let
       jjuiConfig = {
         preview.show_at_start = false;
 
-        custom_commands = {
-          tug = {
-            key = singleton "T";
-            args = [
-              "bookmark"
-              "move"
-              "--from"
-              "closest($change_id)"
-              "--to"
-              "closest_pushable($change_id)"
-            ];
-          };
+        actions = singleton {
+          name = "tug";
+          lua = # lua
+            ''
+              jj_async("tug")
+              revisions.refresh()
+            '';
+        };
 
+        bindings = singleton {
+          key = singleton "T";
+          action = "tug";
+          scope = "revisions";
+          desc = "tug";
         };
 
         ui.colors."selected".bg = "#${theme.colors.base01}";
