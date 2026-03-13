@@ -10,6 +10,7 @@ let
     let
       inherit (lib.types) types;
       inherit (lib.options) mkOption;
+      inherit (lib.lists) optional;
       inherit (config.networking) hostName;
 
       name = hostName;
@@ -46,7 +47,7 @@ let
             tokenFile = config.age.secrets.forgejoRunnerToken.path;
             inherit name url;
 
-            labels = defaultLabels ++ lib.optionals config.forgejo-action-runner.strong [ "strong:host" ];
+            labels = defaultLabels ++ optional config.forgejo-action-runner.strong "strong:host";
 
             settings = {
               runner = {

@@ -131,7 +131,7 @@ let
       ...
     }:
     let
-      inherit (lib.lists) singleton optionals;
+      inherit (lib.lists) singleton optional;
       inherit (config.myLib) merge;
       inherit (config.networking) hostName;
 
@@ -174,10 +174,8 @@ let
             connect = personalNodes;
             follow = personalDIDs;
             externalAddresses =
-              optionals (hostName == "plum")
-              <|
-                singleton "${fqdn}:${toString nodePort}" # First because it is highlighted in the radicle-explorer.
-                ++ singleton "${hostName}.taild29fec.ts.net:${toString nodePort}";
+              optional (hostName == "plum") "${fqdn}:${toString nodePort}" # First because it is highlighted in the radicle-explorer.
+              ++ singleton "${hostName}.taild29fec.ts.net:${toString nodePort}";
             workers = 16;
             relay = "always";
             seedingPolicy = {

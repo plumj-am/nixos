@@ -19,7 +19,7 @@ let
     let
       inherit (lib.attrsets) mapAttrs;
       inherit (lib.meta) getExe;
-      inherit (lib.lists) optionals;
+      inherit (lib.lists) optionals optional;
 
       isLix = config.nix.package == pkgs.lixPackageSets.latest.lix;
 
@@ -60,15 +60,13 @@ let
           "flakes"
           "nix-command"
         ]
-        ++ optionals (!isLix) [
-          "pipe-operators"
-        ]
         ++ optionals isLix [
           "pipe-operator"
           "auto-allocate-uids"
           "coerce-integers"
           "lix-custom-sub-commands"
-        ];
+        ]
+        ++ optional (!isLix) "pipe-operators";
 
         builders-use-substitutes = true;
         flake-registry = "";
