@@ -269,6 +269,7 @@ with theme;
             "reorder_inline_tables=true"
             "--option"
             "reorder_keys=true"
+            "-"
             "{buffer_path}"
           ];
         };
