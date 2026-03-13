@@ -83,7 +83,6 @@ let
             source = toml.generate "helix-theme-${name}.toml" value;
           }
         ) themes;
-
       settings = {
         theme = if theme.colorScheme == "pywal" then "base16_custom" else theme.helix;
 
@@ -450,17 +449,6 @@ let
       inherit (config.age) secrets;
 
       json = pkgs.formats.json { };
-
-      zedPackage = pkgs.symlinkJoin {
-        name = "zed-wrapped";
-        paths = singleton pkgs.zed-editor-fhs;
-        buildInputs = singleton pkgs.makeWrapper;
-        postBuild = # sh
-          ''
-            wrapProgram $out/bin/zeditor \
-              --run 'export ZAI_API_KEY="$(cat ${secrets.zaiKey.path})"'
-          '';
-      };
     in
     {
       nix.settings = {
@@ -472,7 +460,18 @@ let
         { osConfig, ... }:
         {
           packages = singleton (
-            if osConfig.nixpkgs.hostPlatform.isDarwin then pkgs.zed-editor else zedPackage
+            pkgs.symlinkJoin {
+              name = "zed-wrapped";
+              paths = singleton (
+                if osConfig.nixpkgs.hostPlatform.isDarwin then pkgs.zed-editor else pkgs.zed-editor-fhs
+              );
+              buildInputs = singleton pkgs.makeWrapper;
+              postBuild = # sh
+                ''
+                  wrapProgram $out/bin/zeditor \
+                    --run 'export ZAI_API_KEY="$(cat ${secrets.zaiKey.path})"'
+                '';
+            }
           );
 
           xdg.config.files = {
