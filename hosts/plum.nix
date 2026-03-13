@@ -37,6 +37,8 @@ in
       tangled-spindle
       uptime-kuma
       website-personal
+      woodpecker-server
+      woodpecker-agent
       { hardware.facter.reportPath = ./facter/plum.json; }
       {
         config = mkConfig inputs "plum" "x86_64-linux" "server" {
@@ -61,6 +63,8 @@ in
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBH1S3dhOYCCltqrseHc3YZFHc9XU90PsvDo7frzUGrr root@plum";
 
           age.secrets = {
+            woodpeckerAgentSecret.rekeyFile = ../secrets/plum-woodpecker-agent-secret.age;
+            woodpeckerRadicleHookSecret.rekeyFile = ../secrets/plum-woodpecker-radicle-hook-secret.age;
             forgejoSigningKey = {
               rekeyFile = ../secrets/plum-forgejo-signing-key.age;
               owner = "forgejo";

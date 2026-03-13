@@ -17,5 +17,6 @@ inputs.parts.lib.mkFlake { inherit inputs; } {
   imports = [
     (importTree ./modules)
     (importTree ./hosts)
+    (importTree ./packages)
   ];
 }
