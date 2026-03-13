@@ -36,10 +36,24 @@ let
 
       # TODO: Fix sub-menu selection bg colour (press "l" on revision to view files)
       jjuiConfig = {
-        preview.show_at_start = true;
+        preview.show_at_start = false;
+
+        custom_commands = {
+          tug = {
+            key = [ "ctrl+t" ];
+            args = [
+              "bookmark"
+              "move"
+              "--from"
+              "closest($change_id)"
+              "--to"
+              "closest_pushable($change_id)"
+            ];
+          };
+
+        };
 
         ui.colors."selected".bg = "#${theme.colors.base01}";
-
       };
     in
     {
@@ -76,7 +90,7 @@ let
             git = {
               sign-on-push = true; # Sign in bulk on push.
               subprocess = true;
-              private-commits = "description('wip:*') | description('private:*')"; # Prevent pushing WIP commits.
+              private-commits = "private()"; # Prevent pushing WIP commits.
               write-change-id-header = true;
             };
 
@@ -259,9 +273,21 @@ let
               "log"
             ];
 
-            revset-aliases."closest(to)" = "heads(::to & bookmarks())";
-            revset-aliases."closest_pushable(to)" =
-              "heads(::to & ~description(exact:\"\") & (~empty() | merges()))";
+            revset-aliases = {
+              "closest(to)" = "heads(::to & bookmarks())";
+              "closest_pushable(to)" = "heads(::to & ~description(exact:\"\") & (~empty() | merges()))";
+              "pending()" = ".. ~ ::tags() ~ ::remote_bookmarks() ~ @ ~ private()";
+              "private()" = ''
+                description(glob:'wip:*') |
+                description(glob:'private:*') |
+                description(glob:'WIP:*') |
+                description(glob:'PRIVATE:*') |
+                conflicts() |
+                (empty() ~ merges()) |
+                description('substring-i:"DO NOT MAIL"')
+              '';
+
+            };
 
             revsets.log = "ancestors(reachable(@, mutable()), 2)";
 
@@ -272,15 +298,22 @@ let
 
             templates.log_node = # python
               ''
-                label("node",
-                  coalesce(
-                    if(!self, label("elided", "⇋")),
-                    if(current_working_copy, label("working_copy", "◉")),
-                    if(conflict, label("conflict", "x")),
-                    if(immutable, label("immutable", "◆")),
-                    if(description.starts_with("wip: "), label("wip", "!")),
-                    label("normal", "○")
-                  )
+                coalesce(
+                  if(!self, label("elided", "~")),
+                    label(
+                      separate(" ",
+                        if(current_working_copy, "working_copy"),
+                        if(immutable, "immutable"),
+                        if(conflict, "conflict"),
+                      ),
+                      coalesce(
+                        if(current_working_copy, "◉"),
+                        if(immutable, "◆"),
+                        if(conflict, "×"),
+                        if(self.contained_in("private()"), "◍"),
+                        "○",
+                      )
+                    )
                 )
               '';
 
