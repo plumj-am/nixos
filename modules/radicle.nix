@@ -82,7 +82,7 @@ let
           };
           workers = 16;
           seedingPolicy = {
-            scope = "all";
+            scope = "followed";
             default = "block";
           };
         };
@@ -179,7 +179,7 @@ let
             workers = 16;
             relay = "always";
             seedingPolicy = {
-              scope = "all";
+              scope = "followed";
               default = if hostName == "plum" then "allow" else "block";
             };
           };
