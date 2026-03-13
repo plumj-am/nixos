@@ -256,8 +256,9 @@ in
       ...
     }:
     let
-      inherit (lib.generators) toJSON;
       inherit (config.myLib) merge;
+
+      toJSON = lib.generators.toJSON { };
 
       # <https://app.radicle.xyz/nodes/seed.radicle.xyz/rad:z4V1sjrXqjvFdnCUbxPFqd5p4DtH5/tree/config/default.json>
       radicalExplorerConfig = toJSON {
