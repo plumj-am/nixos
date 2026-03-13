@@ -31,6 +31,8 @@ let
       inherit (lib.generators) toJSON;
       inherit (lib.lists) singleton;
       inherit (config.networking) hostName;
+      inherit (config.flake) keys;
+      inherit (config.age) secrets;
 
       userNodePort = 8775;
 
@@ -104,10 +106,19 @@ let
       };
 
       hjem.extraModules = singleton {
-        files.".radicle/config.json" = {
-          generator = toJSON { };
-          value = radicleUserConfig;
+        files = {
+          ".radicle/keys/radicle.pub".text = keys."${hostName}-jam-radicle";
+          ".radicle/keys/radicle".source = secrets.radicleUserKey.path;
+
+          ".radicle/config.json" = {
+            generator = toJSON { };
+            value = radicleUserConfig;
+          };
+          # TODO: Need to figure out if ^this^ will be a problem when it is not set.
+          # TODO: I don't want it to overwrite the generated key.
+          # TODO: Overall bootstrapping is weak for new/reset hosts...
         };
+
         packages = singleton pkgs.radicle-node;
       };
     };
