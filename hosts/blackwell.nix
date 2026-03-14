@@ -12,7 +12,6 @@ in
 
       boot-grub
       disks-disko
-      determinate-systems
       forgejo-action-runner
       linux-kernel-latest
       nix-distributed-builder

@@ -15,7 +15,6 @@ in
       cgit
       cinny
       disks-disko
-      determinate-systems
       forgejo
       freshrss-server
       forgejo-action-runner

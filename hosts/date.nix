@@ -18,7 +18,6 @@ in
       boot-systemd
       desktop-gui
       desktop-tools
-      determinate-systems
       discord-gui
       discord-tui
       disks-normal

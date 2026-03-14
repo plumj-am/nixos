@@ -25,10 +25,6 @@
         nixpkgs.follows = "os";
       };
     };
-    determinate = {
-      url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
-      inputs.nixpkgs.follows = "os";
-    };
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "os";

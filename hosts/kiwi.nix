@@ -13,7 +13,6 @@ in
       acme
       boot-grub
       disks-disko
-      determinate-systems
       forgejo-action-runner
       linux-kernel-latest
       nginx

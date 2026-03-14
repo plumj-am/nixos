@@ -32,7 +32,7 @@ let
           '';
     in
     {
-      # nix.package = pkgs.nixVersions.latest; # Using determinate-nix which sets this.
+      nix.package = mkDefault pkgs.nixVersions.latest;
       nix.channel = {
         enable = false;
       };

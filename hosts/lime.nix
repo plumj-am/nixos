@@ -11,7 +11,6 @@ in
       aspectsBase
 
       app-launcher
-      determinate-systems
       editor-extra
       jujutsu-extra
       kitty

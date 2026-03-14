@@ -11,7 +11,6 @@ in
       aspectsBase
 
       desktop-tools
-      determinate-systems
       jujutsu-extra
       linux-kernel-zen
       nix-distributed-builds
