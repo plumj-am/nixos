@@ -21,7 +21,7 @@ let
         log.date = "iso";
         column.ui = "auto";
 
-        aliases = {
+        alias = {
           patch = "push rad HEAD:refs/patches";
         };
 
