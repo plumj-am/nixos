@@ -74,7 +74,9 @@ with theme;
     bc = "pane::CloseActiveItem";
     rl = "editor::ReloadFile";
     lspr = "editor::RestartLanguageServer";
+    lspre = "editor::RestartLanguageServer";
     wn = "workspace::SaveWithoutFormat";
+    "w --no-format" = "workspace::SaveWithoutFormat";
   };
 
   inlay_hints = {
