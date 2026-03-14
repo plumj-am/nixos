@@ -50,6 +50,11 @@ let
           name = "Screenshot-Window";
           exec = "niri msg action screenshot-window --write-to-disk";
         })
+
+        (mkDesktopEntry {
+          name = "Jarvis-unshit-my-pants";
+          exec = "nu -c 'steam; zeditor; zeditor; job spawn {radicle-desktop}; thunderbird; OpenCode; brave'";
+        })
       ];
 
       hjem.extraModules = singleton (
@@ -82,14 +87,34 @@ let
 
                   window-rule {
                     match app-id=r#"^dev.zed.Zed$"#
+                    exclude title=r#"^docpad.*$"
                     open-maximized false
-                    open-on-workspace "editor"
+                    open-on-workspace "editor1"
                   }
 
                   window-rule {
-                    match app-id=r#"^vesktop$"#
+                    match app-id=r#"^dev.zed.Zed$"#
+                    match title=r#"^docpad.*$"
+                    open-maximized false
+                    open-on-workspace "editor2"
+                  }
+
+                  window-rule {
+                    match app-id=r#"^vesktop|wasistlos$"#
                     open-maximized true
                     open-on-workspace "chat"
+                  }
+
+                  window-rule {
+                    match app-id=r#"^thunderbird$"#
+                    open-maximized true
+                    open-on-workspace "email"
+                  }
+
+                  window-rule {
+                    match app-id=r#"^radicle-desktop|com.saivert.pwvucontrol|thunar$"#
+                    open-maximized true
+                    open-on-workspace "guis"
                   }
 
                   window-rule {
@@ -179,17 +204,28 @@ let
                     open-on-output "DP-2"
                   }
 
+                  workspace "guis" {
+                    open-on-output "DP-2"
+                  }
+
                   workspace "chat" {
                     open-on-output "DP-2"
                   }
 
-                  workspace "editor" {
+                  workspace "email" {
+                    open-on-output "DP-2"
+                  }
+
+                  workspace "editor1" {
+                    open-on-output "DP-1"
+                  }
+                  workspace "editor2" {
                     open-on-output "DP-1"
                   }
 
                   layout {
                     always-center-single-column true
-                    empty-workspace-above-first true
+                    empty-workspace-above-first false
                     gaps 0
                     preset-column-widths {
                       proportion 0.20
