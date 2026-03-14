@@ -320,10 +320,19 @@ in
     }:
     let
       inherit (lib.lists) singleton;
+      inherit (lib.strings) removePrefix;
+      inherit (lib) map;
       inherit (config.myLib) merge;
       fqdn = "ci.${domain}";
     in
     {
+      age.secrets.ciHtpasswd = {
+        rekeyFile = ../secrets/ci-htpasswd.age;
+        owner = "nginx";
+        group = "nginx";
+        mode = "0400";
+      };
+
       services.radicle.ci = {
         broker.enable = true;
         broker.settings = {
@@ -337,7 +346,7 @@ in
             filters = singleton {
               And = [
                 { HasFile = ".radicle/native.yaml"; }
-                { Or = personalDIDs; }
+                { Or = map (did: { Node = removePrefix "did:key:" did; }) personalDIDs; }
                 {
                   Or = [
                     "DefaultBranch"
@@ -366,12 +375,15 @@ in
       };
 
       services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
+        basicAuthFile = config.age.secrets.ciHtpasswd.path;
         extraConfig = ''
           ${config.services.nginx.goatCounterTemplate}
         '';
         locations = {
           "/" = {
+            index = "index.html";
             root = "/var/lib/radicle-ci/reports";
+            tryFiles = "$uri $uri/ /index.html";
           };
           "/adapters/" = {
             root = "/var/lib/radicle-ci";
@@ -379,9 +391,9 @@ in
         };
       };
 
-      # systemd.tmpfiles.rules = [
-      #   "d /var/lib/radicle-ci/reports 0755 radicle-ci radicle-ci -"
-      #   "d /var/lib/radicle-ci/adapters/native/native 0755 radicle-ci radicle-ci -"
-      # ];
+      systemd.tmpfiles.rules = [
+        "d /var/lib/radicle-ci/reports 0755 radicle-ci radicle-ci -"
+        "d /var/lib/radicle-ci/adapters/native/native 0755 radicle-ci radicle-ci -"
+      ];
     };
 }
