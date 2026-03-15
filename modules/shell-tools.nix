@@ -21,6 +21,7 @@ let
           pkgs.bat
           pkgs.btop
           pkgs.eza
+          pkgs.devenv
           pkgs.fastfetch
           pkgs.fd
           pkgs.fzf
