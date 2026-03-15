@@ -14,7 +14,7 @@ in
       disks-disko
       forgejo-action-runner
       linux-kernel-latest
-      nix-distributed-builder
+      # nix-distributed-builder
       nix-distributed-builds
       nix-settings-extra-server
       object-storage
@@ -24,10 +24,10 @@ in
       sudo-extra-server
       {
         config = mkConfig inputs "blackwell" "x86_64-linux" "server" {
-          nix-builder = {
-            cores = 2;
-            speedFactor = 1;
-          };
+          # nix-builder = {
+          #   cores = 2;
+          #   speedFactor = 1;
+          # };
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGSi4SKhqze7ZzhJFcUF9KW/4nXX1MfvZjUqrYWNDi9c root@blackwell";
 

@@ -8,7 +8,7 @@ Dendritic NixOS configurations for 8 personal machines:
 
 | Name      | System  | Platform       | Follows                  | Active |
 | --------- | ------- | -------------- | ------------------------ | :----: |
-| Blackwell | Server  | x86_64-linux   | nixos-unstable-small[^1] |   ✔    |
+| Blackwell | Server  | x86_64-linux   | nixos-unstable-small[^1] |        |
 | Date      | Laptop  | x86_64-linux   | nixos-unstable-small[^1] |   ✔    |
 | Kiwi      | Server  | x86_64-linux   | nixos-unstable-small[^1] |   ✔    |
 | Lime      | Macbook | aarch64-darwin | nix-darwin[^2]           |        |

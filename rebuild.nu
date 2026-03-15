@@ -103,7 +103,7 @@ def --wrapped main [
 # Rebuild all hosts sequentially
 def "main all" [] {
    const HOSTS = [
-      blackwell
+      # blackwell
       date
       kiwi
       lime

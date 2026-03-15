@@ -32,7 +32,7 @@ in
     };
     concurrency = commonConcurrency "nix-ci";
     jobs = {
-      build-blackwell = mkJob "build" "Build: blackwell" "nixosConfigurations.blackwell" "blackwell";
+      # build-blackwell = mkJob "build" "Build: blackwell" "nixosConfigurations.blackwell" "blackwell";
       build-date = mkJob "build" "Build: date" "nixosConfigurations.date" "strong";
       build-kiwi = mkJob "build" "Build: kiwi" "nixosConfigurations.kiwi" "kiwi";
       # build-lime    = job "build" "Build: lime" "darwinConfigurations.lime" "strong";
