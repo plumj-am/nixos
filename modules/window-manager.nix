@@ -65,240 +65,240 @@ let
           xdg.config.files."niri/config.kdl".text =
             with theme; # kdl
             ''
-                  window-rule {
-                    match app-id=r#"^*$"#
-                    opacity 1.0
-                    draw-border-with-background false
-                    clip-to-geometry true
-                    geometry-corner-radius 0
-                    shadow {
-                      off
-                    }
-                    focus-ring {
-                      off
-                    }
-                  }
+              window-rule {
+                match app-id=r#"^*$"#
+                opacity 1.0
+                draw-border-with-background false
+                clip-to-geometry true
+                geometry-corner-radius 0
+                shadow {
+                  off
+                }
+                focus-ring {
+                  off
+                }
+              }
 
-                  window-rule {
-                    match app-id=r#"^(zen-.*|org\.qutebrowser\.qutebrowser|brave-browser)$"#
-                    open-maximized true
-                    open-on-workspace "browser"
-                  }
+              window-rule {
+                match app-id=r#"^(zen-.*|org\.qutebrowser\.qutebrowser|brave-browser)$"#
+                open-maximized true
+                open-on-workspace "browser"
+              }
 
-                  window-rule {
-                    match app-id=r#"^dev.zed.Zed$"#
-                    exclude title=r#"^docpad.*$"
-                    open-maximized false
-                    open-on-workspace "editor1"
-                  }
+              window-rule {
+                match app-id=r#"^dev.zed.Zed|OpenCode$"#
+                exclude title=r#"^docpad-*$"#
+                open-maximized false
+                open-on-workspace "editor1"
+              }
 
-                  window-rule {
-                    match app-id=r#"^dev.zed.Zed$"#
-                    match title=r#"^docpad.*$"
-                    open-maximized false
-                    open-on-workspace "editor2"
-                  }
+              window-rule {
+                match app-id=r#"^dev.zed.Zed$"#
+                match title=r#"^docpad-*$"#
+                open-maximized false
+                open-on-workspace "editor2"
+              }
 
-                  window-rule {
-                    match app-id=r#"^vesktop|wasistlos$"#
-                    open-maximized true
-                    open-on-workspace "chat"
-                  }
+              window-rule {
+                match app-id=r#"^vesktop|wasistlos$"#
+                open-maximized true
+                open-on-workspace "chat"
+              }
 
-                  window-rule {
-                    match app-id=r#"^thunderbird$"#
-                    open-maximized true
-                    open-on-workspace "email"
-                  }
+              window-rule {
+                match app-id=r#"^thunderbird$"#
+                open-maximized true
+                open-on-workspace "email"
+              }
 
-                  window-rule {
-                    match app-id=r#"^radicle-desktop|com.saivert.pwvucontrol|thunar$"#
-                    open-maximized true
-                    open-on-workspace "guis"
-                  }
+              window-rule {
+                match app-id=r#"^radicle-desktop|com.saivert.pwvucontrol|thunar$"#
+                open-maximized true
+                open-on-workspace "guis"
+              }
 
-                  window-rule {
-                    match title=r#"^.*YouTube|Picture-in-Picture.*"#
-                    opacity 1.0
-                  }
+              window-rule {
+                match title=r#"^.*YouTube|Picture-in-Picture.*"#
+                opacity 1.0
+              }
 
-                  window-rule {
-                    match app-id=r#"kitty"#
-                  }
+              window-rule {
+                match app-id=r#"kitty"#
+              }
 
-                  window-rule {
-                    match app-id=r#"^zed_float$"#
-                    open-floating true
-                    default-column-width { proportion 0.66; }
-                    default-window-height { proportion 0.9; }
-                  }
+              window-rule {
+                match app-id=r#"^zed_float$"#
+                open-floating true
+                default-column-width { proportion 0.66; }
+                default-window-height { proportion 0.9; }
+              }
 
-                  window-rule {
-                    match app-id=r#"^steam$"#
-                    open-maximized true
-                    open-on-workspace "games"
-                  }
+              window-rule {
+                match app-id=r#"^steam$"#
+                open-maximized true
+                open-on-workspace "games"
+              }
 
-                  window-rule {
-                    match app-id=r#"^steam_app_*"#
-                    opacity 1.0
-                    open-on-workspace "games"
-                    border {
-                      off
-                    }
-                    geometry-corner-radius 0
-                    clip-to-geometry false
-                  }
+              window-rule {
+                match app-id=r#"^steam_app_*"#
+                opacity 1.0
+                open-on-workspace "games"
+                border {
+                  off
+                }
+                geometry-corner-radius 0
+                clip-to-geometry false
+              }
 
-                  layer-rule {
-                    match namespace=r#"ashell|notifications|launcher"#
-                    opacity 1.0
-                  }
+              layer-rule {
+                match namespace=r#"ashell|notifications|launcher"#
+                opacity 1.0
+              }
 
-                  input {
-                    focus-follows-mouse
-                    warp-mouse-to-focus
-                    disable-power-key-handling
+              input {
+                focus-follows-mouse
+                warp-mouse-to-focus
+                disable-power-key-handling
 
-                    mouse {
-                      accel-profile "flat"
-                      left-handed
-                    }
+                mouse {
+                  accel-profile "flat"
+                  left-handed
+                }
 
-                    touchpad {
-                      accel-profile "flat"
-                      left-handed
-                    }
+                touchpad {
+                  accel-profile "flat"
+                  left-handed
+                }
 
-                    trackball {
-                      accel-profile "flat"
-                      left-handed
-                    }
+                trackball {
+                  accel-profile "flat"
+                  left-handed
+                }
 
-                    trackpoint {
-                      accel-profile "flat"
-                      left-handed
-                    }
-                  }
+                trackpoint {
+                  accel-profile "flat"
+                  left-handed
+                }
+              }
 
-                  output "ASUSTek COMPUTER INC VG259QM M1LMQS084030" {
-                    mode "1920x1080@279.857"
-                    position x=0 y=0
-                  }
+              output "ASUSTek COMPUTER INC VG259QM M1LMQS084030" {
+                mode "1920x1080@279.857"
+                position x=0 y=0
+              }
 
-                  output "PNP(BNQ) BenQ xl2411t PAD00133SL0" {
-                    mode "1920x1080@60.000"
-                    position x=1920 y=0
-                  }
+              output "PNP(BNQ) BenQ xl2411t PAD00133SL0" {
+                mode "1920x1080@60.000"
+                position x=1920 y=0
+              }
 
-                  // output "Dell Inc. DELL U3415W F1T1W92E116L" {
-                  //   mode "3440x1440@49.987" // On Windows I could get 80hz but not here for some reason...
-                  //   position x=1920 y=0
-                  // }
+              // output "Dell Inc. DELL U3415W F1T1W92E116L" {
+              //   mode "3440x1440@49.987" // On Windows I could get 80hz but not here for some reason...
+              //   position x=1920 y=0
+              // }
 
-                  workspace "games" {
-                    open-on-output "DP-2"
-                  }
+              workspace "games" {
+                open-on-output "DP-2"
+              }
 
-                  workspace "browser" {
-                    open-on-output "DP-2"
-                  }
+              workspace "guis" {
+                open-on-output "DP-2"
+              }
 
-                  workspace "guis" {
-                    open-on-output "DP-2"
-                  }
+              workspace "browser" {
+                open-on-output "DP-2"
+              }
 
-                  workspace "chat" {
-                    open-on-output "DP-2"
-                  }
+              workspace "chat" {
+                open-on-output "DP-2"
+              }
 
-                  workspace "email" {
-                    open-on-output "DP-2"
-                  }
+              workspace "email" {
+                open-on-output "DP-2"
+              }
 
-                  workspace "editor1" {
-                    open-on-output "DP-1"
-                  }
-                  workspace "editor2" {
-                    open-on-output "DP-1"
-                  }
+              workspace "editor1" {
+                open-on-output "DP-1"
+              }
+              workspace "editor2" {
+                open-on-output "DP-1"
+              }
 
-                  layout {
-                    always-center-single-column true
-                    empty-workspace-above-first false
-                    gaps 0
-                    preset-column-widths {
-                      proportion 0.20
-                      proportion 0.25
-                      proportion 0.33
-                      proportion 0.50
-                      proportion 0.66
-                      proportion 0.75
-                      proportion 0.80
-                    }
-                    preset-window-heights {
-                      proportion 0.50
-                      proportion 0.66
-                      proportion 1.00
-                    }
+              layout {
+                always-center-single-column true
+                empty-workspace-above-first false
+                gaps 0
+                preset-column-widths {
+                  proportion 0.20
+                  proportion 0.25
+                  proportion 0.33
+                  proportion 0.50
+                  proportion 0.66
+                  proportion 0.75
+                  proportion 0.80
+                }
+                preset-window-heights {
+                  proportion 0.50
+                  proportion 0.66
+                  proportion 1.00
+                }
 
-                    border {
-                      on
-                      width ${toString border.small}
-                      active-gradient from="${colors.base0B}" to="${colors.base09}" angle=45
-                      inactive-color "#${colors.base01}"
-                      urgent-color "#${colors.base08}"
-                    }
-                    shadow {
-                      off
-                      color "#${toString colors.base09}DD"
-                      draw-behind-window false
-                      softness 10
-                      offset x=0 y=0
-                    }
-                    focus-ring {
-                      off
-                    }
-                  }
+                border {
+                  on
+                  width ${toString border.small}
+                  active-gradient from="${colors.base0B}" to="${colors.base09}" angle=45
+                  inactive-color "#${colors.base01}"
+                  urgent-color "#${colors.base08}"
+                }
+                shadow {
+                  off
+                  color "#${toString colors.base09}DD"
+                  draw-behind-window false
+                  softness 10
+                  offset x=0 y=0
+                }
+                focus-ring {
+                  off
+                }
+              }
 
-                  animations {
-                    slowdown 0.75
-                  }
+              animations {
+                slowdown 0.75
+              }
 
-                  //   window-open {
-                  //     curve "ease-out-cubic"
-                  //     duration-ms 150
-                  //   }
+              //   window-open {
+              //     curve "ease-out-cubic"
+              //     duration-ms 150
+              //   }
 
-                  //   window-close {
-                  //     curve "ease-out-expo"
-                  //     duration-ms 150
-                  //   }
+              //   window-close {
+              //     curve "ease-out-expo"
+              //     duration-ms 150
+              //   }
 
-                  //   window-movement {
-                  //     spring damping-ratio=1.0 stiffness=800 epsilon=0.0001
-                  //   }
+              //   window-movement {
+              //     spring damping-ratio=1.0 stiffness=800 epsilon=0.0001
+              //   }
 
-                  //   window-resize {
-                  //     spring damping-ratio=1.0 stiffness=1200 epsilon=0.0001
-                  //   }
-                  // }
+              //   window-resize {
+              //     spring damping-ratio=1.0 stiffness=1200 epsilon=0.0001
+              //   }
+              // }
 
-                  cursor {
-                    hide-when-typing
-                  }
+              cursor {
+                hide-when-typing
+              }
 
-                  hotkey-overlay {
-                    skip-at-startup
-                  }
+              hotkey-overlay {
+                skip-at-startup
+              }
 
-                  gestures {
-                    hot-corners {
-                      off
-                    }
-                  }
+              gestures {
+                hot-corners {
+                  off
+                }
+              }
 
-                  screenshot-path "${config.directory}/Pictures/Screenshots/screenshot_%Y-%m-%d_%H-%M-%S.png"
+              screenshot-path "${config.directory}/Pictures/Screenshots/screenshot_%Y-%m-%d_%H-%M-%S.png"
 
               binds {
                 Mod+slash { show-hotkey-overlay; }
