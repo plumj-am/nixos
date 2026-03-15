@@ -32,7 +32,7 @@
           addresses = [ "tcp://plum.taild29fec.ts.net:22000" ];
         };
         sloe = {
-          id = "";
+          id = "OL4HTIF-PU3A7G4-K7QXABE-FUIFI3U-JHEKRSV-AKEPZU6-6Y5CXA2-KMMKQA4";
           addresses = [ "tcp://sloe.taild29fec.ts.net:22000" ];
         };
         yuzu = {
@@ -46,19 +46,21 @@
     {
       services.syncthing = {
         enable = true;
-        inherit devices;
+        settings = {
+          inherit devices;
 
-        options = {
-          relaysEnabled = true;
-          localAnnounceEnabled = true;
-        };
+          options = {
+            relaysEnabled = true;
+            localAnnounceEnabled = true;
+          };
 
-        folders = {
-          radicle-ci = {
-            path = "/var/lib/radicle-ci/native/${hostName}";
-            devices = allDevices;
-            ignorePerms = true;
-            copyOwnershipFromParent = true;
+          folders = {
+            radicle-ci = {
+              path = "/var/lib/radicle-ci/adapters/native";
+              devices = allDevices;
+              ignorePerms = true;
+              copyOwnershipFromParent = true;
+            };
           };
         };
       };
