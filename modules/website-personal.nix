@@ -103,5 +103,11 @@
             '';
         };
       };
+
+      systemd.tmpfiles.rules = [
+        "d ${root} 0755 nginx nginx -"
+        "d ${root}/public 0755 nginx nginx -"
+        "d ${root}/nerd 0755 nginx nginx -"
+      ];
     };
 }
