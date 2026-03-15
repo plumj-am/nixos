@@ -37,7 +37,8 @@ let
               "Settings"
             ]
             [
-              "Tempo"
+              # "Tempo" # Needs v0.8
+              "Clock"
             ]
           ];
         };
@@ -69,6 +70,8 @@ let
           weather_location = "Current";
           clock_format = "%Y-%m-%d | %H:%M";
         };
+
+        clock.format = "%F | %H:%M";
 
         system_info = {
           indicators = [
