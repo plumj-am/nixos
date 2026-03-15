@@ -1,11 +1,2 @@
 shell: |
-  nix build .#nixosConfigurations.blackwell.config.system.build.toplevel --accept-flake-config --builders "" --no-link --print-build-logs
-  nix build .#nixosConfigurations.date.config.system.build.toplevel --accept-flake-config --builders "" --no-link --print-build-logs
-  nix build .#nixosConfigurations.kiwi.config.system.build.toplevel --accept-flake-config --builders "" --no-link --print-build-logs
-  nix build .#nixosConfigurations.pear.config.system.build.toplevel --accept-flake-config --builders "" --no-link --print-build-logs
-  nix build .#nixosConfigurations.plum.config.system.build.toplevel --accept-flake-config --builders "" --no-link --print-build-logs
-  nix build .#nixosConfigurations.sloe.config.system.build.toplevel --accept-flake-config --builders "" --no-link --print-build-logs
-  nix build .#nixosConfigurations.yuzu.config.system.build.toplevel --accept-flake-config --builders "" --no-link --print-build-logs
-  nix build .#checks.x86_64-linux.deadnix --accept-flake-config --builders "" --no-link --print-build-logs
-  nix build .#checks.x86_64-linux.nix-path --accept-flake-config --builders "" --no-link --print-build-logs
-  nix build .#checks.x86_64-linux.statix --accept-flake-config --builders "" --no-link --print-build-logs
+  nix flake check --all-systems --print-build-logs --keep-going
