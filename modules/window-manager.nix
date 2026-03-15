@@ -53,11 +53,6 @@ let
           name = "Screenshot-Window";
           exec = "niri msg action screenshot-window --write-to-disk";
         })
-
-        (mkDesktopEntry {
-          name = "Jarvis-unshit-my-pants";
-          exec = "nu -c 'steam; zeditor; zeditor; job spawn {radicle-desktop}; thunderbird; OpenCode; brave'";
-        })
       ];
 
       system.activationScripts.niri-validate = stringAfter [ "etc" ] ''

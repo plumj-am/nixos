@@ -56,10 +56,14 @@ let
       ...
     }:
     let
-      inherit (lib.lists) singleton;
       inherit (pkgs.formats) keyValue;
+      inherit (lib.lists) singleton;
+      inherit (lib) readFile;
       inherit (lib.generators) mkKeyValueDefault;
+      inherit (config.myLib) mkDesktopEntry;
       inherit (config) theme;
+
+      launchApps = pkgs.writeScriptBin "launch-apps" <| readFile ./nushell.launch.nu;
 
       tofiKeyValue = keyValue {
         listsAsDuplicateKeys = true;
@@ -98,6 +102,15 @@ let
       };
     in
     {
+      environment.systemPackages = [
+        launchApps
+
+        (mkDesktopEntry {
+          name = "Jarvis-unshit-my-pants";
+          exec = "launch-apps";
+        })
+      ];
+
       hjem.extraModules = singleton {
         packages = singleton pkgs.tofi;
 
