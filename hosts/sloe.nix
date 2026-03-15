@@ -21,6 +21,7 @@ in
       object-storage
       openssh-extra-users
       prometheus-node-exporter
+      radicle-ci-runner
       radicle-node
       rust
       sudo-extra-server

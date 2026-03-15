@@ -311,7 +311,7 @@ in
   flake.modules.nixos.radicle-gui = radicleGUI;
   flake.modules.darwin.radicle-gui = radicleGUI;
 
-  flake.modules.nixos.radicle-ci =
+  flake.modules.nixos.radicle-ci-runner =
     {
       pkgs,
       lib,
@@ -322,17 +322,9 @@ in
       inherit (lib.lists) singleton;
       inherit (lib.strings) removePrefix;
       inherit (lib) map;
-      inherit (config.myLib) merge;
-      fqdn = "ci.${domain}";
+      inherit (config.networking) hostName;
     in
     {
-      age.secrets.ciHtpasswd = {
-        rekeyFile = ../secrets/ci-htpasswd.age;
-        owner = "nginx";
-        group = "nginx";
-        mode = "0400";
-      };
-
       services.radicle.ci = {
         broker.enable = true;
         broker.settings = {
@@ -360,9 +352,9 @@ in
             };
           };
         };
-        adapters.native.instances.native = {
+        adapters.native.instances.${hostName} = {
           enable = true;
-          settings.base_url = "/adapters/native/native/";
+          settings.base_url = "/adapters/native/${hostName}/";
           runtimePackages = with pkgs; [
             bash
             coreutils
@@ -373,6 +365,39 @@ in
             nix
             wget
           ];
+        };
+      };
+
+      systemd.tmpfiles.rules = [
+        "d /var/lib/radicle-ci/adapters/native 0755 radicle-ci radicle -"
+        "d /var/lib/radicle-ci/adapters/native/${hostName} 0755 radicle radicle -"
+      ];
+    };
+
+  flake.modules.nixos.radicle-ci-host =
+    {
+      lib,
+      config,
+      ...
+    }:
+    let
+      inherit (config.myLib) merge mkResticBackup;
+
+      fqdn = "ci.${domain}";
+    in
+    {
+      age.secrets.ciHtpasswd = {
+        rekeyFile = ../secrets/ci-htpasswd.age;
+        owner = "nginx";
+        group = "nginx";
+        mode = "0400";
+      };
+
+      services.restic.backups.forgejo = mkResticBackup "forgejo" {
+        paths = [ "/var/lib/radicle-ci" ];
+        timerConfig = {
+          OnCalendar = "hourly";
+          Persistent = true;
         };
       };
 
@@ -394,8 +419,8 @@ in
       };
 
       systemd.tmpfiles.rules = [
-        "d /var/lib/radicle-ci/reports 0755 radicle-ci radicle-ci -"
-        "d /var/lib/radicle-ci/adapters/native/native 0755 radicle-ci radicle-ci -"
+        "d /var/lib/radicle-ci/reports 0755 radicle radicle -"
+        "d /var/lib/radicle-ci/adapters/native 0755 radicle radicle -"
       ];
     };
 }

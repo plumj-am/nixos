@@ -28,7 +28,7 @@ in
       object-storage
       opengist
       prometheus-node-exporter
-      radicle-ci
+      radicle-ci-host
       radicle-explorer
       radicle-node
       rust
