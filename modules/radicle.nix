@@ -336,6 +336,8 @@ in
       services.radicle.ci = {
         broker.enable = true;
         broker.settings = {
+          concurrent_adapters = 1;
+          max_run_time = "2hour";
           adapters.native = {
             command = lib.getExe pkgs.radicle-native-ci;
             config = { };
