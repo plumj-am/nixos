@@ -9,8 +9,11 @@ let
     }:
     let
       inherit (lib.lists) singleton;
+      inherit (lib.meta) getExe;
+      inherit (lib.stringsWithDeps) stringAfter;
       inherit (config) theme;
       inherit (config.myLib) mkDesktopEntry;
+
     in
     {
       xdg.portal = {
@@ -56,6 +59,13 @@ let
           exec = "nu -c 'steam; zeditor; zeditor; job spawn {radicle-desktop}; thunderbird; OpenCode; brave'";
         })
       ];
+
+      system.activationScripts.niri-validate = stringAfter [ "etc" ] ''
+        ${getExe pkgs.niri} validate --config /home/jam/.config/niri/config.kdl || {
+          echo "ERROR: niri config validation failed"
+          exit 1
+        }
+      '';
 
       hjem.extraModules = singleton (
         { config, ... }:
