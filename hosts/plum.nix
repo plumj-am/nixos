@@ -33,6 +33,7 @@ in
       radicle-node
       rust
       sudo-extra-server
+      syncthing
       tangled-knot
       tangled-spindle
       uptime-kuma

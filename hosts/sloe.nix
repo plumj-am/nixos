@@ -24,6 +24,7 @@ in
       radicle-node
       rust
       sudo-extra-server
+      syncthing
       users-extra
       {
         config = mkConfig inputs "sloe" "x86_64-linux" "server" {
