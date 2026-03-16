@@ -19,6 +19,12 @@ let
         description = "Custom library functions";
       };
 
+      # NOTE: `myLib` needs `config` to exist first because it references config
+      # in its functions.
+      # It works here because the line below creates a lazy reference that
+      # resolves after `config` is built.
+      config._module.args.lib' = config.myLib;
+
       config.myLib = {
         # Creates a mergeable attribute set that can be called as a function
         # allows syntax like: `config.myLib.merge { option1 = value1; } <| conditionalOptions`

@@ -113,12 +113,13 @@ let
     {
       pkgs,
       lib,
+      lib',
       config,
       ...
     }:
     let
       inherit (lib.lists) singleton optional;
-      inherit (config.myLib) merge;
+      inherit (lib') merge;
       inherit (config.networking) hostName;
     in
     {
@@ -252,11 +253,12 @@ in
     {
       pkgs,
       lib,
+      lib',
       config,
       ...
     }:
     let
-      inherit (config.myLib) merge;
+      inherit (lib') merge;
 
       toJSON = lib.generators.toJSON { };
 
@@ -384,11 +386,12 @@ in
       pkgs,
       config,
       lib,
+      lib',
       ...
     }:
     let
       inherit (lib.attrsets) filterAttrs attrNames;
-      inherit (config.myLib) merge mkResticBackup;
+      inherit (lib') merge mkResticBackup;
 
       fqdn = "ci.${domain}";
 
