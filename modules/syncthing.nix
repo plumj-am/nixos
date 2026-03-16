@@ -47,24 +47,9 @@
       users.users.syncthing.extraGroups = [ "radicle" ];
 
       systemd.tmpfiles.rules = [
-        "d /var/lib/radicle-ci/adapters 0775 radicle radicle -"
-        "a /var/lib/radicle-ci/adapters - - - g:radicle:rwx"
-        "a /var/lib/radicle-ci/adapters - - - d:g:radicle:rwx"
-        "a /var/lib/radicle-ci/adapters - - - g:nginx:rwx"
-        "a /var/lib/radicle-ci/adapters - - - d:g:nginx:rwx"
-        "d /var/lib/radicle-ci/reports 0775 radicle radicle -"
-        "a /var/lib/radicle-ci/reports - - - g:radicle:rwx"
-        "a /var/lib/radicle-ci/reports - - - d:g:radicle:rwx"
-        "a /var/lib/radicle-ci/reports - - - g:nginx:rwx"
-        "a /var/lib/radicle-ci/reports - - - d:g:nginx:rwx"
+        "d /var/lib/radicle-ci/adapters 2775 radicle radicle -"
+        "d /var/lib/radicle-ci/reports 2775 radicle radicle -"
       ];
-
-      systemd.services.syncthing = {
-        serviceConfig = {
-          AmbientCapabilities = "CAP_CHOWN";
-          CapabilityBoundingSet = "CAP_CHOWN";
-        };
-      };
 
       services.syncthing = {
         enable = true;
@@ -80,7 +65,6 @@
             radicle-ci-adapters = {
               path = "/var/lib/radicle-ci/adapters";
               devices = allDevices;
-              copyOwnershipFromParent = true;
               ignorePerms = true;
               ignorePatterns = [
                 "native/**/src"
@@ -89,7 +73,6 @@
             radicle-ci-reports = {
               path = "/var/lib/radicle-ci/reports";
               devices = allDevices;
-              copyOwnershipFromParent = true;
               ignorePerms = true;
             };
           };

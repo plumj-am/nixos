@@ -397,6 +397,11 @@ in
     in
     {
       users.users.nginx.extraGroups = [ "radicle" ];
+
+      systemd.tmpfiles.rules = [
+        "L+ /var/lib/radicle-ci/reports/index.html - - - - ${ciIndexHtml}"
+      ];
+
       age.secrets.ciHtpasswd = {
         rekeyFile = ../secrets/ci-htpasswd.age;
         owner = "nginx";
