@@ -29,6 +29,7 @@ in
       opengist
       prometheus-node-exporter
       radicle-ci-host
+      # radicle-ci-runner
       radicle-explorer
       radicle-node
       rust
