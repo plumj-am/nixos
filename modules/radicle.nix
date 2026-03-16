@@ -438,7 +438,7 @@ in
         mode = "0400";
       };
 
-      services.restic.backups.forgejo = mkResticBackup "forgejo" {
+      services.restic.backups.radicle-ci = mkResticBackup "radicle-ci" {
         paths = [ "/var/lib/radicle-ci" ];
         timerConfig = {
           OnCalendar = "hourly";
