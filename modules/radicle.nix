@@ -325,20 +325,10 @@ in
       inherit (config.networking) hostName;
     in
     {
-      users.users.radicle-ci = {
-        isSystemUser = true;
-        group = "radicle-ci";
-      };
-      users.groups.radicle-ci = { };
-
-      systemd.services.radicle-ci-broker.serviceConfig = {
-        User = mkForce "radicle-ci";
-        Group = mkForce "radicle-ci";
-      };
-
       services.radicle.ci = {
         broker.enable = true;
         broker.settings = {
+          report_dir = "/var/lib/radicle-ci/reports/${hostName}";
           concurrent_adapters = 1;
           max_run_time = "2hour";
           adapters.native = {
@@ -381,6 +371,8 @@ in
 
       systemd.tmpfiles.rules = [
         "d /var/lib/radicle-ci 0755 radicle-ci radicle-ci -"
+        "d /var/lib/radicle-ci/reports 0755 radicle-ci radicle-ci -"
+        "d /var/lib/radicle-ci/reports/${hostName} 0755 radicle-ci radicle-ci -"
         "d /var/lib/radicle-ci/adapters 0755 radicle-ci radicle-ci -"
         "d /var/lib/radicle-ci/adapters/native 0755 radicle-ci radicle-ci -"
         "d /var/lib/radicle-ci/adapters/native/${hostName} 0755 radicle-ci radicle-ci -"
@@ -389,25 +381,30 @@ in
 
   flake.modules.nixos.radicle-ci-host =
     {
-      lib,
+      pkgs,
       config,
       ...
     }:
     let
-      inherit (lib.lists) singleton;
       inherit (config.myLib) merge mkResticBackup;
 
       fqdn = "ci.${domain}";
+
+      ciIndexHtml = pkgs.writeText "ci-index.html" ''
+        <!DOCTYPE html>
+        <html>
+        <head><title>CI Reports</title></head>
+        <body>
+        <h1>CI Reports</h1>
+        <ul>
+          <li><a href="plum/">plum</a></li>
+          <li><a href="sloe/">sloe</a></li>
+        </ul>
+        </body>
+        </html>
+      '';
     in
     {
-      users.users.radicle-ci = {
-        isSystemUser = true;
-        group = "radicle-ci";
-      };
-      users.groups.radicle-ci = { };
-
-      users.users.nginx.extraGroups = singleton "radicle-ci";
-
       age.secrets.ciHtpasswd = {
         rekeyFile = ../secrets/ci-htpasswd.age;
         owner = "nginx";
@@ -441,10 +438,11 @@ in
       };
 
       systemd.tmpfiles.rules = [
-        "d /var/lib/radicle-ci 0755 radicle-ci radicle-ci -"
-        "d /var/lib/radicle-ci/reports 0755 radicle-ci radicle-ci -"
-        "d /var/lib/radicle-ci/adapters 0755 radicle-ci radicle-ci -"
-        "d /var/lib/radicle-ci/adapters/native 0755 radicle-ci radicle-ci -"
+        "d /var/lib/radicle-ci 0755 radicle radicle -"
+        "d /var/lib/radicle-ci/reports 0755 radicle radicle -"
+        "d /var/lib/radicle-ci/adapters 0755 radicle radicle -"
+        "d /var/lib/radicle-ci/adapters/native 0755 radicle radicle -"
+        "C+ /var/lib/radicle-ci/reports/index.html 0644 radicle radicle - ${ciIndexHtml}"
       ];
     };
 }

@@ -1,10 +1,9 @@
 {
 
   flake.modules.nixos.syncthing =
-    { lib, config, ... }:
+    { lib, ... }:
     let
       inherit (lib.attrsets) attrNames;
-      inherit (config.networking) hostName;
 
       devices = {
         # blackwell = {
@@ -42,9 +41,10 @@
       };
 
       allDevices = attrNames devices;
+
     in
     {
-      users.users.syncthing.extraGroups = [ "radicle-ci" ];
+      users.users.syncthing.extraGroups = [ "radicle" ];
 
       services.syncthing = {
         enable = true;
@@ -58,10 +58,14 @@
 
           folders = {
             radicle-ci = {
-              path = "/var/lib/radicle-ci/adapters/native";
+              path = "/var/lib/radicle-ci";
               devices = allDevices;
               ignorePerms = true;
               copyOwnershipFromParent = true;
+              ignore = [
+                "ci-broker.db" # Host-exclusive broker database.
+                "adapters/native/*/src" # Source code from the CI run.
+              ];
             };
           };
         };
