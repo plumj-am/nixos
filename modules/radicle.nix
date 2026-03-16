@@ -368,15 +368,6 @@ in
           ];
         };
       };
-
-      systemd.tmpfiles.rules = [
-        "d /var/lib/radicle-ci 0755 radicle-ci radicle-ci -"
-        "d /var/lib/radicle-ci/reports 0755 radicle-ci radicle-ci -"
-        "d /var/lib/radicle-ci/reports/${hostName} 0755 radicle-ci radicle-ci -"
-        "d /var/lib/radicle-ci/adapters 0755 radicle-ci radicle-ci -"
-        "d /var/lib/radicle-ci/adapters/native 0755 radicle-ci radicle-ci -"
-        "d /var/lib/radicle-ci/adapters/native/${hostName} 0755 radicle-ci radicle-ci -"
-      ];
     };
 
   flake.modules.nixos.radicle-ci-host =
@@ -405,6 +396,7 @@ in
       '';
     in
     {
+      users.users.nginx.extraGroups = [ "radicle" ];
       age.secrets.ciHtpasswd = {
         rekeyFile = ../secrets/ci-htpasswd.age;
         owner = "nginx";
@@ -436,13 +428,5 @@ in
           };
         };
       };
-
-      systemd.tmpfiles.rules = [
-        "d /var/lib/radicle-ci 0755 radicle radicle -"
-        "d /var/lib/radicle-ci/reports 0755 radicle radicle -"
-        "d /var/lib/radicle-ci/adapters 0755 radicle radicle -"
-        "d /var/lib/radicle-ci/adapters/native 0755 radicle radicle -"
-        "C+ /var/lib/radicle-ci/reports/index.html 0644 radicle radicle - ${ciIndexHtml}"
-      ];
     };
 }

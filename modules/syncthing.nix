@@ -35,7 +35,7 @@
           addresses = [ "tcp://sloe.taild29fec.ts.net:22000" ];
         };
         yuzu = {
-          id = "";
+          id = "COZUXV4-HYFNNR2-APPQQL3-7QUUZFN-6VXGKOI-YSYS5VQ-3TAHZ6Y-P2USQAO";
           addresses = [ "tcp://yuzu.taild29fec.ts.net:22000" ];
         };
       };
@@ -45,6 +45,26 @@
     in
     {
       users.users.syncthing.extraGroups = [ "radicle" ];
+
+      systemd.tmpfiles.rules = [
+        "d /var/lib/radicle-ci/adapters 0775 radicle radicle -"
+        "a /var/lib/radicle-ci/adapters - - - g:radicle:rwx"
+        "a /var/lib/radicle-ci/adapters - - - d:g:radicle:rwx"
+        "a /var/lib/radicle-ci/adapters - - - g:nginx:rwx"
+        "a /var/lib/radicle-ci/adapters - - - d:g:nginx:rwx"
+        "d /var/lib/radicle-ci/reports 0775 radicle radicle -"
+        "a /var/lib/radicle-ci/reports - - - g:radicle:rwx"
+        "a /var/lib/radicle-ci/reports - - - d:g:radicle:rwx"
+        "a /var/lib/radicle-ci/reports - - - g:nginx:rwx"
+        "a /var/lib/radicle-ci/reports - - - d:g:nginx:rwx"
+      ];
+
+      systemd.services.syncthing = {
+        serviceConfig = {
+          AmbientCapabilities = "CAP_CHOWN";
+          CapabilityBoundingSet = "CAP_CHOWN";
+        };
+      };
 
       services.syncthing = {
         enable = true;
@@ -57,15 +77,20 @@
           };
 
           folders = {
-            radicle-ci = {
-              path = "/var/lib/radicle-ci";
+            radicle-ci-adapters = {
+              path = "/var/lib/radicle-ci/adapters";
               devices = allDevices;
-              ignorePerms = true;
               copyOwnershipFromParent = true;
-              ignore = [
-                "ci-broker.db" # Host-exclusive broker database.
-                "adapters/native/*/src" # Source code from the CI run.
+              ignorePerms = true;
+              ignorePatterns = [
+                "native/**/src"
               ];
+            };
+            radicle-ci-reports = {
+              path = "/var/lib/radicle-ci/reports";
+              devices = allDevices;
+              copyOwnershipFromParent = true;
+              ignorePerms = true;
             };
           };
         };
