@@ -371,6 +371,7 @@ in
             gitMinimal
             gnused
             nix
+            nix-output-monitor
             wget
           ];
         };

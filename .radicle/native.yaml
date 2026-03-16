@@ -1,2 +1,2 @@
 shell: |
-  nix flake check --all-systems --print-build-logs --keep-going
+  nix flake check --all-systems --keep-going |& nom
