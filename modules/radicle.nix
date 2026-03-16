@@ -321,7 +321,6 @@ in
     let
       inherit (lib.lists) singleton map;
       inherit (lib.strings) removePrefix;
-      inherit (lib.modules) mkForce;
       inherit (config.networking) hostName;
     in
     {
@@ -333,11 +332,15 @@ in
           max_run_time = "2hour";
           adapters.native = {
             command = lib.getExe pkgs.radicle-native-ci;
-            config = { };
+            config = {
+              state = "/var/lib/radicle-ci/adapters/native/${hostName}";
+              log = "/var/lib/radicle-ci/adapters/native/${hostName}/native.log";
+              base_url = "/adapters/native/${hostName}/";
+            };
             config_env = "RADICLE_NATIVE_CI";
           };
           triggers = singleton {
-            adapter = "native";
+            adapter = hostName;
             filters = singleton {
               And = [
                 { HasFile = ".radicle/native.yaml"; }
@@ -355,7 +358,11 @@ in
         };
         adapters.native.instances.${hostName} = {
           enable = true;
-          settings.base_url = "/adapters/native/${hostName}/";
+          settings = {
+            state = "/var/lib/radicle-ci/adapters/native/${hostName}";
+            log = "/var/lib/radicle-ci/adapters/native/${hostName}/native.log";
+            base_url = "/adapters/native/${hostName}/";
+          };
           runtimePackages = with pkgs; [
             bash
             coreutils
@@ -372,28 +379,49 @@ in
 
   flake.modules.nixos.radicle-ci-host =
     {
+      inputs,
       pkgs,
       config,
+      lib,
       ...
     }:
     let
+      inherit (lib.attrsets) filterAttrs attrNames;
       inherit (config.myLib) merge mkResticBackup;
 
       fqdn = "ci.${domain}";
 
-      ciIndexHtml = pkgs.writeText "ci-index.html" ''
-        <!DOCTYPE html>
-        <html>
-        <head><title>CI Reports</title></head>
-        <body>
-        <h1>CI Reports</h1>
-        <ul>
-          <li><a href="plum/">plum</a></li>
-          <li><a href="sloe/">sloe</a></li>
-        </ul>
-        </body>
-        </html>
-      '';
+      ciRunners =
+        # Plum still has some old reports I want to keep viewable.
+        [ "plum" ]
+        ++ (
+          inputs.self.nixosConfigurations
+          |> filterAttrs (_: cfg: cfg.config.services.radicle.ci.broker.enable or false)
+          |> attrNames
+        );
+
+      runnerLinks = lib.concatMapStrings (
+        name:
+        # html
+        ''
+          <li><a href="${name}/">${name}</a></li>
+        '') ciRunners;
+
+      ciIndexHtml =
+        pkgs.writeText "ci-index.html"
+          # html
+          ''
+            <!DOCTYPE html>
+            <html>
+            <head><title>CI Reports</title></head>
+            <body>
+            <h1>CI Reports</h1>
+            <ul>
+            ${runnerLinks}
+            </ul>
+            </body>
+            </html>
+          '';
     in
     {
       users.users.nginx.extraGroups = [ "radicle" ];
