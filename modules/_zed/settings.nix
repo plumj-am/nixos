@@ -54,7 +54,7 @@ with theme;
 
   active_pane_modifiers = {
     inactive_opacity = 0.85;
-    border_size = border.small;
+    border_size = border.normal;
   };
 
   terminal.shell.program = "nu";
