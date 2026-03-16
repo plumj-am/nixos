@@ -26,12 +26,12 @@ def --wrapped rsync-files [...rest: string] {
 
 # Rebuild the current or a remote NixOS/nix-darwin host
 @example "Rebuild the current host" rebuild
-@example "Rebuild a remote host" { rebuild plum }
+@example "Rebuild a remote host" { rebuild --remote plum }
 @example "Rebuild all hosts sequentially" { rebuild all }
 def --wrapped main [
-   target: string = "" # The host to build (defaults to current)
-   --help (-h)         # Show this help message
-   ...rest: string     # Extra arguments to pass to nh
+   --remote: string # The host to build (defaults to current)
+   --help (-h)      # Show this help message
+   ...rest          # Extra arguments to pass to nh
 ]: nothing -> nothing {
    if $help { help main; exit 0 }
 
@@ -42,7 +42,7 @@ def --wrapped main [
       {path: /home/jam/nixos, cmd: os}
    }
    let hostname = sys host | get hostname
-   let remote = ($target | is-not-empty) and ($target != $hostname)
+   let is_remote = ($remote | is-not-empty) and ($remote != $hostname)
 
    let nix_args = [
       --
@@ -59,18 +59,18 @@ def --wrapped main [
       ...$rest
    ]
 
-   let result = if $remote {
-      print-notify $"Attempting to start remote build process on ($target)."
+   let result = if $is_remote {
+      print-notify $"Attempting to start remote build process on ($remote)."
 
       try {
-         print-notify $"Removing old configuration files on ($target)."
-         ssh -o ConnectTimeout=10 -tt $"jam@($target)" "rm --recursive --force nixos"
+         print-notify $"Removing old configuration files on ($remote)."
+         ssh -o ConnectTimeout=10 -tt $"jam@($remote)" "rm --recursive --force nixos"
 
-         print-notify $"Copying new configuration files to ($target)."
-         jj file list | rsync-files --files-from - ./ $"jam@($target):nixos"
+         print-notify $"Copying new configuration files to ($remote)."
+         jj file list | rsync-files --files-from - ./ $"jam@($remote):nixos"
 
-         print-notify $"Starting rebuild on ($target)."
-         ssh -o ConnectTimeout=10 -qtt $"jam@($target)" ./nixos/rebuild.nu
+         print-notify $"Starting rebuild on ($remote)."
+         ssh -o ConnectTimeout=10 -qtt $"jam@($remote)" ./nixos/rebuild.nu
 
          true
       } catch {|e|
@@ -91,11 +91,11 @@ def --wrapped main [
       try { sudo ...$nh $config.cmd ...$nh_args; true } catch { false }
    }
 
-   if not $remote {
+   if not $is_remote {
       if $result {
-         print-notify $"Rebuild for ($target | default --empty $hostname) succeeded."
+         print-notify $"Rebuild for ($remote | default --empty $hostname) succeeded."
       } else {
-         print-notify $"Rebuild for ($target | default --empty $hostname) failed."
+         print-notify $"Rebuild for ($remote | default --empty $hostname) failed."
       }
    }
 }
@@ -117,7 +117,7 @@ def "main all" [] {
       if ($h == (sys host | get hostname)) {
          main
       } else {
-         main $h
+         main --remote $h
       }
    }
 }
