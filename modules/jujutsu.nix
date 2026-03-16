@@ -47,12 +47,20 @@ let
             '';
         };
 
-        bindings = singleton {
-          key = singleton "T";
-          action = "tug";
-          scope = "revisions";
-          desc = "tug";
-        };
+        bindings = [
+          {
+            key = singleton "T";
+            action = "tug";
+            scope = "revisions";
+            desc = "tug";
+          }
+          {
+            key = singleton "P";
+            action = "ui.preview_toggle_bottom";
+            scope = "details";
+            desc = "toggle preview bottom/right";
+          }
+        ];
 
         ui.colors."selected".bg = "#${theme.colors.base01}";
       };
