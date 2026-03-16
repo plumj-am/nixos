@@ -44,6 +44,8 @@
       allDevices = attrNames devices;
     in
     {
+      users.users.syncthing.extraGroups = [ "radicle-ci" ];
+
       services.syncthing = {
         enable = true;
         settings = {

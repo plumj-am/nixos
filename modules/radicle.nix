@@ -319,12 +319,23 @@ in
       ...
     }:
     let
-      inherit (lib.lists) singleton;
+      inherit (lib.lists) singleton map;
       inherit (lib.strings) removePrefix;
-      inherit (lib) map;
+      inherit (lib.modules) mkForce;
       inherit (config.networking) hostName;
     in
     {
+      users.users.radicle-ci = {
+        isSystemUser = true;
+        group = "radicle-ci";
+      };
+      users.groups.radicle-ci = { };
+
+      systemd.services.radicle-ci-broker.serviceConfig = {
+        User = mkForce "radicle-ci";
+        Group = mkForce "radicle-ci";
+      };
+
       services.radicle.ci = {
         broker.enable = true;
         broker.settings = {
@@ -369,8 +380,10 @@ in
       };
 
       systemd.tmpfiles.rules = [
-        "d /var/lib/radicle-ci/adapters/native 0755 radicle-ci radicle -"
-        "d /var/lib/radicle-ci/adapters/native/${hostName} 0755 radicle radicle -"
+        "d /var/lib/radicle-ci 0755 radicle-ci radicle-ci -"
+        "d /var/lib/radicle-ci/adapters 0755 radicle-ci radicle-ci -"
+        "d /var/lib/radicle-ci/adapters/native 0755 radicle-ci radicle-ci -"
+        "d /var/lib/radicle-ci/adapters/native/${hostName} 0755 radicle-ci radicle-ci -"
       ];
     };
 
@@ -381,11 +394,20 @@ in
       ...
     }:
     let
+      inherit (lib.lists) singleton;
       inherit (config.myLib) merge mkResticBackup;
 
       fqdn = "ci.${domain}";
     in
     {
+      users.users.radicle-ci = {
+        isSystemUser = true;
+        group = "radicle-ci";
+      };
+      users.groups.radicle-ci = { };
+
+      users.users.nginx.extraGroups = singleton "radicle-ci";
+
       age.secrets.ciHtpasswd = {
         rekeyFile = ../secrets/ci-htpasswd.age;
         owner = "nginx";
@@ -419,8 +441,10 @@ in
       };
 
       systemd.tmpfiles.rules = [
-        "d /var/lib/radicle-ci/reports 0755 radicle radicle -"
-        "d /var/lib/radicle-ci/adapters/native 0755 radicle radicle -"
+        "d /var/lib/radicle-ci 0755 radicle-ci radicle-ci -"
+        "d /var/lib/radicle-ci/reports 0755 radicle-ci radicle-ci -"
+        "d /var/lib/radicle-ci/adapters 0755 radicle-ci radicle-ci -"
+        "d /var/lib/radicle-ci/adapters/native 0755 radicle-ci radicle-ci -"
       ];
     };
 }
