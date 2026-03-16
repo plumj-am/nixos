@@ -43,7 +43,7 @@ in
     alt-q = "pane::CloseCleanItems";
   })
   (mkZedKeymap "Workspace && !Picker" {
-    ctrl-p = "workspace::Open";
+    "ctrl-g ctrl-p" = "workspace::Open";
     alt-S = "workspace::ToggleLeftDock";
     alt-s = "project_panel::ToggleFocus";
     alt-T = "workspace::ToggleBottomDock";
