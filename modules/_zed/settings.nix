@@ -39,6 +39,7 @@ with theme;
   selection_highlight = false;
   scrollbar.show = "never";
   file_scan_exclusion = [ ];
+  semantic_tokens = "combined";
 
   telemetry = {
     diagnostics = false;
