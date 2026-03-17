@@ -57,7 +57,7 @@ let
           {
             key = singleton "P";
             action = "ui.preview_toggle_bottom";
-            scope = "details";
+            scope = "revisions.details";
             desc = "toggle preview bottom/right";
           }
         ];
