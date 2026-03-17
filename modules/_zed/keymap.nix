@@ -16,6 +16,7 @@ in
       ctrl-q = null;
       ctrl-F = null;
       ctrl-P = null;
+      ctrl-p = null;
       ctrl-H = null;
       ctrl-n = null;
       ctrl-X = null;
