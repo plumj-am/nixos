@@ -242,10 +242,10 @@ with theme;
         formatter.external.command = "nixfmt";
       };
 
-      Nushell = {
+      Nu = {
         tab_size = 3;
         language_servers = withTypos [
-          "nu-lsp"
+          "nu"
           "nu-lint"
         ];
       };
@@ -303,11 +303,6 @@ with theme;
         language_servers = withTypos [ "just-lsp" ];
 
         formatter.external.command = "just-formatter";
-      };
-
-      Nu = {
-        tab_size = 3;
-        language_servers = withTypos [ "nu-lsp" ];
       };
 
       Astro = {
