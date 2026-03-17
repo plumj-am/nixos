@@ -255,6 +255,22 @@ with theme;
         language_servers = withTypos [ "rust-analyzer" ];
       };
 
+      Haskell = {
+        tab_size = 3;
+        language_servers = withTypos [ "hls" ];
+        formatter = [
+          {
+            language_server.name = "hls";
+          }
+          {
+            external = {
+              command = "stylish-haskell";
+              arguments = [ "--inplace" ];
+            };
+          }
+        ];
+      };
+
       TOML = {
         language_servers = withTypos [ "taplo" ];
 
@@ -366,6 +382,17 @@ with theme;
         procMacro.enable = true;
         check.command = "clippy";
         inlayHints.enable = null;
+      };
+    };
+
+    hls = {
+      initialization_options = {
+        haskell = {
+          plugin = {
+            hlint.globalOn = true;
+          };
+          formattingProvider = "fourmolu";
+        };
       };
     };
 

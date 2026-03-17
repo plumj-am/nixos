@@ -28,6 +28,7 @@ in
       gammastep
       graphics
       hardware-desktop
+      haskell
       hyprlock
       jujutsu-extra
       kitty

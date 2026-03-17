@@ -540,6 +540,7 @@ let
 
           # Haskell
           pkgs.fourmolu
+          pkgs.stylish-haskell
           pkgs.haskell-language-server
 
           # Nushell
