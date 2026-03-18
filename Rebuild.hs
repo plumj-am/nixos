@@ -1,5 +1,6 @@
 #!/usr/bin/env nix-shell
 #!nix-shell -i runghc -p "haskell.packages.ghc9103.ghcWithPackages (p: [p.typed-process])" --impure
+module Rebuild where
 
 import           Data.Char            (isSpace)
 import           Data.List            (dropWhileEnd)
