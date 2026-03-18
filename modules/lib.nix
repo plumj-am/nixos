@@ -50,6 +50,16 @@ let
             inherit default;
           };
 
+        mkHaskellScript =
+          name:
+          {
+            deps ? [ ],
+            path,
+          }:
+          pkgs.writers.writeHaskell name {
+            libraries = map (d: pkgs.haskellPackages.${d}) deps;
+          } (builtins.readFile path);
+
         # Create a .desktop file entry for app launchers.
         mkDesktopEntry =
           {

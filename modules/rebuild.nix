@@ -3,26 +3,37 @@
     {
       pkgs,
       lib,
-      config,
+      lib',
       ...
     }:
     let
       inherit (lib.lists) singleton;
-      inherit (config.myLib) mkDesktopEntry;
+      inherit (lib') mkDesktopEntry mkHaskellScript;
     in
     {
       environment.systemPackages = [
         pkgs.nh
         pkgs.nix-output-monitor
+
+        # (mkHaskellScript "rebuild-hs" {
+        #   path = ../Rebuild.hs;
+        #   deps = singleton "typed-process";
+        # })
       ];
 
       hjem.extraModules = singleton (
         { config, ... }:
         {
-          packages = singleton (mkDesktopEntry {
-            name = "Rebuild";
-            exec = "${config.directory}/nixos/rebuild.nu";
-          });
+          packages = [
+            (mkDesktopEntry {
+              name = "Rebuild";
+              exec = "${config.directory}/nixos/rebuild.nu";
+            })
+            (mkDesktopEntry {
+              name = "Rebuild-hs";
+              exec = "rebuild-hs --local";
+            })
+          ];
         }
       );
     };
