@@ -314,9 +314,9 @@ let
       inherit (lib) map;
       inherit (config.myLib) mkDesktopEntry;
 
-      pickWallpaper = pkgs.writeScriptBin "pick-wallpaper" <| readFile ./nushell.pick-wallpaper.nu;
+      pickWallpaper = pkgs.writeScriptBin "pick-wallpaper" <| readFile ./_scripts/pick-wallpaper.nu;
 
-      themeToggleScript = pkgs.writeScriptBin "tt" <| readFile ./nushell.toggle-theme.nu;
+      themeToggleScript = pkgs.writeScriptBin "tt" <| readFile ./_scripts/toggle-theme.nu;
     in
     {
       environment.systemPackages = [

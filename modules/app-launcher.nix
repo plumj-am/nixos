@@ -63,7 +63,7 @@ let
       inherit (config.myLib) mkDesktopEntry;
       inherit (config) theme;
 
-      launchApps = pkgs.writeScriptBin "launch-apps" <| readFile ./nushell.launch.nu;
+      launchApps = pkgs.writeScriptBin "launch-apps" <| readFile ./_scripts/launch.nu;
 
       tofiKeyValue = keyValue {
         listsAsDuplicateKeys = true;
