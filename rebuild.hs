@@ -1,8 +1,8 @@
 #!/usr/bin/env nix-shell
 #!nix-shell -i runghc -p "haskell.packages.ghc9103.ghcWithPackages (p: [p.typed-process])" --impure
 
-import           Data.Maybe           (listToMaybe)
-import qualified Data.Text            as T
+import           Data.Char            (isSpace)
+import           Data.List            (dropWhileEnd)
 import           System.Directory     (findExecutable)
 import           System.Environment   (getArgs)
 import           System.Exit          (ExitCode (ExitFailure, ExitSuccess), die,
@@ -10,13 +10,15 @@ import           System.Exit          (ExitCode (ExitFailure, ExitSuccess), die,
 import           System.Process       (readProcess)
 import           System.Process.Typed (proc, runProcess)
 
-purple, blue, reset :: String
-purple = "\ESC[35m"
-blue = "\ESC[34m"
+reset :: String
 reset = "\ESC[0m"
 
+purple, blue :: String -> String
+purple msg = "\ESC[35m" ++ msg ++ reset
+blue msg = "\ESC[34m" ++ msg ++ reset
+
 rebuilderTag :: String
-rebuilderTag = purple ++ "[Rebuilder] " ++ reset
+rebuilderTag = purple "[Rebuilder] "
 
 nixEvalArgs :: [String]
 nixEvalArgs =
@@ -27,23 +29,27 @@ nixEvalArgs =
      "x: builtins.concatStringsSep \",\" (builtins.attrNames x)"
    ]
 
-printer :: String -> IO ()
-printer msg = putStrLn $ rebuilderTag ++ msg
+printTagged :: String -> IO ()
+printTagged msg = putStrLn $ rebuilderTag ++ msg
 
-splitOnSep :: String -> String -> [String]
-splitOnSep sep = map T.unpack . T.splitOn (T.pack sep) . T.pack
+splitCommas :: String -> [String]
+splitCommas [] = []
+splitCommas xs =
+   case break (== ',') xs of
+      (chunk, [])       -> [chunk]
+      (chunk, _ : rest) -> chunk : splitCommas rest
 
-prefixLineNr :: [String] -> [String]
-prefixLineNr = zipWith (\i x -> "  " ++ show i ++ ". \"" ++ x ++ "\"") [1 ..]
+numberLines :: [String] -> [String]
+numberLines = zipWith (\i x -> "  " ++ show i ++ ". \"" ++ x ++ "\"") [1 ..]
 
 availableHosts :: IO [String]
-availableHosts = splitOnSep "," <$> readProcess "nix" nixEvalArgs ""
+availableHosts = splitCommas <$> readProcess "nix" nixEvalArgs ""
 
 listHosts :: IO ()
-listHosts = availableHosts >>= putStrLn . unlines . prefixLineNr
+listHosts = availableHosts >>= putStrLn . unlines . numberLines
 
 getHostname :: IO String
-getHostname = maybe (die "Invalid hostname") return . listToMaybe . lines =<< readProcess "hostname" [] ""
+getHostname = dropWhileEnd isSpace <$> readProcess "hostname" [] ""
 
 nhArgs :: String -> [String]
 nhArgs host =
@@ -65,15 +71,15 @@ nhCommand = maybe fallback toNh <$> findExecutable "nh"
 
 rebuild :: String -> IO ()
 rebuild host = do
-   printer $ "Rebuilding " ++ host
+   printTagged $ "Rebuilding " ++ host
    (cmd, prefixArgs) <- nhCommand
    code <- runProcess $ proc cmd $ prefixArgs ++ nhArgs host
-   handleResult code host
+   handleExitCode code host
 
-handleResult :: ExitCode -> String -> IO ()
-handleResult ExitSuccess host = printer $ "Rebuild succeeded for " ++ host
-handleResult code@(ExitFailure _) host = do
-   printer $ "Rebuild failed for " ++ host
+handleExitCode :: ExitCode -> String -> IO ()
+handleExitCode ExitSuccess host = printTagged $ "Rebuild succeeded for " ++ host
+handleExitCode code@(ExitFailure _) host = do
+   printTagged $ "Rebuild failed for " ++ host
    exitWith code
 
 main :: IO ()
@@ -82,16 +88,20 @@ main = do
    case args of
       [x] | x `elem` ["--local", "-local", "-l"] -> rebuild =<< getHostname
       [x, host] | x `elem` ["--remote", "-remote", "-r"] -> die $ notImplemented "--remote"
+      [x] | x `elem` ["--remote", "-remote", "-r"] -> die $ missingArgVal "--remote [hostname]"
       [x] | x `elem` ["--list", "-list", "-L"] -> listHosts
       [x] | x `elem` ["--help", "-help", "-h"] -> putStr usage
       _ -> die $ invalidInput args
+
+missingArgVal :: String -> String
+missingArgVal arg = "Required value for '" ++ arg ++ "' not provided!\n\n" ++ usage
 
 invalidInput :: [String] -> String
 invalidInput input =
    unlines
       [ "Invalid input from user:",
         "",
-        unlines $ prefixLineNr input,
+        unlines $ numberLines input,
         "See correct usage below:",
         "",
         usage
@@ -106,12 +116,12 @@ usage =
       [ "PlumJam's NixOS System Rebuilder",
         "",
         "Usage:",
-        purple ++ "  rebuild " ++ blue ++ "--local " ++ reset ++ "              Rebuild the current host",
-        purple ++ "  rebuild " ++ blue ++ "--remote" ++ reset ++ " [hostname]   Rebuild a remote host",
+        purple "  rebuild " ++ blue "--local " ++ "             Rebuild the current host",
+        purple "  rebuild " ++ blue "--remote" ++ " [hostname]  Rebuild a remote host",
         "",
         "Arguments:",
-        blue ++ "  --local (-l) " ++ reset ++ "                 Rebuild the current host",
-        blue ++ "  --remote (-r)" ++ reset ++ " [hostname]      Remote host to rebuild [optional]",
-        blue ++ "  --list (-L)  " ++ reset ++ "                 List the available hosts",
-        blue ++ "  --help (-h)  " ++ reset ++ "                 Print this help output"
+        blue "  --local (-l) " ++ "                Rebuild the current host",
+        blue "  --remote (-r)" ++ " [hostname]     Remote host to rebuild [optional]",
+        blue "  --list (-L)  " ++ "                List the available hosts",
+        blue "  --help (-h)  " ++ "                Print this help output"
       ]
