@@ -35,7 +35,6 @@ in
       linux-kernel-zen
       # lix
       mprocs
-      nix-cache-proxy
       nix-distributed-builds
       nix-settings-extra-desktop
       notifications
@@ -63,8 +62,6 @@ in
       zellij
       {
         config = mkConfig inputs "yuzu" "x86_64-linux" "desktop" {
-          nix-cache-proxy.publicKey = "cache-proxy-yuzu:6dj2bWMTi/ScnDAilNuo/xERm5VZIa1/OUeBm0fUO3g=";
-
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFDLlddona4PlORWd+QpR/7F5H46/Dic9vV23/YSrZl0 root@yuzu";
           age.secrets = {
             nixStoreKey.rekeyFile = ../secrets/yuzu-nix-store-key.age;

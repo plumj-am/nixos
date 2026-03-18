@@ -14,7 +14,6 @@ in
       disks-disko
       forgejo-action-runner
       linux-kernel-latest
-      nix-cache-proxy
       nix-distributed-builder
       nix-distributed-builds
       nix-settings-extra-server
@@ -29,7 +28,6 @@ in
       users-extra
       {
         config = mkConfig inputs "sloe" "x86_64-linux" "server" {
-          nix-cache-proxy.publicKey = "cache-proxy-sloe:naaLkMoioaUUujHWdn8QUwnjxlI7XiJEZkGqPRffPPw=";
 
           nix-builder = {
             cores = 12;
