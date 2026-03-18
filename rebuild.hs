@@ -40,7 +40,7 @@ splitCommas xs =
       (chunk, _ : rest) -> chunk : splitCommas rest
 
 numberLines :: [String] -> [String]
-numberLines = zipWith (\i x -> "  " ++ show i ++ ". \"" ++ x ++ "\"") [1 ..]
+numberLines = zipWith (\i x -> "  " ++ show i ++ ". " ++ x) [1 ..]
 
 availableHosts :: IO [String]
 availableHosts = splitCommas <$> readProcess "nix" nixEvalArgs ""
@@ -86,12 +86,18 @@ main :: IO ()
 main = do
    args <- getArgs
    case args of
-      [x] | x `elem` ["--local", "-local", "-l"] -> rebuild =<< getHostname
-      [x, host] | x `elem` ["--remote", "-remote", "-r"] -> die $ notImplemented "--remote"
-      [x] | x `elem` ["--remote", "-remote", "-r"] -> die $ missingArgVal "--remote [hostname]"
-      [x] | x `elem` ["--list", "-list", "-L"] -> listHosts
-      [x] | x `elem` ["--help", "-help", "-h"] -> putStr usage
+      [x]
+         | isLocal x -> rebuild =<< getHostname
+         | isRemote x -> die $ missingArgVal "--remote [hostname]"
+         | isList x -> listHosts
+         | isHelp x -> putStr usage
+      [x, host] | isRemote x -> die $ notImplemented "--remote"
       _ -> die $ invalidInput args
+  where
+   isLocal s = s `elem` ["--local", "-local", "-l"]
+   isRemote s = s `elem` ["--remote", "-remote", "-r"]
+   isList s = s `elem` ["--list", "-list", "-L"]
+   isHelp s = s `elem` ["--help", "-help", "-h"]
 
 missingArgVal :: String -> String
 missingArgVal arg = "Required value for '" ++ arg ++ "' not provided!\n\n" ++ usage
