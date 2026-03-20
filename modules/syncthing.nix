@@ -35,7 +35,7 @@
           addresses = [ "tcp://sloe.taild29fec.ts.net:22000" ];
         };
         yuzu = {
-          id = "COZUXV4-HYFNNR2-APPQQL3-7QUUZFN-6VXGKOI-YSYS5VQ-3TAHZ6Y-P2USQAO";
+          id = "JL3HLSF-2JP4K7Y-MHDQWLQ-USTAS4D-W4LQNSK-BKR4PD5-Q72IUMR-H7MYIA5";
           addresses = [ "tcp://yuzu.taild29fec.ts.net:22000" ];
         };
       };
