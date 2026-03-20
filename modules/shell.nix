@@ -9,8 +9,11 @@ let
       inherit (lib.lists) singleton;
       inherit (lib.options) mkOption;
       inherit (lib.types) attrsOf str;
+      inherit (lib.meta) getExe;
     in
     {
+      config.environment.shells = singleton <| getExe pkgs.nushell;
+
       options.shellAliases = mkOption {
         type = attrsOf str;
         default = { };
