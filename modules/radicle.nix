@@ -331,7 +331,7 @@ in
         broker.settings = {
           report_dir = "/var/lib/radicle-ci/reports/${hostName}";
           concurrent_adapters = 1;
-          max_run_time = "2hour";
+          max_run_time = "3hour";
           adapters.native = {
             command = lib.getExe pkgs.radicle-native-ci;
             config = {
