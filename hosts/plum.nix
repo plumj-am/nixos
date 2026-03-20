@@ -14,7 +14,7 @@ in
       boot-grub
       cgit
       cinny
-      disks-disko
+      disks-server
       forgejo
       freshrss-server
       forgejo-action-runner

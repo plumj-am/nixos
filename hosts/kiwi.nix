@@ -12,7 +12,7 @@ in
 
       acme
       boot-grub
-      disks-disko
+      disks-server
       forgejo-action-runner
       linux-kernel-latest
       nginx

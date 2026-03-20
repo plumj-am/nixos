@@ -21,7 +21,6 @@ in
       discord-gui
       discord-tui
       disks-normal
-      disks-extra-swap
       disks-extra-zram-swap
       editor-extra
       games

@@ -20,7 +20,7 @@ in
       desktop-tools
       discord-gui
       discord-tui
-      disks-normal
+      disks-bcachefs
       disks-extra-zram-swap
       editor-extra
       forgejo-action-runner
@@ -59,6 +59,8 @@ in
           #   cores = 8;
           #   speedFactor = 4;
           # };
+          diskConfig.swapSize = "18G";
+
 
           forgejo-action-runner = {
             strong = true;
