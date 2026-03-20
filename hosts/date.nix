@@ -52,6 +52,7 @@ in
       window-manager
       yazi
       zellij
+      { hardware.facter.reportPath = ./facter/date.json; }
       {
         config = mkConfig inputs "date" "x86_64-linux" "desktop" {
           # nix-builder = {
