@@ -35,7 +35,7 @@ in
       mprocs
       notifications
       nix-settings-extra-desktop
-      # nix-distributed-builder
+      nix-distributed-builder
       nix-distributed-builds
       object-storage
       packages-extra-linux
@@ -55,12 +55,12 @@ in
       { hardware.facter.reportPath = ./facter/date.json; }
       {
         config = mkConfig inputs "date" "x86_64-linux" "desktop" {
-          # nix-builder = {
-          #   cores = 8;
-          #   speedFactor = 4;
-          # };
           diskConfig.swapSize = "18G";
 
+          nix-builder = {
+            cores = 8;
+            speedFactor = 4;
+          };
 
           forgejo-action-runner = {
             strong = true;
