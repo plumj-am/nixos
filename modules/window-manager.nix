@@ -55,13 +55,6 @@ let
         })
       ];
 
-      system.activationScripts.niri-validate = stringAfter [ "etc" ] ''
-        ${getExe pkgs.niri} validate --config /home/jam/.config/niri/config.kdl || {
-          echo "ERROR: niri config validation failed"
-          exit 1
-        }
-      '';
-
       hjem.extraModules = singleton (
         { config, ... }:
         {
