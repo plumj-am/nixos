@@ -2,6 +2,7 @@
 let
   inherit (lib.attrsets) genAttrs mapAttrs;
   inherit (lib.lists) singleton;
+  inherit (lib.strings) toLower;
   inherit (config) theme;
 
   denoJsTsLanguages = {
@@ -45,6 +46,25 @@ with theme;
     diagnostics = false;
     metrics = false;
   };
+
+  ssh_connections =
+    map
+      (host: {
+        inherit host;
+        username = "jam";
+        args = [
+          "-i"
+          "~/.ssh/id"
+        ];
+      })
+      [
+        "date"
+        "kiwi"
+        "pear"
+        "plum"
+        "sloe"
+        "yuzu"
+      ];
 
   git_hosting_providers = singleton {
     provider = "forgejo";
@@ -188,23 +208,8 @@ with theme;
     openai_compatible.zai = {
       api_url = "https://api.z.ai/api/coding/paas/v4";
       available_models =
-        let
-          inherit (lib.strings) toLower;
-
-          models = [
-            "GLM-5"
-            "GLM-4.7"
-            "GLM-4.7-FlashX"
-            "GLM-4.7-Flash"
-            "GLM-4.6"
-            "GLM-4.5"
-            "GLM-4.5-X"
-            "GLM-4.5-Air"
-            "GLM-4.5-AirX"
-            "GLM-4.5-Flash"
-          ];
-
-          mkGlmModel = display_name: {
+        map
+          (display_name: {
             inherit display_name;
             name = toLower display_name;
             max_tokens = 200000;
@@ -216,9 +221,19 @@ with theme;
               parallel_tool_calls = true;
               prompt_cache_key = true;
             };
-          };
-        in
-        map mkGlmModel models;
+          })
+          [
+            "GLM-5"
+            "GLM-4.7"
+            "GLM-4.7-FlashX"
+            "GLM-4.7-Flash"
+            "GLM-4.6"
+            "GLM-4.5"
+            "GLM-4.5-X"
+            "GLM-4.5-Air"
+            "GLM-4.5-AirX"
+            "GLM-4.5-Flash"
+          ];
     };
   };
 
