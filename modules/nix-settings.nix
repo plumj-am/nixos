@@ -13,13 +13,11 @@ let
       inputs,
       pkgs,
       lib,
-      config,
       ...
     }:
     let
       inherit (lib.attrsets) mapAttrs;
       inherit (lib.meta) getExe;
-      inherit (lib.lists) optionals optional;
 
       dixHook =
         pkgs.writeShellScript "dix-hook" # sh
