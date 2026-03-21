@@ -44,6 +44,7 @@ with theme;
   scrollbar.show = "never";
   file_scan_exclusion = [ ];
   semantic_tokens = "combined";
+  format_on_save = "on";
 
   telemetry = {
     diagnostics = false;
@@ -279,7 +280,10 @@ with theme;
       mkDenoFmt = ext: {
         external = {
           command = "deno";
-          arguments = denoFmtArgs ++ singleton ext;
+          arguments = denoFmtArgs ++ [
+            ext
+            "-"
+          ];
         };
       };
     in
