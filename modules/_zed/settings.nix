@@ -401,6 +401,7 @@ with theme;
           plugin = {
             hlint.globalOn = true;
           };
+          cabalFormattingProvider = "cabal-fmt";
           formattingProvider = "fourmolu";
         };
       };
