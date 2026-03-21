@@ -2,12 +2,15 @@
 let
   commonModule =
     {
+      inputs,
       pkgs,
       lib,
       config,
       ...
     }:
     let
+      inherit (pkgs.formats) keyValue;
+      inherit (lib.generators) mkKeyValueDefault;
       inherit (lib.trivial) readFile;
       inherit (lib.strings)
         splitString
@@ -36,6 +39,7 @@ let
       # in its functions.
       # It works here because the line below creates a lazy reference that
       # resolves after `config` is built.
+      # FIXME: I will do this better at the flake level soon for pure items.
       config._module.args.lib' = config.myLib;
 
       config.myLib = {
@@ -167,6 +171,18 @@ let
             "~@cpu-emulation @debug @keyring @mount @obsolete @privileged @setuid"
             "setrlimit"
           ];
+        };
+
+        generators = {
+          keyValueEqualsSep = keyValue {
+            listsAsDuplicateKeys = true;
+            mkKeyValue = mkKeyValueDefault { } " = ";
+          };
+
+          keyValueSpaceSep = keyValue {
+            listsAsDuplicateKeys = true;
+            mkKeyValue = mkKeyValueDefault { } " ";
+          };
         };
       };
     };

@@ -3,30 +3,25 @@ let
     {
       pkgs,
       lib,
+      lib',
       config,
       ...
     }:
     let
-      inherit (pkgs.formats) keyValue;
       inherit (lib.attrsets) mapAttrsToList mapAttrs' nameValuePair;
       inherit (lib.lists) singleton;
-      inherit (lib.generators) mkKeyValueDefault;
+      inherit (lib'.generators) keyValueEqualsSep;
+      inherit (lib') mkDesktopEntry;
       inherit (config) theme;
-      inherit (config.myLib) mkDesktopEntry;
 
       # Thank you to: <https://github.com/snugnug/hjem-rum/blob/main/modules/collection/programs/ghostty.nix>
       # for `mkTheme`.
-      ghosttyKeyValue = keyValue {
-        listsAsDuplicateKeys = true;
-        mkKeyValue = mkKeyValueDefault { } " = ";
-      };
-
       mkThemes =
         themes:
         mapAttrs' (
           name: value:
           nameValuePair "ghostty/themes/${name}" {
-            generator = ghosttyKeyValue.generate "ghostty-${name}-theme";
+            generator = keyValueEqualsSep.generate "ghostty-${name}-theme";
             inherit value;
           }
         ) themes;
@@ -72,7 +67,7 @@ let
 
         xdg.config.files = {
           "ghostty/config" = {
-            generator = ghosttyKeyValue.generate "ghostty-config";
+            generator = keyValueEqualsSep.generate "ghostty-config";
             value = with theme; {
               font-size = font.size.normal;
               font-family = font.mono.name;

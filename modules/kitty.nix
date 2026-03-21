@@ -3,20 +3,15 @@ let
     {
       pkgs,
       lib,
+      lib',
       config,
       ...
     }:
     let
-      inherit (lib.generators) mkKeyValueDefault;
       inherit (lib.lists) singleton;
-      inherit (pkgs.formats) keyValue;
+      inherit (lib'.generators) keyValueSpaceSep;
+      inherit (lib') mkDesktopEntry;
       inherit (config) theme;
-      inherit (config.myLib) mkDesktopEntry;
-
-      kittyKeyValueGen = keyValue {
-        listsAsDuplicateKeys = true;
-        mkKeyValue = mkKeyValueDefault { } " ";
-      };
     in
     {
       hjem.extraModules = singleton {
@@ -30,7 +25,7 @@ let
         ];
 
         xdg.config.files."kitty/kitty.conf" = {
-          generator = kittyKeyValueGen.generate "kitty.conf";
+          generator = keyValueSpaceSep.generate "kitty.conf";
           value = with theme.withHash; {
             font_family = theme.font.mono.name;
             font_size = theme.font.size.small;

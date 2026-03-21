@@ -53,23 +53,17 @@ let
       pkgs,
       config,
       lib,
+      lib',
       ...
     }:
     let
-      inherit (pkgs.formats) keyValue;
       inherit (lib.lists) singleton;
       inherit (lib) readFile;
-      inherit (lib.generators) mkKeyValueDefault;
-      inherit (config.myLib) mkDesktopEntry;
+      inherit (lib'.generators) keyValueEqualsSep;
+      inherit (lib') mkDesktopEntry;
       inherit (config) theme;
 
       launchApps = pkgs.writeScriptBin "launch-apps" <| readFile ./_scripts/launch.nu;
-
-      tofiKeyValue = keyValue {
-        listsAsDuplicateKeys = true;
-        mkKeyValue = mkKeyValueDefault { } " = ";
-      };
-
     in
     {
       environment.systemPackages = [
@@ -85,7 +79,7 @@ let
         packages = singleton pkgs.tofi;
 
         xdg.config.files."tofi/config" = {
-          generator = tofiKeyValue.generate "tofi-config";
+          generator = keyValueEqualsSep.generate "tofi-config";
           value = with theme; {
             width = "50%";
             height = 26;
