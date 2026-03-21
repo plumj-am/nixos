@@ -21,8 +21,6 @@ let
       inherit (lib.meta) getExe;
       inherit (lib.lists) optionals optional;
 
-      isLix = config.nix.package == pkgs.lixPackageSets.latest.lix;
-
       dixHook =
         pkgs.writeShellScript "dix-hook" # sh
           ''
@@ -59,14 +57,8 @@ let
           "cgroups"
           "flakes"
           "nix-command"
-        ]
-        ++ optionals isLix [
-          "pipe-operator"
-          "auto-allocate-uids"
-          "coerce-integers"
-          "lix-custom-sub-commands"
-        ]
-        ++ optional (!isLix) "pipe-operators";
+          "pipe-operators"
+        ];
 
         builders-use-substitutes = true;
         flake-registry = "";

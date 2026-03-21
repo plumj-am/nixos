@@ -33,7 +33,6 @@ in
       jujutsu-extra
       kitty
       linux-kernel-zen
-      # lix
       mprocs
       nix-distributed-builds
       nix-settings-extra-desktop
