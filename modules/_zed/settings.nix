@@ -3,6 +3,7 @@ let
   inherit (lib.attrsets) genAttrs mapAttrs;
   inherit (lib.lists) singleton;
   inherit (lib.strings) toLower;
+  inherit (lib.trivial) const;
   inherit (config) theme;
 
   denoJsTsLanguages = {
@@ -140,11 +141,34 @@ with theme;
   agent_ui_font_size = font.size.medium;
   agent_buffer_font_size = font.size.medium;
 
+  buffer_font_features =
+    if font.mono.family == "Maple Mono" then
+      {
+        cv64 = true;
+        ss03 = true;
+        ss05 = true;
+        ss07 = true;
+        ss09 = true;
+        ss10 = true;
+        ss11 = true;
+      }
+    else
+      { };
+
   theme = {
     mode = "system";
     dark = themes.zed.dark;
     light = themes.zed.light;
   };
+
+  theme_overrides = genAttrs [ "Gruvbox Light Hard" "Gruvbox Dark Hard" ] (const {
+    syntax.comment = {
+      font_style = "italic";
+      doc = {
+        font_style = "italic";
+      };
+    };
+  });
 
   auto_install_extensions = genAttrs [
     "astro"
