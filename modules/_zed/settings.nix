@@ -27,6 +27,8 @@ let
 in
 with theme;
 {
+  "$schema" = "zed://schemas/settings";
+
   auto_update = false;
   base_keymap = "VSCode";
   helix_mode = true;
@@ -120,11 +122,22 @@ with theme;
 
   git.inline_blame.enabled = true;
 
+  debugger = {
+    dock = "right";
+    default_width = 300;
+  };
+
+  git_panel = {
+    dock = "left";
+    default_width = 300;
+  };
+
   project_panel = {
+    dock = "left";
     default_width = 300;
     indent_size = 16;
     entry_spacing = "standard";
-    starts_open = false;
+    starts_open = true;
   };
 
   which_key = {
@@ -192,7 +205,7 @@ with theme;
     "context7"
 
     "jj-conflict-resolver"
-  ] (_: true);
+  ] (const true);
 
   search = {
     regex = true;
