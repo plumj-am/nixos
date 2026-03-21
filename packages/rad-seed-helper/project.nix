@@ -2,7 +2,6 @@
   perSystem =
     {
       pkgs,
-      config,
       ...
     }:
     let
@@ -29,34 +28,24 @@
               touch $out
             '';
 
-        "${name}-weeder" =
-          pkgs.runCommand "${name}-weeder-check"
-            {
-              nativeBuildInputs = [ pkgs.haskellPackages.weeder ];
-            }
-            ''
-              weeder ${root}
-              touch $out
-            '';
-
         "${name}-fmt" =
           pkgs.runCommand "fmt-check"
             {
               nativeBuildInputs = [ pkgs.haskellPackages.fourmolu ];
             }
             ''
-              fourmolu --mode check ${root}/*.hs
+              fourmolu --config ${root}/fourmolu.yaml --mode check ${root}/*.hs
               stylish-haskell --recursive ${root}/*.hs
               touch $out
             '';
 
-        "${name}-cabal-gild" =
-          pkgs.runCommand "cabal-gild-check"
+        "${name}-cabal-fmt" =
+          pkgs.runCommand "cabal-fmt-check"
             {
-              nativeBuildInputs = [ pkgs.haskellPackages.cabal-gild ];
+              nativeBuildInputs = [ pkgs.haskellPackages.cabal-fmt ];
             }
             ''
-              cabal-gild --input ${root}/rad-seed-helper.cabal --mode check
+              cabal-fmt --check ${root}/rad-seed-helper.cabal --indent 4
               touch $out
             '';
       };

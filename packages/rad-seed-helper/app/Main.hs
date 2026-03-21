@@ -93,7 +93,7 @@ isCmd :: String -> IO Bool
 isCmd cmd = isJust <$> findExecutable cmd -- `isJust` does the same as `maybe False (const True)`.
 
 getSeeds :: [Seed] -> [String]
-getSeeds = map (\(Seed{host, did}) -> unHost host ++ ": " ++ unDID did)
+getSeeds = map $ \(Seed{host, did}) -> unHost host ++ ": " ++ unDID did
 
 getSshCmd :: User -> Host -> SshCmd
 getSshCmd user host =
@@ -121,7 +121,7 @@ splitCommas xs =
       (chunk, _ : rest) -> chunk : splitCommas rest
 
 numberLines :: [String] -> [String]
-numberLines = zipWith (\i x -> "  " ++ show i ++ ". " ++ x) [1 ..]
+numberLines = zipWith (\i x -> "  " ++ show i ++ ". " ++ x) [1 :: Int ..]
 
 -- EXECUTORS AND HANDLERS
 
@@ -156,8 +156,8 @@ main = do
          | isRid x -> die $ missingArgVal "--rid [rid]"
          | isList x -> listSeeds
          | isHelp x -> putStr usage
-      [x, rid] | isRid x -> die $ notImplemented $ RadCmd "--rid"
-      _ -> die $ invalidInput args
+      [x, _rid] | isRid x -> error $ notImplemented $ RadCmd "--rid"
+      _ -> error $ invalidInput args
   where
    isRid s = s `elem` ["--rid", "-rid", "-r"]
    isList s = s `elem` ["--list", "-list", "-l"]

@@ -15,10 +15,10 @@ extra-doc-files: README.md
 common warnings
     ghc-options: -Wall
 
-executable rad-seed-helper
+executable rsh
     import:           warnings
     default-language: GHC2024
-    hs-source-dirs:   .
+    hs-source-dirs:   app
     main-is:          Main.hs
     ghc-options:      -threaded
 
