@@ -9,8 +9,6 @@ let
     }:
     let
       inherit (lib.lists) singleton;
-      inherit (lib.meta) getExe;
-      inherit (lib.stringsWithDeps) stringAfter;
       inherit (config) theme;
       inherit (config.myLib) mkDesktopEntry;
 
