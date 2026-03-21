@@ -132,7 +132,7 @@ let
         enable = true;
 
         publicKey = config.age.rekey.hostPubkey;
-        privateKeyFile = config.age.secrets.id.path;
+        privateKey = config.age.secrets.id.path;
         checkConfig = false; # Allows debugging at systemd unit level.
 
         httpd = {
