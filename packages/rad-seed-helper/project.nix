@@ -31,10 +31,13 @@
         "${name}-fmt" =
           pkgs.runCommand "fmt-check"
             {
-              nativeBuildInputs = [ pkgs.haskellPackages.fourmolu ];
+              nativeBuildInputs = [
+                pkgs.haskellPackages.fourmolu
+                pkgs.haskellPackages.stylish-haskell
+              ];
             }
             ''
-              fourmolu --config ${root}/fourmolu.yaml --mode check ${root}/*.hs
+              fourmolu --config ${root}/fourmolu.yaml --mode check --no-cabal ${root}/*.hs
               stylish-haskell --recursive ${root}/*.hs
               touch $out
             '';
