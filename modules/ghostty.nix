@@ -26,39 +26,10 @@ let
         mapAttrs' (
           name: value:
           nameValuePair "ghostty/themes/${name}" {
-            source = ghosttyKeyValue.generate "ghostty-${name}-theme" value;
+            generator = ghosttyKeyValue.generate "ghostty-${name}-theme";
+            inherit value;
           }
         ) themes;
-
-      settings = with theme; {
-        font-size = font.size.normal;
-        font-family = font.mono.name;
-        font-feature = "+calt, +liga, +dlig";
-
-        theme = if theme.colorScheme == "pywal" then "custom" else theme.ghostty;
-
-        window-padding-x = padding.small;
-        window-padding-y = padding.small;
-        window-decoration = false;
-
-        scrollback-limit = 100 * 1024 * 1024; # 100 MiB
-
-        mouse-hide-while-typing = true;
-
-        confirm-close-surface = false;
-        quit-after-last-window-closed = true;
-
-        keybind = mapAttrsToList (name: value: "ctrl+shift+${name}=${value}") {
-          c = "copy_to_clipboard";
-          v = "paste_from_clipboard";
-
-          i = "inspector:toggle";
-
-          plus = "increase_font_size:1";
-          minus = "decrease_font_size:1";
-          equal = "reset_font_size";
-        };
-      };
 
       themes = with theme.withHash; {
         custom = {
@@ -100,7 +71,38 @@ let
         ];
 
         xdg.config.files = {
-          "ghostty/config".source = ghosttyKeyValue.generate "ghostty-config" settings;
+          "ghostty/config" = {
+            generator = ghosttyKeyValue.generate "ghostty-config";
+            value = with theme; {
+              font-size = font.size.normal;
+              font-family = font.mono.name;
+              font-feature = "+calt, +liga, +dlig";
+
+              theme = if theme.colorScheme == "pywal" then "custom" else theme.ghostty;
+
+              window-padding-x = padding.small;
+              window-padding-y = padding.small;
+              window-decoration = false;
+
+              scrollback-limit = 100 * 1024 * 1024; # 100 MiB
+
+              mouse-hide-while-typing = true;
+
+              confirm-close-surface = false;
+              quit-after-last-window-closed = true;
+
+              keybind = mapAttrsToList (name: value: "ctrl+shift+${name}=${value}") {
+                c = "copy_to_clipboard";
+                v = "paste_from_clipboard";
+
+                i = "inspector:toggle";
+
+                plus = "increase_font_size:1";
+                minus = "decrease_font_size:1";
+                equal = "reset_font_size";
+              };
+            };
+          };
         }
         // mkThemes themes;
       };

@@ -40,8 +40,6 @@ let
           inherit (osConfig.flake) keys;
           inherit (osConfig.age) secrets;
           inherit (osConfig.networking) hostName;
-
-          json = pkgs.formats.json { };
         in
         {
           packages = singleton pkgs.radicle-node;
@@ -53,54 +51,57 @@ let
             # TODO: I don't want it to overwrite the generated key.
             # TODO: Overall bootstrapping is weak for new/reset hosts...
 
-            ".radicle/config.json".source = json.generate "radicle-config.json" {
-              publicExplorer = "https://rad.plumj.am/nodes/$host/$rid$path";
-              preferredSeeds = personalNodes;
-              web = {
-                pinned = {
-                  repositories = [ ];
-                };
-              };
-              cli = {
-                hints = true;
-              };
-              node = {
-                alias = "jam@${hostName}.plumj.am";
-                listen = singleton "[::]:${toString userNodePort}";
-                peers = {
-                  type = "dynamic";
-                };
-                connect = personalNodes;
-                externalAddresses = singleton "${hostName}.taild29fec.ts.net:${toString userNodePort}";
-                network = "main";
-                log = "INFO";
-                relay = "auto";
-                limits = {
-                  routingMaxSize = 1000;
-                  routingMaxAge = 604800;
-                  gossipMaxAge = 1209600;
-                  fetchConcurrency = 1;
-                  maxOpenFiles = 4096;
-                  rate = {
-                    inbound = {
-                      fillRate = 5.0;
-                      capacity = 1024;
-                    };
-                    outbound = {
-                      fillRate = 10.0;
-                      capacity = 2048;
-                    };
+            ".radicle/config.json" = {
+              generator = pkgs.writers.writeJSON "radicle-config.json";
+              value = {
+                publicExplorer = "https://rad.plumj.am/nodes/$host/$rid$path";
+                preferredSeeds = personalNodes;
+                web = {
+                  pinned = {
+                    repositories = [ ];
                   };
-                  connection = {
-                    inbound = 128;
-                    outbound = 16;
-                  };
-                  fetchPackReceive = "500.0 MiB";
                 };
-                workers = 16;
-                seedingPolicy = {
-                  scope = "followed";
-                  default = "block";
+                cli = {
+                  hints = true;
+                };
+                node = {
+                  alias = "jam@${hostName}.plumj.am";
+                  listen = singleton "[::]:${toString userNodePort}";
+                  peers = {
+                    type = "dynamic";
+                  };
+                  connect = personalNodes;
+                  externalAddresses = singleton "${hostName}.taild29fec.ts.net:${toString userNodePort}";
+                  network = "main";
+                  log = "INFO";
+                  relay = "auto";
+                  limits = {
+                    routingMaxSize = 1000;
+                    routingMaxAge = 604800;
+                    gossipMaxAge = 1209600;
+                    fetchConcurrency = 1;
+                    maxOpenFiles = 4096;
+                    rate = {
+                      inbound = {
+                        fillRate = 5.0;
+                        capacity = 1024;
+                      };
+                      outbound = {
+                        fillRate = 10.0;
+                        capacity = 2048;
+                      };
+                    };
+                    connection = {
+                      inbound = 128;
+                      outbound = 16;
+                    };
+                    fetchPackReceive = "500.0 MiB";
+                  };
+                  workers = 16;
+                  seedingPolicy = {
+                    scope = "followed";
+                    default = "block";
+                  };
                 };
               };
             };
@@ -221,11 +222,16 @@ let
 in
 {
   flake.modules.nixos.radicle =
-    { pkgs, lib, ... }:
+    {
+      inputs,
+      pkgs,
+      lib,
+      ...
+    }:
     let
       inherit (lib.lists) singleton;
     in
-    radicleUserBase { inherit lib; }
+    radicleUserBase { inherit inputs lib; }
     // {
       networking.firewall.allowedTCPPorts = singleton userNodePort;
 

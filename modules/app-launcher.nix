@@ -70,36 +70,6 @@ let
         mkKeyValue = mkKeyValueDefault { } " = ";
       };
 
-      settings = with theme; {
-        width = "50%";
-        height = 26;
-        anchor = "top-left";
-
-        font = "${font.sans.package}/share/fonts/truetype/lexend/lexend/Lexend-Medium.ttf";
-        font-size = font.size.small;
-        hint-font = false;
-        ascii-input = true;
-
-        horizontal = true;
-        num-results = 20;
-        drun-launch = false;
-        hide-input = true;
-        hidden-character = ''""'';
-        prompt-text = "[run]";
-
-        outline-width = 0;
-        border-width = 0;
-        result-spacing = margin.normal * 2;
-        padding-top = 4;
-        padding-bottom = 0;
-        padding-left = 10;
-        padding-right = 0;
-
-        background-color = theme.withHash.base00;
-        prompt-color = theme.withHash.base06;
-        text-color = theme.withHash.base04;
-        selection-color = theme.withHash.base08;
-      };
     in
     {
       environment.systemPackages = [
@@ -114,7 +84,39 @@ let
       hjem.extraModules = singleton {
         packages = singleton pkgs.tofi;
 
-        xdg.config.files."tofi/config".source = tofiKeyValue.generate "tofi-config" settings;
+        xdg.config.files."tofi/config" = {
+          generator = tofiKeyValue.generate "tofi-config";
+          value = with theme; {
+            width = "50%";
+            height = 26;
+            anchor = "top-left";
+
+            font = "${font.sans.package}/share/fonts/truetype/lexend/lexend/Lexend-Medium.ttf";
+            font-size = font.size.small;
+            hint-font = false;
+            ascii-input = true;
+
+            horizontal = true;
+            num-results = 20;
+            drun-launch = false;
+            hide-input = true;
+            hidden-character = ''""'';
+            prompt-text = "[run]";
+
+            outline-width = 0;
+            border-width = 0;
+            result-spacing = margin.normal * 2;
+            padding-top = 4;
+            padding-bottom = 0;
+            padding-left = 10;
+            padding-right = 0;
+
+            background-color = theme.withHash.base00;
+            prompt-color = theme.withHash.base06;
+            text-color = theme.withHash.base04;
+            selection-color = theme.withHash.base08;
+          };
+        };
       };
     };
 

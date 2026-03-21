@@ -3,16 +3,6 @@ let
     { pkgs, lib, ... }:
     let
       inherit (lib.lists) singleton;
-
-      ini = pkgs.formats.ini { };
-
-      settings = {
-        general = {
-          location-provider = "geoclue2";
-          temp-day = 4500;
-          temp-night = 3500;
-        };
-      };
     in
     {
       services.geoclue2.enable = true;
@@ -20,7 +10,16 @@ let
       hjem.extraModules = singleton {
         packages = singleton pkgs.gammastep;
 
-        xdg.config.files."gammastep/config.ini".source = ini.generate "gammastep-config.ini" settings;
+        xdg.config.files."gammastep/config.ini" = {
+          generator = lib.generators.toINI { };
+          value = {
+            general = {
+              location-provider = "geoclue2";
+              temp-day = 4500;
+              temp-night = 3500;
+            };
+          };
+        };
       };
     };
 

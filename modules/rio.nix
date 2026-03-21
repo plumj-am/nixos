@@ -1,6 +1,4 @@
 let
-  # TODO: Configuration.
-  # No point configuring yet because it still doesn't work for some reason.
   rioBase =
     {
       pkgs,
@@ -11,17 +9,6 @@ let
     let
       inherit (config.myLib) mkDesktopEntry;
       inherit (lib.lists) singleton;
-
-      toml = pkgs.formats.toml { };
-
-      rioConfig = {
-        shell.program = "nu";
-        renderer = {
-          performance = "High";
-          backend = "GL";
-          target_fps = 280;
-        };
-      };
     in
     {
 
@@ -35,7 +22,17 @@ let
           })
         ];
 
-        xdg.config.files."rio/config.toml".source = toml.generate "rio-config.toml" rioConfig;
+        xdg.config.files."rio/config.toml" = {
+          generator = pkgs.writers.writeTOML "rio-config.toml";
+          value = {
+            shell.program = "nu";
+            renderer = {
+              performance = "High";
+              backend = "GL";
+              target_fps = 280;
+            };
+          };
+        };
       };
     };
 in

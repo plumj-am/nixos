@@ -42,8 +42,6 @@ let
       inherit (lib) elem;
       inherit (config) theme;
 
-      toml = pkgs.formats.toml { };
-
       yaziPickerScript =
         pkgs.writeShellScript "yazi-picker.sh" # bash
           ''
@@ -80,129 +78,10 @@ let
         mapAttrs' (
           name: value:
           nameValuePair "helix/themes/${name}.toml" {
-            source = toml.generate "helix-theme-${name}.toml" value;
+            generator = pkgs.writers.writeTOML "helix-theme-${name}";
+            inherit value;
           }
         ) themes;
-      settings = {
-        theme = if theme.colorScheme == "pywal" then "base16_custom" else theme.helix;
-
-        editor = {
-          bufferline = "multiple";
-          completion-timeout = 5;
-          completion-replace = true;
-          color-modes = true;
-          cursorline = true;
-          file-picker.hidden = false;
-          idle-timeout = 0;
-          shell = [
-            "nu"
-            "--commands"
-          ];
-          trim-trailing-whitespace = true;
-          true-color = true;
-          lsp.display-inlay-hints = true;
-          inline-diagnostics.cursor-line = "hint";
-          end-of-line-diagnostics = "hint";
-          jump-label-alphabet = "jfkdls;aurieowpqnvmcxz";
-          cursor-shape = {
-            normal = "block";
-            select = "underline";
-            insert = "bar";
-          };
-          indent-guides = {
-            character = "▏";
-            render = true;
-          };
-          whitespace = {
-            characters.tab = "→";
-            render.tab = "all";
-          };
-
-          auto-pairs = {
-            "\"" = "\"";
-            "'" = "'";
-            "`" = "`";
-            "(" = ")";
-            "{" = "}";
-            "[" = "]";
-            "<" = ">";
-          };
-        };
-
-        keys = {
-          select = {
-            "A-h" = "jump_view_left";
-            "A-j" = "jump_view_down";
-            "A-k" = "jump_view_up";
-            "A-l" = "jump_view_right";
-
-            "C-j" = "@X*dp";
-            "C-k" = "@X*dkP";
-
-            "ret" = "goto_word";
-
-            "q" = "record_macro";
-            "@" = "replay_macro";
-
-            "C-X" = "select_line_above";
-
-            "C-y" =
-              ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- ${yaziPickerScript} open ...%{buffer_name}";
-
-            "C-a" = "@*%s<ret>";
-
-            "D" = "extend_to_line_end";
-          };
-
-          normal = {
-            # Hack to have a custom popup helper with a title.
-            "A-h" = "jump_view_left";
-            "A-j" = "jump_view_down";
-            "A-k" = "jump_view_up";
-            "A-l" = "jump_view_right";
-
-            # Move lines up and down. Use `z` register to avoid clobbering system or primary clipboard.
-            "C-j" = "@X\"zd\"zp";
-            "C-k" = "@X\"zdk\"zP";
-
-            "ret" = "goto_word";
-
-            "q" = "record_macro";
-            "@" = "replay_macro";
-
-            "C-X" = "select_line_above";
-
-            "C-y" =
-              ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- ${yaziPickerScript} open ...%{buffer_name}";
-
-            "C-a" = "@*%s<ret>";
-
-            "D" = "extend_to_line_end";
-
-            "'" = {
-              _ = "@ File Management\n";
-
-              t = "@:sh touch <C-r>%";
-              r = "@:sh rm <C-r>%";
-              k = "@:sh mkdir <C-r>%";
-              m = "@:sh mv <C-r>% <C-r>%";
-              c = "@:sh cp <C-r>% <C-r>%";
-            };
-
-            # Like `ci<char>` in vim.
-            m = {
-              "(" = "@lf)hmi)";
-              ")" = "@lf)hmi)";
-              "{" = "@lf}hmi}";
-              "}" = "@lf}hmi}";
-              "[" = "@lf]hmi]";
-              "]" = "@lf]hmi]";
-              "'" = "@lf'lmi'";
-              "\"" = "@lf\"lmi\"";
-            };
-          };
-        };
-      };
 
       # Pywal output doesn't have gradients like base16 needs.
       # So it's necessary to override a few colours.
@@ -237,192 +116,314 @@ let
           if theme.isDark then "#9D0006" else "#8F3F71" # Muted red/brown.
         );
       };
-
-      languages = {
-        language =
-          let
-            languageConfig =
-              name: ext:
-              {
-                inherit name;
-                auto-format = true;
-                formatter.command = "deno";
-                formatter.args = denoFmtArgs ++ [
-                  "--ext"
-                  ext
-                  "-"
-                ];
-              }
-              // optionalAttrs (elem ext (attrValues denoJsTsLanguages)) {
-                language-servers = withTypos [ "deno" ];
-              };
-
-            denoFmtLanguages =
-              {
-                astro = "astro";
-                css = "css";
-                html = "html";
-                javascript = "js";
-                json = "json";
-                jsonc = "jsonc";
-                jsx = "jsx";
-                markdown = "md";
-                scss = "scss";
-                svelte = "svelte";
-                tsx = "tsx";
-                typescript = "ts";
-                vue = "vue";
-                yaml = "yaml";
-              }
-              |> mapAttrs languageConfig
-              |> attrValues;
-
-            baseLanguages = [
-              {
-                name = "rust";
-                auto-format = true;
-                language-servers = withTypos [
-                  {
-                    name = "rust-analyzer";
-                    except-features = singleton "inlay-hints";
-                  }
-                ];
-                indent = {
-                  tab-width = 3;
-                  unit = "   ";
-                };
-              }
-              {
-                name = "nix";
-                auto-format = true;
-                formatter.command = "nixfmt";
-                language-servers = withTypos [ "nixd" ];
-              }
-              {
-                name = "toml";
-                auto-format = true;
-                formatter.command = "taplo";
-                formatter.args = [
-                  "fmt"
-                  "--option"
-                  "align_entries=true"
-                  "--option"
-                  "column_width=100"
-                  "--option"
-                  "compact_arrays=false"
-                  "--option"
-                  "reorder_inline_tables=true"
-                  "--option"
-                  "reorder_keys=true"
-                  "-"
-                ];
-                language-servers = withTypos [ "typos" ];
-              }
-              {
-                name = "markdown";
-                auto-format = true;
-                language-servers = withTypos [ "marksman" ];
-              }
-              {
-                name = "just";
-                auto-format = true;
-                formatter.command = "just-formatter";
-                language-servers = withTypos [ "just-lsp" ];
-              }
-              {
-                name = "nu";
-                auto-format = false;
-                # formatter.command = "nufmt"; # Not good enough yet.
-                # formatter.args = [
-                #   "--config"
-                #   "/home/jam/.config/nufmt/config.nuon"
-                #   "--stdin"
-                # ];
-                language-servers = withTypos [
-                  "nu-lsp"
-                  # "nu-lint" # Waiting for <https://codeberg.org/wvhulle/nu-lint/pulls/96>
-                ];
-                indent = {
-                  tab-width = 3;
-                  unit = "   ";
-                };
-              }
-              # I can't get this working right now.
-              # {
-              #   name               = "rust";
-              #   debugger.name      = "lldb-dap";
-              #   debugger.transport = "stdio";
-              #   debugger.command   = "lldb-dap";
-              #   debugger.templates = [{
-              #     name         = "binary";
-              #     request      = "launch";
-              #     args.program = "{0}";
-              #     completion   = [{
-              #       name       = "binary";
-              #       completion = "filename";
-              #     }];
-              #   }];
-              # }
-            ];
-          in
-          denoFmtLanguages ++ baseLanguages;
-
-        language-servers = {
-          nixd = {
-            command = "nixd";
-            args = singleton "--inlay-hints";
-            config.nixd = {
-              nixpkgs.expr = ''import (lib.getFlake "/home/jam/nixos").inputs.os { }'';
-              options = {
-                current-host.expr = ''(lib.getFlake "/home/jam/nixos").nixosConfigurations.${config.networking.hostName}.options'';
-                flake-parts.expr = ''(lib.getFlake "/home/jam/nixos").debug.options'';
-                flake-parts2.expr = ''(lib.getFlake "/home/jam/nixos").currentSystem.options'';
-              };
-            };
-          };
-
-          typos.command = "typos-lsp";
-
-          deno = {
-            command = "deno";
-            args = singleton "lsp";
-
-            config.javascript = {
-              enable = true;
-              lint = true;
-              unstable = true;
-
-              suggest.imports.hosts."https://deno.land" = true;
-
-              inlayHints.enumMemberValues.enabled = true;
-              inlayHints.functionLikeReturnTypes.enabled = true;
-              inlayHints.parameterNames.enabled = "all";
-              inlayHints.parameterTypes.enabled = true;
-              inlayHints.propertyDeclarationTypes.enabled = true;
-              inlayHints.variableTypes.enabled = true;
-            };
-          };
-
-          rust-analyzer = {
-            except-features = singleton "inlay-hints";
-
-            config = {
-              cargo.features = "all";
-              check.command = "clippy";
-              completion.callable.snippets = "add_parentheses";
-            };
-          };
-        };
-      };
     in
     {
       hjem.extraModules = singleton {
         packages = singleton pkgs.helix;
 
         xdg.config.files = {
-          "helix/config.toml".source = toml.generate "helix-config.toml" settings;
+          "helix/config.toml" = {
+            generator = pkgs.writers.writeTOML "helix-config.toml";
+            value = {
+              theme = if theme.colorScheme == "pywal" then "base16_custom" else theme.helix;
 
-          "helix/languages.toml".source = toml.generate "helix-languages.toml" languages;
+              editor = {
+                bufferline = "multiple";
+                completion-timeout = 5;
+                completion-replace = true;
+                color-modes = true;
+                cursorline = true;
+                file-picker.hidden = false;
+                idle-timeout = 0;
+                shell = [
+                  "nu"
+                  "--commands"
+                ];
+                trim-trailing-whitespace = true;
+                true-color = true;
+                lsp.display-inlay-hints = true;
+                inline-diagnostics.cursor-line = "hint";
+                end-of-line-diagnostics = "hint";
+                jump-label-alphabet = "jfkdls;aurieowpqnvmcxz";
+                cursor-shape = {
+                  normal = "block";
+                  select = "underline";
+                  insert = "bar";
+                };
+                indent-guides = {
+                  character = "▏";
+                  render = true;
+                };
+                whitespace = {
+                  characters.tab = "→";
+                  render.tab = "all";
+                };
+
+                auto-pairs = {
+                  "\"" = "\"";
+                  "'" = "'";
+                  "`" = "`";
+                  "(" = ")";
+                  "{" = "}";
+                  "[" = "]";
+                  "<" = ">";
+                };
+              };
+
+              keys = {
+                select = {
+                  "A-h" = "jump_view_left";
+                  "A-j" = "jump_view_down";
+                  "A-k" = "jump_view_up";
+                  "A-l" = "jump_view_right";
+
+                  "C-j" = "@X*dp";
+                  "C-k" = "@X*dkP";
+
+                  "ret" = "goto_word";
+
+                  "q" = "record_macro";
+                  "@" = "replay_macro";
+
+                  "C-X" = "select_line_above";
+
+                  "C-y" =
+                    ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- ${yaziPickerScript} open ...%{buffer_name}";
+
+                  "C-a" = "@*%s<ret>";
+
+                  "D" = "extend_to_line_end";
+                };
+
+                normal = {
+                  # Hack to have a custom popup helper with a title.
+                  "A-h" = "jump_view_left";
+                  "A-j" = "jump_view_down";
+                  "A-k" = "jump_view_up";
+                  "A-l" = "jump_view_right";
+
+                  # Move lines up and down. Use `z` register to avoid clobbering system or primary clipboard.
+                  "C-j" = "@X\"zd\"zp";
+                  "C-k" = "@X\"zdk\"zP";
+
+                  "ret" = "goto_word";
+
+                  "q" = "record_macro";
+                  "@" = "replay_macro";
+
+                  "C-X" = "select_line_above";
+
+                  "C-y" =
+                    ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- ${yaziPickerScript} open ...%{buffer_name}";
+
+                  "C-a" = "@*%s<ret>";
+
+                  "D" = "extend_to_line_end";
+
+                  "'" = {
+                    _ = "@ File Management\n";
+
+                    t = "@:sh touch <C-r>%";
+                    r = "@:sh rm <C-r>%";
+                    k = "@:sh mkdir <C-r>%";
+                    m = "@:sh mv <C-r>% <C-r>%";
+                    c = "@:sh cp <C-r>% <C-r>%";
+                  };
+
+                  # Like `ci<char>` in vim.
+                  m = {
+                    "(" = "@lf)hmi)";
+                    ")" = "@lf)hmi)";
+                    "{" = "@lf}hmi}";
+                    "}" = "@lf}hmi}";
+                    "[" = "@lf]hmi]";
+                    "]" = "@lf]hmi]";
+                    "'" = "@lf'lmi'";
+                    "\"" = "@lf\"lmi\"";
+                  };
+                };
+              };
+            };
+          };
+          "helix/languages.toml" = {
+            generator = pkgs.writers.writeTOML "helix-languages.toml";
+            value = {
+              language =
+                let
+                  languageConfig =
+                    name: ext:
+                    {
+                      inherit name;
+                      auto-format = true;
+                      formatter.command = "deno";
+                      formatter.args = denoFmtArgs ++ [
+                        "--ext"
+                        ext
+                        "-"
+                      ];
+                    }
+                    // optionalAttrs (elem ext (attrValues denoJsTsLanguages)) {
+                      language-servers = withTypos [ "deno" ];
+                    };
+
+                  denoFmtLanguages =
+                    {
+                      astro = "astro";
+                      css = "css";
+                      html = "html";
+                      javascript = "js";
+                      json = "json";
+                      jsonc = "jsonc";
+                      jsx = "jsx";
+                      markdown = "md";
+                      scss = "scss";
+                      svelte = "svelte";
+                      tsx = "tsx";
+                      typescript = "ts";
+                      vue = "vue";
+                      yaml = "yaml";
+                    }
+                    |> mapAttrs languageConfig
+                    |> attrValues;
+
+                  baseLanguages = [
+                    {
+                      name = "rust";
+                      auto-format = true;
+                      language-servers = withTypos [
+                        {
+                          name = "rust-analyzer";
+                          except-features = singleton "inlay-hints";
+                        }
+                      ];
+                      indent = {
+                        tab-width = 3;
+                        unit = "   ";
+                      };
+                    }
+                    {
+                      name = "nix";
+                      auto-format = true;
+                      formatter.command = "nixfmt";
+                      language-servers = withTypos [ "nixd" ];
+                    }
+                    {
+                      name = "toml";
+                      auto-format = true;
+                      formatter.command = "taplo";
+                      formatter.args = [
+                        "fmt"
+                        "--option"
+                        "align_entries=true"
+                        "--option"
+                        "column_width=100"
+                        "--option"
+                        "compact_arrays=false"
+                        "--option"
+                        "reorder_inline_tables=true"
+                        "--option"
+                        "reorder_keys=true"
+                        "-"
+                      ];
+                      language-servers = withTypos [ "typos" ];
+                    }
+                    {
+                      name = "markdown";
+                      auto-format = true;
+                      language-servers = withTypos [ "marksman" ];
+                    }
+                    {
+                      name = "just";
+                      auto-format = true;
+                      formatter.command = "just-formatter";
+                      language-servers = withTypos [ "just-lsp" ];
+                    }
+                    {
+                      name = "nu";
+                      auto-format = false;
+                      # formatter.command = "nufmt"; # Not good enough yet.
+                      # formatter.args = [
+                      #   "--config"
+                      #   "/home/jam/.config/nufmt/config.nuon"
+                      #   "--stdin"
+                      # ];
+                      language-servers = withTypos [
+                        "nu-lsp"
+                        # "nu-lint" # Waiting for <https://codeberg.org/wvhulle/nu-lint/pulls/96>
+                      ];
+                      indent = {
+                        tab-width = 3;
+                        unit = "   ";
+                      };
+                    }
+                    # I can't get this working right now.
+                    # {
+                    #   name               = "rust";
+                    #   debugger.name      = "lldb-dap";
+                    #   debugger.transport = "stdio";
+                    #   debugger.command   = "lldb-dap";
+                    #   debugger.templates = [{
+                    #     name         = "binary";
+                    #     request      = "launch";
+                    #     args.program = "{0}";
+                    #     completion   = [{
+                    #       name       = "binary";
+                    #       completion = "filename";
+                    #     }];
+                    #   }];
+                    # }
+                  ];
+                in
+                denoFmtLanguages ++ baseLanguages;
+
+              language-servers = {
+                nixd = {
+                  command = "nixd";
+                  args = singleton "--inlay-hints";
+                  config.nixd = {
+                    nixpkgs.expr = ''import (lib.getFlake "/home/jam/nixos").inputs.os { }'';
+                    options = {
+                      current-host.expr = ''(lib.getFlake "/home/jam/nixos").nixosConfigurations.${config.networking.hostName}.options'';
+                      flake-parts.expr = ''(lib.getFlake "/home/jam/nixos").debug.options'';
+                      flake-parts2.expr = ''(lib.getFlake "/home/jam/nixos").currentSystem.options'';
+                    };
+                  };
+                };
+
+                typos.command = "typos-lsp";
+
+                deno = {
+                  command = "deno";
+                  args = singleton "lsp";
+
+                  config.javascript = {
+                    enable = true;
+                    lint = true;
+                    unstable = true;
+
+                    suggest.imports.hosts."https://deno.land" = true;
+
+                    inlayHints.enumMemberValues.enabled = true;
+                    inlayHints.functionLikeReturnTypes.enabled = true;
+                    inlayHints.parameterNames.enabled = "all";
+                    inlayHints.parameterTypes.enabled = true;
+                    inlayHints.propertyDeclarationTypes.enabled = true;
+                    inlayHints.variableTypes.enabled = true;
+                  };
+                };
+
+                rust-analyzer = {
+                  except-features = singleton "inlay-hints";
+
+                  config = {
+                    cargo.features = "all";
+                    check.command = "clippy";
+                    completion.callable.snippets = "add_parentheses";
+                  };
+                };
+              };
+            };
+          };
 
           "nufmt/config.nuon".text = # nuon
             ''
@@ -447,8 +448,6 @@ let
     let
       inherit (lib.lists) singleton;
       inherit (config.age) secrets;
-
-      json = pkgs.formats.json { };
     in
     {
       nix.settings = {
@@ -475,15 +474,22 @@ let
           );
 
           xdg.config.files = {
-            "zed/settings.json".source =
-              json.generate "zed-settings.json" <| import ./_zed/settings.nix { inherit lib config; };
+            "zed/settings.json" = {
+              source =
+                pkgs.writers.writeJSON "zed-settings.json" <| import ./_zed/settings.nix { inherit lib config; };
+            };
 
-            "zed/keymap.json".source = json.generate "zed-keymap.json" <| import ./_zed/keymap.nix;
+            "zed/keymap.json" = {
+              source = pkgs.writers.writeJSON "zed-keymap.json" <| import ./_zed/keymap.nix;
+            };
 
-            "zed/tasks.json".source =
-              json.generate "zed-tasks.json" <| import ./_zed/tasks.nix { inherit pkgs lib; };
+            "zed/tasks.json" = {
+              source = pkgs.writers.writeJSON "zed-tasks.json" <| import ./_zed/tasks.nix { inherit pkgs lib; };
+            };
 
-            "zed/debug.json".source = json.generate "zed-debug.json" <| import ./_zed/debug.nix;
+            "zed/debug.json" = {
+              source = pkgs.writers.writeJSON "zed-debug.json" <| import ./_zed/debug.nix;
+            };
           };
         }
       );

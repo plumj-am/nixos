@@ -31,328 +31,329 @@ let
     let
       inherit (lib.lists) singleton;
       inherit (config) theme;
-
-      toml = pkgs.formats.toml { };
-
-      # TODO: Fix sub-menu selection bg colour (press "l" on revision to view files)
-      jjuiConfig = {
-        preview = {
-          position = "bottom";
-          show_at_start = true;
-        };
-
-        actions = singleton {
-          name = "tug";
-          lua = # lua
-            ''
-              jj_async("tug")
-              revisions.refresh()
-            '';
-        };
-
-        bindings = [
-          {
-            key = singleton "T";
-            action = "tug";
-            scope = "revisions";
-            desc = "tug";
-          }
-          {
-            key = singleton "P";
-            action = "ui.preview_toggle_bottom";
-            scope = "revisions.details";
-            desc = "toggle preview bottom/right";
-          }
-        ];
-
-        ui.colors."selected".bg = "#${theme.colors.base01}";
-      };
     in
     {
       hjem.extraModules = singleton (
         { osConfig, config, ... }:
         {
-          xdg.config.files."jj/config.toml".source = toml.generate "jj-config.toml" {
-            user.name = "PlumJam";
-            user.email = "git@plumj.am";
+          xdg.config.files."jj/config.toml" = {
+            generator = pkgs.writers.writeTOML "jj-config.toml";
+            value = {
+              user.name = "PlumJam";
+              user.email = "git@plumj.am";
 
-            signing.key = "${config.directory}/.ssh/id";
-            signing.backend = "ssh";
-            signing.behavior = "own";
+              signing.key = "${config.directory}/.ssh/id";
+              signing.backend = "ssh";
+              signing.behavior = "own";
 
-            ui.conflict-marker-style = "snapshot";
-            ui.default-command = "lg";
-            ui.diff-editor = ":builtin";
-            ui.diff-formatter = [
-              "difft"
-              "--color"
-              "always"
-              "$left"
-              "$right"
-            ];
-            ui.editor = osConfig.environment.variables.EDITOR;
-            ui.graph.style = "curved";
-            ui.movement.edit = true;
-            ui.pager = ":builtin";
+              ui.conflict-marker-style = "snapshot";
+              ui.default-command = "lg";
+              ui.diff-editor = ":builtin";
+              ui.diff-formatter = [
+                "difft"
+                "--color"
+                "always"
+                "$left"
+                "$right"
+              ];
+              ui.editor = osConfig.environment.variables.EDITOR;
+              ui.graph.style = "curved";
+              ui.movement.edit = true;
+              ui.pager = ":builtin";
 
-            snapshot.max-new-file-size = "10MiB";
+              snapshot.max-new-file-size = "10MiB";
 
-            lazyjj.highlight-color = "#${theme.colors.base02}";
+              lazyjj.highlight-color = "#${theme.colors.base02}";
 
-            git = {
-              sign-on-push = true; # Sign in bulk on push.
-              subprocess = true;
-              private-commits = "private()"; # Prevent pushing WIP commits.
-              write-change-id-header = true;
-            };
+              git = {
+                sign-on-push = true; # Sign in bulk on push.
+                subprocess = true;
+                private-commits = "private()"; # Prevent pushing WIP commits.
+                write-change-id-header = true;
+              };
 
-            remotes.origin.auto-track-bookmarks = "glob:*";
+              remotes.origin.auto-track-bookmarks = "glob:*";
 
-            git.fetch = [
-              "origin"
-              "rad"
-            ];
-            git.push = "origin";
+              git.fetch = [
+                "origin"
+                "rad"
+              ];
+              git.push = "origin";
 
-            aliases.".." = [
-              "edit"
-              "@-"
-            ];
-            aliases.",," = [
-              "edit"
-              "@+"
-            ];
+              aliases.".." = [
+                "edit"
+                "@-"
+              ];
+              aliases.",," = [
+                "edit"
+                "@+"
+              ];
 
-            aliases.a = [ "abandon" ];
+              aliases.a = [ "abandon" ];
 
-            aliases.b = [ "bookmark" ];
-            aliases.bs = [
-              "bookmark"
-              "set"
-            ];
-            aliases.bc = [
-              "bookmark"
-              "create"
-            ];
+              aliases.b = [ "bookmark" ];
+              aliases.bs = [
+                "bookmark"
+                "set"
+              ];
+              aliases.bc = [
+                "bookmark"
+                "create"
+              ];
 
-            aliases.c = [ "commit" ];
-            aliases.ci = [
-              "commit"
-              "--interactive"
-            ];
+              aliases.c = [ "commit" ];
+              aliases.ci = [
+                "commit"
+                "--interactive"
+              ];
 
-            aliases.e = [ "edit" ];
+              aliases.e = [ "edit" ];
 
-            aliases.fetch = [
-              "git"
-              "fetch"
-            ];
-            aliases.f = [
-              "git"
-              "fetch"
-            ];
+              aliases.fetch = [
+                "git"
+                "fetch"
+              ];
+              aliases.f = [
+                "git"
+                "fetch"
+              ];
 
-            aliases.fr = [
-              "new"
-              "trunk()"
-            ];
-            aliases.fresh = [
-              "new"
-              "trunk()"
-            ];
+              aliases.fr = [
+                "new"
+                "trunk()"
+              ];
+              aliases.fresh = [
+                "new"
+                "trunk()"
+              ];
 
-            aliases.r = [ "rebase" ];
+              aliases.r = [ "rebase" ];
 
-            aliases.res = [ "resolve" ];
-            aliases.resolve-ast = [
-              "resolve"
-              "--tool"
-              "mergiraf"
-            ];
-            aliases.resa = [ "resolve-ast" ];
+              aliases.res = [ "resolve" ];
+              aliases.resolve-ast = [
+                "resolve"
+                "--tool"
+                "mergiraf"
+              ];
+              aliases.resa = [ "resolve-ast" ];
 
-            aliases.s = [ "split" ];
-            aliases.sm = [
-              "split"
-              "--message"
-            ];
+              aliases.s = [ "split" ];
+              aliases.sm = [
+                "split"
+                "--message"
+              ];
 
-            aliases.sq = [ "squash" ];
-            aliases.sqf = [
-              "squash"
-              "--from"
-            ];
-            aliases.sqi = [
-              "squash"
-              "--interactive"
-            ];
-            aliases.sqm = [
-              "squash"
-              "--message"
-            ];
-            aliases.sqmi = [
-              "squash"
-              "--interactive"
-              "--message"
-            ];
+              aliases.sq = [ "squash" ];
+              aliases.sqf = [
+                "squash"
+                "--from"
+              ];
+              aliases.sqi = [
+                "squash"
+                "--interactive"
+              ];
+              aliases.sqm = [
+                "squash"
+                "--message"
+              ];
+              aliases.sqmi = [
+                "squash"
+                "--interactive"
+                "--message"
+              ];
 
-            aliases.sh = [ "show" ];
+              aliases.sh = [ "show" ];
 
-            aliases.tug = [
-              "bookmark"
-              "move"
-              "--from"
-              "closest(@-)"
-              "--to"
-              "closest_pushable(@)"
-            ];
-            aliases.t = [ "tug" ];
+              aliases.tug = [
+                "bookmark"
+                "move"
+                "--from"
+                "closest(@-)"
+                "--to"
+                "closest_pushable(@)"
+              ];
+              aliases.t = [ "tug" ];
 
-            aliases.push = [
-              "git"
-              "push"
-            ];
-            aliases.p = [
-              "git"
-              "push"
-            ];
-            aliases.pb = [
-              "git"
-              "push"
-              "--bookmark"
-            ];
+              aliases.push = [
+                "git"
+                "push"
+              ];
+              aliases.p = [
+                "git"
+                "push"
+              ];
+              aliases.pb = [
+                "git"
+                "push"
+                "--bookmark"
+              ];
 
-            aliases.init = [
-              "git"
-              "init"
-              "--colocate"
-            ];
-            aliases.i = [
-              "git"
-              "init"
-              "--colocate"
-            ];
+              aliases.init = [
+                "git"
+                "init"
+                "--colocate"
+              ];
+              aliases.i = [
+                "git"
+                "init"
+                "--colocate"
+              ];
 
-            aliases.clone = [
-              "git"
-              "clone"
-              "--colocate"
-            ];
-            aliases.cl = [
-              "git"
-              "clone"
-              "--colocate"
-            ];
+              aliases.clone = [
+                "git"
+                "clone"
+                "--colocate"
+              ];
+              aliases.cl = [
+                "git"
+                "clone"
+                "--colocate"
+              ];
 
-            aliases.d = [ "diff" ];
-            aliases.ds = [ "diff --stat" ];
+              aliases.d = [ "diff" ];
+              aliases.ds = [ "diff --stat" ];
 
-            aliases.l = [ "log" ];
-            aliases.la = [
-              "log"
-              "--revisions"
-              "::"
-            ];
-            aliases.ls = [
-              "log"
-              "--summary"
-            ];
-            aliases.lsa = [
-              "log"
-              "--summary"
-              "--revisions"
-              "::"
-            ];
-            aliases.lp = [
-              "log"
-              "--patch"
-            ];
-            aliases.lpa = [
-              "log"
-              "--patch"
-              "--revisions"
-              "::"
-            ];
-            aliases.lg = [
-              "log"
-              "--summary"
-              "--no-pager"
-              "--limit=4"
-            ];
-            aliases.el = [ "evolog" ];
-            aliases.ol = [
-              "op"
-              "log"
-            ];
+              aliases.l = [ "log" ];
+              aliases.la = [
+                "log"
+                "--revisions"
+                "::"
+              ];
+              aliases.ls = [
+                "log"
+                "--summary"
+              ];
+              aliases.lsa = [
+                "log"
+                "--summary"
+                "--revisions"
+                "::"
+              ];
+              aliases.lp = [
+                "log"
+                "--patch"
+              ];
+              aliases.lpa = [
+                "log"
+                "--patch"
+                "--revisions"
+                "::"
+              ];
+              aliases.lg = [
+                "log"
+                "--summary"
+                "--no-pager"
+                "--limit=4"
+              ];
+              aliases.el = [ "evolog" ];
+              aliases.ol = [
+                "op"
+                "log"
+              ];
 
-            revset-aliases = {
-              "closest(to)" = "heads(::to & bookmarks())";
-              "closest_pushable(to)" =
-                "heads(::to & ~description(exact:\"\") & (~empty() | merges()) & ~private())";
-              "pending()" = ".. ~ ::tags() ~ ::remote_bookmarks() ~ @ ~ private()";
-              "private()" = ''
-                description(glob:'wip:*') |
-                description(glob:'private:*') |
-                description(glob:'WIP:*') |
-                description(glob:'PRIVATE:*') |
-                conflicts() |
-                (empty() ~ merges()) |
-                description('substring-i:"DO NOT MAIL"')
-              '';
+              revset-aliases = {
+                "closest(to)" = "heads(::to & bookmarks())";
+                "closest_pushable(to)" =
+                  "heads(::to & ~description(exact:\"\") & (~empty() | merges()) & ~private())";
+                "pending()" = ".. ~ ::tags() ~ ::remote_bookmarks() ~ @ ~ private()";
+                "private()" = ''
+                  description(glob:'wip:*') |
+                  description(glob:'private:*') |
+                  description(glob:'WIP:*') |
+                  description(glob:'PRIVATE:*') |
+                  conflicts() |
+                  (empty() ~ merges()) |
+                  description('substring-i:"DO NOT MAIL"')
+                '';
 
-            };
+              };
 
-            revsets.log = "ancestors(reachable(@, mutable()), 2)";
+              revsets.log = "ancestors(reachable(@, mutable()), 2)";
 
-            template-aliases."in_branch(commit)" = # python
-              ''
-                commit.contained_in("immutable_heads()..bookmarks()")
-              '';
+              template-aliases."in_branch(commit)" = # python
+                ''
+                  commit.contained_in("immutable_heads()..bookmarks()")
+                '';
 
-            templates.log_node = # python
-              ''
-                coalesce(
-                  if(!self, label("elided", "~")),
-                    label(
-                      separate(" ",
-                        if(current_working_copy, "working_copy"),
-                        if(immutable, "immutable"),
-                        if(conflict, "conflict"),
-                      ),
-                      coalesce(
-                        if(current_working_copy, "◉"),
-                        if(immutable, "◆"),
-                        if(conflict, "×"),
-                        if(self.contained_in("private()"), "◍"),
-                        "○",
+              templates.log_node = # python
+                ''
+                  coalesce(
+                    if(!self, label("elided", "~")),
+                      label(
+                        separate(" ",
+                          if(current_working_copy, "working_copy"),
+                          if(immutable, "immutable"),
+                          if(conflict, "conflict"),
+                        ),
+                        coalesce(
+                          if(current_working_copy, "◉"),
+                          if(immutable, "◆"),
+                          if(conflict, "×"),
+                          if(self.contained_in("private()"), "◍"),
+                          "○",
+                        )
                       )
-                    )
-                )
-              '';
+                  )
+                '';
 
-            templates.draft_commit_description = # python
-              ''
-                concat(
-                  coalesce(description, "\n"),
-                  if(
-                    !description.contains("Signed-off-by: " ++ author.name()),
-                    "\nSigned-off-by: " ++ author.name() ++ " <" ++ author.email() ++ ">",
-                  ),
-                  surround(
-                    "\nJJ: This commit contains the following changes:\n", "",
-                    indent("JJ:     ", diff.stat(72)),
-                  ),
-                  "\nJJ: ignore-rest\n",
-                  diff.git(),
-                )
-              '';
+              templates.draft_commit_description = # python
+                ''
+                  concat(
+                    coalesce(description, "\n"),
+                    if(
+                      !description.contains("Signed-off-by: " ++ author.name()),
+                      "\nSigned-off-by: " ++ author.name() ++ " <" ++ author.email() ++ ">",
+                    ),
+                    surround(
+                      "\nJJ: This commit contains the following changes:\n", "",
+                      indent("JJ:     ", diff.stat(72)),
+                    ),
+                    "\nJJ: ignore-rest\n",
+                    diff.git(),
+                  )
+                '';
 
-            templates.git_push_bookmark = # python
-              ''
-                "patch/PlumJam-" ++ change_id.short()
-              '';
+              templates.git_push_bookmark = # python
+                ''
+                  "patch/PlumJam-" ++ change_id.short()
+                '';
+            };
           };
-          xdg.config.files."jjui/config.toml".source = toml.generate "jjui-config.toml" jjuiConfig;
+          xdg.config.files."jjui/config.toml" = {
+            generator = pkgs.writers.writeTOML "jjui-config.toml";
+            value = {
+              preview = {
+                position = "bottom";
+                show_at_start = true;
+              };
+
+              actions = singleton {
+                name = "tug";
+                lua = # lua
+                  ''
+                    jj_async("tug")
+                    revisions.refresh()
+                  '';
+              };
+
+              bindings = [
+                {
+                  key = singleton "T";
+                  action = "tug";
+                  scope = "revisions";
+                  desc = "tug";
+                }
+                {
+                  key = singleton "P";
+                  action = "ui.preview_toggle_bottom";
+                  scope = "revisions.details";
+                  desc = "toggle preview bottom/right";
+                }
+              ];
+
+              ui.colors."selected".bg = "#${theme.colors.base01}";
+            };
+          };
         }
       );
     };
