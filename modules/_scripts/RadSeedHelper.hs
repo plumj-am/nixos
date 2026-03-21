@@ -69,10 +69,10 @@ tailnetExt = ".taild29fec.net"
 sysSeeds :: [Seed]
 sysSeeds =
    [ -- Seed {host = "date", did = ""},
-     Seed{host = Host "kiwi", did = DID "did:key:z6MkjPdRVZGSoMnFXL7FtgR7xvdrque51TMRspJ9WAK2gde6"},
-     Seed{host = Host "plum", did = DID "did:key:z6MkffMv6gHyhQQWT1NH8p3X9hiMdxsAnUhtxXTfx2xZSqzz"},
-     Seed{host = Host "sloe", did = DID "did:key:z6MkrBKRwq3ADkck29xhyxSvjWiPs9XXoCLxNCZ2egYSNWCv"},
-     Seed{host = Host "yuzu", did = DID "did:key:z6MkjteiKR9kqhLXnU3oVDDNf3zpoQPnLfMeqZXGsbVJVKeT"}
+     Seed{host = Host "kiwi", did = DID "did:key:z6MkjPdRVZGSoMnFXL7FtgR7xvdrque51TMRspJ9WAK2gde6"}
+   , Seed{host = Host "plum", did = DID "did:key:z6MkffMv6gHyhQQWT1NH8p3X9hiMdxsAnUhtxXTfx2xZSqzz"}
+   , Seed{host = Host "sloe", did = DID "did:key:z6MkrBKRwq3ADkck29xhyxSvjWiPs9XXoCLxNCZ2egYSNWCv"}
+   , Seed{host = Host "yuzu", did = DID "did:key:z6MkjteiKR9kqhLXnU3oVDDNf3zpoQPnLfMeqZXGsbVJVKeT"}
    ]
 
 userSeeds :: [Seed]
@@ -171,12 +171,12 @@ missingArgVal arg = "Required value for '" ++ arg ++ "' not provided!\n\n" ++ us
 invalidInput :: [String] -> String
 invalidInput input =
    unlines
-      [ "Invalid input from user:",
-        "",
-        unlines $ numberLines input,
-        "See correct usage below:",
-        "",
-        usage
+      [ "Invalid input from user:"
+      , ""
+      , unlines $ numberLines input
+      , "See correct usage below:"
+      , ""
+      , usage
       ]
 
 notImplemented :: RadCmd -> String

@@ -23,11 +23,11 @@ rebuilderTag = purple "[Rebuilder] "
 
 nixEvalArgs :: [String]
 nixEvalArgs =
-   [ "eval",
-     "--raw",
-     ".#nixosConfigurations",
-     "--apply",
-     "x: builtins.concatStringsSep \",\" (builtins.attrNames x)"
+   [ "eval"
+   , "--raw"
+   , ".#nixosConfigurations"
+   , "--apply"
+   , "x: builtins.concatStringsSep \",\" (builtins.attrNames x)"
    ]
 
 printTagged :: String -> IO ()
@@ -54,14 +54,14 @@ getHostname = dropWhileEnd isSpace <$> readProcess "hostname" [] ""
 
 nhArgs :: String -> [String]
 nhArgs host =
-   [ "os",
-     "switch",
-     ".#nixosConfigurations." ++ host,
-     "--accept-flake-config",
-     "--bypass-root-check",
-     "--builders=null",
-     "--",
-     "--fallback"
+   [ "os"
+   , "switch"
+   , ".#nixosConfigurations." ++ host
+   , "--accept-flake-config"
+   , "--bypass-root-check"
+   , "--builders=null"
+   , "--"
+   , "--fallback"
    ]
 
 nhCommand :: IO (String, [String])
@@ -106,12 +106,12 @@ missingArgVal arg = "Required value for '" ++ arg ++ "' not provided!\n\n" ++ us
 invalidInput :: [String] -> String
 invalidInput input =
    unlines
-      [ "Invalid input from user:",
-        "",
-        unlines $ numberLines input,
-        "See correct usage below:",
-        "",
-        usage
+      [ "Invalid input from user:"
+      , ""
+      , unlines $ numberLines input
+      , "See correct usage below:"
+      , ""
+      , usage
       ]
 
 notImplemented :: String -> String
@@ -120,15 +120,15 @@ notImplemented cmd = unlines ["Command '" ++ cmd ++ "' not yet implemented!", ""
 usage :: String
 usage =
    unlines
-      [ "PlumJam's NixOS System Rebuilder",
-        "",
-        "Usage:",
-        purple "  rebuild " ++ blue "--local " ++ "             Rebuild the current host",
-        purple "  rebuild " ++ blue "--remote" ++ " [hostname]  Rebuild a remote host",
-        "",
-        "Arguments:",
-        blue "  --local (-l) " ++ "                Rebuild the current host",
-        blue "  --remote (-r)" ++ " [hostname]     Remote host to rebuild [optional]",
-        blue "  --list (-L)  " ++ "                List the available hosts",
-        blue "  --help (-h)  " ++ "                Print this help output"
+      [ "PlumJam's NixOS System Rebuilder"
+      , ""
+      , "Usage:"
+      , purple "  rebuild " ++ blue "--local " ++ "             Rebuild the current host"
+      , purple "  rebuild " ++ blue "--remote" ++ " [hostname]  Rebuild a remote host"
+      , ""
+      , "Arguments:"
+      , blue "  --local (-l) " ++ "                Rebuild the current host"
+      , blue "  --remote (-r)" ++ " [hostname]     Remote host to rebuild [optional]"
+      , blue "  --list (-L)  " ++ "                List the available hosts"
+      , blue "  --help (-h)  " ++ "                Print this help output"
       ]
