@@ -59,7 +59,7 @@ in
   })
   (mkPane {
     label = "opencode";
-    command = "opencode";
+    command = "[ -f .envrc ] && nix develop -c opencode || opencode";
     allowMany = true;
   })
   (mkPane {
