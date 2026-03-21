@@ -27,6 +27,7 @@ let
 
   radicleUserBase =
     {
+      inputs,
       lib,
       ...
     }:
@@ -42,7 +43,10 @@ let
           inherit (osConfig.networking) hostName;
         in
         {
-          packages = singleton pkgs.radicle-node;
+          packages = [
+            inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.rad-seed-helper
+            pkgs.radicle-node
+          ];
 
           files = {
             ".radicle/keys/radicle.pub".text = keys."${hostName}-jam-radicle";
