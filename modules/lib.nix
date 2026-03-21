@@ -8,13 +8,24 @@ let
       ...
     }:
     let
+      inherit (lib.trivial) readFile;
+      inherit (lib.strings)
+        splitString
+        hasPrefix
+        concatStringsSep
+        match
+        head
+        filter
+        ;
+      inherit (lib.lists) optionals;
       inherit (lib.options) mkOption;
+      inherit (lib.types) attrs;
       inherit (config.age) secrets;
       inherit (config.networking) hostName;
     in
     {
       options.myLib = lib.mkOption {
-        type = lib.types.attrs;
+        type = attrs;
         default = { };
         description = "Custom library functions";
       };
@@ -50,15 +61,37 @@ let
             inherit default;
           };
 
-        mkHaskellScript =
+        mkDirtyHaskellScript =
           name:
           {
             deps ? [ ],
             path,
+            ghcArgs ? [ ],
           }:
-          pkgs.writers.writeHaskell name {
-            libraries = map (d: pkgs.haskellPackages.${d}) deps;
-          } (builtins.readFile path);
+          let
+            source = readFile path;
+            lines = splitString "\n" source;
+            isShebang = line: hasPrefix "#!" line;
+            filteredLines = filter (line: !(isShebang line)) lines;
+            cleanSource = concatStringsSep "\n" filteredLines;
+            moduleLines = filter (line: hasPrefix "module " line) filteredLines;
+            moduleDecl = if moduleLines != [ ] then head moduleLines else null;
+            matchResult = if moduleDecl != null then match "module ([^ ]+).*" moduleDecl else null;
+            moduleName = if matchResult != null then head matchResult else null;
+            mainIsArg = optionals (moduleName != null && moduleName != "Main") [
+              "-main-is"
+              "${moduleName}.main"
+            ];
+            bin = pkgs.writers.writeHaskell name {
+              libraries = map (d: pkgs.haskellPackages.${d}) deps;
+              ghcArgs = mainIsArg ++ ghcArgs;
+            } cleanSource;
+          in
+          pkgs.runCommand name { } ''
+            mkdir -p $out/bin
+            cp ${bin} $out/bin/${name}
+            chmod +x $out/bin/${name}
+          '';
 
         # Create a .desktop file entry for app launchers.
         mkDesktopEntry =

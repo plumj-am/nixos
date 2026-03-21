@@ -8,17 +8,17 @@
     }:
     let
       inherit (lib.lists) singleton;
-      inherit (lib') mkDesktopEntry mkHaskellScript;
+      inherit (lib') mkDesktopEntry mkDirtyHaskellScript;
     in
     {
       environment.systemPackages = [
         pkgs.nh
         pkgs.nix-output-monitor
 
-        # (mkHaskellScript "rebuild-hs" {
-        #   path = ../Rebuild.hs;
-        #   deps = singleton "typed-process";
-        # })
+        (mkDirtyHaskellScript "rebuild-hs" {
+          path = ../Rebuild.hs;
+          deps = singleton "typed-process";
+        })
       ];
 
       hjem.extraModules = singleton (
