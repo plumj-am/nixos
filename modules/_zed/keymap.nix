@@ -49,10 +49,8 @@ in
     alt-s = "project_panel::ToggleFocus";
     alt-T = "workspace::ToggleBottomDock";
     alt-t = "terminal_panel::ToggleFocus";
-    alt-D = "workspace::ToggleBottomDock";
+    alt-D = "workspace::ToggleRightDock";
     alt-d = "debug_panel::ToggleFocus";
-    alt-A = "workspace::ToggleRightDock";
-    alt-a = "agent::ToggleFocus";
     ctrl-t = "task::Spawn";
     ctrl-T = "task::Rerun";
     "ctrl-g ctrl-g" = spawnTask "jjui";
@@ -62,20 +60,10 @@ in
     "space f" = spawnTask "find_file";
     "space /" = spawnTask "live_grep";
   })
-  (mkZedKeymap "AgentPanel" {
-    ctrl-h = "agent::OpenHistory";
-    ctrl-n = "agent::RejectOnce";
-    ctrl-y = "agent::Keep";
-    shift-tab = "agent::CycleModeSelector";
-    tab = "agent::CycleModeSelector";
-    alt-n = [
-      "agent::NewExternalAgentThread"
-      { agent.custom.name = "opencode"; }
-    ];
-  })
   (mkZedKeymap "VimControl && !menu" {
     ctrl-b = null;
     space = null;
+    alt-d = null;
     "space B" = "editor::BlameHover";
     "space b" = "tab_switcher::ToggleAll";
     D = "editor::SelectToEndOfLine";
