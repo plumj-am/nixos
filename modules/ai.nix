@@ -147,8 +147,6 @@ let
               build = {
                 mode = "primary";
                 model = "zai-coding-plan/glm-5";
-
-                permission.write."*" = "allow";
               };
 
               researcher = {
