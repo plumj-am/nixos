@@ -252,6 +252,7 @@ let
               ];
 
               revset-aliases = {
+                "current()" = "ancestors(reachable(@, mutable()), 2)";
                 "closest(to)" = "heads(::to & bookmarks())";
                 "closest_pushable(to)" =
                   "heads(::to & ~description(exact:\"\") & (~empty() | merges()) & ~private())";
@@ -268,7 +269,7 @@ let
 
               };
 
-              revsets.log = "ancestors(reachable(@, mutable()), 2)";
+              revsets.log = "present(@) | present(trunk()) | ancestors(remote_bookmarks().. | @.., 6)";
 
               template-aliases."in_branch(commit)" = # python
                 ''
