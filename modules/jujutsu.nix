@@ -36,7 +36,10 @@ let
 
       # TODO: Fix sub-menu selection bg colour (press "l" on revision to view files)
       jjuiConfig = {
-        preview.show_at_start = false;
+        preview = {
+          position = "bottom";
+          show_at_start = true;
+        };
 
         actions = singleton {
           name = "tug";
