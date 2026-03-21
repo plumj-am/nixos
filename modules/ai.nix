@@ -59,15 +59,8 @@ let
         "jj workspace list*"
         "jj workspace root*"
 
-        "fj actions tasks*"
-        "fj issue search*"
-        "fj issue view*"
-        "fj pr list*"
-        "fj repo view*"
-        "fj wiki contents*"
-        "fj wiki view*"
-
         "git branch --list"
+        "git branch --show-current"
         "git diff*"
         "git log*"
         "git status*"
@@ -77,6 +70,7 @@ let
         "cargo fmt*"
         "cargo nextest*"
         "cargo test*"
+        "cargo tree*"
 
         "curl http://localhost*"
         "curl -s http://localhost*"
@@ -88,6 +82,14 @@ let
         "curl -s -X PUT http://localhost*"
         "curl -X DELETE http://localhost*"
         "curl -s -X DELETE http://localhost*"
+
+        "fj actions tasks*"
+        "fj issue search*"
+        "fj issue view*"
+        "fj pr list*"
+        "fj repo view*"
+        "fj wiki contents*"
+        "fj wiki view*"
       ];
 
       opencodePackage = pkgs.symlinkJoin {
