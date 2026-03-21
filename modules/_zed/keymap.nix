@@ -54,6 +54,7 @@ in
     ctrl-t = "task::Spawn";
     ctrl-T = "task::Rerun";
 
+    "ctrl-s" = spawnTask "dired";
     "ctrl-g ctrl-g" = spawnTask "jjui";
     "ctrl-g ctrl-n" = spawnTask "nushell_pane";
     "ctrl-g ctrl-N" = spawnTask "nushell_float";

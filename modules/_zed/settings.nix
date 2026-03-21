@@ -137,7 +137,7 @@ with theme;
     default_width = 300;
     indent_size = 16;
     entry_spacing = "standard";
-    starts_open = true;
+    starts_open = false;
   };
 
   which_key = {

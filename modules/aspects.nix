@@ -11,6 +11,7 @@ let
     hjem
     jujutsu
     keys
+    lf
     lib
     locale
     netrc
@@ -43,6 +44,7 @@ let
     hjem
     jujutsu
     keys
+    lf
     lib
     nix-index
     nix-settings
