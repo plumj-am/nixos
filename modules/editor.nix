@@ -450,11 +450,6 @@ let
       inherit (config.age) secrets;
     in
     {
-      nix.settings = {
-        extra-substituters = singleton "https://zed.cachix.org";
-        extra-trusted-public-keys = singleton "zed.cachix.org-1:/pHQ6dpMsAZk2DiP4WCL0p9YDNKWj2Q5FL20bNmw1cU=";
-      };
-
       hjem.extraModules = singleton (
         { osConfig, ... }:
         {
