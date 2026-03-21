@@ -27,7 +27,7 @@ in
       website-dr-radka
       { hardware.facter.reportPath = ./facter/kiwi.json; }
       {
-        config = mkConfig inputs "kiwi" "x86_64-linux" "server" {
+        config = mkConfig inputs "kiwi" "x86_64-linux" {
           networking = {
             domain = "dr-radka.pl";
             firewall.allowedTCPPorts = [

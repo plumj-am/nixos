@@ -28,7 +28,7 @@ in
       users-extra
       { hardware.facter.reportPath = ./facter/yuzu.json; }
       {
-        config = mkConfig inputs "sloe" "x86_64-linux" "server" {
+        config = mkConfig inputs "sloe" "x86_64-linux" {
 
           nix-builder = {
             cores = 12;

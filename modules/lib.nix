@@ -2,7 +2,6 @@
 let
   commonModule =
     {
-      inputs,
       pkgs,
       lib,
       config,
@@ -190,7 +189,7 @@ let
 in
 {
   flake.mkConfig =
-    inputs: host: platform: type: rest:
+    inputs: host: platform: rest:
     let
       lib = inputs.os.lib;
       inherit (lib) mkMerge;
@@ -201,8 +200,6 @@ in
     in
     mkMerge [
       {
-        inherit type;
-
         nixpkgs.hostPlatform = platform;
 
         networking.hostName = host;

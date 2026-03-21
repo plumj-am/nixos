@@ -55,7 +55,7 @@ in
       zellij
       { hardware.facter.reportPath = ./facter/date.json; }
       {
-        config = mkConfig inputs "date" "x86_64-linux" "desktop" {
+        config = mkConfig inputs "date" "x86_64-linux" {
           diskConfig.swapSize = "18G";
 
           nix-builder = {

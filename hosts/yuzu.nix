@@ -61,7 +61,7 @@ in
       zellij
       { hardware.facter.reportPath = ./facter/yuzu.json; }
       {
-        config = mkConfig inputs "yuzu" "x86_64-linux" "desktop" {
+        config = mkConfig inputs "yuzu" "x86_64-linux" {
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFDLlddona4PlORWd+QpR/7F5H46/Dic9vV23/YSrZl0 root@yuzu";
           age.secrets = {
             nixStoreKey.rekeyFile = ../secrets/yuzu-nix-store-key.age;

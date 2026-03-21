@@ -41,7 +41,7 @@ in
       website-personal
       { hardware.facter.reportPath = ./facter/plum.json; }
       {
-        config = mkConfig inputs "plum" "x86_64-linux" "server" {
+        config = mkConfig inputs "plum" "x86_64-linux" {
           networking = {
             domain = "plumj.am";
             firewall.allowedTCPPorts = [

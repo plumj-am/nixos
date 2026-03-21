@@ -23,7 +23,7 @@ in
       rust
       sudo-extra-server
       {
-        config = mkConfig inputs "blackwell" "x86_64-linux" "server" {
+        config = mkConfig inputs "blackwell" "x86_64-linux" {
           # nix-builder = {
           #   cores = 2;
           #   speedFactor = 1;
