@@ -53,8 +53,11 @@ in
     alt-d = "debug_panel::ToggleFocus";
     ctrl-t = "task::Spawn";
     ctrl-T = "task::Rerun";
+
     "ctrl-g ctrl-g" = spawnTask "jjui";
-    "ctrl-g ctrl-n" = spawnTask "nushell";
+    "ctrl-g ctrl-n" = spawnTask "nushell_pane";
+    "ctrl-g ctrl-N" = spawnTask "nushell_float";
+    "ctrl-g ctrl-o" = spawnTask "opencode";
   })
   (mkZedKeymap "not_editing" {
     "space f" = spawnTask "find_file";

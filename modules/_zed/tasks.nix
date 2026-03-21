@@ -45,8 +45,16 @@ let
 in
 [
   (mkFloat {
-    label = "nushell";
+    label = "nushell_float";
     command = "nu";
+  })
+  (mkPane {
+    label = "nushell_pane";
+    command = "nu";
+  })
+  (mkPane {
+    label = "opencode";
+    command = "opencode";
   })
   (mkPane {
     label = "jjui";
