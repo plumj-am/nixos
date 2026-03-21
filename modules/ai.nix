@@ -8,8 +8,87 @@ let
     }:
     let
       inherit (lib.lists) singleton;
-      inherit (lib.meta) getExe getExe';
+      inherit (lib.attrsets) genAttrs;
+      inherit (lib.meta) getExe;
+      inherit (lib.trivial) const;
       inherit (config.age) secrets;
+
+      commands.allow = [
+        "ag*"
+        "bat*"
+        "cat*"
+        "fd*"
+        "find*"
+        "fzf*"
+        "grep*"
+        "head*"
+        "less*"
+        "ls*"
+        "rg*"
+        "sg*"
+        "tail*"
+        "tree*"
+
+        "jj bookmark list*"
+        "jj diff*"
+        "jj evolog*"
+        "jj file list*"
+        "jj file search*"
+        "jj file show*"
+        "jj git colocation status*"
+        "jj git remote list*"
+        "jj git root*"
+        "jj help*"
+        "jj interdiff*"
+        "jj log*"
+        "jj op diff*"
+        "jj op log*"
+        "jj op show*"
+        "jj operation diff*"
+        "jj operation log*"
+        "jj operation show*"
+        "jj resolve --list"
+        "jj root*"
+        "jj show*"
+        "jj sparse list*"
+        "jj st"
+        "jj status"
+        "jj tag list*"
+        "jj util config-schema"
+        "jj version"
+        "jj workspace list*"
+        "jj workspace root*"
+
+        "fj actions tasks*"
+        "fj issue search*"
+        "fj issue view*"
+        "fj pr list*"
+        "fj repo view*"
+        "fj wiki contents*"
+        "fj wiki view*"
+
+        "git branch --list"
+        "git diff*"
+        "git log*"
+        "git status*"
+
+        "cargo check*"
+        "cargo clippy*"
+        "cargo fmt*"
+        "cargo nextest*"
+        "cargo test*"
+
+        "curl http://localhost*"
+        "curl -s http://localhost*"
+        "curl -X GET http://localhost*"
+        "curl -s -X GET http://localhost*"
+        "curl -X POST http://localhost*"
+        "curl -s -X POST http://localhost*"
+        "curl -X PUT http://localhost*"
+        "curl -s -X PUT http://localhost*"
+        "curl -X DELETE http://localhost*"
+        "curl -s -X DELETE http://localhost*"
+      ];
 
       opencodePackage = pkgs.symlinkJoin {
         name = "opencode-wrapped";
@@ -40,13 +119,17 @@ let
             small_model = "zai-coding-plan/glm-4.7-flash";
 
             permission = {
-              list = "allow";
-              lsp = "allow";
+              "*" = "ask";
+              codesearch = "allow";
               glob = "allow";
               grep = "allow";
+              list = "allow";
+              lsp = "allow";
               question = "allow";
               read = "allow";
-              webfetch = "ask";
+              task = "allow";
+              todoread = "allow";
+              todowrite = "allow";
               websearch = "allow";
 
               "context7_*" = "allow";
@@ -54,6 +137,8 @@ let
               "web-reader_*" = "allow";
               "web-search-prime_*" = "allow";
               "nixos_*" = "allow";
+
+              bash = genAttrs commands.allow (const "allow");
             };
 
             agent = {
@@ -61,47 +146,17 @@ let
                 mode = "primary";
                 model = "zai-coding-plan/glm-5";
 
-                permission = {
-                  write."*" = "allow";
-                  bash."*" = "allow";
-                  read."*" = "allow";
-
-                  bash."curl*" = "ask";
-                  bash."git stash*" = "ask";
-
-                  read."*.env" = "deny";
-                  read."*.envrc" = "deny";
-                  bash."git reset*" = "deny";
-                  bash."git checkout*" = "deny";
-                  bash."git restore*" = "deny";
-                  bash."git switch*" = "deny";
-                  bash."git push*" = "deny";
-                  bash."git commit*" = "deny";
-                  bash."jj*" = "deny";
-                };
+                permission.write."*" = "allow";
               };
 
               researcher = {
                 mode = "primary";
                 model = "zai-coding-plan/glm-5";
                 description = "Read-only research primarily using the web";
-
-                tools = {
-                  read = true;
-                  bash = false;
-                  write = false;
-                  edit = false;
-                  list = true;
-                  glob = true;
-                  grep = true;
-                  webfetch = false;
-                  task = true;
-                  todowrite = true;
-                  todoread = true;
-                };
               };
 
               explore = {
+                mode = "subagent";
                 model = "zai-coding-plan/glm-4.7-flash";
               };
             };
@@ -210,14 +265,6 @@ let
                   "--"
                 ];
               };
-
-              playwriter = {
-                type = "local";
-                command = [
-                  "${getExe' pkgs.nodejs "npx"}"
-                  "playwriter@latest"
-                ];
-              };
             };
           };
         };
@@ -234,7 +281,7 @@ let
       inherit (lib.lists) singleton;
 
       opencodeDesktopPackage = pkgs.symlinkJoin {
-        name = "opencode-wrapped";
+        name = "opencode-desktop-wrapped";
         paths = singleton pkgs.opencode-desktop;
         buildInputs = singleton pkgs.makeWrapper;
         postBuild = # sh
