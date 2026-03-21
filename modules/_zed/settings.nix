@@ -78,7 +78,7 @@ with theme;
 
   active_pane_modifiers = {
     inactive_opacity = 0.85;
-    border_size = border.normal;
+    border_size = border.small;
   };
 
   terminal.shell.program = "nu";
@@ -175,14 +175,18 @@ with theme;
     light = themes.zed.light;
   };
 
-  theme_overrides = genAttrs [ "Gruvbox Light Hard" "Gruvbox Dark Hard" ] (const {
-    syntax.comment = {
-      font_style = "italic";
-      doc = {
+  theme_overrides =
+    with theme.withHash;
+    (genAttrs [ "Gruvbox Light Hard" "Gruvbox Dark Hard" ] (const {
+      "border.focused" = base0B; # This doesn't work for some reason.
+
+      syntax.comment = {
         font_style = "italic";
+        doc = {
+          font_style = "italic";
+        };
       };
-    };
-  });
+    }));
 
   auto_install_extensions = genAttrs [
     "astro"
