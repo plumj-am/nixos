@@ -10,6 +10,12 @@ let
   ];
 in
 [
+
+  # Disable default project_panel opener.
+  (mkZedKeymap "Workspace || AgentPanel" {
+    ctrl-E = null;
+  })
+
   {
     bindings = {
       ctrl-W = null;
@@ -26,10 +32,14 @@ in
       alt-j = "workspace::ActivatePaneDown";
       alt-k = "workspace::ActivatePaneUp";
       alt-l = "workspace::ActivatePaneRight";
-      alt-H = "vim::ResizePaneLeft";
-      alt-J = "vim::ResizePaneDown";
-      alt-K = "vim::ResizePaneUp";
-      alt-L = "vim::ResizePaneRight";
+      ctrl-alt-h = "vim::ResizePaneLeft";
+      ctrl-alt-j = "vim::ResizePaneDown";
+      ctrl-alt-k = "vim::ResizePaneUp";
+      ctrl-alt-l = "vim::ResizePaneRight";
+      alt-H = "pane::SplitLeft";
+      alt-J = "pane::SplitDown";
+      alt-K = "pane::SplitUp";
+      alt-L = "pane::SplitRight";
     };
   }
   (mkZedKeymap "Dock && !Terminal" {
@@ -75,8 +85,6 @@ in
     ctrl-k = "editor::MoveLineUp";
     enter = "vim::PushSneak";
     shift-enter = "vim::PushSneakBackward";
-  })
-  (mkZedKeymap "Pane" {
   })
   (mkZedKeymap "BufferSearchBar" {
     "ctrl-w" = [
