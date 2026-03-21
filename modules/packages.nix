@@ -16,7 +16,6 @@ let
     // mkHjemPackages [
       pkgs.ast-grep
       pkgs.curl
-      pkgs.forgejo-cli
       pkgs.hyperfine
       pkgs.moreutils
       pkgs.nodejs

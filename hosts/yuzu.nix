@@ -23,6 +23,7 @@ in
       disks-normal
       disks-extra-zram-swap
       editor-extra
+      forgejo-cli
       games
       gammastep
       graphics

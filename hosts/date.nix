@@ -24,6 +24,7 @@ in
       disks-extra-zram-swap
       editor-extra
       forgejo-action-runner
+      forgejo-cli
       games
       gammastep
       graphics
