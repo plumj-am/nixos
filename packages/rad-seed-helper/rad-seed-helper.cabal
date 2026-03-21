@@ -1,0 +1,30 @@
+cabal-version:   3.0
+name:            rad-seed-helper
+version:         0.0.0.1
+synopsis:        "Radicle seed helper"
+description:     ""
+license:         MIT
+author:          PlumJam
+maintainer:      git@plumj.am
+copyright:       ""
+build-type:      Simple
+extra-doc-files: README.md
+
+-- extra-source-files:
+
+common warnings
+    ghc-options: -Wall
+
+executable rad-seed-helper
+    import:           warnings
+    default-language: GHC2024
+    hs-source-dirs:   .
+    main-is:          Main.hs
+    ghc-options:      -threaded
+
+    -- other-modules:
+    build-depends:
+        , base           ^>=4.20.2.0
+        , directory      ^>=1.3.8.5
+        , process        ^>=1.6.26.1
+        , typed-process  ^>=0.2.13.0
