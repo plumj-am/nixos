@@ -4,7 +4,8 @@ module Rebuild where
 
 import           Data.Char            (isSpace)
 import           Data.List            (dropWhileEnd)
-import           System.Directory     (findExecutable)
+import           System.Directory     (findExecutable, getHomeDirectory,
+                                       setCurrentDirectory)
 import           System.Environment   (getArgs)
 import           System.Exit          (ExitCode (ExitFailure, ExitSuccess), die,
                                        exitWith)
@@ -102,7 +103,9 @@ handleExitCode code@(ExitFailure _) host = do
 main :: IO ()
 main = do
    args <- getArgs
-   case args of
+   (dir, restArgs) <- parsePathArgs args
+   setCurrentDirectory dir
+   case restArgs of
       [x]
          | isLocal x -> rebuild =<< getHostname
          | isRemote x -> die $ missingArgVal "--remote [hostname]"
@@ -110,11 +113,20 @@ main = do
          | isHelp x -> putStr usage
       [x, host] | isRemote x -> die $ notImplemented "--remote"
       _ -> die $ invalidInput args
-  where
-   isLocal s = s `elem` ["--local", "-local", "-l"]
-   isRemote s = s `elem` ["--remote", "-remote", "-r"]
-   isList s = s `elem` ["--list", "-list", "-L"]
-   isHelp s = s `elem` ["--help", "-help", "-h"]
+
+isLocal, isRemote, isList, isHelp, isPath :: String -> Bool
+isLocal s = s `elem` ["--local", "-local", "-l"]
+isRemote s = s `elem` ["--remote", "-remote", "-r"]
+isList s = s `elem` ["--list", "-list", "-L"]
+isHelp s = s `elem` ["--help", "-help", "-h"]
+isPath s = s `elem` ["--path", "-path", "-p"]
+
+parsePathArgs :: [String] -> IO (String, [String])
+parsePathArgs args =
+   case break isPath args of
+      (before, []) -> (\home -> (home <> "/nixos", before)) <$> getHomeDirectory
+      (before, _ : dir : after) -> pure (dir, before ++ after)
+      (before, _) -> die $ invalidInput args
 
 missingArgVal :: String -> String
 missingArgVal arg = "Required value for '" ++ arg ++ "' not provided!\n\n" ++ usage
@@ -133,18 +145,21 @@ invalidInput input =
 notImplemented :: String -> String
 notImplemented cmd = unlines ["Command '" ++ cmd ++ "' not yet implemented!", "", usage]
 
+{- FOURMOLU_DISABLE -}
 usage :: String
 usage =
    unlines
       [ "PlumJam's NixOS System Rebuilder"
       , ""
       , "Usage:"
-      , purple "  rebuild " ++ blue "--local " ++ "             Rebuild the current host"
-      , purple "  rebuild " ++ blue "--remote" ++ " [hostname]  Rebuild a remote host"
+      , purple "  rebuild " ++ blue "--local " ++ "                           Rebuild the current host"
+      , purple "  rebuild " ++ blue "--remote" ++ " [hostname]                Rebuild a remote host"
+      , purple "  rebuild " ++ blue "--remote" ++ " [hostname] " ++ blue "--path" ++ " [path]  Rebuild a remote host with a custom path"
       , ""
       , "Arguments:"
-      , blue "  --local (-l) " ++ "                Rebuild the current host"
-      , blue "  --remote (-r)" ++ " [hostname]     Remote host to rebuild [optional]"
-      , blue "  --list (-L)  " ++ "                List the available hosts"
-      , blue "  --help (-h)  " ++ "                Print this help output"
+      , blue "  --path (-p)" ++ " [path]        Absolute or relative path to your NixOS config directory (default: $HOME/nixos)"
+      , blue "  --local (-l)" ++ "              Rebuild the current host"
+      , blue "  --remote (-r)" ++ " [hostname]  Remote host to rebuild"
+      , blue "  --list (-L)" ++ "               List the available hosts"
+      , blue "  --help (-h)" ++ "               Print this help output"
       ]
