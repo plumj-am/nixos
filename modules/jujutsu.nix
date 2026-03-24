@@ -245,9 +245,8 @@ let
               ];
               aliases.lg = [
                 "log"
-                "--summary"
-                "--no-pager"
-                "--limit=4"
+                "--revisions"
+                "current()"
               ];
               aliases.el = [ "evolog" ];
               aliases.ol = [
