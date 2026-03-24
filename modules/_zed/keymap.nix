@@ -86,11 +86,17 @@ in
     enter = "vim::PushSneak";
     shift-enter = "vim::PushSneakBackward";
   })
+  (mkZedKeymap "TabSwitcher" {
+    ctrl-x = "tab_switcher::CloseSelectedItem";
+  })
   (mkZedKeymap "BufferSearchBar" {
     "ctrl-w" = [
       "editor::DeleteToPreviousWordStart"
       { ignore_newlines = false; }
     ];
+  })
+  (mkZedKeymap "Editor && (mode == full)" {
+    alt-enter = null; # editor::OpenSelectionsInMultibuffer
   })
   # (mkZedKeymap "vim_mode == helix_normal || vim_mode == helix_select" {
   #   "space B" = "editor::BlameHover";
@@ -109,6 +115,9 @@ in
     alt-n = "workspace::NewTerminal";
     alt-u = "terminal::ScrollHalfPageUp";
     alt-d = "terminal::ScrollHalfPageDown";
+  })
+  (mkZedKeymap "!Terminal" {
+    ctrl-C = null; # collab_panel::ToggleFocus
   })
   (mkZedKeymap "ProjectPanel && not_editing" {
     "/" = null;
