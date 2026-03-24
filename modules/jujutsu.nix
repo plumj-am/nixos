@@ -56,6 +56,7 @@ let
                 "$left"
                 "$right"
               ];
+              ui.merge-editor = "mergiraf";
               ui.editor = osConfig.environment.variables.EDITOR;
               ui.graph.style = "curved";
               ui.movement.edit = true;
