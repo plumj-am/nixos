@@ -52,6 +52,9 @@ listHosts = availableHosts >>= putStrLn . unlines . numberLines
 getHostname :: IO String
 getHostname = dropWhileEnd isSpace <$> readProcess "hostname" [] ""
 
+nixExperimentalFeatures :: String
+nixExperimentalFeatures = "flakes nix-command cgroups pipe-operators"
+
 nhArgs :: String -> [String]
 nhArgs host =
    [ "os"
@@ -62,12 +65,25 @@ nhArgs host =
    , "--builders=null"
    , "--"
    , "--fallback"
+   , "--option"
+   , "experimental-features"
+   , nixExperimentalFeatures
    ]
 
 nhCommand :: IO (String, [String])
 nhCommand = maybe fallback toNh <$> findExecutable "nh"
   where
-   fallback = ("sudo", ["nix", "run", "nixpkgs#nh", "--"])
+   fallback =
+      ( "sudo"
+      ,
+         [ "nix"
+         , "--extra-experimental-features"
+         , nixExperimentalFeatures
+         , "run"
+         , "nixpkgs#nh"
+         , "--"
+         ]
+      )
    toNh path = ("sudo", [path])
 
 rebuild :: String -> IO ()
