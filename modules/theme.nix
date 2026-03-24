@@ -127,9 +127,17 @@ let
           # mono.family = "Iosevka";
           # mono.package = pkgs.nerd-fonts.iosevka;
 
-          mono.name = "Maple Mono NF";
-          mono.family = "Maple Mono";
-          mono.package = pkgs.maple-mono.NF;
+          # mono.name = "Maple Mono NF";
+          # mono.family = "Maple Mono";
+          # mono.package = pkgs.maple-mono.NF;
+
+          mono.name = "Hasklug Nerd Font Mono";
+          mono.family = "Hasklug";
+          mono.package = pkgs.nerd-fonts.hasklug;
+
+          # mono.name = "Fira Code Nerd Font Mono";
+          # mono.family = "Fira Code";
+          # mono.package = pkgs.nerd-fonts.fira-code;
 
           sans.name = "Lexend";
           sans.family = "Lexend";
