@@ -63,7 +63,10 @@ let
 
               snapshot.max-new-file-size = "10MiB";
 
-              lazyjj.highlight-color = "#${theme.colors.base02}";
+              gg = {
+                default-mode = "web";
+                web.default-port = 9999;
+              };
 
               git = {
                 sign-on-push = true; # Sign in bulk on push.
