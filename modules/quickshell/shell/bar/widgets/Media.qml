@@ -23,6 +23,8 @@ Item {
             font.pixelSize: 12
             color: Theme.foreground
             visible: Mpris.hasPlayer
+            Layout.alignment: Qt.AlignVCenter
+            verticalAlignment: Text.AlignVCenter
         }
 
         Text {
@@ -33,6 +35,7 @@ Item {
             color: Theme.foreground
             elide: Text.ElideRight
             visible: Mpris.hasPlayer
+            Layout.alignment: Qt.AlignVCenter
         }
 
         Text {
@@ -42,6 +45,7 @@ Item {
             color: Theme.textMuted
             elide: Text.ElideRight
             visible: Mpris.hasPlayer && Mpris.trackArtist
+            Layout.alignment: Qt.AlignVCenter
         }
     }
 

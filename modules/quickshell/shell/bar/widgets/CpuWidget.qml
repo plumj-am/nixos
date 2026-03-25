@@ -3,7 +3,6 @@ import QtQuick.Layouts
 import Quickshell
 import "../../common"
 import "../../common/widgets"
-import "../../common/icons"
 import "../../services"
 
 Item {
@@ -12,24 +11,31 @@ Item {
     implicitWidth: row.width + 8
     implicitHeight: 24
 
-    Row {
+    RowLayout {
         id: row
         spacing: 4
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
+        height: 20
 
-        CPUIcon {
-            visible: true
+        Text {
+            text: "\uf2db"
+            font.family: "Hasklug Nerd Font Mono"
+            font.pixelSize: 16
             color: Theme.foreground
-            scale: 14
+            Layout.alignment: Qt.AlignVCenter
+            Layout.fillHeight: true
+            verticalAlignment: Text.AlignVCenter
         }
 
         Text {
-            anchors.verticalCenter: parent.verticalCenter
             text: (CPU.overallUsage >= 0 ? Math.round(CPU.overallUsage * 100) : 0) + "%"
             font.family: Config.data.theme.fontMono.family
             font.pixelSize: Config.data.theme.fontMono.size
             color: Theme.foreground
+            Layout.alignment: Qt.AlignVCenter
+            Layout.fillHeight: true
+            verticalAlignment: Text.AlignVCenter
         }
     }
 

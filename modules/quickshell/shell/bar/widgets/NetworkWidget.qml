@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Layouts
 import "../../common"
 import "../../common/widgets"
-import "../../common/icons"
 import "../../services"
 
 Item {
@@ -11,39 +10,56 @@ Item {
     implicitWidth: 60
     implicitHeight: 24
 
-    Row {
+    RowLayout {
         id: row
         spacing: 4
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
+        height: 20
 
-        NetworkWiredIcon {
+        Text {
             visible: Network.networkType === Types.networkWired
+            text: "\uf0ac"
+            font.family: "Hasklug Nerd Font Mono"
+            font.pixelSize: 16
             color: Theme.foreground
-            scale: 14
-        }
-
-        NetworkWirelessIcon {
-            visible: Network.networkType === Types.networkWireless
-            color: Theme.foreground
-            scale: 14
-            bars: 3
-        }
-
-        NetworkVirtualIcon {
-            visible: Network.networkType === Types.networkVirtual
-            color: Theme.foreground
-            scale: 14
+            Layout.alignment: Qt.AlignVCenter
+            Layout.fillHeight: true
+            verticalAlignment: Text.AlignVCenter
         }
 
         Text {
-            anchors.verticalCenter: parent.verticalCenter
+            visible: Network.networkType === Types.networkWireless
+            text: "\uf1eb"
+            font.family: "Hasklug Nerd Font Mono"
+            font.pixelSize: 16
+            color: Theme.foreground
+            Layout.alignment: Qt.AlignVCenter
+            Layout.fillHeight: true
+            verticalAlignment: Text.AlignVCenter
+        }
+
+        Text {
+            visible: Network.networkType === Types.networkVirtual
+            text: "\uf023"
+            font.family: "Hasklug Nerd Font Mono"
+            font.pixelSize: 16
+            color: Theme.foreground
+            Layout.alignment: Qt.AlignVCenter
+            Layout.fillHeight: true
+            verticalAlignment: Text.AlignVCenter
+        }
+
+        Text {
             width: 36
             text: formatRate(Network.rateDown)
             font.family: Config.data.theme.fontMono.family
             font.pixelSize: Config.data.theme.fontMono.size
             color: Theme.foreground
             horizontalAlignment: Text.AlignLeft
+            Layout.alignment: Qt.AlignVCenter
+            Layout.fillHeight: true
+            verticalAlignment: Text.AlignVCenter
         }
     }
 

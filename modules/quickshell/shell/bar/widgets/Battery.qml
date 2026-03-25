@@ -14,7 +14,7 @@ Item {
     implicitWidth: row.width + 8
     implicitHeight: 24
 
-    Row {
+    RowLayout {
         id: row
         spacing: 4
         anchors.verticalCenter: parent.verticalCenter
@@ -24,15 +24,16 @@ Item {
             id: icon
             size: 20
             iconColor: Theme.foreground
+            Layout.alignment: Qt.AlignVCenter
         }
 
         Text {
             visible: Config.data.battery?.showPercentage ?? true
-            anchors.verticalCenter: parent.verticalCenter
             text: Math.round(Battery.percentage * 100) + "%"
             font.family: Config.data.theme.fontMono.family
             font.pixelSize: Config.data.theme.fontMono.size
             color: Battery.isCritical ? Theme.error : Theme.foreground
+            Layout.alignment: Qt.AlignVCenter
         }
     }
 

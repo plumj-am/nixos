@@ -43,8 +43,8 @@ PanelWindow {
 
         RowLayout {
             anchors.fill: parent
-            anchors.leftMargin: 8
-            anchors.rightMargin: 8
+            anchors.leftMargin: 16
+            anchors.rightMargin: 16
             spacing: 8
 
             FocusedWindow {
@@ -62,31 +62,36 @@ PanelWindow {
             Item { Layout.fillWidth: true }
 
             Tray {
-                Layout.preferredWidth: 80
                 Layout.alignment: Qt.AlignVCenter
             }
             Privacy {
-                Layout.preferredWidth: 24
+                Layout.alignment: Qt.AlignVCenter
+            }
+            Text {
+                text: "|"
+                color: Theme.textMuted
+                font.pixelSize: 14
                 Layout.alignment: Qt.AlignVCenter
             }
             CpuWidget {
-                Layout.preferredWidth: 52
                 Layout.alignment: Qt.AlignVCenter
             }
             RamWidget {
-                Layout.preferredWidth: 52
                 Layout.alignment: Qt.AlignVCenter
             }
             NetworkWidget {
-                Layout.preferredWidth: 60
                 Layout.alignment: Qt.AlignVCenter
             }
             Battery {
-                Layout.preferredWidth: 52
+                Layout.alignment: Qt.AlignVCenter
+            }
+            Text {
+                text: "|"
+                color: Theme.textMuted
+                font.pixelSize: 14
                 Layout.alignment: Qt.AlignVCenter
             }
             Clock {
-                Layout.preferredWidth: 130
                 Layout.alignment: Qt.AlignVCenter
             }
         }
