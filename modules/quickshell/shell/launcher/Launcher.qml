@@ -15,13 +15,13 @@ PanelWindow {
     property int selectedIndex: 0
     property var filteredApps: []
     property var allApps: []
+    property var screen: null
 
     visible: isOpen
     color: "transparent"
 
     anchors {
         top: true
-        bottom: true
         left: true
         right: true
     }
@@ -31,6 +31,7 @@ PanelWindow {
     WlrLayershell.layer: WlrLayer.Overlay
     exclusionMode: ExclusionMode.Ignore
 
+    readonly property int barHeight: 28
     readonly property int launcherWidth: 500
     readonly property int launcherHeight: 400
     readonly property int itemHeight: 48
@@ -108,7 +109,7 @@ PanelWindow {
 
     Rectangle {
         anchors.fill: parent
-        color: Qt.rgba(0, 0, 0, 0.5)
+        color: Qt.rgba(0, 0, 0, 0.4)
 
         MouseArea {
             anchors.fill: parent
@@ -117,13 +118,32 @@ PanelWindow {
 
         Rectangle {
             id: launcherBox
-            anchors.centerIn: parent
-            width: root.launcherWidth
-            height: Math.min(root.launcherHeight, contentColumn.height + 20)
+            anchors.horizontalCenter: parent.horizontalCenter
+            y: barHeight
+            width: launcherWidth
+            height: Math.min(launcherHeight, contentColumn.height + 20)
             color: Common.Theme.background
             radius: Common.Theme.radius.normal
             border.color: Common.Theme.outline
             border.width: 1
+
+            Rectangle {
+                id: curveJoin
+                anchors.horizontalCenter: parent.horizontalCenter
+                y: -height + 2
+                width: launcherWidth + 20
+                height: barHeight
+                color: Common.Theme.background
+                radius: Common.Theme.radius.normal
+
+                Rectangle {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.bottom: parent.bottom
+                    width: launcherWidth - 20
+                    height: 2
+                    color: Common.Theme.background
+                }
+            }
 
             ColumnLayout {
                 id: contentColumn
