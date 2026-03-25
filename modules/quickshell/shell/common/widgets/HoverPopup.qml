@@ -90,15 +90,6 @@ Item {
                 implicitHeight: contentLoader.implicitHeight + 24
                 y: chevron.height
 
-                layer.enabled: true
-                layer.effect: MultiEffect {
-                    shadowEnabled: true
-                    shadowVerticalOffset: 5
-                    shadowHorizontalOffset: 0
-                    blurMax: 20
-                    shadowColor: "#60000000"
-                }
-
                 Loader {
                     id: contentLoader
                     anchors.centerIn: parent

@@ -11,7 +11,7 @@ PanelWindow {
     id: root
 
     property bool isTop: true
-    property int barSize: 32
+    property int barSize: 28
     readonly property color barColor: Theme.background
     readonly property color textColor: Theme.text
     readonly property color outlineColor: Theme.outline
@@ -33,13 +33,6 @@ PanelWindow {
         id: barContent
         anchors.fill: parent
         color: barColor
-        layer.enabled: true
-        layer.effect: MultiEffect {
-            shadowEnabled: true
-            shadowVerticalOffset: root.isTop ? 4 : -4
-            shadowBlur: 0.5
-            shadowColor: "#90000000"
-        }
 
         RowLayout {
             anchors.fill: parent
