@@ -147,7 +147,7 @@ let
               }
 
               layer-rule {
-                match namespace=r#"ashell|notifications|launcher"#
+                match namespace=r#"notifications|launcher"#
                 opacity 1.0
               }
 
@@ -352,20 +352,15 @@ let
                 Mod+D { spawn "todo-scratchpad"; }
                 Mod+S { spawn "random-scratchpad"; }
                 // Mod+C { spawn-sh "cliphist list | tofi --prompt-text '[cliphist]' | cliphist decode | wl-copy"; }
-                // Needs ashell v0.8
-                // Mod+B { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && notify-send bar_toggle && pkill -USR1 ashell"; }
                 Mod+N { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && notify-send hidden_toggle && makoctl mode -t mute && makoctl mode -t do-not-disturb"; }
                 Mod+M { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && makoctl mode -t mute && notify-send mute_toggle"; }
-                // Needs ashell v0.8
-                // Mod+Z { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && notify-send zen_toggle && pkill -USR1 ashell && makoctl mode -t mute && makoctl mode -t do-not-disturb"; }
               }
 
-              // spawn-at-startup "quickshell" // Not using yet.
+              spawn-at-startup "quickshell --path /home/jam/nixos/modules/quickshell/shell"
               spawn-at-startup "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
               spawn-at-startup "swww-daemon"
               spawn-at-startup "gammastep-indicator"
               // spawn-at-startup "mako" // Started by NixOS.
-              spawn-sh-at-startup "WGPU_BACKEND=gl ashell"
             '';
         }
       );

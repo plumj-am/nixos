@@ -13,7 +13,6 @@ in
       ai
       ai-extra
       app-launcher
-      ashell
       audio
       boot-systemd
       desktop-gui
