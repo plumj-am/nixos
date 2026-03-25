@@ -47,7 +47,7 @@ let
               signing.behavior = "own";
 
               ui.conflict-marker-style = "snapshot";
-              ui.default-command = "lg";
+              ui.default-command = "log";
               ui.diff-editor = ":builtin";
               ui.diff-formatter = [
                 "difft"
@@ -245,6 +245,7 @@ let
               ];
               aliases.lg = [
                 "log"
+                "--summary"
                 "--revisions"
                 "current()"
               ];
