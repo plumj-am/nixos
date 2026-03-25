@@ -8,7 +8,7 @@ import "../../services"
 Item {
     id: root
 
-    implicitWidth: row.width + 8
+    implicitWidth: 60
     implicitHeight: 24
 
     Row {
@@ -38,10 +38,12 @@ Item {
 
         Text {
             anchors.verticalCenter: parent.verticalCenter
+            width: 36
             text: formatRate(Network.rateDown)
             font.family: Config.data.theme.fontMono.family
             font.pixelSize: Config.data.theme.fontMono.size
             color: Theme.foreground
+            horizontalAlignment: Text.AlignLeft
         }
     }
 

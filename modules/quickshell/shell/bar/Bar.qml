@@ -43,38 +43,52 @@ PanelWindow {
 
         RowLayout {
             anchors.fill: parent
-            anchors.leftMargin: 4
-            anchors.rightMargin: 4
-            spacing: 4
+            anchors.leftMargin: 8
+            anchors.rightMargin: 8
+            spacing: 8
 
-            Item { Layout.preferredWidth: 4 }
-            
             FocusedWindow {
                 Layout.fillWidth: true
                 Layout.maximumWidth: 400
+                Layout.alignment: Qt.AlignVCenter
             }
 
             Item { Layout.fillWidth: true }
 
-            Row {
-                spacing: 6
-                Media {}
+            Media {
+                Layout.alignment: Qt.AlignVCenter
             }
 
             Item { Layout.fillWidth: true }
 
-            Row {
-                spacing: 6
-                Tray {}
-                Privacy { Layout.preferredWidth: 24 }
-                CpuWidget { Layout.preferredWidth: 48 }
-                RamWidget { Layout.preferredWidth: 48 }
-                NetworkWidget { Layout.preferredWidth: 48 }
-                Battery { Layout.preferredWidth: 48 }
-                Clock { Layout.preferredWidth: 120 }
+            Tray {
+                Layout.preferredWidth: 80
+                Layout.alignment: Qt.AlignVCenter
             }
-
-            Item { Layout.preferredWidth: 4 }
-        }
+            Privacy {
+                Layout.preferredWidth: 24
+                Layout.alignment: Qt.AlignVCenter
+            }
+            CpuWidget {
+                Layout.preferredWidth: 52
+                Layout.alignment: Qt.AlignVCenter
+            }
+            RamWidget {
+                Layout.preferredWidth: 52
+                Layout.alignment: Qt.AlignVCenter
+            }
+            NetworkWidget {
+                Layout.preferredWidth: 60
+                Layout.alignment: Qt.AlignVCenter
+            }
+            Battery {
+                Layout.preferredWidth: 52
+                Layout.alignment: Qt.AlignVCenter
+            }
+            Clock {
+                Layout.preferredWidth: 130
+                Layout.alignment: Qt.AlignVCenter
+            }
         }
     }
+}
