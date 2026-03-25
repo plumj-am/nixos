@@ -68,17 +68,17 @@
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs-lib.follows = "os";
     };
-    # qml-niri = {
-    #   url = "github:imiric/qml-niri/main";
-    #   inputs = {
-    #     nixpkgs.follows = "os";
-    #     quickshell.follows = "quickshell";
-    #   };
-    # };
-    # quickshell = {
-    #   url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
-    #   inputs.nixpkgs.follows = "os";
-    # };
+    qml-niri = {
+      url = "github:imiric/qml-niri/main";
+      inputs = {
+        nixpkgs.follows = "os";
+        quickshell.follows = "quickshell";
+      };
+    };
+    quickshell = {
+      url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
+      inputs.nixpkgs.follows = "os";
+    };
     run0-sudo-shim = {
       url = "github:plumj-am/run0-sudo-shim";
       inputs.nixpkgs.follows = "os";

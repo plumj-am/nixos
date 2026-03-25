@@ -1,0 +1,263 @@
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import Quickshell
+import Quickshell.Wayland
+import Quickshell.Widgets
+import "../common" as Common
+import "../services" as Services
+
+PanelWindow {
+    id: root
+
+    property bool isOpen: false
+    property string searchText: ""
+    property int selectedIndex: 0
+    property var filteredApps: []
+    property var allApps: []
+
+    visible: isOpen
+    color: "transparent"
+
+    screen: Quickshell.focusedScreen
+
+    anchors {
+        top: true
+        bottom: true
+        left: true
+        right: true
+    }
+
+    WlrLayershell.namespace: "quickshell-launcher"
+    WlrLayershell.keyboardFocus: isOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+    WlrLayershell.layer: WlrLayer.Overlay
+    exclusionMode: ExclusionMode.Ignore
+
+    readonly property int launcherWidth: 500
+    readonly property int launcherHeight: 400
+    readonly property int itemHeight: 48
+    readonly property int maxVisibleItems: 8
+
+    onIsOpenChanged: {
+        if (isOpen) {
+            searchText = ""
+            selectedIndex = 0
+            searchField.forceActiveFocus()
+            loadApps()
+        }
+    }
+
+    function loadApps() {
+        var apps = []
+        var entries = DesktopEntries.applications.values
+        for (var i = 0; i < entries.length; i++) {
+            var app = entries[i]
+            if (!app.noDisplay && !app.hidden) {
+                apps.push({
+                    name: app.name || "Unknown",
+                    description: app.genericName || app.comment || "",
+                    icon: app.icon || "application-x-executable",
+                    command: app.command || [],
+                    app: app
+                })
+            }
+        }
+        apps.sort(function(a, b) {
+            return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+        })
+        allApps = apps
+        filterApps()
+    }
+
+    function filterApps() {
+        if (!searchText || searchText.trim() === "") {
+            filteredApps = allApps.slice(0, 50)
+        } else {
+            var query = searchText.toLowerCase()
+            var results = []
+            for (var i = 0; i < allApps.length; i++) {
+                var app = allApps[i]
+                var name = (app.name || "").toLowerCase()
+                var desc = (app.description || "").toLowerCase()
+                if (name.indexOf(query) !== -1 || desc.indexOf(query) !== -1) {
+                    results.push(app)
+                }
+            }
+            filteredApps = results.slice(0, 50)
+        }
+        selectedIndex = 0
+    }
+
+    onSearchTextChanged: filterApps()
+
+    function launchSelected() {
+        if (filteredApps.length > 0 && filteredApps[selectedIndex]) {
+            var app = filteredApps[selectedIndex].app
+            if (app.execute) {
+                app.execute()
+            } else if (app.command && app.command.length > 0) {
+                Qt.callLater(function() {
+                    Quickshell.execDetached(app.command)
+                })
+            }
+            isOpen = false
+        }
+    }
+
+    function toggle() {
+        isOpen = !isOpen
+    }
+
+    Rectangle {
+        anchors.fill: parent
+        color: Qt.rgba(0, 0, 0, 0.5)
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: root.isOpen = false
+        }
+
+        Rectangle {
+            id: launcherBox
+            anchors.centerIn: parent
+            width: root.launcherWidth
+            height: Math.min(root.launcherHeight, contentColumn.height + 20)
+            color: Common.Theme.background
+            radius: Common.Theme.radius.normal
+            border.color: Common.Theme.outline
+            border.width: 1
+
+            ColumnLayout {
+                id: contentColumn
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.margins: 10
+                spacing: 10
+
+                TextField {
+                    id: searchField
+                    Layout.fillWidth: true
+                    placeholderText: "Search applications..."
+                    text: root.searchText
+                    onTextChanged: root.searchText = text
+                    color: Common.Theme.text
+                    placeholderTextColor: Common.Theme.textMuted
+                    font.family: Common.Theme.font.sans.name
+                    font.pixelSize: 14
+                    background: Rectangle {
+                        color: Common.Theme.surface
+                        radius: Common.Theme.radius.small
+                        border.color: searchField.activeFocus ? Common.Theme.accent : Common.Theme.outline
+                    }
+
+                    Keys.onEscapePressed: root.isOpen = false
+                    Keys.onReturnPressed: root.launchSelected()
+                    Keys.onEnterPressed: root.launchSelected()
+                    Keys.onUpPressed: {
+                        if (root.selectedIndex > 0) {
+                            root.selectedIndex--
+                        }
+                    }
+                    Keys.onDownPressed: {
+                        if (root.selectedIndex < root.filteredApps.length - 1) {
+                            root.selectedIndex++
+                        }
+                    }
+                }
+
+                ListView {
+                    id: appList
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: Math.min(
+                        root.filteredApps.length * root.itemHeight,
+                        root.maxVisibleItems * root.itemHeight
+                    )
+                    model: root.filteredApps
+                    clip: true
+                    currentIndex: root.selectedIndex
+                    onCurrentIndexChanged: {
+                        if (currentIndex >= 0) {
+                            positionViewAtIndex(currentIndex, ListView.Contain)
+                        }
+                    }
+
+                    delegate: Rectangle {
+                        width: appList.width
+                        height: root.itemHeight
+                        color: index === root.selectedIndex ? Common.Theme.accent : "transparent"
+                        radius: Common.Theme.radius.small
+
+                        property bool isHovered: mouseArea.containsMouse
+
+                        onIsHoveredChanged: {
+                            if (isHovered) {
+                                root.selectedIndex = index
+                            }
+                        }
+
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.leftMargin: 8
+                            anchors.rightMargin: 8
+                            spacing: 10
+
+                            IconImage {
+                                source: modelData.icon ? ThemeIcons.iconFromName(modelData.icon, "application-x-executable") : ""
+                                Layout.preferredWidth: 32
+                                Layout.preferredHeight: 32
+                                asynchronous: true
+                            }
+
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                spacing: 2
+
+                                Text {
+                                    text: modelData.name
+                                    color: index === root.selectedIndex ? Common.Theme.background : Common.Theme.text
+                                    font.family: Common.Theme.font.sans.name
+                                    font.pixelSize: 13
+                                    font.weight: Font.Medium
+                                    elide: Text.ElideRight
+                                    Layout.fillWidth: true
+                                }
+
+                                Text {
+                                    text: modelData.description || ""
+                                    visible: text !== ""
+                                    color: index === root.selectedIndex ? Qt.rgba(0, 0, 0, 0.6) : Common.Theme.textMuted
+                                    font.family: Common.Theme.font.sans.name
+                                    font.pixelSize: 11
+                                    elide: Text.ElideRight
+                                    Layout.fillWidth: true
+                                }
+                            }
+                        }
+
+                        MouseArea {
+                            id: mouseArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                root.selectedIndex = index
+                                root.launchSelected()
+                            }
+                        }
+                    }
+                }
+
+                Text {
+                    Layout.fillWidth: true
+                    text: root.filteredApps.length + " applications"
+                    color: Common.Theme.textMuted
+                    font.family: Common.Theme.font.sans.name
+                    font.pixelSize: 11
+                    horizontalAlignment: Text.AlignRight
+                    visible: root.filteredApps.length > 0
+                }
+            }
+        }
+    }
+}
