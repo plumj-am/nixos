@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import Quickshell
 import Quickshell.Wayland
+import Quickshell.Io
 import "bar"
 import "common" as Common
 import "services" as Services
@@ -37,8 +38,10 @@ ShellRoot {
         }
     }
 
-    Shortcut {
-        sequence: "Ctrl+Space"
-        onActivated: toggleLauncher()
+    IpcHandler {
+        target: "launcher"
+        function toggle(): void {
+            toggleLauncher()
+        }
     }
 }

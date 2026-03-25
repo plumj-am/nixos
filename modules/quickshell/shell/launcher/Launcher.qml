@@ -203,9 +203,10 @@ PanelWindow {
                             spacing: 10
 
                             IconImage {
-                                source: modelData.icon ? ThemeIcons.iconFromName(modelData.icon, "application-x-executable") : ""
+                                source: modelData.icon ? Quickshell.iconPath(modelData.icon, "application-x-executable") : ""
                                 Layout.preferredWidth: 32
                                 Layout.preferredHeight: 32
+                                implicitSize: 32
                                 asynchronous: true
                             }
 

@@ -36,6 +36,6 @@ Item {
     }
 
     function toggleLauncher() {
-        sendCommand("toggle-launcher")
+        launcherToggleRequested()
     }
 }

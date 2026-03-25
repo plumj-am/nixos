@@ -297,6 +297,7 @@ let
               screenshot-path "${config.directory}/Pictures/Screenshots/screenshot_%Y-%m-%d_%H-%M-%S.png"
 
               binds {
+                Ctrl+Backspace { spawn "qs" "ipc" "call" "launcher" "toggle"; }
                 Mod+slash { show-hotkey-overlay; }
                 Mod+Shift+slash { show-hotkey-overlay; }
 
@@ -344,13 +345,13 @@ let
                 Mod+Shift+Comma { consume-or-expel-window-left; }
                 Mod+Shift+Period { consume-or-expel-window-right; }
 
-                Ctrl+Backspace { spawn-sh "tofi-drun | xargs niri msg action spawn --"; }
+                // Ctrl+Backspace { spawn-sh "tofi-drun | xargs niri msg action spawn --"; }
                 Mod+Shift+P { spawn "power-menu"; }
                 Mod+T { spawn "process-monitor"; }
                 Mod+P { spawn "process-killer"; }
                 Mod+D { spawn "todo-scratchpad"; }
                 Mod+S { spawn "random-scratchpad"; }
-                Mod+C { spawn-sh "cliphist list | tofi --prompt-text '[cliphist]' | cliphist decode | wl-copy"; }
+                // Mod+C { spawn-sh "cliphist list | tofi --prompt-text '[cliphist]' | cliphist decode | wl-copy"; }
                 // Needs ashell v0.8
                 // Mod+B { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && notify-send bar_toggle && pkill -USR1 ashell"; }
                 Mod+N { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && notify-send hidden_toggle && makoctl mode -t mute && makoctl mode -t do-not-disturb"; }
