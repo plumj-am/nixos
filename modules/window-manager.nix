@@ -297,7 +297,7 @@ let
               screenshot-path "${config.directory}/Pictures/Screenshots/screenshot_%Y-%m-%d_%H-%M-%S.png"
 
               binds {
-                Ctrl+Backspace { spawn "qs" "ipc" "call" "launcher" "toggle"; }
+                Ctrl+Backspace { spawn-sh "qs ipc -p /home/jam/nixos/modules/quickshell/shell call launcher toggle"; }
                 Mod+slash { show-hotkey-overlay; }
                 Mod+Shift+slash { show-hotkey-overlay; }
 

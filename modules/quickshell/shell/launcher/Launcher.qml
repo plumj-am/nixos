@@ -19,8 +19,6 @@ PanelWindow {
     visible: isOpen
     color: "transparent"
 
-    screen: Quickshell.focusedScreen
-
     anchors {
         top: true
         bottom: true
