@@ -1,4 +1,4 @@
- import QtQuick
+import QtQuick
 import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
@@ -36,8 +36,8 @@ PanelWindow {
 
         RowLayout {
             anchors.fill: parent
-            anchors.leftMargin: 16
-            anchors.rightMargin: 16
+            anchors.leftMargin: 12
+            anchors.rightMargin: 12
             spacing: 8
 
             FocusedWindow {
