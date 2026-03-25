@@ -12,7 +12,7 @@ in
 
       ai
       ai-extra
-      # app-launcher
+      app-launcher
       ashell
       audio
       boot-systemd
