@@ -10,14 +10,13 @@ import "../services" as Services
 PanelWindow {
     id: root
 
-    property var screen
     property bool isTop: true
     property int barSize: 32
     readonly property color barColor: Theme.background
     readonly property color textColor: Theme.text
     readonly property color outlineColor: Theme.outline
 
-    readonly property bool isVertical: root.isTop
+    implicitHeight: barSize
 
     anchors {
         top: root.isTop
@@ -33,7 +32,6 @@ PanelWindow {
     Rectangle {
         id: barContent
         anchors.fill: parent
-        height: barSize
         color: barColor
         layer.enabled: true
         layer.effect: MultiEffect {
@@ -44,10 +42,10 @@ PanelWindow {
         }
 
         RowLayout {
-                anchors.fill: parent
-                anchors.leftMargin: Theme.margin.small
-                anchors.rightMargin: Theme.margin.small
-                spacing: Theme.margin.small
+            anchors.fill: parent
+            anchors.leftMargin: 4
+            anchors.rightMargin: 4
+            spacing: 4
 
                 Row {
                     spacing: 6
