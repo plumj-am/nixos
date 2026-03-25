@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Widgets
@@ -19,6 +20,7 @@ PanelWindow {
 
     visible: isOpen
     color: "transparent"
+    implicitHeight: 800
 
     anchors {
         top: true
@@ -107,175 +109,168 @@ PanelWindow {
         isOpen = !isOpen
     }
 
-    Rectangle {
+    MouseArea {
         anchors.fill: parent
-        color: Qt.rgba(0, 0, 0, 0.4)
+        acceptedButtons: Qt.AllButtons
+        onPressed: root.isOpen = false
+    }
 
-        MouseArea {
-            anchors.fill: parent
-            onClicked: root.isOpen = false
-        }
+    Rectangle {
+        id: launcherBox
+        anchors.horizontalCenter: parent.horizontalCenter
+        y: root.isOpen ? barHeight + Common.Theme.margin.normal : barHeight - 10
+        width: launcherWidth
+        height: launcherHeight
+        color: Common.Theme.background
+        radius: Common.Theme.radius.normal
+        border.color: Common.Theme.outline
+        border.width: 1
+            opacity: root.isOpen ? 1.0 : 0.0
+            z: 1
 
-        Rectangle {
-            id: launcherBox
-            anchors.horizontalCenter: parent.horizontalCenter
-            y: barHeight
-            width: launcherWidth
-            height: Math.min(launcherHeight, contentColumn.height + 20)
-            color: Common.Theme.background
-            radius: Common.Theme.radius.normal
-            border.color: Common.Theme.outline
-            border.width: 1
-
-            Rectangle {
-                id: curveJoin
-                anchors.horizontalCenter: parent.horizontalCenter
-                y: -height + 2
-                width: launcherWidth + 20
-                height: barHeight
-                color: Common.Theme.background
-                radius: Common.Theme.radius.normal
-
-                Rectangle {
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.bottom: parent.bottom
-                    width: launcherWidth - 20
-                    height: 2
-                    color: Common.Theme.background
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 150
+                    easing.type: Easing.OutCubic
                 }
             }
 
-            ColumnLayout {
-                id: contentColumn
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.margins: 10
-                spacing: 10
+            Behavior on y {
+                NumberAnimation {
+                    duration: 150
+                    easing.type: Easing.OutCubic
+                }
+            }
 
-                TextField {
-                    id: searchField
-                    Layout.fillWidth: true
-                    placeholderText: "Search applications..."
-                    text: root.searchText
-                    onTextChanged: root.searchText = text
-                    color: Common.Theme.text
-                    placeholderTextColor: Common.Theme.textMuted
-                    font.family: Common.Theme.font.sans.name
-                    font.pixelSize: 14
-                    background: Rectangle {
-                        color: Common.Theme.surface
-                        radius: Common.Theme.radius.small
-                        border.color: searchField.activeFocus ? Common.Theme.accent : Common.Theme.outline
-                    }
 
-                    Keys.onEscapePressed: root.isOpen = false
-                    Keys.onReturnPressed: root.launchSelected()
-                    Keys.onEnterPressed: root.launchSelected()
-                    Keys.onUpPressed: {
-                        if (root.selectedIndex > 0) {
-                            root.selectedIndex--
-                        }
+         ColumnLayout {
+             id: contentColumn
+             anchors.fill: parent
+             anchors.margins: 8
+             spacing: 8
+
+            TextField {
+                id: searchField
+                Layout.fillWidth: true
+                placeholderText: "Search applications..."
+                text: root.searchText
+                onTextChanged: root.searchText = text
+                color: Common.Theme.text
+                placeholderTextColor: Common.Theme.textMuted
+                font.family: Common.Theme.font.sans.name
+                font.pixelSize: 14
+                background: Rectangle {
+                    color: Common.Theme.surface
+                    radius: Common.Theme.radius.small
+                    border.color: searchField.activeFocus ? Common.Theme.accent : Common.Theme.outline
+                }
+
+                Keys.onEscapePressed: root.isOpen = false
+                Keys.onReturnPressed: root.launchSelected()
+                Keys.onEnterPressed: root.launchSelected()
+                Keys.onUpPressed: {
+                    if (root.selectedIndex > 0) {
+                        root.selectedIndex--
                     }
-                    Keys.onDownPressed: {
-                        if (root.selectedIndex < root.filteredApps.length - 1) {
-                            root.selectedIndex++
-                        }
+                }
+                Keys.onDownPressed: {
+                    if (root.selectedIndex < root.filteredApps.length - 1) {
+                        root.selectedIndex++
+                    }
+                }
+            }
+
+            ListView {
+                id: appList
+                Layout.fillWidth: true
+                Layout.preferredHeight: 330
+                model: root.filteredApps
+                clip: true
+                currentIndex: root.selectedIndex
+                onCurrentIndexChanged: {
+                    if (currentIndex >= 0) {
+                        positionViewAtIndex(currentIndex, ListView.Contain)
                     }
                 }
 
-                ListView {
-                    id: appList
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: Math.min(
-                        root.filteredApps.length * root.itemHeight,
-                        root.maxVisibleItems * root.itemHeight
-                    )
-                    model: root.filteredApps
-                    clip: true
-                    currentIndex: root.selectedIndex
-                    onCurrentIndexChanged: {
-                        if (currentIndex >= 0) {
-                            positionViewAtIndex(currentIndex, ListView.Contain)
+                onModelChanged: {
+                }
+
+                delegate: Rectangle {
+                    width: appList.width
+                    height: root.itemHeight
+                    color: index === root.selectedIndex ? Common.Theme.accent : "transparent"
+                    radius: Common.Theme.radius.small
+
+                    property bool isHovered: mouseArea.containsMouse
+
+                    onIsHoveredChanged: {
+                        if (isHovered) {
+                            root.selectedIndex = index
                         }
                     }
 
-                    delegate: Rectangle {
-                        width: appList.width
-                        height: root.itemHeight
-                        color: index === root.selectedIndex ? Common.Theme.accent : "transparent"
-                        radius: Common.Theme.radius.small
+                    RowLayout {
+                        anchors.fill: parent
+                        anchors.leftMargin: 6
+                        anchors.rightMargin: 6
+                        spacing: 8
 
-                        property bool isHovered: mouseArea.containsMouse
-
-                        onIsHoveredChanged: {
-                            if (isHovered) {
-                                root.selectedIndex = index
-                            }
+                        IconImage {
+                            source: modelData.icon ? Quickshell.iconPath(modelData.icon, "application-x-executable") : ""
+                            Layout.preferredWidth: 32
+                            Layout.preferredHeight: 32
+                            implicitSize: 32
+                            asynchronous: true
                         }
 
-                        RowLayout {
-                            anchors.fill: parent
-                            anchors.leftMargin: 8
-                            anchors.rightMargin: 8
-                            spacing: 10
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            spacing: 2
 
-                            IconImage {
-                                source: modelData.icon ? Quickshell.iconPath(modelData.icon, "application-x-executable") : ""
-                                Layout.preferredWidth: 32
-                                Layout.preferredHeight: 32
-                                implicitSize: 32
-                                asynchronous: true
-                            }
-
-                            ColumnLayout {
+                            Text {
+                                text: modelData.name
+                                color: index === root.selectedIndex ? Common.Theme.background : Common.Theme.text
+                                font.family: Common.Theme.font.sans.name
+                                font.pixelSize: 13
+                                font.weight: Font.Medium
+                                elide: Text.ElideRight
                                 Layout.fillWidth: true
-                                spacing: 2
-
-                                Text {
-                                    text: modelData.name
-                                    color: index === root.selectedIndex ? Common.Theme.background : Common.Theme.text
-                                    font.family: Common.Theme.font.sans.name
-                                    font.pixelSize: 13
-                                    font.weight: Font.Medium
-                                    elide: Text.ElideRight
-                                    Layout.fillWidth: true
-                                }
-
-                                Text {
-                                    text: modelData.description || ""
-                                    visible: text !== ""
-                                    color: index === root.selectedIndex ? Qt.rgba(0, 0, 0, 0.6) : Common.Theme.textMuted
-                                    font.family: Common.Theme.font.sans.name
-                                    font.pixelSize: 11
-                                    elide: Text.ElideRight
-                                    Layout.fillWidth: true
-                                }
                             }
-                        }
 
-                        MouseArea {
-                            id: mouseArea
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                root.selectedIndex = index
-                                root.launchSelected()
+                            Text {
+                                text: modelData.description || ""
+                                visible: text !== ""
+                                color: index === root.selectedIndex ? Qt.rgba(0, 0, 0, 0.6) : Common.Theme.textMuted
+                                font.family: Common.Theme.font.sans.name
+                                font.pixelSize: 11
+                                elide: Text.ElideRight
+                                Layout.fillWidth: true
                             }
                         }
                     }
-                }
 
-                Text {
-                    Layout.fillWidth: true
-                    text: root.filteredApps.length + " applications"
-                    color: Common.Theme.textMuted
-                    font.family: Common.Theme.font.sans.name
-                    font.pixelSize: 11
-                    horizontalAlignment: Text.AlignRight
-                    visible: root.filteredApps.length > 0
+                    MouseArea {
+                        id: mouseArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            root.selectedIndex = index
+                            root.launchSelected()
+                        }
+                    }
                 }
+            }
+
+            Text {
+                Layout.fillWidth: true
+                text: root.filteredApps.length + " applications"
+                color: Common.Theme.textMuted
+                font.family: Common.Theme.font.sans.name
+                font.pixelSize: 11
+                horizontalAlignment: Text.AlignRight
+                visible: root.filteredApps.length > 0
             }
         }
     }
