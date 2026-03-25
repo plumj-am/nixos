@@ -1,4 +1,4 @@
-import QtQuick
+ import QtQuick
 import QtQuick.Effects
 import QtQuick.Layouts
 import Quickshell
@@ -7,67 +7,43 @@ import "widgets"
 import "../common"
 import "../services" as Services
 
-Item {
+PanelWindow {
     id: root
 
     property var screen
-    property int barSize: Config.data.bar?.size ?? 30
-    property string barPosition: Config.data.bar?.position ?? "top"
-    property color barColor: Theme.background
+    property bool isTop: true
+    property int barSize: 32
+    readonly property color barColor: Theme.background
+    readonly property color textColor: Theme.text
+    readonly property color outlineColor: Theme.outline
 
-    readonly property bool isTop: barPosition === "top"
+    readonly property bool isVertical: root.isTop
 
-    WlrLayershell {
-        id: shadowWindow
-        screen: root.screen
-        layer: WlrLayer.Bottom
-        exclusionMode: ExclusionMode.Ignore
-        anchors: barWindow.anchors
-        implicitHeight: barSize + 10
-        color: "transparent"
-
-        Rectangle {
-            anchors {
-                top: root.isTop ? parent.top : undefined
-                bottom: root.isTop ? undefined : parent.bottom
-                left: parent.left
-                right: parent.right
-            }
-            height: barSize
-            color: barColor
-            layer.enabled: true
-            layer.effect: MultiEffect {
-                shadowEnabled: true
-                shadowVerticalOffset: root.isTop ? 4 : -4
-                shadowBlur: 0.5
-                shadowColor: "#90000000"
-            }
-        }
+    anchors {
+        top: root.isTop
+        bottom: !root.isTop
+        left: true
+        right: true
     }
 
-    PanelWindow {
-        id: barWindow
-        screen: root.screen
-        implicitHeight: barSize
-        color: "transparent"
+    WlrLayershell.layer: WlrLayer.Top
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+    WlrLayershell.exclusionMode: ExclusionMode.Auto
 
-        anchors {
-            top: root.isTop
-            bottom: root.isTop ? undefined : true
-            left: true
-            right: true
+    Rectangle {
+        id: barContent
+        anchors.fill: parent
+        height: barSize
+        color: barColor
+        layer.enabled: true
+        layer.effect: MultiEffect {
+            shadowEnabled: true
+            shadowVerticalOffset: root.isTop ? 4 : -4
+            shadowBlur: 0.5
+            shadowColor: "#90000000"
         }
 
-        WlrLayershell.layer: WlrLayer.Top
-        WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
-        WlrLayershell.exclusionMode: ExclusionMode.Auto
-
-        Rectangle {
-            id: barContent
-            anchors.fill: parent
-            color: barColor
-
-            RowLayout {
+        RowLayout {
                 anchors.fill: parent
                 anchors.leftMargin: Theme.margin.small
                 anchors.rightMargin: Theme.margin.small
@@ -100,4 +76,3 @@ Item {
             }
         }
     }
-}

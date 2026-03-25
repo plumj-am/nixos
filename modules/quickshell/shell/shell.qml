@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import Quickshell
 import Quickshell.Wayland
 import "bar"
@@ -27,5 +28,17 @@ ShellRoot {
         if (launcherLoader.item) {
             launcherLoader.item.isOpen = !launcherLoader.item.isOpen
         }
+    }
+
+    Connections {
+        target: Services.Niri
+        function onLauncherToggleRequested() {
+            toggleLauncher()
+        }
+    }
+
+    Shortcut {
+        sequence: "Ctrl+Space"
+        onActivated: toggleLauncher()
     }
 }
