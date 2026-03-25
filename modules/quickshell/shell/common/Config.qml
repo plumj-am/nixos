@@ -28,11 +28,11 @@ QtObject {
             },
             font: {
                 family: "Lexend",
-                size: 12
+                size: 15
             },
             fontMono: {
                 family: "Hasklug Nerd Font Mono",
-                size: 11
+                size: 14
             },
             radius: { tiny: 1, small: 2, normal: 4, big: 8 },
             margin: { small: 4, normal: 8 }
