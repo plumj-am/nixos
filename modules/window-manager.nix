@@ -297,7 +297,6 @@ let
               screenshot-path "${config.directory}/Pictures/Screenshots/screenshot_%Y-%m-%d_%H-%M-%S.png"
 
               binds {
-                Ctrl+Backspace { spawn-sh "qs ipc -p /home/jam/nixos/modules/quickshell/shell call launcher toggle"; }
                 Mod+slash { show-hotkey-overlay; }
                 Mod+Shift+slash { show-hotkey-overlay; }
 
@@ -346,6 +345,7 @@ let
                 Mod+Shift+Period { consume-or-expel-window-right; }
 
                 // Ctrl+Backspace { spawn-sh "tofi-drun | xargs niri msg action spawn --"; }
+                Ctrl+Backspace { spawn-sh "qs ipc -p /home/jam/nixos/modules/quickshell/shell call launcher toggle"; }
                 Mod+Shift+P { spawn "power-menu"; }
                 Mod+T { spawn "process-monitor"; }
                 Mod+P { spawn "process-killer"; }
