@@ -15,7 +15,8 @@ Item {
 
     RowLayout {
         id: privacyRow
-        anchors.centerIn: parent
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
         spacing: 4
 
         Rectangle {

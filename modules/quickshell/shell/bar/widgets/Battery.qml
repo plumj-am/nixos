@@ -10,13 +10,15 @@ import "../../services"
 Item {
     id: root
 
+    visible: Battery.available
     implicitWidth: row.width + 8
     implicitHeight: 24
 
     Row {
         id: row
         spacing: 4
-        anchors.centerIn: parent
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
 
         BatteryIcon {
             id: icon

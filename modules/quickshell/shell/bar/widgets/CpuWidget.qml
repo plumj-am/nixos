@@ -15,7 +15,8 @@ Item {
     Row {
         id: row
         spacing: 4
-        anchors.centerIn: parent
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
 
         CPUIcon {
             visible: true
@@ -25,7 +26,7 @@ Item {
 
         Text {
             anchors.verticalCenter: parent.verticalCenter
-            text: Math.round(CPU.overallUsage * 100) + "%"
+            text: (CPU.overallUsage >= 0 ? Math.round(CPU.overallUsage * 100) : 0) + "%"
             font.family: Config.data.theme.fontMono.family
             font.pixelSize: Config.data.theme.fontMono.size
             color: Theme.foreground

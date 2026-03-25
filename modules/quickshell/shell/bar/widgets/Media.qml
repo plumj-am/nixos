@@ -13,7 +13,8 @@ Item {
 
     RowLayout {
         id: mediaRow
-        anchors.centerIn: parent
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
         spacing: 6
 
         Text {

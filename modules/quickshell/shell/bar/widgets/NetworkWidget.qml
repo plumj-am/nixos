@@ -14,7 +14,8 @@ Item {
     Row {
         id: row
         spacing: 4
-        anchors.centerIn: parent
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
 
         NetworkWiredIcon {
             visible: Network.networkType === Types.networkWired

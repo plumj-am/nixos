@@ -47,30 +47,34 @@ PanelWindow {
             anchors.rightMargin: 4
             spacing: 4
 
-                Row {
-                    spacing: 6
-                    FocusedWindow {}
-                }
-
-                Item { Layout.fillWidth: true }
-
-                Row {
-                    spacing: 6
-                    Media {}
-                }
-
-                Item { Layout.fillWidth: true }
-
-                Row {
-                    spacing: 6
-                    Tray {}
-                    Privacy {}
-                    CpuWidget {}
-                    RamWidget {}
-                    NetworkWidget {}
-                    Battery {}
-                    Clock {}
-                }
+            Item { Layout.preferredWidth: 4 }
+            
+            FocusedWindow {
+                Layout.fillWidth: true
+                Layout.maximumWidth: 400
             }
+
+            Item { Layout.fillWidth: true }
+
+            Row {
+                spacing: 6
+                Media {}
+            }
+
+            Item { Layout.fillWidth: true }
+
+            Row {
+                spacing: 6
+                Tray {}
+                Privacy { Layout.preferredWidth: 24 }
+                CpuWidget { Layout.preferredWidth: 48 }
+                RamWidget { Layout.preferredWidth: 48 }
+                NetworkWidget { Layout.preferredWidth: 48 }
+                Battery { Layout.preferredWidth: 48 }
+                Clock { Layout.preferredWidth: 120 }
+            }
+
+            Item { Layout.preferredWidth: 4 }
+        }
         }
     }
