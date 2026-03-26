@@ -553,7 +553,7 @@ let
           # })
 
           # QML
-          pkgs.qt6Packages.qtlanguageserver
+          pkgs.qt6Packages.qtdeclarative
 
           # Typos
           pkgs.typos-lsp
