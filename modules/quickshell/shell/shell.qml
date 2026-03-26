@@ -1,3 +1,4 @@
+//@ pragma UseQApplication
 import QtQuick
 import QtQuick.Controls
 import Quickshell
@@ -22,7 +23,7 @@ ShellRoot {
         active: true
         source: "launcher/Launcher.qml"
         onLoaded: {
-            item.screen = Quickshell.focusedScreen || Quickshell.screens[0]
+            item.screen = Quickshell.focusedScreen || Quickshell.screens[0];
         }
     }
 
@@ -37,45 +38,45 @@ ShellRoot {
         active: true
         source: "notifications/NotificationCenter.qml"
         onLoaded: {
-            item.screen = Quickshell.focusedScreen || Quickshell.screens[0]
+            item.screen = Quickshell.focusedScreen || Quickshell.screens[0];
         }
     }
 
     function toggleLauncher() {
         if (launcherLoader.item) {
-            launcherLoader.item.screen = Quickshell.focusedScreen || Quickshell.screens[0]
-            launcherLoader.item.isOpen = !launcherLoader.item.isOpen
+            launcherLoader.item.screen = Quickshell.focusedScreen || Quickshell.screens[0];
+            launcherLoader.item.isOpen = !launcherLoader.item.isOpen;
         }
     }
 
     function toggleNotificationCenter() {
         if (notificationCenterLoader.item) {
-            notificationCenterLoader.item.screen = Quickshell.focusedScreen || Quickshell.screens[0]
-            notificationCenterLoader.item.toggle()
+            notificationCenterLoader.item.screen = Quickshell.focusedScreen || Quickshell.screens[0];
+            notificationCenterLoader.item.toggle();
         }
     }
 
     Connections {
         target: Services.Niri
         function onLauncherToggleRequested() {
-            toggleLauncher()
+            toggleLauncher();
         }
     }
 
     IpcHandler {
         target: "launcher"
         function toggle(): void {
-            toggleLauncher()
+            toggleLauncher();
         }
     }
 
     IpcHandler {
         target: "notifications"
         function toggle(): void {
-            toggleNotificationCenter()
+            toggleNotificationCenter();
         }
         function clear(): void {
-            Notifications.NotificationServer.dismissAll()
+            Notifications.NotificationServer.dismissAll();
         }
     }
 }
