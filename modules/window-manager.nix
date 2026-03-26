@@ -356,7 +356,9 @@ let
                 Mod+M { spawn-sh "niri msg action do-screen-transition --delay-ms 100 && makoctl mode -t mute && notify-send mute_toggle"; }
               }
 
-              spawn-at-startup "quickshell --path /home/jam/nixos/modules/quickshell/shell"
+              spawn-at-startup "${
+                inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.quickshell
+              }/bin/quickshell --path ${./quickshell/shell}"
               spawn-at-startup "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
               spawn-at-startup "swww-daemon"
               spawn-at-startup "gammastep-indicator"
