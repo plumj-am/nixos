@@ -1,8 +1,7 @@
+pragma Singleton
 import QtQuick
-import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
-import "../common"
 
 Item {
     id: root
@@ -53,11 +52,60 @@ Item {
         }
     }
 
-    FileView {
-        id: statFile
-        path: "/proc/stat"
-        onLoadFailed: function(error) {
-            console.log("CPU Service: FileView load failed:", error)
+    Process {
+        id: statProc
+        running: false
+        command: ["cat", "/proc/stat"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const lines = text.split('\n')
+                const currentStats = []
+
+                for (let i = 0; i < lines.length; ++i) {
+                    const line = lines[i].trim()
+                    if (line.startsWith('cpu')) {
+                        const parts = line.split(/\s+/)
+                        if (parts.length >= 8) {
+                            const user = parseInt(parts[1])
+                            const nice = parseInt(parts[2])
+                            const system = parseInt(parts[3])
+                            const idle = parseInt(parts[4])
+                            const iowait = parseInt(parts[5])
+                            const irq = parseInt(parts[6])
+                            const softirq = parseInt(parts[7])
+                            const total = user + nice + system + idle + iowait + irq + softirq
+                            currentStats.push({ total: total, idle: idle })
+                        }
+                    }
+                }
+
+                if (prevStats.length === currentStats.length && prevStats.length > 0) {
+                    let totalUsage = 0.0
+                    const coreUsagesTemp = []
+
+                    for (let j = 1; j < currentStats.length; ++j) {
+                        const current = currentStats[j]
+                        const prev = prevStats[j]
+                        const deltaTotal = current.total - prev.total
+                        const deltaIdle = current.idle - prev.idle
+                        let usage = (deltaTotal > 0) ? (deltaTotal - deltaIdle) / deltaTotal : 0.0
+                        usage = Math.min(Math.max(usage, 0.0), 1.0)
+                        coreUsagesTemp.push(usage)
+                    }
+
+                    const overallCurrent = currentStats[0]
+                    const overallPrev = prevStats[0]
+                    const overallDeltaTotal = overallCurrent.total - overallPrev.total
+                    const overallDeltaIdle = overallCurrent.idle - overallPrev.idle
+                    totalUsage = (overallDeltaTotal > 0) ? (overallDeltaTotal - overallDeltaIdle) / overallDeltaTotal : 0.0
+                    totalUsage = Math.min(Math.max(totalUsage, 0.0), 1.0)
+
+                    coreUsages = coreUsagesTemp
+                    overallUsage = totalUsage
+                }
+
+                prevStats = currentStats
+            }
         }
     }
 
@@ -67,65 +115,9 @@ Item {
         repeat: true
         triggeredOnStart: true
         onTriggered: {
-            updateCpuUsage()
+            statProc.running = true
             psProc.running = true
             loadAvgProc.running = true
         }
-    }
-
-    function updateCpuUsage() {
-        statFile.reload()
-        const content = statFile.text()
-        if (content === "") return
-
-        const lines = content.split('\n')
-        const currentStats = []
-
-        for (let i = 0; i < lines.length; ++i) {
-            const line = lines[i].trim()
-            if (line.startsWith('cpu')) {
-                const parts = line.split(/\s+/)
-                if (parts.length >= 8) {
-                    const user = parseInt(parts[1])
-                    const nice = parseInt(parts[2])
-                    const system = parseInt(parts[3])
-                    const idle = parseInt(parts[4])
-                    const iowait = parseInt(parts[5])
-                    const irq = parseInt(parts[6])
-                    const softirq = parseInt(parts[7])
-                    const total = user + nice + system + idle + iowait + irq + softirq
-                    currentStats.push({ total: total, idle: idle })
-                }
-            }
-        }
-
-        if (prevStats.length === currentStats.length && prevStats.length > 0) {
-            let totalUsage = 0.0
-            const coreUsagesTemp = []
-
-            for (let j = 1; j < currentStats.length; ++j) {
-                const current = currentStats[j]
-                const prev = prevStats[j]
-                const deltaTotal = current.total - prev.total
-                const deltaIdle = current.idle - prev.idle
-                let usage = (deltaTotal > 0) ? (deltaTotal - deltaIdle) / deltaTotal : 0.0
-                usage = Math.min(Math.max(usage, 0.0), 1.0)
-                coreUsagesTemp.push(usage)
-            }
-
-            const overallCurrent = currentStats[0]
-            const overallPrev = prevStats[0]
-            const overallDeltaTotal = overallCurrent.total - overallPrev.total
-            const overallDeltaIdle = overallCurrent.idle - overallPrev.idle
-            totalUsage = (overallDeltaTotal > 0) ? (overallDeltaTotal - overallDeltaIdle) / overallDeltaTotal : 0.0
-            totalUsage = Math.min(Math.max(totalUsage, 0.0), 1.0)
-
-            coreUsages = coreUsagesTemp
-            overallUsage = totalUsage
-        } else if (prevStats.length === 0) {
-            prevStats = currentStats
-        }
-
-        prevStats = currentStats
     }
 }
