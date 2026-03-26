@@ -76,23 +76,24 @@ Item {
                     text: "Interface: " + Network.activeInterface
                     font.family: Theme.font.mono.family
                     font.pixelSize: Theme.font.mono.size
+                    color: Theme.foreground
+                }
 
-                    Text {
-                        Layout.alignment: Qt.AlignHCenter
-                        text: "Type: " + Types.networkToString(Network.networkType)
-                        font.family: Theme.fontMono.family
-                        font.pixelSize: Theme.fontMono.size
-                        color: Theme.textMuted
-                    }
+                Text {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: "Type: " + Types.networkToString(Network.networkType)
+                    font.family: Theme.font.mono.family
+                    font.pixelSize: Theme.font.mono.size
+                    color: Theme.textMuted
+                }
 
-                    Text {
-                        Layout.alignment: Qt.AlignHCenter
-                        visible: Network.lanIPs.length > 0
-                        text: "IP: " + Network.lanIPs[0]
-                        font.family: Theme.fontMono.family
-                        font.pixelSize: Theme.fontMono.size
-                        color: Theme.textMuted
-                    }
+                Text {
+                    Layout.alignment: Qt.AlignHCenter
+                    visible: Network.lanIPs.length > 0
+                    text: "IP: " + Network.lanIPs[0]
+                    font.family: Theme.font.mono.family
+                    font.pixelSize: Theme.font.mono.size
+                    color: Theme.textMuted
                 }
             }
         }

@@ -9,7 +9,7 @@ Item {
     id: root
 
     property Item hoverTarget
-    property int anchorPosition: Types.Position.Top
+    property int anchorPosition: Types.positionTop
     property bool shouldShow: false
     // Generic content to display in the popup
     property Component contentComponent: null
@@ -58,8 +58,8 @@ Item {
             anchors {
                 left: true
                 right: true
-                top: root.anchorPosition === Types.Position.Top
-                bottom: root.anchorPosition === Types.Position.Bottom
+                top: root.anchorPosition === Types.positionTop
+                bottom: root.anchorPosition === Types.positionBottom
             }
 
             implicitWidth: contentRect.implicitWidth
@@ -73,8 +73,8 @@ Item {
                     )
                     return mapped.x
                 }
-                top: root.anchorPosition === Types.Position.Top ? Config.data.bar.size : 0
-                bottom: root.anchorPosition === Types.Position.Bottom ? Config.data.bar.size : 0
+                top: root.anchorPosition === Types.positionTop ? Config.data.bar.size : 0
+                bottom: root.anchorPosition === Types.positionBottom ? Config.data.bar.size : 0
             }
 
             exclusionMode: ExclusionMode.Ignore
@@ -104,15 +104,15 @@ Item {
                 height: 10
                 anchors {
                     horizontalCenter: contentRect.horizontalCenter
-                    bottom: root.anchorPosition === Types.Position.Top ? contentRect.top : undefined
-                    top: root.anchorPosition === Types.Position.Bottom ? contentRect.bottom : undefined
+                    bottom: root.anchorPosition === Types.positionTop ? contentRect.top : undefined
+                    top: root.anchorPosition === Types.positionBottom ? contentRect.bottom : undefined
                 }
                 onPaint: {
                     var ctx = getContext("2d")
                     ctx.clearRect(0, 0, width, height)
                     ctx.fillStyle = Theme.background
                     ctx.beginPath()
-                    if (root.anchorPosition === Types.Position.Top) {
+                    if (root.anchorPosition === Types.positionTop) {
                         // Pointing up
                         ctx.moveTo(0, height)
                         ctx.lineTo(width / 2, 0)
