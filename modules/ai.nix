@@ -173,6 +173,11 @@ let
                 command = [ "nixd" ];
                 extensions = [ ".nix" ];
               };
+
+              qmlls = {
+                command = [ "qmlls" ];
+                extensions = [ ".qml" ];
+              };
             };
 
             formatter = {
