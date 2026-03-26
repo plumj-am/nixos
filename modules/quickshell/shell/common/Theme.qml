@@ -29,7 +29,7 @@ QtObject {
                 base0F: "#d65d0e"
             },
             light: {
-                base00: "#fbf1c7",
+                base00: "#faf9f7",
                 base01: "#ebdbb2",
                 base02: "#d5c4a1",
                 base03: "#bdae93",
