@@ -26,7 +26,7 @@ in
       alt-j = "workspace::ActivatePaneDown";
       alt-k = "workspace::ActivatePaneUp";
       alt-l = "workspace::ActivatePaneRight";
-      ctrl-alt-h = "vim::PaneLeft";
+      ctrl-alt-h = "vim::ResizePaneLeft";
       ctrl-alt-j = "vim::ResizePaneDown";
       ctrl-alt-k = "vim::ResizePaneUp";
       ctrl-alt-l = "vim::ResizePaneRight";
