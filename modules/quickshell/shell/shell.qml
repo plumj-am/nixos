@@ -33,26 +33,10 @@ ShellRoot {
         source: "notifications/ToastManager.qml"
     }
 
-    Loader {
-        id: notificationCenterLoader
-        active: true
-        source: "notifications/NotificationCenter.qml"
-        onLoaded: {
-            item.screen = Quickshell.focusedScreen || Quickshell.screens[0];
-        }
-    }
-
     function toggleLauncher() {
         if (launcherLoader.item) {
             launcherLoader.item.screen = Quickshell.focusedScreen || Quickshell.screens[0];
             launcherLoader.item.isOpen = !launcherLoader.item.isOpen;
-        }
-    }
-
-    function toggleNotificationCenter() {
-        if (notificationCenterLoader.item) {
-            notificationCenterLoader.item.screen = Quickshell.focusedScreen || Quickshell.screens[0];
-            notificationCenterLoader.item.toggle();
         }
     }
 
@@ -72,9 +56,6 @@ ShellRoot {
 
     IpcHandler {
         target: "notifications"
-        function toggle(): void {
-            toggleNotificationCenter();
-        }
         function clear(): void {
             Notifications.NotificationServer.dismissAll();
         }

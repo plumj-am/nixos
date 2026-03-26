@@ -1,8 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Io
 import "../../common"
+import "../../common/widgets"
 import "../../notifications" as Notifications
 
 Item {
@@ -50,12 +50,16 @@ Item {
         id: mouseArea
         anchors.fill: parent
         hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        onClicked: toggleProcess.running = true
+        acceptedButtons: Qt.NoButton
     }
 
-    Process {
-        id: toggleProcess
-        command: ["qs", "ipc", "-p", "/home/jam/nixos/modules/quickshell/shell", "call", "notifications", "toggle"]
+    PersistentPopup {
+        anchors.centerIn: root
+        hoverTarget: root
+        anchorPosition: Types.stringToPosition(Config.data.bar.position)
+        anchorHAlign: Types.alignLeft
+        contentComponent: Component {
+            Notifications.NotificationPopupContent {}
+        }
     }
 }

@@ -6,6 +6,9 @@ QtObject {
     readonly property int orientationVertical: 1
     readonly property int positionTop: 0
     readonly property int positionBottom: 1
+    readonly property int alignLeft: 0
+    readonly property int alignCenter: 1
+    readonly property int alignRight: 2
     readonly property int networkWired: 0
     readonly property int networkWireless: 1
     readonly property int networkVirtual: 2
