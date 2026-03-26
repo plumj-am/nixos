@@ -32,7 +32,7 @@ QtObject {
             },
             fontMono: {
                 family: "Hasklug Nerd Font Mono",
-                size: 14
+                size: 13
             },
             radius: { tiny: 1, small: 2, normal: 4, big: 8 },
             margin: { small: 4, normal: 8 }
