@@ -19,9 +19,10 @@ Item {
 
         Text {
             visible: Network.networkType === Types.networkWired
-            text: "\uf0ac"
-            font.family: "Hasklug Nerd Font Mono"
-            font.pixelSize: 16
+            text: "E"
+            font.family: Config.data.theme.fontMono.family
+            font.pixelSize: Config.data.theme.fontMono.size
+            font.bold: true
             color: Theme.foreground
             Layout.alignment: Qt.AlignVCenter
             Layout.fillHeight: true
@@ -30,20 +31,10 @@ Item {
 
         Text {
             visible: Network.networkType === Types.networkWireless
-            text: "\uf1eb"
-            font.family: "Hasklug Nerd Font Mono"
-            font.pixelSize: 16
-            color: Theme.foreground
-            Layout.alignment: Qt.AlignVCenter
-            Layout.fillHeight: true
-            verticalAlignment: Text.AlignVCenter
-        }
-
-        Text {
-            visible: Network.networkType === Types.networkVirtual
-            text: "\uf023"
-            font.family: "Hasklug Nerd Font Mono"
-            font.pixelSize: 16
+            text: "W"
+            font.family: Config.data.theme.fontMono.family
+            font.pixelSize: Config.data.theme.fontMono.size
+            font.bold: true
             color: Theme.foreground
             Layout.alignment: Qt.AlignVCenter
             Layout.fillHeight: true

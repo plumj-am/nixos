@@ -19,9 +19,10 @@ Item {
         height: 20
 
         Text {
-            text: "\uf2db"
-            font.family: "Hasklug Nerd Font Mono"
-            font.pixelSize: 16
+            text: "C"
+            font.family: Config.data.theme.fontMono.family
+            font.pixelSize: Config.data.theme.fontMono.size
+            font.bold: true
             color: Theme.foreground
             Layout.alignment: Qt.AlignVCenter
             Layout.fillHeight: true
