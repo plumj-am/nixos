@@ -26,6 +26,9 @@ Item {
                 }
             }
         }
+        onExited: (code, status) => {
+            if (code !== 0) console.log("GPU: nvidia-smi failed:", code)
+        }
     }
 
     Timer {

@@ -24,6 +24,9 @@ Item {
                 }
             }
         }
+        onExited: (code, status) => {
+            if (code !== 0) console.log("Disk: df command failed:", code)
+        }
     }
 
     Timer {
