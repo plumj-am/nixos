@@ -48,11 +48,9 @@ Rectangle {
             implicitSize: 32
             source: {
                 if (!notification) return ""
-                const icon = notification.appIcon || notification.desktopEntry || "dialog-information"
-                const path = Quickshell.iconPath(icon, "dialog-information")
-                if (path.includes("?fallback=")) {
-                    return path.split("?fallback=")[0]
-                }
+                const icon = notification.appIcon || notification.desktopEntry
+                if (!icon) return ""
+                const path = Quickshell.iconPath(icon)
                 return path
             }
             asynchronous: true
@@ -98,7 +96,7 @@ Rectangle {
             Text {
                 text: notification?.summary || ""
                 color: Common.Theme.text
-                font.family: Common.Theme.font.sans.name
+                font.family: Common.Theme.font.sans.family
                 font.pixelSize: 13
                 wrapMode: Text.WordWrap
                 Layout.fillWidth: true
@@ -108,7 +106,7 @@ Rectangle {
             Text {
                 text: notification?.body || ""
                 color: Common.Theme.foreground
-                font.family: Common.Theme.font.sans.name
+                font.family: Common.Theme.font.sans.family
                 font.pixelSize: 12
                 wrapMode: Text.WordWrap
                 textFormat: Text.RichText
@@ -164,7 +162,7 @@ Rectangle {
                 anchors.centerIn: parent
                 text: "×"
                 color: Common.Theme.textMuted
-                font.family: Common.Theme.font.sans.name
+                font.family: Common.Theme.font.sans.family
                 font.pixelSize: 14
             }
 
