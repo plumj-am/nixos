@@ -296,7 +296,7 @@ let
               		    let dir = if ($jj_root | is-not-empty) {
               		      let subpath = $pwd | path relative-to $jj_root
               		      let subpath = if ($subpath | is-not-empty) {
-              		        $"(ansi '${base0E}') ⟶ (ansi rst)(ansi '${base0B}')($subpath)(ansi rst)"
+              		        $"(ansi '${base0E}') ⟶  (ansi rst)(ansi '${base0B}')($subpath)(ansi rst)"
               		      }
               			      $"($jj_root | path basename)($subpath)"
               			    } else {
