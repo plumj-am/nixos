@@ -13,6 +13,7 @@ Item {
     property bool shouldShow: false
     property Component contentComponent: null
     property int openCloseDelay: 200
+    property bool fillRemainingWidth: false
 
     property bool targetHovered: false
     property bool popupHovered: false
@@ -56,17 +57,25 @@ Item {
         closeTimer.start();
     }
 
+    property int estimatedContentWidth: 400
+
     function getLeftMargin() {
         if (anchorHAlign === Types.alignLeft) {
             const mapped = root.QsWindow.mapFromItem(root, 0, 0);
             return mapped.x;
         } else if (anchorHAlign === Types.alignRight) {
-            const mapped = root.QsWindow.mapFromItem(root, root.width - contentRect.implicitWidth, 0);
+            const mapped = root.QsWindow.mapFromItem(root, root.width - root.estimatedContentWidth, 0);
             return mapped.x;
         } else {
-            const mapped = root.QsWindow.mapFromItem(root, (root.width - contentRect.implicitWidth) / 2, 0);
+            const mapped = root.QsWindow.mapFromItem(root, (root.width - root.estimatedContentWidth) / 2, 0);
             return mapped.x;
         }
+    }
+
+    function getAvailableWidth() {
+        const leftMargin = getLeftMargin();
+        const targetScreen = root.hoverTarget ? root.hoverTarget.QsWindow.screen : null;
+        return targetScreen ? targetScreen.width - leftMargin - Theme.margin.normal : 400;
     }
 
     MouseArea {
@@ -92,7 +101,7 @@ Item {
                 bottom: root.anchorPosition === Types.positionBottom
             }
 
-            implicitWidth: contentRect.implicitWidth
+            implicitWidth: root.fillRemainingWidth ? root.getAvailableWidth() : contentRect.implicitWidth
             implicitHeight: contentRect.implicitHeight
 
             margins {
@@ -120,6 +129,14 @@ Item {
                 border.color: Theme.alpha(Theme.outline, 0.3)
                 implicitWidth: contentLoader.implicitWidth + 24
                 implicitHeight: contentLoader.implicitHeight + 24
+                width: root.fillRemainingWidth ? parent.width : implicitWidth
+                height: implicitHeight
+
+                Binding {
+                    target: root
+                    property: "estimatedContentWidth"
+                    value: contentRect.implicitWidth
+                }
 
                 HoverHandler {
                     id: popupHoverHandler
@@ -135,7 +152,11 @@ Item {
 
                 Loader {
                     id: contentLoader
-                    anchors.centerIn: parent
+                    anchors.left: parent.left
+                    anchors.right: root.fillRemainingWidth ? parent.right : undefined
+                    anchors.top: parent.top
+                    anchors.margins: 12
+                    width: root.fillRemainingWidth ? undefined : implicitWidth
                     sourceComponent: root.contentComponent
                 }
             }

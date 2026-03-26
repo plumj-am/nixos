@@ -58,6 +58,7 @@ Item {
         hoverTarget: root
         anchorPosition: Types.stringToPosition(Config.data.bar.position)
         anchorHAlign: Types.alignLeft
+        fillRemainingWidth: true
         contentComponent: Component {
             Notifications.NotificationPopupContent {}
         }

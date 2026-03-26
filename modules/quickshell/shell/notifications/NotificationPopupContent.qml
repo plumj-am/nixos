@@ -7,8 +7,9 @@ ColumnLayout {
     id: root
 
     spacing: Common.Theme.margin.normal
-    implicitWidth: 360
+    Layout.fillWidth: true
     implicitHeight: Math.min(450, contentHeight)
+    Layout.minimumWidth: 300
 
     property real contentHeight: headerRow.implicitHeight + notificationList.implicitHeight + footerText.implicitHeight + (Common.Theme.margin.normal * 3)
 
