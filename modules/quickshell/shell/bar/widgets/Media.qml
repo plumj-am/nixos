@@ -50,7 +50,14 @@ Item {
         }
     }
 
-    HoverPopup {
+    MouseArea {
+        id: clickArea
+        anchors.fill: parent
+        acceptedButtons: Qt.LeftButton
+        onClicked: Mpris.playPause()
+    }
+
+    PersistentPopup {
         anchors.centerIn: root
         hoverTarget: root
         anchorPosition: Types.stringToPosition(Config.data.bar.position)
@@ -182,7 +189,7 @@ Item {
                         width: 32
                         height: 32
                         radius: 16
-                        color: playPauseMouse.containsMouse ? Theme.primary : Theme.accent
+                        color: playPauseHover.hovered ? Theme.primary : Theme.accent
 
                         Text {
                             anchors.centerIn: parent
@@ -192,12 +199,13 @@ Item {
                             color: Theme.background
                         }
 
-                        MouseArea {
-                            id: playPauseMouse
-                            anchors.fill: parent
-                            hoverEnabled: true
+                        HoverHandler {
+                            id: playPauseHover
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: Mpris.playPause()
+                        }
+
+                        TapHandler {
+                            onTapped: Mpris.playPause()
                         }
                     }
 
@@ -215,11 +223,5 @@ Item {
                 }
             }
         }
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        acceptedButtons: Qt.LeftButton
-        onClicked: Mpris.playPause()
     }
 }
