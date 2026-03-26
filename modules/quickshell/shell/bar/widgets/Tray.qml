@@ -39,7 +39,11 @@ Item {
                         if (icon.includes("?path=")) {
                             const split = icon.split("?path=")
                             if (split.length === 2) {
-                                return "file://" + split[1] + "/" + split[0]
+                                let iconName = split[0]
+                                if (iconName.startsWith("image://icon/")) {
+                                    iconName = iconName.substring("image://icon/".length)
+                                }
+                                return "file://" + split[1] + "/" + iconName
                             }
                         }
                         if (icon.startsWith("/") && !icon.startsWith("file://")) {
