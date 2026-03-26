@@ -75,12 +75,7 @@ PanelWindow {
                     Privacy {
                         Layout.alignment: Qt.AlignVCenter
                     }
-                    Text {
-                        text: "|"
-                        color: Theme.textMuted
-                        font.pixelSize: 14
-                        Layout.alignment: Qt.AlignVCenter
-                    }
+                    Separator { Layout.alignment: Qt.AlignVCenter }
                     CpuWidget {
                         Layout.alignment: Qt.AlignVCenter
                     }
@@ -99,12 +94,7 @@ PanelWindow {
                     Battery {
                         Layout.alignment: Qt.AlignVCenter
                     }
-                    Text {
-                        text: "|"
-                        color: Theme.textMuted
-                        font.pixelSize: 14
-                        Layout.alignment: Qt.AlignVCenter
-                    }
+                    Separator { Layout.alignment: Qt.AlignVCenter }
                     NotificationWidget {
                         Layout.alignment: Qt.AlignVCenter
                     }
