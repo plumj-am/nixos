@@ -21,6 +21,7 @@ Item {
         id: mouseArea
         anchors.fill: parent
         hoverEnabled: true
+        acceptedButtons: Qt.NoButton
         onEntered: root.onHoveredEntered()
         onExited: root.onHoveredExited()
     }

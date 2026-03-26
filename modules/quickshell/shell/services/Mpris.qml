@@ -10,6 +10,7 @@ Item {
     readonly property bool hasPlayer: activePlayer !== null
     property string trackTitle: ""
     property string trackArtist: ""
+    property string trackArtUrl: ""
     property bool isPlaying: false
 
     readonly property bool canGoNext: activePlayer?.canGoNext ?? false
@@ -33,12 +34,14 @@ Item {
             if (activePlayer) {
                 trackTitle = activePlayer.trackTitle ?? ""
                 trackArtist = activePlayer.trackArtist ?? ""
+                trackArtUrl = activePlayer.trackArtUrl ?? ""
                 isPlaying = activePlayer.isPlaying ?? false
             }
         } else {
             activePlayer = null
             trackTitle = ""
             trackArtist = ""
+            trackArtUrl = ""
             isPlaying = false
         }
     }
@@ -65,5 +68,17 @@ Item {
         if (activePlayer && activePlayer.canGoPrevious) {
             activePlayer.previous()
         }
+    }
+
+    function setPosition(pos) {
+        if (activePlayer) {
+            activePlayer.position = pos
+        }
+    }
+
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60)
+        const secs = Math.floor(seconds % 60)
+        return mins + ":" + (secs < 10 ? "0" : "") + secs
     }
 }
