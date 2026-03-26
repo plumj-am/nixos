@@ -105,6 +105,9 @@ PanelWindow {
                         font.pixelSize: 14
                         Layout.alignment: Qt.AlignVCenter
                     }
+                    NotificationWidget {
+                        Layout.alignment: Qt.AlignVCenter
+                    }
                     Clock {
                         Layout.alignment: Qt.AlignVCenter
                     }

@@ -6,6 +6,7 @@ import Quickshell.Io
 import "bar"
 import "common" as Common
 import "services" as Services
+import "notifications" as Notifications
 
 ShellRoot {
     Variants {
@@ -25,10 +26,32 @@ ShellRoot {
         }
     }
 
+    Loader {
+        id: toastManagerLoader
+        active: true
+        source: "notifications/ToastManager.qml"
+    }
+
+    Loader {
+        id: notificationCenterLoader
+        active: true
+        source: "notifications/NotificationCenter.qml"
+        onLoaded: {
+            item.screen = Quickshell.focusedScreen || Quickshell.screens[0]
+        }
+    }
+
     function toggleLauncher() {
         if (launcherLoader.item) {
             launcherLoader.item.screen = Quickshell.focusedScreen || Quickshell.screens[0]
             launcherLoader.item.isOpen = !launcherLoader.item.isOpen
+        }
+    }
+
+    function toggleNotificationCenter() {
+        if (notificationCenterLoader.item) {
+            notificationCenterLoader.item.screen = Quickshell.focusedScreen || Quickshell.screens[0]
+            notificationCenterLoader.item.toggle()
         }
     }
 
@@ -43,6 +66,16 @@ ShellRoot {
         target: "launcher"
         function toggle(): void {
             toggleLauncher()
+        }
+    }
+
+    IpcHandler {
+        target: "notifications"
+        function toggle(): void {
+            toggleNotificationCenter()
+        }
+        function clear(): void {
+            Notifications.NotificationServer.dismissAll()
         }
     }
 }

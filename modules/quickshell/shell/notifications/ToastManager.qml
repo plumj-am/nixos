@@ -1,0 +1,82 @@
+import QtQuick
+import QtQuick.Layouts
+import Quickshell
+import Quickshell.Wayland
+import "../common" as Common
+import "."
+
+PanelWindow {
+    id: root
+
+    property int maxVisible: 5
+    property var activeToasts: []
+
+    color: "transparent"
+    visible: activeToasts.length > 0
+
+    anchors {
+        right: true
+        top: true
+        bottom: true
+    }
+
+    implicitWidth: 450
+    exclusionMode: ExclusionMode.Ignore
+    WlrLayershell.namespace: "quickshell-notifications"
+    WlrLayershell.layer: WlrLayer.Overlay
+
+    margins {
+        top: Common.Config.data.bar.size + Common.Theme.margin.normal
+        right: Common.Theme.margin.normal
+    }
+
+    ColumnLayout {
+        anchors.fill: parent
+        anchors.topMargin: Common.Theme.margin.normal
+        spacing: Common.Theme.margin.small
+
+        Repeater {
+            model: root.activeToasts.slice(0, root.maxVisible).reverse()
+
+            NotificationToast {
+                Layout.alignment: Qt.AlignRight
+                notification: modelData
+
+                onDismissed: {
+                    NotificationServer.dismiss(notification)
+                    root.removeToast(notification)
+                }
+
+                onExpired: {
+                    NotificationServer.expire(notification)
+                    root.removeToast(notification)
+                }
+
+                onActionTriggered: function(action) {
+                    NotificationServer.invokeAction(notification, action)
+                }
+            }
+        }
+
+        Item { Layout.fillHeight: true }
+    }
+
+    Connections {
+        target: NotificationServer
+
+        function onNotificationReceived(notification) {
+            root.addToast(notification)
+        }
+    }
+
+    function addToast(notification) {
+        const newToasts = activeToasts.slice()
+        newToasts.push(notification)
+        activeToasts = newToasts
+    }
+
+    function removeToast(notification) {
+        const newToasts = activeToasts.filter(function(n) { return n !== notification })
+        activeToasts = newToasts
+    }
+}
