@@ -140,7 +140,7 @@ PanelWindow {
                 visible: NotificationServer.notificationCount === 0
                 text: "No notifications"
                 color: Common.Theme.textMuted
-                font.family: Common.Theme.font.sans.name
+                font.family: Common.Theme.font.sans.family
                 font.pixelSize: 14
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
@@ -150,7 +150,7 @@ PanelWindow {
                 Layout.fillWidth: true
                 text: NotificationServer.notificationCount + " notification" + (NotificationServer.notificationCount !== 1 ? "s" : "")
                 color: Common.Theme.textMuted
-                font.family: Common.Theme.font.sans.name
+                font.family: Common.Theme.font.sans.family
                 font.pixelSize: 11
                 horizontalAlignment: Text.AlignRight
                 visible: NotificationServer.notificationCount > 0
@@ -158,5 +158,9 @@ PanelWindow {
         }
     }
 
-    Keys.onEscapePressed: root.close()
+    Shortcut {
+        sequence: "Escape"
+        onActivated: root.close()
+        enabled: root.isOpen
+    }
 }
