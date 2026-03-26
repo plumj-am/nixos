@@ -87,7 +87,13 @@ PanelWindow {
                     RamWidget {
                         Layout.alignment: Qt.AlignVCenter
                     }
+                    DiskWidget {
+                        Layout.alignment: Qt.AlignVCenter
+                    }
                     NetworkWidget {
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                    GpuWidget {
                         Layout.alignment: Qt.AlignVCenter
                     }
                     Battery {
