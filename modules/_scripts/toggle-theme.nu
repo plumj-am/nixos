@@ -135,7 +135,6 @@ def reload-applications [] {
    pkill -USR2 ghostty | ignore
    pkill -USR1 hx | ignore
    pkill -USR2 opencode | ignore
-   makoctl reload | ignore
    pkill -SIGTERM brave | ignore
    sleep 1sec
    niri msg action do-screen-transition --delay-ms 500 | ignore

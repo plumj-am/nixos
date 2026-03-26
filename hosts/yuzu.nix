@@ -34,7 +34,6 @@ in
       mprocs
       nix-distributed-builds
       nix-settings-extra-desktop
-      notifications
       object-storage
       packages-extra-linux
       packages-extra-gui

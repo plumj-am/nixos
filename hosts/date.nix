@@ -32,7 +32,6 @@ in
       kitty
       linux-kernel-zen
       mprocs
-      notifications
       nix-settings-extra-desktop
       nix-distributed-builder
       nix-distributed-builds
