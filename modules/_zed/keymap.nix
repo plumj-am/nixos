@@ -10,12 +10,6 @@ let
   ];
 in
 [
-
-  # Disable default project_panel opener.
-  (mkZedKeymap "Workspace || AgentPanel" {
-    ctrl-E = null;
-  })
-
   {
     bindings = {
       ctrl-W = null;
@@ -32,7 +26,7 @@ in
       alt-j = "workspace::ActivatePaneDown";
       alt-k = "workspace::ActivatePaneUp";
       alt-l = "workspace::ActivatePaneRight";
-      ctrl-alt-h = "vim::ResizePaneLeft";
+      ctrl-alt-h = "vim::PaneLeft";
       ctrl-alt-j = "vim::ResizePaneDown";
       ctrl-alt-k = "vim::ResizePaneUp";
       ctrl-alt-l = "vim::ResizePaneRight";
@@ -42,6 +36,10 @@ in
       alt-L = "pane::SplitRight";
     };
   }
+  # Disable default project_panel opener.
+  (mkZedKeymap "Workspace || AgentPanel" {
+    ctrl-E = null;
+  })
   (mkZedKeymap "Dock && !Terminal" {
     alt-q = "workspace::CloseActiveDock";
     "ctrl-w h" = "workspace::ActivatePaneLeft";
@@ -55,12 +53,9 @@ in
   })
   (mkZedKeymap "Workspace && !Picker" {
     "ctrl-g ctrl-p" = "workspace::Open";
-    alt-S = "workspace::ToggleLeftDock";
-    alt-s = "project_panel::ToggleFocus";
-    alt-T = "workspace::ToggleBottomDock";
-    alt-t = "terminal_panel::ToggleFocus";
-    alt-D = "workspace::ToggleRightDock";
-    alt-d = "debug_panel::ToggleFocus";
+    alt-s = "workspace::ToggleLeftDock";
+    alt-t = "workspace::ToggleBottomDock";
+    alt-d = "workspace::ToggleRightDock";
     ctrl-t = "task::Spawn";
     ctrl-T = "task::Rerun";
 
@@ -98,23 +93,12 @@ in
   (mkZedKeymap "Editor && (mode == full)" {
     alt-enter = null; # editor::OpenSelectionsInMultibuffer
   })
-  # (mkZedKeymap "vim_mode == helix_normal || vim_mode == helix_select" {
-  #   "space B" = "editor::BlameHover";
-  #   "space b" = "tab_switcher::ToggleAll";
-  #   D = "editor::SelectToEndOfLine";
-  #   ctrl-j = "editor::MoveLineDown";
-  #   ctrl-k = "editor::MoveLineUp";
-  #   enter = "vim::PushSneak";
-  #   shift-enter = "vim::PushSneakBackward";
-  # })
   (mkZedKeymap "Terminal" {
     alt-q = "pane::CloseActiveItem";
     alt-H = "pane::SplitLeft";
     alt-L = "pane::SplitRight";
     alt-w = "workspace::ActivateNextPane";
     alt-n = "workspace::NewTerminal";
-    alt-u = "terminal::ScrollHalfPageUp";
-    alt-d = "terminal::ScrollHalfPageDown";
   })
   (mkZedKeymap "!Terminal" {
     ctrl-C = null; # collab_panel::ToggleFocus
