@@ -160,9 +160,9 @@ PanelWindow {
                 font.family: Common.Theme.font.sans.name
                 font.pixelSize: 14
                 background: Rectangle {
-                    color: Common.Theme.surface
+                    color: Common.Theme.background
                     radius: Common.Theme.radius.small
-                    border.color: searchField.activeFocus ? Common.Theme.accent : Common.Theme.outline
+                    border.color: searchField.activeFocus ? Common.Theme.background : Common.Theme.outline
                 }
 
                 Keys.onEscapePressed: root.isOpen = false
@@ -199,7 +199,7 @@ PanelWindow {
                 delegate: Rectangle {
                     width: appList.width
                     height: root.itemHeight
-                    color: index === root.selectedIndex ? Common.Theme.accent : "transparent"
+                    color: index === root.selectedIndex ? Common.Theme.background2 : "transparent"
                     radius: Common.Theme.radius.small
 
                     property bool isHovered: mouseArea.containsMouse
@@ -230,7 +230,7 @@ PanelWindow {
 
                             Text {
                                 text: modelData.name
-                                color: index === root.selectedIndex ? Common.Theme.background : Common.Theme.text
+                                color: Common.Theme.text
                                 font.family: Common.Theme.font.sans.name
                                 font.pixelSize: 13
                                 font.weight: Font.Medium
@@ -241,7 +241,7 @@ PanelWindow {
                             Text {
                                 text: modelData.description || ""
                                 visible: text !== ""
-                                color: index === root.selectedIndex ? Qt.rgba(0, 0, 0, 0.6) : Common.Theme.textMuted
+                                color: Common.Theme.text
                                 font.family: Common.Theme.font.sans.name
                                 font.pixelSize: 11
                                 elide: Text.ElideRight
