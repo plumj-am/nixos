@@ -40,52 +40,69 @@ PanelWindow {
             anchors.rightMargin: 12
             spacing: 8
 
-            FocusedWindow {
+            Item {
                 Layout.fillWidth: true
-                Layout.maximumWidth: 400
-                Layout.alignment: Qt.AlignVCenter
+                Layout.preferredWidth: 0
+
+                RowLayout {
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 8
+
+                    Media {
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                }
             }
 
-            Item { Layout.fillWidth: true }
-
-            Media {
-                Layout.alignment: Qt.AlignVCenter
+            FocusedWindow {
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                Layout.minimumWidth: implicitWidth
             }
 
-            Item { Layout.fillWidth: true }
+            Item {
+                Layout.fillWidth: true
+                Layout.preferredWidth: 0
 
-            Tray {
-                Layout.alignment: Qt.AlignVCenter
-            }
-            Privacy {
-                Layout.alignment: Qt.AlignVCenter
-            }
-            Text {
-                text: "|"
-                color: Theme.textMuted
-                font.pixelSize: 14
-                Layout.alignment: Qt.AlignVCenter
-            }
-            CpuWidget {
-                Layout.alignment: Qt.AlignVCenter
-            }
-            RamWidget {
-                Layout.alignment: Qt.AlignVCenter
-            }
-            NetworkWidget {
-                Layout.alignment: Qt.AlignVCenter
-            }
-            Battery {
-                Layout.alignment: Qt.AlignVCenter
-            }
-            Text {
-                text: "|"
-                color: Theme.textMuted
-                font.pixelSize: 14
-                Layout.alignment: Qt.AlignVCenter
-            }
-            Clock {
-                Layout.alignment: Qt.AlignVCenter
+                RowLayout {
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 8
+
+                    Tray {
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                    Privacy {
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                    Text {
+                        text: "|"
+                        color: Theme.textMuted
+                        font.pixelSize: 14
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                    CpuWidget {
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                    RamWidget {
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                    NetworkWidget {
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                    Battery {
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                    Text {
+                        text: "|"
+                        color: Theme.textMuted
+                        font.pixelSize: 14
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                    Clock {
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                }
             }
         }
     }

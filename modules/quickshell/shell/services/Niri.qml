@@ -1,38 +1,46 @@
 pragma Singleton
 import QtQuick
-import Quickshell.Io
+import Niri 0.1
 
-Item {
-    id: niri
-
-    property bool ipcAvailable: false
-    property string focusedWindow: ""
-    property int focusedWorkspace: 0
-    property var workspaces: []
+QtObject {
+    id: niriWrapper
 
     signal launcherToggleRequested
-    signal connected
-    signal errorOccurred(string error)
 
-    Process {
-        id: checkProcess
-        command: ["niri", "msg", "focused-window"]
-        
-        onExited: function(code, status) {
-            ipcAvailable = (code === 0)
-            if (ipcAvailable) {
-                connected()
-            }
+    property Niri niri: Niri {
+        Component.onCompleted: connect()
+        onConnected: console.log("Connected to niri")
+        onErrorOccurred: function(error) {
+            console.error("Niri error:", error)
         }
     }
 
-    Component.onCompleted: {
-        checkProcess.running = true
+    readonly property var workspaces: niri.workspaces
+    readonly property var windows: niri.windows
+    readonly property var focusedWindow: niri.focusedWindow
+
+    function focusWorkspace(index) {
+        niri.focusWorkspace(index)
     }
 
-    function sendCommand(cmd) {
-        if (!ipcAvailable) return
-        Quickshell.execDetached(["niri", "msg", "action", cmd])
+    function focusWorkspaceById(id) {
+        niri.focusWorkspaceById(id)
+    }
+
+    function focusWorkspaceByName(name) {
+        niri.focusWorkspaceByName(name)
+    }
+
+    function focusWindow(id) {
+        niri.focusWindow(id)
+    }
+
+    function closeWindow(id) {
+        niri.closeWindow(id)
+    }
+
+    function closeWindowOrFocused() {
+        niri.closeWindowOrFocused()
     }
 
     function toggleLauncher() {
