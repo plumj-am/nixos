@@ -84,7 +84,7 @@ Item {
 
             Rectangle {
                 id: contentRect
-                color: Config.data.theme.colors.background
+                color: Config.data.theme.background
                 radius: 8
                 implicitWidth: contentLoader.implicitWidth + 24
                 implicitHeight: contentLoader.implicitHeight + 24

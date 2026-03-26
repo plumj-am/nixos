@@ -37,13 +37,13 @@ Item {
     FileView {
         id: txBytesView
         path: root.activeInterface ? `/sys/class/net/${root.activeInterface}/statistics/tx_bytes` : ""
-        onLoadFailed: err => {}
+        onLoadFailed: err => console.log("Network: tx_bytes load failed:", err)
     }
 
     FileView {
         id: rxBytesView
         path: root.activeInterface ? `/sys/class/net/${root.activeInterface}/statistics/rx_bytes` : ""
-        onLoadFailed: err => {}
+        onLoadFailed: err => console.log("Network: rx_bytes load failed:", err)
     }
 
     Process {

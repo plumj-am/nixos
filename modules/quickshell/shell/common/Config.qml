@@ -15,17 +15,6 @@ QtObject {
             ok: "#b8bb26",
             error: "#fb4934",
             warning: "#fe8019",
-            colors: {
-                text: "#d5c4a1",
-                textMuted: "#bdae93",
-                foreground: "#ebdbb2",
-                foreground2: "#a89984",
-                background: "#1d2021",
-                background2: "#282828",
-                ok: "#b8bb26",
-                error: "#fb4934",
-                warning: "#fe8019"
-            },
             font: {
                 family: "Lexend",
                 size: 15
