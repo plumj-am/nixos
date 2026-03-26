@@ -9,10 +9,12 @@ Rectangle {
     property var notification: null
     property int timeout: notification?.expireTimeout > 0 ? notification.expireTimeout * 1000 : 5000
     property bool autoDismiss: true
+    property bool skipEntryAnimation: false
 
     signal dismissed()
     signal expired()
     signal actionTriggered(var action)
+    signal entryComplete()
 
     implicitWidth: 300
     implicitHeight: notificationItem.implicitHeight
@@ -20,14 +22,21 @@ Rectangle {
     height: implicitHeight
     color: "transparent"
 
-    property bool isEntering: true
+    property bool hasEntered: skipEntryAnimation
+    property bool isEntering: !hasEntered
     property bool isExiting: false
 
     scale: isEntering ? 0.9 : 1.0
     opacity: isExiting ? 0.0 : 1.0
 
     Behavior on scale {
-        NumberAnimation { duration: 200; easing.type: Easing.OutCubic }
+        NumberAnimation { duration: 200; easing.type: Easing.OutCubic
+            onRunningChanged: {
+                if (!running && !isEntering) {
+                    root.entryComplete()
+                }
+            }
+        }
     }
 
     Behavior on opacity {
@@ -35,7 +44,10 @@ Rectangle {
     }
 
     Component.onCompleted: {
-        isEntering = false
+        hasEntered = true
+        if (skipEntryAnimation) {
+            root.entryComplete()
+        }
         if (autoDismiss && timeout > 0) {
             dismissTimer.start()
         }

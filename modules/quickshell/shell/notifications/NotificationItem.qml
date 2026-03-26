@@ -49,7 +49,11 @@ Rectangle {
             source: {
                 if (!notification) return ""
                 const icon = notification.appIcon || notification.desktopEntry || "dialog-information"
-                return Quickshell.iconPath(icon, "dialog-information")
+                const path = Quickshell.iconPath(icon, "dialog-information")
+                if (path.includes("?fallback=")) {
+                    return path.split("?fallback=")[0]
+                }
+                return path
             }
             asynchronous: true
             visible: status === Image.Ready

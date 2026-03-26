@@ -10,6 +10,7 @@ PanelWindow {
 
     property int maxVisible: 5
     property var activeToasts: []
+    property var seenIds: ({})
 
     color: "transparent"
     visible: activeToasts.length > 0
@@ -41,6 +42,9 @@ PanelWindow {
             NotificationToast {
                 Layout.alignment: Qt.AlignRight
                 notification: modelData
+                skipEntryAnimation: root.seenIds[modelData.id] === true
+
+                onEntryComplete: root.markSeen(notification.id)
 
                 onDismissed: {
                     NotificationServer.dismiss(notification)
@@ -73,6 +77,10 @@ PanelWindow {
         const newToasts = activeToasts.slice()
         newToasts.push(notification)
         activeToasts = newToasts
+    }
+
+    function markSeen(notificationId) {
+        seenIds[notificationId] = true
     }
 
     function removeToast(notification) {

@@ -66,4 +66,11 @@ QtObject {
             action.invoke()
         }
     }
+
+    function expire(notificationData) {
+        var tracked = server.trackedNotifications.values.find(function(n) { return n.id === notificationData.id })
+        if (tracked) {
+            tracked.tracked = false
+        }
+    }
 }
