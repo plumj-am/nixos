@@ -54,12 +54,6 @@ Item {
         }
     }
 
-    function formatRate(bytesPerSec) {
-        if (bytesPerSec < 1024) return bytesPerSec + "B"
-        if (bytesPerSec < 1024 * 1024) return (bytesPerSec / 1024).toFixed(1) + "K"
-        return (bytesPerSec / 1024 / 1024).toFixed(1) + "M"
-    }
-
     HoverPopup {
         anchors.centerIn: root
         hoverTarget: root
