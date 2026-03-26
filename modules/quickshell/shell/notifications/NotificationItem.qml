@@ -80,7 +80,7 @@ Rectangle {
                 Text {
                     text: notification?.appName || "Unknown"
                     color: Common.Theme.textMuted
-                    font.family: Common.Theme.font.sans.name
+                    font.family: Common.Theme.font.sans.family
                     font.pixelSize: 13
                     elide: Text.ElideRight
                     Layout.fillWidth: true
@@ -89,7 +89,7 @@ Rectangle {
                 Text {
                     text: formatTime(notification?.time)
                     color: Common.Theme.textMuted
-                    font.family: Common.Theme.font.sans.name
+                    font.family: Common.Theme.font.sans.family
                     font.pixelSize: 10
                     visible: notification?.time !== undefined && notification?.time !== 0
                 }
@@ -137,7 +137,7 @@ Rectangle {
                             anchors.centerIn: parent
                             text: modelData.text || modelData.identifier || "Action"
                             color: Common.Theme.accent
-                            font.family: Common.Theme.font.sans.name
+                            font.family: Common.Theme.font.sans.family
                             font.pixelSize: 11
                         }
 

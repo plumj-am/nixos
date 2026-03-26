@@ -84,7 +84,7 @@ Item {
 
             Rectangle {
                 id: contentRect
-                color: Config.data.theme.background
+                color: Theme.background
                 radius: 8
                 implicitWidth: contentLoader.implicitWidth + 24
                 implicitHeight: contentLoader.implicitHeight + 24
@@ -110,7 +110,7 @@ Item {
                 onPaint: {
                     var ctx = getContext("2d")
                     ctx.clearRect(0, 0, width, height)
-                    ctx.fillStyle = Config.data.theme.colors.background
+                    ctx.fillStyle = Theme.background
                     ctx.beginPath()
                     if (root.anchorPosition === Types.Position.Top) {
                         // Pointing up

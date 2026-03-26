@@ -30,7 +30,7 @@ Item {
         Text {
             Layout.maximumWidth: 200
             text: Mpris.trackTitle ? Mpris.trackTitle : "No track"
-            font.family: Theme.font.sans.name
+            font.family: Theme.font.sans.family
             font.pixelSize: 12
             color: Theme.foreground
             elide: Text.ElideRight
@@ -40,7 +40,7 @@ Item {
 
         Text {
             text: Mpris.trackArtist ? " - " + Mpris.trackArtist : ""
-            font.family: Theme.font.sans.name
+            font.family: Theme.font.sans.family
             font.pixelSize: 12
             color: Theme.textMuted
             elide: Text.ElideRight

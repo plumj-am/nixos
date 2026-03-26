@@ -29,7 +29,7 @@ RowLayout {
         Layout.maximumWidth: 300
         elide: Text.ElideRight
         text: Niri.focusedWindow?.title ?? ""
-        font.family: Theme.font.sans.name
+        font.family: Theme.font.sans.family
         font.pixelSize: 13
         color: Theme.text
         Layout.alignment: Qt.AlignVCenter

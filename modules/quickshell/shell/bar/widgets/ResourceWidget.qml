@@ -22,8 +22,8 @@ Item {
 
         Text {
             text: root.label
-            font.family: Config.data.theme.fontMono.family
-            font.pixelSize: Config.data.theme.fontMono.size
+            font.family: Theme.font.mono.family
+            font.pixelSize: Theme.font.mono.size
             font.bold: true
             color: Theme.foreground
             Layout.alignment: Qt.AlignVCenter
@@ -33,8 +33,8 @@ Item {
 
         Text {
             text: root.valueText
-            font.family: Config.data.theme.fontMono.family
-            font.pixelSize: Config.data.theme.fontMono.size
+            font.family: Theme.font.mono.family
+            font.pixelSize: Theme.font.mono.size
             color: Theme.foreground
             Layout.alignment: Qt.AlignVCenter
             Layout.fillHeight: true
@@ -54,8 +54,8 @@ Item {
                     delegate: Text {
                         Layout.alignment: Qt.AlignHCenter
                         text: modelData.text
-                        font.family: modelData.mono ? Config.data.theme.fontMono.family : Config.data.theme.font.family
-                        font.pixelSize: modelData.mono ? Config.data.theme.fontMono.size : Config.data.theme.font.size
+                        font.family: modelData.mono ? Theme.font.mono.family : Theme.font.sans.family
+                        font.pixelSize: modelData.mono ? Theme.font.mono.size : Theme.font.sans.size
                         font.bold: modelData.bold || false
                         color: modelData.muted ? Theme.textMuted : Theme.foreground
                     }

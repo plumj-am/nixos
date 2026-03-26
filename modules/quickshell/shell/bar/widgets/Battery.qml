@@ -30,8 +30,8 @@ Item {
         Text {
             visible: Config.data.battery?.showPercentage ?? true
             text: Math.round(Battery.percentage * 100) + "%"
-            font.family: Config.data.theme.fontMono.family
-            font.pixelSize: Config.data.theme.fontMono.size
+            font.family: Theme.font.mono.family
+            font.pixelSize: Theme.font.mono.size
             color: Battery.isCritical ? Theme.error : Theme.foreground
             Layout.alignment: Qt.AlignVCenter
         }
@@ -48,8 +48,8 @@ Item {
                 Text {
                     Layout.alignment: Qt.AlignHCenter
                     text: Battery.isCharging ? "Charging" : (Battery.isPluggedIn ? "Plugged in" : "On battery")
-                    font.family: Config.data.theme.font.family
-                    font.pixelSize: Config.data.theme.font.size
+                    font.family: Theme.font.sans.family
+                    font.pixelSize: Theme.font.sans.size
                     font.bold: true
                     color: Theme.foreground
                 }
@@ -57,18 +57,17 @@ Item {
                 Text {
                     Layout.alignment: Qt.AlignHCenter
                     text: Math.round(Battery.percentage * 100) + "%"
-                    font.family: Config.data.theme.fontMono.family
-                    font.pixelSize: Config.data.theme.fontMono.size
-                    color: Theme.foreground
-                }
+                    font.family: Theme.font.mono.family
+                    font.pixelSize: Theme.font.mono.size
 
-                Text {
-                    Layout.alignment: Qt.AlignHCenter
-                    visible: Battery.energyRate > 0
-                    text: Battery.energyRate.toFixed(1) + "W"
-                    font.family: Config.data.theme.fontMono.family
-                    font.pixelSize: Config.data.theme.fontMono.size
-                    color: Theme.textMuted
+                    Text {
+                        Layout.alignment: Qt.AlignHCenter
+                        visible: Battery.energyRate > 0
+                        text: Battery.energyRate.toFixed(1) + "W"
+                        font.family: Theme.fontMono.family
+                        font.pixelSize: Theme.fontMono.size
+                        color: Theme.textMuted
+                    }
                 }
             }
         }

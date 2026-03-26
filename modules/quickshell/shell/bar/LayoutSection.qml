@@ -8,7 +8,7 @@ RowLayout {
 
     property string section: "left"
     property var widgetComponents: ({})
-    spacing: Config.data.bar[section]?.spacing ?? Config.data.theme.margin.small
+    spacing: Config.data.bar[section]?.spacing ?? Theme.margin.small
 
     Repeater {
         model: Config.data.bar[section]?.widgets ?? []

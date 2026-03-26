@@ -22,7 +22,7 @@ Item {
         Text {
             text: "󰂚"
             font.family: "Symbols Nerd Font"
-            font.pixelSize: Config.data.theme.fontSans.size
+            font.pixelSize: Theme.font.sans.size
             color: mouseArea.containsMouse ? Theme.accent : Theme.foreground
             Layout.alignment: Qt.AlignVCenter
         }
@@ -38,7 +38,7 @@ Item {
                 id: countText
                 anchors.centerIn: parent
                 text: Notifications.NotificationServer.notificationCount
-                font.family: Config.data.theme.fontSans.family
+                font.family: Theme.font.sans.family
                 font.pixelSize: 10
                 font.bold: true
                 color: Theme.background

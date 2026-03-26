@@ -1,5 +1,6 @@
 pragma Singleton
 import QtQuick
+import Quickshell
 import Quickshell.Io
 
 QtObject {
@@ -52,8 +53,8 @@ QtObject {
     readonly property var colors: schemes[scheme] ? (schemes[scheme][mode] || schemes.gruvbox.dark) : schemes.gruvbox.dark
 
     readonly property var font: ({
-        sans: { name: "Lexend", size: 12 },
-        mono: { name: "Hasklug Nerd Font Mono", size: 12 }
+        sans: { family: "Lexend", size: 15 },
+        mono: { family: "Hasklug Nerd Font Mono", size: 13 }
     })
 
     readonly property var radius: ({ tiny: 1, small: 2, normal: 4, big: 8 })

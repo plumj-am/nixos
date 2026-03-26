@@ -20,8 +20,8 @@ Item {
         Text {
             visible: Network.networkType === Types.networkWired
             text: "E"
-            font.family: Config.data.theme.fontMono.family
-            font.pixelSize: Config.data.theme.fontMono.size
+            font.family: Theme.font.mono.family
+            font.pixelSize: Theme.font.mono.size
             font.bold: true
             color: Theme.foreground
             Layout.alignment: Qt.AlignVCenter
@@ -32,8 +32,8 @@ Item {
         Text {
             visible: Network.networkType === Types.networkWireless
             text: "W"
-            font.family: Config.data.theme.fontMono.family
-            font.pixelSize: Config.data.theme.fontMono.size
+            font.family: Theme.font.mono.family
+            font.pixelSize: Theme.font.mono.size
             font.bold: true
             color: Theme.foreground
             Layout.alignment: Qt.AlignVCenter
@@ -43,9 +43,9 @@ Item {
 
         Text {
             width: 36
-            text: formatRate(Network.rateDown)
-            font.family: Config.data.theme.fontMono.family
-            font.pixelSize: Config.data.theme.fontMono.size
+            text: Utils.formatBytes(Network.rateDown)
+            font.family: Theme.font.mono.family
+            font.pixelSize: Theme.font.mono.size
             color: Theme.foreground
             horizontalAlignment: Text.AlignLeft
             Layout.alignment: Qt.AlignVCenter
@@ -71,8 +71,8 @@ Item {
                 Text {
                     Layout.alignment: Qt.AlignHCenter
                     text: "Network"
-                    font.family: Config.data.theme.font.family
-                    font.pixelSize: Config.data.theme.font.size
+                    font.family: Theme.font.sans.family
+                    font.pixelSize: Theme.font.sans.size
                     font.bold: true
                     color: Theme.foreground
                 }
@@ -80,26 +80,25 @@ Item {
                 Text {
                     Layout.alignment: Qt.AlignHCenter
                     text: "Interface: " + Network.activeInterface
-                    font.family: Config.data.theme.fontMono.family
-                    font.pixelSize: Config.data.theme.fontMono.size
-                    color: Theme.foreground
-                }
+                    font.family: Theme.font.mono.family
+                    font.pixelSize: Theme.font.mono.size
 
-                Text {
-                    Layout.alignment: Qt.AlignHCenter
-                    text: "Type: " + Types.networkToString(Network.networkType)
-                    font.family: Config.data.theme.fontMono.family
-                    font.pixelSize: Config.data.theme.fontMono.size
-                    color: Theme.textMuted
-                }
+                    Text {
+                        Layout.alignment: Qt.AlignHCenter
+                        text: "Type: " + Types.networkToString(Network.networkType)
+                        font.family: Theme.fontMono.family
+                        font.pixelSize: Theme.fontMono.size
+                        color: Theme.textMuted
+                    }
 
-                Text {
-                    Layout.alignment: Qt.AlignHCenter
-                    visible: Network.lanIPs.length > 0
-                    text: "IP: " + Network.lanIPs[0]
-                    font.family: Config.data.theme.fontMono.family
-                    font.pixelSize: Config.data.theme.fontMono.size
-                    color: Theme.textMuted
+                    Text {
+                        Layout.alignment: Qt.AlignHCenter
+                        visible: Network.lanIPs.length > 0
+                        text: "IP: " + Network.lanIPs[0]
+                        font.family: Theme.fontMono.family
+                        font.pixelSize: Theme.fontMono.size
+                        color: Theme.textMuted
+                    }
                 }
             }
         }

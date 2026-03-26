@@ -80,7 +80,7 @@ PanelWindow {
                 Text{
                     text: "Notifications"
                     color: Common.Theme.text
-                    font.family: Common.Theme.font.sans.name
+                    font.family: Common.Theme.font.sans.family
                     font.pixelSize: 16
                     font.weight: Font.Bold
                 }
@@ -99,7 +99,7 @@ PanelWindow {
                         anchors.centerIn: parent
                         text: "Clear All"
                         color: Common.Theme.accent
-                        font.family: Common.Theme.font.sans.name
+                        font.family: Common.Theme.font.sans.family
                         font.pixelSize: 12
                     }
 

@@ -165,7 +165,7 @@ PanelWindow {
                 onTextChanged: root.searchText = text
                 color: Common.Theme.text
                 placeholderTextColor: Common.Theme.textMuted
-                font.family: Common.Theme.font.sans.name
+                font.family: Common.Theme.font.sans.family
                 font.pixelSize: 14
                 background: Rectangle {
                     color: Common.Theme.background
@@ -254,7 +254,7 @@ PanelWindow {
                             Text {
                                 text: modelData.name
                                 color: Common.Theme.text
-                                font.family: Common.Theme.font.sans.name
+                                font.family: Common.Theme.font.sans.family
                                 font.pixelSize: 13
                                 font.weight: Font.Medium
                                 elide: Text.ElideRight
@@ -265,7 +265,7 @@ PanelWindow {
                                 text: modelData.description || ""
                                 visible: text !== ""
                                 color: Common.Theme.text
-                                font.family: Common.Theme.font.sans.name
+                                font.family: Common.Theme.font.sans.family
                                 font.pixelSize: 11
                                 elide: Text.ElideRight
                                 Layout.fillWidth: true
@@ -290,7 +290,7 @@ PanelWindow {
                 Layout.fillWidth: true
                 text: root.filteredApps.length + " applications"
                 color: Common.Theme.textMuted
-                font.family: Common.Theme.font.sans.name
+                font.family: Common.Theme.font.sans.family
                 font.pixelSize: 11
                 horizontalAlignment: Text.AlignRight
                 visible: root.filteredApps.length > 0
