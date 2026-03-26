@@ -39,12 +39,20 @@ PanelWindow {
     readonly property int itemHeight: 48
     readonly property int maxVisibleItems: 8
 
+    Component.onCompleted: loadApps()
+
+    Connections {
+        target: DesktopEntries
+        function onApplicationsChanged() {
+            loadApps()
+        }
+    }
+
     onIsOpenChanged: {
         if (isOpen) {
             searchText = ""
             selectedIndex = 0
             searchField.forceActiveFocus()
-            loadApps()
         }
     }
 
@@ -176,6 +184,21 @@ PanelWindow {
                 Keys.onDownPressed: {
                     if (root.selectedIndex < root.filteredApps.length - 1) {
                         root.selectedIndex++
+                    }
+                }
+                Keys.onPressed: function(event) {
+                    if (event.key === Qt.Key_W && (event.modifiers & Qt.ControlModifier)) {
+                        event.accepted = true
+                        var cursorPos = searchField.cursorPosition
+                        var text = searchField.text
+                        if (cursorPos === 0) return
+
+                        var start = cursorPos - 1
+                        while (start > 0 && text.charAt(start - 1) !== ' ') {
+                            start--
+                        }
+                        searchField.text = text.substring(0, start) + text.substring(cursorPos)
+                        searchField.cursorPosition = start
                     }
                 }
             }
