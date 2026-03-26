@@ -190,6 +190,14 @@ let
                 ];
                 extensions = [ ".rs" ];
               };
+              qmlformat = {
+                command = [
+                  "qmlformat"
+                  "--inplace"
+                  "$FILE"
+                ];
+                extensions = [ ".qml" ];
+              };
             };
 
             provider.zai-coding-plan = {
