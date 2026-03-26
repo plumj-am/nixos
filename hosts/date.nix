@@ -12,7 +12,6 @@ in
 
       ai
       ai-extra
-      app-launcher
       audio
       boot-systemd
       desktop-gui
