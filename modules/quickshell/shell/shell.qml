@@ -27,6 +27,7 @@ ShellRoot {
 
     function toggleLauncher() {
         if (launcherLoader.item) {
+            launcherLoader.item.screen = Quickshell.focusedScreen || Quickshell.screens[0]
             launcherLoader.item.isOpen = !launcherLoader.item.isOpen
         }
     }
