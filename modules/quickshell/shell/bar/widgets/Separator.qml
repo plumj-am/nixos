@@ -1,8 +1,8 @@
 import QtQuick
 import "../../common"
 
-Text {
-    text: "|"
-    color: Theme.textMuted
-    font.pixelSize: 14
+Rectangle {
+    width: 1
+    height: 14
+    color: Theme.foreground
 }
