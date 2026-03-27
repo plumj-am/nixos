@@ -440,6 +440,7 @@ let
 
   zedBase =
     {
+      inputs,
       pkgs,
       lib,
       config,
@@ -457,7 +458,11 @@ let
             pkgs.symlinkJoin {
               name = "zed-wrapped";
               paths = singleton (
-                if osConfig.nixpkgs.hostPlatform.isDarwin then pkgs.zed-editor else pkgs.zed-editor-fhs
+                if osConfig.nixpkgs.hostPlatform.isDarwin then
+                  pkgs.zed-editor
+                else
+                  # inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.zedless
+                  pkgs.zed-editor.fhs
               );
               buildInputs = singleton pkgs.makeWrapper;
               postBuild = # sh
