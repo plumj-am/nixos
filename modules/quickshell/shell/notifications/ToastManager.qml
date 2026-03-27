@@ -36,7 +36,7 @@ PanelWindow {
         anchors.fill: parent
         anchors.leftMargin: 12
         anchors.rightMargin: 12
-        anchors.topMargin: 12
+        anchors.topMargin: 0
         anchors.bottomMargin: 12
         spacing: Common.Theme.margin.small
 

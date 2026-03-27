@@ -11,7 +11,7 @@ PanelWindow {
     id: root
 
     property bool isTop: true
-    property int barSize: 28
+    property int barSize: Config.data.bar.size
     readonly property color barColor: Theme.background
     readonly property color textColor: Theme.text
     readonly property color outlineColor: Theme.outline
