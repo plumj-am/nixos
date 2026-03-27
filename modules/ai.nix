@@ -304,10 +304,14 @@ let
       inherit (lib.trivial) const;
     in
     {
-      # THANK YOU FOR THIS ENTIRE THING
-      # @HSVSphere <https://github.com/RGBCube/ncc/blob/dentride/modules/slop.mod.nix>
+      # THANK YOU FOR THIS ENTIRE THING!!
+      # Xitter: @HSVSphere
+      # Source: <https://github.com/RGBCube/ncc/blob/dentride/modules/slop.mod.nix>
       hjem.extraModule =
-        { config, ... }:
+        { config, osConfig, ... }:
+        let
+          inherit (osConfig.age) secrets;
+        in
         {
           xdg.config.files."claude-code/settings.json" = {
             type = "copy"; # Sometimes needs to write to config.
@@ -331,6 +335,9 @@ let
               ];
 
               env = {
+                # For z.ai coding plan.
+                ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
+                API_TIMEOUT_MS = "3000000";
                 ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.7-air";
                 ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-5.1";
                 ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-5.1";
@@ -382,11 +389,9 @@ let
               };
 
               enabledPlugins = genAttrs [
-                "clangd-lsp@claude-plugins-official"
                 "code-review@claude-plugins-official"
                 "code-simplifier@claude-plugins-official"
                 "context7@claude-plugins-official"
-                "kotlin-lsp@claude-plugins-official"
                 "ralph-loop@claude-plugins-official"
                 "rust-analyzer-lsp@claude-plugins-official"
               ] (const true);
@@ -396,6 +401,21 @@ let
                 pr = "";
               };
             };
+          };
+
+          # Helper script for adding MCP servers.
+          # Should probably use writeScriptBin but idc, I run it once.
+          files."claude-mcp-setup" = {
+            text = # nu
+              ''
+                #!/usr/bin/env nu
+                # Run this once to add the MCP servers that need API keys
+                try { claude mcp add -s user -t http context7 https://mcp.context7.com/mcp --header $"CONTEXT7_API_KEY: (cat ${secrets.context7Key.path})" }
+                try { claude mcp add -s user -t http web-reader https://api.z.ai/api/mcp/web_reader/mcp --header $"Authorization: Bearer (cat ${secrets.zaiKey.path})" }
+                try { claude mcp add -s user -t http web-search-prime https://api.z.ai/api/mcp/web_search_prime/mcp --header $"Authorization: Bearer (cat ${secrets.zaiKey.path})" }
+                try { claude mcp add -s user -t http zread https://api.z.ai/api/mcp/zread/mcp --header $"Authorization: Bearer (cat ${secrets.zaiKey.path})" }
+              '';
+            executable = true;
           };
 
           packages =
@@ -663,80 +683,91 @@ let
 
                     Path(sys.argv[1]).write_bytes(data)
                   '';
+
+              claudeScript =
+                pkgs.writeScriptBin "claude" # nu
+                  ''
+                    #!${getExe pkgs.nushell}
+
+                    def --wrapped main [--rebuild, ...arguments] {
+                      let cache_global = $env
+                      | get --optional "XDG_CACHE_HOME"
+                      | default ($env.HOME | path join ".cache")
+
+                      let cache = $cache_global | path join "claude-code"
+
+                      let version = do {
+                        let version_file = $cache | path join "latest-version"
+
+                        match (try { (date now) - (ls $version_file | get 0.modified) > 6hr }) {
+                          # Version older than 6h or doesn't exist.
+                          true | null => {
+                            let version = try {
+                              http get --max-time 5sec https://registry.npmjs.org/@anthropic-ai/claude-code/latest | get version
+                            } catch {
+                              print --stderr $"(ansi yellow_bold)warn:(ansi reset) fetched version older than 6hr, but can't re-fetch"
+                              return ""
+                            }
+
+                            try {
+                              $version_file | path parse | get parent | mkdir $in
+                              $version | save --force $version_file
+                            } catch {
+                              print --stderr $"(ansi yellow_bold)warn:(ansi reset) failed to save latest fetched version"
+                            }
+
+                            $version
+                          },
+
+                          # Version fetched within 6h.
+                          false => { try {
+                            open $version_file
+                          } catch {
+                            print --stderr $"(ansi yellow_bold)warn:(ansi reset) failed to read latest fetched version"
+                            ""
+                          } },
+                        }
+                      }
+
+                      let binary_path = if ($version | is-empty) {
+                        print --stderr $"(ansi yellow_bold)warn:(ansi reset) falling back to latest binary"
+
+                        try {
+                          glob ($cache)/claude-code-* | last
+                        } catch {
+                          print --stderr $"(ansi red_bold)error:(ansi reset) no binary found"
+                          exit 67
+                        }
+                      } else {
+                        $cache | path join $"claude-code-($version)"
+                      }
+
+                      if not ($binary_path | path exists) or $rebuild {
+                        ${getExe pkgs.deno} cache $"npm:@anthropic-ai/claude-code@($version)"
+                        ${getExe patch} ($cache_global | path join "deno" "npm" "registry.npmjs.org" "@anthropic-ai" "claude-code" $version "cli.js")
+                        ${getExe pkgs.deno} compile --allow-all --output $binary_path $"npm:@anthropic-ai/claude-code@($version)"
+                      }
+
+                      $env.PATH ++= [ "${pkgs.ripgrep}/bin" ]
+                      r#'${
+                        toJSON config.xdg.config.files."claude-code/settings.json".value.env
+                      }'# | from json | load-env
+
+                      exec $binary_path ...$arguments
+                    }
+                  '';
             in
             singleton
-            <|
-              pkgs.writeScriptBin "claude" # nu
-                ''
-                  #!${getExe pkgs.nushell}
+            <| pkgs.symlinkJoin {
+              name = "claude-wrapped";
+              paths = singleton claudeScript;
+              buildInputs = singleton pkgs.makeWrapper;
+              postBuild = ''
+                wrapProgram $out/bin/claude \
+                  --run 'export ANTHROPIC_AUTH_TOKEN="$(cat ${secrets.zaiKey.path})"'
+              '';
+            };
 
-                  def --wrapped main [--rebuild, ...arguments] {
-                    let cache_global = $env
-                    | get --optional "XDG_CACHE_HOME"
-                    | default ($env.HOME | path join ".cache")
-
-                    let cache = $cache_global | path join "claude-code"
-
-                    let version = do {
-                      let version_file = $cache | path join "latest-version"
-
-                      match (try { (date now) - (ls $version_file | get 0.modified) > 6hr }) {
-                        # Version older than 6h or doesn't exist.
-                        true | null => {
-                          let version = try {
-                            http get --max-time 5sec https://registry.npmjs.org/@anthropic-ai/claude-code/latest | get version
-                          } catch {
-                            print --stderr $"(ansi yellow_bold)warn:(ansi reset) fetched version older than 6hr, but can't re-fetch"
-                            return ""
-                          }
-
-                          try {
-                            $version_file | path parse | get parent | mkdir $in
-                            $version | save --force $version_file
-                          } catch {
-                            print --stderr $"(ansi yellow_bold)warn:(ansi reset) failed to save latest fetched version"
-                          }
-
-                          $version
-                        },
-
-                        # Version fetched within 6h.
-                        false => { try {
-                          open $version_file
-                        } catch {
-                          print --stderr $"(ansi yellow_bold)warn:(ansi reset) failed to read latest fetched version"
-                          ""
-                        } },
-                      }
-                    }
-
-                    let binary_path = if ($version | is-empty) {
-                      print --stderr $"(ansi yellow_bold)warn:(ansi reset) falling back to latest binary"
-
-                      try {
-                        glob ($cache)/claude-code-* | last
-                      } catch {
-                        print --stderr $"(ansi red_bold)error:(ansi reset) no binary found"
-                        exit 67
-                      }
-                    } else {
-                      $cache | path join $"claude-code-($version)"
-                    }
-
-                    if not ($binary_path | path exists) or $rebuild {
-                      ${getExe pkgs.deno} cache $"npm:@anthropic-ai/claude-code@($version)"
-                      ${getExe patch} ($cache_global | path join "deno" "npm" "registry.npmjs.org" "@anthropic-ai" "claude-code" $version "cli.js")
-                      ${getExe pkgs.deno} compile --allow-all --output $binary_path $"npm:@anthropic-ai/claude-code@($version)"
-                    }
-
-                    $env.PATH ++= [ "${pkgs.ripgrep}/bin" ]
-                    r#'${
-                      toJSON config.xdg.config.files."claude-code/settings.json".value.env
-                    }'# | from json | load-env
-
-                    exec $binary_path ...$arguments
-                  }
-                '';
         };
     };
 
