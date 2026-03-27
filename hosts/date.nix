@@ -10,10 +10,10 @@ in
     modules = with inputs.self.modules.nixos; [
       aspectsBase
 
-      ai
       ai-extra
       audio
       boot-systemd
+      claude-code
       desktop-gui
       desktop-tools
       discord-gui
@@ -36,6 +36,7 @@ in
       nix-distributed-builder
       nix-distributed-builds
       object-storage
+      opencode
       packages-extra-linux
       packages-extra-gui
       packages-extra-cli
