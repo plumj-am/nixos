@@ -69,7 +69,7 @@ in
   })
   (mkPane {
     label = "dired";
-    command = "lf";
+    command = "lf -command 'set hidden true'";
     allowMany = false;
   })
   (mkPane {
