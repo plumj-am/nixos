@@ -92,7 +92,7 @@ Item {
                 bottom: root.anchorPosition === Types.positionBottom
             }
 
-            implicitWidth: root.fixedWidth > 0 ? root.fixedWidth : (root.fillRemainingWidth ? root.getAvailableWidth() : contentRect.implicitWidth)
+            implicitWidth: root.fixedWidth > 0 ? root.fixedWidth + contentRect.flare : (root.fillRemainingWidth ? root.getAvailableWidth() : contentRect.implicitWidth)
             implicitHeight: contentRect.implicitHeight
 
             margins {
@@ -120,31 +120,134 @@ Item {
                 id: container
                 anchors.fill: parent
 
-                Rectangle {
+                Canvas {
                     id: contentRect
-                    color: Theme.background
-                    border.width: 1
-                    border.color: Theme.outline
-                    topLeftRadius: (popupWindow.isTopEdge || popupWindow.isLeftEdge) ? 0 : Theme.radius.big
-                    topRightRadius: (popupWindow.isTopEdge || !popupWindow.isLeftEdge) ? 0 : Theme.radius.big
-                    bottomLeftRadius: (!popupWindow.isTopEdge || popupWindow.isLeftEdge) ? 0 : Theme.radius.big
-                    bottomRightRadius: (!popupWindow.isTopEdge || !popupWindow.isLeftEdge) ? 0 : Theme.radius.big
-                    implicitWidth: contentLoader.implicitWidth + 24
-                    implicitHeight: contentLoader.implicitHeight + 24
-                    width: root.fixedWidth > 0 ? root.fixedWidth : (root.fillRemainingWidth ? parent.width : implicitWidth)
+
+                    readonly property real r: Theme.radius.big
+                    readonly property real flare: Config.data.bar.size
+
+                    property real contentImplicitWidth: contentLoader.implicitWidth + 24 + flare
+                    property real contentImplicitHeight: contentLoader.implicitHeight + 24
+                    implicitWidth: contentImplicitWidth
+                    implicitHeight: contentImplicitHeight
+                    width: root.fixedWidth > 0 ? root.fixedWidth + flare : (root.fillRemainingWidth ? parent.width : implicitWidth)
                     height: implicitHeight
                     x: popupWindow.isLeftEdge ? 0 : parent.width - width
                     y: popupWindow.isTopEdge ? 0 : parent.height - height
+
+                    onPaint: {
+                        var ctx = getContext("2d");
+                        ctx.reset();
+                        ctx.beginPath();
+
+                        var w = width;
+                        var h = height;
+                        var r = contentRect.r;
+                        var f = contentRect.flare;
+
+                        // Helper: draw full shape path (closed)
+                        function drawShape() {
+                            if (popupWindow.isLeftEdge && popupWindow.isTopEdge) {
+                                ctx.moveTo(0, 0);
+                                ctx.lineTo(w - f, 0);
+                                ctx.arcTo(w, 0, w, f, f);
+                                ctx.lineTo(w, h - r);
+                                ctx.arcTo(w, h, w - r, h, r);
+                                ctx.lineTo(0, h);
+                            } else if (!popupWindow.isLeftEdge && popupWindow.isTopEdge) {
+                                ctx.moveTo(0, 0);
+                                ctx.lineTo(w, 0);
+                                ctx.lineTo(w, h);
+                                ctx.lineTo(f + r, h);
+                                ctx.arcTo(f, h, f, h - r, r);
+                                ctx.lineTo(f, f);
+                                ctx.arcTo(f, 0, 0, 0, f);
+                            } else if (popupWindow.isLeftEdge && !popupWindow.isTopEdge) {
+                                ctx.moveTo(0, 0);
+                                ctx.lineTo(w - f - r, 0);
+                                ctx.arcTo(w - f, 0, w - f, r, r);
+                                ctx.lineTo(w - f, h - f);
+                                ctx.arcTo(w, h - f, w, h, f);
+                                ctx.lineTo(0, h);
+                            } else {
+                                ctx.moveTo(0, h);
+                                ctx.lineTo(w, h);
+                                ctx.lineTo(w, 0);
+                                ctx.lineTo(f + r, 0);
+                                ctx.arcTo(f, 0, f, r, r);
+                                ctx.lineTo(f, h - f);
+                                ctx.arcTo(0, h - f, 0, h, f);
+                            }
+                            ctx.closePath();
+                        }
+
+                        // Fill the shape
+                        drawShape();
+                        ctx.fillStyle = Theme.background;
+                        ctx.fill();
+
+                        // Stroke only the non-bar edges (skip top for top bar, bottom for bottom bar)
+                        ctx.strokeStyle = Theme.outline;
+                        ctx.lineWidth = 1;
+
+                        if (popupWindow.isLeftEdge && popupWindow.isTopEdge) {
+                            // Left edge + bottom edge + bottom-right round + right edge + flare (skip top)
+                            ctx.beginPath();
+                            ctx.moveTo(0, 0);
+                            ctx.lineTo(0, h);
+                            ctx.lineTo(w - r, h);
+                            ctx.arcTo(w, h, w, h - r, r);
+                            ctx.lineTo(w, f);
+                            ctx.arcTo(w, 0, w - f, 0, f);
+                            ctx.stroke();
+                        } else if (!popupWindow.isLeftEdge && popupWindow.isTopEdge) {
+                            // Skip top edge; stroke: right + bottom + bottom-left round + left + flare
+                            ctx.beginPath();
+                            ctx.moveTo(w, 0);
+                            ctx.lineTo(w, h);
+                            ctx.lineTo(f + r, h);
+                            ctx.arcTo(f, h, f, h - r, r);
+                            ctx.lineTo(f, f);
+                            ctx.arcTo(f, 0, 0, 0, f);
+                            ctx.stroke();
+                        } else if (popupWindow.isLeftEdge && !popupWindow.isTopEdge) {
+                            // Skip bottom edge; stroke: left + top + top-right round + right + flare
+                            ctx.beginPath();
+                            ctx.moveTo(0, h);
+                            ctx.lineTo(0, 0);
+                            ctx.lineTo(w - f - r, 0);
+                            ctx.arcTo(w - f, 0, w - f, r, r);
+                            ctx.lineTo(w - f, h - f);
+                            ctx.arcTo(w, h - f, w, h, f);
+                            ctx.stroke();
+                        } else {
+                            // Skip bottom edge; stroke: right + top + top-left round + left + flare
+                            ctx.beginPath();
+                            ctx.moveTo(w, h);
+                            ctx.lineTo(w, 0);
+                            ctx.lineTo(f + r, 0);
+                            ctx.arcTo(f, 0, f, r, r);
+                            ctx.lineTo(f, h - f);
+                            ctx.arcTo(0, h - f, 0, h, f);
+                            ctx.stroke();
+                        }
+                    }
 
                     Loader {
                         id: contentLoader
                         anchors.left: parent.left
                         anchors.right: root.fillRemainingWidth ? parent.right : undefined
                         anchors.top: parent.top
-                        anchors.margins: 12
+                        anchors.topMargin: 12
+                        anchors.bottomMargin: 12
+                        anchors.leftMargin: 12 + (popupWindow.isLeftEdge ? 0 : contentRect.flare)
+                        anchors.rightMargin: root.fillRemainingWidth && popupWindow.isLeftEdge ? (12 + contentRect.flare) : 12
                         width: root.fillRemainingWidth ? undefined : implicitWidth
                         sourceComponent: root.contentComponent
                     }
+
+                    onWidthChanged: requestPaint()
+                    onHeightChanged: requestPaint()
                 }
 
                 Binding {
