@@ -61,6 +61,7 @@ Item {
         anchors.centerIn: root
         hoverTarget: root
         anchorPosition: Types.stringToPosition(Config.data.bar.position)
+        corner: Types.cornerTopLeft
         contentComponent: Component {
             ColumnLayout {
                 id: popupContent
@@ -158,7 +159,9 @@ Item {
                             color: Theme.textMuted
                         }
 
-                        Item { Layout.fillWidth: true }
+                        Item {
+                            Layout.fillWidth: true
+                        }
 
                         Text {
                             text: Mpris.formatTime(Mpris.length)
@@ -181,7 +184,8 @@ Item {
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Mpris.canGoPrevious ? Qt.PointingHandCursor : Qt.ArrowCursor
-                            onClicked: if (Mpris.canGoPrevious) Mpris.previous()
+                            onClicked: if (Mpris.canGoPrevious)
+                                Mpris.previous()
                         }
                     }
 
@@ -217,7 +221,8 @@ Item {
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Mpris.canGoNext ? Qt.PointingHandCursor : Qt.ArrowCursor
-                            onClicked: if (Mpris.canGoNext) Mpris.next()
+                            onClicked: if (Mpris.canGoNext)
+                                Mpris.next()
                         }
                     }
                 }

@@ -9,7 +9,7 @@ Item {
 
     property Item hoverTarget
     property int anchorPosition: Types.positionTop
-    property int anchorHAlign: Types.alignCenter
+    property int corner: Types.cornerTopLeft
     property bool shouldShow: false
     property Component contentComponent: null
     property int openCloseDelay: 200
@@ -59,23 +59,13 @@ Item {
 
     property int estimatedContentWidth: 400
 
-    function getLeftMargin() {
-        if (anchorHAlign === Types.alignLeft) {
-            const mapped = root.QsWindow.mapFromItem(root, 0, 0);
-            return mapped.x;
-        } else if (anchorHAlign === Types.alignRight) {
-            const mapped = root.QsWindow.mapFromItem(root, root.width - root.estimatedContentWidth, 0);
-            return mapped.x;
-        } else {
-            const mapped = root.QsWindow.mapFromItem(root, (root.width - root.estimatedContentWidth) / 2, 0);
-            return mapped.x;
-        }
+    function getScreen() {
+        return root.hoverTarget ? root.hoverTarget.QsWindow.screen : null;
     }
 
     function getAvailableWidth() {
-        const leftMargin = getLeftMargin();
-        const targetScreen = root.hoverTarget ? root.hoverTarget.QsWindow.screen : null;
-        return targetScreen ? targetScreen.width - leftMargin - Theme.margin.normal : 400;
+        const screen = getScreen();
+        return screen ? screen.width - (Theme.margin.normal * 2) : 400;
     }
 
     MouseArea {
@@ -95,8 +85,8 @@ Item {
             color: "transparent"
 
             anchors {
-                left: true
-                right: true
+                left: root.corner === Types.cornerTopLeft
+                right: root.corner === Types.cornerTopRight
                 top: root.anchorPosition === Types.positionTop
                 bottom: root.anchorPosition === Types.positionBottom
             }
@@ -105,7 +95,8 @@ Item {
             implicitHeight: contentRect.implicitHeight
 
             margins {
-                left: root.getLeftMargin()
+                left: root.corner === Types.cornerTopLeft ? Theme.margin.normal : 0
+                right: root.corner === Types.cornerTopRight ? Theme.margin.normal : 0
                 top: root.anchorPosition === Types.positionTop ? Config.data.bar.size : 0
                 bottom: root.anchorPosition === Types.positionBottom ? Config.data.bar.size : 0
             }
