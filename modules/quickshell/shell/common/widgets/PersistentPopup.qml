@@ -113,43 +113,101 @@ Item {
                 }
             }
 
-            Rectangle {
-                id: contentRect
-                color: Theme.background
-                radius: Theme.radius.big
-                border.width: 1
-                border.color: Theme.alpha(Theme.outline, 0.3)
-                implicitWidth: contentLoader.implicitWidth + 24
-                implicitHeight: contentLoader.implicitHeight + 24
-                width: root.fixedWidth > 0 ? root.fixedWidth : (root.fillRemainingWidth ? parent.width : implicitWidth)
-                height: implicitHeight
+            property bool isLeftEdge: root.corner === Types.cornerTopLeft
+            property bool isTopEdge: root.anchorPosition === Types.positionTop
+
+            Item {
+                id: container
+                anchors.fill: parent
+
+                Rectangle {
+                    id: contentRect
+                    color: Theme.background
+                    radius: Theme.radius.big
+                    border.width: 0
+                    implicitWidth: contentLoader.implicitWidth + 24
+                    implicitHeight: contentLoader.implicitHeight + 24
+                    width: root.fixedWidth > 0 ? root.fixedWidth : (root.fillRemainingWidth ? parent.width : implicitWidth)
+                    height: implicitHeight
+                    x: popupWindow.isLeftEdge ? 0 : parent.width - width
+                    y: popupWindow.isTopEdge ? 0 : parent.height - height
+
+                    Loader {
+                        id: contentLoader
+                        anchors.left: parent.left
+                        anchors.right: root.fillRemainingWidth ? parent.right : undefined
+                        anchors.top: parent.top
+                        anchors.margins: 12
+                        width: root.fillRemainingWidth ? undefined : implicitWidth
+                        sourceComponent: root.contentComponent
+                    }
+                }
+
+                Rectangle {
+                    id: cornerSquare
+                    width: contentRect.radius + 1
+                    height: contentRect.radius + 1
+                    color: Theme.background
+                    x: contentRect.x + (popupWindow.isLeftEdge ? 0 : contentRect.width - contentRect.radius - 1)
+                    y: contentRect.y + (popupWindow.isTopEdge ? 0 : contentRect.height - contentRect.radius - 1)
+                }
+
+                Rectangle {
+                    id: rightBorder
+                    visible: !popupWindow.isLeftEdge
+                    width: 1
+                    height: contentRect.height - contentRect.radius
+                    color: Theme.alpha(Theme.outline, 0.3)
+                    x: contentRect.x + contentRect.width - 1
+                    y: contentRect.y + (popupWindow.isTopEdge ? 0 : contentRect.radius)
+                }
+
+                Rectangle {
+                    id: leftBorder
+                    visible: popupWindow.isLeftEdge
+                    width: 1
+                    height: contentRect.height - contentRect.radius
+                    color: Theme.alpha(Theme.outline, 0.3)
+                    x: contentRect.x
+                    y: contentRect.y + (popupWindow.isTopEdge ? 0 : contentRect.radius)
+                }
+
+                Rectangle {
+                    id: bottomBorder
+                    visible: popupWindow.isTopEdge
+                    width: contentRect.width - contentRect.radius * 2
+                    height: 1
+                    color: Theme.alpha(Theme.outline, 0.3)
+                    x: contentRect.x + contentRect.radius
+                    y: contentRect.y + contentRect.height - 1
+                }
+
+                Rectangle {
+                    id: topBorder
+                    visible: !popupWindow.isTopEdge
+                    width: contentRect.width - contentRect.radius * 2
+                    height: 1
+                    color: Theme.alpha(Theme.outline, 0.3)
+                    x: contentRect.x + contentRect.radius
+                    y: contentRect.y
+                }
 
                 Binding {
                     target: root
                     property: "estimatedContentWidth"
                     value: contentRect.implicitWidth
                 }
+            }
 
-                HoverHandler {
-                    id: popupHoverHandler
-                    onHoveredChanged: {
-                        root.popupHovered = hovered;
-                        if (hovered) {
-                            closeTimer.stop();
-                        } else {
-                            closeTimer.start();
-                        }
+            HoverHandler {
+                id: popupHoverHandler
+                onHoveredChanged: {
+                    root.popupHovered = hovered;
+                    if (hovered) {
+                        closeTimer.stop();
+                    } else {
+                        closeTimer.start();
                     }
-                }
-
-                Loader {
-                    id: contentLoader
-                    anchors.left: parent.left
-                    anchors.right: root.fillRemainingWidth ? parent.right : undefined
-                    anchors.top: parent.top
-                    anchors.margins: 12
-                    width: root.fillRemainingWidth ? undefined : implicitWidth
-                    sourceComponent: root.contentComponent
                 }
             }
         }
