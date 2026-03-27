@@ -125,10 +125,10 @@ Item {
                     color: Theme.background
                     border.width: 1
                     border.color: Theme.outline
-                    topLeftRadius: (popupWindow.isLeftEdge && popupWindow.isTopEdge) ? 0 : Theme.radius.big
-                    topRightRadius: (!popupWindow.isLeftEdge && popupWindow.isTopEdge) ? 0 : Theme.radius.big
-                    bottomLeftRadius: (popupWindow.isLeftEdge && !popupWindow.isTopEdge) ? 0 : Theme.radius.big
-                    bottomRightRadius: (!popupWindow.isLeftEdge && !popupWindow.isTopEdge) ? 0 : Theme.radius.big
+                    topLeftRadius: (popupWindow.isTopEdge || popupWindow.isLeftEdge) ? 0 : Theme.radius.big
+                    topRightRadius: (popupWindow.isTopEdge || !popupWindow.isLeftEdge) ? 0 : Theme.radius.big
+                    bottomLeftRadius: (!popupWindow.isTopEdge || popupWindow.isLeftEdge) ? 0 : Theme.radius.big
+                    bottomRightRadius: (!popupWindow.isTopEdge || !popupWindow.isLeftEdge) ? 0 : Theme.radius.big
                     implicitWidth: contentLoader.implicitWidth + 24
                     implicitHeight: contentLoader.implicitHeight + 24
                     width: root.fixedWidth > 0 ? root.fixedWidth : (root.fillRemainingWidth ? parent.width : implicitWidth)
