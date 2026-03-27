@@ -123,8 +123,12 @@ Item {
                 Rectangle {
                     id: contentRect
                     color: Theme.background
-                    radius: Theme.radius.big
-                    border.width: 0
+                    border.width: 1
+                    border.color: Theme.outline
+                    topLeftRadius: (popupWindow.isLeftEdge && popupWindow.isTopEdge) ? 0 : Theme.radius.big
+                    topRightRadius: (!popupWindow.isLeftEdge && popupWindow.isTopEdge) ? 0 : Theme.radius.big
+                    bottomLeftRadius: (popupWindow.isLeftEdge && !popupWindow.isTopEdge) ? 0 : Theme.radius.big
+                    bottomRightRadius: (!popupWindow.isLeftEdge && !popupWindow.isTopEdge) ? 0 : Theme.radius.big
                     implicitWidth: contentLoader.implicitWidth + 24
                     implicitHeight: contentLoader.implicitHeight + 24
                     width: root.fixedWidth > 0 ? root.fixedWidth : (root.fillRemainingWidth ? parent.width : implicitWidth)
@@ -141,55 +145,6 @@ Item {
                         width: root.fillRemainingWidth ? undefined : implicitWidth
                         sourceComponent: root.contentComponent
                     }
-                }
-
-                Rectangle {
-                    id: cornerSquare
-                    width: contentRect.radius + 1
-                    height: contentRect.radius + 1
-                    color: Theme.background
-                    x: contentRect.x + (popupWindow.isLeftEdge ? 0 : contentRect.width - contentRect.radius - 1)
-                    y: contentRect.y + (popupWindow.isTopEdge ? 0 : contentRect.height - contentRect.radius - 1)
-                }
-
-                Rectangle {
-                    id: rightBorder
-                    visible: !popupWindow.isLeftEdge
-                    width: 1
-                    height: contentRect.height - contentRect.radius
-                    color: Theme.alpha(Theme.outline, 0.3)
-                    x: contentRect.x + contentRect.width - 1
-                    y: contentRect.y + (popupWindow.isTopEdge ? 0 : contentRect.radius)
-                }
-
-                Rectangle {
-                    id: leftBorder
-                    visible: popupWindow.isLeftEdge
-                    width: 1
-                    height: contentRect.height - contentRect.radius
-                    color: Theme.alpha(Theme.outline, 0.3)
-                    x: contentRect.x
-                    y: contentRect.y + (popupWindow.isTopEdge ? 0 : contentRect.radius)
-                }
-
-                Rectangle {
-                    id: bottomBorder
-                    visible: popupWindow.isTopEdge
-                    width: contentRect.width - contentRect.radius * 2
-                    height: 1
-                    color: Theme.alpha(Theme.outline, 0.3)
-                    x: contentRect.x + contentRect.radius
-                    y: contentRect.y + contentRect.height - 1
-                }
-
-                Rectangle {
-                    id: topBorder
-                    visible: !popupWindow.isTopEdge
-                    width: contentRect.width - contentRect.radius * 2
-                    height: 1
-                    color: Theme.alpha(Theme.outline, 0.3)
-                    x: contentRect.x + contentRect.radius
-                    y: contentRect.y
                 }
 
                 Binding {
