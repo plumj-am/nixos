@@ -62,10 +62,12 @@ Item {
         hoverTarget: root
         anchorPosition: Types.stringToPosition(Config.data.bar.position)
         corner: Types.cornerTopLeft
+        fillRemainingWidth: true
         contentComponent: Component {
             ColumnLayout {
                 id: popupContent
                 spacing: 12
+                Layout.fillWidth: true
 
                 RowLayout {
                     spacing: 12

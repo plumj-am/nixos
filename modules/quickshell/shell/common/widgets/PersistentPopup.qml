@@ -14,6 +14,7 @@ Item {
     property Component contentComponent: null
     property int openCloseDelay: 200
     property bool fillRemainingWidth: false
+    property int fixedWidth: -1
 
     property bool targetHovered: false
     property bool popupHovered: false
@@ -91,12 +92,12 @@ Item {
                 bottom: root.anchorPosition === Types.positionBottom
             }
 
-            implicitWidth: root.fillRemainingWidth ? root.getAvailableWidth() : contentRect.implicitWidth
+            implicitWidth: root.fixedWidth > 0 ? root.fixedWidth : (root.fillRemainingWidth ? root.getAvailableWidth() : contentRect.implicitWidth)
             implicitHeight: contentRect.implicitHeight
 
             margins {
-                left: root.corner === Types.cornerTopLeft ? Theme.margin.normal : 0
-                right: root.corner === Types.cornerTopRight ? Theme.margin.normal : 0
+                left: 0
+                right: 0
                 top: root.anchorPosition === Types.positionTop ? Config.data.bar.size : 0
                 bottom: root.anchorPosition === Types.positionBottom ? Config.data.bar.size : 0
             }
@@ -120,7 +121,7 @@ Item {
                 border.color: Theme.alpha(Theme.outline, 0.3)
                 implicitWidth: contentLoader.implicitWidth + 24
                 implicitHeight: contentLoader.implicitHeight + 24
-                width: root.fillRemainingWidth ? parent.width : implicitWidth
+                width: root.fixedWidth > 0 ? root.fixedWidth : (root.fillRemainingWidth ? parent.width : implicitWidth)
                 height: implicitHeight
 
                 Binding {
