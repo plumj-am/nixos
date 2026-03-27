@@ -33,9 +33,9 @@ PanelWindow {
     WlrLayershell.layer: WlrLayer.Overlay
     exclusionMode: ExclusionMode.Ignore
 
-    readonly property int barHeight: 28
+    readonly property int barHeight: Common.Config.data.bar.size
     readonly property int launcherWidth: 500
-    readonly property int launcherHeight: 400
+    readonly property int launcherHeight: 440
     readonly property int itemHeight: 48
     readonly property int maxVisibleItems: 8
 
@@ -123,38 +123,38 @@ PanelWindow {
         onPressed: root.isOpen = false
     }
 
-    Rectangle {
+    Common.FlaredRect {
         id: launcherBox
         anchors.horizontalCenter: parent.horizontalCenter
-        y: root.isOpen ? barHeight + Common.Theme.margin.normal : barHeight - 10
+        y: root.isOpen ? barHeight : barHeight - 10
         width: launcherWidth
         height: launcherHeight
-        color: Common.Theme.background
-        radius: Common.Theme.radius.normal
-        border.color: Common.Theme.outline
-        border.width: 1
-            opacity: root.isOpen ? 1.0 : 0.0
-            z: 1
+        flareLeft: true
+        flareRight: true
+        opacity: root.isOpen ? 1.0 : 0.0
+        z: 1
 
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: 150
-                    easing.type: Easing.OutCubic
-                }
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 150
+                easing.type: Easing.OutCubic
             }
+        }
 
-            Behavior on y {
-                NumberAnimation {
-                    duration: 150
-                    easing.type: Easing.OutCubic
-                }
+        Behavior on y {
+            NumberAnimation {
+                duration: 150
+                easing.type: Easing.OutCubic
             }
-
+        }
 
          ColumnLayout {
              id: contentColumn
              anchors.fill: parent
-             anchors.margins: 8
+             anchors.topMargin: launcherBox.f + 8
+             anchors.bottomMargin: 8
+             anchors.leftMargin: 8
+             anchors.rightMargin: 8
              spacing: 8
 
             TextField {
@@ -206,7 +206,7 @@ PanelWindow {
             ListView {
                 id: appList
                 Layout.fillWidth: true
-                Layout.preferredHeight: 330
+                Layout.fillHeight: true
                 model: root.filteredApps
                 clip: true
                 currentIndex: root.selectedIndex
