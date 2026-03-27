@@ -148,13 +148,15 @@ Item {
                         // Helper: draw full shape path (closed)
                         function drawShape() {
                             if (popupWindow.isLeftEdge && popupWindow.isTopEdge) {
+                                // Flare at top-right: quarter circle from (w,0) to (w-f,f)
                                 ctx.moveTo(0, 0);
-                                ctx.lineTo(w - f, 0);
-                                ctx.arcTo(w, 0, w, f, f);
-                                ctx.lineTo(w, h - r);
-                                ctx.arcTo(w, h, w - r, h, r);
+                                ctx.lineTo(w, 0);
+                                ctx.arc(w, f, f, 3 * Math.PI / 2, Math.PI, true);
+                                ctx.lineTo(w - f, h - r);
+                                ctx.arcTo(w - f, h, w - f - r, h, r);
                                 ctx.lineTo(0, h);
                             } else if (!popupWindow.isLeftEdge && popupWindow.isTopEdge) {
+                                // Flare at top-left: quarter circle from (0,0) to (f,f)
                                 ctx.moveTo(0, 0);
                                 ctx.lineTo(w, 0);
                                 ctx.lineTo(w, h);
@@ -163,13 +165,15 @@ Item {
                                 ctx.lineTo(f, f);
                                 ctx.arcTo(f, 0, 0, 0, f);
                             } else if (popupWindow.isLeftEdge && !popupWindow.isTopEdge) {
+                                // Flare at bottom-right: quarter circle from (w,h) to (w-f,h-f)
                                 ctx.moveTo(0, 0);
                                 ctx.lineTo(w - f - r, 0);
                                 ctx.arcTo(w - f, 0, w - f, r, r);
                                 ctx.lineTo(w - f, h - f);
-                                ctx.arcTo(w, h - f, w, h, f);
+                                ctx.arc(w, h - f, f, Math.PI, Math.PI / 2, true);
                                 ctx.lineTo(0, h);
                             } else {
+                                // Flare at bottom-left: quarter circle from (0,h) to (f,h-f)
                                 ctx.moveTo(0, h);
                                 ctx.lineTo(w, h);
                                 ctx.lineTo(w, 0);
@@ -191,14 +195,14 @@ Item {
                         ctx.lineWidth = 1;
 
                         if (popupWindow.isLeftEdge && popupWindow.isTopEdge) {
-                            // Left edge + bottom edge + bottom-right round + right edge + flare (skip top)
+                            // Skip top edge; stroke: left + bottom + bottom-right round + right content + flare
                             ctx.beginPath();
                             ctx.moveTo(0, 0);
                             ctx.lineTo(0, h);
-                            ctx.lineTo(w - r, h);
-                            ctx.arcTo(w, h, w, h - r, r);
-                            ctx.lineTo(w, f);
-                            ctx.arcTo(w, 0, w - f, 0, f);
+                            ctx.lineTo(w - f - r, h);
+                            ctx.arcTo(w - f, h, w - f, h - r, r);
+                            ctx.lineTo(w - f, f);
+                            ctx.arc(w, f, f, Math.PI, 3 * Math.PI / 2, false);
                             ctx.stroke();
                         } else if (!popupWindow.isLeftEdge && popupWindow.isTopEdge) {
                             // Skip top edge; stroke: right + bottom + bottom-left round + left + flare
@@ -211,14 +215,14 @@ Item {
                             ctx.arcTo(f, 0, 0, 0, f);
                             ctx.stroke();
                         } else if (popupWindow.isLeftEdge && !popupWindow.isTopEdge) {
-                            // Skip bottom edge; stroke: left + top + top-right round + right + flare
+                            // Skip bottom edge; stroke: left + top + top-right round + right content + flare
                             ctx.beginPath();
                             ctx.moveTo(0, h);
                             ctx.lineTo(0, 0);
                             ctx.lineTo(w - f - r, 0);
                             ctx.arcTo(w - f, 0, w - f, r, r);
                             ctx.lineTo(w - f, h - f);
-                            ctx.arcTo(w, h - f, w, h, f);
+                            ctx.arc(w, h - f, f, Math.PI / 2, Math.PI, false);
                             ctx.stroke();
                         } else {
                             // Skip bottom edge; stroke: right + top + top-left round + left + flare
