@@ -21,19 +21,23 @@ PanelWindow {
         bottom: true
     }
 
-    implicitWidth: 450
+    implicitWidth: 420
     exclusionMode: ExclusionMode.Ignore
     WlrLayershell.namespace: "quickshell-notifications"
     WlrLayershell.layer: WlrLayer.Overlay
 
     margins {
-        top: Common.Config.data.bar.size + Common.Theme.margin.normal
-        right: Common.Theme.margin.normal
+        top: Common.Config.data.bar.size
+        right: 0
     }
 
     ColumnLayout {
+        id: toastColumn
         anchors.fill: parent
-        anchors.topMargin: Common.Theme.margin.normal
+        anchors.leftMargin: 12
+        anchors.rightMargin: 12
+        anchors.topMargin: 12
+        anchors.bottomMargin: 12
         spacing: Common.Theme.margin.small
 
         Repeater {
@@ -47,44 +51,48 @@ PanelWindow {
                 onEntryComplete: root.markSeen(notification.id)
 
                 onDismissed: {
-                    NotificationServer.dismiss(notification)
-                    root.removeToast(notification)
+                    NotificationServer.dismiss(notification);
+                    root.removeToast(notification);
                 }
 
                 onExpired: {
-                    NotificationServer.expire(notification)
-                    root.removeToast(notification)
+                    NotificationServer.expire(notification);
+                    root.removeToast(notification);
                 }
 
-                onActionTriggered: function(action) {
-                    NotificationServer.invokeAction(notification, action)
+                onActionTriggered: function (action) {
+                    NotificationServer.invokeAction(notification, action);
                 }
             }
         }
 
-        Item { Layout.fillHeight: true }
+        Item {
+            Layout.fillHeight: true
+        }
     }
 
     Connections {
         target: NotificationServer
 
         function onNotificationReceived(notification) {
-            root.addToast(notification)
+            root.addToast(notification);
         }
     }
 
     function addToast(notification) {
-        const newToasts = activeToasts.slice()
-        newToasts.push(notification)
-        activeToasts = newToasts
+        const newToasts = activeToasts.slice();
+        newToasts.push(notification);
+        activeToasts = newToasts;
     }
 
     function markSeen(notificationId) {
-        seenIds[notificationId] = true
+        seenIds[notificationId] = true;
     }
 
     function removeToast(notification) {
-        const newToasts = activeToasts.filter(function(n) { return n !== notification })
-        activeToasts = newToasts
+        const newToasts = activeToasts.filter(function (n) {
+            return n !== notification;
+        });
+        activeToasts = newToasts;
     }
 }

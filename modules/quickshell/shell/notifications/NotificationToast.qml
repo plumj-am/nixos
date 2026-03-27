@@ -11,12 +11,12 @@ Rectangle {
     property bool autoDismiss: true
     property bool skipEntryAnimation: false
 
-    signal dismissed()
-    signal expired()
+    signal dismissed
+    signal expired
     signal actionTriggered(var action)
-    signal entryComplete()
+    signal entryComplete
 
-    implicitWidth: 300
+    implicitWidth: 420
     implicitHeight: notificationItem.implicitHeight
     width: implicitWidth
     height: implicitHeight
@@ -30,26 +30,31 @@ Rectangle {
     opacity: isExiting ? 0.0 : 1.0
 
     Behavior on scale {
-        NumberAnimation { duration: 200; easing.type: Easing.OutCubic
+        NumberAnimation {
+            duration: 200
+            easing.type: Easing.OutCubic
             onRunningChanged: {
                 if (!running && !isEntering) {
-                    root.entryComplete()
+                    root.entryComplete();
                 }
             }
         }
     }
 
     Behavior on opacity {
-        NumberAnimation { duration: 150; easing.type: Easing.OutCubic }
+        NumberAnimation {
+            duration: 150
+            easing.type: Easing.OutCubic
+        }
     }
 
     Component.onCompleted: {
-        hasEntered = true
+        hasEntered = true;
         if (skipEntryAnimation) {
-            root.entryComplete()
+            root.entryComplete();
         }
         if (autoDismiss && timeout > 0) {
-            dismissTimer.start()
+            dismissTimer.start();
         }
     }
 
@@ -60,15 +65,15 @@ Rectangle {
     }
 
     function dismiss() {
-        isExiting = true
-        exitAnimationTimer.dismissMode = true
-        exitAnimationTimer.start()
+        isExiting = true;
+        exitAnimationTimer.dismissMode = true;
+        exitAnimationTimer.start();
     }
 
     function expire() {
-        isExiting = true
-        exitAnimationTimer.dismissMode = false
-        exitAnimationTimer.start()
+        isExiting = true;
+        exitAnimationTimer.dismissMode = false;
+        exitAnimationTimer.start();
     }
 
     Timer {
@@ -86,9 +91,9 @@ Rectangle {
         showDismiss: true
 
         onDismissed: root.dismiss()
-        onActionTriggered: (action) => {
-            root.actionTriggered(action)
-            root.dismiss()
+        onActionTriggered: action => {
+            root.actionTriggered(action);
+            root.dismiss();
         }
     }
 
@@ -99,8 +104,8 @@ Rectangle {
         onEntered: dismissTimer.stop()
         onExited: {
             if (autoDismiss && timeout > 0) {
-                dismissTimer.interval = 2000
-                dismissTimer.start()
+                dismissTimer.interval = 2000;
+                dismissTimer.start();
             }
         }
     }
