@@ -117,8 +117,8 @@ let
           value = {
             theme = "gruvbox";
             autoupdate = false;
-            model = "zai-coding-plan/glm-5";
-            small_model = "zai-coding-plan/glm-4.7-flash";
+            model = "zai-coding-plan/glm-5.1";
+            small_model = "zai-coding-plan/glm-4.7-air";
 
             permission = {
               "*" = "ask";
@@ -146,18 +146,18 @@ let
             agent = {
               build = {
                 mode = "primary";
-                model = "zai-coding-plan/glm-5";
+                model = "zai-coding-plan/glm-5.1";
               };
 
               researcher = {
                 mode = "primary";
-                model = "zai-coding-plan/glm-5";
+                model = "zai-coding-plan/glm-5.1";
                 description = "Read-only research primarily using the web";
               };
 
               explore = {
                 mode = "subagent";
-                model = "zai-coding-plan/glm-4.7-flash";
+                model = "zai-coding-plan/glm-4.7-air";
               };
             };
 
@@ -208,7 +208,9 @@ let
                   inherit (lib) elem;
 
                   models = [
+                    "glm-5.1"
                     "glm-5"
+                    "glm-5-turbo"
                     "glm-4.7"
                     "glm-4.7-flashx"
                     "glm-4.7-flash"
@@ -220,7 +222,11 @@ let
                     "glm-4.5-flash"
                   ];
 
-                  supportsToolStreaming = [ "glm-5" ];
+                  supportsToolStreaming = [
+                    "glm-5.1"
+                    "glm-5"
+                    "glm-5-turbo"
+                  ];
                 in
                 genAttrs models (name: {
                   options = {
