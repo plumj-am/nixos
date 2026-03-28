@@ -300,7 +300,7 @@ let
       inherit (lib.lists) singleton;
       inherit (lib.attrsets) genAttrs;
       inherit (lib.meta) getExe;
-      inherit (lib.strings) toJSON;
+      inherit (lib.strings) toJSON replaceStrings;
       inherit (lib.trivial) const;
     in
     {
@@ -319,7 +319,7 @@ let
             value = {
               "$schema" = "https://json.schemastore.org/claude-code-settings.json";
 
-              permissions.allow = map (cmd: "Bash(${cmd})") commands.allow ++ [
+              permissions.allow = map (cmd: "Bash(${replaceStrings [ "*" ] [ ":*" ] cmd})") commands.allow ++ [
                 "Glob"
                 "Grep"
                 "Read"
