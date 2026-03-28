@@ -64,6 +64,7 @@ in
     "ctrl-g ctrl-n" = spawnTask "nushell_pane";
     "ctrl-g ctrl-N" = spawnTask "nushell_float";
     "ctrl-g ctrl-o" = spawnTask "opencode";
+    "ctrl-g ctrl-c" = spawnTask "claude-code";
   })
   (mkZedKeymap "not_editing" {
     "space f" = spawnTask "find_file";

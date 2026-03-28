@@ -63,6 +63,11 @@ in
     allowMany = true;
   })
   (mkPane {
+    label = "claude-code";
+    command = "[ -f .envrc ] && nix develop -c claude || claude";
+    allowMany = true;
+  })
+  (mkPane {
     label = "jjui";
     command = "jjui";
     allowMany = false;
