@@ -1,12 +1,11 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Wayland
 import "widgets"
 import "../common"
 import "../services" as Services
 
-PanelWindow {
+Item {
     id: root
 
     property bool isTop: true
@@ -15,18 +14,18 @@ PanelWindow {
     readonly property color textColor: Theme.text
     readonly property color outlineColor: Theme.outline
 
+    signal notificationClicked()
+    signal mediaClicked()
+    signal sessionClicked()
+
     implicitHeight: barSize
 
     anchors {
-        top: root.isTop
-        bottom: !root.isTop
-        left: true
-        right: true
+        left: parent.left
+        right: parent.right
+        top: root.isTop ? parent.top : undefined
+        bottom: !root.isTop ? parent.bottom : undefined
     }
-
-    WlrLayershell.layer: WlrLayer.Top
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
-    WlrLayershell.exclusionMode: ExclusionMode.Auto
 
     Rectangle {
         id: barContent
@@ -50,6 +49,7 @@ PanelWindow {
 
                     Media {
                         Layout.alignment: Qt.AlignVCenter
+                        onClicked: root.mediaClicked()
                     }
                 }
             }
@@ -96,9 +96,14 @@ PanelWindow {
                     Separator { Layout.alignment: Qt.AlignVCenter }
                     NotificationWidget {
                         Layout.alignment: Qt.AlignVCenter
+                        onClicked: root.notificationClicked()
                     }
                     Clock {
                         Layout.alignment: Qt.AlignVCenter
+                    }
+                    SessionButton {
+                        Layout.alignment: Qt.AlignVCenter
+                        onClicked: root.sessionClicked()
                     }
                 }
             }

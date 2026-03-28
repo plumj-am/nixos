@@ -1,17 +1,18 @@
 import QtQuick
 import QtQuick.Layouts
-import Quickshell
 import "../../common"
-import "../../common/widgets"
 import "../../notifications" as Notifications
 
 Item {
     id: root
 
     property real size: 24
+    property bool drawerOpen: false
 
     implicitWidth: row.width + 8
     implicitHeight: size
+
+    signal clicked()
 
     RowLayout {
         id: row
@@ -23,7 +24,7 @@ Item {
             text: "󰂚"
             font.family: Theme.font.icons.family
             font.pixelSize: Theme.font.sans.size
-            color: mouseArea.containsMouse ? Theme.accent : Theme.foreground
+            color: mouseArea.containsMouse || root.drawerOpen ? Theme.accent : Theme.foreground
             Layout.alignment: Qt.AlignVCenter
         }
 
@@ -50,17 +51,7 @@ Item {
         id: mouseArea
         anchors.fill: parent
         hoverEnabled: true
-        acceptedButtons: Qt.NoButton
-    }
-
-    PersistentPopup {
-        anchors.centerIn: root
-        hoverTarget: root
-        anchorPosition: Types.stringToPosition(Config.data.bar.position)
-        corner: Types.cornerTopRight
-        fillRemainingWidth: true
-        contentComponent: Component {
-            Notifications.NotificationPopupContent {}
-        }
+        cursorShape: Qt.PointingHandCursor
+        onClicked: root.clicked()
     }
 }
