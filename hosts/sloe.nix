@@ -13,6 +13,7 @@ in
       boot-grub
       disks-server
       forgejo-action-runner
+      graphics
       linux-kernel-latest
       nix-distributed-builder
       nix-distributed-builds
