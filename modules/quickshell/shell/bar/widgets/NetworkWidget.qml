@@ -18,20 +18,8 @@ Item {
         height: 20
 
         Text {
-            visible: Network.networkType === Types.networkWired
-            text: "E"
-            font.family: Theme.font.mono.family
-            font.pixelSize: Theme.font.mono.size
-            font.bold: true
-            color: Theme.foreground
-            Layout.alignment: Qt.AlignVCenter
-            Layout.fillHeight: true
-            verticalAlignment: Text.AlignVCenter
-        }
-
-        Text {
-            visible: Network.networkType === Types.networkWireless
-            text: "W"
+            visible: Network.networkType === Types.networkWired || Network.networkType === Types.networkWireless
+            text: Network.networkType === Types.networkWired ? "E" : "W"
             font.family: Theme.font.mono.family
             font.pixelSize: Theme.font.mono.size
             font.bold: true

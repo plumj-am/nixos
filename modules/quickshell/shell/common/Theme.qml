@@ -60,6 +60,9 @@ QtObject {
             mono: {
                 family: "Hasklug Nerd Font Mono",
                 size: 13
+            },
+            icons: {
+                family: "Symbols Nerd Font"
             }
         })
 

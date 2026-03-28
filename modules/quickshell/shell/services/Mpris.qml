@@ -20,8 +20,10 @@ Item {
     readonly property string identity: activePlayer?.identity ?? ""
 
     // Keep position updating while playing
-    property FrameAnimation _posUpdater: FrameAnimation {
+    property Timer _posUpdater: Timer {
         running: root.activePlayer?.playbackState === MprisPlaybackState.Playing
+        interval: 1000
+        repeat: true
         onTriggered: {
             if (root.activePlayer) root.activePlayer.positionChanged()
         }

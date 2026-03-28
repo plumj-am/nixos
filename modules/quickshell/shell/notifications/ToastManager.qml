@@ -91,6 +91,10 @@ PanelWindow {
 
     function markSeen(notificationId) {
         seenIds[notificationId] = true;
+        var keys = Object.keys(seenIds);
+        while (keys.length > 50) {
+            delete seenIds[keys.shift()];
+        }
     }
 
     function removeToast(notification) {

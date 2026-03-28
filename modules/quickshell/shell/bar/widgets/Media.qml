@@ -20,7 +20,7 @@ Item {
 
         Text {
             text: Mpris.isPlaying ? "\uf04b" : "\uf04c"
-            font.family: "Hasklug Nerd Font Mono"
+            font.family: Theme.font.mono.family
             font.pixelSize: 12
             color: Theme.foreground
             visible: Mpris.hasPlayer
@@ -92,7 +92,7 @@ Item {
                         Text {
                             anchors.centerIn: parent
                             text: "\uf001"
-                            font.family: "Hasklug Nerd Font Mono"
+                            font.family: Theme.font.mono.family
                             font.pixelSize: 28
                             color: Theme.textMuted
                             visible: !albumArtImage.visible
@@ -180,7 +180,7 @@ Item {
 
                     Text {
                         text: "\uf048"
-                        font.family: "Hasklug Nerd Font Mono"
+                        font.family: Theme.font.mono.family
                         font.pixelSize: 16
                         color: Mpris.canGoPrevious ? Theme.foreground : Theme.textMuted
                         MouseArea {
@@ -200,7 +200,7 @@ Item {
                         Text {
                             anchors.centerIn: parent
                             text: Mpris.isPlaying ? "\uf04c" : "\uf04b"
-                            font.family: "Hasklug Nerd Font Mono"
+                            font.family: Theme.font.mono.family
                             font.pixelSize: 14
                             color: Theme.background
                         }
@@ -217,7 +217,7 @@ Item {
 
                     Text {
                         text: "\uf051"
-                        font.family: "Hasklug Nerd Font Mono"
+                        font.family: Theme.font.mono.family
                         font.pixelSize: 16
                         color: Mpris.canGoNext ? Theme.foreground : Theme.textMuted
                         MouseArea {

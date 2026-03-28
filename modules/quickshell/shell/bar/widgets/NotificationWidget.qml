@@ -21,7 +21,7 @@ Item {
 
         Text {
             text: "󰂚"
-            font.family: "Symbols Nerd Font"
+            font.family: Theme.font.icons.family
             font.pixelSize: Theme.font.sans.size
             color: mouseArea.containsMouse ? Theme.accent : Theme.foreground
             Layout.alignment: Qt.AlignVCenter

@@ -27,6 +27,8 @@ QtObject {
 
     signal notificationReceived(var notification)
 
+    readonly property int maxHistory: 100
+
     function addToHistory(notification) {
         var data = {
             id: notification.id,
@@ -42,6 +44,9 @@ QtObject {
             expireTimeout: notification.expireTimeout
         }
         historyModel.insert(0, { "notificationData": data })
+        while (historyModel.count > maxHistory) {
+            historyModel.remove(historyModel.count - 1)
+        }
     }
 
     function removeFromHistory(index) {

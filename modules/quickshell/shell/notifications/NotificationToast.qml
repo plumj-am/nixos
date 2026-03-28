@@ -104,7 +104,6 @@ Rectangle {
         onEntered: dismissTimer.stop()
         onExited: {
             if (autoDismiss && timeout > 0) {
-                dismissTimer.interval = 2000;
                 dismissTimer.start();
             }
         }
