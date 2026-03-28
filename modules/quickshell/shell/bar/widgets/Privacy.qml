@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import Quickshell.Services.Pipewire
 import "../../common"
 
 Item {
@@ -8,8 +9,13 @@ Item {
     implicitHeight: 24
     implicitWidth: privacyRow.implicitWidth + 8
 
-    property bool microphoneActive: false
+    property bool microphoneActive: micTracker.linkGroups.length > 0
     property bool cameraActive: false
+
+    PwNodeLinkTracker {
+        id: micTracker
+        node: Pipewire.defaultAudioSource
+    }
 
     RowLayout {
         id: privacyRow
@@ -21,18 +27,18 @@ Item {
             Layout.preferredWidth: 8
             Layout.preferredHeight: 8
             radius: Theme.radius.small
-            color: microphoneActive ? Theme.error : Theme.foreground2
-            visible: microphoneActive
+            color: root.microphoneActive ? Theme.error : Theme.foreground2
+            visible: root.microphoneActive
         }
 
         Rectangle {
             Layout.preferredWidth: 8
             Layout.preferredHeight: 8
             radius: Theme.radius.small
-            color: cameraActive ? Theme.error : Theme.foreground2
-            visible: cameraActive
+            color: root.cameraActive ? Theme.error : Theme.foreground2
+            visible: root.cameraActive
         }
     }
 
-    visible: microphoneActive || cameraActive
+    visible: root.microphoneActive || root.cameraActive
 }
