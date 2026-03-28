@@ -19,7 +19,7 @@ Item {
     }
 
     Behavior on implicitWidth {
-        NAnim {}
+        Common.NAnim {}
     }
 
     Common.Corner {
@@ -81,7 +81,7 @@ Item {
                     }
 
                     Behavior on animProgress {
-                        NAnim {
+                        Common.NAnim {
                             duration: 200
                         }
                     }

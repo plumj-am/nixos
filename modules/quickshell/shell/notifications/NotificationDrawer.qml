@@ -14,7 +14,7 @@ Item {
     clip: true
 
     Behavior on implicitHeight {
-        NAnim {}
+        Common.NAnim {}
     }
 
     Common.Corner {
