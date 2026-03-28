@@ -155,11 +155,11 @@
         "rust-analyzer-src": "rust-analyzer-src"
       },
       "locked": {
-        "lastModified": 1774510107,
-        "narHash": "sha256-UDNmYHtwG73aNs48ng7x0i3BWv6lkSn5KHxkNi1ivbU=",
+        "lastModified": 1774682177,
+        "narHash": "sha256-OVbuJnJLlbHE28eRMudjtA6NXz/ifuXSho79gvh6GHY=",
         "owner": "nix-community",
         "repo": "fenix",
-        "rev": "620b63b95c258486d2d381bc174fa7e73adf6462",
+        "rev": "e0f515387df77b9fdbaaf81e7f866f0365474c18",
         "type": "github"
       },
       "original": {
@@ -602,11 +602,11 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1773130184,
-        "narHash": "sha256-3bwx4WqCB06yfQIGB+OgIckOkEDyKxiTD5pOo4Xz2rI=",
+        "lastModified": 1774616418,
+        "narHash": "sha256-z+dLkAS4bqytIlOI4h2MnjBJrSP4d1Awx0n+IV5YA3Y=",
         "owner": "niri-wm",
         "repo": "niri",
-        "rev": "b07bde3ee82dd73115e6b949e4f3f63695da35ea",
+        "rev": "8f48f56fe19918b5cfa02e5d68a47ebaf7bf3dee",
         "type": "github"
       },
       "original": {
@@ -713,11 +713,11 @@
     },
     "os": {
       "locked": {
-        "lastModified": 1774509978,
-        "narHash": "sha256-hdl5+yPF2KXSpuFy6dTHe62c5hKiEAhd1fq8UagtTdQ=",
+        "lastModified": 1774700625,
+        "narHash": "sha256-dBkofLIWlS5LuUaAxkDKPyDquqqRovGXg7hs70oG5xc=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "b317a7eaabaea07be8c71aded8b266fddce0a181",
+        "rev": "57597ba4391da342b27161d28b5ee99c7dbb48fa",
         "type": "github"
       },
       "original": {
@@ -908,11 +908,11 @@
     "rust-analyzer-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1774454876,
-        "narHash": "sha256-bwkM8HseUs/22x+hy6FWvJMP6q/2CKBrm4sYxz9rMY8=",
+        "lastModified": 1774569884,
+        "narHash": "sha256-E8iWEPzg7OnE0XXXjo75CX7xFauqzJuGZ5wSO9KS8Ek=",
         "owner": "rust-lang",
         "repo": "rust-analyzer",
-        "rev": "9253d39eab8b9c9da3c1412fc94764e01d55a02b",
+        "rev": "443ddcddd0c73b07b799d052f5ef3b448c2f3508",
         "type": "github"
       },
       "original": {
@@ -1154,11 +1154,11 @@
         "sqlite-lib-src": "sqlite-lib-src"
       },
       "locked": {
-        "lastModified": 1774452236,
-        "narHash": "sha256-mlcZC2INHi8DRV4YHY9i+d7NNdrfwpWShf9lYeLpyao=",
+        "lastModified": 1774691944,
+        "narHash": "sha256-oZS+XQlxOHSmey93fd9q7F64bYDEG2Uxeivae1Vcjms=",
         "ref": "refs/heads/master",
-        "rev": "233111b316b5faf365bcd0ee1bc1632460fab552",
-        "revCount": 2115,
+        "rev": "2677d2b115aceea71bc759f6f391972e34579e80",
+        "revCount": 2121,
         "type": "git",
         "url": "https://tangled.org/tangled.org/core"
       },
@@ -1230,11 +1230,11 @@
     "zedless-patches": {
       "flake": false,
       "locked": {
-        "lastModified": 1774571817,
-        "narHash": "sha256-sZyELeOtBt9bAWSPOeuDHD/dbWIRAC2PQteMb2FMmRU=",
+        "lastModified": 1774647173,
+        "narHash": "sha256-aCFJnXazYL0UMMow+sn8oLs0v97tH4rlZrNFpP2dPKI=",
         "owner": "zedless-editor",
         "repo": "zedless-patches",
-        "rev": "7ff14f6b1b94f2e73310fd52ae2f8efb156d3aee",
+        "rev": "3dac2ad68ea0036214d464acef3744448116c429",
         "type": "github"
       },
       "original": {
