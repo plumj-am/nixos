@@ -440,7 +440,7 @@ let
 
   zedBase =
     {
-      inputs,
+      # inputs,
       pkgs,
       lib,
       config,
