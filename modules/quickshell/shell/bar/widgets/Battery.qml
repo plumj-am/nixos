@@ -64,8 +64,8 @@ Item {
                         Layout.alignment: Qt.AlignHCenter
                         visible: Battery.energyRate > 0
                         text: Battery.energyRate.toFixed(1) + "W"
-                        font.family: Theme.fontMono.family
-                        font.pixelSize: Theme.fontMono.size
+                        font.family: Theme.font.mono.family
+                        font.pixelSize: Theme.font.mono.size
                         color: Theme.textMuted
                     }
                 }
