@@ -38,7 +38,7 @@ PanelWindow {
         anchors.rightMargin: 12
         anchors.topMargin: 0
         anchors.bottomMargin: 12
-        spacing: Common.Theme.margin.small
+        spacing: 0
 
         Repeater {
             model: root.activeToasts.slice(0, root.maxVisible).reverse()
