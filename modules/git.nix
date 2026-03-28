@@ -14,7 +14,7 @@ let
       hjem.extraModules = singleton {
         packages = [
           pkgs.gh
-          pkgs.git
+          pkgs.gitMinimal
           pkgs.difftastic
           pkgs.git-credential-oauth
         ];
