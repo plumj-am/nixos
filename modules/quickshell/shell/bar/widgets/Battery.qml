@@ -11,6 +11,7 @@ Item {
     id: root
 
     visible: Battery.available
+
     implicitWidth: row.width + 8
     implicitHeight: 24
 
@@ -29,7 +30,7 @@ Item {
 
         Text {
             visible: Config.data.battery?.showPercentage ?? true
-            text: Math.round(Battery.percentage * 100) + "%"
+            text: (Math.round(Battery.percentage * 100) + "%").padEnd(3)
             font.family: Theme.font.mono.family
             font.pixelSize: Theme.font.mono.size
             color: Battery.isCritical ? Theme.error : Theme.foreground

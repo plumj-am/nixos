@@ -13,6 +13,16 @@ Item {
         precision: SystemClock.Seconds
     }
 
+    // HACK: Fix clock width changing for sans font.
+    // Yes I could just use monospace font but I don't want to.
+    TextMetrics {
+        id: timeMetrics
+        font.family: Theme.font.sans.family
+        font.pixelSize: Theme.font.sans.size
+        font.weight: 600
+        text: "88:88"
+    }
+
     implicitWidth: row.width + 8
     implicitHeight: size
 
@@ -38,6 +48,8 @@ Item {
             font.weight: 600
             color: Theme.foreground
             Layout.alignment: Qt.AlignVCenter
+            Layout.preferredWidth: timeMetrics.width
+            horizontalAlignment: Text.AlignHCenter
         }
     }
 }

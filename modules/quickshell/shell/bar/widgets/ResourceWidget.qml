@@ -32,7 +32,7 @@ Item {
         }
 
         Text {
-            text: root.valueText
+            text: root.valueText.padEnd(3)
             font.family: Theme.font.mono.family
             font.pixelSize: Theme.font.mono.size
             color: Theme.foreground
