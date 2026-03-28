@@ -11,8 +11,7 @@ QtObject {
         },
         clock: {
             time: { format: "HH:mm", enabled: true },
-            date: { format: "yyyy-MM-dd", enabled: true },
-            font: { family: "Lexend", scale: 0.7 }
+            date: { format: "yyyy-MM-dd", enabled: true }
         },
         battery: {
             showPercentage: true,

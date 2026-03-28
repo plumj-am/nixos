@@ -58,7 +58,6 @@ Item {
         closeTimer.start();
     }
 
-    property int estimatedContentWidth: 400
 
     function getScreen() {
         return root.hoverTarget ? root.hoverTarget.QsWindow.screen : null;
@@ -252,12 +251,6 @@ Item {
 
                     onWidthChanged: requestPaint()
                     onHeightChanged: requestPaint()
-                }
-
-                Binding {
-                    target: root
-                    property: "estimatedContentWidth"
-                    value: contentRect.implicitWidth
                 }
             }
 

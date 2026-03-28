@@ -8,10 +8,10 @@ Item {
 
     property var activePlayer: null
     readonly property bool hasPlayer: activePlayer !== null
-    property string trackTitle: ""
-    property string trackArtist: ""
-    property string trackArtUrl: ""
-    property bool isPlaying: false
+    readonly property string trackTitle: activePlayer?.trackTitle ?? ""
+    readonly property string trackArtist: activePlayer?.trackArtist ?? ""
+    readonly property string trackArtUrl: activePlayer?.trackArtUrl ?? ""
+    readonly property bool isPlaying: activePlayer?.playbackState === MprisPlaybackState.Playing
 
     readonly property bool canGoNext: activePlayer?.canGoNext ?? false
     readonly property bool canGoPrevious: activePlayer?.canGoPrevious ?? false
@@ -19,38 +19,35 @@ Item {
     readonly property real length: activePlayer?.length ?? 1
     readonly property string identity: activePlayer?.identity ?? ""
 
-    Timer {
-        interval: 1000
-        running: true
-        repeat: true
-        onTriggered: root.updateActivePlayer()
-    }
-
-    function updateActivePlayer() {
-        const players = Mpris.players.values
-        if (players.length > 0) {
-            const playing = players.find(p => p.isPlaying)
-            activePlayer = playing ?? players[0]
-            if (activePlayer) {
-                trackTitle = activePlayer.trackTitle ?? ""
-                trackArtist = activePlayer.trackArtist ?? ""
-                trackArtUrl = activePlayer.trackArtUrl ?? ""
-                isPlaying = activePlayer.isPlaying ?? false
-            }
-        } else {
-            activePlayer = null
-            trackTitle = ""
-            trackArtist = ""
-            trackArtUrl = ""
-            isPlaying = false
+    // Keep position updating while playing
+    property FrameAnimation _posUpdater: FrameAnimation {
+        running: root.activePlayer?.playbackState === MprisPlaybackState.Playing
+        onTriggered: {
+            if (root.activePlayer) root.activePlayer.positionChanged()
         }
     }
 
-    Component.onCompleted: updateActivePlayer()
+    function _updateActivePlayer() {
+        const players = Mpris.players.values
+        if (players.length > 0) {
+            const playing = players.find(p => p.playbackState === MprisPlaybackState.Playing)
+            activePlayer = playing ?? players[0]
+        } else {
+            activePlayer = null
+        }
+    }
+
+    Component.onCompleted: _updateActivePlayer()
+
+    Connections {
+        target: Mpris.players
+        function onObjectInsertedPost() { root._updateActivePlayer() }
+        function onObjectRemovedPost() { root._updateActivePlayer() }
+    }
 
     function playPause() {
         if (activePlayer) {
-            if (activePlayer.isPlaying) {
+            if (activePlayer.playbackState === MprisPlaybackState.Playing) {
                 activePlayer.pause()
             } else {
                 activePlayer.play()
@@ -67,12 +64,6 @@ Item {
     function previous() {
         if (activePlayer && activePlayer.canGoPrevious) {
             activePlayer.previous()
-        }
-    }
-
-    function setPosition(pos) {
-        if (activePlayer) {
-            activePlayer.position = pos
         }
     }
 

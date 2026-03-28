@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Widgets
@@ -44,23 +43,23 @@ PanelWindow {
     Connections {
         target: DesktopEntries
         function onApplicationsChanged() {
-            loadApps()
+            loadApps();
         }
     }
 
     onIsOpenChanged: {
         if (isOpen) {
-            searchText = ""
-            selectedIndex = 0
-            searchField.forceActiveFocus()
+            searchText = "";
+            selectedIndex = 0;
+            searchField.forceActiveFocus();
         }
     }
 
     function loadApps() {
-        var apps = []
-        var entries = DesktopEntries.applications.values
+        var apps = [];
+        var entries = DesktopEntries.applications.values;
         for (var i = 0; i < entries.length; i++) {
-            var app = entries[i]
+            var app = entries[i];
             if (!app.noDisplay && !app.hidden) {
                 apps.push({
                     name: app.name || "Unknown",
@@ -68,53 +67,49 @@ PanelWindow {
                     icon: app.icon || "application-x-executable",
                     command: app.command || [],
                     app: app
-                })
+                });
             }
         }
-        apps.sort(function(a, b) {
-            return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
-        })
-        allApps = apps
-        filterApps()
+        apps.sort(function (a, b) {
+            return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+        });
+        allApps = apps;
+        filterApps();
     }
 
     function filterApps() {
         if (!searchText || searchText.trim() === "") {
-            filteredApps = allApps.slice(0, 50)
+            filteredApps = allApps.slice(0, 50);
         } else {
-            var query = searchText.toLowerCase()
-            var results = []
+            var query = searchText.toLowerCase();
+            var results = [];
             for (var i = 0; i < allApps.length; i++) {
-                var app = allApps[i]
-                var name = (app.name || "").toLowerCase()
-                var desc = (app.description || "").toLowerCase()
+                var app = allApps[i];
+                var name = (app.name || "").toLowerCase();
+                var desc = (app.description || "").toLowerCase();
                 if (name.indexOf(query) !== -1 || desc.indexOf(query) !== -1) {
-                    results.push(app)
+                    results.push(app);
                 }
             }
-            filteredApps = results.slice(0, 50)
+            filteredApps = results.slice(0, 50);
         }
-        selectedIndex = 0
+        selectedIndex = 0;
     }
 
     onSearchTextChanged: filterApps()
 
     function launchSelected() {
         if (filteredApps.length > 0 && filteredApps[selectedIndex]) {
-            var app = filteredApps[selectedIndex].app
+            var app = filteredApps[selectedIndex].app;
             if (app.execute) {
-                app.execute()
+                app.execute();
             } else if (app.command && app.command.length > 0) {
-                Qt.callLater(function() {
-                    Quickshell.execDetached(app.command)
-                })
+                Qt.callLater(function () {
+                    Quickshell.execDetached(app.command);
+                });
             }
-            isOpen = false
+            isOpen = false;
         }
-    }
-
-    function toggle() {
-        isOpen = !isOpen
     }
 
     MouseArea {
@@ -149,14 +144,14 @@ PanelWindow {
             }
         }
 
-         ColumnLayout {
-             id: contentColumn
-             anchors.fill: parent
-             anchors.topMargin: launcherBox.f + 12
-             anchors.bottomMargin: 12
-             anchors.leftMargin: launcherBox.f + 8
-             anchors.rightMargin: launcherBox.f + 8
-             spacing: 8
+        ColumnLayout {
+            id: contentColumn
+            anchors.fill: parent
+            anchors.topMargin: launcherBox.f + 12
+            anchors.bottomMargin: 12
+            anchors.leftMargin: launcherBox.f + 8
+            anchors.rightMargin: launcherBox.f + 8
+            spacing: 8
 
             TextField {
                 id: searchField
@@ -179,27 +174,27 @@ PanelWindow {
                 Keys.onEnterPressed: root.launchSelected()
                 Keys.onUpPressed: {
                     if (root.selectedIndex > 0) {
-                        root.selectedIndex--
+                        root.selectedIndex--;
                     }
                 }
                 Keys.onDownPressed: {
                     if (root.selectedIndex < root.filteredApps.length - 1) {
-                        root.selectedIndex++
+                        root.selectedIndex++;
                     }
                 }
-                Keys.onPressed: function(event) {
+                Keys.onPressed: function (event) {
                     if (event.key === Qt.Key_W && (event.modifiers & Qt.ControlModifier)) {
-                        event.accepted = true
-                        var cursorPos = searchField.cursorPosition
-                        var text = searchField.text
-                        if (cursorPos === 0) return
-
-                        var start = cursorPos - 1
+                        event.accepted = true;
+                        var cursorPos = searchField.cursorPosition;
+                        var text = searchField.text;
+                        if (cursorPos === 0)
+                            return;
+                        var start = cursorPos - 1;
                         while (start > 0 && text.charAt(start - 1) !== ' ') {
-                            start--
+                            start--;
                         }
-                        searchField.text = text.substring(0, start) + text.substring(cursorPos)
-                        searchField.cursorPosition = start
+                        searchField.text = text.substring(0, start) + text.substring(cursorPos);
+                        searchField.cursorPosition = start;
                     }
                 }
             }
@@ -213,11 +208,8 @@ PanelWindow {
                 currentIndex: root.selectedIndex
                 onCurrentIndexChanged: {
                     if (currentIndex >= 0) {
-                        positionViewAtIndex(currentIndex, ListView.Contain)
+                        positionViewAtIndex(currentIndex, ListView.Contain);
                     }
-                }
-
-                onModelChanged: {
                 }
 
                 delegate: Rectangle {
@@ -230,7 +222,7 @@ PanelWindow {
 
                     onIsHoveredChanged: {
                         if (isHovered) {
-                            root.selectedIndex = index
+                            root.selectedIndex = index;
                         }
                     }
 
@@ -280,8 +272,8 @@ PanelWindow {
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            root.selectedIndex = index
-                            root.launchSelected()
+                            root.selectedIndex = index;
+                            root.launchSelected();
                         }
                     }
                 }

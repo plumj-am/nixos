@@ -7,7 +7,6 @@ import "../common"
 Item {
     id: root
 
-    property var interfaces: []
     property string activeInterface: ""
     property int networkType: 0  // 0=wired, 1=wireless, 2=virtual
 
@@ -27,7 +26,7 @@ Item {
     }
 
     Timer {
-        interval: 5000
+        interval: Config.data.network?.updateInterval ?? 5000
         running: true
         repeat: true
         triggeredOnStart: true
@@ -57,7 +56,6 @@ Item {
                 if (iface && !activeInterface) {
                     setActiveInterface(iface.trim(), 0)
                 }
-                interfaces = lines.map(l => l.trim()).filter(Boolean)
             }
         }
     }
