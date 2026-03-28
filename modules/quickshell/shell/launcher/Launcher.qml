@@ -147,7 +147,7 @@ PanelWindow {
         ColumnLayout {
             id: contentColumn
             anchors.fill: parent
-            anchors.topMargin: launcherBox.f + 12
+            anchors.topMargin: launcherBox.f - 26
             anchors.bottomMargin: 12
             anchors.leftMargin: launcherBox.f + 8
             anchors.rightMargin: launcherBox.f + 8
