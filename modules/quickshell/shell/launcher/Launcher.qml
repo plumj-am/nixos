@@ -131,6 +131,7 @@ PanelWindow {
         height: launcherHeight
         flareLeft: true
         flareRight: true
+        clip: true
         opacity: root.isOpen ? 1.0 : 0.0
         z: 1
 
@@ -151,10 +152,10 @@ PanelWindow {
          ColumnLayout {
              id: contentColumn
              anchors.fill: parent
-             anchors.topMargin: launcherBox.f + 8
-             anchors.bottomMargin: 8
-             anchors.leftMargin: 8
-             anchors.rightMargin: 8
+             anchors.topMargin: launcherBox.f + 12
+             anchors.bottomMargin: 12
+             anchors.leftMargin: launcherBox.f + 8
+             anchors.rightMargin: launcherBox.f + 8
              spacing: 8
 
             TextField {

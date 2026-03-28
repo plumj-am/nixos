@@ -160,11 +160,13 @@ Canvas {
                 ctx.arcTo(w - f, h, w - f, h - r, r);
             }
 
-            // Right side up to bar edge
-            ctx.lineTo(root.flareRight ? w - f : w, 0);
+            // Right side up to flare/corner
+            ctx.lineTo(root.flareRight ? w - f : w - r, root.flareRight ? f : r);
 
             if (root.flareRight) {
                 ctx.arc(w, f, f, Math.PI, 3 * Math.PI / 2, false);
+            } else {
+                ctx.arcTo(w, 0, w - r, 0, r);
             }
         } else {
             // Bottom bar: skip bottom edge, trace the rest
