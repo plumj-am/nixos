@@ -332,7 +332,24 @@ let
                 "TaskList"
                 "TaskOutput"
                 "TaskStop"
+
+                "mcp__context7"
+                "mcp__web-reader"
+                "mcp__web-search-prime"
+                "mcp__zread"
               ];
+
+              sandbox = {
+                enabled = true;
+                filesystem = {
+                  allowWrite = [ "/tmp" ];
+                  denyRead = [
+                    "/run/agenix"
+                    "/run/agenix.d"
+                  ];
+                };
+
+              };
 
               env = {
                 # For z.ai coding plan.
@@ -757,17 +774,21 @@ let
                     }
                   '';
             in
-            singleton
-            <| pkgs.symlinkJoin {
-              name = "claude-wrapped";
-              paths = singleton claudeScript;
-              buildInputs = singleton pkgs.makeWrapper;
-              postBuild = ''
-                wrapProgram $out/bin/claude \
-                  --run 'export ANTHROPIC_AUTH_TOKEN="$(cat ${secrets.zaiKey.path})"'
-              '';
-            };
+            [
+              (pkgs.symlinkJoin {
+                name = "claude-wrapped";
+                paths = singleton claudeScript;
+                buildInputs = singleton pkgs.makeWrapper;
+                postBuild = ''
+                  wrapProgram $out/bin/claude \
+                    --run 'export ANTHROPIC_AUTH_TOKEN="$(cat ${secrets.zaiKey.path})"'
+                '';
+              })
 
+              # claude-code sandbox deps.
+              pkgs.socat
+              pkgs.bubblewrap
+            ];
         };
     };
 
