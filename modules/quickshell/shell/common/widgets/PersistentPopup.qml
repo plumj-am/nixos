@@ -18,13 +18,15 @@ Item {
 
     property bool targetHovered: false
     property bool popupHovered: false
+    property bool popupAlive: false
+    property int openDelay: 0
 
     width: hoverTarget ? hoverTarget.width : 0
     height: hoverTarget ? hoverTarget.height : 0
 
     Timer {
         id: openTimer
-        interval: root.openCloseDelay
+        interval: root.openDelay
         onTriggered: root.open()
     }
 
@@ -41,6 +43,7 @@ Item {
     function open() {
         closeTimer.stop();
         shouldShow = true;
+        popupAlive = true;
     }
 
     function close() {
@@ -57,7 +60,6 @@ Item {
         root.targetHovered = false;
         closeTimer.start();
     }
-
 
     function getScreen() {
         return root.hoverTarget ? root.hoverTarget.QsWindow.screen : null;
@@ -78,7 +80,7 @@ Item {
     }
 
     LazyLoader {
-        active: root.shouldShow
+        active: root.popupAlive
 
         component: PanelWindow {
             id: popupWindow
@@ -94,6 +96,8 @@ Item {
             implicitWidth: root.fixedWidth > 0 ? root.fixedWidth + contentRect.flare : (root.fillRemainingWidth ? root.getAvailableWidth() : contentRect.implicitWidth)
             implicitHeight: contentRect.implicitHeight
 
+            property real animProgress: 0
+
             margins {
                 left: 0
                 right: 0
@@ -107,9 +111,44 @@ Item {
             WlrLayershell.layer: WlrLayer.Top
 
             onVisibleChanged: {
-                if (!visible) {
+                if (visible && root.shouldShow) {
+                    openAnim.start();
+                } else if (!visible) {
                     root.shouldShow = false;
+                    root.popupAlive = false;
                 }
+            }
+
+            Connections {
+                target: root
+                function onShouldShowChanged() {
+                    if (root.shouldShow && popupWindow.visible) {
+                        closeAnim.stop();
+                        openAnim.start();
+                    } else if (!root.shouldShow && popupWindow.visible) {
+                        openAnim.stop();
+                        closeAnim.start();
+                    }
+                }
+            }
+
+            NumberAnimation {
+                id: openAnim
+                target: popupWindow
+                property: "animProgress"
+                to: 1
+                duration: 300
+                easing.type: Easing.OutCubic
+            }
+
+            NumberAnimation {
+                id: closeAnim
+                target: popupWindow
+                property: "animProgress"
+                to: 0
+                duration: 100
+                easing.type: Easing.InCubic
+                onFinished: root.popupAlive = false
             }
 
             property bool isLeftEdge: root.corner === Types.cornerTopLeft
@@ -117,7 +156,11 @@ Item {
 
             Item {
                 id: container
-                anchors.fill: parent
+                width: parent.width
+                height: contentRect.implicitHeight * popupWindow.animProgress
+                anchors.top: popupWindow.isTopEdge ? parent.top : undefined
+                anchors.bottom: popupWindow.isTopEdge ? undefined : parent.bottom
+                clip: true
 
                 Canvas {
                     id: contentRect
