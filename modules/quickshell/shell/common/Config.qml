@@ -9,6 +9,11 @@ QtObject {
             size: 32,
             position: "top"
         },
+        shell: {
+            enableOuterBorder: false,
+            outerBorderSize: 4,
+            cornerRadius: 40
+        },
         clock: {
             time: { format: "HH:mm", enabled: true },
             date: { format: "yyyy-MM-dd", enabled: true }
