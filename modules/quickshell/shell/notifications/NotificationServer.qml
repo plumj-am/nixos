@@ -6,8 +6,8 @@ import Quickshell.Services.Notifications
 QtObject {
     id: root
 
-    property list<var> notificationHistory: []
-    
+    property ListModel historyModel: ListModel {}
+
     property NotificationServer server: NotificationServer {
         bodySupported: true
         bodyMarkupSupported: true
@@ -23,7 +23,7 @@ QtObject {
         }
     }
 
-    readonly property int notificationCount: notificationHistory.length
+    readonly property int notificationCount: historyModel.count
 
     signal notificationReceived(var notification)
 
@@ -41,15 +41,13 @@ QtObject {
             actions: notification.actions,
             expireTimeout: notification.expireTimeout
         }
-        var history = Array.from(notificationHistory)
-        history.unshift(data)
-        notificationHistory = history
+        historyModel.insert(0, { "notificationData": data })
     }
 
     function removeFromHistory(index) {
-        var history = Array.from(notificationHistory)
-        history.splice(index, 1)
-        notificationHistory = history
+        if (index >= 0 && index < historyModel.count) {
+            historyModel.remove(index)
+        }
     }
 
     function dismiss(index) {
@@ -57,7 +55,7 @@ QtObject {
     }
 
     function dismissAll() {
-        notificationHistory = []
+        historyModel.clear()
     }
 
     function invokeAction(notificationData, action) {

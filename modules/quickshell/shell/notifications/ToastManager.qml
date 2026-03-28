@@ -9,11 +9,10 @@ PanelWindow {
     id: root
 
     property int maxVisible: 5
-    property var activeToasts: []
     property var seenIds: ({})
 
     color: "transparent"
-    visible: activeToasts.length > 0
+    visible: toastModel.count > 0
 
     anchors {
         right: true
@@ -31,6 +30,10 @@ PanelWindow {
         right: 0
     }
 
+    ListModel {
+        id: toastModel
+    }
+
     ColumnLayout {
         id: toastColumn
         anchors.fill: parent
@@ -41,12 +44,12 @@ PanelWindow {
         spacing: 0
 
         Repeater {
-            model: root.activeToasts.slice(0, root.maxVisible).reverse()
+            model: toastModel
 
             NotificationToast {
                 Layout.alignment: Qt.AlignRight
-                notification: modelData
-                skipEntryAnimation: root.seenIds[modelData.id] === true
+                notification: model.notificationData
+                skipEntryAnimation: root.seenIds[model.notificationData.id] === true
 
                 onEntryComplete: root.markSeen(notification.id)
 
@@ -80,9 +83,10 @@ PanelWindow {
     }
 
     function addToast(notification) {
-        const newToasts = activeToasts.slice();
-        newToasts.push(notification);
-        activeToasts = newToasts;
+        toastModel.insert(0, { "notificationData": notification });
+        while (toastModel.count > maxVisible) {
+            toastModel.remove(toastModel.count - 1);
+        }
     }
 
     function markSeen(notificationId) {
@@ -90,9 +94,11 @@ PanelWindow {
     }
 
     function removeToast(notification) {
-        const newToasts = activeToasts.filter(function (n) {
-            return n !== notification;
-        });
-        activeToasts = newToasts;
+        for (var i = 0; i < toastModel.count; i++) {
+            if (toastModel.get(i).notificationData === notification) {
+                toastModel.remove(i);
+                break;
+            }
+        }
     }
 }

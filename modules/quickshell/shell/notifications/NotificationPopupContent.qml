@@ -59,12 +59,12 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: Math.min(350, notificationList.contentHeight)
         clip: true
-        model: NotificationServer.notificationHistory
+        model: NotificationServer.historyModel
         spacing: Common.Theme.margin.small
 
         delegate: NotificationItem {
             width: notificationList.width
-            notification: modelData
+            notification: model.notificationData
             maxWidth: width
             showActions: true
             showDismiss: true
