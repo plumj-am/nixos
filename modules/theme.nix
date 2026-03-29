@@ -309,6 +309,7 @@ let
       fonts.packages = [
         config.theme.font.mono.package
         config.theme.font.sans.package
+        pkgs.nerd-fonts.symbols-only
         pkgs.noto-fonts
         pkgs.noto-fonts-cjk-sans
         pkgs.noto-fonts-lgc-plus

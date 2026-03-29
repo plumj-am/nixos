@@ -12,7 +12,7 @@ Item {
     Text {
         anchors.centerIn: parent
         text: "\uf011"
-        font.family: Theme.font.mono.family
+        font.family: Theme.font.icons.family
         font.pixelSize: Theme.font.sans.size
         color: mouseArea.containsMouse ? Theme.accent : Theme.foreground
     }

@@ -10,7 +10,6 @@ Item {
     implicitWidth: open ? 80 : 0
     implicitHeight: parent.height * 0.5
     visible: implicitWidth > 0
-    clip: true
 
     anchors {
         right: parent.right
@@ -50,11 +49,31 @@ Item {
 
             Repeater {
                 model: [
-                    { "icon": "\uf011", "name": "Shutdown", "action": "shutdown" },
-                    { "icon": "\uf2f1", "name": "Reboot", "action": "reboot" },
-                    { "icon": "\uf236", "name": "Suspend", "action": "suspend" },
-                    { "icon": "\uf2f5", "name": "Logout", "action": "logout" },
-                    { "icon": "\uf023", "name": "Lock", "action": "lock" }
+                    {
+                        "icon": "\uf011",
+                        "name": "Shutdown",
+                        "action": "shutdown"
+                    },
+                    {
+                        "icon": "\uf2f1",
+                        "name": "Reboot",
+                        "action": "reboot"
+                    },
+                    {
+                        "icon": "\uf236",
+                        "name": "Suspend",
+                        "action": "suspend"
+                    },
+                    {
+                        "icon": "\uf2f5",
+                        "name": "Logout",
+                        "action": "logout"
+                    },
+                    {
+                        "icon": "\uf023",
+                        "name": "Lock",
+                        "action": "lock"
+                    }
                 ]
 
                 delegate: Rectangle {
@@ -67,17 +86,10 @@ Item {
                     color: mouseArea.containsMouse ? Qt.alpha(Common.Theme.accent, 0.2) : "transparent"
                     radius: Common.Theme.radius.small
 
-                    property real animProgress: 0
-                    property int animDelay: root.open ? (4 - index) * 50 : index * 50
+                    property real animProgress: root.open ? 1 : 0
 
                     transform: Translate {
                         x: (1 - animProgress) * 120
-                    }
-
-                    Timer {
-                        interval: parent.animDelay
-                        running: true
-                        onTriggered: parent.animProgress = root.open ? 1 : 0
                     }
 
                     Behavior on animProgress {
@@ -89,7 +101,7 @@ Item {
                     Text {
                         anchors.centerIn: parent
                         text: modelData.icon
-                        font.family: Common.Theme.font.mono.family
+                        font.family: Common.Theme.font.icons.family
                         font.pixelSize: 28
                         color: mouseArea.pressed ? Common.Theme.accent : Common.Theme.foreground
                     }
@@ -108,14 +120,16 @@ Item {
 
     function executeAction(action) {
         var cmds = {
-            "shutdown": ["shutdown", "now"],
+            "shutdown": ["systemctl", "poweroff"],
             "reboot": ["systemctl", "reboot"],
-            "suspend": ["systemctl", "suspend"],
-            "logout": ["niri", "msg", "action", "quit"],
-            "lock": ["loginctl", "lock-session"]
+            "suspend": ["bash -c 'hyprlock --quiet &", "systemctl", "suspend"],
+            "hibernate": ["bash -c 'hyprlock --quiet &", "systemctl", "hibernate"],
+            "lock": ["hyprlock", "--quiet"]
         };
         var cmd = cmds[action];
         if (cmd)
-            Quickshell.execDetached({ command: cmd });
+            Quickshell.execDetached({
+                command: cmd
+            });
     }
 }
