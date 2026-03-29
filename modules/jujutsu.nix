@@ -267,6 +267,8 @@ let
                   description(glob:'private:*') |
                   description(glob:'WIP:*') |
                   description(glob:'PRIVATE:*') |
+                  description(glob:'aba*') |
+                  description(glob:'abandon*') |
                   conflicts() |
                   (empty() ~ merges()) |
                   description('substring-i:"DO NOT MAIL"')
