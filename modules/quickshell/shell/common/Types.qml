@@ -2,8 +2,6 @@ pragma Singleton
 import QtQuick
 
 QtObject {
-    readonly property int orientationHorizontal: 0
-    readonly property int orientationVertical: 1
     readonly property int positionTop: 0
     readonly property int positionBottom: 1
     readonly property int cornerTopLeft: 0
