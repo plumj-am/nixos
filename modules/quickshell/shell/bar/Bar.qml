@@ -8,7 +8,6 @@ import "../services" as Services
 Item {
     id: root
 
-    property bool isTop: true
     property int barSize: Config.data.bar.size
     readonly property color barColor: Theme.background
     readonly property color textColor: Theme.text
@@ -23,8 +22,7 @@ Item {
     anchors {
         left: parent.left
         right: parent.right
-        top: root.isTop ? parent.top : undefined
-        bottom: !root.isTop ? parent.bottom : undefined
+        top: parent.top
     }
 
     Rectangle {
