@@ -27,7 +27,7 @@ in
       sudo-extra-server
       syncthing
       users-extra
-      { hardware.facter.reportPath = ./facter/yuzu.json; }
+      { hardware.facter.reportPath = ./facter/sloe.json; }
       {
         config = mkConfig inputs "sloe" "x86_64-linux" {
 
