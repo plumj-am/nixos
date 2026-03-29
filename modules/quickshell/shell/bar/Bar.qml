@@ -14,9 +14,9 @@ Item {
     readonly property color textColor: Theme.text
     readonly property color outlineColor: Theme.outline
 
-    signal notificationClicked()
-    signal mediaClicked()
-    signal sessionClicked()
+    signal notificationClicked
+    signal mediaClicked
+    signal sessionClicked
 
     implicitHeight: barSize
 
@@ -31,8 +31,6 @@ Item {
         id: barContent
         anchors.fill: parent
         color: barColor
-        bottomLeftRadius: Config.radius.big
-        bottomRightRadius: Config.radius.big
 
         RowLayout {
             anchors.fill: parent
@@ -76,7 +74,9 @@ Item {
                     Privacy {
                         Layout.alignment: Qt.AlignVCenter
                     }
-                    Separator { Layout.alignment: Qt.AlignVCenter }
+                    Separator {
+                        Layout.alignment: Qt.AlignVCenter
+                    }
                     CpuWidget {
                         Layout.alignment: Qt.AlignVCenter
                     }
@@ -95,7 +95,9 @@ Item {
                     Battery {
                         Layout.alignment: Qt.AlignVCenter
                     }
-                    Separator { Layout.alignment: Qt.AlignVCenter }
+                    Separator {
+                        Layout.alignment: Qt.AlignVCenter
+                    }
                     NotificationWidget {
                         Layout.alignment: Qt.AlignVCenter
                         onClicked: root.notificationClicked()

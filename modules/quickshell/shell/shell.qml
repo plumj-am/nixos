@@ -23,6 +23,21 @@ ShellRoot {
             exclusionMode: ExclusionMode.Ignore
             WlrLayershell.namespace: "quickshell:shell"
 
+            mask: Region {
+                regions: childRegions.instances
+                intersection: Intersection.Xor
+            }
+
+            Variants {
+                id: childRegions
+                model: window.contentItem.children
+                delegate: Region {
+                    required property Item modelData
+                    item: modelData
+                    intersection: Intersection.Xor
+                }
+            }
+
             anchors {
                 left: true
                 top: true
@@ -112,7 +127,7 @@ ShellRoot {
                 open: window.sessionOpen
             }
 
-            // Background click handler to close drawers
+            // Click outside drawers to close (covers empty areas only due to mask)
             MouseArea {
                 anchors.fill: parent
                 z: -1
