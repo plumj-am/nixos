@@ -347,7 +347,8 @@ let
                 Mod+Shift+Comma { consume-or-expel-window-left; }
                 Mod+Shift+Period { consume-or-expel-window-right; }
 
-                Mod+Shift+Q { spawn-sh "${quickshell} --path ${quickshellPath} ipc call shell reload"; }
+                Mod+Ctrl+R { spawn-sh "${quickshell} --path ${quickshellPath} ipc call shell reload"; }
+                Mod+Ctrl+Shift+R { spawn-sh "${quickshell} --path ${quickshellPath} ipc call shell reloadHard"; }
                 Ctrl+Backspace { spawn-sh "${quickshell} --path ${quickshellPath} ipc call launcher toggle"; }
                 Mod+T { spawn "process-monitor"; }
                 Mod+P { spawn "process-killer"; }

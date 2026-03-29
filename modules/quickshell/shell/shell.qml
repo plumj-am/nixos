@@ -55,9 +55,9 @@ ShellRoot {
                 id: notifAutoCloseTimer
                 onTriggered: {
                     if (window.notifAutoOpened) {
-                        window.notifOpen = false
-                        window.notifAutoOpened = false
-                        Notifications.NotificationServer.markAllSeen()
+                        window.notifOpen = false;
+                        window.notifAutoOpened = false;
+                        Notifications.NotificationServer.markAllSeen();
                     }
                 }
             }
@@ -92,29 +92,28 @@ ShellRoot {
                 color: Common.Theme.background
             }
 
-            property int topMargin: Common.Config.data.shell.enableOuterBorder
-                ? Common.Config.data.shell.outerBorderSize : 0
+            property int topMargin: Common.Config.data.shell.enableOuterBorder ? Common.Config.data.shell.outerBorderSize : 0
 
             // Bar
             Bar {
                 id: bar
                 y: window.topMargin
                 onNotificationClicked: {
-                    window.notifOpen = !window.notifOpen
-                    window.notifAutoOpened = false
-                    window.mediaOpen = false
-                    window.sessionOpen = false
-                    notifAutoCloseTimer.stop()
+                    window.notifOpen = !window.notifOpen;
+                    window.notifAutoOpened = false;
+                    window.mediaOpen = false;
+                    window.sessionOpen = false;
+                    notifAutoCloseTimer.stop();
                 }
                 onMediaClicked: {
-                    window.mediaOpen = !window.mediaOpen
-                    window.notifOpen = false
-                    window.sessionOpen = false
+                    window.mediaOpen = !window.mediaOpen;
+                    window.notifOpen = false;
+                    window.sessionOpen = false;
                 }
                 onSessionClicked: {
-                    window.sessionOpen = !window.sessionOpen
-                    window.notifOpen = false
-                    window.mediaOpen = false
+                    window.sessionOpen = !window.sessionOpen;
+                    window.notifOpen = false;
+                    window.mediaOpen = false;
                 }
             }
 
@@ -148,13 +147,13 @@ ShellRoot {
                 anchors.fill: parent
                 z: -1
                 acceptedButtons: Qt.AllButtons
-                onClicked: function(mouse) {
-                    window.notifOpen = false
-                    window.notifAutoOpened = false
-                    window.mediaOpen = false
-                    window.sessionOpen = false
-                    notifAutoCloseTimer.stop()
-                    Notifications.NotificationServer.markAllSeen()
+                onClicked: function (mouse) {
+                    window.notifOpen = false;
+                    window.notifAutoOpened = false;
+                    window.mediaOpen = false;
+                    window.sessionOpen = false;
+                    notifAutoCloseTimer.stop();
+                    Notifications.NotificationServer.markAllSeen();
                 }
             }
 
@@ -162,15 +161,15 @@ ShellRoot {
                 target: Notifications.NotificationServer
                 function onNotificationReceived(notification) {
                     if (!window.notifOpen) {
-                        window.notifOpen = true
-                        window.notifAutoOpened = true
-                        window.mediaOpen = false
-                        window.sessionOpen = false
+                        window.notifOpen = true;
+                        window.notifAutoOpened = true;
+                        window.mediaOpen = false;
+                        window.sessionOpen = false;
                     }
                     if (window.notifAutoOpened) {
-                        var timeout = notification.expireTimeout > 0 ? notification.expireTimeout * 1000 : 8000
-                        notifAutoCloseTimer.interval = timeout
-                        notifAutoCloseTimer.restart()
+                        var timeout = notification.expireTimeout > 0 ? notification.expireTimeout * 1000 : 8000;
+                        notifAutoCloseTimer.interval = timeout;
+                        notifAutoCloseTimer.restart();
                     }
                 }
             }
@@ -223,7 +222,8 @@ ShellRoot {
     }
 
     function toggleLauncher() {
-        if (clipboardLoader.item) clipboardLoader.item.isOpen = false;
+        if (clipboardLoader.item)
+            clipboardLoader.item.isOpen = false;
         if (launcherLoader.item) {
             launcherLoader.item.screen = Quickshell.focusedScreen || Quickshell.screens[0];
             launcherLoader.item.isOpen = !launcherLoader.item.isOpen;
@@ -231,7 +231,8 @@ ShellRoot {
     }
 
     function toggleClipboard() {
-        if (launcherLoader.item) launcherLoader.item.isOpen = false;
+        if (launcherLoader.item)
+            launcherLoader.item.isOpen = false;
         if (clipboardLoader.item) {
             clipboardLoader.item.screen = Quickshell.focusedScreen || Quickshell.screens[0];
             clipboardLoader.item.isOpen = !clipboardLoader.item.isOpen;
@@ -273,6 +274,13 @@ ShellRoot {
         target: "shell"
         function reload(): void {
             Quickshell.reload(false);
+        }
+    }
+
+    IpcHandler {
+        target: "shell"
+        function reloadHard(): void {
+            Quickshell.reload(true);
         }
     }
 }
