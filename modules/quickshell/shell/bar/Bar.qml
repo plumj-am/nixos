@@ -31,6 +31,8 @@ Item {
         id: barContent
         anchors.fill: parent
         color: barColor
+        bottomLeftRadius: Config.radius.big
+        bottomRightRadius: Config.radius.big
 
         RowLayout {
             anchors.fill: parent

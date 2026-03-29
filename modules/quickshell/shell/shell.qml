@@ -126,6 +126,23 @@ ShellRoot {
         }
     }
 
+    // Exclusion zone: reserves space at top so windows tile below the bar
+    Variants {
+        model: Quickshell.screens
+
+        delegate: PanelWindow {
+            required property var modelData
+            screen: modelData
+            anchors.top: true
+            anchors.left: true
+            anchors.right: true
+            exclusionMode: ExclusionMode.Normal
+            explicitExclusiveZone: Common.Config.data.bar.size
+            color: "transparent"
+            height: 1
+        }
+    }
+
     // Launcher stays as separate overlay PanelWindow
     Loader {
         id: launcherLoader
