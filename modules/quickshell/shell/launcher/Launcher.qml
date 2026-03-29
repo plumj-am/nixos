@@ -10,15 +10,13 @@ PanelWindow {
     id: root
 
     property bool isOpen: false
-    property real animProgress: isOpen ? 1 : 0
-    property bool animAlive: animProgress > 0 || isOpen
     property string searchText: ""
     property int selectedIndex: 0
     property var filteredApps: []
     property var allApps: []
     property var screen: null
 
-    visible: animAlive
+    visible: isOpen || launcherClip.implicitHeight > 0
     color: "transparent"
     implicitHeight: 800
 
@@ -45,14 +43,6 @@ PanelWindow {
         target: DesktopEntries
         function onApplicationsChanged() {
             loadApps();
-        }
-    }
-
-    Behavior on animProgress {
-        NumberAnimation {
-            duration: 500
-            easing.type: Easing.BezierSpline
-            easing.bezierCurve: [0.38, 1.21, 0.22, 1, 1, 1]
         }
     }
 
@@ -132,7 +122,13 @@ PanelWindow {
         anchors.horizontalCenter: parent.horizontalCenter
         y: barHeight
         width: launcherWidth + Common.Config.data.shell.cornerRadius * 2
-        height: launcherHeight * root.animProgress
+        implicitHeight: root.isOpen ? launcherHeight : 0
+        visible: implicitHeight > 0
+
+        Behavior on implicitHeight {
+            Common.NAnim {}
+        }
+
         clip: true
 
         Item {
@@ -145,7 +141,7 @@ PanelWindow {
             Common.Corner {
                 location: Qt.TopLeftCorner
                 extensionSide: Qt.Horizontal
-                radius: root.animAlive ? Common.Config.data.shell.cornerRadius : 0
+                radius: root.visible ? Common.Config.data.shell.cornerRadius : 0
                 color: Common.Theme.background
             }
 
@@ -153,7 +149,7 @@ PanelWindow {
             Common.Corner {
                 location: Qt.TopRightCorner
                 extensionSide: Qt.Horizontal
-                radius: root.animAlive ? Common.Config.data.shell.cornerRadius : 0
+                radius: root.visible ? Common.Config.data.shell.cornerRadius : 0
                 color: Common.Theme.background
             }
 
@@ -164,6 +160,7 @@ PanelWindow {
                 radius: 0
                 bottomLeftRadius: Common.Theme.radius.big
                 bottomRightRadius: Common.Theme.radius.big
+                clip: true
 
                 ColumnLayout {
                     id: contentColumn
