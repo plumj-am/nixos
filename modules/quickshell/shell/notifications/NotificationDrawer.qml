@@ -7,6 +7,7 @@ Item {
     id: root
 
     property bool open: false
+    property bool popupMode: false
 
     implicitWidth: 320
     implicitHeight: open ? contentLoader.implicitHeight + 24 : 0
@@ -42,7 +43,9 @@ Item {
             asynchronous: true
             anchors.fill: parent
             anchors.margins: 12
-            sourceComponent: NotificationPopupContent {}
+            sourceComponent: NotificationPopupContent {
+                popupMode: root.popupMode
+            }
         }
     }
 }

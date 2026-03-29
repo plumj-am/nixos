@@ -46,8 +46,20 @@ ShellRoot {
             }
 
             property bool notifOpen: false
+            property bool notifAutoOpened: false
             property bool mediaOpen: false
             property bool sessionOpen: false
+
+            Timer {
+                id: notifAutoCloseTimer
+                onTriggered: {
+                    if (window.notifAutoOpened) {
+                        window.notifOpen = false
+                        window.notifAutoOpened = false
+                        Notifications.NotificationServer.markAllSeen()
+                    }
+                }
+            }
 
             // Outer border rectangles (configurable)
             Rectangle {
@@ -88,8 +100,10 @@ ShellRoot {
                 y: window.topMargin
                 onNotificationClicked: {
                     window.notifOpen = !window.notifOpen
+                    window.notifAutoOpened = false
                     window.mediaOpen = false
                     window.sessionOpen = false
+                    notifAutoCloseTimer.stop()
                 }
                 onMediaClicked: {
                     window.mediaOpen = !window.mediaOpen
@@ -107,6 +121,7 @@ ShellRoot {
             Notifications.NotificationDrawer {
                 id: notifDrawer
                 open: window.notifOpen
+                popupMode: window.notifAutoOpened
                 anchors.top: parent.top
                 anchors.topMargin: window.topMargin + bar.barSize
                 anchors.right: parent.right
@@ -134,8 +149,28 @@ ShellRoot {
                 acceptedButtons: Qt.AllButtons
                 onClicked: function(mouse) {
                     window.notifOpen = false
+                    window.notifAutoOpened = false
                     window.mediaOpen = false
                     window.sessionOpen = false
+                    notifAutoCloseTimer.stop()
+                    Notifications.NotificationServer.markAllSeen()
+                }
+            }
+
+            Connections {
+                target: Notifications.NotificationServer
+                function onNotificationReceived(notification) {
+                    if (!window.notifOpen) {
+                        window.notifOpen = true
+                        window.notifAutoOpened = true
+                        window.mediaOpen = false
+                        window.sessionOpen = false
+                    }
+                    if (window.notifAutoOpened) {
+                        var timeout = notification.expireTimeout > 0 ? notification.expireTimeout * 1000 : 8000
+                        notifAutoCloseTimer.interval = timeout
+                        notifAutoCloseTimer.restart()
+                    }
                 }
             }
         }
@@ -167,7 +202,7 @@ ShellRoot {
 
     Loader {
         id: toastManagerLoader
-        active: true
+        active: false
         source: "notifications/ToastManager.qml"
     }
 

@@ -6,12 +6,14 @@ import "."
 ColumnLayout {
     id: root
 
-    spacing: Common.Theme.margin.normal
+    property bool popupMode: false
+
+    spacing: Common.Theme.margin.small
     Layout.fillWidth: true
     implicitHeight: Math.min(450, contentHeight)
     Layout.minimumWidth: 300
 
-    property real contentHeight: headerRow.implicitHeight + notificationList.implicitHeight + footerText.implicitHeight + (Common.Theme.margin.normal * 3)
+    property real contentHeight: headerRow.implicitHeight + notificationList.implicitHeight + footerText.implicitHeight + (Common.Theme.margin.normal * 2)
 
     RowLayout {
         id: headerRow
@@ -29,7 +31,7 @@ ColumnLayout {
         Item { Layout.fillWidth: true }
 
         Rectangle {
-            visible: NotificationServer.notificationCount > 0
+            visible: !root.popupMode && NotificationServer.notificationCount > 0
             implicitWidth: clearText.implicitWidth + Common.Theme.padding.normal * 2
             implicitHeight: 28
             color: clearMouseArea.containsMouse ? Common.Theme.surfaceContainer : Common.Theme.surface
@@ -69,6 +71,8 @@ ColumnLayout {
             showActions: true
             showDismiss: true
             notificationIndex: index
+            visible: !root.popupMode || index < NotificationServer.unreadCount
+            height: visible ? implicitHeight : 0
 
             onDismissed: NotificationServer.dismiss(notificationIndex)
             onActionTriggered: function(action) { NotificationServer.invokeAction(notification, action) }
@@ -79,7 +83,7 @@ ColumnLayout {
         id: emptyText
         Layout.fillWidth: true
         Layout.fillHeight: true
-        visible: NotificationServer.notificationCount === 0
+        visible: root.popupMode ? NotificationServer.unreadCount === 0 : NotificationServer.notificationCount === 0
         text: "No notifications"
         color: Common.Theme.textMuted
         font.family: Common.Theme.font.sans.family
@@ -91,11 +95,13 @@ ColumnLayout {
     Text {
         id: footerText
         Layout.fillWidth: true
-        text: NotificationServer.notificationCount + " notification" + (NotificationServer.notificationCount !== 1 ? "s" : "")
+        text: root.popupMode
+            ? NotificationServer.unreadCount + " new notification" + (NotificationServer.unreadCount !== 1 ? "s" : "")
+            : NotificationServer.notificationCount + " notification" + (NotificationServer.notificationCount !== 1 ? "s" : "")
         color: Common.Theme.textMuted
         font.family: Common.Theme.font.sans.family
         font.pixelSize: 11
         horizontalAlignment: Text.AlignRight
-        visible: NotificationServer.notificationCount > 0
+        visible: root.popupMode ? NotificationServer.unreadCount > 0 : NotificationServer.notificationCount > 0
     }
 }

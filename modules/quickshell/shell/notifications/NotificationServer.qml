@@ -27,6 +27,14 @@ QtObject {
 
     signal notificationReceived(var notification)
 
+    property int seenCount: 0
+
+    function markAllSeen() {
+        seenCount = historyModel.count
+    }
+
+    readonly property int unreadCount: historyModel.count - seenCount
+
     readonly property int maxHistory: 100
 
     function addToHistory(notification) {
