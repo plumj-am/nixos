@@ -346,8 +346,8 @@ let
                 Mod+Shift+Comma { consume-or-expel-window-left; }
                 Mod+Shift+Period { consume-or-expel-window-right; }
 
-                Mod+Q { spawn-sh "${quickshellPackage} --path ${./quickshell/shell} ipc call shell reload"; }
-                Ctrl+Backspace { spawn-sh "qs ipc -p /home/jam/nixos/modules/quickshell/shell call launcher toggle"; }
+                Mod+Shift+Q { spawn-sh "${quickshellPackage} --path ${./quickshell/shell} ipc call shell reload"; }
+                Ctrl+Backspace { spawn-sh "${quickshellPackage} --path ${./quickshell/shell} ipc call launcher toggle"; }
                 Mod+T { spawn "process-monitor"; }
                 Mod+P { spawn "process-killer"; }
                 Mod+D { spawn "todo-scratchpad"; }
