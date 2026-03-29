@@ -41,6 +41,7 @@ Item {
         topLeftRadius: Common.Theme.radius.big
         bottomLeftRadius: Common.Theme.radius.big
         color: Common.Theme.background
+        clip: true
 
         ColumnLayout {
             anchors.fill: parent

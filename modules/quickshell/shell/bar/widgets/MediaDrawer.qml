@@ -35,6 +35,7 @@ Item {
         color: Common.Theme.background
         radius: 0
         bottomRightRadius: Common.Theme.radius.big
+        clip: true
 
         ColumnLayout {
             id: contentColumn

@@ -36,6 +36,7 @@ Item {
         color: Common.Theme.background
         radius: 0
         bottomLeftRadius: Common.Theme.radius.big
+        clip: true
 
         Loader {
             id: contentLoader
