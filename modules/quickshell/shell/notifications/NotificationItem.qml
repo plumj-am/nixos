@@ -34,147 +34,142 @@ Rectangle {
         }
     }
 
-    RowLayout {
+    ColumnLayout {
         id: contentLayout
         anchors.fill: parent
         anchors.margins: Common.Theme.padding.normal
-        spacing: Common.Theme.margin.normal
+        spacing: 2
 
-        IconImage {
-            id: appIcon
-            Layout.preferredWidth: 32
-            Layout.preferredHeight: 32
-            implicitSize: 32
-            source: {
-                if (!notification) return ""
-                const icon = notification.appIcon || notification.desktopEntry
-                if (!icon) return ""
-                const path = Quickshell.iconPath(icon)
-                return path
-            }
-            asynchronous: true
-            visible: status === Image.Ready
-        }
-
-        Image {
-            id: notifImage
-            Layout.preferredWidth: 48
-            Layout.preferredHeight: 48
-            property string imageSource: notification?.image || ""
-            property bool loadFailed: false
-            source: loadFailed ? "" : imageSource
-            fillMode: Image.PreserveAspectCrop
-            visible: imageSource !== "" && status === Image.Ready
-            asynchronous: true
-            onImageSourceChanged: loadFailed = false
-            onStatusChanged: if (status === Image.Error) loadFailed = true
-        }
-
-        ColumnLayout {
+        RowLayout {
             Layout.fillWidth: true
-            spacing: 2
+            spacing: Common.Theme.margin.small
 
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: Common.Theme.margin.small
-
-                Text {
-                    text: notification?.appName || "Unknown"
-                    color: Common.Theme.textMuted
-                    font.family: Common.Theme.font.sans.family
-                    font.pixelSize: 13
-                    elide: Text.ElideRight
-                    Layout.fillWidth: true
+            IconImage {
+                id: appIcon
+                Layout.preferredWidth: 24
+                Layout.preferredHeight: 24
+                implicitSize: 24
+                source: {
+                    if (!notification) return ""
+                    const icon = notification.appIcon || notification.desktopEntry
+                    if (!icon) return ""
+                    const path = Quickshell.iconPath(icon)
+                    return path
                 }
+                asynchronous: true
+                visible: status === Image.Ready
+            }
 
-                Text {
-                    text: formatTime(notification?.time)
-                    color: Common.Theme.textMuted
-                    font.family: Common.Theme.font.sans.family
-                    font.pixelSize: 10
-                    visible: notification?.time !== undefined && notification?.time !== 0
-                }
+            Image {
+                id: notifImage
+                Layout.preferredWidth: 24
+                Layout.preferredHeight: 24
+                property string imageSource: notification?.image || ""
+                property bool loadFailed: false
+                source: loadFailed ? "" : imageSource
+                fillMode: Image.PreserveAspectCrop
+                visible: imageSource !== "" && status === Image.Ready
+                asynchronous: true
+                onImageSourceChanged: loadFailed = false
+                onStatusChanged: if (status === Image.Error) loadFailed = true
             }
 
             Text {
-                text: notification?.summary || ""
-                color: Common.Theme.text
-                font.family: Common.Theme.font.sans.family
-                font.pixelSize: 13
-                wrapMode: Text.WordWrap
-                Layout.fillWidth: true
-                visible: text !== ""
-            }
-
-            Text {
-                text: notification?.body || ""
-                color: Common.Theme.foreground
-                font.family: Common.Theme.font.sans.family
-                font.pixelSize: 12
-                wrapMode: Text.WordWrap
-                textFormat: Text.RichText
-                Layout.fillWidth: true
-                visible: text !== ""
-                maximumLineCount: 3
-                elide: Text.ElideRight
-            }
-
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: Common.Theme.margin.small
-                visible: root.showActions && notification?.actions !== undefined && notification?.actions?.length > 0
-
-                Repeater {
-                    model: notification?.actions || []
-
-                    Rectangle {
-                        Layout.preferredHeight: 24
-                        implicitWidth: actionText.implicitWidth + Common.Theme.padding.normal * 2
-                        color: actionMouseArea.containsMouse ? Common.Theme.surfaceContainer : Common.Theme.surface
-                        radius: Common.Theme.radius.small
-
-                        Text {
-                            id: actionText
-                            anchors.centerIn: parent
-                            text: modelData.text || modelData.identifier || "Action"
-                            color: Common.Theme.accent
-                            font.family: Common.Theme.font.sans.family
-                            font.pixelSize: 11
-                        }
-
-                        MouseArea {
-                            id: actionMouseArea
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: root.actionTriggered(modelData)
-                        }
-                    }
-                }
-            }
-        }
-
-        Rectangle {
-            Layout.preferredWidth: 20
-            Layout.preferredHeight: 20
-            color: dismissMouseArea.containsMouse ? Common.Theme.surfaceContainer : "transparent"
-            radius: Common.Theme.radius.small
-            visible: root.showDismiss
-
-            Text {
-                anchors.centerIn: parent
-                text: "×"
+                text: notification?.appName || "Unknown"
                 color: Common.Theme.textMuted
                 font.family: Common.Theme.font.sans.family
-                font.pixelSize: 14
+                font.pixelSize: 13
+                elide: Text.ElideRight
+                Layout.fillWidth: true
             }
 
-            MouseArea {
-                id: dismissMouseArea
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-                onClicked: root.dismissed()
+            Text {
+                text: formatTime(notification?.time)
+                color: Common.Theme.textMuted
+                font.family: Common.Theme.font.sans.family
+                font.pixelSize: 10
+                visible: notification?.time !== undefined && notification?.time !== 0
+            }
+
+            Rectangle {
+                Layout.preferredWidth: 20
+                Layout.preferredHeight: 20
+                color: dismissMouseArea.containsMouse ? Common.Theme.surfaceContainer : "transparent"
+                radius: Common.Theme.radius.small
+                visible: root.showDismiss
+
+                Text {
+                    anchors.centerIn: parent
+                    text: "×"
+                    color: Common.Theme.textMuted
+                    font.family: Common.Theme.font.sans.family
+                    font.pixelSize: 14
+                }
+
+                MouseArea {
+                    id: dismissMouseArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: root.dismissed()
+                }
+            }
+        }
+
+        Text {
+            text: notification?.summary || ""
+            color: Common.Theme.text
+            font.family: Common.Theme.font.sans.family
+            font.pixelSize: 13
+            wrapMode: Text.WordWrap
+            Layout.fillWidth: true
+            visible: text !== ""
+        }
+
+        Text {
+            text: notification?.body || ""
+            color: Common.Theme.foreground
+            font.family: Common.Theme.font.sans.family
+            font.pixelSize: 12
+            wrapMode: Text.WordWrap
+            textFormat: Text.RichText
+            Layout.fillWidth: true
+            visible: text !== ""
+            maximumLineCount: 3
+            elide: Text.ElideRight
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: Common.Theme.margin.small
+            visible: root.showActions && notification?.actions !== undefined && notification?.actions?.length > 0
+
+            Repeater {
+                model: notification?.actions || []
+
+                Rectangle {
+                    Layout.preferredHeight: 24
+                    implicitWidth: actionText.implicitWidth + Common.Theme.padding.normal * 2
+                    color: actionMouseArea.containsMouse ? Common.Theme.surfaceContainer : Common.Theme.surface
+                    radius: Common.Theme.radius.small
+
+                    Text {
+                        id: actionText
+                        anchors.centerIn: parent
+                        text: modelData.text || modelData.identifier || "Action"
+                        color: Common.Theme.accent
+                        font.family: Common.Theme.font.sans.family
+                        font.pixelSize: 11
+                    }
+
+                    MouseArea {
+                        id: actionMouseArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: root.actionTriggered(modelData)
+                    }
+                }
             }
         }
     }
