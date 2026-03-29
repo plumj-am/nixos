@@ -68,8 +68,6 @@ in
         file = "random.md";
         title = "Random";
       };
-
-      powerMenu = pkgs.writeScriptBin "power-menu" <| readFile ./_scripts/power-menu.nu;
     in
     {
       environment.systemPackages = [
