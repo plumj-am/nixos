@@ -187,10 +187,10 @@ PanelWindow {
                 ColumnLayout {
                     id: contentColumn
                     anchors.fill: parent
-                    anchors.topMargin: Common.Config.data.shell.cornerRadius - 26
+                    anchors.topMargin: 12
                     anchors.bottomMargin: 12
-                    anchors.leftMargin: Common.Config.data.shell.cornerRadius + 8
-                    anchors.rightMargin: Common.Config.data.shell.cornerRadius + 8
+                    anchors.leftMargin: 12
+                    anchors.rightMargin: 12
                     spacing: 8
 
                     TextField {
