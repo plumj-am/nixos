@@ -10,8 +10,8 @@ PanelWindow {
     id: root
 
     property bool isOpen: false
-    property real animProgress: 0
-    property bool animAlive: false
+    property real animProgress: isOpen ? 1 : 0
+    property bool animAlive: animProgress > 0 || isOpen
     property string searchText: ""
     property int selectedIndex: 0
     property var filteredApps: []
@@ -48,39 +48,20 @@ PanelWindow {
         }
     }
 
-    onIsOpenChanged: {
-        if (isOpen) {
-            closeAnim.stop();
-            searchText = "";
-            selectedIndex = 0;
-            animAlive = true;
-            openAnim.start();
-            searchField.forceActiveFocus();
-        } else {
-            openAnim.stop();
-            closeAnim.start();
+    Behavior on animProgress {
+        NumberAnimation {
+            duration: 500
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: [0.38, 1.21, 0.22, 1, 1, 1]
         }
     }
 
-    NumberAnimation {
-        id: openAnim
-        target: root
-        property: "animProgress"
-        to: 1
-        duration: 500
-        easing.type: Easing.BezierSpline
-        easing.bezierCurve: [0.38, 1.21, 0.22, 1, 1, 1]
-    }
-
-    NumberAnimation {
-        id: closeAnim
-        target: root
-        property: "animProgress"
-        to: 0
-        duration: 500
-        easing.type: Easing.BezierSpline
-        easing.bezierCurve: [0.38, 1.21, 0.22, 1, 1, 1]
-        onFinished: root.animAlive = false
+    onIsOpenChanged: {
+        if (isOpen) {
+            searchText = "";
+            selectedIndex = 0;
+            searchField.forceActiveFocus();
+        }
     }
 
     function loadApps() {
