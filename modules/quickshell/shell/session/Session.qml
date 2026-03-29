@@ -102,7 +102,7 @@ Item {
                         anchors.centerIn: parent
                         text: modelData.icon
                         font.family: Common.Theme.font.icons.family
-                        font.pixelSize: 28
+                        font.pixelSize: 22
                         color: mouseArea.pressed ? Common.Theme.accent : Common.Theme.foreground
                     }
 
