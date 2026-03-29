@@ -53,6 +53,17 @@
               ! grep -r "import <nixos>" ${../.}/modules/ --exclude=checks.nix || exit 1
               touch $out
             '';
+
+        # TODO: Setup treefmt for yml, qml, etc. formatting.
+        nixfmt =
+          pkgs.runCommand "nixfmt"
+            {
+              nativeBuildInputs = [ pkgs.nixfmt ];
+            }
+            ''
+              nixfmt --check ${../.}
+              touch $out
+            '';
       };
     };
 }
