@@ -256,6 +256,7 @@ PanelWindow {
                                     Layout.preferredHeight: 32
                                     implicitSize: 32
                                     asynchronous: true
+                                    visible: status === Image.Ready
                                 }
 
                                 ColumnLayout {
