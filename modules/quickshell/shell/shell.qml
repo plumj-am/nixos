@@ -9,6 +9,7 @@ import "common" as Common
 import "services" as Services
 import "notifications" as Notifications
 import "session" as Session
+import "lock" as Lock
 
 ShellRoot {
     Variants {
@@ -204,6 +205,12 @@ ShellRoot {
         id: toastManagerLoader
         active: false
         source: "notifications/ToastManager.qml"
+    }
+
+    Loader {
+        id: lockLoader
+        active: true
+        source: "lock/Lock.qml"
     }
 
     function toggleLauncher() {

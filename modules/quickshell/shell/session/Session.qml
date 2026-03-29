@@ -1,5 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
+import Quickshell.Io
 import "../common" as Common
 
 Item {
@@ -123,15 +125,16 @@ Item {
         var cmds = {
             "shutdown": ["systemctl", "poweroff"],
             "reboot": ["systemctl", "reboot"],
-            "suspend": ["bash", "-c", "hyprlock --quiet & systemctl suspend"],
-            "hibernate": ["bash", "-c", "hyprlock --quiet & systemctl hibernate"],
-            "logout": ["niri", "msg", "action", "quit"],
-            "lock": ["hyprlock", "--quiet"]
+            "suspend": ["systemctl", "suspend"],
+            "hibernate": ["systemctl", "hibernate"],
+            "logout": ["niri", "msg", "action", "quit"]
         };
-        var cmd = cmds[action];
-        if (cmd)
-            Quickshell.execDetached({
-                command: cmd
-            });
+        if (action === "lock") {
+            Quickshell.execDetached({ command: ["qs", "ipc", "call", "lock", "toggle"] });
+        } else {
+            var cmd = cmds[action];
+            if (cmd)
+                Quickshell.execDetached({ command: cmd });
+        }
     }
 }

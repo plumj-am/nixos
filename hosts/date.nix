@@ -27,7 +27,6 @@ in
       gammastep
       graphics
       hardware-desktop
-      hyprlock
       jujutsu-extra
       kitty
       linux-kernel-zen

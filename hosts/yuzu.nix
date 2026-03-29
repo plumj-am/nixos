@@ -27,7 +27,6 @@ in
       graphics
       hardware-desktop
       haskell
-      hyprlock
       jujutsu-extra
       kitty
       linux-kernel-zen
