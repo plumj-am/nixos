@@ -8,7 +8,7 @@ let
       ...
     }:
     let
-      inherit (lib.types) types;
+      inherit (lib.types) bool;
       inherit (lib.options) mkOption;
       inherit (lib.lists) optional;
       inherit (config.networking) hostName;
@@ -25,7 +25,7 @@ let
     {
       options.forgejo-action-runner = {
         strong = mkOption {
-          type = types.bool;
+          type = bool;
           default = false;
           description = "If the system is powerful enough to handle heavier workloads";
         };
