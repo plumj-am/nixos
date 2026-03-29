@@ -11,7 +11,6 @@ Item {
     implicitWidth: 340
     implicitHeight: open ? contentColumn.implicitHeight + 24 : 0
     visible: implicitHeight > 0
-    clip: true
 
     Behavior on implicitHeight {
         Common.NAnim {}
@@ -134,7 +133,9 @@ Item {
                         color: Common.Theme.textMuted
                     }
 
-                    Item { Layout.fillWidth: true }
+                    Item {
+                        Layout.fillWidth: true
+                    }
 
                     Text {
                         text: Mpris.formatTime(Mpris.length)
@@ -157,7 +158,8 @@ Item {
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Mpris.canGoPrevious ? Qt.PointingHandCursor : Qt.ArrowCursor
-                        onClicked: if (Mpris.canGoPrevious) Mpris.previous()
+                        onClicked: if (Mpris.canGoPrevious)
+                            Mpris.previous()
                     }
                 }
 
@@ -193,7 +195,8 @@ Item {
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Mpris.canGoNext ? Qt.PointingHandCursor : Qt.ArrowCursor
-                        onClicked: if (Mpris.canGoNext) Mpris.next()
+                        onClicked: if (Mpris.canGoNext)
+                            Mpris.next()
                     }
                 }
             }

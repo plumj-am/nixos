@@ -11,7 +11,6 @@ Item {
     implicitWidth: 320
     implicitHeight: open ? contentLoader.implicitHeight + 24 : 0
     visible: implicitHeight > 0
-    clip: true
 
     Behavior on implicitHeight {
         Common.NAnim {}

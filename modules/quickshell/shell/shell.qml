@@ -134,12 +134,9 @@ ShellRoot {
             required property var modelData
             screen: modelData
             anchors.top: true
-            anchors.left: true
-            anchors.right: true
-            exclusionMode: ExclusionMode.Normal
-            explicitExclusiveZone: Common.Config.data.bar.size
             color: "transparent"
-            height: 1
+            WlrLayershell.namespace: "quickshell:topExclusionZone"
+            exclusiveZone: Common.Config.data.bar.size
         }
     }
 
