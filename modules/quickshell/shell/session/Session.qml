@@ -122,8 +122,9 @@ Item {
         var cmds = {
             "shutdown": ["systemctl", "poweroff"],
             "reboot": ["systemctl", "reboot"],
-            "suspend": ["bash -c 'hyprlock --quiet &", "systemctl", "suspend"],
-            "hibernate": ["bash -c 'hyprlock --quiet &", "systemctl", "hibernate"],
+            "suspend": ["bash", "-c", "hyprlock --quiet & systemctl suspend"],
+            "hibernate": ["bash", "-c", "hyprlock --quiet & systemctl hibernate"],
+            "logout": ["niri", "msg", "action", "quit"],
             "lock": ["hyprlock", "--quiet"]
         };
         var cmd = cmds[action];
