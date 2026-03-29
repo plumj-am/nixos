@@ -60,10 +60,14 @@ Rectangle {
             id: notifImage
             Layout.preferredWidth: 48
             Layout.preferredHeight: 48
-            source: notification?.image || ""
+            property string imageSource: notification?.image || ""
+            property bool loadFailed: false
+            source: loadFailed ? "" : imageSource
             fillMode: Image.PreserveAspectCrop
-            visible: notification?.image !== undefined && notification?.image !== "" && status === Image.Ready
+            visible: imageSource !== "" && status === Image.Ready
             asynchronous: true
+            onImageSourceChanged: loadFailed = false
+            onStatusChanged: if (status === Image.Error) loadFailed = true
         }
 
         ColumnLayout {

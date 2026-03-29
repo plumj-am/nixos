@@ -13,6 +13,9 @@
 
         # Notifications.
         pkgs.libnotify
+
+        # Clipboard.
+        pkgs.wl-clipboard
       ];
     };
 }

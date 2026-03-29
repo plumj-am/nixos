@@ -208,15 +208,33 @@ ShellRoot {
     }
 
     Loader {
+        id: clipboardLoader
+        active: true
+        source: "clipboard/Clipboard.qml"
+        onLoaded: {
+            item.screen = Quickshell.focusedScreen || Quickshell.screens[0];
+        }
+    }
+
+    Loader {
         id: lockLoader
         active: true
         source: "lock/Lock.qml"
     }
 
     function toggleLauncher() {
+        if (clipboardLoader.item) clipboardLoader.item.isOpen = false;
         if (launcherLoader.item) {
             launcherLoader.item.screen = Quickshell.focusedScreen || Quickshell.screens[0];
             launcherLoader.item.isOpen = !launcherLoader.item.isOpen;
+        }
+    }
+
+    function toggleClipboard() {
+        if (launcherLoader.item) launcherLoader.item.isOpen = false;
+        if (clipboardLoader.item) {
+            clipboardLoader.item.screen = Quickshell.focusedScreen || Quickshell.screens[0];
+            clipboardLoader.item.isOpen = !clipboardLoader.item.isOpen;
         }
     }
 
@@ -225,12 +243,22 @@ ShellRoot {
         function onLauncherToggleRequested() {
             toggleLauncher();
         }
+        function onClipboardToggleRequested() {
+            toggleClipboard();
+        }
     }
 
     IpcHandler {
         target: "launcher"
         function toggle(): void {
             toggleLauncher();
+        }
+    }
+
+    IpcHandler {
+        target: "clipboard"
+        function toggle(): void {
+            toggleClipboard();
         }
     }
 

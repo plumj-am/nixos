@@ -353,6 +353,7 @@ let
                 Mod+D { spawn "todo-scratchpad"; }
                 Mod+S { spawn "random-scratchpad"; }
                 // Mod+C { spawn-sh "cliphist list | tofi --prompt-text '[cliphist]' | cliphist decode | wl-copy"; }
+                Mod+C { spawn-sh "${quickshellPackage} --path ${./quickshell/shell} ipc call clipboard toggle"; }
               }
 
               spawn-at-startup "${quickshellPackage} --path ${./quickshell/shell}"

@@ -6,6 +6,7 @@ QtObject {
     id: niriWrapper
 
     signal launcherToggleRequested
+    signal clipboardToggleRequested
 
     property Niri niri: Niri {
         Component.onCompleted: connect()
