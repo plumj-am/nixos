@@ -117,7 +117,7 @@ WrapperItem {
 			strokeWidth: 0
 			strokeColor: "transparent"
 			fillColor: "white"
-			pathHints: ShapePath.PathSolid & ShapePath.PathNonIntersecting
+			pathHints: ShapePath.PathSolid | ShapePath.PathNonIntersecting
 			startX: root.width
 			startY: 0
 			PathLine {
