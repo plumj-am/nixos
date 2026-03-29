@@ -13,7 +13,8 @@ let
       inherit (config) theme;
       inherit (config.myLib) mkDesktopEntry;
 
-      quickshellPackage = getExe inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.quickshell;
+      quickshell = getExe inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.quickshell;
+      quickshellPath = "/home/jam/nixos/modules/quickshell/shell";
     in
     {
       xdg.portal = {
@@ -346,17 +347,17 @@ let
                 Mod+Shift+Comma { consume-or-expel-window-left; }
                 Mod+Shift+Period { consume-or-expel-window-right; }
 
-                Mod+Shift+Q { spawn-sh "${quickshellPackage} --path ${./quickshell/shell} ipc call shell reload"; }
-                Ctrl+Backspace { spawn-sh "${quickshellPackage} --path ${./quickshell/shell} ipc call launcher toggle"; }
+                Mod+Shift+Q { spawn-sh "${quickshell} --path ${quickshellPath} ipc call shell reload"; }
+                Ctrl+Backspace { spawn-sh "${quickshell} --path ${quickshellPath} ipc call launcher toggle"; }
                 Mod+T { spawn "process-monitor"; }
                 Mod+P { spawn "process-killer"; }
                 Mod+D { spawn "todo-scratchpad"; }
                 Mod+S { spawn "random-scratchpad"; }
-                // Mod+C { spawn-sh "cliphist list | tofi --prompt-text '[cliphist]' | cliphist decode | wl-copy"; }
-                Mod+C { spawn-sh "${quickshellPackage} --path ${./quickshell/shell} ipc call clipboard toggle"; }
+                Mod+C { spawn-sh "${quickshell} --path ${quickshellPath} ipc call clipboard toggle"; }
               }
 
-              spawn-at-startup "${quickshellPackage} --path ${./quickshell/shell}"
+              spawn-sh-at-startup "${quickshell} --path ${quickshellPath}"
+              spawn-at-startup "${pkgs.wl-clipboard}/bin/wl-paste --watch ${pkgs.cliphist}/bin/cliphist store"
               spawn-at-startup "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
               spawn-at-startup "swww-daemon"
               spawn-at-startup "gammastep-indicator"
