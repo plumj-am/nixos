@@ -3,7 +3,7 @@ import "../../common"
 import "../../services"
 
 ResourceWidget {
-    label: "M"
+    label: "\uefc5"
     valueText: Math.round(RAM.used / RAM.total * 100) + "%"
     popupLines: [
         { text: "RAM", bold: true },

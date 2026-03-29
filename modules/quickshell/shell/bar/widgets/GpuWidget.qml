@@ -3,7 +3,7 @@ import "../../common"
 import "../../services"
 
 ResourceWidget {
-    label: "G"
+    label: "\uf26c"
     valueText: Math.round(GPU.overallUsage * 100) + "%"
     popupLines: GPU.memoryTotal > 0 ? [
         { text: "GPU", bold: true },

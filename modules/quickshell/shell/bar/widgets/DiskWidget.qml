@@ -3,7 +3,7 @@ import "../../common"
 import "../../services"
 
 ResourceWidget {
-    label: "D"
+    label: "\uf0a0"
     valueText: (Disk.total > 0 ? Math.round(Disk.used / Disk.total * 100) : 0) + "%"
     popupLines: [
         { text: "Disk", bold: true },

@@ -22,7 +22,7 @@ Item {
 
         Text {
             text: Mpris.isPlaying ? "\uf04b" : "\uf04c"
-            font.family: Theme.font.mono.family
+            font.family: Theme.font.icons.family
             font.pixelSize: 12
             color: mouseArea.containsMouse || root.drawerOpen ? Theme.accent : Theme.foreground
             visible: Mpris.hasPlayer

@@ -19,10 +19,9 @@ Item {
 
         Text {
             visible: Network.networkType === Types.networkWired || Network.networkType === Types.networkWireless
-            text: Network.networkType === Types.networkWired ? "E" : "W"
-            font.family: Theme.font.mono.family
+            text: Network.networkType === Types.networkWired ? "\uef44" : "\uf1eb"
+            font.family: Theme.font.icons.family
             font.pixelSize: Theme.font.mono.size
-            font.bold: true
             color: Theme.foreground
             Layout.alignment: Qt.AlignVCenter
             Layout.fillHeight: true
