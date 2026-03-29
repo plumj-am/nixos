@@ -4,13 +4,6 @@
   outputs = inputs: import ./outputs.nix inputs;
 
   inputs = {
-    actions = {
-      url = "github:nialov/actions.nix";
-      inputs = {
-        flake-parts.follows = "parts";
-        nixpkgs.follows = "os";
-      };
-    };
     age = {
       url = "github:ryantm/agenix";
       inputs = {

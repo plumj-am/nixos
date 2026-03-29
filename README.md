@@ -137,18 +137,9 @@ agenix-rekey: <https://github.com/oddlama/agenix-rekey>
 
 ### Imports
 
-Imports are handled by an `importTree` function in `modules/outputs.nix`. It automatically imports all nix files in the specified directory (`./modules` in my case).
-
-### CI
-
-Forgejo workflows are generated with actions.nix in `ci/`. On every push, each
-host is built and cached automatically in an S3 bucket using self-hosted runners
-(see `modules/forgejo-action-runner.nix`).
-
-actions.nix is really nice, it gives you the power and flexibility of Nix for
-creating workflows. See `ci/nix-ci.nix` and `ci/lib.nix` for some examples.
-
-actions.nix: <https://github.com/nialov/actions.nix>
+Imports are handled by an `importTree` function in `modules/outputs.nix`. It
+automatically imports all nix files in the specified directory (`./modules` in
+my case).
 
 ### myLib
 
@@ -186,7 +177,8 @@ really need it and I already use generators or write config files directly for
 the most part anyway.
 
 Modules that are yet to be migrated live in `modules/_to-migrate/`. The
-underscore prefix tells my `importTree` function to ignore this directory so we can easily migrate them gradually without breaking builds.
+underscore prefix tells my `importTree` function to ignore this directory so we
+can easily migrate them gradually without breaking builds.
 
 Inputs use different names to what you might expect:
 
@@ -221,17 +213,14 @@ The structure of the repository and a few key files are highlighted below:
 
 ```sh
 .
-├── ci/                # CI with actions.nix (generates .forgejo/workflows/*)
-│   └── ...
 ├── modules/           # All modules live in here
 │   ├── outputs.nix    # Flake outputs
 │   ├── hosts.nix      # Host definitions
-│   ├── actions.nix    # Generates CI workflows from `ci/`
 │   ├── theme.nix      # System-wide theming
 │   ├── ...
 │   ├── _to-migrate/   # Modules waiting for migration to new dendritic setup
 │   │   └── ...
-│   └── quickshell/    # Quickshell configs (not currently used)
+│   └── quickshell/    # Quickshell configs
 │       └── ...
 ├── secrets/           # Secrets managed by agenix
 │   ├── ...
