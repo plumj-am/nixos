@@ -57,18 +57,9 @@ Item {
 
                 Text {
                     Layout.alignment: Qt.AlignHCenter
-                    text: Math.round(Battery.percentage * 100) + "%"
+                    text: Math.round(Battery.percentage * 100) + "%" + (Battery.energyRate > 0 ? " " + Battery.energyRate.toFixed(1) + "W" : "")
                     font.family: Theme.font.mono.family
                     font.pixelSize: Theme.font.mono.size
-
-                    Text {
-                        Layout.alignment: Qt.AlignHCenter
-                        visible: Battery.energyRate > 0
-                        text: Battery.energyRate.toFixed(1) + "W"
-                        font.family: Theme.font.mono.family
-                        font.pixelSize: Theme.font.mono.size
-                        color: Theme.textMuted
-                    }
                 }
             }
         }
