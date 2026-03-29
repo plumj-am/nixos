@@ -83,8 +83,6 @@ in
 
         todoScratchpad
         randomScratchpad
-
-        powerMenu
       ];
     };
 }
