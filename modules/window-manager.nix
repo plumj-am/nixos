@@ -9,9 +9,11 @@ let
     }:
     let
       inherit (lib.lists) singleton;
+      inherit (lib.meta) getExe;
       inherit (config) theme;
       inherit (config.myLib) mkDesktopEntry;
 
+      quickshellPackage = getExe inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.quickshell;
     in
     {
       xdg.portal = {
@@ -344,6 +346,7 @@ let
                 Mod+Shift+Comma { consume-or-expel-window-left; }
                 Mod+Shift+Period { consume-or-expel-window-right; }
 
+                Mod+Q { spawn-sh "${quickshellPackage} --path ${./quickshell/shell} ipc call shell reload"; }
                 Ctrl+Backspace { spawn-sh "qs ipc -p /home/jam/nixos/modules/quickshell/shell call launcher toggle"; }
                 Mod+T { spawn "process-monitor"; }
                 Mod+P { spawn "process-killer"; }
@@ -352,9 +355,7 @@ let
                 // Mod+C { spawn-sh "cliphist list | tofi --prompt-text '[cliphist]' | cliphist decode | wl-copy"; }
               }
 
-              spawn-at-startup "${
-                inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.quickshell
-              }/bin/quickshell --path ${./quickshell/shell}"
+              spawn-at-startup "${quickshellPackage} --path ${./quickshell/shell}"
               spawn-at-startup "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
               spawn-at-startup "swww-daemon"
               spawn-at-startup "gammastep-indicator"
