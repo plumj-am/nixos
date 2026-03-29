@@ -10,10 +10,7 @@ ColumnLayout {
 
     spacing: Common.Theme.margin.small
     Layout.fillWidth: true
-    implicitHeight: Math.min(450, contentHeight)
     Layout.minimumWidth: 300
-
-    property real contentHeight: headerRow.implicitHeight + notificationList.implicitHeight + footerText.implicitHeight + (Common.Theme.margin.normal * 2)
 
     RowLayout {
         id: headerRow
@@ -82,7 +79,7 @@ ColumnLayout {
     Text {
         id: emptyText
         Layout.fillWidth: true
-        Layout.fillHeight: true
+        Layout.fillHeight: visible
         visible: root.popupMode ? NotificationServer.unreadCount === 0 : NotificationServer.notificationCount === 0
         text: "No notifications"
         color: Common.Theme.textMuted
