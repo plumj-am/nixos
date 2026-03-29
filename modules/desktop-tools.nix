@@ -71,8 +71,8 @@ in
     in
     {
       environment.systemPackages = [
-        pkgs.thunar
-        pkgs.tumbler
+        pkgs.kdePackages.dolphin
+        pkgs.kdePackages.ark
 
         pkgs.hyprpicker
 
