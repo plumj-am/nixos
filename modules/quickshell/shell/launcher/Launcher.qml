@@ -150,12 +150,13 @@ PanelWindow {
         id: launcherClip
         anchors.horizontalCenter: parent.horizontalCenter
         y: barHeight
-        width: launcherWidth
+        width: launcherWidth + Common.Config.data.shell.cornerRadius * 2
         height: launcherHeight * root.animProgress
         clip: true
 
         Item {
             id: launcherBody
+            x: Common.Config.data.shell.cornerRadius
             width: launcherWidth
             height: launcherHeight
 
@@ -163,7 +164,7 @@ PanelWindow {
             Common.Corner {
                 location: Qt.TopLeftCorner
                 extensionSide: Qt.Horizontal
-                radius: root.animProgress * Common.Config.data.shell.cornerRadius
+                radius: root.animAlive ? Common.Config.data.shell.cornerRadius : 0
                 color: Common.Theme.background
             }
 
@@ -171,7 +172,7 @@ PanelWindow {
             Common.Corner {
                 location: Qt.TopRightCorner
                 extensionSide: Qt.Horizontal
-                radius: root.animProgress * Common.Config.data.shell.cornerRadius
+                radius: root.animAlive ? Common.Config.data.shell.cornerRadius : 0
                 color: Common.Theme.background
             }
 
