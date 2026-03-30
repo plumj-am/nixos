@@ -37,7 +37,7 @@ let
       "kernel.perf_event_paranoid" = 3;
 
       # Require CAP_BPF to use bpf.
-      "kernel.unprvileged_bpf_disabled" = 1;
+      "kernel.unprivileged_bpf_disabled" = 1;
     };
 
     # https://www.kernel.org/doc/html/latest/admin-guide/kernel-parameters.html
