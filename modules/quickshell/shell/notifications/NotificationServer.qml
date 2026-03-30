@@ -48,7 +48,7 @@ QtObject {
             image: notification.image,
             urgency: notification.urgency,
             time: notification.time,
-            actions: notification.actions,
+            actions: notification.actions ? notification.actions.map(a => ({ identifier: a.identifier, text: a.text })) : [],
             expireTimeout: notification.expireTimeout
         }
         historyModel.insert(0, { "notificationData": data })
