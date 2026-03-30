@@ -111,10 +111,20 @@ let
       persistent = true;
     };
 
-    systemd.services.nix-daemon.serviceConfig = {
-      MemoryAccounting = true;
-      MemoryMax = "90%";
-      OOMScoreAdjust = 500;
+    # OOM configuration for the nix-daemon.
+    systemd = {
+      slices."nix-daemon".sliceConfig = {
+        ManagedOOMMemoryPressure = "kill";
+        ManagedOOMMemoryPressureLimit = "50%";
+      };
+      services."nix-daemon".serviceConfig = {
+        Slice = "nix-daemon.slice";
+        MemoryAccounting = true;
+        # Begin throttling memory usage.
+        MemoryHigh = "80%";
+        # Prefer killing nix-daemon child processes if OOM does occur.
+        OOMScoreAdjust = 1000;
+      };
     };
 
     nix.extraOptions = ''
