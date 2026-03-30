@@ -48,13 +48,11 @@ in
   flake.modules.nixos.desktop-tools =
     {
       pkgs,
-      lib,
       config,
       ...
     }:
     let
       inherit (config.myLib) mkDesktopEntry;
-      inherit (lib) readFile;
 
       mkScratchpad' = mkScratchpad { inherit pkgs; };
 
