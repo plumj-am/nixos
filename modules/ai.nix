@@ -118,7 +118,7 @@ let
             theme = "gruvbox";
             autoupdate = false;
             model = "zai-coding-plan/glm-5.1";
-            small_model = "zai-coding-plan/glm-4.7-air";
+            small_model = "zai-coding-plan/glm-4.7-flash";
 
             permission = {
               "*" = "ask";
@@ -157,7 +157,7 @@ let
 
               explore = {
                 mode = "subagent";
-                model = "zai-coding-plan/glm-4.7-air";
+                model = "zai-coding-plan/glm-4.7-flash";
               };
             };
 
@@ -355,7 +355,7 @@ let
                 # For z.ai coding plan.
                 ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
                 API_TIMEOUT_MS = "3000000";
-                ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.7-air";
+                ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.7-flash";
                 ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-5.1";
                 ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-5.1";
 
@@ -713,38 +713,39 @@ let
 
                       let cache = $cache_global | path join "claude-code"
 
-                      let version = do {
-                        let version_file = $cache | path join "latest-version"
+                      let version = "2.1.70"
+                      # let version = do {
+                      #   let version_file = $cache | path join "latest-version"
 
-                        match (try { (date now) - (ls $version_file | get 0.modified) > 6hr }) {
-                          # Version older than 6h or doesn't exist.
-                          true | null => {
-                            let version = try {
-                              http get --max-time 5sec https://registry.npmjs.org/@anthropic-ai/claude-code/latest | get version
-                            } catch {
-                              print --stderr $"(ansi yellow_bold)warn:(ansi reset) fetched version older than 6hr, but can't re-fetch"
-                              return ""
-                            }
+                      #   match (try { (date now) - (ls $version_file | get 0.modified) > 6hr }) {
+                      #     # Version older than 6h or doesn't exist.
+                      #     true | null => {
+                      #       let version = try {
+                      #         http get --max-time 5sec https://registry.npmjs.org/@anthropic-ai/claude-code/latest | get version
+                      #       } catch {
+                      #         print --stderr $"(ansi yellow_bold)warn:(ansi reset) fetched version older than 6hr, but can't re-fetch"
+                      #         return ""
+                      #       }
 
-                            try {
-                              $version_file | path parse | get parent | mkdir $in
-                              $version | save --force $version_file
-                            } catch {
-                              print --stderr $"(ansi yellow_bold)warn:(ansi reset) failed to save latest fetched version"
-                            }
+                      #       try {
+                      #         $version_file | path parse | get parent | mkdir $in
+                      #         $version | save --force $version_file
+                      #       } catch {
+                      #         print --stderr $"(ansi yellow_bold)warn:(ansi reset) failed to save latest fetched version"
+                      #       }
 
-                            $version
-                          },
+                      #       $version
+                      #     },
 
-                          # Version fetched within 6h.
-                          false => { try {
-                            open $version_file
-                          } catch {
-                            print --stderr $"(ansi yellow_bold)warn:(ansi reset) failed to read latest fetched version"
-                            ""
-                          } },
-                        }
-                      }
+                      #     # Version fetched within 6h.
+                      #     false => { try {
+                      #       open $version_file
+                      #     } catch {
+                      #       print --stderr $"(ansi yellow_bold)warn:(ansi reset) failed to read latest fetched version"
+                      #       ""
+                      #     } },
+                      #   }
+                      # }
 
                       let binary_path = if ($version | is-empty) {
                         print --stderr $"(ansi yellow_bold)warn:(ansi reset) falling back to latest binary"
@@ -794,6 +795,7 @@ let
 
   aiExtra =
     {
+      inputs,
       pkgs,
       lib,
       ...
@@ -817,6 +819,7 @@ let
     {
       hjem.extraModules = singleton {
         packages = [
+          inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.agentfs
           pkgs.codex
           pkgs.gemini-cli
           opencodeDesktopPackage
