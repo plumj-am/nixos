@@ -16,6 +16,10 @@ let
     "tree*"
 
     "jj bookmark list*"
+    "jj commit -m*"
+    "jj commit --message*"
+    "jj desc -m*"
+    "jj desc --message*"
     "jj diff*"
     "jj evolog*"
     "jj file list*"
@@ -27,6 +31,8 @@ let
     "jj help*"
     "jj interdiff*"
     "jj log*"
+    "jj new -m*"
+    "jj new --message*"
     "jj op diff*"
     "jj op log*"
     "jj op show*"
@@ -78,6 +84,19 @@ let
     "fj wiki view*"
   ];
 
+  instructions = # md
+    ''
+      # Version Control
+
+      - Never use `git`. Always use `jj` (jj --help).
+      - When unsupervised or requested by the user, use `jj {commit,new,desc} --message "<message>"` to describe your changes.
+
+      # General
+
+      - Avoid quick hacks.
+      - Ask using the AskUserQuestion tool - do not make assumptions.
+    '';
+
   opencodeBase =
     {
       pkgs,
@@ -112,177 +131,184 @@ let
           opencodePackage
         ];
 
-        xdg.config.files."opencode/opencode.jsonc" = {
-          generator = pkgs.writers.writeJSON "opencode-opencode.jsonc";
-          value = {
-            theme = "gruvbox";
-            autoupdate = false;
-            model = "zai-coding-plan/glm-5.1";
-            small_model = "zai-coding-plan/glm-4.7-flash";
+        xdg.config.files = {
+          "opencode/AGENTS.md" = {
+            type = "copy";
+            text = instructions;
+          };
 
-            permission = {
-              "*" = "ask";
-              codesearch = "allow";
-              glob = "allow";
-              grep = "allow";
-              list = "allow";
-              lsp = "allow";
-              question = "allow";
-              read = "allow";
-              task = "allow";
-              todoread = "allow";
-              todowrite = "allow";
-              websearch = "allow";
+          "opencode/opencode.jsonc" = {
+            generator = pkgs.writers.writeJSON "opencode-opencode.jsonc";
+            value = {
+              theme = "gruvbox";
+              autoupdate = false;
+              model = "zai-coding-plan/glm-5.1";
+              small_model = "zai-coding-plan/glm-4.7-flash";
 
-              "context7_*" = "allow";
-              "gh_grep_*" = "allow";
-              "web-reader_*" = "allow";
-              "web-search-prime_*" = "allow";
-              "nixos_*" = "allow";
+              permission = {
+                "*" = "ask";
+                codesearch = "allow";
+                glob = "allow";
+                grep = "allow";
+                list = "allow";
+                lsp = "allow";
+                question = "allow";
+                read = "allow";
+                task = "allow";
+                todoread = "allow";
+                todowrite = "allow";
+                websearch = "allow";
 
-              bash = genAttrs commands.allow (const "allow");
-            };
+                "context7_*" = "allow";
+                "gh_grep_*" = "allow";
+                "web-reader_*" = "allow";
+                "web-search-prime_*" = "allow";
+                "nixos_*" = "allow";
 
-            agent = {
-              build = {
-                mode = "primary";
-                model = "zai-coding-plan/glm-5.1";
+                bash = genAttrs commands.allow (const "allow");
               };
 
-              researcher = {
-                mode = "primary";
-                model = "zai-coding-plan/glm-5.1";
-                description = "Read-only research primarily using the web";
+              agent = {
+                build = {
+                  mode = "primary";
+                  model = "zai-coding-plan/glm-5.1";
+                };
+
+                researcher = {
+                  mode = "primary";
+                  model = "zai-coding-plan/glm-5.1";
+                  description = "Read-only research primarily using the web";
+                };
+
+                explore = {
+                  mode = "subagent";
+                  model = "zai-coding-plan/glm-4.7-flash";
+                };
               };
 
-              explore = {
-                mode = "subagent";
-                model = "zai-coding-plan/glm-4.7-flash";
-              };
-            };
-
-            keybinds = {
-              app_exit = "ctrl+c";
-              messages_half_page_up = "ctrl+u";
-              messages_half_page_down = "ctrl+d";
-              input_newline = "shift+enter";
-            };
-
-            lsp = {
-              nixd = {
-                command = [ "nixd" ];
-                extensions = [ ".nix" ];
+              keybinds = {
+                app_exit = "ctrl+c";
+                messages_half_page_up = "ctrl+u";
+                messages_half_page_down = "ctrl+d";
+                input_newline = "shift+enter";
               };
 
-              qmlls = {
-                command = [ "qmlls" ];
-                extensions = [ ".qml" ];
-              };
-            };
+              lsp = {
+                nixd = {
+                  command = [ "nixd" ];
+                  extensions = [ ".nix" ];
+                };
 
-            formatter = {
-              rustfmt = {
-                command = [
-                  "cargo"
-                  "fmt"
-                  "--"
-                  "$FILE"
-                ];
-                extensions = [ ".rs" ];
+                qmlls = {
+                  command = [ "qmlls" ];
+                  extensions = [ ".qml" ];
+                };
               };
-              qmlformat = {
-                command = [
-                  "qmlformat"
-                  "--inplace"
-                  "$FILE"
-                ];
-                extensions = [ ".qml" ];
-              };
-            };
 
-            provider.zai-coding-plan = {
-              options.timeout = 600000;
-              models =
-                let
-                  inherit (lib.attrsets) genAttrs;
-                  inherit (lib) elem;
-
-                  models = [
-                    "glm-5.1"
-                    "glm-5"
-                    "glm-5-turbo"
-                    "glm-4.7"
-                    "glm-4.7-flashx"
-                    "glm-4.7-flash"
-                    "glm-4.6"
-                    "glm-4.5"
-                    "glm-4.5-x"
-                    "glm-4.5-air"
-                    "glm-4.5-airx"
-                    "glm-4.5-flash"
+              formatter = {
+                rustfmt = {
+                  command = [
+                    "cargo"
+                    "fmt"
+                    "--"
+                    "$FILE"
                   ];
-
-                  supportsToolStreaming = [
-                    "glm-5.1"
-                    "glm-5"
-                    "glm-5-turbo"
+                  extensions = [ ".rs" ];
+                };
+                qmlformat = {
+                  command = [
+                    "qmlformat"
+                    "--inplace"
+                    "$FILE"
                   ];
-                in
-                genAttrs models (name: {
-                  options = {
-                    tool_stream = elem name supportsToolStreaming;
-                    stream = true;
-                    thinking.type = "enabled";
+                  extensions = [ ".qml" ];
+                };
+              };
+
+              provider.zai-coding-plan = {
+                options.timeout = 600000;
+                models =
+                  let
+                    inherit (lib.attrsets) genAttrs;
+                    inherit (lib) elem;
+
+                    models = [
+                      "glm-5.1"
+                      "glm-5"
+                      "glm-5-turbo"
+                      "glm-4.7"
+                      "glm-4.7-flashx"
+                      "glm-4.7-flash"
+                      "glm-4.6"
+                      "glm-4.5"
+                      "glm-4.5-x"
+                      "glm-4.5-air"
+                      "glm-4.5-airx"
+                      "glm-4.5-flash"
+                    ];
+
+                    supportsToolStreaming = [
+                      "glm-5.1"
+                      "glm-5"
+                      "glm-5-turbo"
+                    ];
+                  in
+                  genAttrs models (name: {
+                    options = {
+                      tool_stream = elem name supportsToolStreaming;
+                      stream = true;
+                      thinking.type = "enabled";
+                    };
+                  });
+              };
+
+              mcp = {
+                context7 = {
+                  type = "remote";
+                  url = "https://mcp.context7.com/mcp";
+                  headers = {
+                    CONTEXT7_API_KEY = "{file:${secrets.context7Key.path}}";
                   };
-                });
-            };
-
-            mcp = {
-              context7 = {
-                type = "remote";
-                url = "https://mcp.context7.com/mcp";
-                headers = {
-                  CONTEXT7_API_KEY = "{file:${secrets.context7Key.path}}";
                 };
-              };
 
-              gh_grep = {
-                type = "remote";
-                url = "https://mcp.grep.app";
-              };
-
-              web-reader = {
-                type = "remote";
-                url = "https://api.z.ai/api/mcp/web_reader/mcp";
-                headers = {
-                  Authorization = "Bearer {file:${secrets.zaiKey.path}}";
+                gh_grep = {
+                  type = "remote";
+                  url = "https://mcp.grep.app";
                 };
-              };
 
-              web-search-prime = {
-                type = "remote";
-                url = "https://api.z.ai/api/mcp/web_search_prime/mcp";
-                headers = {
-                  Authorization = "Bearer {file:${secrets.zaiKey.path}}";
+                web-reader = {
+                  type = "remote";
+                  url = "https://api.z.ai/api/mcp/web_reader/mcp";
+                  headers = {
+                    Authorization = "Bearer {file:${secrets.zaiKey.path}}";
+                  };
                 };
-              };
 
-              zread = {
-                type = "remote";
-                url = "https://api.z.ai/api/mcp/zread/mcp";
-                headers = {
-                  Authorization = "Bearer {file:${secrets.zaiKey.path}}";
+                web-search-prime = {
+                  type = "remote";
+                  url = "https://api.z.ai/api/mcp/web_search_prime/mcp";
+                  headers = {
+                    Authorization = "Bearer {file:${secrets.zaiKey.path}}";
+                  };
                 };
-              };
 
-              nixos = {
-                type = "local";
-                command = [
-                  "${getExe pkgs.nix}"
-                  "run"
-                  "github:utensils/mcp-nixos"
-                  "--"
-                ];
+                zread = {
+                  type = "remote";
+                  url = "https://api.z.ai/api/mcp/zread/mcp";
+                  headers = {
+                    Authorization = "Bearer {file:${secrets.zaiKey.path}}";
+                  };
+                };
+
+                nixos = {
+                  type = "local";
+                  command = [
+                    "${getExe pkgs.nix}"
+                    "run"
+                    "github:utensils/mcp-nixos"
+                    "--"
+                  ];
+                };
               };
             };
           };
@@ -313,109 +339,116 @@ let
           inherit (osConfig.age) secrets;
         in
         {
-          xdg.config.files."claude-code/settings.json" = {
-            type = "copy"; # Sometimes needs to write to config.
-            generator = pkgs.writers.writeJSON "claude-code-settings.json";
-            value = {
-              "$schema" = "https://json.schemastore.org/claude-code-settings.json";
+          xdg.config.files = {
+            "claude-code/CLAUDE.md" = {
+              type = "copy";
+              text = instructions;
+            };
 
-              permissions.allow = map (cmd: "Bash(${replaceStrings [ "*" ] [ ":*" ] cmd})") commands.allow ++ [
-                "Glob"
-                "Grep"
-                "Read"
-                "LSP"
-                "WebFetch"
-                "WebSearch"
-                "TaskCreate"
-                "TaskUpdate"
-                "TaskGet"
-                "TaskList"
-                "TaskOutput"
-                "TaskStop"
+            "claude-code/settings.json" = {
+              type = "copy"; # Sometimes needs to write to config.
+              generator = pkgs.writers.writeJSON "claude-code-settings.json";
+              value = {
+                "$schema" = "https://json.schemastore.org/claude-code-settings.json";
 
-                "mcp__context7"
-                "mcp__web-reader"
-                "mcp__web-search-prime"
-                "mcp__zread"
-              ];
+                permissions.allow = map (cmd: "Bash(${replaceStrings [ "*" ] [ ":*" ] cmd})") commands.allow ++ [
+                  "Glob"
+                  "Grep"
+                  "Read"
+                  "LSP"
+                  "WebFetch"
+                  "WebSearch"
+                  "TaskCreate"
+                  "TaskUpdate"
+                  "TaskGet"
+                  "TaskList"
+                  "TaskOutput"
+                  "TaskStop"
 
-              sandbox = {
-                enabled = true;
-                filesystem = {
-                  allowWrite = [ "/tmp" ];
-                  denyRead = [
-                    "/run/agenix"
-                    "/run/agenix.d"
-                  ];
+                  "mcp__context7"
+                  "mcp__web-reader"
+                  "mcp__web-search-prime"
+                  "mcp__zread"
+                ];
+
+                sandbox = {
+                  enabled = true;
+                  filesystem = {
+                    allowWrite = [ "/tmp" ];
+                    denyRead = [
+                      "/run/agenix"
+                      "/run/agenix.d"
+                    ];
+                  };
+
                 };
 
-              };
+                env = {
+                  # For z.ai coding plan.
+                  ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
+                  API_TIMEOUT_MS = "3000000";
+                  ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.7-flash";
+                  ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-5.1";
+                  ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-5.1";
 
-              env = {
-                # For z.ai coding plan.
-                ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
-                API_TIMEOUT_MS = "3000000";
-                ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.7-flash";
-                ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-5.1";
-                ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-5.1";
+                  CLAUDE_BASH_NO_LOGIN = "1";
+                  CLAUDE_CODE_EAGER_FLUSH = "1";
+                  CLAUDE_CODE_FORCE_GLOBAL_CACHE = "1";
+                  MCP_CONNECTION_NONBLOCKING = "1";
+                  USE_BUILTIN_RIPGREP = "0";
 
-                CLAUDE_BASH_NO_LOGIN = "1";
-                CLAUDE_CODE_EAGER_FLUSH = "1";
-                CLAUDE_CODE_FORCE_GLOBAL_CACHE = "1";
-                MCP_CONNECTION_NONBLOCKING = "1";
-                USE_BUILTIN_RIPGREP = "0";
+                  CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING = "1";
+                  CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
+                  CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY = "20";
+                  CLAUDE_CODE_PLAN_V2_AGENT_COUNT = "5";
+                  CLAUDE_CODE_PLAN_V2_EXPLORE_AGENT_COUNT = "5";
+                  DISABLE_AUTO_COMPACT = "1";
+                  ENABLE_MCP_LARGE_OUTPUT_FILES = "1";
+                  ENABLE_TOOL_SEARCH = "auto:5";
+                  MAX_THINKING_TOKENS = "31999";
 
-                CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING = "1";
-                CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
-                CLAUDE_CODE_MAX_TOOL_USE_CONCURRENCY = "20";
-                CLAUDE_CODE_PLAN_V2_AGENT_COUNT = "5";
-                CLAUDE_CODE_PLAN_V2_EXPLORE_AGENT_COUNT = "5";
-                DISABLE_AUTO_COMPACT = "1";
-                ENABLE_MCP_LARGE_OUTPUT_FILES = "1";
-                ENABLE_TOOL_SEARCH = "auto:5";
-                MAX_THINKING_TOKENS = "31999";
+                  CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY = "1";
+                  DISABLE_AUTOUPDATER = "1";
+                  DISABLE_ERROR_REPORTING = "1";
+                  DISABLE_INSTALLATION_CHECKS = "1";
+                  DISABLE_TELEMETRY = "1";
 
-                CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY = "1";
-                DISABLE_AUTOUPDATER = "1";
-                DISABLE_ERROR_REPORTING = "1";
-                DISABLE_INSTALLATION_CHECKS = "1";
-                DISABLE_TELEMETRY = "1";
-
-                CLAUDE_CODE_DISABLE_TERMINAL_TITLE = "1";
-                CLAUDE_CODE_HIDE_ACCOUNT_INFO = "1";
-                DISABLE_COST_WARNINGS = "1";
-              };
-
-              alwaysThinkingEnabled = true;
-
-              skipWebFetchPreflight = true;
-
-              hooks.WorktreeCreate = singleton {
-                hooks = singleton {
-                  type = "command";
-                  command = # bash
-                    ''jj workspace add "$(cat /dev/stdin | jq '.name' --raw-output)"'';
+                  CLAUDE_CODE_DISABLE_TERMINAL_TITLE = "1";
+                  CLAUDE_CODE_HIDE_ACCOUNT_INFO = "1";
+                  DISABLE_COST_WARNINGS = "1";
                 };
-              };
-              hooks.WorktreeRemove = singleton {
-                hooks = singleton {
-                  type = "command";
-                  command = # bash
-                    ''jj workspace forget "$(cat /dev/stdin | jq '.worktree_path' --raw-output)"'';
+
+                alwaysThinkingEnabled = true;
+
+                skipWebFetchPreflight = true;
+
+                hooks.WorktreeCreate = singleton {
+                  hooks = singleton {
+                    type = "command";
+                    command = # bash
+                      ''jj workspace add "$(cat /dev/stdin | jq '.name' --raw-output)"'';
+                  };
                 };
-              };
+                hooks.WorktreeRemove = singleton {
+                  hooks = singleton {
+                    type = "command";
+                    command = # bash
+                      ''jj workspace forget "$(cat /dev/stdin | jq '.worktree_path' --raw-output)"'';
+                  };
+                };
 
-              enabledPlugins = genAttrs [
-                "code-review@claude-plugins-official"
-                "code-simplifier@claude-plugins-official"
-                "context7@claude-plugins-official"
-                "ralph-loop@claude-plugins-official"
-                "rust-analyzer-lsp@claude-plugins-official"
-              ] (const true);
+                enabledPlugins = genAttrs [
+                  "code-review@claude-plugins-official"
+                  "code-simplifier@claude-plugins-official"
+                  "context7@claude-plugins-official"
+                  "ralph-loop@claude-plugins-official"
+                  "rust-analyzer-lsp@claude-plugins-official"
+                ] (const true);
 
-              attribution = {
-                commit = "";
-                pr = "";
+                attribution = {
+                  commit = "";
+                  pr = "";
+                };
               };
             };
           };
@@ -426,7 +459,6 @@ let
             text = # nu
               ''
                 #!/usr/bin/env nu
-                # Run this once to add the MCP servers that need API keys
                 try { claude mcp add -s user -t http context7 https://mcp.context7.com/mcp --header $"CONTEXT7_API_KEY: (cat ${secrets.context7Key.path})" }
                 try { claude mcp add -s user -t http web-reader https://api.z.ai/api/mcp/web_reader/mcp --header $"Authorization: Bearer (cat ${secrets.zaiKey.path})" }
                 try { claude mcp add -s user -t http web-search-prime https://api.z.ai/api/mcp/web_search_prime/mcp --header $"Authorization: Bearer (cat ${secrets.zaiKey.path})" }
