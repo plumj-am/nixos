@@ -12,12 +12,6 @@
       inherit (lib.trivial) flip;
     in
     {
-      config.services.prometheus.exporters.postgres = {
-        enable = true;
-        listenAddress = "[::]";
-        runAsLocalSuperUser = true;
-      };
-
       config.environment.systemPackages = [ config.services.postgresql.package ];
 
       options.services.postgresql.ensure = mkValue [ ];

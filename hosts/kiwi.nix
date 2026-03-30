@@ -20,7 +20,6 @@ in
       nix-distributed-builds
       nix-settings-extra-server
       object-storage
-      prometheus-node-exporter
       radicle-node
       rust
       sudo-extra-server

@@ -27,7 +27,6 @@ in
       nix-settings-extra-server
       object-storage
       opengist
-      prometheus-node-exporter
       radicle-ci-host
       # radicle-ci-runner
       radicle-explorer

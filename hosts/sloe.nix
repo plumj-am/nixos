@@ -20,7 +20,6 @@ in
       nix-settings-extra-server
       object-storage
       openssh-extra-users
-      prometheus-node-exporter
       radicle-ci-runner
       radicle-node
       rust

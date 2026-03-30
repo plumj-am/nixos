@@ -71,11 +71,6 @@
         allowedUDPPorts = [ 443 ];
       };
 
-      config.services.prometheus.exporters.nginx = {
-        enable = true;
-        listenAddress = "[::]";
-      };
-
       config.security.acme.users = [ "nginx" ];
 
       config.services.nginx = {
