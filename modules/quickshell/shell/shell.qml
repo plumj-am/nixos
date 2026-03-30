@@ -275,10 +275,6 @@ ShellRoot {
         function reload(): void {
             Quickshell.reload(false);
         }
-    }
-
-    IpcHandler {
-        target: "shell"
         function reloadHard(): void {
             Quickshell.reload(true);
         }
