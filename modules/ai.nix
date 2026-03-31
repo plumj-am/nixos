@@ -94,7 +94,8 @@ let
       # General
 
       - Avoid quick hacks.
-      - Ask using the AskUserQuestion tool - do not make assumptions.
+      - Never ask questions using plain text. Always use the AskUserQuestion/question tool.
+      - Ask using the AskUserQuestion/question tool - do not make assumptions.
     '';
 
   opencodeBase =
