@@ -30,7 +30,6 @@ let
     theme
     unfree
     users
-    virtualisation
     yubikey
   ];
 

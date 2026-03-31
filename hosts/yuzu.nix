@@ -20,6 +20,7 @@ in
       discord-tui
       disks-normal
       disks-extra-zram-swap
+      docker-rootless
       editor-extra
       forgejo-cli
       games

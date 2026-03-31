@@ -20,6 +20,7 @@ in
       discord-tui
       disks-bcachefs
       disks-extra-zram-swap
+      docker-rootless
       editor-extra
       forgejo-action-runner
       forgejo-cli

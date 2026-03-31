@@ -10,7 +10,7 @@ let
     let
       inherit (lib.types) bool;
       inherit (lib.options) mkOption;
-      inherit (lib.lists) optional;
+      inherit (lib.lists) optional singleton;
       inherit (config.networking) hostName;
 
       name = hostName;
@@ -95,6 +95,11 @@ let
           };
         };
         virtualisation.docker.enable = true;
+
+        services.cron = {
+          enable = true;
+          systemCronJobs = singleton "0 0 * * *    root    docker network prune --force";
+        };
       };
     };
 in
