@@ -116,31 +116,6 @@
         EOF
         chmod 600 /root/.aws/credentials
 
-        # Set up post-build hook if we have a signing key.
-        ${
-          if secrets ? nixStoreKey then # sh
-            ''
-              cat > /etc/nix/post-build-hook.sh <<'HOOK'
-              #!/bin/sh
-              set -e
-
-              # Add outputs to upload queue.
-              QUEUE_DIR=/var/cache/nix/upload-queue
-              mkdir -p "$QUEUE_DIR"
-
-              for output in $OUT_PATHS; do
-                echo "$output" >> "$QUEUE_DIR/pending"
-              done
-
-              exit 0
-              HOOK
-              chmod +x /etc/nix/post-build-hook.sh
-              echo "Post-build hook configured at /etc/nix/post-build-hook.sh"
-            ''
-          else
-            ""
-        }
-
         echo "S3 setup complete."
         echo "  Bucket: ${bucket}"
         echo "  Endpoint: ${endpoint}"
@@ -154,6 +129,25 @@
         setupScript
         uploadProcessor
       ];
+
+      environment.etc = optionalAttrs (secrets ? nixStoreKey) {
+        "nix/post-build-hook.sh" = {
+          mode = "0755";
+          text = ''
+            #!/bin/sh
+            set -e
+
+            QUEUE_DIR=/var/cache/nix/upload-queue
+            mkdir -p "$QUEUE_DIR"
+
+            for output in $OUT_PATHS; do
+              echo "$output" >> "$QUEUE_DIR/pending"
+            done
+
+            exit 0
+          '';
+        };
+      };
 
       system.activationScripts.s3-setup = {
         deps = [ "agenix" ];
