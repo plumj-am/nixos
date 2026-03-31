@@ -23,22 +23,6 @@ in
         config = mkConfig inputs "lime" "aarch64-darwin" {
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPeG5tRLj+z0LlAhH60rQuvRarHWuYE+fYMEgPvGbMrW jam@lime";
 
-          age.secrets = {
-            id.rekeyFile = ../secrets/lime-id.age;
-            s3AccessKey.rekeyFile = ../secrets/s3-access-key.age;
-            s3SecretKey.rekeyFile = ../secrets/s3-secret-key.age;
-            context7Key = {
-              rekeyFile = ../secrets/context7-key.age;
-              owner = "jam";
-              mode = "400";
-            };
-            zaiKey = {
-              rekeyFile = ../secrets/z-ai-key.age;
-              owner = "jam";
-              mode = "400";
-            };
-          };
-
           system.stateVersion = 6;
         };
       }
