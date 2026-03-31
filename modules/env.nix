@@ -7,7 +7,7 @@ let
 
       # TODO: Make an option.
       variables = {
-        EDITOR = "zeditor --wait";
+        EDITOR = "hx";
         SHELL = getExe pkgs.nushell;
         TERMINAL = "zellij";
         TERM_PROGRAM = "zellij";
