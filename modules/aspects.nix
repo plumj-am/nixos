@@ -1,63 +1,46 @@
 { inputs, ... }:
 let
-  aspectsBaseLinux.imports = with inputs.self.modules.nixos; [
+  commonModuleNames = [
+    "disable-nix-documentation"
+    "git"
+    "env"
+    "helix"
+    "hjem"
+    "jujutsu"
+    "keys"
+    "lf"
+    "lib"
+    "nix-index"
+    "nix-settings"
+    "openssh"
+    "packages"
+    "secret-manager"
+    "shell"
+    "shell-tools"
+    "sudo"
+    "ssh"
+    "tailscale"
+    "theme"
+    "unfree"
+    "users"
+  ];
+
+  getCommon = modules: map (name: modules.${name}) commonModuleNames;
+
+  aspectsBaseLinux.imports = getCommon inputs.self.modules.nixos ++ (with inputs.self.modules.nixos; [
     disable-nano
-    disable-nix-documentation
     disks-extra-zram-swap
     dynamic-binaries
-    git
-    env
-    helix
-    hjem
-    jujutsu
-    keys
-    lf
-    lib
     locale
     netrc
     networking
-    nix-index
-    nix-settings
-    openssh
-    packages
     rebuild
-    secret-manager
-    shell
-    shell-tools
-    sudo
-    ssh
-    tailscale
-    theme
-    unfree
-    users
     yubikey
-  ];
+  ]);
 
-  aspectsBaseDarwin.imports = with inputs.self.modules.darwin; [
+  aspectsBaseDarwin.imports = getCommon inputs.self.modules.darwin ++ (with inputs.self.modules.darwin; [
     fixes
-    disable-nix-documentation
-    git
-    env
-    helix
-    hjem
-    jujutsu
-    keys
-    lf
-    lib
-    nix-index
-    nix-settings
-    openssh
-    packages
-    secret-manager
-    shell
-    shell-tools
-    sudo
-    ssh
-    tailscale
-    theme
-    unfree
-    users
-  ];
+  ]);
 in
 {
   flake.modules.nixos.aspectsBase = aspectsBaseLinux;
