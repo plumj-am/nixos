@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
@@ -68,6 +69,11 @@ Item {
                         "action": "suspend"
                     },
                     {
+                        "icon": "\uf186",
+                        "name": "Hibernate",
+                        "action": "hibernate"
+                    },
+                    {
                         "icon": "\uf2f5",
                         "name": "Logout",
                         "action": "logout"
@@ -115,6 +121,26 @@ Item {
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
                         onClicked: root.executeAction(modelData.action)
+                        onContainsMouseChanged: toolTip.visible = containsMouse
+                    }
+
+                    ToolTip {
+                        id: toolTip
+                        text: modelData.name
+                        delay: 0
+                        timeout: 0
+                        x: -width - 8
+                        y: parent.height / 2 - height / 2
+                        background: Rectangle {
+                            color: Common.Theme.background
+                            radius: Common.Theme.radius.small
+                            border.color: Common.Theme.accent
+                            border.width: 1
+                        }
+                        contentItem: Text {
+                            text: toolTip.text
+                            color: Common.Theme.foreground
+                        }
                     }
                 }
             }
