@@ -94,7 +94,7 @@ let
     let
       inherit (config.flake) keys;
 
-      home = "/User/jam";
+      home = "/Users/jam";
     in
     {
       system.primaryUser = "jam";
