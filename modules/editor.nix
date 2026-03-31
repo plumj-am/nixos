@@ -15,7 +15,6 @@ let
     "--indent-width"
     "4"
     "--unstable-component"
-    "--ext"
   ];
 
   disableNano = {
