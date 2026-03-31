@@ -340,6 +340,13 @@ let
           inherit (osConfig.age) secrets;
         in
         {
+          # For compatibility.
+          # Retarded 500k loc crap refuses to follow XDG spec.
+          files.".claude/CLAUDE.md" = {
+            type = "copy";
+            text = instructions;
+          };
+
           xdg.config.files = {
             "claude-code/CLAUDE.md" = {
               type = "copy";
