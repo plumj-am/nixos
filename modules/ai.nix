@@ -1016,8 +1016,11 @@ let
                 name = "claude-wrapped";
                 paths = singleton claudeScript;
                 buildInputs = singleton pkgs.makeWrapper;
+
+                # This just allows skipping permissions - not enabled by default.
                 postBuild = ''
                   wrapProgram $out/bin/claude \
+                    --add-flags "--allow-dangerously-skip-permissions" \
                     --run 'export ANTHROPIC_AUTH_TOKEN="$(cat ${secrets.zaiKey.path})"'
                 '';
               })
