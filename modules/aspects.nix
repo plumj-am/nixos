@@ -27,20 +27,24 @@ let
 
   getCommon = modules: map (name: modules.${name}) commonModuleNames;
 
-  aspectsBaseLinux.imports = getCommon inputs.self.modules.nixos ++ (with inputs.self.modules.nixos; [
-    disable-nano
-    disks-extra-zram-swap
-    dynamic-binaries
-    locale
-    netrc
-    networking
-    rebuild
-    yubikey
-  ]);
+  aspectsBaseLinux.imports =
+    getCommon inputs.self.modules.nixos
+    ++ (with inputs.self.modules.nixos; [
+      disable-nano
+      disks-extra-zram-swap
+      dynamic-binaries
+      locale
+      netrc
+      networking
+      rebuild
+      yubikey
+    ]);
 
-  aspectsBaseDarwin.imports = getCommon inputs.self.modules.darwin ++ (with inputs.self.modules.darwin; [
-    fixes
-  ]);
+  aspectsBaseDarwin.imports =
+    getCommon inputs.self.modules.darwin
+    ++ (with inputs.self.modules.darwin; [
+      fixes
+    ]);
 in
 {
   flake.modules.nixos.aspectsBase = aspectsBaseLinux;
