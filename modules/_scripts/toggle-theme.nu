@@ -131,7 +131,7 @@ def switch-scheme [scheme: string] {
 def reload-applications [] {
    print-notify "Reloading applications..."
    niri msg action do-screen-transition --delay-ms 0 | ignore
-   qs -p /home/jam/nixos/modules/quickshell/shell ipc call shell reload | ignore
+   qs --no-duplicate -p /home/jam/nixos/modules/quickshell/shell ipc call shell reload | ignore
    pkill -USR1 kitty | ignore
    pkill -USR2 ghostty | ignore
    pkill -USR1 hx | ignore

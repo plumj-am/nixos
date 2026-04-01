@@ -32,6 +32,10 @@ let
         ];
       };
 
+      services.logind.settings.Login = {
+        HandlePowerKey = "ignore";
+      };
+
       environment.sessionVariables = {
         # Hint Electron apps to use Wayland.
         NIXOS_OZONE_WL = "1";
@@ -347,14 +351,14 @@ let
                 Mod+Shift+Comma { consume-or-expel-window-left; }
                 Mod+Shift+Period { consume-or-expel-window-right; }
 
-                Mod+Ctrl+R { spawn-sh "${quickshell} --path ${quickshellPath} ipc call shell reload"; }
-                Mod+Ctrl+Shift+R { spawn-sh "${quickshell} --path ${quickshellPath} ipc call shell reloadHard"; }
-                Ctrl+Backspace { spawn-sh "${quickshell} --path ${quickshellPath} ipc call launcher toggle"; }
+                Mod+Ctrl+R { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call shell reload"; }
+                Mod+Ctrl+Shift+R { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call shell reloadHard"; }
+                Ctrl+Backspace { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call launcher toggle"; }
                 Mod+T { spawn "process-monitor"; }
                 Mod+P { spawn "process-killer"; }
                 Mod+D { spawn "todo-scratchpad"; }
                 Mod+S { spawn "random-scratchpad"; }
-                Mod+C { spawn-sh "${quickshell} --path ${quickshellPath} ipc call clipboard toggle"; }
+                Mod+C { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call clipboard toggle"; }
               }
 
               spawn-sh-at-startup "${quickshell} --path ${quickshellPath}"
