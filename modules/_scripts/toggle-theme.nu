@@ -17,7 +17,7 @@ def attempt-rebuild [] {
 }
 
 def get-current-wallpaper [] {
-   let wallpaper = swww query
+   let wallpaper = awww query
    | lines
    | first
    | parse "{monitor}: image: {path}"

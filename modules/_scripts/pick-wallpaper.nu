@@ -20,12 +20,12 @@ let selected = $wallpapers
    | get name
    | str join "\n"
    | (fzf
-      --bind "focus:execute-silent(bash -c 'nohup swww img --transition-type none {} >/dev/null 2>&1 &')"
+      --bind "focus:execute-silent(bash -c 'nohup awww img --transition-type none {} >/dev/null 2>&1 &')"
       --preview-window hidden
       --prompt="Select wallpaper: ")
 
 if ($selected | is-not-empty) {
-   swww img --transition-type none $selected | ignore
+   awww img --transition-type none $selected | ignore
    print $"Wallpaper set: \(($selected | path basename)\)"
 
    let theme_config = try {

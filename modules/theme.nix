@@ -329,7 +329,7 @@ let
     in
     {
       environment.systemPackages = [
-        pkgs.swww
+        pkgs.awww
         themeToggleScript
         pickWallpaper
       ]
