@@ -44,20 +44,20 @@ Rectangle {
             Layout.fillWidth: true
             spacing: Common.Theme.margin.small
 
-            IconImage {
+            Image {
                 id: appIcon
                 Layout.preferredWidth: 24
                 Layout.preferredHeight: 24
-                implicitSize: 24
+                sourceSize.width: 24
+                sourceSize.height: 24
                 source: {
                     if (!notification) return ""
                     const icon = notification.appIcon || notification.desktopEntry
                     if (!icon) return ""
-                    const path = Quickshell.iconPath(icon)
-                    return path
+                    return Quickshell.iconPath(icon, true)
                 }
                 asynchronous: true
-                visible: status === Image.Ready
+                visible: source !== "" && status === Image.Ready
             }
 
             Image {

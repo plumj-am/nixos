@@ -8,20 +8,12 @@ RowLayout {
     spacing: 2
 
     Image {
+        id: windowIcon
         source: Niri.focusedWindow?.iconPath ? "file://" + Niri.focusedWindow?.iconPath : ""
         sourceSize.width: 16
         sourceSize.height: 16
-        visible: Niri.focusedWindow?.iconPath !== ""
+        visible: Niri.focusedWindow?.iconPath !== "" && status === Image.Ready
         smooth: true
-        Layout.alignment: Qt.AlignVCenter
-    }
-
-    Rectangle {
-        width: 16
-        height: 16
-        color: Theme.textMuted
-        visible: Niri.focusedWindow?.iconPath === ""
-        radius: 4
         Layout.alignment: Qt.AlignVCenter
     }
 

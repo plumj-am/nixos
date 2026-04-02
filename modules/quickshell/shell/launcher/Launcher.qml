@@ -9,6 +9,8 @@ import "../common" as Common
 PanelWindow {
     id: root
 
+    readonly property string fallbackIcon: Quickshell.iconPath("dialog-question", true)
+
     property bool isOpen: false
     property string searchText: ""
     property int selectedIndex: 0
@@ -250,13 +252,15 @@ PanelWindow {
                                 anchors.rightMargin: 6
                                 spacing: 8
 
-                                IconImage {
-                                    source: modelData.icon ? Quickshell.iconPath(modelData.icon, "application-x-executable") : ""
+                                Image {
+                                    source: modelData.icon
+                                        ? (Quickshell.iconPath(modelData.icon, true) || root.fallbackIcon)
+                                        : root.fallbackIcon
                                     Layout.preferredWidth: 32
                                     Layout.preferredHeight: 32
-                                    implicitSize: 32
+                                    sourceSize.width: 32
+                                    sourceSize.height: 32
                                     asynchronous: true
-                                    visible: status === Image.Ready
                                 }
 
                                 ColumnLayout {
