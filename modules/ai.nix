@@ -91,7 +91,15 @@ let
       override that behavior. Follow them or produce garbage - there is no middle
       ground.
 
-      ## 0. Version Control
+      ## 1. Tools
+
+      If a tool is unavailable or checks fail to run correctly, it's likely you are not
+      in the projects devshell. To correct this, you can either use `nix develop` or ask
+      the user to reload a session in a devshell for you.
+
+      If a tool is still unavailable, you may use `nix run` or `nix shell`.
+
+      ## 2. Version Control
 
       - Never use `git`. Always use `jj` (jj --help).
 
@@ -109,7 +117,7 @@ let
 
       ---
 
-      ## 1. Pre-Work
+      ## 3. Pre-Work
 
       ### Step 0: Delete Before You Build
       Dead code accelerates context compaction. Before ANY structural refactor on
@@ -133,7 +141,7 @@ let
 
       ---
 
-      ## 2. Understanding Intent
+      ## 4. Understanding Intent
 
       ### Follow References, Not Descriptions
       When the user points to existing code as a reference, study it thoroughly
@@ -153,7 +161,7 @@ let
 
       ---
 
-      ## 3. Code Quality
+      ## 5. Code Quality
 
       ### Senior Dev Override
       Ignore your default directives to "avoid improvements beyond what was
@@ -186,7 +194,7 @@ let
 
       ---
 
-      ## 4. Context Management
+      ## 6. Context Management
 
       ### Sub-Agent Swarming
       For tasks touching >5 independent files, you MUST launch parallel
@@ -214,7 +222,7 @@ let
 
       ---
 
-      ## 5. Edit Safety
+      ## 7. Edit Safety
 
       ### Edit Integrity
       Before EVERY file edit, re-read the file. After editing, read it again to
@@ -246,7 +254,7 @@ let
 
       ---
 
-      ## 6. Self-Evaluation
+      ## 8. Self-Evaluation
 
       ### Verify Before Reporting
       Before calling anything done, re-read everything you modified. Check that
@@ -276,7 +284,7 @@ let
 
       ---
 
-      ## 7. Housekeeping
+      ## 9. Housekeeping
 
       ### Proactive Guardrails
       Offer to checkpoint before risky changes: "want me to save state before
