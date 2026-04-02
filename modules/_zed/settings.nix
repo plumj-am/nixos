@@ -223,7 +223,7 @@ with theme;
 
   seed_search_query_from_cursor = "selection";
 
-  auto_signature_help = true;
+  auto_signature_help = false;
 
   expand_excerpt_lines = 10;
   excerpt_context_lines = 6;
