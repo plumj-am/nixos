@@ -10,6 +10,9 @@ or ask the user to reload a session in a devshell for you.
 
 If a tool is still unavailable, you may use `nix run` or `nix shell`.
 
+When you need to ask the user a question, always use the
+AskUserQuestion/question tool. Never ask the user a question in plain text.
+
 ---
 
 ## 2. Version Control
