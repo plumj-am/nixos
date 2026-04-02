@@ -256,6 +256,33 @@ let
                 "log"
               ];
 
+              aliases.w = [ "workspace" ];
+
+              aliases.wa = [
+                "workspace"
+                "add"
+              ];
+              aliases.wf = [
+                "workspace"
+                "forget"
+              ];
+              aliases.wl = [
+                "workspace"
+                "list"
+              ];
+              aliases.wr = [
+                "workspace"
+                "rename"
+              ];
+              aliases.wro = [
+                "workspace"
+                "root"
+              ];
+              aliases.wu = [
+                "workspace"
+                "update-stale"
+              ];
+
               revset-aliases = {
                 "current()" = "ancestors(reachable(@, mutable()), 2)";
                 "closest(to)" = "heads(::to & bookmarks())";
