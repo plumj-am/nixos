@@ -345,7 +345,7 @@ let
               value = {
                 "$schema" = "https://json.schemastore.org/claude-code-settings.json";
 
-                permissions.allow = map (cmd: "Bash(${replaceStrings [ "*" ] [ ":*" ] cmd})") commands.allow ++ [
+                permissions.allow = map (cmd: "Bash(${cmd})") commands.allow ++ [
                   "Glob"
                   "Grep"
                   "Read"
