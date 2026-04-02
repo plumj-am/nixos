@@ -12,7 +12,6 @@ in
 
       acme
       boot-grub
-      cgit
       cinny
       disks-server
       forgejo
