@@ -61,7 +61,7 @@
               nativeBuildInputs = [ pkgs.nixfmt ];
             }
             ''
-              nixfmt --check ${../.}
+              nix fmt -- --fail-on-change
               touch $out
             '';
       };
