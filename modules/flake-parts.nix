@@ -1,11 +1,19 @@
-{ inputs, lib, config, moduleLocation, ... }:
+{
+  lib,
+  config,
+  moduleLocation,
+  ...
+}:
 let
-  inherit (lib) mapAttrs mkOption types;
+  inherit (lib.attrsets) mapAttrs;
+  inherit (lib.options) mkOption;
+  inherit (lib.types) lazyAttrsOf deferredModule;
   inherit (lib.strings) escapeNixIdentifier;
 
   # Extended version of flake-parts' addInfo that treats "common" like "generic"
   # (classless), so common modules can be imported into any module class.
-  addInfo = class: moduleName:
+  addInfo =
+    class: moduleName:
     if class == "generic" || class == "common" then
       module: module
     else
@@ -34,7 +42,7 @@ in
   ];
 
   options.flake.modules = mkOption {
-    type = types.lazyAttrsOf (types.lazyAttrsOf types.deferredModule);
+    type = lazyAttrsOf <| lazyAttrsOf deferredModule;
 
     apply = mapAttrs (k: mapAttrs (addInfo k));
 
@@ -48,7 +56,7 @@ in
     '';
   };
 
-  # Auto-merge common modules into both platform namespaces.
+  # Auto-merge common modules into both namespaces.
   config.flake.modules.nixos = config.flake.modules.common or { };
   config.flake.modules.darwin = config.flake.modules.common or { };
 }
