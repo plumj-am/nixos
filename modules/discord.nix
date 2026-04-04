@@ -1,5 +1,5 @@
-let
-  discordTuiBase =
+{
+  flake.modules.common.discord-tui =
     {
       pkgs,
       lib,
@@ -44,7 +44,7 @@ let
       };
     };
 
-  discordGuiBase =
+  flake.modules.common.discord-gui =
     { pkgs, lib, ... }:
     let
       inherit (lib.lists) singleton;
@@ -54,12 +54,4 @@ let
         packages = singleton pkgs.vesktop;
       };
     };
-
-in
-{
-  flake.modules.nixos.discord-tui = discordTuiBase;
-  flake.modules.darwin.discord-tui = discordTuiBase;
-
-  flake.modules.nixos.discord-gui = discordGuiBase;
-  flake.modules.darwin.discord-gui = discordGuiBase;
 }
