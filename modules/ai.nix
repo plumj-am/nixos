@@ -83,8 +83,9 @@ let
     "fj wiki contents*"
     "fj wiki view*"
   ];
-
-  opencodeBase =
+in
+{
+  flake.modules.common.opencode =
     {
       pkgs,
       lib,
@@ -303,7 +304,7 @@ let
       };
     };
 
-  claudeCodeBase =
+  flake.modules.common.claude-code =
     {
       pkgs,
       lib,
@@ -313,7 +314,7 @@ let
       inherit (lib.lists) singleton optionals;
       inherit (lib.attrsets) genAttrs;
       inherit (lib.meta) getExe;
-      inherit (lib.strings) toJSON replaceStrings;
+      inherit (lib.strings) toJSON;
       inherit (lib.trivial) const;
     in
     {
@@ -827,7 +828,7 @@ let
         };
     };
 
-  aiExtra =
+  flake.modules.common.ai-extra =
     {
       inputs,
       pkgs,
@@ -863,14 +864,4 @@ let
           ++ optional (!osConfig.nixpkgs.hostPlatform.isDarwin) opencodeDesktopPackage;
         };
     };
-in
-{
-  flake.modules.nixos.opencode = opencodeBase;
-  flake.modules.darwin.opencode = opencodeBase;
-
-  flake.modules.nixos.claude-code = claudeCodeBase;
-  flake.modules.darwin.claude-code = claudeCodeBase;
-
-  flake.modules.nixos.ai-extra = aiExtra;
-  flake.modules.darwin.ai-extra = aiExtra;
 }
