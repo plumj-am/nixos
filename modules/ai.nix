@@ -429,6 +429,22 @@ in
                   };
                 };
 
+                hooks.Notification = singleton {
+                  matcher = "";
+                  hooks = singleton {
+                    type = "command";
+                    command = # bash
+                      ''zellij pipe --name "zellij-attention::waiting::$ZELLIJ_PANE_ID"'';
+                  };
+                };
+                hooks.Stop = singleton {
+                  hooks = singleton {
+                    type = "command";
+                    command = # bash
+                      ''zellij pipe --name "zellij-attention::completed::$ZELLIJ_PANE_ID"'';
+                  };
+                };
+
                 enabledPlugins = genAttrs [
                   "code-review@claude-plugins-official"
                   "code-simplifier@claude-plugins-official"
