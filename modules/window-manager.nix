@@ -311,7 +311,7 @@ let
                 off
               }
 
-              bind {
+              binds {
                 Mod+slash { show-hotkey-overlay; }
                 Mod+Shift+slash { show-hotkey-overlay; }
 
@@ -369,8 +369,8 @@ let
                 Mod+C { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call clipboard toggle"; }
 
                 ${optionalString (hostName == "date") ''
-                XF86MonBrightnessDown { spawn "brightnessctl" "set" "5%-"; }
-                XF86MonBrightnessUp { spawn "brightnessctl" "set" "+5%"; }
+                  XF86MonBrightnessDown { spawn "brightnessctl" "set" "5%-"; }
+                  XF86MonBrightnessUp { spawn "brightnessctl" "set" "+5%"; }
                 ''}
               }
 
