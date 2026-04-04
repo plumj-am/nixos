@@ -16,6 +16,7 @@ Item {
     signal notificationClicked
     signal mediaClicked
     signal sessionClicked
+    signal controlCenterClicked
 
     implicitHeight: barSize
 
@@ -95,6 +96,10 @@ Item {
                     }
                     Separator {
                         Layout.alignment: Qt.AlignVCenter
+                    }
+                    ControlCenterButton {
+                        Layout.alignment: Qt.AlignVCenter
+                        onClicked: root.controlCenterClicked()
                     }
                     NotificationWidget {
                         Layout.alignment: Qt.AlignVCenter
