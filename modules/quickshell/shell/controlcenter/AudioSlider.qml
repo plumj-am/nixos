@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import Quickshell.Services.Pipewire
-import "../../common" as Common
+import "../common" as Common
 
 RowLayout {
     id: root
@@ -11,21 +11,31 @@ RowLayout {
     required property string icon
     required property string label
 
+    property real value: node && node.audio ? (node.audio.volume || 0.0) : 0.0
+    property bool muted: node && node.audio ? node.audio.muted : false
+
     spacing: 8
 
     PwObjectTracker {
         objects: [node].filter(n => n !== null)
     }
 
-    Text {
-        text: root.icon
-        font.family: Common.Theme.font.icons.family
-        font.pixelSize: Common.Theme.font.sans.size
-        color: root.muted ? Common.Theme.error : (root.value === 0 ? Common.Theme.textMuted : Common.Theme.foreground)
+    Rectangle {
+        Layout.preferredWidth: 24
+        Layout.preferredHeight: 24
         Layout.alignment: Qt.AlignVCenter
+        color: "transparent"
+
+        Text {
+            anchors.centerIn: parent
+            text: root.icon
+            font.family: Common.Theme.font.icons.family
+            font.pixelSize: Common.Theme.font.sans.size
+            color: root.muted ? Common.Theme.error : (root.value === 0 ? Common.Theme.textMuted : Common.Theme.foreground)
+        }
 
         TapHandler {
-            onTapped: if (root.node) root.node.audio.muted = !root.node.audio.muted
+            onTapped: if (root.node && root.node.audio) root.node.audio.muted = !root.node.audio.muted
         }
     }
 
@@ -37,15 +47,6 @@ RowLayout {
         Layout.alignment: Qt.AlignVCenter
     }
 
-    Text {
-        text: Math.round(root.value * 100) + "%"
-        font.family: Common.Theme.font.mono.family
-        font.pixelSize: Common.Theme.font.mono.size
-        color: Common.Theme.textMuted
-        Layout.alignment: Qt.AlignVCenter
-        Layout.preferredWidth: 42
-    }
-
     Slider {
         id: slider
         Layout.fillWidth: true
@@ -53,45 +54,52 @@ RowLayout {
         from: 0.0
         to: 1.0
         stepSize: 0.01
-        value: root.value
-        onMoved: slider.value = {
-            if (root.node) {
+
+        Binding {
+            target: slider
+            property: "value"
+            value: root.value
+            when: !slider.pressed
+        }
+
+        onMoved: {
+            if (root.node && root.node.audio)
                 root.node.audio.volume = Math.max(0.0, Math.min(1.0, slider.value))
-            }
         }
 
         background: Rectangle {
-            x: 0
-            y: slider.topPadding
+            x: slider.leftPadding
+            y: slider.topPadding + slider.availableHeight / 2 - height / 2
             width: slider.availableWidth
-            height: slider.availableHeight
+            height: 4
             radius: height / 2
             color: Common.Theme.outline
 
             Rectangle {
-                x: 0
-                y: slider.topPadding
-                width: slider.availableWidth * root.value
-                height: slider.availableHeight
+                width: slider.visualPosition * parent.width
+                height: parent.height
                 radius: height / 2
                 color: Common.Theme.accent
             }
         }
 
         handle: Rectangle {
-            x: slider.value * slider.availableWidth - 1
-            y: 0
-            height: parent.height
-            radius: height / 2
-            color: Common.Theme.foreground
-
-            TapHandler {
-                onTapped: slider.increase()
-            }
-
-            TapHandler {
-                onTapped: slider.decrease()
-            }
+            x: slider.leftPadding + slider.visualPosition * slider.availableWidth - width / 2
+            y: slider.topPadding + slider.availableHeight / 2 - height / 2
+            width: 12
+            height: 12
+            radius: width / 2
+            color: Common.Theme.accent
         }
+    }
+
+    Text {
+        text: Math.round((slider.pressed ? slider.value : root.value) * 100) + "%"
+        font.family: Common.Theme.font.mono.family
+        font.pixelSize: Common.Theme.font.mono.size
+        color: Common.Theme.textMuted
+        Layout.alignment: Qt.AlignVCenter
+        Layout.preferredWidth: 36
+        horizontalAlignment: Text.AlignRight
     }
 }

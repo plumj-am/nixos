@@ -1,21 +1,29 @@
 import QtQuick
 import QtQuick.Layouts
-import "../../common" as Common
-import "../../services" as Services
+import "../common" as Common
+import "../services" as Services
 
-RowLayout {
+ColumnLayout {
     id: root
 
-    spacing: 8
+    spacing: 4
 
     RowLayout {
         spacing: 8
 
-        Text {
-            text: Services.Network.networkType === 0 ? "\uf1eb" : "\ue7b8"
-            font.family: Common.Theme.font.icons.family
-            font.pixelSize: Common.Theme.font.sans.size
-            color: Common.Theme.foreground
+        Rectangle {
+            Layout.preferredWidth: 24
+            Layout.preferredHeight: 24
+            Layout.alignment: Qt.AlignVCenter
+            color: "transparent"
+
+            Text {
+                anchors.centerIn: parent
+                text: Services.Network.activeInterface ? (Services.Network.networkType === 0 ? "\uf796" : "\uf1eb") : "\uf127"
+                font.family: Common.Theme.font.icons.family
+                font.pixelSize: Common.Theme.font.sans.size
+                color: Common.Theme.foreground
+            }
         }
 
         Text {
@@ -23,10 +31,10 @@ RowLayout {
             font.family: Common.Theme.font.sans.family
             font.pixelSize: Common.Theme.font.sans.size
             color: Common.Theme.foreground
-            Layout.fillWidth: true
         }
 
         Text {
+            visible: Services.Network.activeInterface
             text: "· " + (Services.Network.networkType === 0 ? "Wired" : "Wireless")
             font.family: Common.Theme.font.mono.family
             font.pixelSize: Common.Theme.font.mono.size
@@ -35,24 +43,24 @@ RowLayout {
     }
 
     RowLayout {
+        visible: Services.Network.activeInterface
         spacing: 8
 
-        Text {
-            text: "\uf063"
-            font.family: Common.Theme.font.icons.family
-            font.pixelSize: Common.Theme.font.mono.size
-            color: Common.Theme.textMuted
+        Item {
+            Layout.preferredWidth: 24
         }
 
         Text {
-            text: Services.Network.lanIPs.length > 0 ? Services.Network.lanIPs[0] : ""
+            visible: Services.Network.lanIPs.length > 0
+            text: Services.Network.lanIPs[0]
             font.family: Common.Theme.font.mono.family
             font.pixelSize: Common.Theme.font.mono.size
             color: Common.Theme.textMuted
         }
 
         Text {
-            text: "  \u2193 " + Utils.formatBytes(Services.Network.rateDown) + "/s"
+            visible: Services.Network.rateDown > 0
+            text: "\u2193 " + Common.Utils.formatBytes(Services.Network.rateDown) + "/s"
             font.family: Common.Theme.font.mono.family
             font.pixelSize: Common.Theme.font.mono.size
             color: Common.Theme.textMuted

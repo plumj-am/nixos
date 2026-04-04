@@ -9,6 +9,7 @@ import "common" as Common
 import "services" as Services
 import "notifications" as Notifications
 import "session" as Session
+import "controlcenter" as ControlCenter
 import "lock" as Lock
 
 ShellRoot {
@@ -50,6 +51,7 @@ ShellRoot {
             property bool notifAutoOpened: false
             property bool mediaOpen: false
             property bool sessionOpen: false
+            property bool controlCenterOpen: false
 
             Timer {
                 id: notifAutoCloseTimer
@@ -103,16 +105,25 @@ ShellRoot {
                     window.notifAutoOpened = false;
                     window.mediaOpen = false;
                     window.sessionOpen = false;
+                    window.controlCenterOpen = false;
                     notifAutoCloseTimer.stop();
                 }
                 onMediaClicked: {
                     window.mediaOpen = !window.mediaOpen;
                     window.notifOpen = false;
                     window.sessionOpen = false;
+                    window.controlCenterOpen = false;
                 }
                 onSessionClicked: {
                     window.sessionOpen = !window.sessionOpen;
                     window.notifOpen = false;
+                    window.mediaOpen = false;
+                    window.controlCenterOpen = false;
+                }
+                onControlCenterClicked: {
+                    window.controlCenterOpen = !window.controlCenterOpen;
+                    window.notifOpen = false;
+                    window.sessionOpen = false;
                     window.mediaOpen = false;
                 }
             }
@@ -142,6 +153,15 @@ ShellRoot {
                 open: window.sessionOpen
             }
 
+            // Control center drawer (top-right, below bar)
+            ControlCenter.ControlCenter {
+                id: controlCenter
+                open: window.controlCenterOpen
+                anchors.top: parent.top
+                anchors.topMargin: window.topMargin + bar.barSize
+                anchors.right: parent.right
+            }
+
             // Click outside drawers to close (covers empty areas only due to mask)
             MouseArea {
                 anchors.fill: parent
@@ -152,6 +172,7 @@ ShellRoot {
                     window.notifAutoOpened = false;
                     window.mediaOpen = false;
                     window.sessionOpen = false;
+                    window.controlCenterOpen = false;
                     notifAutoCloseTimer.stop();
                     Notifications.NotificationServer.markAllSeen();
                 }
@@ -165,6 +186,7 @@ ShellRoot {
                         window.notifAutoOpened = true;
                         window.mediaOpen = false;
                         window.sessionOpen = false;
+                        window.controlCenterOpen = false;
                     }
                     if (window.notifAutoOpened) {
                         var timeout = notification.expireTimeout > 0 ? notification.expireTimeout * 1000 : 8000;

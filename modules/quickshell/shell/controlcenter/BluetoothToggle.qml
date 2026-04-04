@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Bluetooth
-import "../../common" as Common
+import "../common" as Common
 
 RowLayout {
     id: root
