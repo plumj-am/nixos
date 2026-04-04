@@ -64,7 +64,6 @@
           haskell-language-server
           hlint
           stylish-haskell
-          weeder
         ];
 
         withHoogle = true;
