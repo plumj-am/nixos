@@ -16,6 +16,10 @@
 
         # Clipboard.
         pkgs.wl-clipboard
+        # Screen brightness.
+        pkgs.brightnessctl
+        pkgs.bluez
+        pkgs.bluez-tools
       ];
     };
 }
