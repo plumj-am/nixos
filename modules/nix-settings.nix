@@ -138,9 +138,8 @@ let
     {
       nix.optimise.automatic = mkForce false;
       nix.gc.automatic = mkForce false;
-      nix.nixPath = (
-        registryMap |> mapAttrsToList (name: value: "${name}=${value}") |> concatStringsSep ":"
-      );
+      nix.nixPath =
+        registryMap |> mapAttrsToList (name: value: "${name}=${value}") |> concatStringsSep ":";
     };
 in
 {
