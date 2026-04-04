@@ -34,6 +34,5 @@ let
 
 in
 {
-  flake.modules.nixos.env = envBase;
-  flake.modules.darwin.env = envBase;
+  flake.modules.common.env = envBase;
 }
