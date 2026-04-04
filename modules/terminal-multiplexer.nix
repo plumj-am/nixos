@@ -48,7 +48,7 @@ let
             simplified_ui true
             show_startup_tips false
 
-            mouse_mode false
+            mouse_mode true
             scroll_buffer_size 5000
 
             copy_on_select false
@@ -70,6 +70,12 @@ let
 
               locked {
                 bind "Ctrl g" { SwitchToMode "normal"; }
+                bind "Alt h" { MoveFocus "Left"; }
+                bind "Alt j" { MoveFocus "Down"; }
+                bind "Alt k" { MoveFocus "Up"; }
+                bind "Alt l" { MoveFocus "Right"; }
+                bind "Alt -" { Resize "Decrease"; }
+                bind "Alt +" { Resize "Increase"; }
               }
 
               normal {
@@ -119,12 +125,8 @@ let
                 }
                 bind "Ctrl j" {
                   Run "${getExe pkgs.jjui}" {
+                    in_place true
                     close_on_exit true
-                    floating true
-                    x "5%"
-                    y "5%"
-                    width "90%"
-                    height "90%"
                   };
                   SwitchToMode "locked";
                 }
