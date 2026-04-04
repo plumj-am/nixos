@@ -40,11 +40,13 @@ Item {
         clip: true
 
         MouseArea {
+            z: -1
             anchors.fill: parent
-            onClicked: function(mouse) { mouse.accepted = true }
+            onPressed: function(mouse) { mouse.accepted = true }
         }
 
         ColumnLayout {
+            z: 0
             id: contentColumn
             anchors.fill: parent
             anchors.margins: 12

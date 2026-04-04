@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
 import Quickshell.Services.Pipewire
 import "../common" as Common
 
@@ -11,7 +10,7 @@ RowLayout {
     required property string icon
     required property string label
 
-    property real value: node && node.audio ? (node.audio.volume || 0.0) : 0.0
+    property real volume: node && node.audio ? (node.audio.volume || 0.0) : 0.0
     property bool muted: node && node.audio ? node.audio.muted : false
 
     spacing: 8
@@ -31,7 +30,7 @@ RowLayout {
             text: root.icon
             font.family: Common.Theme.font.icons.family
             font.pixelSize: Common.Theme.font.sans.size
-            color: root.muted ? Common.Theme.error : (root.value === 0 ? Common.Theme.textMuted : Common.Theme.foreground)
+            color: root.muted ? Common.Theme.error : (root.volume === 0 ? Common.Theme.textMuted : Common.Theme.foreground)
         }
 
         TapHandler {
@@ -45,56 +44,59 @@ RowLayout {
         font.pixelSize: Common.Theme.font.sans.size - 2
         color: Common.Theme.textMuted
         Layout.alignment: Qt.AlignVCenter
+        Layout.preferredWidth: 48
     }
 
-    Slider {
-        id: slider
+    Item {
+        id: track
         Layout.fillWidth: true
+        Layout.preferredHeight: 20
         Layout.alignment: Qt.AlignVCenter
-        from: 0.0
-        to: 1.0
-        stepSize: 0.01
 
-        Binding {
-            target: slider
-            property: "value"
-            value: root.value
-            when: !slider.pressed
-        }
-
-        onMoved: {
-            if (root.node && root.node.audio)
-                root.node.audio.volume = Math.max(0.0, Math.min(1.0, slider.value))
-        }
-
-        background: Rectangle {
-            x: slider.leftPadding
-            y: slider.topPadding + slider.availableHeight / 2 - height / 2
-            width: slider.availableWidth
+        Rectangle {
+            anchors.verticalCenter: parent.verticalCenter
+            width: parent.width
             height: 4
             radius: height / 2
             color: Common.Theme.outline
 
             Rectangle {
-                width: slider.visualPosition * parent.width
+                width: parent.width * root.volume
                 height: parent.height
                 radius: height / 2
                 color: Common.Theme.accent
             }
         }
 
-        handle: Rectangle {
-            x: slider.leftPadding + slider.visualPosition * slider.availableWidth - width / 2
-            y: slider.topPadding + slider.availableHeight / 2 - height / 2
+        Rectangle {
+            id: handle
+            x: root.volume * (track.width - width)
+            y: (track.height - height) / 2
             width: 12
             height: 12
             radius: width / 2
             color: Common.Theme.accent
         }
+
+        MouseArea {
+            id: ma
+            anchors.fill: parent
+            hoverEnabled: true
+            cursorShape: Qt.PointingHandCursor
+
+            function setVolumeFromMouse(mouseX) {
+                var v = Math.max(0.0, Math.min(1.0, mouseX / track.width))
+                if (root.node && root.node.audio)
+                    root.node.audio.volume = v
+            }
+
+            onPressed: function(mouse) { setVolumeFromMouse(mouse.x) }
+            onPositionChanged: function(mouse) { if (pressed) setVolumeFromMouse(mouse.x) }
+        }
     }
 
     Text {
-        text: Math.round((slider.pressed ? slider.value : root.value) * 100) + "%"
+        text: Math.round(root.volume * 100) + "%"
         font.family: Common.Theme.font.mono.family
         font.pixelSize: Common.Theme.font.mono.size
         color: Common.Theme.textMuted

@@ -19,7 +19,7 @@ ColumnLayout {
 
             Text {
                 anchors.centerIn: parent
-                text: Services.Network.activeInterface ? (Services.Network.networkType === 0 ? "\uf796" : "\uf1eb") : "\uf127"
+                text: Services.Network.activeInterface ? (Services.Network.networkType === 0 ? "\uef44" : "\uf1eb") : "\uf127"
                 font.family: Common.Theme.font.icons.family
                 font.pixelSize: Common.Theme.font.sans.size
                 color: Common.Theme.foreground
