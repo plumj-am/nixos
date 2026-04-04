@@ -126,6 +126,10 @@ ShellRoot {
                     window.sessionOpen = false;
                     window.mediaOpen = false;
                 }
+                onThemeSwitchClicked: {
+                    var cmd = Common.Theme.mode === "light" ? "dark" : "light";
+                    Quickshell.execDetached({ command: ["tt", cmd, "--force"] });
+                }
             }
 
             // Notification drawer (top-right)

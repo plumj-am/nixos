@@ -17,6 +17,7 @@ Item {
     signal mediaClicked
     signal sessionClicked
     signal controlCenterClicked
+    signal themeSwitchClicked
 
     implicitHeight: barSize
 
@@ -96,6 +97,10 @@ Item {
                     }
                     Separator {
                         Layout.alignment: Qt.AlignVCenter
+                    }
+                    ThemeSwitcher {
+                        Layout.alignment: Qt.AlignVCenter
+                        onClicked: root.themeSwitchClicked()
                     }
                     ControlCenterButton {
                         Layout.alignment: Qt.AlignVCenter
