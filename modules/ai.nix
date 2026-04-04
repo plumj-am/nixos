@@ -327,20 +327,15 @@ in
           inherit (osConfig.age) secrets;
         in
         {
-          # For compatibility.
-          # Retarded 500k loc crap refuses to follow XDG spec.
-          files.".claude/CLAUDE.md" = {
-            type = "copy";
-            source = ./ai.INSTRUCTIONS.md;
-          };
-
-          xdg.config.files = {
-            "claude-code/CLAUDE.md" = {
+          # TODO: Retarded 500k loc crap refuses to follow XDG spec.
+          # I will fix this system-wide when I cba figuring out how to do it well.
+          files = {
+            ".claude/CLAUDE.md" = {
               type = "copy";
               source = ./ai.INSTRUCTIONS.md;
             };
 
-            "claude-code/settings.json" = {
+            ".claude/settings.json" = {
               type = "copy"; # Sometimes needs to write to config.
               generator = pkgs.writers.writeJSON "claude-code-settings.json";
               value = {
@@ -796,9 +791,7 @@ in
                       }
 
                       $env.PATH ++= [ "${pkgs.ripgrep}/bin" ]
-                      r#'${
-                        toJSON config.xdg.config.files."claude-code/settings.json".value.env
-                      }'# | from json | load-env
+                      r#'${toJSON config.files.".claude/settings.json".value.env}'# | from json | load-env
 
                       exec $binary_path ...$arguments
                     }
