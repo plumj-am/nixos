@@ -1,9 +1,11 @@
 #!/usr/bin/env nix-shell
 #!nix-shell -i runghc -p "haskell.packages.ghc9103.ghcWithPackages (p: [p.typed-process])" --impure
+{-# LANGUAGE OverloadedStrings #-}
 module Rebuild where
 
-import           Data.Char            (isSpace)
-import           Data.List            (dropWhileEnd)
+import           Data.Text            (Text)
+import qualified Data.Text            as T
+import qualified Data.Text.IO         as TIO
 import           System.Directory     (findExecutable, getHomeDirectory,
                                        setCurrentDirectory)
 import           System.Environment   (getArgs)
@@ -12,17 +14,17 @@ import           System.Exit          (ExitCode (ExitFailure, ExitSuccess), die,
 import           System.Process       (readProcess)
 import           System.Process.Typed (proc, runProcess)
 
-reset :: String
+reset :: Text
 reset = "\ESC[0m"
 
-purple, blue :: String -> String
-purple msg = "\ESC[35m" ++ msg ++ reset
-blue msg = "\ESC[34m" ++ msg ++ reset
+purple, blue :: Text -> Text
+purple msg = "\ESC[35m" <> msg <> reset
+blue msg = "\ESC[34m" <> msg <> reset
 
-rebuilderTag :: String
+rebuilderTag :: Text
 rebuilderTag = purple "[Rebuilder] "
 
-nixEvalArgs :: [String]
+nixEvalArgs :: [Text]
 nixEvalArgs =
    [ "eval"
    , "--raw"
@@ -31,36 +33,29 @@ nixEvalArgs =
    , "x: builtins.concatStringsSep \",\" (builtins.attrNames x)"
    ]
 
-printTagged :: String -> IO ()
-printTagged msg = putStrLn $ rebuilderTag ++ msg
+printTagged :: Text -> IO ()
+printTagged msg = TIO.putStrLn $ rebuilderTag <> msg
 
-splitCommas :: String -> [String]
-splitCommas [] = []
-splitCommas xs =
-   case break (== ',') xs of
-      (chunk, [])       -> [chunk]
-      (chunk, _ : rest) -> chunk : splitCommas rest
+numberLines :: [Text] -> [Text]
+numberLines = zipWith (\i x -> "  " <> T.pack (show i) <> ". " <> x) [1 ..]
 
-numberLines :: [String] -> [String]
-numberLines = zipWith (\i x -> "  " ++ show i ++ ". " ++ x) [1 ..]
-
-availableHosts :: IO [String]
-availableHosts = splitCommas <$> readProcess "nix" nixEvalArgs ""
+availableHosts :: IO [Text]
+availableHosts = T.split (== ',') . T.stripEnd . T.pack <$> readProcess "nix" (map T.unpack nixEvalArgs) ""
 
 listHosts :: IO ()
-listHosts = availableHosts >>= putStrLn . unlines . numberLines
+listHosts = availableHosts >>= TIO.putStrLn . T.unlines . numberLines
 
-getHostname :: IO String
-getHostname = dropWhileEnd isSpace <$> readProcess "hostname" [] ""
+getHostname :: IO Text
+getHostname = T.stripEnd . T.pack <$> readProcess "hostname" [] ""
 
-nixExperimentalFeatures :: String
+nixExperimentalFeatures :: Text
 nixExperimentalFeatures = "flakes nix-command cgroups pipe-operators"
 
-nhArgs :: String -> [String]
+nhArgs :: Text -> [Text]
 nhArgs host =
    [ "os"
    , "switch"
-   , ".#nixosConfigurations." ++ host
+   , ".#nixosConfigurations." <> host
    , "--accept-flake-config"
    , "--bypass-root-check"
    , "--builders=null"
@@ -71,7 +66,7 @@ nhArgs host =
    , nixExperimentalFeatures
    ]
 
-nhCommand :: IO (String, [String])
+nhCommand :: IO (String, [Text])
 nhCommand = maybe fallback toNh <$> findExecutable "nh"
   where
    fallback =
@@ -85,81 +80,81 @@ nhCommand = maybe fallback toNh <$> findExecutable "nh"
          , "--"
          ]
       )
-   toNh path = ("sudo", [path])
+   toNh path = ("sudo", [T.pack path])
 
-rebuild :: String -> IO ()
+rebuild :: Text -> IO ()
 rebuild host = do
-   printTagged $ "Rebuilding " ++ host
+   printTagged $ "Rebuilding " <> host
    (cmd, prefixArgs) <- nhCommand
-   code <- runProcess $ proc cmd $ prefixArgs ++ nhArgs host
+   code <- runProcess $ proc cmd $ map T.unpack $ prefixArgs <> nhArgs host
    handleExitCode code host
 
-handleExitCode :: ExitCode -> String -> IO ()
-handleExitCode ExitSuccess host = printTagged $ "Rebuild succeeded for " ++ host
+handleExitCode :: ExitCode -> Text -> IO ()
+handleExitCode ExitSuccess host = printTagged $ "Rebuild succeeded for " <> host
 handleExitCode code@(ExitFailure _) host = do
-   printTagged $ "Rebuild failed for " ++ host
+   printTagged $ "Rebuild failed for " <> host
    exitWith code
 
 main :: IO ()
 main = do
-   args <- getArgs
+   args <- map T.pack <$> getArgs
    (dir, restArgs) <- parsePathArgs args
-   setCurrentDirectory dir
+   setCurrentDirectory $ T.unpack dir
    case restArgs of
       [x]
          | isLocal x -> rebuild =<< getHostname
-         | isRemote x -> die $ missingArgVal "--remote [hostname]"
+         | isRemote x -> die . T.unpack $ missingArgVal "--remote [hostname]"
          | isList x -> listHosts
-         | isHelp x -> putStr usage
-      [x, host] | isRemote x -> die $ notImplemented "--remote"
-      _ -> die $ invalidInput args
+         | isHelp x -> TIO.putStr usage
+      [x, host] | isRemote x -> die . T.unpack $ notImplemented "--remote"
+      _ -> die . T.unpack $ invalidInput args
 
-isLocal, isRemote, isList, isHelp, isPath :: String -> Bool
+isLocal, isRemote, isList, isHelp, isPath :: Text -> Bool
 isLocal s = s `elem` ["--local", "-local", "-l"]
 isRemote s = s `elem` ["--remote", "-remote", "-r"]
 isList s = s `elem` ["--list", "-list", "-L"]
 isHelp s = s `elem` ["--help", "-help", "-h"]
 isPath s = s `elem` ["--path", "-path", "-p"]
 
-parsePathArgs :: [String] -> IO (String, [String])
+parsePathArgs :: [Text] -> IO (Text, [Text])
 parsePathArgs args =
    case break isPath args of
-      (before, []) -> (\home -> (home <> "/nixos", before)) <$> getHomeDirectory
+      (before, []) -> (\home -> (T.pack home <> "/nixos", before)) <$> getHomeDirectory
       (before, _ : dir : after) -> pure (dir, before ++ after)
-      (before, _) -> die $ invalidInput args
+      (before, _) -> die . T.unpack $ invalidInput args
 
-missingArgVal :: String -> String
-missingArgVal arg = "Required value for '" ++ arg ++ "' not provided!\n\n" ++ usage
+missingArgVal :: Text -> Text
+missingArgVal arg = "Required value for '" <> arg <> "' not provided!\n\n" <> usage
 
-invalidInput :: [String] -> String
+invalidInput :: [Text] -> Text
 invalidInput input =
-   unlines
+   T.unlines
       [ "Invalid input from user:"
       , ""
-      , unlines $ numberLines input
+      , T.unlines $ numberLines input
       , "See correct usage below:"
       , ""
       , usage
       ]
 
-notImplemented :: String -> String
-notImplemented cmd = unlines ["Command '" ++ cmd ++ "' not yet implemented!", "", usage]
+notImplemented :: Text -> Text
+notImplemented cmd = T.unlines ["Command '" <> cmd <> "' not yet implemented!", "", usage]
 
 {- FOURMOLU_DISABLE -}
-usage :: String
+usage :: Text
 usage =
-   unlines
+   T.unlines
       [ "PlumJam's NixOS System Rebuilder"
       , ""
       , "Usage:"
-      , purple "  rebuild " ++ blue "--local " ++ "                           Rebuild the current host"
-      , purple "  rebuild " ++ blue "--remote" ++ " [hostname]                Rebuild a remote host"
-      , purple "  rebuild " ++ blue "--remote" ++ " [hostname] " ++ blue "--path" ++ " [path]  Rebuild a remote host with a custom path"
+      , purple "  rebuild " <> blue "--local " <> "                           Rebuild the current host"
+      , purple "  rebuild " <> blue "--remote" <> " [hostname]                Rebuild a remote host"
+      , purple "  rebuild " <> blue "--remote" <> " [hostname] " <> blue "--path" <> " [path]  Rebuild a remote host with a custom path"
       , ""
       , "Arguments:"
-      , blue "  --path (-p)" ++ " [path]        Absolute or relative path to your NixOS config directory (default: $HOME/nixos)"
-      , blue "  --local (-l)" ++ "              Rebuild the current host"
-      , blue "  --remote (-r)" ++ " [hostname]  Remote host to rebuild"
-      , blue "  --list (-L)" ++ "               List the available hosts"
-      , blue "  --help (-h)" ++ "               Print this help output"
+      , blue "  --path (-p)" <> " [path]        Absolute or relative path to your NixOS config directory (default: $HOME/nixos)"
+      , blue "  --local (-l)" <> "              Rebuild the current host"
+      , blue "  --remote (-r)" <> " [hostname]  Remote host to rebuild"
+      , blue "  --list (-L)" <> "               List the available hosts"
+      , blue "  --help (-h)" <> "               Print this help output"
       ]
