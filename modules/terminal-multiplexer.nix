@@ -67,25 +67,17 @@ let
             ui.pane_frames.rounded_corners false
 
             keybinds clear-defaults=true {
-
               locked {
                 bind "Ctrl g" { SwitchToMode "normal"; }
                 bind "Alt h" { MoveFocus "Left"; }
-                bind "Alt j" { MoveFocus "Down"; }
                 bind "Alt k" { MoveFocus "Up"; }
+                bind "Alt j" { MoveFocus "Down"; }
                 bind "Alt l" { MoveFocus "Right"; }
                 bind "Alt -" { Resize "Decrease"; }
                 bind "Alt +" { Resize "Increase"; }
               }
 
               normal {
-                bind "Esc" { SwitchToMode "locked"; }
-                bind "Enter" { SwitchToMode "locked"; }
-                bind "Ctrl w" { SwitchToMode "pane"; }
-                bind "Ctrl t" { SwitchToMode "tab"; }
-                bind "Ctrl r" { SwitchToMode "resize"; }
-                bind "Ctrl s" { SwitchToMode "scroll"; }
-                bind "Ctrl o" { SwitchToMode "session"; }
                 bind "Ctrl h" { MoveFocus "Left"; SwitchToMode "locked"; }
                 bind "Ctrl j" { MoveFocus "Down"; SwitchToMode "locked"; }
                 bind "Ctrl k" { MoveFocus "Up"; SwitchToMode "locked"; }
@@ -101,17 +93,6 @@ let
                 bind "o" { GoToTab 9; }
                 bind "H" { GoToPreviousTab; }
                 bind "L" { GoToNextTab; }
-                bind "g" {
-                  Run "nu" "--commands" "repo" {
-                    close_on_exit true
-                    floating true
-                    x "1%"
-                    y "1%"
-                    width "1%"
-                    height "1%"
-                  };
-                  SwitchToMode "locked";
-                }
                 bind "Ctrl n" {
                   Run "nu" {
                     close_on_exit true
@@ -154,8 +135,6 @@ let
               }
 
               pane {
-                bind "Esc" { SwitchToMode "locked"; }
-                bind "Enter" { SwitchToMode "locked"; }
                 bind "h" { MoveFocus "Left"; }
                 bind "j" { MoveFocus "Up"; }
                 bind "k" { MoveFocus "Down"; }
@@ -170,8 +149,6 @@ let
               }
 
               tab {
-                bind "Esc" { SwitchToMode "locked"; }
-                bind "Enter" { SwitchToMode "locked"; }
                 bind "h" { MoveTab "Left"; }
                 bind "l" { MoveTab "Right"; }
                 bind "n" { NewTab; }
@@ -183,8 +160,6 @@ let
               }
 
               resize {
-                bind "Esc" { SwitchToMode "locked"; }
-                bind "Enter" { SwitchToMode "locked"; }
                 bind "h" { Resize "Increase Left"; }
                 bind "j" { Resize "Increase Down"; }
                 bind "k" { Resize "Increase Up"; }
@@ -198,8 +173,6 @@ let
               }
 
               scroll {
-                bind "Esc" { SwitchToMode "locked"; }
-                bind "Enter" { SwitchToMode "locked"; }
                 bind "j" { ScrollDown; }
                 bind "k" { ScrollUp; }
                 bind "d" { HalfPageScrollDown; }
@@ -208,8 +181,6 @@ let
               }
 
               session {
-                bind "Esc" { SwitchToMode "locked"; }
-                bind "Enter" { SwitchToMode "locked"; }
                 bind "d" { Detach; }
                 bind "w" {
                   SwitchToMode "locked";
@@ -218,8 +189,30 @@ let
               }
 
               "RenameTab" {
-                bind "Esc" { SwitchToMode "locked"; }
-                bind "Enter" { SwitchToMode "locked"; }
+              }
+
+              shared_except "locked" {
+                bind "Esc" "Enter" { SwitchToMode "locked"; }
+              }
+
+              shared_except "pane" "locked" {
+                bind "Ctrl w" { SwitchToMode "pane"; }
+              }
+
+              shared_except "tab" "locked" {
+                bind "Ctrl t" { SwitchToMode "tab"; }
+              }
+
+              shared_except "resize" "locked" {
+                bind "Ctrl r" { SwitchToMode "resize"; }
+              }
+
+              shared_except "scroll" "locked" {
+                bind "Ctrl s" { SwitchToMode "scroll"; }
+              }
+
+              shared_except "session" "locked" {
+                bind "Ctrl o" { SwitchToMode "session"; }
               }
             }
 
