@@ -1,27 +1,5 @@
-let
-  jujutsuExtra =
-    { pkgs, lib, ... }:
-    let
-      inherit (lib.lists) singleton;
-    in
-    {
-      hjem.extraModules = singleton {
-        packages = [
-          pkgs.jujutsu
-          pkgs.difftastic
-          pkgs.mergiraf
-
-          # TUI
-          pkgs.lazyjj
-          pkgs.jjui
-
-          # GUI
-          pkgs.gg-jj
-        ];
-      };
-    };
-
-  jujutsuBase =
+{
+  flake.modules.common.jujutsu =
     {
       pkgs,
       lib,
@@ -392,11 +370,26 @@ let
         }
       );
     };
-in
-{
-  flake.modules.nixos.jujutsu = jujutsuBase;
-  flake.modules.darwin.jujutsu = jujutsuBase;
 
-  flake.modules.nixos.jujutsu-extra = jujutsuExtra;
-  flake.modules.darwin.jujutsu-extra = jujutsuExtra;
+  flake.modules.common.jujutsu-extra =
+    { pkgs, lib, ... }:
+    let
+      inherit (lib.lists) singleton;
+    in
+    {
+      hjem.extraModules = singleton {
+        packages = [
+          pkgs.jujutsu
+          pkgs.difftastic
+          pkgs.mergiraf
+
+          # TUI
+          pkgs.lazyjj
+          pkgs.jjui
+
+          # GUI
+          pkgs.gg-jj
+        ];
+      };
+    };
 }
