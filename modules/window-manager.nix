@@ -303,7 +303,12 @@ let
 
               screenshot-path "${config.directory}/Pictures/Screenshots/screenshot_%Y-%m-%d_%H-%M-%S.png"
 
-              binds {
+              // Disable alt-tab.
+              recent-windows {
+                off
+              }
+
+              bind {
                 Mod+slash { show-hotkey-overlay; }
                 Mod+Shift+slash { show-hotkey-overlay; }
 
