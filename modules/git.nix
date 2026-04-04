@@ -1,5 +1,6 @@
-let
-  gitBase =
+{
+  flake.modules.common.git =
+
     {
       pkgs,
       config,
@@ -100,8 +101,4 @@ let
           '';
       };
     };
-in
-{
-  flake.modules.nixos.git = gitBase;
-  flake.modules.darwin.git = gitBase;
 }
