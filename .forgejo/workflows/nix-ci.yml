@@ -15,13 +15,13 @@ concurrency:
     group: nix-ci-${{ forgejo.ref_name }}
 jobs:
     build-blackwell:
-      name: "Build: blackwell"
+        name: "Build: blackwell"
         runs-on: strong
         steps:
             - name: Checkout
               uses: actions/checkout@v5
             - name: "Build: blackwell"
-            run: nix build .#nixosConfigurations.blackwell.config.system.build.toplevel --accept-flake-config
+              run: nix build .#nixosConfigurations.blackwell.config.system.build.toplevel --accept-flake-config
                   --builders "" --no-link --print-build-logs
     build-date:
         name: "Build: date"
