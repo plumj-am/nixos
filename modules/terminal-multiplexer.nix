@@ -224,6 +224,8 @@ let
             load_plugins {
               "https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm"
               "https://github.com/plumj-am/zellij-sessionizer/releases/download/v0.4.5/zellij-sessionizer.wasm"
+              "https://github.com/KiryuuLight/zellij-attention/releases/latest/download/zellij-attention.wasm"
+              zjstatus-hints
             };
 
             plugins {
@@ -231,6 +233,14 @@ let
               status-bar location="zellij:status-bar"
               strider location="zellij:strider"
               compact-bar location="zellij:compact-bar"
+              plugin-manager location="zellij:plugin-manager"
+
+              zjstatus-hints location="https://github.com/b0o/zjstatus-hints/releases/latest/download/zjstatus-hints.wasm" {
+                  max_length 0
+                  overflow_str "..."
+                  pipe_name "zjstatus_hints"
+                  hide_in_base_mode false
+              }
             }
           '';
 
@@ -247,8 +257,10 @@ let
 
             			format_left "{mode}#[fg=gray]{session}"
             			format_center "{tabs}"
-            			format_right ""
+            			format_right "{pipe_zjstatus_hints}"
             			format_space ""
+
+                  pipe_zjstatus_hints_format "{output}"
 
             			// Gives gray [ ] and coloured mode.
             			mode_normal "${modeTemplate "NOR" "#b8bb26"}"
@@ -264,6 +276,31 @@ let
             			tab_active "#[fg=#83a598,bold]{index}:{name}* "
             		}
               }
+            }
+          '';
+
+        # This is so much nicer than having to approve permissions.
+        xdg.cache.files."zellij/permissions.kdl".text = # kdl
+          ''
+            "https://github.com/plumj-am/zellij-sessionizer/releases/download/v0.4.5/zellij-sessionizer.wasm" {
+                ReadApplicationState
+                ChangeApplicationState
+                RunCommands
+            }
+            "https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
+                ChangeApplicationState
+                ReadApplicationState
+                RunCommands
+            }
+            "https://github.com/KiryuuLight/zellij-attention/releases/latest/download/zellij-attention.wasm" {
+                ReadCliPipes
+                MessageAndLaunchOtherPlugins
+                ChangeApplicationState
+                ReadApplicationState
+            }
+            "https://github.com/b0o/zjstatus-hints/releases/latest/download/zjstatus-hints.wasm" {
+                MessageAndLaunchOtherPlugins
+                ReadApplicationState
             }
           '';
       };
