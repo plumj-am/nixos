@@ -8,7 +8,7 @@ Item {
     property bool open: false
 
     implicitWidth: 360
-    implicitHeight: open ? contentLoader.implicitHeight + 24 : 0
+    implicitHeight: open ? contentColumn.implicitHeight + 24 : 0
     visible: implicitHeight > 0
 
     Behavior on implicitHeight {
@@ -36,66 +36,31 @@ Item {
         bottomRightRadius: Common.Theme.radius.big
         clip: true
 
-        Loader {
-            id: contentLoader
-            active: root.open
-            asynchronous: true
+        ColumnLayout {
+            id: contentColumn
             anchors.fill: parent
             anchors.margins: 12
+            spacing: 12
 
-            sourceComponent: ColumnLayout {
-                spacing: 12
+            Text {
+                text: "Control Center"
+                font.family: Common.Theme.font.sans.family
+                font.pixelSize: Common.Theme.font.sans.size
+                font.bold: true
+                color: Common.Theme.foreground
+            }
 
-                // Audio section
-                AudioSlider {
-                    Layout.fillWidth: true
-                    node: Pipewire.defaultAudioSink
-                    icon: node && node.audio && node.audio.muted ? "\uf6a9" : "\uf028"
-                    label: "Output"
-                }
+            Rectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 1
+                color: Common.Theme.outline
+            }
 
-                AudioSlider {
-                    Layout.fillWidth: true
-                    node: Pipewire.defaultAudioSource
-                    icon: "\uf130"
-                    label: "Input"
-                }
-
-                // Separator
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 1
-                    color: Common.Theme.outline
-                }
-
-                // Brightness
-                BrightnessSlider {
-                    Layout.fillWidth: true
-                }
-
-                // Separator
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 1
-                    color: Common.Theme.outline
-                }
-
-                // Bluetooth
-                BluetoothToggle {
-                    Layout.fillWidth: true
-                }
-
-                // Separator
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 1
-                    color: Common.Theme.outline
-                }
-
-                // Network
-                NetworkInfo {
-                    Layout.fillWidth: true
-                }
+            Text {
+                text: "Coming soon..."
+                font.family: Common.Theme.font.sans.family
+                font.pixelSize: Common.Theme.font.sans.size
+                color: Common.Theme.textMuted
             }
         }
     }
