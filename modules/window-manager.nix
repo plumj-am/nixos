@@ -10,7 +10,9 @@ let
     let
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
+      inherit (lib.strings) optionalString;
       inherit (config) theme;
+      inherit (config.networking) hostName;
       inherit (config.myLib) mkDesktopEntry;
 
       quickshell = getExe inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.quickshell;
@@ -47,6 +49,7 @@ let
       environment.systemPackages = [
         pkgs.cliphist
         pkgs.polkit_gnome
+        pkgs.brightnessctl
         pkgs.xwayland-satellite
         pkgs.xdg-utils
 
@@ -364,6 +367,11 @@ let
                 Mod+D { spawn "todo-scratchpad"; }
                 Mod+S { spawn "random-scratchpad"; }
                 Mod+C { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call clipboard toggle"; }
+
+                ${optionalString (hostName == "date") ''
+                XF86MonBrightnessDown { spawn "brightnessctl" "set" "5%-"; }
+                XF86MonBrightnessUp { spawn "brightnessctl" "set" "+5%"; }
+                ''}
               }
 
               spawn-sh-at-startup "${quickshell} --path ${quickshellPath}"
