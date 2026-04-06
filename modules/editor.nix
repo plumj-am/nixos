@@ -167,6 +167,9 @@ let
                   "C-a" = "@*%s<ret>";
 
                   "D" = "extend_to_line_end";
+
+                  "space"."B" =
+                    '':sh echo $"# git blame:(char nl)  (git blame -L %{cursor_line},+1 %{buffer_name} | cut -c1-60)"'';
                 };
 
                 normal = {
@@ -184,6 +187,9 @@ let
                   "C-a" = "@*%s<ret>";
 
                   "D" = "extend_to_line_end";
+
+                  "space"."B" =
+                    '':sh echo $"# git blame:(char nl)  (git blame -L %{cursor_line},+1 %{buffer_name} | cut -c1-60)"'';
 
                   "'" = {
                     # Hack to have a custom popup helper with a title.
