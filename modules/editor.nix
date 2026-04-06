@@ -410,63 +410,6 @@ let
       };
     };
 
-  zedBase =
-    {
-      # inputs,
-      pkgs,
-      lib,
-      config,
-      ...
-    }:
-    let
-      inherit (lib.lists) singleton;
-      inherit (config.age) secrets;
-    in
-    {
-      hjem.extraModules = singleton (
-        { osConfig, ... }:
-        {
-          packages = singleton (
-            pkgs.symlinkJoin {
-              name = "zed-wrapped";
-              paths = singleton (
-                if osConfig.nixpkgs.hostPlatform.isDarwin then
-                  pkgs.zed-editor
-                else
-                  # inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.zedless
-                  pkgs.zed-editor.fhs
-              );
-              buildInputs = singleton pkgs.makeWrapper;
-              postBuild = # sh
-                ''
-                  wrapProgram $out/bin/zeditor \
-                    --run 'export ZAI_API_KEY="$(cat ${secrets.zaiKey.path})"'
-                '';
-            }
-          );
-
-          xdg.config.files = {
-            "zed/settings.json" = {
-              source =
-                pkgs.writers.writeJSON "zed-settings.json" <| import ./_zed/settings.nix { inherit lib config; };
-            };
-
-            "zed/keymap.json" = {
-              source = pkgs.writers.writeJSON "zed-keymap.json" <| import ./_zed/keymap.nix;
-            };
-
-            "zed/tasks.json" = {
-              source = pkgs.writers.writeJSON "zed-tasks.json" <| import ./_zed/tasks.nix { inherit pkgs lib; };
-            };
-
-            "zed/debug.json" = {
-              source = pkgs.writers.writeJSON "zed-debug.json" <| import ./_zed/debug.nix;
-            };
-          };
-        }
-      );
-    };
-
   editorExtra =
     {
       inputs,
@@ -544,9 +487,6 @@ in
 
   flake.modules.nixos.editor-extra = editorExtra;
   flake.modules.darwin.editor-extra = editorExtra;
-
-  flake.modules.nixos.zed = zedBase;
-  flake.modules.darwin.zed = zedBase;
 
   flake.modules.nixos.disable-nano = disableNano;
   flake.modules.darwin.disable-nano = disableNano;

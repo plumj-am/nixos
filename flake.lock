@@ -861,8 +861,7 @@
         "qml-niri": "qml-niri",
         "quickshell": "quickshell",
         "run0-sudo-shim": "run0-sudo-shim",
-        "tangled": "tangled",
-        "zedless-patches": "zedless-patches"
+        "tangled": "tangled"
       }
     },
     "run0-sudo-shim": {
@@ -1208,22 +1207,6 @@
       "original": {
         "owner": "numtide",
         "repo": "treefmt-nix",
-        "type": "github"
-      }
-    },
-    "zedless-patches": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1774726391,
-        "narHash": "sha256-ATnRRX9XjrN+whvEan2TvqBmjQY7gDmirIis3TfByQc=",
-        "owner": "zedless-editor",
-        "repo": "zedless-patches",
-        "rev": "f753dfcb8991880fe3d7b638057ab0e96c47dc62",
-        "type": "github"
-      },
-      "original": {
-        "owner": "zedless-editor",
-        "repo": "zedless-patches",
         "type": "github"
       }
     }

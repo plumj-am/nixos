@@ -55,7 +55,6 @@ in
       theme-extra-scripts
       window-manager
       yazi
-      zed
       zellij
       { hardware.facter.reportPath = ./facter/yuzu.json; }
       {

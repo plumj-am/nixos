@@ -91,9 +91,5 @@
       url = "git+https://tangled.org/tangled.org/core";
       inputs.nixpkgs.follows = "os";
     };
-    zedless-patches = {
-      url = "github:zedless-editor/zedless-patches";
-      flake = false;
-    };
   };
 }

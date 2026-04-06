@@ -24,7 +24,6 @@ in
       rust-desktop
       sudo
       theme-extra-fonts
-      zed
       zellij
       {
         config = mkConfig inputs "lime" "aarch64-darwin" {
