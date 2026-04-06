@@ -29,10 +29,9 @@ let
       ...
     }:
     let
-      inherit (lib.attrsets) mapAttrs' nameValuePair;
-      inherit (lib.trivial) const;
       inherit (lib.attrsets)
-        genAttrs
+        mapAttrs'
+        nameValuePair
         optionalAttrs
         attrValues
         mapAttrs
@@ -40,20 +39,6 @@ let
       inherit (lib.lists) singleton;
       inherit (lib) elem;
       inherit (config) theme;
-
-      mkFgStyle =
-        colors: color:
-        genAttrs colors
-        <| const {
-          fg = color;
-        };
-
-      mkBgStyle =
-        colors: color:
-        genAttrs colors
-        <| const {
-          bg = color;
-        };
 
       mkThemes =
         themes:
@@ -65,39 +50,7 @@ let
           }
         ) themes;
 
-      # Pywal output doesn't have gradients like base16 needs.
-      # So it's necessary to override a few colours.
-      # Also added overrides for diagnostic colours which don't work well from Pywal.
-      themes = {
-        base16_custom = {
-          inherits = "base16_default";
-        }
-        # Comments.
-        // mkFgStyle [ "comment" ] (if theme.isDark then "#909090" else "#C0C0C0")
-        # Selections.
-        // mkBgStyle [ "ui.selection" "ui.selection.primary" ] (
-          if theme.isDark then "#707070" else "#E0E0E0"
-        )
-        # Cursorline and popups.
-        // mkBgStyle [ "ui.cursorline.primary" "ui.cursorline.secondary" "ui.popup" "ui.popup.info" ] (
-          if theme.isDark then "#404040" else "#F0F0F0"
-        )
-        # Info.
-        //
-          mkFgStyle
-            [ "hint" "info" "diagnostic" "diagnostic.hint" "diagnostic.info" "diagnostic.unnecessary" ]
-            (
-              if theme.isDark then "#2B83A6" else "#3A8C9A" # Muted teal.
-            )
-        # Warnings.
-        // mkFgStyle [ "warning" "diagnostic.warning" "diagnostic.deprecated" ] (
-          if theme.isDark then "#B58900" else "#9D8740" # Muted yellow.
-        )
-        # Errors.
-        // mkFgStyle [ "error" "diagnostic.error" ] (
-          if theme.isDark then "#9D0006" else "#8F3F71" # Muted red/brown.
-        );
-      };
+      themes.base16_custom.inherits = "base16_default";
     in
     {
       hjem.extraModules = singleton {
@@ -107,7 +60,7 @@ let
           "helix/config.toml" = {
             generator = pkgs.writers.writeTOML "helix-config.toml";
             value = {
-              theme = if theme.colorScheme == "pywal" then "base16_custom" else theme.helix;
+              theme = if theme.colorScheme == "matugen" then "base16_custom" else theme.helix;
 
               editor = {
                 bufferline = "multiple";

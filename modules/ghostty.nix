@@ -73,7 +73,7 @@ let
               font-family = font.mono.name;
               font-feature = "+calt, +liga, +dlig";
 
-              theme = if theme.colorScheme == "pywal" then "custom" else theme.ghostty;
+              theme = if theme.colorScheme == "matugen" then "custom" else theme.ghostty;
 
               window-padding-x = padding.small;
               window-padding-y = padding.small;

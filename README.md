@@ -149,11 +149,11 @@ There may be unfamiliar functions/helpers in some files - these come from
 ### Theming
 
 I have a custom theming setup which can be seen in `modules/theme.nix`. It does
-rely on a rebuild but it's a simple toggle between light/dark and gruvbox/pywal
+rely on a rebuild but it's a simple toggle between light/dark and gruvbox/matugen
 modes by running shortcuts setup in Fuzzel. It automatically updates colour
 schemes and refreshes necessary applications to apply changes.
 
-The pywal mode generates colours from the current wallpaper.
+The matugen mode generates colours from the current wallpaper using Material You.
 
 The gruvbox mode uses the defined themes in `modules/themes.nix` and some base16
 colours for applications that can make use of them.

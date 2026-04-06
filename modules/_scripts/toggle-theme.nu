@@ -1,11 +1,7 @@
 #!/usr/bin/env nu
 const THEME_CONFIG = "/home/jam/nixos/modules/theme.json"
-const THEME_PYWAL = "/home/jam/nixos/modules/theme-pywal-colors.json"
-const PYWAL_CONFIG = "/home/jam/.cache/wal/colors.json"
+const THEME_MATUGEN = "/home/jam/nixos/modules/theme-matugen-colors.json"
 const REBUILD_SCRIPT = "/home/jam/nixos/rebuild.nu"
-
-const HIGH_SAT = 0.75
-const MID_SAT = 0.5
 
 def print-notify [message: string] {
    print $"(ansi purple)[Theme Switcher](ansi rst) ($message)"
@@ -59,42 +55,18 @@ def is-current [mode_or_scheme: string] {
 
 }
 
-def generate-pywal-colors [
+def generate-matugen-colors [
    wallpaper: string
-   is_dark: bool
 ]: nothing -> nothing {
-   rm --recursive --force ($PYWAL_CONFIG | path dirname)
-
-   let mode_args = if $is_dark {
-      [ "--saturate" $MID_SAT ]
-   } else {
-      [ "--saturate" $HIGH_SAT "-l" ]
-   }
-
-   let args = [ "-n" "--backend" wal "-i" $wallpaper ] | append mode_args
-
-   wal ...$args | ignore
-
-   cp $PYWAL_CONFIG $THEME_PYWAL
+   matugen image $wallpaper --json hex --quiet --source-color-index 0 | save --force $THEME_MATUGEN
 }
 
 def toggle-theme [theme: string] {
-   let theme_config = get-current-theme
-
    print-notify $"Switching to ($theme) theme."
 
-   if $theme_config.scheme == pywal {
-      print-notify "Regenerating pywal colors..."
-      let wallpaper = get-current-wallpaper
-
-      if ($wallpaper | is-not-empty) {
-         generate-pywal-colors $wallpaper ($theme == dark)
-      } else {
-         print-notify "Warning: Could not detect current wallpaper"
-      }
-   }
-
    print-notify "Updating theme configuration..."
+
+   let theme_config = get-current-theme
 
    $env.THEME_MODE = $theme
 
@@ -110,13 +82,13 @@ def switch-scheme [scheme: string] {
 
    let theme_config = get-current-theme
 
-   if $scheme == pywal {
-      print-notify "Generating pywal colors from current wallpaper..."
+   if $scheme == matugen {
+      print-notify "Generating matugen colors from current wallpaper..."
 
       let wallpaper = get-current-wallpaper
 
       if ($wallpaper | is-not-empty) {
-         generate-pywal-colors $wallpaper ($theme_config.mode == dark)
+         generate-matugen-colors $wallpaper
       } else {
          print-notify "Warning: Could not detect current wallpaper"
       }
@@ -143,11 +115,11 @@ def reload-applications [] {
 }
 
 def main [] {
-   print $"Usage: tt <dark|light|pywal|gruvbox|reload>
+   print $"Usage: tt <dark|light|matugen|gruvbox|reload>
 
       dark    - Switch to dark mode
       light   - Switch to light mode
-      pywal   - Use generated pywal colours from wallpaper
+      matugen - Use generated matugen colours from wallpaper
       gruvbox - Use the gruvbox theme
       reload  - Reload applications"
 }
@@ -166,13 +138,13 @@ def "main light" [--force] {
 
 def "main gruvbox" [--force] {
    if not $force { is-current gruvbox }
-   toggle-scheme gruvbox
+   switch-scheme gruvbox
    main reload
 }
 
-def "main pywal" [--force] {
-   if not $force { is-current pywal }
-   toggle-scheme pywal
+def "main matugen" [--force] {
+   if not $force { is-current matugen }
+   switch-scheme matugen
    main reload
 }
 

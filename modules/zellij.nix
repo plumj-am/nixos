@@ -26,7 +26,7 @@
               in
               with theme.withRgb; # kdl
               ''
-                 theme "${if theme.colorScheme == "pywal" then "custom" else theme.zellij}"
+                 theme "${if theme.colorScheme == "matugen" then "custom" else theme.zellij}"
                  themes {
                    custom {
                      bg ${toString base00}

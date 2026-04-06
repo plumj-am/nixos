@@ -20,13 +20,14 @@ let
       isDark = themeConfig.mode == "dark";
       colorScheme = themeConfig.scheme;
 
-      pywalCache = ./theme-pywal-colors.json;
+      matugenCache = ./theme-matugen-colors.json;
 
-      parsePywalColors =
+      parseMatugenColors =
         json:
         let
-          colors = fromJSON json;
+          data = fromJSON json;
           stripHash = s: substring 1 6 s;
+          slot = if isDark then "dark" else "light";
           colorNames = [
             "base00"
             "base01"
@@ -49,11 +50,11 @@ let
         listToAttrs
         <| genList (n: {
           name = elemAt colorNames n;
-          value = stripHash (elemAt colors.colors.colors n);
+          value = stripHash data.base16.${elemAt colorNames n}.${slot}.color;
         }) 16;
 
-      pywalColors =
-        if pathExists pywalCache then parsePywalColors (readFile pywalCache) else gruvboxColors.dark;
+      matugenColors =
+        if pathExists matugenCache then parseMatugenColors (readFile matugenCache) else gruvboxColors.dark;
 
       gruvboxColors = {
         dark = {
@@ -95,8 +96,8 @@ let
       };
 
       colors =
-        if colorScheme == "pywal" then
-          pywalColors
+        if colorScheme == "matugen" then
+          matugenColors
         else
           (if isDark then gruvboxColors.dark else gruvboxColors.light);
 
@@ -343,6 +344,7 @@ let
     {
       environment.systemPackages = [
         pkgs.awww
+        pkgs.matugen
         themeToggleScript
         pickWallpaper
       ]
@@ -356,8 +358,8 @@ let
           exec = "tt light";
         }
         {
-          name = "Pywal-Mode";
-          exec = "tt pywal";
+          name = "Matugen-Mode";
+          exec = "tt matugen";
         }
         {
           name = "Gruvbox-Mode";

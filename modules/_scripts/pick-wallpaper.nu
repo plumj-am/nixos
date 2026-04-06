@@ -33,23 +33,11 @@ if ($selected | is-not-empty) {
    } catch {
       {mode: light, scheme: gruvbox}
    }
-   if $theme_config.scheme == pywal {
-      print "Regenerating pywal colors..."
+   if $theme_config.scheme == matugen {
+      print "Regenerating matugen colors..."
 
       try {
-         rm --recursive --force ~/.cache/wal
-
-         let base_args = ["-n" "--backend" wal "-i" $selected]
-
-         let mode_args = if $theme_config.mode == dark {
-            ["--saturate" "0.5"]
-         } else {
-            ["--saturate" "0.75" "-l"]
-         }
-
-         wal ...($base_args | append $mode_args) | ignore # nu-lint-ignore: redundant_ignore
-
-         cp ~/.cache/wal/colors.json $"($env.HOME)/nixos/modules/theme-pywal-colors.json"
+         matugen image $selected --json hex --quiet --source-color-index 0 | save --force $"($env.HOME)/nixos/modules/theme-matugen-colors.json"
 
          print "Colors regenerated!"
 
