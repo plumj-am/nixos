@@ -1,5 +1,5 @@
-let
-  zellijBase =
+{
+  flake.modules.common.zellij =
     {
       pkgs,
       config,
@@ -300,8 +300,4 @@ let
           '';
       };
     };
-in
-{
-  flake.modules.nixos.zellij = zellijBase;
-  flake.modules.darwin.zellij = zellijBase;
 }
