@@ -41,23 +41,6 @@ let
       inherit (lib) elem;
       inherit (config) theme;
 
-      yaziPickerScript =
-        pkgs.writeShellScript "yazi-picker.sh" # bash
-          ''
-            #!/usr/bin/env bash
-
-            paths=$(yazi "$2" --chooser-file=/dev/stdout | while read -r; do printf "%q " "$REPLY"; done)
-
-            if [[ -n "$paths" ]]; then
-            	zellij action toggle-floating-panes
-            	zellij action write 27 # send <Escape> key
-            	zellij action write-chars ":$1 $paths"
-            	zellij action write 13 # send <Enter> key
-            else
-            	zellij action toggle-floating-panes
-            fi
-          '';
-
       mkFgStyle =
         colors: color:
         genAttrs colors
@@ -171,11 +154,6 @@ let
 
               keys = {
                 select = {
-                  "A-h" = "jump_view_left";
-                  "A-j" = "jump_view_down";
-                  "A-k" = "jump_view_up";
-                  "A-l" = "jump_view_right";
-
                   "C-j" = "@X*dp";
                   "C-k" = "@X*dkP";
 
@@ -186,21 +164,12 @@ let
 
                   "C-X" = "select_line_above";
 
-                  "C-y" =
-                    ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- ${yaziPickerScript} open ...%{buffer_name}";
-
                   "C-a" = "@*%s<ret>";
 
                   "D" = "extend_to_line_end";
                 };
 
                 normal = {
-                  # Hack to have a custom popup helper with a title.
-                  "A-h" = "jump_view_left";
-                  "A-j" = "jump_view_down";
-                  "A-k" = "jump_view_up";
-                  "A-l" = "jump_view_right";
-
                   # Move lines up and down. Use `z` register to avoid clobbering system or primary clipboard.
                   "C-j" = "@X\"zd\"zp";
                   "C-k" = "@X\"zdk\"zP";
@@ -212,14 +181,12 @@ let
 
                   "C-X" = "select_line_above";
 
-                  "C-y" =
-                    ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- ${yaziPickerScript} open ...%{buffer_name}";
-
                   "C-a" = "@*%s<ret>";
 
                   "D" = "extend_to_line_end";
 
                   "'" = {
+                    # Hack to have a custom popup helper with a title.
                     _ = "@ File Management\n";
 
                     t = "@:sh touch <C-r>%";
