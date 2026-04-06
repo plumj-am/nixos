@@ -28,7 +28,7 @@ let
           '';
     in
     {
-      nix.package = mkDefault pkgs.nixVersions.nix_2_33;
+      nix.package = mkDefault pkgs.nixVersions.latest;
       nix.channel = {
         enable = false;
       };
