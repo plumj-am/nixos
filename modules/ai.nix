@@ -370,8 +370,9 @@ in
                       "/run/agenix.d"
                     ];
                   };
-
                 };
+
+                model = "opus";
 
                 env = {
                   # For z.ai coding plan.
