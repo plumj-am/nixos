@@ -3,14 +3,34 @@
     {
       pkgs,
       lib,
+      config,
       ...
     }:
     let
       inherit (lib.lists) singleton;
+      inherit (config.age) secrets;
     in
     {
-      hjem.extraModules = singleton {
-        packages = singleton pkgs.discordo;
+      age.secrets.discordToken = {
+        rekeyFile = ../secrets/discord-token.age;
+        owner = "jam";
+        mode = "600";
+      };
+
+      hjem.extraModule = {
+        packages =
+          singleton
+          <| pkgs.symlinkJoin {
+            name = "discordo-wrapped";
+            paths = singleton pkgs.discordo;
+            buildInputs = singleton pkgs.makeWrapper;
+            postBuild = # sh
+              ''
+                wrapProgram $out/bin/discordo \
+                    --run 'export DISCORDO_TOKEN="$(cat ${secrets.discordToken.path})"'
+
+              '';
+          };
 
         xdg.config.files."discordo/config.toml" = {
           generator = pkgs.writers.writeTOML "discordo-config.toml";
@@ -50,7 +70,7 @@
       inherit (lib.lists) singleton;
     in
     {
-      hjem.extraModules = singleton {
+      hjem.extraModule = {
         packages = singleton pkgs.vesktop;
       };
     };
