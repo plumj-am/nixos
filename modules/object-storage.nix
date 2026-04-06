@@ -176,7 +176,7 @@
           RestartSec = "10s";
           StateDirectory = "nix-upload-queue";
           StateDirectoryMode = "0755";
-          CPUQuota = "25%";
+          CPUQuota = "50%";
         };
 
         environment = {
