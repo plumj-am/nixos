@@ -14,7 +14,7 @@ let
                 if [ -d "$f" ]; then
                     lf -remote "send $id cd '$f'"
                 else
-                    zeditor --wait "$f"
+                    hx "$f"
                 fi
             }}
 
