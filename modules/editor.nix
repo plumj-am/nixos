@@ -342,8 +342,49 @@ let
 
                   config = {
                     cargo.features = "all";
+                    procMacro.enable = true;
                     check.command = "clippy";
+                    inlayHints.enable = true;
+                    diagnostics.experimental.enable = true;
                     completion.callable.snippets = "add_parentheses";
+
+                    # <https://zed.dev/docs/languages/rust>
+                    completion.snippets.custom = {
+                      "Arc::new" = {
+                        postfix = "arc";
+                        body = [ "Arc::new(\${receiver})" ];
+                        requires = "std::sync::Arc";
+                        scope = "expr";
+                      };
+                      "Some" = {
+                        postfix = "some";
+                        body = [ "Some(\${receiver})" ];
+                        scope = "expr";
+                      };
+                      "Ok" = {
+                        postfix = "ok";
+                        body = [ "Ok(\${receiver})" ];
+                        scope = "expr";
+                      };
+                      "Rc::new" = {
+                        postfix = "rc";
+                        body = [ "Rc::new(\${receiver})" ];
+                        requires = "std::rc::Rc";
+                        scope = "expr";
+                      };
+                      "Box::pin" = {
+                        postfix = "boxpin";
+                        body = [ "Box::pin(\${receiver})" ];
+                        requires = "std::boxed::Box";
+                        scope = "expr";
+                      };
+                      "vec!" = {
+                        postfix = "vec";
+                        body = [ "vec![\${receiver}]" ];
+                        description = "vec![]";
+                        scope = "expr";
+                      };
+                    };
                   };
                 };
               };
