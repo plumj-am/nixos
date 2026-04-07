@@ -336,7 +336,7 @@
             generator = pkgs.writers.writeTOML "jjui-config.toml";
             value = {
               preview = {
-                position = "bottom";
+                position = "right";
                 show_at_start = true;
               };
 
