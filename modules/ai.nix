@@ -407,8 +407,6 @@ in
                   CLAUDE_CODE_DISABLE_TERMINAL_TITLE = "1";
                   CLAUDE_CODE_HIDE_ACCOUNT_INFO = "1";
                   DISABLE_COST_WARNINGS = "1";
-
-                  CLAUDE_CODE_NO_FLICKER = "1";
                 };
 
                 alwaysThinkingEnabled = true;
@@ -823,7 +821,6 @@ in
                 # This just allows skipping permissions - not enabled by default.
                 postBuild = ''
                   wrapProgram $out/bin/claude \
-                    --set CLAUDE_CODE_NO_FLICKER "1" \
                     --add-flags "--allow-dangerously-skip-permissions" \
                     --run 'export ANTHROPIC_AUTH_TOKEN="$(cat ${secrets.zaiKey.path})"'
                 '';
