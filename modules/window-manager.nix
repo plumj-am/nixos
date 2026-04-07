@@ -92,33 +92,19 @@ let
               }
 
               window-rule {
-                match app-id=r#"^dev.zed.Zed|OpenCode$"#
-                exclude title=r#"^docpad-*$"#
+                match app-id=r#"kitty"#
                 open-maximized false
-                open-on-workspace "editor1"
+                open-on-workspace "editor"
               }
 
               window-rule {
-                match app-id=r#"^dev.zed.Zed$"#
-                match title=r#"^docpad-*$"#
-                open-maximized false
-                open-on-workspace "editor2"
-              }
-
-              window-rule {
-                match app-id=r#"^vesktop|wasistlos$"#
+                match app-id=r#"^vesktop|wasistlos|thunderbird$"#
                 open-maximized true
-                open-on-workspace "chat"
+                open-on-workspace "comms"
               }
 
               window-rule {
-                match app-id=r#"^thunderbird$"#
-                open-maximized true
-                open-on-workspace "email"
-              }
-
-              window-rule {
-                match app-id=r#"^radicle-desktop|com.saivert.pwvucontrol|thunar$"#
+                match app-id=r#"^radicle-desktop|com.saivert.pwvucontrol|dolphin$"#
                 open-maximized true
                 open-on-workspace "guis"
               }
@@ -126,17 +112,6 @@ let
               window-rule {
                 match title=r#"^.*YouTube|Picture-in-Picture.*"#
                 opacity 1.0
-              }
-
-              window-rule {
-                match app-id=r#"kitty"#
-              }
-
-              window-rule {
-                match app-id=r#"^zed_float$"#
-                open-floating true
-                default-column-width { proportion 0.66; }
-                default-window-height { proportion 0.9; }
               }
 
               window-rule {
@@ -197,16 +172,7 @@ let
                 position x=1920 y=0
               }
 
-              // output "Dell Inc. DELL U3415W F1T1W92E116L" {
-              //   mode "3440x1440@49.987" // On Windows I could get 80hz but not here for some reason...
-              //   position x=1920 y=0
-              // }
-
               workspace "games" {
-                open-on-output "DP-2"
-              }
-
-              workspace "guis" {
                 open-on-output "DP-2"
               }
 
@@ -214,18 +180,15 @@ let
                 open-on-output "DP-2"
               }
 
-              workspace "chat" {
+              workspace "comms" {
                 open-on-output "DP-2"
               }
 
-              workspace "email" {
+              workspace "guis" {
                 open-on-output "DP-2"
               }
 
-              workspace "editor1" {
-                open-on-output "DP-1"
-              }
-              workspace "editor2" {
+              workspace "editor" {
                 open-on-output "DP-1"
               }
 
@@ -270,25 +233,6 @@ let
               animations {
                 slowdown 0.75
               }
-
-              //   window-open {
-              //     curve "ease-out-cubic"
-              //     duration-ms 150
-              //   }
-
-              //   window-close {
-              //     curve "ease-out-expo"
-              //     duration-ms 150
-              //   }
-
-              //   window-movement {
-              //     spring damping-ratio=1.0 stiffness=800 epsilon=0.0001
-              //   }
-
-              //   window-resize {
-              //     spring damping-ratio=1.0 stiffness=1200 epsilon=0.0001
-              //   }
-              // }
 
               cursor {
                 hide-when-typing
