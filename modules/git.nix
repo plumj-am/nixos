@@ -79,6 +79,8 @@
             tag.gpgSign = true;
             gpg.format = "ssh";
 
+            user.signingkey = "~/.ssh/id";
+
             core.sshCommand = "ssh -i ~/.ssh/id";
 
             url."ssh://git@github.com/".insteadOf = "gh:";
