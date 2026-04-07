@@ -12,7 +12,10 @@
       inherit (config) theme;
     in
     {
-      shellAliases."zellij-ide" = "zellij action override-layout ~/.config/zellij/layouts/ide.kdl";
+      shellAliases = {
+        "zellij-ide" = "zellij action override-layout ~/.config/zellij/layouts/ide.kdl";
+        "zellij-3t2b" = "zellij action override-layout ~/.config/zellij/layouts/3t2b.kdl";
+      };
 
       hjem.extraModule =
         { osConfig, config, ... }:
@@ -22,7 +25,7 @@
           xdg.config.files = {
             "zellij/config.kdl".text =
               let
-                modeTemplate = mode: modeFg: "#[fg=gray][#[fg=${modeFg}]${mode}#[fg=gray]] ";
+                modeTemplate = mode: modeBg: "#[bg=${modeBg},fg=#ebdbb2,bold] ${mode} ";
               in
               with theme.withRgb; # kdl
               ''
@@ -115,7 +118,7 @@
                           };
                           SwitchToMode "locked";
                         }
-                        bind "Ctrl s" {
+                        bind "Ctrl e" {
                           Run "${getExe pkgs.lf}" {
                             in_place true
                             close_on_exit true
@@ -219,23 +222,23 @@
                       compact-bar location="zellij:compact-bar"
                       plugin-manager location="zellij:plugin-manager"
 
-                      sessionizer location="file:/home/jam/projects/zellij-sessionizer/target/wasm32-wasip1/debug/zellij-sessionizer.wasm"
+                      // sessionizer location="file:/home/jam/projects/zellij-sessionizer/target/wasm32-wasip1/debug/zellij-sessionizer.wasm"
+                      sessionizer location="https://github.com/plumj-am/zellij-sessionizer/releases/latest/download/zellij-sessionizer.wasm"
 
                       attention location="https://github.com/KiryuuLight/zellij-attention/releases/latest/download/zellij-attention.wasm"
 
                       zjstatus location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
                     		hide_frame_for_single_pane "false"
 
-                    		format_left "{mode}#[fg=gray]{session}"
+                    		format_left "{mode}#[bg=#d5c4a1,fg=#665c54] {session} "
                     		format_center "{tabs}"
                     		format_right "{pipe_zjstatus_hints}"
-                    		format_space ""
 
+                    		format_space ""
                         pipe_zjstatus_hints_format "{output}"
 
-                  		  // Gives gray [ ] and coloured mode.
                   		  mode_normal "${modeTemplate "NOR" "#b8bb26"}"
-                  		  mode_locked "${modeTemplate "LOC" "#fb4934"}"
+                  		  mode_locked "${modeTemplate "LOC" "#665c54"}"
                   		  mode_pane "${modeTemplate "PAN" "#83a598"}"
                   		  mode_tab "${modeTemplate "TAB" "#d3869b"}"
                   		  mode_rename "${modeTemplate "REN" "#fabd2f"}"
@@ -243,8 +246,8 @@
                   		  mode_scroll "${modeTemplate "SCR" "#fe8019"}"
                   		  mode_session "${modeTemplate "SES" "#d65d0e"}"
 
-                  		  tab_normal "#[fg=#d5c4a1]{index}:{name} "
-                  		  tab_active "#[fg=#83a598,bold]{index}:{name}* "
+                  		  tab_normal "#[bg=#d5c4a1,fg=#665c54] {index}:{name} "
+                  		  tab_active "#[bg=#665c54,fg=#d5c4a1,bold] {index}:{name}* "
                 		  }
 
                       zjstatus-hints location="https://github.com/b0o/zjstatus-hints/releases/latest/download/zjstatus-hints.wasm" {
@@ -275,6 +278,24 @@
                   pane size="75%" split_direction="vertical" {
                       pane focus=true size="75%"
                       pane size="25%"
+                  }
+                  pane size="25%" split_direction="vertical" {
+                      pane size="50%"
+                      pane size="50%"
+                  }
+                  pane size=1 borderless=true {
+                    plugin location="zjstatus"
+                  }
+                }
+              '';
+
+            "zellij/layouts/3t2b.kdl".text = # kdl
+              ''
+                layout {
+                  pane size="75%" split_direction="vertical" {
+                      pane focus=true size="33%"
+                      pane size="34%"
+                      pane size="33%"
                   }
                   pane size="25%" split_direction="vertical" {
                       pane size="50%"
