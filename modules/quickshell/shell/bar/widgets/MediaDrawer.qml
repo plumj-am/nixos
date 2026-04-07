@@ -189,4 +189,8 @@ Item {
             }
         }
     }
+
+    Common.Border {
+        anchors.fill: parent
+    }
 }

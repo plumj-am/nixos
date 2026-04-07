@@ -297,5 +297,9 @@ PanelWindow {
                 }
             }
         }
+
+        Common.Border {
+            anchors.fill: parent
+        }
     }
 }

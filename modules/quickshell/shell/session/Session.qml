@@ -133,6 +133,10 @@ Item {
         }
     }
 
+    Common.Border {
+        anchors.fill: parent
+    }
+
     function executeAction(action) {
         var cmds = {
             "shutdown": ["systemctl", "poweroff"],

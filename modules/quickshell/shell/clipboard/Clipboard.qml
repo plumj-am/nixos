@@ -20,6 +20,7 @@ PanelWindow {
     color: "transparent"
 
     anchors {
+        top: true
         bottom: true
         left: true
         right: true
@@ -331,6 +332,10 @@ PanelWindow {
                     }
                 }
             }
+        }
+
+        Common.Border {
+            anchors.fill: parent
         }
     }
 }

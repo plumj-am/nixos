@@ -20,8 +20,7 @@ Item {
     Rectangle {
         anchors.fill: parent
         color: Common.Theme.background
-        radius: 0
-        bottomLeftRadius: Common.Theme.radius.big
+        radius: Common.Theme.radius.small
         clip: true
 
         Loader {
@@ -34,5 +33,9 @@ Item {
                 popupMode: root.popupMode
             }
         }
+    }
+
+    Common.Border {
+        anchors.fill: parent
     }
 }
