@@ -149,7 +149,7 @@ PanelWindow {
         id: clipboardClip
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        width: clipboardWidth + Common.Config.data.shell.cornerRadius * 2
+        width: clipboardWidth
         implicitHeight: root.isOpen ? clipboardHeight : 0
         visible: implicitHeight > 0
 
@@ -162,23 +162,8 @@ PanelWindow {
         Item {
             id: clipboardBody
             anchors.bottom: parent.bottom
-            x: Common.Config.data.shell.cornerRadius
             width: clipboardWidth
             height: clipboardHeight
-
-            Common.Corner {
-                location: Qt.BottomLeftCorner
-                extensionSide: Qt.Horizontal
-                radius: root.visible ? Common.Config.data.shell.cornerRadius : 0
-                color: Common.Theme.background
-            }
-
-            Common.Corner {
-                location: Qt.BottomRightCorner
-                extensionSide: Qt.Horizontal
-                radius: root.visible ? Common.Config.data.shell.cornerRadius : 0
-                color: Common.Theme.background
-            }
 
             Rectangle {
                 anchors.fill: parent

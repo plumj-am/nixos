@@ -11,8 +11,7 @@ QtObject {
         },
         shell: {
             enableOuterBorder: false,
-            outerBorderSize: 4,
-            cornerRadius: 40
+            outerBorderSize: 4
         },
         clock: {
             time: { format: "HH:mm", enabled: true },

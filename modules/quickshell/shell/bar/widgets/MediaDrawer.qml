@@ -16,20 +16,6 @@ Item {
         Common.NAnim {}
     }
 
-    Common.Corner {
-        location: Qt.TopRightCorner
-        extensionSide: Qt.Horizontal
-        radius: root.open ? Common.Config.data.shell.cornerRadius : 0
-        color: Common.Theme.background
-    }
-
-    Common.Corner {
-        location: Qt.BottomLeftCorner
-        extensionSide: Qt.Vertical
-        radius: root.open ? Common.Config.data.shell.cornerRadius : 0
-        color: Common.Theme.background
-    }
-
     Rectangle {
         anchors.fill: parent
         color: Common.Theme.background

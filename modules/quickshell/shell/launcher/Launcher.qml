@@ -123,7 +123,7 @@ PanelWindow {
         id: launcherClip
         anchors.horizontalCenter: parent.horizontalCenter
         y: barHeight
-        width: launcherWidth + Common.Config.data.shell.cornerRadius * 2
+        width: launcherWidth
         implicitHeight: root.isOpen ? launcherHeight : 0
         visible: implicitHeight > 0
 
@@ -135,25 +135,8 @@ PanelWindow {
 
         Item {
             id: launcherBody
-            x: Common.Config.data.shell.cornerRadius
             width: launcherWidth
             height: launcherHeight
-
-            // Left corner (connects to bar)
-            Common.Corner {
-                location: Qt.TopLeftCorner
-                extensionSide: Qt.Horizontal
-                radius: root.visible ? Common.Config.data.shell.cornerRadius : 0
-                color: Common.Theme.background
-            }
-
-            // Right corner (connects to bar)
-            Common.Corner {
-                location: Qt.TopRightCorner
-                extensionSide: Qt.Horizontal
-                radius: root.visible ? Common.Config.data.shell.cornerRadius : 0
-                color: Common.Theme.background
-            }
 
             // Body rectangle
             Rectangle {
