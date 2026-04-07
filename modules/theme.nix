@@ -163,6 +163,7 @@ let
         };
 
         padding = {
+          tiny = 2;
           small = 4;
           normal = 8;
         };

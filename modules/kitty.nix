@@ -53,7 +53,7 @@ let
             sync_to_monitor = false;
 
             hide_window_decorations = true;
-            window_padding_width = theme.padding.small;
+            window_padding_width = theme.padding.tiny;
             window_border_width = "0pt";
 
             cursor = base05;
