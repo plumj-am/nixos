@@ -1,6 +1,4 @@
 let
-  withTypos = lsps: lsps ++ [ "typos" ];
-
   denoJsTsLanguages = {
     JavaScript = "js";
     JSX = "jsx";
@@ -188,7 +186,7 @@ let
                       ];
                     }
                     // optionalAttrs (elem ext (attrValues denoJsTsLanguages)) {
-                      language-servers = withTypos [ "deno" ];
+                      language-servers = [ "deno" ];
                     };
 
                   denoFmtLanguages =
@@ -215,7 +213,7 @@ let
                     {
                       name = "rust";
                       auto-format = true;
-                      language-servers = withTypos [
+                      language-servers = [
                         {
                           name = "rust-analyzer";
                           except-features = singleton "inlay-hints";
@@ -227,10 +225,28 @@ let
                       };
                     }
                     {
+                      name = "haskell";
+                      auto-format = true;
+                      language-servers = [
+                        "haskell-language-server"
+                      ];
+                      indent = {
+                        tab-width = 3;
+                        unit = "   ";
+                      };
+                      formatter = {
+                        command = "stylish-haskell";
+                        args = [ "--in-place" ];
+                      };
+                    }
+                    {
                       name = "nix";
                       auto-format = true;
                       formatter.command = "nixfmt";
-                      language-servers = withTypos [ "nixd" ];
+                      language-servers = [
+                        "nixd"
+                        "nil"
+                      ];
                     }
                     {
                       name = "toml";
@@ -250,18 +266,17 @@ let
                         "reorder_keys=true"
                         "-"
                       ];
-                      language-servers = withTypos [ "typos" ];
                     }
                     {
                       name = "markdown";
                       auto-format = true;
-                      language-servers = withTypos [ "marksman" ];
+                      language-servers = [ "marksman" ];
                     }
                     {
                       name = "just";
                       auto-format = true;
                       formatter.command = "just-formatter";
-                      language-servers = withTypos [ "just-lsp" ];
+                      language-servers = [ "just-lsp" ];
                     }
                     {
                       name = "nu";
@@ -272,7 +287,7 @@ let
                       #   "/home/jam/.config/nufmt/config.nuon"
                       #   "--stdin"
                       # ];
-                      language-servers = withTypos [
+                      language-servers = [
                         "nu-lsp"
                         # "nu-lint" # Waiting for <https://codeberg.org/wvhulle/nu-lint/pulls/96>
                       ];
@@ -302,20 +317,21 @@ let
                 denoFmtLanguages ++ baseLanguages;
 
               language-servers = {
+                nil = {
+                  command = "nil";
+                  config.nil = {
+                    maxMemoryMB = 8192;
+                    flake = {
+                      autoArchive = true;
+                      autoEvalInputs = true;
+                    };
+                    nixpkgsInputName = "os";
+                  };
+                };
                 nixd = {
                   command = "nixd";
                   args = singleton "--inlay-hints";
-                  config.nixd = {
-                    nixpkgs.expr = ''import (lib.getFlake "/home/jam/nixos").inputs.os { }'';
-                    options = {
-                      current-host.expr = ''(lib.getFlake "/home/jam/nixos").nixosConfigurations.${config.networking.hostName}.options'';
-                      flake-parts.expr = ''(lib.getFlake "/home/jam/nixos").debug.options'';
-                      flake-parts2.expr = ''(lib.getFlake "/home/jam/nixos").currentSystem.options'';
-                    };
-                  };
                 };
-
-                typos.command = "typos-lsp";
 
                 deno = {
                   command = "deno";
@@ -385,6 +401,15 @@ let
                         scope = "expr";
                       };
                     };
+                  };
+                };
+                haskell-language-server = {
+                  config.haskell = {
+                    plugin = {
+                      hlint.globalOn = true;
+                    };
+                    cabalFormattingProvider = "cabal-fmt";
+                    formattingProvider = "fourmolu";
                   };
                 };
               };
@@ -468,9 +493,6 @@ let
 
           # QML
           pkgs.qt6Packages.qtdeclarative
-
-          # Typos
-          pkgs.typos-lsp
         ];
       };
     };
