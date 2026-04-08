@@ -11,7 +11,7 @@
       inherit (config) theme;
     in
     {
-      hjem.extraModules = singleton (
+      hjem.extraModule =
         { osConfig, config, ... }:
         {
           xdg.config.files."jj/config.toml" = {
@@ -367,17 +367,13 @@
               ui.colors."selected".bg = "#${theme.colors.base01}";
             };
           };
-        }
-      );
+        };
     };
 
   flake.modules.common.jujutsu-extra =
-    { pkgs, lib, ... }:
-    let
-      inherit (lib.lists) singleton;
-    in
+    { pkgs, ... }:
     {
-      hjem.extraModules = singleton {
+      hjem.extraModule = {
         packages = [
           pkgs.jujutsu
           pkgs.difftastic

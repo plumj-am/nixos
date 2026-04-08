@@ -5,7 +5,7 @@ let
   peripheralsLinux =
     { pkgs, ... }:
     {
-      hjem.extraModules = singleton {
+      hjem.extraModule = {
         packages = [ pkgs.vial ];
       };
 
@@ -31,7 +31,7 @@ let
       inherit (lib.generators) toJSON;
     in
     {
-      hjem.extraModules = singleton {
+      hjem.extraModule = {
         packages = singleton pkgs.karabiner-elements;
 
         xdg.config.files."karabiner/karabiner.json" = {

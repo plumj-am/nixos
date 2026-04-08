@@ -35,7 +35,7 @@ let
       inherit (lib.lists) singleton;
     in
     {
-      hjem.extraModules = singleton (
+      hjem.extraModule =
         { pkgs, osConfig, ... }:
         let
           inherit (osConfig.flake) keys;
@@ -110,8 +110,7 @@ let
               };
             };
           };
-        }
-      );
+        };
     };
 
   radicleNodeBase =
@@ -203,7 +202,7 @@ let
       config = {
         shellAliases.rad = "rad-tui";
 
-        hjem.extraModules = singleton {
+        hjem.extraModule = {
           packages = singleton pkgs.radicle-tui;
         };
       };
@@ -219,7 +218,7 @@ let
       inherit (lib.lists) singleton;
     in
     {
-      hjem.extraModules = singleton {
+      hjem.extraModule = {
         packages = singleton pkgs.radicle-desktop;
       };
     };

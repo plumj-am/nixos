@@ -1,9 +1,6 @@
-{ lib, ... }:
 let
-  inherit (lib.lists) singleton;
-
   mkHjemPackages = packages: {
-    hjem.extraModules = singleton {
+    hjem.extraModule = {
       inherit packages;
     };
   };

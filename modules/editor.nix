@@ -51,7 +51,7 @@ let
       themes.base16_custom.inherits = "base16_default";
     in
     {
-      hjem.extraModules = singleton {
+      hjem.extraModule = {
         packages = singleton pkgs.helix;
 
         xdg.config.files = {
@@ -433,14 +433,10 @@ let
     {
       inputs,
       pkgs,
-      lib,
       ...
     }:
-    let
-      inherit (lib.lists) singleton;
-    in
     {
-      hjem.extraModules = singleton {
+      hjem.extraModule = {
         packages = [
           # Rust
           # rust-analyzer is in modules/common/rust.nix

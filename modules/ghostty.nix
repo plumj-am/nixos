@@ -55,7 +55,7 @@ let
       };
     in
     {
-      hjem.extraModules = singleton {
+      hjem.extraModule = {
         packages = [
           pkgs.ghostty
 

@@ -1,14 +1,11 @@
 let
   xdgBase =
-    { lib, config, ... }:
-    let
-      inherit (lib.lists) singleton;
-    in
+    { config, ... }:
     {
       config = {
         nix.settings.use-xdg-base-directories = true;
 
-        hjem.extraModules = singleton {
+        hjem.extraModule = {
           environment.sessionVariables = {
             XDG_CACHE_HOME = "${config.directory}/.cache";
             XDG_CONFIG_HOME = "${config.directory}/.config";

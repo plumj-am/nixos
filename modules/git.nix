@@ -1,6 +1,5 @@
 {
   flake.modules.common.git =
-
     {
       pkgs,
       config,
@@ -9,10 +8,9 @@
     }:
     let
       inherit (lib.meta) getExe;
-      inherit (lib.lists) singleton;
     in
     {
-      hjem.extraModules = singleton {
+      hjem.extraModule = {
         packages = [
           pkgs.gh
           pkgs.gitMinimal

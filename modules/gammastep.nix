@@ -7,7 +7,7 @@ let
     {
       services.geoclue2.enable = true;
 
-      hjem.extraModules = singleton {
+      hjem.extraModule = {
         packages = singleton pkgs.gammastep;
 
         xdg.config.files."gammastep/config.ini" = {

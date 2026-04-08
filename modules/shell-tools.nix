@@ -7,7 +7,6 @@ let
       ...
     }:
     let
-      inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
       inherit (config) theme;
 
@@ -16,7 +15,7 @@ let
       pager = "${bat} --plain --theme ${theme.bat}";
     in
     {
-      hjem.extraModules = singleton {
+      hjem.extraModule = {
         packages = [
           pkgs.bat
           pkgs.btop

@@ -112,7 +112,7 @@ in
       };
     in
     {
-      hjem.extraModules = singleton {
+      hjem.extraModule = {
         packages = [
           pkgs.python3
           pkgs.uv

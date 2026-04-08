@@ -2,17 +2,15 @@ let
   rioBase =
     {
       pkgs,
-      lib,
       config,
       ...
     }:
     let
       inherit (config.myLib) mkDesktopEntry;
-      inherit (lib.lists) singleton;
     in
     {
 
-      hjem.extraModules = singleton {
+      hjem.extraModule = {
         packages = [
           pkgs.rio
 

@@ -9,7 +9,7 @@ let
       inherit (lib.lists) singleton;
     in
     {
-      hjem.extraModules = singleton {
+      hjem.extraModule = {
         packages = singleton pkgs.yazi;
 
         xdg.config.files."yazi/yazi.toml" = {

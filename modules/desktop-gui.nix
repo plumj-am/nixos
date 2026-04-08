@@ -67,7 +67,7 @@ let
         XCURSOR_SIZE = "24";
       };
 
-      hjem.extraModules = singleton {
+      hjem.extraModule = {
         packages = singleton theme.gtk.package;
 
         files.".gtkrc-2.0".text = gtk2;

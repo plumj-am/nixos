@@ -2,19 +2,17 @@ let
   kittyBase =
     {
       pkgs,
-      lib,
       lib',
       config,
       ...
     }:
     let
-      inherit (lib.lists) singleton;
       inherit (lib'.generators) keyValueSpaceSep;
       inherit (lib') mkDesktopEntry;
       inherit (config) theme;
     in
     {
-      hjem.extraModules = singleton {
+      hjem.extraModule = {
         packages = [
           pkgs.kitty
 

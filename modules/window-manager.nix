@@ -63,7 +63,7 @@ let
         })
       ];
 
-      hjem.extraModules = singleton (
+      hjem.extraModule =
         { config, ... }:
         {
           packages = singleton inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri;
@@ -324,8 +324,7 @@ let
               spawn-at-startup "awww-daemon"
               spawn-at-startup "gammastep-indicator"
             '';
-        }
-      );
+        };
     };
 
   # TODO: MacOS scrolling window manager?

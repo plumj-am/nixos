@@ -64,7 +64,7 @@ let
 
     in
     {
-      hjem.extraModules = singleton {
+      hjem.extraModule = {
         packages = [
           processKiller
           processMonitor

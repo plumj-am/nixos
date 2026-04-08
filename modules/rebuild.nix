@@ -21,7 +21,7 @@
         })
       ];
 
-      hjem.extraModules = singleton (
+      hjem.extraModule =
         { config, ... }:
         {
           packages = [
@@ -34,8 +34,7 @@
               exec = "rebuild-hs --local";
             })
           ];
-        }
-      );
+        };
     };
 
   flake.modules.darwin.rebuild =

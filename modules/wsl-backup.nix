@@ -32,7 +32,7 @@ let
         };
       };
 
-      hjem.extraModules = singleton {
+      hjem.extraModule = {
         files."wsl-backup.nu" = {
           executable = true;
           text = /* nu */ ''

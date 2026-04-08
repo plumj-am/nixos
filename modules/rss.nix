@@ -42,7 +42,7 @@ let
       inherit (config.age) secrets;
     in
     {
-      hjem.extraModules = singleton {
+      hjem.extraModule = {
         packages = singleton pkgs.newsboat;
 
         xdg.config.files."newsboat/config".text = ''

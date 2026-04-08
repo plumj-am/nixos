@@ -5,7 +5,7 @@ let
       inherit (lib.lists) singleton;
     in
     {
-      hjem.extraModules = singleton {
+      hjem.extraModule = {
         packages = singleton pkgs.mprocs;
 
         xdg.config.files."mprocs/mprocs.yaml" = {

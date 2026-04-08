@@ -9,7 +9,7 @@ let
       inherit (lib.lists) singleton;
     in
     {
-      hjem.extraModules = singleton (
+      hjem.extraModule =
         { config, ... }:
         {
           # HACK: Use copy type to prevent permissions issues on the resulting symlink.
@@ -34,8 +34,7 @@ let
           };
 
           packages = singleton pkgs.mosh;
-        }
-      );
+        };
     };
 
   sshAgentBase = {

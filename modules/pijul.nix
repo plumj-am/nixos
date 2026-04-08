@@ -9,7 +9,7 @@ let
       inherit (lib.lists) singleton;
     in
     {
-      hjem.extraModules = singleton (
+      hjem.extraModule =
         { config, ... }:
         {
           packages = singleton pkgs.pijul;
@@ -29,8 +29,7 @@ let
               };
             };
           };
-        }
-      );
+        };
     };
 in
 {
