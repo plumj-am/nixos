@@ -1,5 +1,5 @@
-let
-  wslBackupBase =
+{
+  flake.modules.nixos.wsl-backup =
     { pkgs, lib, ... }:
     let
       inherit (lib.lists) singleton;
@@ -123,7 +123,4 @@ let
         };
       };
     };
-in
-{
-  flake.modules.nixos.wsl-backup = wslBackupBase;
 }
