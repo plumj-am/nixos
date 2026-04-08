@@ -1,5 +1,5 @@
-let
-  freshrssServerBase =
+{
+  flake.modules.nixos.freshrss-server =
     { config, ... }:
     let
       inherit (config.networking) domain;
@@ -30,7 +30,7 @@ let
       };
     };
 
-  rssTuiBase =
+  flake.modules.common.rss-tui =
     {
       pkgs,
       lib,
@@ -53,10 +53,4 @@ let
         '';
       };
     };
-in
-{
-  flake.modules.nixos.freshrss-server = freshrssServerBase;
-
-  flake.modules.nixos.rss-tui = rssTuiBase;
-  flake.modules.darwin.rss-tui = rssTuiBase;
 }
