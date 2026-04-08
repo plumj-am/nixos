@@ -1,5 +1,5 @@
-let
-  lfBase =
+{
+  flake.modules.common.lf =
     { pkgs, lib, ... }:
     let
       inherit (lib.lists) singleton;
@@ -23,8 +23,4 @@ let
           '';
       };
     };
-in
-{
-  flake.modules.nixos.lf = lfBase;
-  flake.modules.darwin.lf = lfBase;
 }
