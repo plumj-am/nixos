@@ -1,5 +1,5 @@
-let
-  desktopGuiBase =
+{
+  flake.modules.nixos.desktop-gui =
     {
       pkgs,
       lib,
@@ -90,8 +90,4 @@ let
           '';
       };
     };
-
-in
-{
-  flake.modules.nixos.desktop-gui = desktopGuiBase;
 }
