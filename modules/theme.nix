@@ -12,7 +12,6 @@ let
     pathExists
     ;
 
-  # Shared theme configuration logic
   mkThemeConfig =
     { pkgs }:
     let
@@ -243,8 +242,9 @@ let
         ;
     };
 
-  # Shared theme module configuration (used by both nixos and darwin)
-  themeBase =
+in
+{
+  flake.modules.common.theme =
     { pkgs, ... }:
     let
       theme = mkThemeConfig { inherit pkgs; };
@@ -297,7 +297,7 @@ let
       };
     };
 
-  themeExtraFontsLinux =
+  flake.modules.nixos.theme-extra-fonts =
     { config, pkgs, ... }:
     {
       console = {
@@ -319,7 +319,7 @@ let
       ];
     };
 
-  themeExtraFontsDarwin =
+  flake.modules.darwin.theme-extra-fonts =
     { config, pkgs, ... }:
     {
       fonts.packages = [
@@ -332,7 +332,7 @@ let
       ];
     };
 
-  themeExtraScripts =
+  flake.modules.nixos.theme-extra-scripts =
     { config, pkgs, ... }:
     let
       inherit (lib) map;
@@ -377,13 +377,4 @@ let
         }
       ]);
     };
-in
-{
-  flake.modules.darwin.theme = themeBase;
-  flake.modules.nixos.theme = themeBase;
-
-  flake.modules.nixos.theme-extra-fonts = themeExtraFontsLinux;
-  flake.modules.darwin.theme-extra-fonts = themeExtraFontsDarwin;
-
-  flake.modules.nixos.theme-extra-scripts = themeExtraScripts;
 }
