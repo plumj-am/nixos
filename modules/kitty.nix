@@ -1,5 +1,5 @@
-let
-  kittyBase =
+{
+  flake.modules.common.kitty =
     {
       pkgs,
       lib',
@@ -93,8 +93,4 @@ let
         };
       };
     };
-in
-{
-  flake.modules.nixos.kitty = kittyBase;
-  flake.modules.darwin.kitty = kittyBase;
 }
