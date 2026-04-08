@@ -1,8 +1,7 @@
-let
-  envBase =
+{
+  flake.modules.common.env =
     { pkgs, lib, ... }:
     let
-      inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
 
       # TODO: Make an option.
@@ -18,7 +17,7 @@ let
     {
       environment.variables = variables;
 
-      hjem.extraModules = singleton {
+      hjem.extraModule = {
         environment.sessionVariables = variables;
 
         # TODO: Add sessionPath equivalent in hjem?
@@ -31,8 +30,4 @@ let
         # }];
       };
     };
-
-in
-{
-  flake.modules.common.env = envBase;
 }
