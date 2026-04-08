@@ -1,5 +1,5 @@
-let
-  niriBase =
+{
+  flake.modules.nixos.window-manager =
     {
       inputs,
       pkgs,
@@ -328,10 +328,5 @@ let
     };
 
   # TODO: MacOS scrolling window manager?
-  wmBase = { };
-
-in
-{
-  flake.modules.nixos.window-manager = niriBase;
-  flake.modules.darwin.window-manager = wmBase;
+  flake.modules.darwin.window-manager = { };
 }
