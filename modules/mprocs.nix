@@ -1,5 +1,5 @@
-let
-  mprocsBase =
+{
+  flake.modules.common.mprocs =
     { pkgs, lib, ... }:
     let
       inherit (lib.lists) singleton;
@@ -53,8 +53,4 @@ let
         };
       };
     };
-in
-{
-  flake.modules.nixos.mprocs = mprocsBase;
-  flake.modules.darwin.mprocs = mprocsBase;
 }
