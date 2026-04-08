@@ -4,8 +4,9 @@ let
       inherit packages;
     };
   };
-
-  packagesBase =
+in
+{
+  flake.modules.common.packages =
     { pkgs, ... }:
     {
       environment.defaultPackages = [ ];
@@ -29,7 +30,25 @@ let
       pkgs.xh
     ];
 
-  packagesExtraCli =
+  flake.modules.nixos.packages-extra-linux =
+    { pkgs, ... }:
+    mkHjemPackages [
+      pkgs.gcc
+      pkgs.gnumake
+      pkgs.wget
+    ];
+
+  flake.modules.nixos.packages-extra-gui =
+    { pkgs, ... }:
+    mkHjemPackages [
+      pkgs.bitwarden-desktop
+      pkgs.brave
+      pkgs.obs-studio
+      pkgs.thunderbird
+      pkgs.wasistlos
+    ];
+
+  flake.modules.nixos.packages-extra-cli =
     { pkgs, ... }:
     mkHjemPackages [
       pkgs.bitwarden-cli
@@ -55,30 +74,4 @@ let
         };
       })
     ];
-
-  packagesExtraGui =
-    { pkgs, ... }:
-    mkHjemPackages [
-      pkgs.bitwarden-desktop
-      pkgs.brave
-      pkgs.obs-studio
-      pkgs.thunderbird
-      pkgs.wasistlos
-    ];
-
-  packagesExtraLinux =
-    { pkgs, ... }:
-    mkHjemPackages [
-      pkgs.gcc
-      pkgs.gnumake
-      pkgs.wget
-    ];
-in
-{
-  flake.modules.nixos.packages = packagesBase;
-  flake.modules.darwin.packages = packagesBase;
-
-  flake.modules.nixos.packages-extra-linux = packagesExtraLinux;
-  flake.modules.nixos.packages-extra-gui = packagesExtraGui;
-  flake.modules.nixos.packages-extra-cli = packagesExtraCli;
 }
