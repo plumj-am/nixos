@@ -1,5 +1,5 @@
-let
-  ghosttyBase =
+{
+  flake.modules.common.ghostty =
     {
       pkgs,
       lib,
@@ -9,7 +9,6 @@ let
     }:
     let
       inherit (lib.attrsets) mapAttrsToList mapAttrs' nameValuePair;
-      inherit (lib.lists) singleton;
       inherit (lib'.generators) keyValueEqualsSep;
       inherit (lib') mkDesktopEntry;
       inherit (config) theme;
@@ -102,8 +101,4 @@ let
         // mkThemes themes;
       };
     };
-in
-{
-  flake.modules.nixos.ghostty = ghosttyBase;
-  flake.modules.darwin.ghostty = ghosttyBase;
 }
