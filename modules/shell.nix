@@ -1,5 +1,5 @@
-let
-  shellBase =
+{
+  flake.modules.common.shell =
     {
       pkgs,
       lib,
@@ -10,6 +10,7 @@ let
       inherit (lib.options) mkOption;
       inherit (lib.types) attrsOf str;
       inherit (lib.meta) getExe;
+      inherit (lib.modules) mkAfter mkIf;
     in
     {
       config.environment.shells = singleton <| getExe pkgs.nushell;
@@ -20,7 +21,7 @@ let
         description = "Additional shell aliases to be merged with defaults";
       };
 
-      config.hjem.extraModules = singleton (
+      config.hjem.extraModule =
         {
           lib,
           osConfig,
@@ -108,6 +109,13 @@ let
             pkgs.zoxide
             pkgs.zsh
           ];
+
+          files.".zshrc" = mkIf osConfig.nixpkgs.hostPlatform.isDarwin {
+            # zsh
+            text = mkAfter ''
+              SHELL=${getExe pkgs.nushell} exec ${getExe pkgs.nushell} --config '${config.directory}/.config/nushell/config.nu'
+            '';
+          };
 
           xdg.config.files."direnv/lib/nix-direnv.sh".source = "${pkgs.nix-direnv}/share/nix-direnv/direnvrc";
 
@@ -411,41 +419,6 @@ let
               			$env.TRANSIENT_PROMPT_INDICATOR_VI_INSERT = $env.PROMPT_INDICATOR
               			$env.TRANSIENT_PROMPT_MULTILINE_INDICATOR = $env.PROMPT_INDICATOR
             '';
-        }
-      );
+        };
     };
-
-  shellExtraDarwin =
-    { pkgs, lib, ... }:
-    let
-      inherit (lib.lists) singleton;
-      inherit (lib.modules) mkAfter;
-      inherit (lib.meta) getExe;
-    in
-    {
-      hjem.extraModules = singleton (
-        { config, ... }:
-        {
-          files.".zshrc" = {
-            text =
-              # zsh
-              mkAfter ''
-                SHELL=${getExe pkgs.nushell} exec ${getExe pkgs.nushell} --config '${config.directory}/.config/nushell/config.nu'
-              '';
-          };
-
-        }
-      );
-
-    };
-
-in
-{
-  flake.modules.nixos.shell = shellBase;
-  flake.modules.darwin.shell = {
-    imports = [
-      shellBase
-      shellExtraDarwin
-    ];
-  };
 }
