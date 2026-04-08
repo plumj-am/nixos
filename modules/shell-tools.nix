@@ -1,5 +1,5 @@
-let
-  shellToolsBase =
+{
+  flake.modules.common.shell-tools =
     {
       pkgs,
       lib,
@@ -43,9 +43,4 @@ let
         '';
       };
     };
-
-in
-{
-  flake.modules.nixos.shell-tools = shellToolsBase;
-  flake.modules.darwin.shell-tools = shellToolsBase;
 }
