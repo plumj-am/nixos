@@ -1,5 +1,5 @@
-let
-  rioBase =
+{
+  flake.modules.common.rio =
     {
       pkgs,
       config,
@@ -33,8 +33,4 @@ let
         };
       };
     };
-in
-{
-  flake.modules.nixos.rio = rioBase;
-  flake.modules.darwin.rio = rioBase;
 }
