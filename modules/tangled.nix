@@ -1,5 +1,5 @@
-let
-  tangledKnotBase =
+{
+  flake.modules.nixos.tangled-knot =
     {
       inputs,
       lib,
@@ -56,7 +56,7 @@ let
       };
     };
 
-  tangledSpindleBase =
+  flake.modules.nixos.tangled-spindle =
     {
       inputs,
       lib,
@@ -102,8 +102,4 @@ let
         };
       };
     };
-in
-{
-  flake.modules.nixos.tangled-knot = tangledKnotBase;
-  flake.modules.nixos.tangled-spindle = tangledSpindleBase;
 }
