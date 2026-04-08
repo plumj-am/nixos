@@ -1,5 +1,5 @@
-let
-  matrixBase =
+{
+  flake.modules.nixos.matrix =
     { config, ... }:
     let
       inherit (config.myLib) merge mkResticBackup;
@@ -124,7 +124,7 @@ let
       };
     };
 
-  cinnyBase =
+  flake.modules.nixos.cinny =
     {
       pkgs,
       lib,
@@ -206,8 +206,4 @@ let
       };
 
     };
-in
-{
-  flake.modules.nixos.matrix = matrixBase;
-  flake.modules.nixos.cinny = cinnyBase;
 }
