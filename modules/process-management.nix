@@ -1,5 +1,5 @@
-let
-  processManagementBase =
+{
+  flake.modules.nixos.process-management =
     {
       pkgs,
       lib,
@@ -8,7 +8,6 @@ let
     }:
     let
       inherit (lib) readFile;
-      inherit (lib.lists) singleton;
 
       processKiller = pkgs.writeScriptBin "process-killer" <| readFile ./_scripts/process-killer.nu;
 
@@ -71,7 +70,4 @@ let
         ];
       };
     };
-in
-{
-  flake.modules.nixos.process-management = processManagementBase;
 }
