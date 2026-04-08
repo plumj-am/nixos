@@ -16,8 +16,9 @@ let
       ];
     };
   };
-
-  bootSystemd = {
+in
+{
+  flake.modules.nixos.boot-systemd = {
     imports = [ bootBase ];
     boot.loader = {
       systemd-boot.enable = true;
@@ -25,7 +26,7 @@ let
     };
   };
 
-  bootGrub =
+  flake.modules.nixos.boot-grub =
     { modulesPath, ... }:
     {
       imports = [
@@ -34,8 +35,4 @@ let
       ];
       boot.loader.systemd-boot.enable = false;
     };
-in
-{
-  flake.modules.nixos.boot-systemd = bootSystemd;
-  flake.modules.nixos.boot-grub = bootGrub;
 }
