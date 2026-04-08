@@ -5,8 +5,9 @@ let
       Defaults !lecture
       Defaults env_keep+="DISPLAY EDITOR PATH"
     '';
-
-  sudoBaseLinux =
+in
+{
+  flake.modules.nixos.sudo =
     {
       inputs,
       pkgs,
@@ -41,7 +42,7 @@ let
       };
     };
 
-  sudoBaseDarwin = {
+  flake.modules.darwin.sudo = {
     security.sudo.extraConfig = sudoExtraConfig;
 
     security.pam.services.sudo_local = {
@@ -50,7 +51,7 @@ let
     };
   };
 
-  sudoExtraDesktop = {
+  flake.modules.nixos.sudo-extra-desktop = {
     # Persistent auth with run0.
     services.dbus.implementation = "broker";
     security.polkit.extraConfig = # js
@@ -69,7 +70,7 @@ let
       '';
   };
 
-  sudoExtraServer = {
+  flake.modules.nixos.sudo-extra-server = {
     security.sudo-rs = {
       wheelNeedsPassword = true;
       extraConfig = # sudoers
@@ -79,12 +80,4 @@ let
         '';
     };
   };
-
-in
-{
-  flake.modules.nixos.sudo = sudoBaseLinux;
-  flake.modules.darwin.sudo = sudoBaseDarwin;
-
-  flake.modules.nixos.sudo-extra-desktop = sudoExtraDesktop;
-  flake.modules.nixos.sudo-extra-server = sudoExtraServer;
 }
