@@ -14,12 +14,13 @@ let
     "4"
     "--unstable-component"
   ];
-
-  disableNano = {
+in
+{
+  flake.modules.common.disable-nano = {
     programs.nano.enable = false;
   };
 
-  helixBase =
+  flake.modules.common.helix =
     {
       lib,
       pkgs,
@@ -429,7 +430,7 @@ let
       };
     };
 
-  editorExtra =
+  flake.modules.common.editor-extra =
     {
       inputs,
       pkgs,
@@ -492,14 +493,4 @@ let
         ];
       };
     };
-in
-{
-  flake.modules.nixos.helix = helixBase;
-  flake.modules.darwin.helix = helixBase;
-
-  flake.modules.nixos.editor-extra = editorExtra;
-  flake.modules.darwin.editor-extra = editorExtra;
-
-  flake.modules.nixos.disable-nano = disableNano;
-  flake.modules.darwin.disable-nano = disableNano;
 }
