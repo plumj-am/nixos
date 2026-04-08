@@ -112,8 +112,40 @@ let
           };
         };
     };
+in
+{
+  flake.modules.nixos.radicle =
+    {
+      inputs,
+      pkgs,
+      lib,
+      ...
+    }:
+    let
+      inherit (lib.lists) singleton;
+    in
+    radicleUserBase { inherit inputs lib; }
+    // {
+      networking.firewall.allowedTCPPorts = singleton userNodePort;
 
-  radicleNodeBase =
+      systemd.user.services.radicle-user-node = {
+        description = "Radicle User Node";
+        wantedBy = [ "default.target" ];
+        after = [ "network-online.target" ];
+        wants = [ "network-online.target" ];
+        unitConfig.ConditionUser = "jam";
+        serviceConfig = {
+          Type = "simple";
+          ExecStart = "${pkgs.radicle-node}/bin/rad node start";
+          Restart = "on-failure";
+          RestartSec = "5";
+        };
+      };
+    };
+
+  flake.modules.darwin.radicle = radicleUserBase;
+
+  flake.modules.common.radicle-node =
     {
       pkgs,
       lib,
@@ -193,71 +225,6 @@ let
       };
     };
 
-  radicleTUI =
-    { pkgs, lib, ... }:
-    let
-      inherit (lib.lists) singleton;
-    in
-    {
-      config = {
-        shellAliases.rad = "rad-tui";
-
-        hjem.extraModule = {
-          packages = singleton pkgs.radicle-tui;
-        };
-      };
-    };
-
-  radicleGUI =
-    {
-      pkgs,
-      lib,
-      ...
-    }:
-    let
-      inherit (lib.lists) singleton;
-    in
-    {
-      hjem.extraModule = {
-        packages = singleton pkgs.radicle-desktop;
-      };
-    };
-in
-{
-  flake.modules.nixos.radicle =
-    {
-      inputs,
-      pkgs,
-      lib,
-      ...
-    }:
-    let
-      inherit (lib.lists) singleton;
-    in
-    radicleUserBase { inherit inputs lib; }
-    // {
-      networking.firewall.allowedTCPPorts = singleton userNodePort;
-
-      systemd.user.services.radicle-user-node = {
-        description = "Radicle User Node";
-        wantedBy = [ "default.target" ];
-        after = [ "network-online.target" ];
-        wants = [ "network-online.target" ];
-        unitConfig.ConditionUser = "jam";
-        serviceConfig = {
-          Type = "simple";
-          ExecStart = "${pkgs.radicle-node}/bin/rad node start";
-          Restart = "on-failure";
-          RestartSec = "5";
-        };
-      };
-    };
-
-  flake.modules.darwin.radicle = radicleUserBase;
-
-  flake.modules.nixos.radicle-node = radicleNodeBase;
-  flake.modules.darwin.radicle-node = radicleNodeBase;
-
   flake.modules.nixos.radicle-explorer =
     {
       pkgs,
@@ -316,11 +283,35 @@ in
       };
     };
 
-  flake.modules.nixos.radicle-tui = radicleTUI;
-  flake.modules.darwin.radicle-tui = radicleTUI;
+  flake.modules.common.radicle-tui =
+    { pkgs, lib, ... }:
+    let
+      inherit (lib.lists) singleton;
+    in
+    {
+      config = {
+        shellAliases.rad = "rad-tui";
 
-  flake.modules.nixos.radicle-gui = radicleGUI;
-  flake.modules.darwin.radicle-gui = radicleGUI;
+        hjem.extraModule = {
+          packages = singleton pkgs.radicle-tui;
+        };
+      };
+    };
+
+  flake.modules.common.radicle-gui =
+    {
+      pkgs,
+      lib,
+      ...
+    }:
+    let
+      inherit (lib.lists) singleton;
+    in
+    {
+      hjem.extraModule = {
+        packages = singleton pkgs.radicle-desktop;
+      };
+    };
 
   flake.modules.nixos.radicle-ci-runner =
     {
