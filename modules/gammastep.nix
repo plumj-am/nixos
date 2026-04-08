@@ -1,5 +1,5 @@
-let
-  gammastepBase =
+{
+  flake.modules.nixos.gammastep =
     { pkgs, lib, ... }:
     let
       inherit (lib.lists) singleton;
@@ -22,8 +22,4 @@ let
         };
       };
     };
-
-in
-{
-  flake.modules.nixos.gammastep = gammastepBase;
 }
