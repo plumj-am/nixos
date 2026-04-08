@@ -1,5 +1,5 @@
-let
-  pijulBase =
+{
+  flake.modules.common.pijul =
     {
       pkgs,
       lib,
@@ -31,8 +31,4 @@ let
           };
         };
     };
-in
-{
-  flake.modules.nixos.pijul = pijulBase;
-  flake.modules.darwin.pijul = pijulBase;
 }
