@@ -1,5 +1,5 @@
-let
-  linuxUsersBase =
+{
+  flake.modules.nixos.users =
     {
       pkgs,
       config,
@@ -44,7 +44,35 @@ let
       };
     };
 
-  linuxUsersExtra =
+  flake.modules.darwin.users =
+    { pkgs, config, ... }:
+    let
+      inherit (config.flake) keys;
+
+      home = "/Users/jam";
+    in
+    {
+      system.primaryUser = "jam";
+
+      users.users = {
+        jam = {
+          inherit home;
+          description = "Jam";
+          shell = pkgs.nushell;
+          openssh.authorizedKeys.keys = keys.admins;
+        };
+      };
+
+      hjem = {
+        clobberByDefault = true;
+        users.jam = {
+          user = "jam";
+          directory = home;
+        };
+      };
+    };
+
+  flake.modules.nixos.users-extra =
     {
       pkgs,
       lib,
@@ -89,37 +117,4 @@ let
       };
     };
 
-  darwinUsersBase =
-    { pkgs, config, ... }:
-    let
-      inherit (config.flake) keys;
-
-      home = "/Users/jam";
-    in
-    {
-      system.primaryUser = "jam";
-
-      users.users = {
-        jam = {
-          inherit home;
-          description = "Jam";
-          shell = pkgs.nushell;
-          openssh.authorizedKeys.keys = keys.admins;
-        };
-      };
-
-      hjem = {
-        clobberByDefault = true;
-        users.jam = {
-          user = "jam";
-          directory = home;
-        };
-      };
-    };
-in
-{
-  flake.modules.nixos.users = linuxUsersBase;
-  flake.modules.darwin.users = darwinUsersBase;
-
-  flake.modules.nixos.users-extra = linuxUsersExtra;
 }
