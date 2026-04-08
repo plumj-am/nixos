@@ -1,5 +1,5 @@
-let
-  xdgBase =
+{
+  flake.modules.common.xdg =
     { config, ... }:
     {
       config = {
@@ -15,8 +15,4 @@ let
         };
       };
     };
-in
-{
-  flake.modules.nixos.xdg = xdgBase;
-  flake.modules.darwin.xdg = xdgBase;
 }
