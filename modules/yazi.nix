@@ -1,5 +1,5 @@
-let
-  yaziBase =
+{
+  flake.modules.common.yazi =
     {
       pkgs,
       lib,
@@ -39,8 +39,4 @@ let
         };
       };
     };
-in
-{
-  flake.modules.nixos.yazi = yaziBase;
-  flake.modules.darwin.yazi = yaziBase;
 }
