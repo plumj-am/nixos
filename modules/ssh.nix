@@ -36,13 +36,17 @@ let
           packages = singleton pkgs.mosh;
         };
     };
+in
+{
+  flake.modules.nixos.ssh = {
+    imports = [ sshConfigBase ];
 
-  sshAgentBase = {
-    # TODO: Handle ssh agent on darwin.
     programs.ssh.startAgent = true;
   };
 
-  nixosOpensshBase =
+  flake.modules.darwin.ssh = sshConfigBase;
+
+  flake.modules.nixos.openssh =
     { config, lib, ... }:
     let
       inherit (lib.lists) singleton map;
@@ -98,7 +102,7 @@ let
         );
     };
 
-  nixosOpensshExtraUsers =
+  flake.modules.nixos.openssh-extra-users =
     { lib, ... }:
     let
       inherit (lib.lists) singleton;
@@ -110,7 +114,7 @@ let
       };
     };
 
-  darwinOpensshBase =
+  flake.modules.darwin.openssh =
     { config, ... }:
     {
       services.openssh = {
@@ -124,17 +128,4 @@ let
           '';
       };
     };
-in
-{
-  flake.modules.nixos.ssh = {
-    imports = [
-      sshConfigBase
-      sshAgentBase
-    ];
-  };
-  flake.modules.darwin.ssh = sshConfigBase;
-
-  flake.modules.nixos.openssh = nixosOpensshBase;
-  flake.modules.nixos.openssh-extra-users = nixosOpensshExtraUsers;
-  flake.modules.darwin.openssh = darwinOpensshBase;
 }
