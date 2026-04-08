@@ -1,7 +1,9 @@
 { inputs, lib, ... }:
 let
   inherit (lib.lists) singleton;
+  inherit (lib.options) mkOption;
   inherit (lib.types) deferredModule nullOr;
+  inherit (lib.modules) mkIf;
 
   mkHjemModule =
     hjemModule:
@@ -9,7 +11,29 @@ let
     {
       imports = singleton hjemModule;
 
-      options.hjem.extraModule = lib.mkOption {
+      # Before:
+      # ```nix
+      # {
+      #  flake.modules.common.something =
+      #    {lib, ...}:
+      #    let
+      #      inherit (lib.lists) singleton;
+      #    in
+      #    {
+      #      hjem.extraModules = singleton { };
+      #    };
+      # }
+      # ```
+      #
+      # After:
+      # ```nix
+      # {
+      #   flake.modules.common.something = {
+      #     hjem.extraModule = { };
+      #   };
+      # }
+      # ```
+      options.hjem.extraModule = mkOption {
         type = nullOr deferredModule;
         default = null;
         description = ''
@@ -19,7 +43,7 @@ let
         '';
       };
 
-      config.hjem.extraModules = lib.mkIf (config.hjem.extraModule != null) [
+      config.hjem.extraModules = mkIf (config.hjem.extraModule != null) [
         config.hjem.extraModule
       ];
     };

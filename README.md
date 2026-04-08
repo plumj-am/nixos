@@ -36,37 +36,43 @@ Dendritic NixOS configurations for 8 personal machines:
 
 ## How it works
 
-Everything lives under `modules/`.
+Almost everything lives under `modules/`.
 
 Each module (for the most part) is grouped by feature as opposed to individual
 applications/services. Using
 [flake-parts](https://github.com/hercules-ci/flake-parts), these modules live at
-`flake.modules.{nixos,darwin}`.
+`flake.modules.{common,nixos,darwin}`.
 
-Modules contains 1 or more of the following:
+Modules contain 1 or more of the following:
 
 ```
 flake.modules.<class>.<aspect> = {}
 ```
 
-For example, our `modules/window-manager.nix` looks like this:
+For example:
 
 ```nix
 {
+  # modules/git.nix
+  flake.modules.common.git = { /* ... */ };
+
+  # modules/window-manager.nix
   flake.modules.nixos.window-manager = { /* ... */ };
   flake.modules.darwin.window-manager = { /* ... */ };
 }
 ```
 
-`hjem` modules are included within the `nixos` and `darwin` classes via
-`hjem.extraModules` as can be seen below.
-
-I tend to write most configuration inside a `let...in` block and then assign a
-single variable to the `<class>.<aspect>` like this:
+`hjem` modules are included within the `common`, `nixos`, and `darwin` classes
+via `hjem.extraModule` as can be seen below. `hjem.extraModule` is a custom
+option that lets me use `hjem.extraModules = []` as a `singleton` without
+needing to specify it every time. See `modules/hjem.nix` for the implementation
+but, note that there is no implementation for `common` due to how the `common`
+class works (by auto-merging). See the "Other comments" section below for more
+details.
 
 ```nix
-let
-  zellijBase =
+{
+  flake.modules.common.zellij =
     {
       pkgs,
       config,
@@ -75,26 +81,24 @@ let
     }:
     let
       inherit (lib.meta) getExe;
-      inherit (lib.lists) singleton;
       inherit (config) theme;
     in
     {
-      hjem.extraModules = singleton {
+      hjem.extraModule = {
         # ... hjem specific config
       };
       # ... rest of config
     }
-in
-{
-  flake.modules.nixos.zellij = zellijBase;
-  flake.modules.darwin.zellij = zellijBase;
 }
 ```
 
-The `darwin` and `nixos` classes are then used in `modules/hosts.nix`. Some
+The `common`, `darwin`, and `nixos` classes are then used in `hosts/`. Some
 aspects are grouped in `modules/aspects.nix` to avoid repeated configs and a
 `mkConfig` helper is used to simplify the inline config module of each host,
-again to reduce repetition. An example of what this could look like:
+again to reduce repetition. The implementation for `mkConfig` can be seen in
+`modules/lib.nix`.
+
+Examples of what this looks like:
 
 ```nix
 {
@@ -102,8 +106,15 @@ again to reduce repetition. An example of what this could look like:
   flake.nixosConfigurations.hostName = inputs.os.lib.nixosSystem {
     specialArgs = { inherit inputs; };
     modules = with inputs.self.modules.nixos; [
-      # ... other packages
+      # ... other aspects
       window-manager
+
+      # Inline module for individual config.
+      {
+        config = mkConfig inputs "hostName" "x86_64-linux" {
+          # ... config here
+        };
+      }
     ];
   };
 
@@ -113,6 +124,13 @@ again to reduce repetition. An example of what this could look like:
     modules = with inputs.self.modules.darwin; [
       # ... other packages
       window-manager
+
+      # Inline module for individual config.
+      {
+        config = mkConfig inputs "hostName" "aarch64-darwin" {
+          # ... config here
+        };
+      }
     ];
   };
 }
@@ -137,9 +155,9 @@ agenix-rekey: <https://github.com/oddlama/agenix-rekey>
 
 ### Imports
 
-Imports are handled by an `importTree` function in `modules/outputs.nix`. It
-automatically imports all nix files in the specified directory (`./modules` in
-my case).
+Imports are handled by an `importTree` function in `outputs.nix`. It
+automatically imports all nix files in the specified directories (`./modules`,
+`./hosts`, and `./packages` in my case).
 
 ### myLib
 
@@ -149,14 +167,44 @@ There may be unfamiliar functions/helpers in some files - these come from
 ### Theming
 
 I have a custom theming setup which can be seen in `modules/theme.nix`. It does
-rely on a rebuild but it's a simple toggle between light/dark and gruvbox/matugen
-modes by running shortcuts setup in Fuzzel. It automatically updates colour
-schemes and refreshes necessary applications to apply changes.
+rely on a rebuild but it's a simple toggle between light/dark and
+gruvbox/matugen modes by running shortcuts setup in my Quickshell launcher and
+the `tt`/`toggle-theme` script. It automatically updates colour schemes and
+refreshes necessary applications to apply changes.
 
-The matugen mode generates colours from the current wallpaper using Material You.
-
-The gruvbox mode uses the defined themes in `modules/themes.nix` and some base16
+The gruvbox mode uses the defined themes in `modules/theme.nix` and some base16
 colours for applications that can make use of them.
+
+### Quickshell
+
+I have a fairly basic Quickshell setup which I have used to replace Fuzzel,
+Mako, Waybar/Ashell, and more.
+
+It has the following features (non-exhaustive):
+
+- Bar
+  - Media
+  - Current window
+  - Tray
+  - System stats
+  - Theme toggle
+  - Control center toggle
+  - Notification toggle and count
+  - Privacy module (shows active mic/webcam)
+  - Date/time
+  - Power/session drawer toggle
+- Launcher
+- Control center
+  - Input volume
+  - Output volume
+  - Bluetooth toggle
+  - Network information
+- Notifications
+- Session/power drawer
+- Media controls
+- Clipboard history drawer
+
+The configuration can be found in `modules/quickshell`.
 
 ## Other comments
 
@@ -186,6 +234,13 @@ Inputs use different names to what you might expect:
 - nix-darwin -> os-darwin
 - nixos-wsl -> os-wsl
 
+`osConfig` comes from Hjem and can be used to access the system-level `config`
+alongside the hjem level `config`.
+
+`flake.modules.common` works by merging automatically with
+`flake.modules.{nixos,darwin}`. Basically, all the `common` aspects can be
+accessed from either `common`, `nixos`, or `darwin`.
+
 If you're interested in learning more about dendritic Nix, feel free to learn
 from my config and consider checking the following links:
 
@@ -213,9 +268,9 @@ The structure of the repository and a few key files are highlighted below:
 
 ```sh
 .
+├── hosts/             # All hosts live in here
+├── packages/          # Some packages I expose in the flake
 ├── modules/           # All modules live in here
-│   ├── outputs.nix    # Flake outputs
-│   ├── hosts.nix      # Host definitions
 │   ├── theme.nix      # System-wide theming
 │   ├── ...
 │   ├── _to-migrate/   # Modules waiting for migration to new dendritic setup
@@ -226,6 +281,7 @@ The structure of the repository and a few key files are highlighted below:
 │   ├── ...
 │   └── rekeyed/       # Rekeyed secrets from agenix-rekey
 │       └── ...
+├── outputs.nix        # Flake outputs
 ├── flake.lock
 ├── flake.nix
 └── ...
