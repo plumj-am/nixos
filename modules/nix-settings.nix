@@ -8,7 +8,12 @@ let
 
   registryMap = inputs |> filterAttrs (const <| isType "flake");
 
-  nixSettingsBase =
+  nixosNixPath = (registryMap |> mapAttrsToList (name: value: "${name}=${value}")) ++ [
+    "nixpkgs=${inputs.os}"
+  ];
+in
+{
+  flake.modules.common.nix-settings =
     {
       inputs,
       pkgs,
@@ -81,11 +86,7 @@ let
       nix.optimise.automatic = true;
     };
 
-  nixosNixPath = (registryMap |> mapAttrsToList (name: value: "${name}=${value}")) ++ [
-    "nixpkgs=${inputs.os}"
-  ];
-
-  nixSettingsDesktopExtra = {
+  flake.modules.nixos.nix-settings-extra-desktop = {
     nix.nixPath = nixosNixPath;
 
     nix.gc = {
@@ -99,7 +100,7 @@ let
     };
   };
 
-  nixSettingsServerExtra = {
+  flake.modules.nixos.nix-settings-extra-server = {
     nix.nixPath = nixosNixPath;
 
     nix.gc = {
@@ -130,7 +131,7 @@ let
     '';
   };
 
-  nixSettingsDarwinExtra =
+  flake.modules.darwin.nix-settings-extra-darwin =
     { lib, ... }:
     let
       inherit (lib) mkForce;
@@ -141,12 +142,4 @@ let
       nix.nixPath =
         registryMap |> mapAttrsToList (name: value: "${name}=${value}") |> concatStringsSep ":";
     };
-in
-{
-  flake.modules.nixos.nix-settings = nixSettingsBase;
-  flake.modules.darwin.nix-settings = nixSettingsBase;
-
-  flake.modules.nixos.nix-settings-extra-desktop = nixSettingsDesktopExtra;
-  flake.modules.nixos.nix-settings-extra-server = nixSettingsServerExtra;
-  flake.modules.darwin.nix-settings-extra-darwin = nixSettingsDarwinExtra;
 }
