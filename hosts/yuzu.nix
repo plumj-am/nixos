@@ -53,7 +53,6 @@ in
       theme-extra-fonts
       theme-extra-scripts
       window-manager
-      yazi
       zellij
       { hardware.facter.reportPath = ./facter/yuzu.json; }
       {
