@@ -94,7 +94,6 @@
               window-rule {
                 match app-id=r#"kitty"#
                 open-maximized false
-                open-on-workspace "editor"
               }
 
               window-rule {
@@ -107,11 +106,6 @@
                 match app-id=r#"^radicle-desktop|com.saivert.pwvucontrol|dolphin$"#
                 open-maximized true
                 open-on-workspace "guis"
-              }
-
-              window-rule {
-                match title=r#"^.*YouTube|Picture-in-Picture.*"#
-                opacity 1.0
               }
 
               window-rule {
@@ -129,11 +123,6 @@
                 }
                 geometry-corner-radius 0
                 clip-to-geometry false
-              }
-
-              layer-rule {
-                match namespace=r#"notifications|launcher"#
-                opacity 1.0
               }
 
               input {
@@ -188,13 +177,9 @@
                 open-on-output "DP-2"
               }
 
-              workspace "editor" {
-                open-on-output "DP-1"
-              }
-
               layout {
                 always-center-single-column true
-                empty-workspace-above-first false
+                empty-workspace-above-first true
                 gaps 0
                 preset-column-widths {
                   proportion 0.20
