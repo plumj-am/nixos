@@ -111,13 +111,6 @@
                           };
                           SwitchToMode "locked";
                         }
-                        bind "Ctrl d" {
-                          Run "${getExe pkgs.discordo}" {
-                            in_place true
-                            close_on_exit true
-                          };
-                          SwitchToMode "locked";
-                        }
                         bind "Ctrl e" {
                           Run "${getExe pkgs.lf}" {
                             in_place true

@@ -70,8 +70,6 @@
 
             mosh = "mosh --no-init";
 
-            dc = "discordo";
-
             ns = "niri-session";
 
             h = "hx";

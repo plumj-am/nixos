@@ -16,8 +16,7 @@ in
       claude-code
       desktop-gui
       desktop-tools
-      discord-gui
-      discord-tui
+      discord
       disks-normal
       disks-extra-zram-swap
       docker-rootless
