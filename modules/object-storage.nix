@@ -88,7 +88,7 @@
         set -euo pipefail
 
         # Minio client.
-        mkdir -p "/home/jam/.mc"
+        # Directory created by `systemd.tmpfiles.rules` to prevent root ownership.
         ${getExe pkgs.minio-client} alias set plumjam-fsn1 \
           https://${endpoint} \
           "$(cat ${secrets.s3AccessKey.path})" \
@@ -151,6 +151,10 @@
           '';
         };
       };
+
+      systemd.tmpfiles.rules = [
+        "d /home/jam/.mc 0755 jam users -"
+      ];
 
       system.activationScripts.s3-setup = {
         deps = [ "agenix" ];
