@@ -177,8 +177,11 @@ colours for applications that can make use of them.
 
 ### Quickshell
 
-I have a fairly basic Quickshell setup which I have used to replace Fuzzel,
-Mako, Waybar/Ashell, and more.
+I have a basic Quickshell setup which I have used to replace Fuzzel, Mako,
+Waybar/Ashell, and more.
+
+Memory consumption idles at 125 MiB and peaks at 140 MiB. CPU usage is basically
+non-existent, peaking at 0.4% when opening the launcher (on an i5-13600KF).
 
 It has the following features (non-exhaustive):
 
