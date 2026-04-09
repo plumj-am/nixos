@@ -13,8 +13,8 @@
     in
     {
       shellAliases = {
-        "zellij-ide" = "zellij action override-layout ~/.config/zellij/layouts/ide.kdl";
-        "zellij-3t2b" = "zellij action override-layout ~/.config/zellij/layouts/3t2b.kdl";
+        "zellij-ide" = "zellij --layout ~/.config/zellij/layouts/ide.kdl";
+        "zellij-3t2b" = "zellij --layout ~/.config/zellij/layouts/3t2b.kdl";
       };
 
       hjem.extraModule =
