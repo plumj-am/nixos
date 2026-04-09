@@ -28,13 +28,9 @@
         QUEUE_FILE="$QUEUE_DIR/pending"
         PROCESSING="$QUEUE_DIR/processing"
         DONE="$QUEUE_DIR/done"
-        PIDFILE="$QUEUE_DIR/processor.pid"
 
         mkdir -p "$QUEUE_DIR"
         touch "$QUEUE_FILE" "$PROCESSING" "$DONE"
-
-        echo $$ > "$PIDFILE"
-        echo "Started (PID: $$)"
 
         # Use env set by systemd.
         export AWS_ACCESS_KEY_ID=$(cat "$AWS_ACCESS_KEY_ID_PATH")
