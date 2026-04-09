@@ -64,7 +64,7 @@
                     mouse_mode true
                     mouse_click_through true
                     focus_follows_mouse true
-                    scroll_buffer_size 5000
+                    scroll_buffer_size 50000
 
                     copy_on_select true
                     copy_clipboard "system"
@@ -72,7 +72,7 @@
                     default_mode "locked"
 
                     pane_viewport_serialization true
-                    scrollback_lines_to_serialize 5000
+                    scrollback_lines_to_serialize 0
 
                     env.EDITOR "${osConfig.environment.variables.EDITOR}"
                     env.SHELL "${osConfig.environment.variables.SHELL}"
