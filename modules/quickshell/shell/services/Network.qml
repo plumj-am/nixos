@@ -61,7 +61,7 @@ Item {
 
     Timer {
         id: rateTimer
-        interval: 3000
+        interval: Config.data.network?.updateInterval ?? 5000
         running: true
         repeat: true
         triggeredOnStart: true

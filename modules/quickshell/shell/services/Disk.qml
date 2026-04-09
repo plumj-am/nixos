@@ -30,7 +30,7 @@ Item {
     }
 
     Timer {
-        interval: 5000
+        interval: Config.data.disk?.updateInterval ?? 60000
         running: true
         repeat: true
         triggeredOnStart: true

@@ -30,6 +30,9 @@ QtObject {
         },
         network: {
             updateInterval: 5000
+        },
+        disk: {
+            updateInterval: 60000
         }
     })
 }
