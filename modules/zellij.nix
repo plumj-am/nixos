@@ -66,8 +66,7 @@
                     focus_follows_mouse true
                     scroll_buffer_size 5000
 
-                    copy_command "wl-copy"
-                    copy_on_select false
+                    copy_on_select true
                     copy_clipboard "system"
 
                     default_mode "locked"
