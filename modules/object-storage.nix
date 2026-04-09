@@ -140,9 +140,12 @@
             QUEUE_DIR=/var/cache/nix/upload-queue
             mkdir -p "$QUEUE_DIR"
 
+            (
+            flock -x 200 # file lock
             for output in $OUT_PATHS; do
               echo "$output" >> "$QUEUE_DIR/pending"
             done
+            ) 200>"$QUEUE_DIR/pending.lock"
 
             exit 0
           '';
