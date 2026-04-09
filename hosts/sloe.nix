@@ -27,6 +27,9 @@ in
       syncthing
       users-extra
       { hardware.facter.reportPath = ./facter/sloe.json; }
+      # TODO: Fix properly. Issue caused by using sdX I think.
+      # It changes the boot device by itself occasionally.
+      { disko.devices.disk.disk1.device = "/dev/sdc"; }
       {
         config = mkConfig inputs "sloe" "x86_64-linux" {
 
