@@ -14,9 +14,16 @@ PanelWindow {
     property bool isOpen: false
     property string searchText: ""
     property int selectedIndex: 0
-    property var filteredApps: []
     property var allApps: []
     property var screen: null
+    property Timer searchDebounce: Timer {
+        interval: 50
+        onTriggered: root.filterApps()
+    }
+
+    ListModel {
+        id: appModel
+    }
 
     visible: isOpen || launcherClip.implicitHeight > 0
     color: "transparent"
@@ -62,10 +69,11 @@ PanelWindow {
         for (var i = 0; i < entries.length; i++) {
             var app = entries[i];
             if (!app.noDisplay && !app.hidden) {
+                var iconName = app.icon || "application-x-executable";
                 apps.push({
                     name: app.name || "Unknown",
                     description: app.genericName || app.comment || "",
-                    icon: app.icon || "application-x-executable",
+                    iconPath: Quickshell.iconPath(iconName, true) || root.fallbackIcon,
                     command: app.command || [],
                     app: app
                 });
@@ -79,11 +87,12 @@ PanelWindow {
     }
 
     function filterApps() {
+        var results;
         if (!searchText || searchText.trim() === "") {
-            filteredApps = allApps.slice(0, 50);
+            results = allApps.slice(0, 50);
         } else {
             var query = searchText.toLowerCase();
-            var results = [];
+            results = [];
             for (var i = 0; i < allApps.length; i++) {
                 var app = allApps[i];
                 var name = (app.name || "").toLowerCase();
@@ -91,17 +100,22 @@ PanelWindow {
                 if (name.indexOf(query) !== -1 || desc.indexOf(query) !== -1) {
                     results.push(app);
                 }
+                if (results.length >= 50)
+                    break;
             }
-            filteredApps = results.slice(0, 50);
+        }
+
+        appModel.clear();
+        for (var j = 0; j < results.length; j++) {
+            appModel.append(results[j]);
         }
         selectedIndex = 0;
     }
 
-    onSearchTextChanged: filterApps()
-
     function launchSelected() {
-        if (filteredApps.length > 0 && filteredApps[selectedIndex]) {
-            var app = filteredApps[selectedIndex].app;
+        if (appModel.count > 0 && selectedIndex >= 0 && selectedIndex < appModel.count) {
+            var entry = appModel.get(selectedIndex);
+            var app = entry.app;
             if (app.execute) {
                 app.execute();
             } else if (app.command && app.command.length > 0) {
@@ -160,8 +174,10 @@ PanelWindow {
                         id: searchField
                         Layout.fillWidth: true
                         placeholderText: "Search applications..."
-                        text: root.searchText
-                        onTextChanged: root.searchText = text
+                        onTextChanged: {
+                            root.searchText = text;
+                            root.searchDebounce.restart();
+                        }
                         color: Common.Theme.text
                         placeholderTextColor: Common.Theme.textMuted
                         font.family: Common.Theme.font.sans.family
@@ -181,7 +197,7 @@ PanelWindow {
                             }
                         }
                         Keys.onDownPressed: {
-                            if (root.selectedIndex < root.filteredApps.length - 1) {
+                            if (root.selectedIndex < appModel.count - 1) {
                                 root.selectedIndex++;
                             }
                         }
@@ -206,7 +222,7 @@ PanelWindow {
                         id: appList
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        model: root.filteredApps
+                        model: appModel
                         clip: true
                         currentIndex: root.selectedIndex
                         onCurrentIndexChanged: {
@@ -236,9 +252,7 @@ PanelWindow {
                                 spacing: 8
 
                                 Image {
-                                    source: modelData.icon
-                                        ? (Quickshell.iconPath(modelData.icon, true) || root.fallbackIcon)
-                                        : root.fallbackIcon
+                                    source: model.iconPath || root.fallbackIcon
                                     Layout.preferredWidth: 32
                                     Layout.preferredHeight: 32
                                     sourceSize.width: 32
@@ -251,7 +265,7 @@ PanelWindow {
                                     spacing: 2
 
                                     Text {
-                                        text: modelData.name
+                                        text: model.name
                                         color: Common.Theme.text
                                         font.family: Common.Theme.font.sans.family
                                         font.pixelSize: 13
@@ -261,7 +275,7 @@ PanelWindow {
                                     }
 
                                     Text {
-                                        text: modelData.description || ""
+                                        text: model.description || ""
                                         visible: text !== ""
                                         color: Common.Theme.text
                                         font.family: Common.Theme.font.sans.family
@@ -287,12 +301,12 @@ PanelWindow {
 
                     Text {
                         Layout.fillWidth: true
-                        text: root.filteredApps.length + " applications"
+                        text: appModel.count + " applications"
                         color: Common.Theme.textMuted
                         font.family: Common.Theme.font.sans.family
                         font.pixelSize: 11
                         horizontalAlignment: Text.AlignRight
-                        visible: root.filteredApps.length > 0
+                        visible: appModel.count > 0
                     }
                 }
             }
