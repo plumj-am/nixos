@@ -89,6 +89,7 @@
             color20 = base04;
             color21 = base06;
 
+            map = [ "ctrl+shift+w no_op" ];
           };
         };
       };
