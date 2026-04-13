@@ -67,8 +67,18 @@ QtObject {
         removeFromHistory(index)
     }
 
+    function dismissById(id) {
+        for (var i = 0; i < historyModel.count; i++) {
+            if (historyModel.get(i).notificationData.id === id) {
+                removeFromHistory(i)
+                return
+            }
+        }
+    }
+
     function dismissAll() {
         historyModel.clear()
+        seenCount = 0
     }
 
     function invokeAction(notificationData, action) {

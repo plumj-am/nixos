@@ -54,7 +54,7 @@ PanelWindow {
                 onEntryComplete: root.markSeen(notification.id)
 
                 onDismissed: {
-                    NotificationServer.dismiss(notification);
+                    NotificationServer.dismissById(notification.id);
                     root.removeToast(notification);
                 }
 
