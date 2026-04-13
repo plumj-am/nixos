@@ -53,6 +53,36 @@ ShellRoot {
             property bool sessionOpen: false
             property bool controlCenterOpen: false
 
+            function toggleDrawer(name) {
+                if (name === "notif") {
+                    var wasOpen = notifOpen && !notifAutoOpened;
+                    notifOpen = !notifOpen;
+                    notifAutoOpened = false;
+                    mediaOpen = false;
+                    sessionOpen = false;
+                    controlCenterOpen = false;
+                    notifAutoCloseTimer.stop();
+                } else if (name === "media") {
+                    mediaOpen = !mediaOpen;
+                    notifOpen = false;
+                    notifAutoOpened = false;
+                    sessionOpen = false;
+                    controlCenterOpen = false;
+                } else if (name === "session") {
+                    sessionOpen = !sessionOpen;
+                    notifOpen = false;
+                    notifAutoOpened = false;
+                    mediaOpen = false;
+                    controlCenterOpen = false;
+                } else if (name === "controlCenter") {
+                    controlCenterOpen = !controlCenterOpen;
+                    notifOpen = false;
+                    notifAutoOpened = false;
+                    sessionOpen = false;
+                    mediaOpen = false;
+                }
+            }
+
             Timer {
                 id: notifAutoCloseTimer
                 onTriggered: {
@@ -102,32 +132,10 @@ ShellRoot {
                 y: window.topMargin
                 mediaDrawerOpen: window.mediaOpen
                 notifDrawerOpen: window.notifOpen
-                onNotificationClicked: {
-                    window.notifOpen = !window.notifOpen;
-                    window.notifAutoOpened = false;
-                    window.mediaOpen = false;
-                    window.sessionOpen = false;
-                    window.controlCenterOpen = false;
-                    notifAutoCloseTimer.stop();
-                }
-                onMediaClicked: {
-                    window.mediaOpen = !window.mediaOpen;
-                    window.notifOpen = false;
-                    window.sessionOpen = false;
-                    window.controlCenterOpen = false;
-                }
-                onSessionClicked: {
-                    window.sessionOpen = !window.sessionOpen;
-                    window.notifOpen = false;
-                    window.mediaOpen = false;
-                    window.controlCenterOpen = false;
-                }
-                onControlCenterClicked: {
-                    window.controlCenterOpen = !window.controlCenterOpen;
-                    window.notifOpen = false;
-                    window.sessionOpen = false;
-                    window.mediaOpen = false;
-                }
+                onNotificationClicked: window.toggleDrawer("notif")
+                onMediaClicked: window.toggleDrawer("media")
+                onSessionClicked: window.toggleDrawer("session")
+                onControlCenterClicked: window.toggleDrawer("controlCenter")
                 onThemeSwitchClicked: {
                     var cmd = Common.Theme.mode === "light" ? "dark" : "light";
                     Quickshell.execDetached({ command: ["tt", cmd, "--force"] });
@@ -174,11 +182,11 @@ ShellRoot {
                 z: -1
                 acceptedButtons: Qt.AllButtons
                 onClicked: function (mouse) {
-                    window.notifOpen = false;
-                    window.notifAutoOpened = false;
-                    window.mediaOpen = false;
-                    window.sessionOpen = false;
-                    window.controlCenterOpen = false;
+                    notifOpen = false;
+                    notifAutoOpened = false;
+                    mediaOpen = false;
+                    sessionOpen = false;
+                    controlCenterOpen = false;
                     notifAutoCloseTimer.stop();
                     Notifications.NotificationServer.markAllSeen();
                 }
@@ -188,11 +196,9 @@ ShellRoot {
                 target: Notifications.NotificationServer
                 function onNotificationReceived(notification) {
                     if (!window.notifOpen) {
+                        window.closeAllDrawers();
                         window.notifOpen = true;
                         window.notifAutoOpened = true;
-                        window.mediaOpen = false;
-                        window.sessionOpen = false;
-                        window.controlCenterOpen = false;
                     }
                     if (window.notifAutoOpened) {
                         var timeout = notification.expireTimeout > 0 ? notification.expireTimeout * 1000 : 8000;

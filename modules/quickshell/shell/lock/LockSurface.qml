@@ -241,12 +241,7 @@ WlSessionLockSurface {
     }
 
     function executeSessionAction(action) {
-        const cmds = {
-            "shutdown": ["systemctl", "poweroff"],
-            "reboot": ["systemctl", "reboot"],
-            "suspend": ["systemctl", "suspend"]
-        };
-        const cmd = cmds[action];
+        const cmd = Common.Utils.sessionCommand(action);
         if (cmd) {
             Quickshell.execDetached({ command: cmd });
         }

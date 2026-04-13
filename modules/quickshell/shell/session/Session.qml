@@ -137,17 +137,17 @@ Item {
     }
 
     function executeAction(action) {
-        var cmds = {
-            "shutdown": ["systemctl", "poweroff"],
-            "reboot": ["systemctl", "reboot"],
-            "suspend": ["systemctl", "suspend"],
-            "hibernate": ["systemctl", "hibernate"],
-            "logout": ["niri", "msg", "action", "quit"]
-        };
         if (action === "lock") {
             Quickshell.execDetached({ command: ["qs", "ipc", "call", "lock", "toggle"] });
         } else {
-            var cmd = cmds[action];
+            var cmd = Common.Utils.sessionCommand(action);
+            if (!cmd) {
+                var extras = {
+                    "hibernate": ["systemctl", "hibernate"],
+                    "logout": ["niri", "msg", "action", "quit"]
+                };
+                cmd = extras[action];
+            }
             if (cmd)
                 Quickshell.execDetached({ command: cmd });
         }

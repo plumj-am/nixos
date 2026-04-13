@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import "../common" as Common
+import "../common/widgets"
 
 PanelWindow {
     id: root
@@ -14,10 +15,6 @@ PanelWindow {
     property int selectedIndex: 0
     property var allEntries: []
     property var filteredEntries: []
-    property Timer searchDebounce: Timer {
-        interval: 50
-        onTriggered: root.filterEntries()
-    }
     property var screen: null
 
     visible: isOpen || clipboardClip.implicitHeight > 0
@@ -85,8 +82,6 @@ PanelWindow {
         }
         selectedIndex = 0;
     }
-
-    onSearchTextChanged: searchDebounce.restart()
 
     function selectEntry() {
         if (filteredEntries.length > 0 && filteredEntries[selectedIndex]) {
@@ -186,20 +181,13 @@ PanelWindow {
                     anchors.rightMargin: 12
                     spacing: 8
 
-                    TextField {
+                    SearchField {
                         id: searchField
                         Layout.fillWidth: true
                         placeholderText: "Search clipboard..."
-                        text: root.searchText
-                        onTextChanged: root.searchText = text
-                        color: Common.Theme.text
-                        placeholderTextColor: Common.Theme.textMuted
-                        font.family: Common.Theme.font.sans.family
-                        font.pixelSize: 14
-                        background: Rectangle {
-                            color: Common.Theme.background2
-                            radius: Common.Theme.radius.small
-                            border.color: searchField.activeFocus ? Common.Theme.background : Common.Theme.outline
+                        onSearchTriggered: function(query) {
+                            root.searchText = query;
+                            root.filterEntries();
                         }
 
                         Keys.onEscapePressed: root.isOpen = false
@@ -210,18 +198,6 @@ PanelWindow {
                         }
                         Keys.onDownPressed: {
                             if (root.selectedIndex < root.filteredEntries.length - 1) root.selectedIndex++;
-                        }
-                        Keys.onPressed: function (event) {
-                            if (event.key === Qt.Key_W && (event.modifiers & Qt.ControlModifier)) {
-                                event.accepted = true;
-                                var cursorPos = searchField.cursorPosition;
-                                var text = searchField.text;
-                                if (cursorPos === 0) return;
-                                var start = cursorPos - 1;
-                                while (start > 0 && text.charAt(start - 1) !== ' ') start--;
-                                searchField.text = text.substring(0, start) + text.substring(cursorPos);
-                                searchField.cursorPosition = start;
-                            }
                         }
                     }
 
