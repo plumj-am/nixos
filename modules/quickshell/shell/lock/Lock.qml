@@ -8,10 +8,9 @@ import "../common" as Common
 WlSessionLock {
     id: lock
 
-    property bool unlocking: false
-
     LockSurface {
         id: surface
+        pam: pam
     }
 
     PamContext {
@@ -21,20 +20,13 @@ WlSessionLock {
 
         onCompleted: function (result) {
             if (result === PamResult.Success) {
-                lock.unlocking = true;
                 lock.locked = false;
-                lock.unlocking = false;
             } else {
                 surface.clearInput();
                 surface.showError();
             }
         }
 
-        onPamMessage: {
-            if (responseRequired) {
-                surface.setPasswordPrompt();
-            }
-        }
     }
 
     IpcHandler {

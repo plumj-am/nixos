@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQml.Models
 import "../common" as Common
 import "."
 
@@ -58,20 +59,21 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: Math.min(350, notificationList.contentHeight)
         clip: true
-        model: NotificationServer.historyModel
-        spacing: Common.Theme.margin.small
+        model: DelegateModel {
+            model: NotificationServer.historyModel
+            filterOnAccepted: !root.popupMode || DelegateModel.items.index < NotificationServer.unreadCount
 
-        delegate: NotificationItem {
-            width: notificationList.width
-            notification: model.notificationData
-            maxWidth: width
-            notificationIndex: index
-            visible: !root.popupMode || index < NotificationServer.unreadCount
-            height: visible ? implicitHeight : 0
+            delegate: NotificationItem {
+                width: notificationList.width
+                notification: model.notificationData
+                maxWidth: width
+                notificationIndex: index
 
-            onDismissed: NotificationServer.dismiss(notificationIndex)
-            onActionTriggered: function(action) { NotificationServer.invokeAction(notification, action) }
+                onDismissed: NotificationServer.dismiss(notificationIndex)
+                onActionTriggered: function(action) { NotificationServer.invokeAction(notification, action) }
+            }
         }
+        spacing: Common.Theme.margin.small
     }
 
     Text {

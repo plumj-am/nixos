@@ -10,6 +10,8 @@ import "../common" as Common
 WlSessionLockSurface {
     id: root
 
+    required property var pam
+
     // Exposed for Lock.qml to call
     function clearInput() {
         passwordField.text = "";
@@ -20,10 +22,6 @@ WlSessionLockSurface {
         errorText.visible = true;
         shakeAnim.running = true;
         errorTimer.restart();
-    }
-
-    function setPasswordPrompt() {
-        // PAM is ready for input
     }
 
     function submitPassword() {

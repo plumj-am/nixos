@@ -83,8 +83,11 @@ QtObject {
 
     function invokeAction(notificationData, action) {
         var tracked = server.trackedNotifications.values.find(function(n) { return n.id === notificationData.id })
-        if (tracked && action && action.invoke) {
-            action.invoke()
+        if (tracked && action) {
+            var trackedAction = action.invoke ? action : tracked.actions.find(function(a) { return a.identifier === action.identifier })
+            if (trackedAction && trackedAction.invoke) {
+                trackedAction.invoke()
+            }
         }
     }
 

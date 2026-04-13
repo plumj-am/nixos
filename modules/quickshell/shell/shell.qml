@@ -196,9 +196,11 @@ ShellRoot {
                 target: Notifications.NotificationServer
                 function onNotificationReceived(notification) {
                     if (!window.notifOpen) {
-                        window.closeAllDrawers();
-                        window.notifOpen = true;
-                        window.notifAutoOpened = true;
+                        notifOpen = true;
+                        notifAutoOpened = true;
+                        mediaOpen = false;
+                        sessionOpen = false;
+                        controlCenterOpen = false;
                     }
                     if (window.notifAutoOpened) {
                         var timeout = notification.expireTimeout > 0 ? notification.expireTimeout * 1000 : 8000;
