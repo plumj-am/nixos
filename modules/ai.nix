@@ -130,8 +130,8 @@ in
             value = {
               theme = "gruvbox";
               autoupdate = false;
-              model = "zai-coding-plan/glm-5.1";
-              small_model = "zai-coding-plan/glm-4.7-flash";
+              model = "opencode-go/minimax-m2.7";
+              small_model = "opencode-go/minimax-m2.5";
 
               permission = {
                 "*" = "ask";
@@ -159,18 +159,18 @@ in
               agent = {
                 build = {
                   mode = "primary";
-                  model = "zai-coding-plan/glm-5.1";
+                  model = "opencode-go/minimax-m2.7";
                 };
 
                 researcher = {
                   mode = "primary";
-                  model = "zai-coding-plan/glm-5.1";
+                  model = "opencode-go/minimax-m2.7";
                   description = "Read-only research primarily using the web";
                 };
 
                 explore = {
                   mode = "subagent";
-                  model = "zai-coding-plan/glm-4.7-flash";
+                  model = "opencode-go/minimax-m2.7";
                 };
               };
 
@@ -213,43 +213,6 @@ in
                 };
               };
 
-              provider.zai-coding-plan = {
-                options.timeout = 600000;
-                models =
-                  let
-                    inherit (lib.attrsets) genAttrs;
-                    inherit (lib) elem;
-
-                    models = [
-                      "glm-5.1"
-                      "glm-5"
-                      "glm-5-turbo"
-                      "glm-4.7"
-                      "glm-4.7-flashx"
-                      "glm-4.7-flash"
-                      "glm-4.6"
-                      "glm-4.5"
-                      "glm-4.5-x"
-                      "glm-4.5-air"
-                      "glm-4.5-airx"
-                      "glm-4.5-flash"
-                    ];
-
-                    supportsToolStreaming = [
-                      "glm-5.1"
-                      "glm-5"
-                      "glm-5-turbo"
-                    ];
-                  in
-                  genAttrs models (name: {
-                    options = {
-                      tool_stream = elem name supportsToolStreaming;
-                      stream = true;
-                      thinking.type = "enabled";
-                    };
-                  });
-              };
-
               mcp = {
                 context7 = {
                   type = "remote";
@@ -262,30 +225,6 @@ in
                 gh_grep = {
                   type = "remote";
                   url = "https://mcp.grep.app";
-                };
-
-                web-reader = {
-                  type = "remote";
-                  url = "https://api.z.ai/api/mcp/web_reader/mcp";
-                  headers = {
-                    Authorization = "Bearer {file:${secrets.zaiKey.path}}";
-                  };
-                };
-
-                web-search-prime = {
-                  type = "remote";
-                  url = "https://api.z.ai/api/mcp/web_search_prime/mcp";
-                  headers = {
-                    Authorization = "Bearer {file:${secrets.zaiKey.path}}";
-                  };
-                };
-
-                zread = {
-                  type = "remote";
-                  url = "https://api.z.ai/api/mcp/zread/mcp";
-                  headers = {
-                    Authorization = "Bearer {file:${secrets.zaiKey.path}}";
-                  };
                 };
 
                 nixos = {
@@ -306,6 +245,7 @@ in
 
   flake.modules.common.claude-code =
     {
+      inputs,
       pkgs,
       lib,
       ...
@@ -318,6 +258,10 @@ in
       inherit (lib.trivial) const;
     in
     {
+      # LiteLLM necessary to use OpenCode Go with Claude Code.
+      # Importing here so it's included by default because otherwise Claude Code simply won't work.
+      imports = singleton inputs.self.modules.common.litellm;
+
       # THANK YOU FOR THIS ENTIRE THING!!
       # Xitter: @HSVSphere
       # Source: <https://github.com/RGBCube/ncc/blob/dentride/modules/slop.mod.nix>
@@ -372,17 +316,14 @@ in
                   };
                 };
 
-                model = "opus";
-
                 env = {
-                  # For z.ai coding plan.
-                  ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic";
+                  ANTHROPIC_BASE_URL = "http://localhost:4000";
                   API_TIMEOUT_MS = "3000000";
-                  ANTHROPIC_MODEL = "glm-5.1";
-                  ANTHROPIC_SMALL_FAST_MODEL = "glm-4.7-flash";
-                  CLAUDE_CODE_SUBAGENT_MODEL = "glm-5.1";
-                  ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.7-flash";
-                  ANTHROPIC_DEFAULT_SONNET_MODEL = "glm-5-turbo";
+                  ANTHROPIC_MODEL = "minimax-m2.7";
+                  ANTHROPIC_SMALL_FAST_MODEL = "minimax-m2.5";
+                  CLAUDE_CODE_SUBAGENT_MODEL = "minimax-m2.5";
+                  ANTHROPIC_DEFAULT_HAIKU_MODEL = "minimax-m2.5";
+                  ANTHROPIC_DEFAULT_SONNET_MODEL = "minimax-m2.7";
                   ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-5.1";
 
                   CLAUDE_BASH_NO_LOGIN = "1";
@@ -470,9 +411,6 @@ in
               ''
                 #!/usr/bin/env nu
                 try { claude mcp add -s user -t http context7 https://mcp.context7.com/mcp --header $"CONTEXT7_API_KEY: (cat ${secrets.context7Key.path})" }
-                try { claude mcp add -s user -t http web-reader https://api.z.ai/api/mcp/web_reader/mcp --header $"Authorization: Bearer (cat ${secrets.zaiKey.path})" }
-                try { claude mcp add -s user -t http web-search-prime https://api.z.ai/api/mcp/web_search_prime/mcp --header $"Authorization: Bearer (cat ${secrets.zaiKey.path})" }
-                try { claude mcp add -s user -t http zread https://api.z.ai/api/mcp/zread/mcp --header $"Authorization: Bearer (cat ${secrets.zaiKey.path})" }
               '';
             executable = true;
           };
@@ -825,7 +763,7 @@ in
                 postBuild = ''
                   wrapProgram $out/bin/claude \
                     --add-flags "--allow-dangerously-skip-permissions" \
-                    --run 'export ANTHROPIC_AUTH_TOKEN="$(cat ${secrets.zaiKey.path})"'
+                    --set ANTHROPIC_AUTH_TOKEN "dummy"
                 '';
               })
 
@@ -836,6 +774,123 @@ in
               pkgs.bubblewrap
             ];
         };
+    };
+
+  flake.modules.common.litellm =
+    { lib, config, ... }:
+    let
+      inherit (lib.modules) mkForce;
+      inherit (lib.lists) map;
+      inherit (config.age) secrets;
+
+      mkModel =
+        {
+          modelName,
+          modelFull,
+          stream,
+          needsV1,
+        }:
+        {
+          model_name = modelName;
+          litellm_params = {
+            model = modelFull;
+            api_base = if needsV1 then "https://opencode.ai/zen/go/v1" else "https://opencode.ai/zen/go";
+            api_key = "os.environ/OPENCODE_GO_KEY";
+            drop_params = true;
+            inherit stream;
+          };
+        };
+
+      models = [
+        {
+          modelName = "minimax-m2.7";
+          modelFull = "minimax/minimax-m2.7";
+          stream = true;
+          needsV1 = false;
+        }
+        {
+          modelName = "minimax-m2.5";
+          modelFull = "minimax/minimax-m2.5";
+          stream = true;
+          needsV1 = false;
+        }
+
+        {
+          modelName = "glm-5.1";
+          modelFull = "zai/glm-5.1";
+          stream = true;
+          needsV1 = true;
+        }
+        {
+          modelName = "glm-5";
+          modelFull = "zai/glm-5";
+          stream = true;
+          needsV1 = true;
+        }
+        {
+          modelName = "kimi-k2.5";
+          modelFull = "moonshot/kimi-k2.5";
+          stream = false;
+          needsV1 = true;
+        }
+        {
+          modelName = "mimo-v2-pro";
+          modelFull = "openai/mimo-v2-pro";
+          stream = true;
+          needsV1 = true;
+        }
+        {
+          modelName = "mimo-v2-omni";
+          modelFull = "openai/mimo-v2-omni";
+          stream = true;
+          needsV1 = true;
+        }
+
+      ];
+    in
+    {
+      age.secrets.opencodeGoEnvironment = {
+        rekeyFile = ../secrets/opencode-go-environment.age;
+        owner = "litellm";
+        group = "litellm";
+        mode = "600";
+      };
+
+      users.users.litellm = {
+        group = "litellm";
+        isSystemUser = true;
+      };
+      users.groups.litellm = { };
+
+      systemd.services.litellm.serviceConfig.DynamicUser = mkForce false;
+
+      services.litellm = {
+        enable = true;
+        port = 4000;
+
+        environmentFile = secrets.opencodeGoEnvironment.path;
+
+        environment = {
+          SCARF_NO_ANALYTICS = "True";
+          DO_NOT_TRACK = "True";
+          ANONYMIZED_TELEMETRY = "False";
+        };
+
+        settings = {
+          model_list = map mkModel models;
+
+          litellm_settings = {
+            drop_params = true;
+            telemetry = false;
+          };
+
+          general_settings = {
+            disable_spend_logs = true;
+            disable_master_key_return = true;
+            store_model_in_db = false;
+          };
+        };
+      };
     };
 
   flake.modules.common.ai-extra =

@@ -213,11 +213,6 @@ in
             owner = "jam";
             mode = "400";
           };
-          zaiKey = {
-            rekeyFile = ../secrets/z-ai-key.age;
-            owner = "jam";
-            mode = "400";
-          };
         }
         // optionalAttrs isLinux {
           password.rekeyFile = ../secrets/${host}-password.age;
