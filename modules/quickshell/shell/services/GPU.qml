@@ -32,7 +32,7 @@ Item {
     }
 
     Timer {
-        interval: 2000
+        interval: Config.data.gpu?.updateInterval ?? 2000
         running: true
         repeat: true
         triggeredOnStart: true

@@ -33,6 +33,9 @@ QtObject {
         },
         disk: {
             updateInterval: 60000
+        },
+        gpu: {
+            updateInterval: 2000
         }
     })
 }
