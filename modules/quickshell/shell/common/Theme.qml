@@ -73,6 +73,7 @@ QtObject {
             big: 8
         })
     readonly property var border: ({
+            tiny: 1,
             small: 2,
             normal: 4
         })

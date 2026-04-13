@@ -52,7 +52,7 @@ Item {
 
     function setBrightness(value) {
         if (!available) return
-        setProc.command = ["brightnessctl", "set", Math.round(value)]
+        setProc.command = ["brightnessctl", "set", Math.round(value * root.maxBrightness)]
         setProc.running = true
     }
 
