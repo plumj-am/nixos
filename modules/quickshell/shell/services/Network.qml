@@ -68,14 +68,6 @@ Item {
         onTriggered: updateRates()
     }
 
-    Timer {
-        interval: Config.data.network?.updateInterval ?? 5000
-        running: true
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: updateInfo()
-    }
-
     function setActiveInterface(name, type) {
         if (name === activeInterface && type === networkType) return
         activeInterface = name
@@ -96,7 +88,4 @@ Item {
         prevRx = rx
     }
 
-    function updateInfo() {
-        if (activeInterface) lanIPProc.running = true
-    }
 }

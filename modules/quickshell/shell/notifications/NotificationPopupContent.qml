@@ -65,8 +65,6 @@ ColumnLayout {
             width: notificationList.width
             notification: model.notificationData
             maxWidth: width
-            showActions: true
-            showDismiss: true
             notificationIndex: index
             visible: !root.popupMode || index < NotificationServer.unreadCount
             height: visible ? implicitHeight : 0

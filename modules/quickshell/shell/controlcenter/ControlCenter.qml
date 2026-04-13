@@ -75,6 +75,7 @@ Item {
             Local.BrightnessSlider {
                 id: brightnessSlider
                 Layout.fillWidth: true
+                active: root.open
             }
 
             Rectangle {

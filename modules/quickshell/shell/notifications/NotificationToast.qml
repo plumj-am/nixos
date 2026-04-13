@@ -87,8 +87,6 @@ Rectangle {
         id: notificationItem
         anchors.fill: parent
         notification: root.notification
-        showActions: true
-        showDismiss: true
 
         onDismissed: root.dismiss()
         onActionTriggered: action => {

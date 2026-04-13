@@ -14,6 +14,10 @@ PanelWindow {
     property int selectedIndex: 0
     property var allEntries: []
     property var filteredEntries: []
+    property Timer searchDebounce: Timer {
+        interval: 50
+        onTriggered: root.filterEntries()
+    }
     property var screen: null
 
     visible: isOpen || clipboardClip.implicitHeight > 0
@@ -82,7 +86,7 @@ PanelWindow {
         selectedIndex = 0;
     }
 
-    onSearchTextChanged: filterEntries()
+    onSearchTextChanged: searchDebounce.restart()
 
     function selectEntry() {
         if (filteredEntries.length > 0 && filteredEntries[selectedIndex]) {

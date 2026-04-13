@@ -17,11 +17,12 @@ Item {
     readonly property bool canGoPrevious: activePlayer?.canGoPrevious ?? false
     readonly property real position: activePlayer?.position ?? 0
     readonly property real length: activePlayer?.length ?? 1
+    property bool positionTrackingEnabled: false
     readonly property string identity: activePlayer?.identity ?? ""
 
     // Keep position updating while playing
     property Timer _posUpdater: Timer {
-        running: root.activePlayer?.playbackState === MprisPlaybackState.Playing
+        running: root.isPlaying && root.positionTrackingEnabled
         interval: 1000
         repeat: true
         onTriggered: {

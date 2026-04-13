@@ -10,6 +10,7 @@ Item {
     property real brightness: 0.0
     property bool available: false
     property int maxBrightness: 1
+    property bool active: false
 
     Process {
         id: getProc
@@ -40,6 +41,7 @@ Item {
 
     Timer {
         id: pollTimer
+        running: root.active
         interval: 2000
         repeat: true
         onTriggered: getProc.running = true
@@ -47,7 +49,6 @@ Item {
 
     Component.onCompleted: {
         getProc.running = true
-        pollTimer.start()
     }
 
     function setBrightness(value) {

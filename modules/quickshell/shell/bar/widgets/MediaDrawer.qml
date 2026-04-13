@@ -8,6 +8,12 @@ Item {
 
     property bool open: false
 
+    Binding {
+        target: Mpris
+        property: "positionTrackingEnabled"
+        value: root.open
+    }
+
     implicitWidth: 340
     implicitHeight: open ? contentColumn.implicitHeight + 24 : 0
     visible: implicitHeight > 0
