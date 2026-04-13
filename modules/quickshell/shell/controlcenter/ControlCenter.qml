@@ -3,7 +3,6 @@ import QtQuick.Layouts
 import Quickshell.Services.Pipewire
 import "." as Local
 import "../common" as Common
-import "../services" as Services
 
 Item {
     id: root

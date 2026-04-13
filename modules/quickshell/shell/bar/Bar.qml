@@ -9,9 +9,9 @@ Item {
     id: root
 
     property int barSize: Config.data.bar.size
+    property bool mediaDrawerOpen: false
+    property bool notifDrawerOpen: false
     readonly property color barColor: Theme.background
-    readonly property color textColor: Theme.text
-    readonly property color outlineColor: Theme.outline
 
     signal notificationClicked
     signal mediaClicked
@@ -49,6 +49,7 @@ Item {
 
                     Media {
                         Layout.alignment: Qt.AlignVCenter
+                        drawerOpen: root.mediaDrawerOpen
                         onClicked: root.mediaClicked()
                     }
                 }
@@ -108,6 +109,7 @@ Item {
                     }
                     NotificationWidget {
                         Layout.alignment: Qt.AlignVCenter
+                        drawerOpen: root.notifDrawerOpen
                         onClicked: root.notificationClicked()
                     }
                     Clock {

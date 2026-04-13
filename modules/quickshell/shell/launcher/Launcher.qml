@@ -3,7 +3,6 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
-import Quickshell.Widgets
 import "../common" as Common
 
 PanelWindow {
@@ -44,7 +43,6 @@ PanelWindow {
     readonly property int launcherWidth: 500
     readonly property int launcherHeight: 440
     readonly property int itemHeight: 48
-    readonly property int maxVisibleItems: 8
 
     Component.onCompleted: loadApps()
 

@@ -34,7 +34,6 @@ PanelWindow {
     readonly property int clipboardWidth: 500
     readonly property int clipboardHeight: 440
     readonly property int itemHeight: 40
-    readonly property int maxVisibleItems: 8
 
     onIsOpenChanged: {
         if (isOpen) {

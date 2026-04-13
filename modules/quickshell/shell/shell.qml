@@ -100,6 +100,8 @@ ShellRoot {
             Bar {
                 id: bar
                 y: window.topMargin
+                mediaDrawerOpen: window.mediaOpen
+                notifDrawerOpen: window.notifOpen
                 onNotificationClicked: {
                     window.notifOpen = !window.notifOpen;
                     window.notifAutoOpened = false;
@@ -228,7 +230,7 @@ ShellRoot {
 
     Loader {
         id: toastManagerLoader
-        active: false
+        active: true
         source: "notifications/ToastManager.qml"
     }
 
@@ -269,9 +271,6 @@ ShellRoot {
         target: Services.Niri
         function onLauncherToggleRequested() {
             toggleLauncher();
-        }
-        function onClipboardToggleRequested() {
-            toggleClipboard();
         }
     }
 

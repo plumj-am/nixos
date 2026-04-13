@@ -8,7 +8,6 @@ QtObject {
     readonly property int cornerTopRight: 1
     readonly property int networkWired: 0
     readonly property int networkWireless: 1
-    readonly property int networkVirtual: 2
 
     function stringToPosition(str) {
         return str === "bottom" ? positionBottom : positionTop;
@@ -19,8 +18,6 @@ QtObject {
             return "wired";
         if (value === networkWireless)
             return "wireless";
-        if (value === networkVirtual)
-            return "virtual";
         return "unknown";
     }
 }

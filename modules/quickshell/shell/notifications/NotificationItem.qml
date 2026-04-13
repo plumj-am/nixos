@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Widgets
 import "../common" as Common
 
 Rectangle {
@@ -9,8 +8,6 @@ Rectangle {
 
     property var notification: null
     property int notificationIndex: -1
-    property bool showActions: true
-    property bool showDismiss: true
     property int maxWidth: 420
 
     signal dismissed()
@@ -96,7 +93,7 @@ Rectangle {
                 Layout.preferredHeight: 20
                 color: dismissMouseArea.containsMouse ? Common.Theme.surfaceContainer : "transparent"
                 radius: Common.Theme.radius.small
-                visible: root.showDismiss
+                visible: true
 
                 Text {
                     anchors.centerIn: parent
@@ -142,7 +139,7 @@ Rectangle {
         RowLayout {
             Layout.fillWidth: true
             spacing: Common.Theme.margin.small
-            visible: root.showActions && notification?.actions !== undefined && notification?.actions?.length > 0
+            visible: notification?.actions !== undefined && notification?.actions?.length > 0
 
             Repeater {
                 model: notification?.actions || []
