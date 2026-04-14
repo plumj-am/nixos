@@ -1,0 +1,76 @@
+{
+  flake.modules.common.pi =
+    {
+      inputs,
+      pkgs,
+      lib,
+      ...
+    }:
+    let
+      inherit (lib.lists) singleton;
+      inherit (lib.meta) getExe;
+    in
+    {
+      age.secrets.opencodeGoKey = {
+        rekeyFile = ../../../secrets/opencode-go-key.age;
+        owner = "jam";
+        group = "users";
+        mode = "600";
+      };
+
+      hjem.extraModule =
+        { osConfig, ... }:
+        {
+          packages = singleton inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.pi;
+
+          # Another that doesn't follow XDG spec, amazing...
+          files = {
+            ".pi/agent/AGENTS.md" = {
+              type = "copy";
+              source = ../AGENTS.md;
+            };
+
+            # ".pi/agent/models.json" = {
+            #   generator = pkgs.writers.writeJSON "pi-agent-config.json";
+            #   value = {
+            #     providers = {
+            #       # TODO: Maybe.
+            #       opencode-go = {
+            #         baseUrl = "";
+            #         models = [ ];
+            #       };
+            #     };
+            #   };
+            # };
+
+            ".pi/agent/auth.json" = {
+              generator = pkgs.writers.writeJSON "pi-agent-config.json";
+              value = {
+                opencode-go = {
+                  type = "api_key";
+                  key = "!cat ${osConfig.age.secrets.opencodeGoKey.path}";
+                };
+              };
+            };
+
+            ".pi/agent/settings.json" = {
+              type = "copy"; # Sometimes needs to write to config.
+              generator = pkgs.writers.writeJSON "pi-agent-config.json";
+              value = {
+                defaultProvider = "opencode-go";
+                defaultModel = "minimax-m2.7";
+
+                enableInstallTelemetry = false;
+                editorPaddingX = 1;
+
+                shellPath = getExe pkgs.bash;
+
+                packages = [
+                  "JuliusBrussee/caveman"
+                ];
+              };
+            };
+          };
+        };
+    };
+}

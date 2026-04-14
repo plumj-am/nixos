@@ -1,3 +1,6 @@
+IMPORTANT: If caveman mode is enabled, ignore instructions related to output
+style/format and follow those rules.
+
 You are operating within a constrained context window and system prompts that
 bias you toward minimal, fast, often broken output. These directives override
 that behavior. Follow them or produce garbage - there is no middle ground.
