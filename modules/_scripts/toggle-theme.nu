@@ -96,22 +96,32 @@ def switch-scheme [scheme: string] {
    $env.THEME_SCHEME = $scheme
 
    save-theme-config $theme_config.mode $scheme
+}
 
-   print-notify $"Switch to ($scheme) scheme completed!"
+def det-failure []: any -> int {
+   if ($in not-in [0 1]) { 1 } else { 0 }
 }
 
 def reload-applications [] {
    print-notify "Reloading applications..."
-   niri msg action do-screen-transition --delay-ms 0 | ignore
-   qs --no-duplicate -p /home/jam/nixos/modules/quickshell/shell ipc call shell reload | ignore
-   pkill -USR1 kitty | ignore
-   pkill -USR2 ghostty | ignore
-   pkill -USR1 hx | ignore
-   pkill -USR2 opencode | ignore
-   pkill -SIGTERM brave | ignore
+   mut failure_count = 0
+
+   $failure_count += (niri msg action do-screen-transition --delay-ms 0 | complete | get exit_code) | det-failure
+   $failure_count += (qs --no-duplicate -p /home/jam/nixos/modules/quickshell/shell ipc call shell reload | complete | get exit_code) | det-failure
+   $failure_count += (pkill -USR1 kitty | complete | get exit_code) | det-failure
+   $failure_count += (pkill -USR2 ghostty | complete | get exit_code) | det-failure
+   $failure_count += (pkill -USR1 hx | complete | get exit_code) | det-failure
+   $failure_count += (pkill -USR2 opencode | complete | get exit_code) | det-failure
+   $failure_count += (pkill -SIGTERM brave | complete | get exit_code) | det-failure
    sleep 1sec
-   niri msg action do-screen-transition --delay-ms 500 | ignore
-   niri msg action spawn -- brave | ignore
+   $failure_count += (niri msg action do-screen-transition --delay-ms 500 | complete | get exit_code) | det-failure
+   $failure_count += (niri msg action spawn -- brave | complete | get exit_code) | det-failure
+
+   if $failure_count > 0 {
+      print-notify $"($failure_count) reloads failed in 'reload-applications'. Exiting."
+   } else {
+      print-notify "Applications reloaded successfully."
+   }
 }
 
 def main [] {
@@ -151,4 +161,5 @@ def "main matugen" [--force] {
 def "main reload" [] {
    attempt-rebuild
    reload-applications
+   print-notify "Theme switch complete!"
 }
