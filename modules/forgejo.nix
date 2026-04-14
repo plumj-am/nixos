@@ -143,6 +143,64 @@
           };
       };
 
+      age.secrets = {
+        renovateBotToken = {
+          rekeyFile = ../secrets/renovate-bot-token.age;
+          owner = "renovate";
+          group = "renovate";
+          mode = "600";
+        };
+        renovateGitHubToken = {
+          rekeyFile = ../secrets/renovate-github-token.age;
+          owner = "renovate";
+          group = "renovate";
+          mode = "600";
+        };
+        renovateSigningKey = {
+          rekeyFile = ../secrets/renovate-signing-key.age;
+          owner = "renovate";
+          group = "renovate";
+          mode = "600";
+        };
+        renovateSigningKeyPub = {
+          rekeyFile = ../secrets/renovate-signing-key-pub.age;
+          owner = "renovate";
+          group = "renovate";
+          mode = "600";
+        };
+      };
+
+      users.users.renovate = {
+        isSystemUser = true;
+        group = "renovate";
+      };
+      users.groups.renovate = { };
+
+      systemd.services.renovate.serviceConfig.DynamicUser = mkForce false;
+      services.renovate = {
+        enable = true;
+        runtimePackages = [
+          pkgs.cargo # I don't think it not being nightly matters here.
+          pkgs.openssh # For ssh-keygen.
+        ];
+        schedule = "hourly";
+        settings = {
+          platform = "forgejo";
+          endpoint = "https://git.plumj.am";
+          autodiscover = true;
+          autodiscoverFilter = [ "PlumJam/docpad" ];
+          onboardingPrTitle = "renovate: Configure";
+          configFileNames = [ ".forgejo/renovate.json" ];
+          productLinks = { };
+        };
+
+        credentials = {
+          RENOVATE_TOKEN = config.age.secrets.renovateBotToken.path;
+          RENOVATE_GITHUB_COM_TOKEN = config.age.secrets.renovateGitHubToken.path;
+          RENOVATE_GIT_PRIVATE_KEY = config.age.secrets.renovateSigningKey.path;
+        };
+      };
+
       services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
         extraConfig = ''
           ${config.services.nginx.goatCounterTemplate}
