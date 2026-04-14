@@ -107,9 +107,12 @@
                 ];
               };
             };
+            # Yes, I could just `".pi/agent/extensions".source = ./extensions`
+            # but this way I can add and remove easily.
             ".pi/agent/extensions/system-theme.ts".source = ./extensions/system-theme.ts;
             ".pi/agent/extensions/permissions.ts".source = ./extensions/permissions.ts;
             ".pi/agent/extensions/plan-mode.ts".source = ./extensions/plan-mode.ts;
+            ".pi/agent/extensions/read-only-mode.ts".source = ./extensions/read-only-mode.ts;
             ".pi/agent/extensions/zellij-attention.ts".source = ./extensions/zellij-attention.ts;
             ".pi/agent/extensions/caveman.ts".source = ./extensions/caveman.ts;
 
