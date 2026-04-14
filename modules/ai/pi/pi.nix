@@ -31,11 +31,35 @@
             };
 
             ".pi/agent/auth.json" = {
-              generator = pkgs.writers.writeJSON "pi-agent-config.json";
+              generator = pkgs.writers.writeJSON "pi-agent-auth.json";
               value = {
                 opencode-go = {
                   type = "api_key";
                   key = "!cat ${osConfig.age.secrets.opencodeGoKey.path}";
+                };
+              };
+            };
+
+            ".pi/agent/mcp.json" = {
+              generator = pkgs.writers.writeJSON "pi-agent-mcp.json";
+              value = {
+                mcpServers = {
+                  context7 = {
+                    url = "https://mcp.context7.com/mcp/oauth";
+                  };
+
+                  gh_grep = {
+                    url = "https://mcp.grep.app";
+                  };
+
+                  nixos = {
+                    command = "${getExe pkgs.nix}";
+                    args = [
+                      "run"
+                      "github:utensils/mcp-nixos"
+                      "--"
+                    ];
+                  };
                 };
               };
             };
@@ -61,6 +85,7 @@
                   "git:github.com/nicobailon/pi-subagents"
                   "git:github.com/nicobailon/pi-interview-tool"
                   "git:github.com/nicobailon/pi-web-access"
+                  "git:github.com/nicobailon/pi-mcp-adapter"
                   {
                     source = "git:github.com/mitsuhiko/agent-stuff";
                     extensions = [
