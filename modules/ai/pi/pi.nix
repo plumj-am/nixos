@@ -58,7 +58,26 @@
                 shellPath = getExe pkgs.bash;
 
                 packages = [
-                  "JuliusBrussee/caveman"
+                  "git:github.com/nicobailon/pi-subagents"
+                  "git:github.com/nicobailon/pi-interview-tool"
+                  "git:github.com/nicobailon/pi-web-access"
+                  {
+                    source = "git:github.com/mitsuhiko/agent-stuff";
+                    extensions = [
+                      "!apple-mail"
+                      "!control"
+                      "!go-to-bed"
+                      "!split-fork"
+                      "!uv"
+                    ];
+                    themes = [ ];
+                    skills = [ ];
+                  }
+                  {
+                    source = "git:github.com/hjanuschka/shitty-extensions";
+                    extensions = [ ];
+                    skills = [ ];
+                  }
                 ];
               };
             };
