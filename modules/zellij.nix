@@ -131,9 +131,19 @@
                         }
                       }
 
+                      move {
+                        bind "n" { MovePane; }
+                        bind "p" { MovePaneBackwards; }
+                        bind "h" { MovePane "Left"; }
+                        bind "j" { MovePane "Down"; }
+                        bind "k" { MovePane "Up"; }
+                        bind "l" { MovePane "Right"; }
+                      }
+
                       pane {
                         bind "d" { NewPane "Down"; SwitchToMode "locked"; }
                         bind "r" { NewPane "Right"; SwitchToMode "locked"; }
+                        bind "n" { NewPane "Stacked"; SwitchToMode "locked"; }
                         bind "x" { CloseFocus; }
                         bind "f" { ToggleFocusFullscreen; }
                         bind "w" { ToggleFloatingPanes; }
@@ -148,6 +158,8 @@
                         bind "l" { MoveTab "Right"; }
                         bind "n" { NewTab; }
                         bind "x" { CloseTab; }
+                        bind "r" { SwitchToMode "renametab"; }
+                        bind "p" { SwitchToMode "renamepane"; }
                       }
 
                       resize {
@@ -183,12 +195,20 @@
                         bind "Ctrl w" { SwitchToMode "pane"; }
                       }
 
+                      shared_except "move" "locked" {
+                        bind "Ctrl m" { SwitchToMode "move"; }
+                      }
+
                       shared_except "tab" "locked" {
                         bind "Ctrl t" { SwitchToMode "tab"; }
                       }
 
                       shared_except "resize" "locked" {
                         bind "Ctrl r" { SwitchToMode "resize"; }
+                      }
+
+                      shared_except "entersearch" "locked" {
+                        bind "/" { SwitchToMode "entersearch"; }
                       }
 
                       shared_except "scroll" "locked" {
