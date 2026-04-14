@@ -245,14 +245,11 @@ in
 
   flake.modules.common.claude-code =
     {
-      inputs,
       pkgs,
       lib,
-      config,
       ...
     }:
     let
-      inherit (lib.modules) mkIf;
       inherit (lib.lists) singleton optionals;
       inherit (lib.attrsets) genAttrs;
       inherit (lib.meta) getExe;
