@@ -22,7 +22,7 @@
 
               signing.key = "${config.directory}/.ssh/id";
               signing.backend = "ssh";
-              signing.behavior = "own";
+              signing.behavior = "drop";
 
               ui.conflict-marker-style = "snapshot";
               ui.default-command = "lg";
