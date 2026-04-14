@@ -11,6 +11,20 @@
       inherit (lib.lists) singleton;
       inherit (config) theme;
     in
+    let
+      # This is probably ass, I just asked the slop machine to do it and it works lol.
+      # https://github.com/zellij-org/zellij/pull/5049
+      zellij-patched = pkgs.zellij.overrideAttrs (oldAttrs: {
+        postPatch = (oldAttrs.postPatch or "") + ''
+          patch -p1 < ${
+            pkgs.fetchurl {
+              url = "https://github.com/zellij-org/zellij/pull/5049.diff";
+              hash = "sha256-qkC9if+TCWE8jLqRcfrALcvxE773N3KqWzDIY8jBb+A=";
+            }
+          }
+        '';
+      });
+    in
     {
       shellAliases = {
         "zellij-ide" = "zellij --layout ~/.config/zellij/layouts/ide.kdl";
@@ -20,7 +34,7 @@
       hjem.extraModule =
         { osConfig, config, ... }:
         {
-          packages = singleton pkgs.zellij;
+          packages = singleton zellij-patched;
 
           xdg.config.files = {
             "zellij/config.kdl".text =
