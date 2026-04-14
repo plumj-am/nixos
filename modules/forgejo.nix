@@ -183,7 +183,7 @@
           pkgs.cargo # I don't think it not being nightly matters here.
           pkgs.openssh # For ssh-keygen.
         ];
-        schedule = "hourly";
+        schedule = "*:0/10";
         settings = {
           platform = "forgejo";
           endpoint = "https://git.plumj.am";
