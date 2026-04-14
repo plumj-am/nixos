@@ -40,6 +40,7 @@ in
       packages-extra-gui
       packages-extra-cli
       peripherals
+      pi
       pijul
       process-management
       quickshell

@@ -44,6 +44,10 @@
       url = "github:homebrew/homebrew-cask";
       flake = false;
     };
+    llm-agents = {
+      url = "github:numtide/llm-agents.nix";
+      inputs.nixpkgs.follows = "os";
+    };
     niri = {
       url = "github:niri-wm/niri";
       inputs.nixpkgs.follows = "os";
