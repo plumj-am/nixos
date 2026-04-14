@@ -1,3 +1,4 @@
+import { homedir } from "node:path"
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent"
 import { Key } from "@mariozechner/pi-tui"
 
@@ -87,6 +88,11 @@ export const allowedPatterns: RegExp[] = [
 	/^fj wiki view /,
 ]
 
+export const allowedExtraCwds: string[] = [
+	"/tmp",
+	"/tmp/",
+]
+
 // Yolo mode: block only truly dangerous commands
 export const dangerousPatterns: RegExp[] = [
 	/^rm\s+-rf\s+\//,
@@ -105,17 +111,79 @@ export const dangerousPatterns: RegExp[] = [
 
 let yoloModeEnabled = false
 
-function isDangerous(command: string): boolean {
-	return dangerousPatterns.some((p) => p.test(command))
-}
-
 export default function (pi: ExtensionAPI) {
+	// Get cwd from extension context on first use
+	let cwdCache: string | null = null
+
+	function getCwd(): string {
+		if (!cwdCache) {
+			// Access cwd through pi's API
+			cwdCache = process.cwd()
+		}
+		return cwdCache
+	}
+
+	function isSafeCwdPrefix(command: string, cwd: string): string | null {
+		const match = command.match(
+			/^cd\s+['"]?([^'"]+)['"]?\s*&&\s*(.+)/,
+		)
+		if (!match) return null
+
+		const cdPath = match[1]
+		const rest = match[2]
+
+		// Resolve the cd target
+		let targetPath: string
+		if (cdPath.startsWith("/")) {
+			targetPath = cdPath
+		} else if (cdPath === "~" || cdPath.startsWith("~/")) {
+			targetPath = homedir() + cdPath.slice(1)
+		} else {
+			targetPath = cwd + "/" + cdPath
+		}
+
+		// Normalize and check if it's cwd or a subdirectory
+		const normalizedTarget = targetPath.replace(/\/$/, "")
+		const normalizedCwd = cwd.replace(/\/$/, "")
+
+		// Must be cwd or child of cwd
+		if (
+			normalizedTarget !== normalizedCwd &&
+			!normalizedTarget.startsWith(normalizedCwd + "/")
+		) {
+			// Check extra allowed cwds
+			const isExtraAllowed = allowedExtraCwds.some((allowed) => {
+				const normAllowed = allowed.replace(/\/$/, "")
+				return normalizedTarget === normAllowed ||
+					normalizedTarget.startsWith(normAllowed + "/")
+			})
+			if (!isExtraAllowed) {
+				return null
+			}
+		}
+
+		return rest
+	}
+
 	function isAllowed(command: string): boolean {
+		// Try stripping safe cwd prefix first
+		const safeRest = isSafeCwdPrefix(command, getCwd())
+		if (safeRest !== null) {
+			return allowedPatterns.some((p) => p.test(safeRest))
+		}
 		return allowedPatterns.some((p) => p.test(command))
 	}
 
+	function isDangerous(command: string): boolean {
+		// Try stripping safe cwd prefix first
+		const safeRest = isSafeCwdPrefix(command, getCwd())
+		const checkCmd = safeRest !== null ? safeRest : command
+		return dangerousPatterns.some((p) => p.test(checkCmd))
+	}
+
 	pi.registerCommand("yolo", {
-		description: "Toggle yolo mode (minimal restrictions, block only very bad commands)",
+		description:
+			"Toggle yolo mode (minimal restrictions, block only very bad commands)",
 		handler: async (_args, ctx) => {
 			yoloModeEnabled = !yoloModeEnabled
 
@@ -128,7 +196,9 @@ export default function (pi: ExtensionAPI) {
 					ctx.ui.theme.fg("warning", "⚡ yolo"),
 				)
 			} else {
-				ctx.ui.notify("Yolo mode disabled. Normal restrictions restored.")
+				ctx.ui.notify(
+					"Yolo mode disabled. Normal restrictions restored.",
+				)
 				ctx.ui.setStatus("yolo", undefined)
 			}
 		},
@@ -148,7 +218,9 @@ export default function (pi: ExtensionAPI) {
 					ctx.ui.theme.fg("warning", "⚡ yolo"),
 				)
 			} else {
-				ctx.ui.notify("Yolo mode disabled. Normal restrictions restored.")
+				ctx.ui.notify(
+					"Yolo mode disabled. Normal restrictions restored.",
+				)
 				ctx.ui.setStatus("yolo", undefined)
 			}
 		},
@@ -191,6 +263,7 @@ export default function (pi: ExtensionAPI) {
 	// Reset yolo mode on new session
 	pi.on("session_start", async (_event, ctx) => {
 		yoloModeEnabled = false
+		cwdCache = null // Refresh cwd on new session
 		ctx.ui.setStatus("yolo", undefined)
 	})
 }
