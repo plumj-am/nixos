@@ -39,6 +39,21 @@ in
       inherit (lib) elem;
       inherit (config) theme;
 
+      fsWatcherLsp = pkgs.rustPlatform.buildRustPackage (final: {
+        pname = "fs_watcher_lsp";
+        version = "0.1.0";
+
+        src = pkgs.fetchCrate {
+          inherit (final) pname version;
+          hash = "sha256-zahbi8RK8aDHcVOzIk5fCIh57+SjMGAVtUvtKhpMvF0=";
+        };
+
+        cargoHash = "sha256-w1i19IV/tjyl+W0NIjjbB0R9UpGrAUuK/yWbOZUKPUA=";
+        cargoDepsName = final.pname;
+      });
+
+      withFsWatcher = rest: [ "fs-watcher-lsp" ] ++ rest;
+
       mkThemes =
         themes:
         mapAttrs' (
@@ -53,7 +68,10 @@ in
     in
     {
       hjem.extraModule = {
-        packages = singleton pkgs.helix;
+        packages = [
+          pkgs.helix
+          fsWatcherLsp
+        ];
 
         xdg.config.files = {
           "helix/config.toml" = {
@@ -182,7 +200,7 @@ in
                       ];
                     }
                     // optionalAttrs (elem ext (attrValues denoJsTsLanguages)) {
-                      language-servers = singleton "deno";
+                      language-servers = withFsWatcher <| singleton "deno";
                     };
 
                   denoFmtLanguages =
@@ -209,10 +227,12 @@ in
                     {
                       name = "rust";
                       auto-format = true;
-                      language-servers = singleton {
-                        name = "rust-analyzer";
-                        except-features = singleton "inlay-hints";
-                      };
+                      language-servers =
+                        withFsWatcher
+                        <| singleton {
+                          name = "rust-analyzer";
+                          except-features = singleton "inlay-hints";
+                        };
                       indent = {
                         tab-width = 3;
                         unit = "   ";
@@ -233,6 +253,10 @@ in
                     {
                       name = "nix";
                       auto-format = true;
+                      language-servers = withFsWatcher [
+                        "nixd"
+                        "nil"
+                      ];
                     }
                     {
                       name = "toml";
@@ -256,7 +280,7 @@ in
                     {
                       name = "markdown";
                       auto-format = true;
-                      language-servers = [ "marksman" ];
+                      language-servers = withFsWatcher <| singleton "marksman";
                     }
                     {
                       name = "just";
@@ -271,7 +295,7 @@ in
                       #   "/home/jam/.config/nufmt/config.nuon"
                       #   "--stdin"
                       # ];
-                      language-servers = [
+                      language-servers = withFsWatcher [
                         "nu-lsp"
                         # "nu-lint" # Waiting for <https://codeberg.org/wvhulle/nu-lint/pulls/96>
                       ];
@@ -285,6 +309,8 @@ in
                 denoFmtLanguages ++ baseLanguages;
 
               language-server = {
+                fs-watcher-lsp.command = "fs_watcher_lsp";
+
                 nil = {
                   command = "nil";
                   config.nil = {
