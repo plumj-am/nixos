@@ -14,6 +14,12 @@ Item {
 
     signal clicked()
 
+    onDrawerOpenChanged: {
+        if (drawerOpen) {
+            Notifications.NotificationServer.markAllSeen()
+        }
+    }
+
     RowLayout {
         id: row
         spacing: 4
@@ -29,7 +35,7 @@ Item {
         }
 
         Rectangle {
-            visible: Notifications.NotificationServer.notificationCount > 0
+            visible: Notifications.NotificationServer.unreadCount > 0
             implicitWidth: countText.implicitWidth + 8
             implicitHeight: 16
             radius: 8
@@ -38,7 +44,7 @@ Item {
             Text {
                 id: countText
                 anchors.centerIn: parent
-                text: Notifications.NotificationServer.notificationCount
+                text: Notifications.NotificationServer.unreadCount
                 font.family: Theme.font.sans.family
                 font.pixelSize: 10
                 font.bold: true
