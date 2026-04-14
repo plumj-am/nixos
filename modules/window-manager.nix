@@ -103,12 +103,6 @@
               }
 
               window-rule {
-                match app-id=r#"^radicle-desktop|com.saivert.pwvucontrol|dolphin$"#
-                open-maximized true
-                open-on-workspace "guis"
-              }
-
-              window-rule {
                 match app-id=r#"^steam$"#
                 open-maximized true
                 open-on-workspace "games"
@@ -170,10 +164,6 @@
               }
 
               workspace "comms" {
-                open-on-output "DP-2"
-              }
-
-              workspace "guis" {
                 open-on-output "DP-2"
               }
 
