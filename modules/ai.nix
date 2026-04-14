@@ -314,10 +314,16 @@ in
                 env = {
                   ANTHROPIC_BASE_URL = "http://localhost:4000";
                   API_TIMEOUT_MS = "3000000";
+                  # Qwen3.5/6 is visible in the OpenCode Go docs but it doesn't work yet.
+                  # ANTHROPIC_MODEL = "qwen3.6-plus";
                   ANTHROPIC_MODEL = "minimax-m2.7";
+                  # ANTHROPIC_SMALL_FAST_MODEL = "qwen3.5-plus";
                   ANTHROPIC_SMALL_FAST_MODEL = "minimax-m2.5";
+                  # CLAUDE_CODE_SUBAGENT_MODEL = "qwen3.5-plus";
                   CLAUDE_CODE_SUBAGENT_MODEL = "minimax-m2.5";
+                  # ANTHROPIC_DEFAULT_HAIKU_MODEL = "qwen3.5-plus";
                   ANTHROPIC_DEFAULT_HAIKU_MODEL = "minimax-m2.5";
+                  # ANTHROPIC_DEFAULT_SONNET_MODEL = "qwen3.6-plus";
                   ANTHROPIC_DEFAULT_SONNET_MODEL = "minimax-m2.7";
                   ANTHROPIC_DEFAULT_OPUS_MODEL = "glm-5.1";
 
@@ -783,8 +789,8 @@ in
         {
           modelName,
           modelFull,
-          stream,
-          needsV1,
+          stream ? true,
+          needsV1 ? true,
         }:
         {
           model_name = modelName;
@@ -801,47 +807,43 @@ in
         {
           modelName = "minimax-m2.7";
           modelFull = "minimax/minimax-m2.7";
-          stream = true;
           needsV1 = false;
         }
         {
           modelName = "minimax-m2.5";
           modelFull = "minimax/minimax-m2.5";
-          stream = true;
           needsV1 = false;
         }
 
         {
           modelName = "glm-5.1";
           modelFull = "zai/glm-5.1";
-          stream = true;
-          needsV1 = true;
         }
         {
           modelName = "glm-5";
           modelFull = "zai/glm-5";
-          stream = true;
-          needsV1 = true;
         }
         {
           modelName = "kimi-k2.5";
           modelFull = "moonshot/kimi-k2.5";
           stream = false;
-          needsV1 = true;
         }
         {
           modelName = "mimo-v2-pro";
           modelFull = "openai/mimo-v2-pro";
-          stream = true;
-          needsV1 = true;
         }
         {
           modelName = "mimo-v2-omni";
           modelFull = "openai/mimo-v2-omni";
-          stream = true;
-          needsV1 = true;
         }
-
+        {
+          modelName = "qwen3.6-plus";
+          modelFull = "openai/qwen3.6-plus";
+        }
+        {
+          modelName = "qwen3.5-plus";
+          modelFull = "openai/qwen3.5-plus";
+        }
       ];
     in
     {
