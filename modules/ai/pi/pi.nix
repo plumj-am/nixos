@@ -30,19 +30,6 @@
               source = ../AGENTS.md;
             };
 
-            # ".pi/agent/models.json" = {
-            #   generator = pkgs.writers.writeJSON "pi-agent-config.json";
-            #   value = {
-            #     providers = {
-            #       # TODO: Maybe.
-            #       opencode-go = {
-            #         baseUrl = "";
-            #         models = [ ];
-            #       };
-            #     };
-            #   };
-            # };
-
             ".pi/agent/auth.json" = {
               generator = pkgs.writers.writeJSON "pi-agent-config.json";
               value = {
@@ -59,6 +46,11 @@
               value = {
                 defaultProvider = "opencode-go";
                 defaultModel = "minimax-m2.7";
+                enabledModels = [
+                  "minimax-*"
+                  "kimi-*"
+                  "qwen*"
+                ];
 
                 enableInstallTelemetry = false;
                 editorPaddingX = 1;
