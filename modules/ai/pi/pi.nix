@@ -114,6 +114,8 @@
 
             # Seeing how well the extension alone works.
             # ".pi/agent/skills/caveman/SKILL.md".source = ./skills/caveman.md;
+
+            ".pi/agent/agents".source = ./agents;
           };
         };
     };

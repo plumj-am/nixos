@@ -1,5 +1,7 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent"
+import { Key } from "@mariozechner/pi-tui"
 
+// Read-only allowlist patterns (strict mode)
 export const allowedPatterns: RegExp[] = [
 	/^ag /,
 	/^bat /,
@@ -85,15 +87,88 @@ export const allowedPatterns: RegExp[] = [
 	/^fj wiki view /,
 ]
 
+// Yolo mode: block only truly dangerous commands
+export const dangerousPatterns: RegExp[] = [
+	/^rm\s+-rf\s+\//,
+	/^rm\s+-rf\s+\/\s*$/,
+	/^dd\s+if=/,
+	/^mkfs\./,
+	/^ddrescue/,
+	/:\s*>;*\s*\/dev\/sd/,
+	/^shred/,
+	/^mke2fs/,
+	/^format\s+(drive|disk|usb|floppy)/i,
+	/^fdisk\s+\/dev\/sd/,
+	/^parted.*--fix-table/i,
+	/rm\s+-[rf]+\s+(['"]|\/?)(home|root|etc|usr|var|sys|proc|opt|boot|dev)\1/i,
+]
+
+let yoloModeEnabled = false
+
+function isDangerous(command: string): boolean {
+	return dangerousPatterns.some((p) => p.test(command))
+}
+
 export default function (pi: ExtensionAPI) {
 	function isAllowed(command: string): boolean {
 		return allowedPatterns.some((p) => p.test(command))
 	}
 
+	pi.registerCommand("yolo", {
+		description: "Toggle yolo mode (minimal restrictions, block only very bad commands)",
+		handler: async (_args, ctx) => {
+			yoloModeEnabled = !yoloModeEnabled
+
+			if (yoloModeEnabled) {
+				ctx.ui.notify(
+					"Yolo mode enabled. Only truly dangerous commands blocked.",
+				)
+				ctx.ui.setStatus(
+					"yolo",
+					ctx.ui.theme.fg("warning", "⚡ yolo"),
+				)
+			} else {
+				ctx.ui.notify("Yolo mode disabled. Normal restrictions restored.")
+				ctx.ui.setStatus("yolo", undefined)
+			}
+		},
+	})
+
+	pi.registerShortcut(Key.ctrlAlt("y"), {
+		description: "Toggle yolo mode",
+		handler: async (_args, ctx) => {
+			yoloModeEnabled = !yoloModeEnabled
+
+			if (yoloModeEnabled) {
+				ctx.ui.notify(
+					"Yolo mode enabled. Only truly dangerous commands blocked.",
+				)
+				ctx.ui.setStatus(
+					"yolo",
+					ctx.ui.theme.fg("warning", "⚡ yolo"),
+				)
+			} else {
+				ctx.ui.notify("Yolo mode disabled. Normal restrictions restored.")
+				ctx.ui.setStatus("yolo", undefined)
+			}
+		},
+	})
+
 	pi.on("tool_call", async (event, ctx) => {
 		if (event.toolName !== "bash") return undefined
 
 		const command = event.input.command as string
+
+		// Yolo mode: block only dangerous commands
+		if (yoloModeEnabled) {
+			if (isDangerous(command)) {
+				return {
+					block: true,
+					reason: `Yolo mode blocked dangerous command: ${command}`,
+				}
+			}
+			return undefined
+		}
 
 		if (isAllowed(command)) return undefined
 
@@ -111,5 +186,11 @@ export default function (pi: ExtensionAPI) {
 		}
 
 		return undefined
+	})
+
+	// Reset yolo mode on new session
+	pi.on("session_start", async (_event, ctx) => {
+		yoloModeEnabled = false
+		ctx.ui.setStatus("yolo", undefined)
 	})
 }
