@@ -248,9 +248,11 @@ in
       inputs,
       pkgs,
       lib,
+      config,
       ...
     }:
     let
+      inherit (lib.modules) mkIf;
       inherit (lib.lists) singleton optionals;
       inherit (lib.attrsets) genAttrs;
       inherit (lib.meta) getExe;
@@ -258,10 +260,6 @@ in
       inherit (lib.trivial) const;
     in
     {
-      # LiteLLM necessary to use OpenCode Go with Claude Code.
-      # Importing here so it's included by default because otherwise Claude Code simply won't work.
-      imports = singleton inputs.self.modules.common.litellm;
-
       # THANK YOU FOR THIS ENTIRE THING!!
       # Xitter: @HSVSphere
       # Source: <https://github.com/RGBCube/ncc/blob/dentride/modules/slop.mod.nix>
@@ -776,7 +774,8 @@ in
         };
     };
 
-  flake.modules.common.litellm =
+  # Not available as a service on nix-darwin need another solution.
+  flake.modules.nixos.litellm =
     { lib, config, ... }:
     let
       inherit (lib.modules) mkForce;

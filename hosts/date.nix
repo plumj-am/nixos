@@ -30,6 +30,7 @@ in
       jujutsu-extra
       kitty
       linux-kernel-zen
+      litellm
       mprocs
       nix-settings-extra-desktop
       nix-distributed-builder
