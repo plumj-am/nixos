@@ -8,14 +8,13 @@ Rectangle {
 
     property var notification: null
     property int notificationIndex: -1
-    property int maxWidth: 420
+    property int maxWidth: 300
 
     signal dismissed()
     signal actionTriggered(var action)
 
     implicitWidth: contentLayout.implicitWidth + Common.Theme.padding.normal * 2
     implicitHeight: contentLayout.implicitHeight + Common.Theme.padding.normal * 2
-    width: Math.max(300, Math.min(implicitWidth, maxWidth))
     height: implicitHeight
     color: Common.Theme.background
     radius: Common.Theme.radius.normal

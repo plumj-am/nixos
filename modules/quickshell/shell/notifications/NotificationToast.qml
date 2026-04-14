@@ -16,7 +16,7 @@ Rectangle {
     signal actionTriggered(var action)
     signal entryComplete
 
-    implicitWidth: 420
+    implicitWidth: 300
     implicitHeight: notificationItem.implicitHeight
     width: implicitWidth
     height: implicitHeight

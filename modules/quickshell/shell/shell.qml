@@ -58,6 +58,9 @@ ShellRoot {
                     var wasOpen = notifOpen && !notifAutoOpened;
                     notifOpen = !notifOpen;
                     notifAutoOpened = false;
+                    if (!wasOpen && toastManagerLoader.item) {
+                        toastManagerLoader.item.dismissAll();
+                    }
                     mediaOpen = false;
                     sessionOpen = false;
                     controlCenterOpen = false;
@@ -194,20 +197,8 @@ ShellRoot {
 
             Connections {
                 target: Notifications.NotificationServer
-                function onNotificationReceived(notification) {
-                    if (!window.notifOpen) {
-                        notifOpen = true;
-                        notifAutoOpened = true;
-                        mediaOpen = false;
-                        sessionOpen = false;
-                        controlCenterOpen = false;
-                    }
-                    if (window.notifAutoOpened) {
-                        var timeout = notification.expireTimeout > 0 ? notification.expireTimeout * 1000 : 8000;
-                        notifAutoCloseTimer.interval = timeout;
-                        notifAutoCloseTimer.restart();
-                    }
-                }
+                // Notifications now appear as toasts via ToastManager.
+                // Drawer only opens via manual interaction (onNotificationClicked).
             }
         }
     }

@@ -20,7 +20,7 @@ PanelWindow {
         bottom: true
     }
 
-    implicitWidth: 420
+    implicitWidth: 300
     exclusionMode: ExclusionMode.Ignore
     WlrLayershell.namespace: "quickshell-notifications"
     WlrLayershell.layer: WlrLayer.Overlay
@@ -37,8 +37,6 @@ PanelWindow {
     ColumnLayout {
         id: toastColumn
         anchors.fill: parent
-        anchors.leftMargin: 12
-        anchors.rightMargin: 12
         anchors.topMargin: 0
         anchors.bottomMargin: 12
         spacing: 0
@@ -104,5 +102,9 @@ PanelWindow {
                 break;
             }
         }
+    }
+
+    function dismissAll() {
+        toastModel.clear();
     }
 }
