@@ -2,11 +2,15 @@
   flake.modules.common.rio =
     {
       pkgs,
+      lib,
+      lib',
       config,
       ...
     }:
     let
-      inherit (config.myLib) mkDesktopEntry;
+      inherit (lib.meta) getExe;
+      inherit (lib') mkDesktopEntry;
+      inherit (config) theme;
     in
     {
 
@@ -16,14 +20,15 @@
 
           (mkDesktopEntry {
             name = "Zellij-Rio";
-            exec = "rio -c ${pkgs.zellij}/bin/zellij";
+            exec = "rio --command ${getExe pkgs.zellij}";
           })
         ];
 
         xdg.config.files."rio/config.toml" = {
           generator = pkgs.writers.writeTOML "rio-config.toml";
           value = {
-            shell.program = "nu";
+            shell.program = getExe pkgs.nushell;
+            font.family = theme.font.mono.name;
             renderer = {
               performance = "High";
               backend = "GL";
