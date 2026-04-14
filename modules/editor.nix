@@ -108,8 +108,6 @@ in
                   "C-j" = "@X*dp";
                   "C-k" = "@X*dkP";
 
-                  "ret" = "goto_word";
-
                   "q" = "record_macro";
                   "@" = "replay_macro";
 
@@ -127,8 +125,6 @@ in
                   # Move lines up and down. Use `z` register to avoid clobbering system or primary clipboard.
                   "C-j" = "@X\"zd\"zp";
                   "C-k" = "@X\"zdk\"zP";
-
-                  "ret" = "goto_word";
 
                   "q" = "record_macro";
                   "@" = "replay_macro";
