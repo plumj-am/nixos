@@ -10,8 +10,7 @@
       inherit (lib.meta) getExe;
       inherit (lib.lists) singleton;
       inherit (config) theme;
-    in
-    let
+
       # This is probably ass, I just asked the slop machine to do it and it works lol.
       # https://github.com/zellij-org/zellij/pull/5049
       zellij-patched = pkgs.zellij.overrideAttrs (oldAttrs: {
