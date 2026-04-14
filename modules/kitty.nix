@@ -2,11 +2,13 @@
   flake.modules.common.kitty =
     {
       pkgs,
+      lib,
       lib',
       config,
       ...
     }:
     let
+      inherit (lib.meta) getExe;
       inherit (lib'.generators) keyValueSpaceSep;
       inherit (lib') mkDesktopEntry;
       inherit (config) theme;
@@ -18,7 +20,8 @@
 
           (mkDesktopEntry {
             name = "Zellij-kitty";
-            exec = "kitty -e ${pkgs.zellij}/bin/zellij";
+            # exec = "kitty -e ${getExe pkgs.zellij}"; # nixpkgs zellij, not our patched version.
+            exec = "kitty -e zellij";
           })
         ];
 
@@ -27,11 +30,7 @@
           value = with theme.withHash; {
             font_family = theme.font.mono.name;
             font_size = theme.font.size.tiny;
-            font_features =
-              if theme.font.mono.name == "Maple Mono NF" then
-                "MapleMono-NF +cv64 +ss03 +ss05 +ss07 +ss08 +ss09 +ss10 +ss11"
-              else
-                "";
+            font_features = "MapleMono-NF +cv64 +ss03 +ss05 +ss07 +ss08 +ss09 +ss10 +ss11";
 
             allow_remote_control = "yes";
             confirm_os_window_close = 0;
