@@ -103,7 +103,7 @@ export default function (pi: ExtensionAPI) {
 
 	// Reset on new session
 	pi.on("session_start", async (_event, ctx) => {
-		currentLevel = "off"
+		currentLevel = "ultra"
 	})
 
 	// Auto-detect caveman triggers
