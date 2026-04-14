@@ -72,6 +72,7 @@
             };
             ".pi/agent/extensions/system-theme.ts".source = ./extensions/system-theme.ts;
             ".pi/agent/extensions/permissions.ts".source = ./extensions/permissions.ts;
+            ".pi/agent/extensions/zellij-attention.ts".source = ./extensions/zellij-attention.ts;
             ".pi/agent/extensions/caveman.ts".source = ./extensions/caveman.ts;
 
             # Seeing how well the extension alone works.
