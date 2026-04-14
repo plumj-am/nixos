@@ -73,7 +73,7 @@
                 enabledModels = [
                   "minimax-*"
                   "kimi-*"
-                  "qwen*"
+                  "qwen3*"
                 ];
 
                 enableInstallTelemetry = false;
@@ -94,6 +94,7 @@
                       "!go-to-bed"
                       "!split-fork"
                       "!uv"
+                      "!whimsical"
                     ];
                     themes = [ ];
                     skills = [ ];
