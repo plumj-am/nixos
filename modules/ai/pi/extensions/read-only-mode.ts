@@ -16,6 +16,26 @@ const NORMAL_TOOLS = ["read", "bash", "edit", "write"]
 
 let readOnlyEnabled = false
 
+// Write-like bash commands to block in read-only mode
+const writeCommands = [
+	/^rm\s/,
+	/^mv\s/,
+	/^cp\s/,
+	/^mkdir\s/,
+	/^touch\s/,
+	/^chmod\s/,
+	/^chown\s/,
+	/^dd\s/,
+	/^ln\s/,
+	/^tee\s/,
+	/^>|/,
+	/^>\s/,
+]
+
+function isWriteCommand(command: string): boolean {
+	return writeCommands.some((p) => p.test(command.trim()))
+}
+
 export default function readOnlyExtension(pi: ExtensionAPI): void {
 	pi.registerCommand("readonly", {
 		description: "Toggle read-only mode (no file modifications)",
@@ -47,16 +67,29 @@ export default function readOnlyExtension(pi: ExtensionAPI): void {
 		},
 	})
 
-	// Block edit and write tools
+	// Block edit/write tools AND write-like bash commands
 	pi.on("tool_call", async (event) => {
 		if (!readOnlyEnabled) return undefined
+
+		// Block edit and write tools
 		if (event.toolName === "edit" || event.toolName === "write") {
 			return {
 				block: true,
-				reason:
-					`Read-only mode: ${event.toolName} is disabled. Use /readonly to disable.`,
+				reason: `Read-only mode: ${event.toolName} is disabled.`,
 			}
 		}
+
+		// Block write-like bash commands
+		if (event.toolName === "bash") {
+			const cmd = (event.input.command as string) || ""
+			if (isWriteCommand(cmd)) {
+				return {
+					block: true,
+					reason: `Read-only mode: write commands blocked.`,
+				}
+			}
+		}
+
 		return undefined
 	})
 

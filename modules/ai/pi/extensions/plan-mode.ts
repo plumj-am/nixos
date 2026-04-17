@@ -7,6 +7,7 @@
  * Features:
  * - /plan command or Ctrl+Alt+P to toggle
  * - Bash restricted to allowlisted read-only commands
+ * - Block edit/write tools explicitly
  * - Extracts numbered plan steps from "Plan:" sections
  * - [DONE:n] markers to complete steps during execution
  * - Progress tracking widget during execution
@@ -25,8 +26,28 @@ import { allowedPatterns } from "./permissions.ts"
 const PLAN_MODE_TOOLS = ["read", "bash", "grep", "find", "ls", "questionnaire"]
 const NORMAL_MODE_TOOLS = ["read", "bash", "edit", "write"]
 
+// Write-like bash commands to block in plan mode
+const writeCommands = [
+	/^rm\s/,
+	/^mv\s/,
+	/^cp\s/,
+	/^mkdir\s/,
+	/^touch\s/,
+	/^chmod\s/,
+	/^chown\s/,
+	/^dd\s/,
+	/^ln\s/,
+	/^tee\s/,
+]
+
 function isSafeCommand(command: string): boolean {
-	return allowedPatterns.some((p) => p.test(command))
+	// Strip cd prefix first
+	const stripped = command.replace(/^cd\s+['"]?[^'"]+['"]?\s*&&\s*/, "")
+	return allowedPatterns.some((p) => p.test(stripped))
+}
+
+function isWriteCommand(command: string): boolean {
+	return writeCommands.some((p) => p.test(command.trim()))
 }
 
 interface TodoItem {
@@ -220,16 +241,27 @@ export default function planModeExtension(pi: ExtensionAPI): void {
 		handler: async (ctx) => togglePlanMode(ctx),
 	})
 
-	// Block destructive bash commands in plan mode
+	// Block write tools and non-allowlisted bash commands in plan mode
 	pi.on("tool_call", async (event) => {
-		if (!planModeEnabled || event.toolName !== "bash") return
+		if (!planModeEnabled) return
 
-		const command = event.input.command as string
-		if (!isSafeCommand(command)) {
+		// Block edit and write tools explicitly
+		if (event.toolName === "edit" || event.toolName === "write") {
 			return {
 				block: true,
-				reason:
-					`Plan mode: command blocked (not allowlisted). Use /plan to disable plan mode first.\nCommand: ${command}`,
+				reason: `Plan mode: ${event.toolName} is disabled.`,
+			}
+		}
+
+		// Block non-allowlisted bash commands
+		if (event.toolName === "bash") {
+			const command = event.input.command as string
+			// Also block write-like commands even if allowlisted
+			if (isWriteCommand(command) || !isSafeCommand(command)) {
+				return {
+					block: true,
+					reason: `Plan mode: command blocked. Use /plan to disable.`,
+				}
 			}
 		}
 	})
