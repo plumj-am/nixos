@@ -268,7 +268,7 @@ in
           files = {
             ".claude/CLAUDE.md" = {
               type = "copy";
-              source = ./AGENTS.md;
+              source = ./CLAUDE_AGENTS.md;
             };
 
             ".claude/settings.json" = {
