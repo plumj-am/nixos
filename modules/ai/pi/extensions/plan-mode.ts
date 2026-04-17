@@ -173,11 +173,13 @@ export default function planModeExtension(pi: ExtensionAPI): void {
 
 		if (planModeEnabled) {
 			pi.setActiveTools(PLAN_MODE_TOOLS)
+			pi.setThinkingLevel("high")
 			ctx.ui.notify(
 				`Plan mode enabled. Tools: ${PLAN_MODE_TOOLS.join(", ")}`,
 			)
 		} else {
 			pi.setActiveTools(NORMAL_MODE_TOOLS)
+			pi.setThinkingLevel("medium")
 			ctx.ui.notify("Plan mode disabled. Full access restored.")
 		}
 		updateStatus(ctx)
