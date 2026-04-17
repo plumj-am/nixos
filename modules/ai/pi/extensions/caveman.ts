@@ -87,6 +87,10 @@ export default function (pi: ExtensionAPI) {
 		const instruction = INSTRUCTIONS[currentLevel]
 		if (!instruction) return
 
+		if (ctx.hasUI) {
+			ctx.ui.setStatus("caveman", ctx.ui.theme.fg("muted", "🪨 caveman"))
+		}
+
 		// Inject a user message that contains the caveman instructions
 		// This ensures the LLM sees it as part of the conversation
 		return {

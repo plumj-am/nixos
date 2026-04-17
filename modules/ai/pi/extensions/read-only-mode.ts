@@ -44,7 +44,10 @@ export default function readOnlyExtension(pi: ExtensionAPI): void {
 
 			if (readOnlyEnabled) {
 				pi.setActiveTools(READ_ONLY_TOOLS)
-				ctx.ui.setStatus("readonly", ctx.ui.theme.fg("warning", "⏸ readonly"))
+				ctx.ui.setStatus(
+					"readonly",
+					ctx.ui.theme.fg("warning", "⏸ readonly"),
+				)
 				ctx.ui.notify("Read-only mode enabled.")
 			} else {
 				pi.setActiveTools(NORMAL_TOOLS)
@@ -61,7 +64,10 @@ export default function readOnlyExtension(pi: ExtensionAPI): void {
 
 			if (readOnlyEnabled) {
 				pi.setActiveTools(READ_ONLY_TOOLS)
-				ctx.ui.setStatus("readonly", ctx.ui.theme.fg("warning", "⏸ readonly"))
+				ctx.ui.setStatus(
+					"readonly",
+					ctx.ui.theme.fg("warning", "⏸ readonly"),
+				)
 				ctx.ui.notify("Read-only mode enabled.")
 			} else {
 				pi.setActiveTools(NORMAL_TOOLS)
@@ -118,5 +124,25 @@ export default function readOnlyExtension(pi: ExtensionAPI): void {
 	pi.on("session_start", async (_event, ctx) => {
 		readOnlyEnabled = false
 		ctx.ui.setStatus("readonly", undefined)
+	})
+
+	// Inject context before agent starts
+	pi.on("before_agent_start", async () => {
+		if (!readOnlyEnabled) return undefined
+
+		return {
+			message: {
+				customType: "readonly-mode-context",
+				content: `[READ-ONLY MODE ACTIVE]
+You are in read-only mode - file modifications are disabled.
+
+Restrictions:
+- You CANNOT use: edit, write (file modifications are blocked)
+- You CAN use: read, bash, grep, find, ls, questionnaire, MCP tools
+
+Browse and analyze code freely, but do NOT attempt to make changes.`,
+				display: false,
+			},
+		}
 	})
 }

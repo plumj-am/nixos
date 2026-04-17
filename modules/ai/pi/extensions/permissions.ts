@@ -266,4 +266,27 @@ export default function (pi: ExtensionAPI) {
 		cwdCache = null // Refresh cwd on new session
 		ctx.ui.setStatus("yolo", undefined)
 	})
+
+	// Inject context before agent starts
+	pi.on("before_agent_start", async (_event, ctx) => {
+		if (!yoloModeEnabled) return undefined
+
+		if (ctx.hasUI) {
+			ctx.ui.setStatus("yolo", ctx.ui.theme.fg("warning", "⚡ yolo"))
+		}
+
+		return {
+			message: {
+				customType: "yolo-mode-context",
+				content: `[YOLO MODE ACTIVE]
+Minimal restrictions. Only truly dangerous commands are blocked:
+- \`rm -rf /\`
+- \`dd if=...\`
+- \`mkfs.*\`, \`fdisk /dev/sd...\`, etc.
+
+Normal file operations allowed. Use with caution.`,
+				display: false,
+			},
+		}
+	})
 }
