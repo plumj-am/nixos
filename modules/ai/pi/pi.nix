@@ -87,17 +87,21 @@
                 packages = [
                   "git:github.com/nicobailon/pi-subagents"
                   "git:github.com/nicobailon/pi-interview-tool"
-                  "git:github.com/nicobailon/pi-web-access"
                   "git:github.com/nicobailon/pi-mcp-adapter"
+                  {
+                    source = "git:github.com/nicobailon/pi-web-access";
+                    skills = [ ];
+                  }
                   {
                     source = "git:github.com/mitsuhiko/agent-stuff";
                     extensions = [
-                      "!apple-mail"
-                      "!control"
-                      "!go-to-bed"
-                      "!split-fork"
-                      "!uv"
-                      "!whimsical"
+                      "answer.ts"
+                      "btw.ts"
+                      "context.ts"
+                      "loop.ts"
+                      "multi-edit.ts"
+                      "prompt-editor.ts"
+                      "review.ts"
                     ];
                     themes = [ ];
                     skills = [ ];
