@@ -44,9 +44,11 @@ export default function readOnlyExtension(pi: ExtensionAPI): void {
 
 			if (readOnlyEnabled) {
 				pi.setActiveTools(READ_ONLY_TOOLS)
+				ctx.ui.setStatus("readonly", ctx.ui.theme.fg("warning", "⏸ readonly"))
 				ctx.ui.notify("Read-only mode enabled.")
 			} else {
 				pi.setActiveTools(NORMAL_TOOLS)
+				ctx.ui.setStatus("readonly", undefined)
 				ctx.ui.notify("Read-only mode disabled. Full access restored.")
 			}
 		},
@@ -59,9 +61,11 @@ export default function readOnlyExtension(pi: ExtensionAPI): void {
 
 			if (readOnlyEnabled) {
 				pi.setActiveTools(READ_ONLY_TOOLS)
+				ctx.ui.setStatus("readonly", ctx.ui.theme.fg("warning", "⏸ readonly"))
 				ctx.ui.notify("Read-only mode enabled.")
 			} else {
 				pi.setActiveTools(NORMAL_TOOLS)
+				ctx.ui.setStatus("readonly", undefined)
 				ctx.ui.notify("Read-only mode disabled. Full access restored.")
 			}
 		},
