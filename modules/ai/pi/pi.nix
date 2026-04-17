@@ -46,10 +46,12 @@
                 mcpServers = {
                   context7 = {
                     url = "https://mcp.context7.com/mcp/oauth";
+                    directTools = true;
                   };
 
                   gh_grep = {
                     url = "https://mcp.grep.app";
+                    directTools = true;
                   };
 
                   nixos = {
@@ -59,6 +61,7 @@
                       "github:utensils/mcp-nixos"
                       "--"
                     ];
+                    directTools = true;
                   };
                 };
               };
