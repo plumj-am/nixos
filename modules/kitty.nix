@@ -2,13 +2,11 @@
   flake.modules.common.kitty =
     {
       pkgs,
-      lib,
       lib',
       config,
       ...
     }:
     let
-      inherit (lib.meta) getExe;
       inherit (lib'.generators) keyValueSpaceSep;
       inherit (lib') mkDesktopEntry;
       inherit (config) theme;
