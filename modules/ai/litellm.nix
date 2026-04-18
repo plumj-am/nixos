@@ -100,6 +100,15 @@
       systemd.services.litellm.serviceConfig.DynamicUser = mkForce false;
 
       services.litellm = {
+        package = pkgs.litellm.overridePythonAttrs (old: {
+          postPatch = (old.postPatch or "") + ''
+            substituteInPlace litellm/caching/qdrant_semantic_cache.py \
+              --replace-warn \
+                'prompt += message["content"]' \
+                'prompt += message["content"] if isinstance(message["content"], str) else " ".join(p["text"] for p in message["content"] if isinstance(p, dict) and p.get("type") == "text")'
+          '';
+        });
+
         enable = true;
         port = 4000;
 
@@ -112,7 +121,7 @@
 
           LITELLM_LOCAL_CACHE = "true";
 
-          LITELLM_HTTPX_TIMEOUT = "20";
+          LITELLM_HTTPX_TIMEOUT = "120"; # Match `request_timeout` below.
           LITELLM_HTTPX_MAX_CONNECTIONS = "128";
           LITELLM_HTTPX_KEEPALIVE = "true";
           LITELLM_HTTPX_MAX_KEEPALIVE_CONNECTIONS = "64";
@@ -124,7 +133,7 @@
             {
               model_name = "ollama-embedding-model";
               litellm_params = {
-                model = "ollama/all-minilm";
+                model = "ollama/nomic-embed-text";
                 api_base = "http://localhost:11434";
                 drop_params = true;
                 stream = false;
@@ -145,9 +154,10 @@
             cache_params = {
               # type = "redis-semantic"; # Can't use it yet. Error: `ModuleNotFoundError: No module named 'redisvl'`
               # See here: <https://github.com/NixOS/nixpkgs/blob/3da2922a907d285ff3d82bc7654f0ae483ad1b0f/pkgs/development/python-modules/litellm/default.nix#L115>
-              type = "redis";
-              host = "127.0.0.1";
-              port = 6379;
+              # type = "redis";
+              type = "qdrant-semantic"; # qdrant-semantic | redis[-semantic]
+              # host = "127.0.0.1";
+              # port = 6379;
 
               ttl = 3600;
               mode = "default_on";
@@ -155,14 +165,24 @@
               namespace = "litellm";
 
               redis_semantic_cache_embedding_model = "ollama-embedding-model";
+              qdrant_semantic_cache_embedding_model = "ollama-embedding-model";
 
               supported_call_types = [
+                "completion"
                 "acompletion"
+                "text_completion"
                 "atext_completion"
+                "embedding"
                 "aembedding"
               ];
 
-              similarity_threshold = 0.82; # For MiniLM.
+              qdrant_api_base = "http://localhost:6333";
+              qdrant_collection_name = "litellm-semantic";
+              qdrant_quantization_config = "binary";
+              qdrant_semantic_cache_vector_size = 768;
+
+              # similarity_threshold = 0.82; # For MiniLM.
+              similarity_threshold = 0.78; # For nomic-embed-text.
 
               max_connections = 128;
             };
@@ -191,16 +211,18 @@
         };
       };
 
-      services.redis.servers."litellm" = {
-        enable = true;
-        port = 6379;
-        settings.maxmemory-policy = "allkeys-lru";
-      };
+      # services.redis.servers."litellm" = {
+      #   enable = true;
+      #   port = 6379;
+      #   settings.maxmemory-policy = "allkeys-lru";
+      # };
+
+      services.qdrant.enable = true;
 
       services.ollama = {
         enable = true;
         package = pkgs.ollama-cuda;
-        loadModels = [ "all-minilm" ];
+        loadModels = [ "nomic-embed-text" ];
 
         environmentVariables = {
           OLLAMA_NUM_PARALLEL = "4";
