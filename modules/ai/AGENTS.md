@@ -16,6 +16,9 @@ If a tool is still unavailable, you may use `nix run` or `nix shell`.
 When you need to ask the user a question, always use the
 AskUserQuestion/question tool. Never ask the user a question in plain text.
 
+Always use Context7 when library/API documentation, code generation, setup or
+configuration steps are needed without the user having to explicitly ask.
+
 ## 2. Version Control
 
 - Never use `git`. Always use `jj` (jj --help).

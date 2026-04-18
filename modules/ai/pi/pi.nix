@@ -40,33 +40,6 @@
               };
             };
 
-            ".pi/agent/mcp.json" = {
-              generator = pkgs.writers.writeJSON "pi-agent-mcp.json";
-              value = {
-                mcpServers = {
-                  context7 = {
-                    url = "https://mcp.context7.com/mcp/oauth";
-                    directTools = true;
-                  };
-
-                  gh_grep = {
-                    url = "https://mcp.grep.app";
-                    directTools = true;
-                  };
-
-                  nixos = {
-                    command = "${getExe pkgs.nix}";
-                    args = [
-                      "run"
-                      "github:utensils/mcp-nixos"
-                      "--"
-                    ];
-                    directTools = true;
-                  };
-                };
-              };
-            };
-
             ".pi/agent/settings.json" = {
               type = "copy"; # Sometimes needs to write to config.
               generator = pkgs.writers.writeJSON "pi-agent-config.json";
@@ -87,7 +60,11 @@
                 packages = [
                   "git:github.com/nicobailon/pi-subagents"
                   "git:github.com/nicobailon/pi-interview-tool"
-                  "git:github.com/nicobailon/pi-mcp-adapter"
+                  {
+                    source = "git:github.com/netresearch/context7-skill";
+                    extensions = [ ];
+                    themes = [ ];
+                  }
                   {
                     source = "git:github.com/nicobailon/pi-web-access";
                     skills = [ ];
@@ -125,6 +102,7 @@
 
             # Seeing how well the extension alone works.
             # ".pi/agent/skills/caveman/SKILL.md".source = ./skills/caveman.md;
+            ".pi/agent/skills/gh-grep".source = ./skills/gh-grep; # Taken from <https://github.com/huynguyen03dev/opencode-setup/tree/main/skills/gh-grep>
 
             ".pi/agent/agents".source = ./agents;
           };
