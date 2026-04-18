@@ -17,15 +17,15 @@
           modelName,
           modelFull,
           stream ? true,
-          needsV1 ? true,
         }:
         {
           model_name = modelName;
           litellm_params = {
             model = modelFull;
-            api_base = if needsV1 then "https://opencode.ai/zen/go/v1" else "https://opencode.ai/zen/go";
+            api_base = "https://opencode.ai/zen/go/v1";
             api_key = "os.environ/OPENCODE_GO_KEY";
-            drop_params = true;
+            modify_params = true;
+            drop_params = false;
             inherit stream;
           };
         };
@@ -33,13 +33,11 @@
       models = [
         {
           modelName = "minimax-m2.7";
-          modelFull = "minimax/minimax-m2.7";
-          needsV1 = false;
+          modelFull = "openai/minimax-m2.7";
         }
         {
           modelName = "minimax-m2.5";
-          modelFull = "minimax/minimax-m2.5";
-          needsV1 = false;
+          modelFull = "openai/minimax-m2.5";
         }
 
         {
@@ -53,6 +51,11 @@
         {
           modelName = "kimi-k2.5";
           modelFull = "moonshot/kimi-k2.5";
+          stream = false;
+        }
+        {
+          modelName = "kimi-k2.6";
+          modelFull = "moonshot/kimi-k2.6";
           stream = false;
         }
         {

@@ -44,12 +44,91 @@
               };
             };
 
+            ".pi/agent/models.json" = {
+              generator = pkgs.writers.writeJSON "pi-agent-config.json";
+              value = {
+                providers.litellm = {
+                  baseUrl = "http://localhost:4000";
+                  api = "openai-completions";
+                  apiKey = "dummy";
+                  models = [
+                    {
+                      id = "minimax-m2.7";
+                      reasoning = true;
+                      contextWindow = 204800;
+                    }
+                    {
+                      id = "minimax-m2.5";
+                      reasoning = true;
+                      contextWindow = 204800;
+                    }
+                    {
+                      id = "glm-5.1";
+                      reasoning = true;
+                      contextWindow = 204800;
+                    }
+                    {
+                      id = "glm-5";
+                      reasoning = true;
+                      contextWindow = 204800;
+                    }
+                    {
+                      id = "kimi-k2.5";
+                      reasoning = true;
+                      contextWindow = 262144;
+                    }
+                    {
+                      id = "kimi-k2.6";
+                      reasoning = true;
+                      contextWindow = 262144;
+                    }
+                    {
+                      id = "mimo-v2-pro";
+                      reasoning = true;
+                      contextWindow = 1048576;
+                    }
+                    {
+                      id = "mimo-v2-omni";
+                      reasoning = true;
+                      contextWindow = 262144;
+                    }
+                    {
+                      id = "qwen3.6-plus";
+                      reasoning = true;
+                      contextWindow = 1048576;
+                    }
+                    {
+                      id = "qwen3.5-plus";
+                      reasoning = true;
+                      contextWindow = 262144;
+                    }
+                  ];
+                };
+              };
+            };
+
+            # To test later but idk why it has to be via MCP...
+            # ".pi/agent/mcp.json" = {
+            #   generator = pkgs.writers.writeJSON "pi-agent-config.json";
+            #   value = {
+            #     mcpServers = {
+            #       context-mode = {
+            #         command = "npx";
+            #         args = [
+            #           "tsx"
+            #           "/home/jam/.pi/agent/git/github.com/context-mode/src/server.ts"
+            #         ];
+            #       };
+            #     };
+            #   };
+            # };
+
             ".pi/agent/settings.json" = {
               type = "copy"; # Sometimes needs to write to config.
               generator = pkgs.writers.writeJSON "pi-agent-config.json";
               value = {
-                defaultProvider = "opencode-go";
-                defaultModel = "minimax-m2.7";
+                defaultProvider = "litellm";
+                defaultModel = "kimi-k2.6";
                 enabledModels = [
                   "minimax-*"
                   "kimi-*"
