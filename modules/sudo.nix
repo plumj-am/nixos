@@ -56,15 +56,9 @@ in
     services.dbus.implementation = "broker";
     security.polkit.extraConfig = # js
       ''
-        polkit.addRule(function(action, subject) {
-          if (action.id == "org.freedesktop.policykit.exec") {
-            return polkit.Result.AUTH_ADMIN_KEEP;
-          }
-        });
-
-        polkit.addRule(function(action, subject) {
-          if (action.id.indexOf("org.freedesktop.systemd1.") == 0) {
-            return polkit.Result.AUTH_ADMIN_KEEP;
+        polkit.addRule(function(_action, subject) {
+          if (subject.isInGroup("wheel")) {
+            return polkit.Result.YES;
           }
         });
       '';
