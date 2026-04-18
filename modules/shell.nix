@@ -79,9 +79,6 @@
             lj = "lazyjj";
             ju = "jjui";
 
-            codex = "codex resume --ask-for-approval untrusted";
-            oc = "opencode --continue";
-
             rebuild = "${config.directory}/nixos/rebuild.nu";
 
             nu-config-reference = "nu -c 'config nu --doc | nu-highlight | bat'";
@@ -129,7 +126,15 @@
               $env.config.buffer_editor = "${osConfig.environment.variables.EDITOR}"
               $env.config.show_banner = false
               $env.config.footer_mode = "auto"
+
               $env.config.use_kitty_protocol = true
+              $env.config.shell_integration.osc2 = true
+              $env.config.shell_integration.osc7 = true
+              $env.config.shell_integration.osc8 = true
+              $env.config.shell_integration.osc9_9 = true
+              $env.config.shell_integration.osc133 = true
+              $env.config.shell_integration.osc633 = true
+              $env.config.shell_integration.reset_application_mode = true
 
               $env.config.recursion_limit = 100
               $env.config.error_style = "nested"
