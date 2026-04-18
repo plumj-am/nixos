@@ -21,6 +21,8 @@ export default function (pi: ExtensionAPI) {
 	let currentTheme: "dark" | "light" | null = null
 
 	pi.on("session_start", async (_event, ctx) => {
+		if (!ctx.hasUI) return undefined
+
 		if (intervalId) {
 			clearInterval(intervalId)
 			intervalId = null
