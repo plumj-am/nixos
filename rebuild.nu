@@ -7,9 +7,7 @@ def print-notify [message: string, --error (-e)] {
       print $"(ansi purple)[Rebuilder](ansi rst) ($message)"
    }
 
-   if (sys host | get hostname) not-in [yuzu date] {
-      try { notify-send Rebuilder $message }
-   }
+   try { notify-send Rebuilder $message }
 }
 
 def --wrapped rsync-files [...rest: string] {
