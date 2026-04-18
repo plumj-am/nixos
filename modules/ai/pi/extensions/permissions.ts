@@ -88,6 +88,41 @@ export const allowedPatterns: RegExp[] = [
 	/^fj wiki view /,
 ]
 
+// Forbidden path patterns (strict mode)
+export const forbiddenPathPatterns: RegExp[] = [
+	/\/run\/agenix/i,
+	/\.env/,
+	/\.env\./,
+	/\.ssh\//,
+	/\.gnupg\//,
+	/\.aws\//,
+	/\.netrc/,
+	/\.npmrc/,
+	/\.pypirc/,
+	/\.cargo\/credentials/,
+	/\.config\/gcloud/,
+	/\.config\/azure/,
+	/\.config\/aws/,
+	/\.kube\//,
+	/\.terraform.d/,
+	/\.terragrunt-cache/,
+	/\/etc\/shadow/,
+	/\/etc\/sudoers/,
+	/\/etc\/passwd/,
+	/\/etc\/group/,
+	/\/root\/\.ssh/,
+	/\/root\/\.gnupg/,
+	/\/home\/[^\/]+\/\.ssh/,
+	/\/home\/[^\/]+\/\.gnupg/,
+	/kubeconfig/,
+	/vaulttoken/,
+	/vaultsecret/,
+	/GITHUB_TOKEN/,
+	/AWS_ACCESS_KEY/,
+	/AWS_SECRET_KEY/,
+	/EDITOR.*vim.*\.swp$/,
+]
+
 export const allowedExtraCwds: string[] = [
 	"/tmp",
 	"/tmp/",
@@ -165,6 +200,30 @@ export default function (pi: ExtensionAPI) {
 		return rest
 	}
 
+	function isForbiddenPath(command: string): string | null {
+		// Extract file paths from the command
+		const pathPattern = /['"]?([^\s'"&|;]+)['"]?/g
+		let match
+		while ((match = pathPattern.exec(command)) !== null) {
+			const path = match[1]
+			// Skip URLs, domains, and common non-path patterns
+			if (
+				path.startsWith("http://") ||
+				path.startsWith("https://") ||
+				path.startsWith("--") ||
+				path.startsWith("-")
+			) {
+				continue
+			}
+			for (const pattern of forbiddenPathPatterns) {
+				if (pattern.test(path)) {
+					return path
+				}
+			}
+		}
+		return null
+	}
+
 	function isAllowed(command: string): boolean {
 		// Try stripping safe cwd prefix first
 		const safeRest = isSafeCwdPrefix(command, getCwd())
@@ -230,6 +289,15 @@ export default function (pi: ExtensionAPI) {
 		if (event.toolName !== "bash") return undefined
 
 		const command = event.input.command as string
+
+		// Check forbidden paths first (always enforced)
+		const forbiddenPath = isForbiddenPath(command)
+		if (forbiddenPath) {
+			return {
+				block: true,
+				reason: `Forbidden path: ${forbiddenPath}`,
+			}
+		}
 
 		// Yolo mode: block only dangerous commands
 		if (yoloModeEnabled) {
