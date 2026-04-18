@@ -103,23 +103,6 @@ export default function readOnlyExtension(pi: ExtensionAPI): void {
 		return undefined
 	})
 
-	// Show status indicator
-	pi.on("before_agent_start", async (_event, ctx) => {
-		if (readOnlyEnabled) {
-			ctx.ui.setStatus(
-				"readonly",
-				ctx.ui.theme.fg("warning", "⏸ readonly"),
-			)
-		}
-	})
-
-	// Clear status on turn end
-	pi.on("turn_end", async (_event, ctx) => {
-		if (!readOnlyEnabled) {
-			ctx.ui.setStatus("readonly", undefined)
-		}
-	})
-
 	// Reset on new session
 	pi.on("session_start", async (_event, ctx) => {
 		readOnlyEnabled = false
@@ -129,6 +112,11 @@ export default function readOnlyExtension(pi: ExtensionAPI): void {
 	// Inject context before agent starts
 	pi.on("before_agent_start", async () => {
 		if (!readOnlyEnabled) return undefined
+
+		ctx.ui.setStatus(
+			"readonly",
+			ctx.ui.theme.fg("warning", "⏸ readonly"),
+		)
 
 		return {
 			message: {
