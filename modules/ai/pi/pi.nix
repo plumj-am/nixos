@@ -32,6 +32,8 @@
 
             ".pi/agent/auth.json" = {
               generator = pkgs.writers.writeJSON "pi-agent-auth.json";
+              type = "copy"; # I think pi auth requires this and 600 mode.
+              permissions = "600";
               value = {
                 opencode-go = {
                   type = "api_key";
@@ -51,6 +53,9 @@
                   "kimi-*"
                   "qwen3*"
                 ];
+
+                quietStartup = true;
+                hideThinkingBlock = true;
 
                 enableInstallTelemetry = false;
                 editorPaddingX = 1;
