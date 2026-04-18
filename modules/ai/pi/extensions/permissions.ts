@@ -147,17 +147,6 @@ export const dangerousPatterns: RegExp[] = [
 let yoloModeEnabled = false
 
 export default function (pi: ExtensionAPI) {
-	// Get cwd from extension context on first use
-	let cwdCache: string | null = null
-
-	function getCwd(): string {
-		if (!cwdCache) {
-			// Access cwd through pi's API
-			cwdCache = process.cwd()
-		}
-		return cwdCache
-	}
-
 	function isSafeCwdPrefix(command: string, cwd: string): string | null {
 		const match = command.match(
 			/^cd\s+['"]?([^'"]+)['"]?\s*&&\s*(.+)/,
@@ -224,18 +213,18 @@ export default function (pi: ExtensionAPI) {
 		return null
 	}
 
-	function isAllowed(command: string): boolean {
+	function isAllowed(command: string, cwd: string): boolean {
 		// Try stripping safe cwd prefix first
-		const safeRest = isSafeCwdPrefix(command, getCwd())
+		const safeRest = isSafeCwdPrefix(command, cwd)
 		if (safeRest !== null) {
 			return allowedPatterns.some((p) => p.test(safeRest))
 		}
 		return allowedPatterns.some((p) => p.test(command))
 	}
 
-	function isDangerous(command: string): boolean {
+	function isDangerous(command: string, cwd: string): boolean {
 		// Try stripping safe cwd prefix first
-		const safeRest = isSafeCwdPrefix(command, getCwd())
+		const safeRest = isSafeCwdPrefix(command, cwd)
 		const checkCmd = safeRest !== null ? safeRest : command
 		return dangerousPatterns.some((p) => p.test(checkCmd))
 	}
@@ -301,7 +290,7 @@ export default function (pi: ExtensionAPI) {
 
 		// Yolo mode: block only dangerous commands
 		if (yoloModeEnabled) {
-			if (isDangerous(command)) {
+			if (isDangerous(command, ctx.cwd)) {
 				return {
 					block: true,
 					reason: `Yolo mode blocked dangerous command: ${command}`,
@@ -310,7 +299,7 @@ export default function (pi: ExtensionAPI) {
 			return undefined
 		}
 
-		if (isAllowed(command)) return undefined
+		if (isAllowed(command, ctx.cwd)) return undefined
 
 		if (!ctx.hasUI) {
 			return { block: true, reason: "Command not in allowlist (no UI)" }
