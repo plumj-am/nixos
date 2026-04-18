@@ -101,9 +101,7 @@
                         bind "Alt k" { MoveFocus "Up"; }
                         bind "Alt j" { MoveFocus "Down"; }
                         bind "Alt l" { MoveFocus "Right"; }
-                        bind "Alt -" { Resize "Decrease"; }
-                        bind "Alt +" { Resize "Increase"; }
-                        bind "Alt =" { Resize "Increase"; }
+                        bind "Alt f" { ToggleFocusFullscreen; }
                       }
 
                       normal {
@@ -160,10 +158,6 @@
                         bind "x" { CloseFocus; }
                         bind "f" { ToggleFocusFullscreen; }
                         bind "w" { ToggleFloatingPanes; }
-                        bind "h" { MovePane "Left"; }
-                        bind "j" { MovePane "Down"; }
-                        bind "k" { MovePane "Up"; }
-                        bind "l" { MovePane "Right"; }
                       }
 
                       tab {
@@ -301,8 +295,8 @@
               ''
                 layout {
                   pane size="75%" split_direction="vertical" {
-                      pane focus=true size="75%"
-                      pane size="25%"
+                      pane focus=true size="72%"
+                      pane size="28%"
                   }
                   pane size="25%" split_direction="vertical" {
                       pane size="50%"
