@@ -101,6 +101,7 @@ export default function (pi: ExtensionAPI) {
 					text: `[CAVEMAN MODE: ${instruction}]`,
 				}],
 				display: false,
+				customType: "caveman",
 			},
 		}
 	})
@@ -120,6 +121,7 @@ export default function (pi: ExtensionAPI) {
 			"less tokens",
 			"be brief",
 			"fewer tokens",
+			"CAVEMAN MODE:",
 		]
 
 		for (const trigger of triggers) {
