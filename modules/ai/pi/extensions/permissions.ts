@@ -18,6 +18,8 @@ export const allowedPatterns: RegExp[] = [
 	/^sg /,
 	/^tail /,
 	/^tree /,
+	/^which /,
+	/^command /,
 
 	/^jj bookmark list /,
 	/^jj commit -m /,
