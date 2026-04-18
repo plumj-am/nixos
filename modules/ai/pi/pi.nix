@@ -66,14 +66,11 @@
 
                 packages = [
                   "git:github.com/nicobailon/pi-interview-tool"
+                  "git:github.com/apmantza/GreedySearch-pi"
                   {
                     source = "git:github.com/netresearch/context7-skill";
                     extensions = [ ];
                     themes = [ ];
-                  }
-                  {
-                    source = "git:github.com/nicobailon/pi-web-access";
-                    skills = [ ];
                   }
                   {
                     source = "git:github.com/mitsuhiko/agent-stuff";
@@ -86,11 +83,6 @@
                     themes = [ ];
                     skills = [ ];
                   }
-                  # {
-                  #   source = "git:github.com/hjanuschka/shitty-extensions";
-                  #   extensions = [ ];
-                  #   skills = [ ];
-                  # }
                 ];
               };
             };
