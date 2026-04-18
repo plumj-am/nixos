@@ -320,7 +320,6 @@ export default function (pi: ExtensionAPI) {
 	// Reset yolo mode on new session
 	pi.on("session_start", async (_event, ctx) => {
 		yoloModeEnabled = false
-		cwdCache = null // Refresh cwd on new session
 		ctx.ui.setStatus("yolo", undefined)
 	})
 
