@@ -8,7 +8,6 @@ let
     "hjem"
     "jujutsu"
     "keys"
-    "lf"
     "lib"
     "nix-index"
     "nix-settings"

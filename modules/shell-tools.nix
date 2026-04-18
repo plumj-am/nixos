@@ -26,6 +26,7 @@
           pkgs.fzf
           pkgs.jq
           pkgs.less
+          pkgs.nnn
           pkgs.ripgrep
           pkgs.vivid
         ];
@@ -35,6 +36,7 @@
           PAGER = pager;
           BAT_PAGER = "${less} --quit-if-one-screen --RAW-CONTROL-CHARS";
           RIPGREP_CONFIG_PATH = "%h/.config/ripgrep/ripgreprc";
+          NNN_FCOLORS = "0000000000000000000000000000"; # Use terminal colours.
         };
 
         xdg.config.files."ripgrep/ripgreprc".text = ''

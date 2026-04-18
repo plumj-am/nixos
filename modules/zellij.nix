@@ -122,7 +122,7 @@
                           SwitchToMode "locked";
                         }
                         bind "Ctrl e" {
-                          Run "${getExe pkgs.lf}" {
+                          Run "${getExe pkgs.nnn}" {
                             in_place true
                             close_on_exit true
                           };
