@@ -18,6 +18,8 @@
         mode = "600";
       };
 
+      shellAliases.pi = "bwrapper pi";
+
       hjem.extraModule =
         { osConfig, ... }:
         {

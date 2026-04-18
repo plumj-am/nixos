@@ -92,9 +92,59 @@
             '';
 
           aliases = defaultAliases // osConfig.shellAliases;
+
+          home = config.directory;
+          user = config.user;
+          bwrapper =
+            pkgs.writeScriptBin "bwrapper"
+              # nu
+              ''
+                #!${getExe pkgs.nushell}
+
+                def main [tool?: string] {
+                  let tool = if ($tool | is-empty) {
+                    input $"Tool to run in (^pwd)? " | str trim
+                  } else { $tool }
+
+                  (bwrap
+                    --dir ${home}
+                    --dir /etc
+                    --dir /etc/ssl
+                    --dir /etc/ssl/certs
+                    --ro-bind ${home}/.config ${home}/.config
+                    --ro-bind /nix/store /nix/store
+                    --ro-bind /run/agenix/opencodeGoKey /run/agenix/opencodeGoKey
+                    --ro-bind /run/current-system /run/current-system
+                    --ro-bind /etc/profiles/per-user/${user}/bin /etc/profiles/per-user/${user}/bin
+                    --ro-bind /etc/resolv.conf /etc/resolv.conf
+                    --ro-bind /etc/nsswitch.conf /etc/nsswitch.conf
+                    --ro-bind /etc/hosts /etc/hosts
+                    --ro-bind ${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt /etc/ssl/certs/ca-certificates.crt
+                    --bind (^pwd) (^pwd)
+                    --bind ${home}/.pi ${home}/.pi
+                    --bind ${home}/.claude ${home}/.claude
+                    --bind ${home}/nixos ${home}/nixos
+                    --bind ${home}/.cache ${home}/.cache
+                    --bind ${home}/.local ${home}/.local
+                    --bind ${home}/.config/nushell ${home}/.config/nushell
+                    --tmpfs /tmp
+                    --proc /proc
+                    --dev /dev
+                    --unshare-pid
+                    --share-net
+                    --die-with-parent
+                    --cap-drop all
+                    --setenv SSL_CERT_FILE /etc/ssl/certs/ca-certificates.crt
+                    --setenv OPENCODE_API_KEY (^cat /run/agenix/opencodeGoKey)
+                    --setenv IN_BWRAP 1
+                    -- $tool)
+                }
+              '';
         in
         {
           packages = [
+            bwrapper
+
             pkgs.bash
             pkgs.carapace
             pkgs.direnv
