@@ -335,7 +335,7 @@ export default function (pi: ExtensionAPI) {
 			message: {
 				customType: "yolo-mode-context",
 				content: `[YOLO MODE ACTIVE]
-Minimal restrictions. Only truly dangerous commands are blocked:
+Minimal restrictions. Only truly dangerous commands blocked:
 - \`rm -rf /\`
 - \`dd if=...\`
 - \`mkfs.*\`, \`fdisk /dev/sd...\`, etc.

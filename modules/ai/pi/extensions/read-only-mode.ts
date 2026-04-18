@@ -110,7 +110,7 @@ export default function readOnlyExtension(pi: ExtensionAPI): void {
 	})
 
 	// Inject context before agent starts
-	pi.on("before_agent_start", async () => {
+	pi.on("before_agent_start", async (_event, ctx) => {
 		if (!readOnlyEnabled) return undefined
 
 		ctx.ui.setStatus(
@@ -125,10 +125,10 @@ export default function readOnlyExtension(pi: ExtensionAPI): void {
 You are in read-only mode - file modifications are disabled.
 
 Restrictions:
-- You CANNOT use: edit, write (file modifications are blocked)
-- You CAN use: read, bash, grep, find, ls, questionnaire, MCP tools
+- You CANNOT: edit, write (file modifications are blocked)
+- You can: read, bash, grep, find, ls, questionnaire, skills
 
-Browse and analyze code freely, but do NOT attempt to make changes.`,
+Browse and analyze code freely, but do NOT try to make changes.`,
 				display: false,
 			},
 		}

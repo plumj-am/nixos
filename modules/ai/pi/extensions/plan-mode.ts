@@ -304,14 +304,14 @@ export default function planModeExtension(pi: ExtensionAPI): void {
 You are in plan mode - a read-only exploration mode for safe code analysis.
 
 Restrictions:
-- You can only use: read, bash, grep, find, ls, questionnaire, MCP tools
-- You CANNOT use: edit, write (file modifications are disabled)
-- Bash is restricted to an allowlist of read-only commands
+- You can only use: read, bash, grep, find, ls, questionnaire, skills
+- You CANNOT: edit, write (file modifications disabled)
+- Bash restricted to an allowlist
 
 Ask clarifying questions using the questionnaire tool.
-Use brave-search skill via bash for web research.
+Use search tools for web research.
 
-Create a detailed numbered plan under a "Plan:" header:
+Create detailed numbered plan under a "Plan:" header:
 
 Plan:
 1. First step description
