@@ -1,16 +1,12 @@
-import { exec } from "node:child_process"
-import { promisify } from "node:util"
+import { readFile } from "node:fs/promises"
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent"
-
-const execAsync = promisify(exec)
 
 async function readThemeMode(): Promise<"dark" | "light"> {
 	try {
-		const { stdout } = await execAsync(
-			"cat /home/jam/nixos/modules/theme.json | jq -r .mode",
-			{ timeout: 1000 },
+		const data = JSON.parse(
+			await readFile("/home/jam/nixos/modules/theme.json", "utf-8"),
 		)
-		return stdout.trim() === "dark" ? "dark" : "light"
+		return data.mode === "dark" ? "dark" : "light"
 	} catch {
 		return "dark"
 	}
