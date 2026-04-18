@@ -58,7 +58,6 @@
                 shellPath = getExe pkgs.bash;
 
                 packages = [
-                  "git:github.com/nicobailon/pi-subagents"
                   "git:github.com/nicobailon/pi-interview-tool"
                   {
                     source = "git:github.com/netresearch/context7-skill";
@@ -72,22 +71,19 @@
                   {
                     source = "git:github.com/mitsuhiko/agent-stuff";
                     extensions = [
-                      "answer.ts"
                       "btw.ts"
                       "context.ts"
                       "loop.ts"
                       "multi-edit.ts"
-                      "prompt-editor.ts"
-                      "review.ts"
                     ];
                     themes = [ ];
                     skills = [ ];
                   }
-                  {
-                    source = "git:github.com/hjanuschka/shitty-extensions";
-                    extensions = [ ];
-                    skills = [ ];
-                  }
+                  # {
+                  #   source = "git:github.com/hjanuschka/shitty-extensions";
+                  #   extensions = [ ];
+                  #   skills = [ ];
+                  # }
                 ];
               };
             };
@@ -100,8 +96,7 @@
             ".pi/agent/extensions/zellij-attention.ts".source = ./extensions/zellij-attention.ts;
             ".pi/agent/extensions/caveman.ts".source = ./extensions/caveman.ts;
 
-            # Seeing how well the extension alone works.
-            # ".pi/agent/skills/caveman/SKILL.md".source = ./skills/caveman.md;
+            ".pi/agent/skills/caveman".source = ./skills/caveman;
             ".pi/agent/skills/gh-grep".source = ./skills/gh-grep; # Taken from <https://github.com/huynguyen03dev/opencode-setup/tree/main/skills/gh-grep>
 
             ".pi/agent/agents".source = ./agents;
