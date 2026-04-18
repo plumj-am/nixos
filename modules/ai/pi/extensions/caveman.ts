@@ -94,6 +94,8 @@ export default function (pi: ExtensionAPI) {
 		// Inject a user message that contains the caveman instructions
 		// This ensures the LLM sees it as part of the conversation
 		return {
+			systemPrompt: event.systemPrompt +
+				"\n\n[CAVEMAN MODE ACTIVE]\n${instruction}",
 			message: {
 				role: "user",
 				content: [{
