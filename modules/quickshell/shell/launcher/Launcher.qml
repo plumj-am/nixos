@@ -21,7 +21,7 @@ PanelWindow {
         id: appModel
     }
 
-    visible: isOpen || launcherClip.implicitHeight > 0
+    visible: isOpen
     color: "transparent"
     implicitHeight: 800
 
@@ -55,6 +55,9 @@ PanelWindow {
             searchText = "";
             selectedIndex = 0;
             searchField.forceActiveFocus();
+        } else {
+            searchText = "";
+            searchField.text = "";
         }
     }
 
