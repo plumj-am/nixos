@@ -265,7 +265,7 @@ export default function (pi: ExtensionAPI) {
 
 	pi.registerShortcut(Key.ctrlAlt("y"), {
 		description: "Toggle yolo mode",
-		handler: async (_args, ctx) => {
+		handler: async (ctx) => {
 			yoloModeEnabled = !yoloModeEnabled
 
 			if (yoloModeEnabled) {
