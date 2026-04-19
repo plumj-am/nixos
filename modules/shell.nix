@@ -239,8 +239,8 @@
 
               ${zoxideNushellIntegration}
 
-              source $"($nu.cache-dir)/carapace.nu"
-              source $"($nu.cache-dir)/jj.nu"
+              try { source $"($nu.cache-dir)/carapace.nu" }
+              try { source $"($nu.cache-dir)/jj.nu" }
             '';
 
           xdg.config.files."nushell/env.nu".text =
@@ -252,9 +252,9 @@
 
                 			$env.CARAPACE_BRIDGES = "zsh,fish,bash,inshellisense,clap,jj,nu"
                 			mkdir $"($nu.cache-dir)"
-                			carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu"
+                			try { carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu" }
 
-                			jj util completion nushell | save --force $"($nu.cache-dir)/jj.nu"
+                			try { jj util completion nushell | save --force $"($nu.cache-dir)/jj.nu" }
 
                 			# let carapace_completer = {|spans: list<string>|
                   	# 		# If the current command is an alias, get it's expansion.
@@ -282,8 +282,6 @@
                 				$env.THEME_MODE = "${theme.variant}"
                 				$env.THEME_SCHEME = "${theme.colorScheme}"
                 			}
-
-                			# Custom Nushell prompt.
 
                 			def prompt [--transient --right]: nothing -> string {
                 				let bar = $"(ansi '${base0D}')(ansi attr_bold)━(ansi rst)"
