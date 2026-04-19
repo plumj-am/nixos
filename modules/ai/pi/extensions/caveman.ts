@@ -60,8 +60,8 @@ export default function (pi: ExtensionAPI) {
 			const levelArg = args?.trim().toLowerCase() || ""
 
 			if (!levelArg) {
-				// Toggle between off and full
-				currentLevel = currentLevel === "off" ? "full" : "off"
+				// Toggle between off and ultra
+				currentLevel = currentLevel === "off" ? "ultra" : "off"
 			} else {
 				// Extract just the level (first word, handle case like "full\n" or "fullhello")
 				const cleanArg = levelArg.split(/\s+/)[0].replace(/[^a-z]/g, "")
@@ -127,9 +127,9 @@ export default function (pi: ExtensionAPI) {
 		for (const trigger of triggers) {
 			if (text.includes(trigger)) {
 				// Check for level in text
-				let level: CavemanLevel = "full"
+				let level: CavemanLevel = "ultra"
 				if (text.includes("lite")) level = "lite"
-				else if (text.includes("ultra")) level = "ultra"
+				else if (text.includes("full")) level = "full"
 
 				currentLevel = level
 				ctx.ui.notify(formatLevel(currentLevel), "info")
