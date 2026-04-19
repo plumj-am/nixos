@@ -46,6 +46,7 @@ in
       rust-desktop
       rss-tui
       sudo-extra-desktop
+      syncthing
       theme-extra-fonts
       theme-extra-scripts
       window-manager

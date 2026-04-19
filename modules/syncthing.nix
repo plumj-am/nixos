@@ -11,7 +11,7 @@
         #   addresses = [ "tcp://blackwell.taild29fec.ts.net:22000" ];
         # };
         date = {
-          id = "";
+          id = "VK2BBSF-26UT4M4-4ZGRZDQ-OKWDEJS-FSV5OXB-M7K2Z6S-R4A6L6R-4WI2SAC";
           addresses = [ "tcp://date.taild29fec.ts.net:22000" ];
         };
         kiwi = {
@@ -38,17 +38,25 @@
           id = "JL3HLSF-2JP4K7Y-MHDQWLQ-USTAS4D-W4LQNSK-BKR4PD5-Q72IUMR-H7MYIA5";
           addresses = [ "tcp://yuzu.taild29fec.ts.net:22000" ];
         };
+
+        onx = {
+          id = "";
+          addresses = [ "tcp://onx.taild29fec.ts.net:22000" ];
+
+        };
       };
 
       allDevices = attrNames devices;
-
     in
     {
       users.users.syncthing.extraGroups = [ "radicle" ];
 
       systemd.tmpfiles.rules = [
+        "d /var/lib/radicle-ci 2775 radicle radicle -"
         "d /var/lib/radicle-ci/adapters 2775 radicle radicle -"
         "d /var/lib/radicle-ci/reports 2775 radicle radicle -"
+        "d /var/backups 0700 syncthing syncthing -"
+        "d /var/backups/onx 0700 syncthing syncthing -"
       ];
 
       services.syncthing = {
@@ -68,12 +76,33 @@
               ignorePerms = true;
               ignorePatterns = [
                 "native/**/src"
+                ".tmp*"
               ];
             };
+
             radicle-ci-reports = {
               path = "/var/lib/radicle-ci/reports";
               devices = allDevices;
               ignorePerms = true;
+              ignorePatterns = [
+                ".tmp*"
+              ];
+            };
+
+            onx-backup = {
+              path = "/var/backups/onx";
+              devices = [
+                "sloe"
+                "onx"
+              ];
+              ignorePerms = true;
+              versioning = {
+                type = "staggered";
+                params = {
+                  cleanInterval = "7200"; # 2h
+                  maxAge = "2592000"; # 30d
+                };
+              };
             };
           };
         };
