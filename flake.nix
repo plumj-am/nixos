@@ -52,6 +52,10 @@
       url = "github:niri-wm/niri";
       inputs.nixpkgs.follows = "os";
     };
+    nixos-core = {
+      url = "github:feel-co/nixos-core/notashelf/push-trvqyswxlpww";
+      inputs.nixpkgs.follows = "os";
+    };
     nix-index = {
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "os";

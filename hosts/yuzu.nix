@@ -49,6 +49,7 @@ in
       radicle-gui
       radicle-node
       radicle-tui
+      raperl
       rust-desktop
       rss-tui
       sudo-extra-desktop

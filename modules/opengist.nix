@@ -33,7 +33,7 @@
         ];
         requires = singleton "forgejo.service";
         wantedBy = singleton "multi-user.target";
-        path = singleton pkgs.git;
+        path = singleton pkgs.gitMinimal;
 
         serviceConfig = systemdHardened // {
           Type = "notify";

@@ -16,7 +16,7 @@
 
         path = [
           pkgs.nix
-          pkgs.git
+          pkgs.gitMinimal
           pkgs.nushell
         ];
       };

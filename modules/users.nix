@@ -105,7 +105,7 @@
           directory = "/home/${cfg.anamana.user}";
           packages = [
             pkgs.sccache
-            pkgs.git
+            pkgs.gitMinimal
             pkgs.direnv
           ];
           xdg.cache.files = mkForce { };

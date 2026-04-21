@@ -758,6 +758,27 @@
         "type": "github"
       }
     },
+    "nixos-core": {
+      "inputs": {
+        "nixpkgs": [
+          "os"
+        ]
+      },
+      "locked": {
+        "lastModified": 1776794965,
+        "narHash": "sha256-DfVLQuAeSLdSk2MEcOw50qW6grXOX+3ofRcWE/jQaAs=",
+        "owner": "feel-co",
+        "repo": "nixos-core",
+        "rev": "f395252c160c47a522d1ba7be30627abb81ec52b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "feel-co",
+        "ref": "notashelf/push-trvqyswxlpww",
+        "repo": "nixos-core",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1761236834,
@@ -974,6 +995,7 @@
         "llm-agents": "llm-agents",
         "niri": "niri",
         "nix-index": "nix-index",
+        "nixos-core": "nixos-core",
         "nu-lint": "nu-lint",
         "os": "os",
         "os-darwin": "os-darwin",

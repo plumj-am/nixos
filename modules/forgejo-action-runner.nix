@@ -72,7 +72,7 @@ let
               pkgs.curl
               pkgs.forgejo-cli
               pkgs.gcc
-              pkgs.git
+              pkgs.gitMinimal
               pkgs.gnutar
               pkgs.gzip
               pkgs.just
