@@ -213,20 +213,24 @@ export default function (pi: ExtensionAPI) {
 		return null
 	}
 
+	function splitChain(command: string): string[] {
+		return command.split(/\s*&&\s*/).map((s) => s.trim()).filter(Boolean)
+	}
+
 	function isAllowed(command: string, cwd: string): boolean {
 		// Try stripping safe cwd prefix first
 		const safeRest = isSafeCwdPrefix(command, cwd)
-		if (safeRest !== null) {
-			return allowedPatterns.some((p) => p.test(safeRest))
-		}
-		return allowedPatterns.some((p) => p.test(command))
+		const checkCmd = safeRest !== null ? safeRest : command
+		const parts = splitChain(checkCmd)
+		return parts.every((part) => allowedPatterns.some((p) => p.test(part)))
 	}
 
 	function isDangerous(command: string, cwd: string): boolean {
 		// Try stripping safe cwd prefix first
 		const safeRest = isSafeCwdPrefix(command, cwd)
 		const checkCmd = safeRest !== null ? safeRest : command
-		return dangerousPatterns.some((p) => p.test(checkCmd))
+		const parts = splitChain(checkCmd)
+		return parts.some((part) => dangerousPatterns.some((p) => p.test(part)))
 	}
 
 	pi.registerCommand("yolo", {
