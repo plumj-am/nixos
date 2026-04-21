@@ -105,7 +105,7 @@
             substituteInPlace litellm/caching/qdrant_semantic_cache.py \
               --replace-warn \
                 'prompt += message["content"]' \
-                'prompt += message["content"] if isinstance(message["content"], str) else " ".join(p["text"] for p in message["content"] if isinstance(p, dict) and p.get("type") == "text")'
+                'prompt += message["content"] if isinstance(message["content"], str) else " ".join(p["text"] for p in (message["content"] or []) if isinstance(p, dict) and p.get("type") == "text")'
           '';
         });
 
@@ -133,7 +133,7 @@
             {
               model_name = "ollama-embedding-model";
               litellm_params = {
-                model = "ollama/nomic-embed-text";
+                model = "ollama/mxbai-embed-large";
                 api_base = "http://localhost:11434";
                 drop_params = true;
                 stream = false;
@@ -142,6 +142,8 @@
           ];
 
           litellm_settings = {
+            set_verbose = true;
+
             drop_params = true;
             telemetry = false;
 
@@ -177,12 +179,11 @@
               ];
 
               qdrant_api_base = "http://localhost:6333";
-              qdrant_collection_name = "litellm-semantic";
+              qdrant_collection_name = "litellm-semantic-1024";
               qdrant_quantization_config = "binary";
-              qdrant_semantic_cache_vector_size = 768;
+              qdrant_semantic_cache_vector_size = 1024;
 
-              # similarity_threshold = 0.82; # For MiniLM.
-              similarity_threshold = 0.78; # For nomic-embed-text.
+              similarity_threshold = 0.92;
 
               max_connections = 128;
             };
@@ -217,12 +218,18 @@
       #   settings.maxmemory-policy = "allkeys-lru";
       # };
 
-      services.qdrant.enable = true;
+      services.qdrant = {
+        enable = true;
+
+        settings = {
+          storage.optimizers.indexing_threshold_kb = 0; # Always build HNSW index.
+        };
+      };
 
       services.ollama = {
         enable = true;
         package = pkgs.ollama-cuda;
-        loadModels = [ "nomic-embed-text" ];
+        loadModels = [ "mxbai-embed-large" ];
 
         environmentVariables = {
           OLLAMA_NUM_PARALLEL = "4";
