@@ -405,6 +405,11 @@
                 				let cmd_duration = if $cmd_duration <= 2sec {
                 				  ""
                 				} else {
+                				  let cmd_duration = if $cmd_duration >= 60sec {
+                				    $cmd_duration | format duration min
+                				  } else {
+                				    $cmd_duration | format duration sec
+                				  }
               						$" (ansi '${base0A}')($cmd_duration)"
                 				}
 
