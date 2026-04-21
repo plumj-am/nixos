@@ -100,15 +100,6 @@
       systemd.services.litellm.serviceConfig.DynamicUser = mkForce false;
 
       services.litellm = {
-        package = pkgs.litellm.overridePythonAttrs (old: {
-          postPatch = (old.postPatch or "") + ''
-            substituteInPlace litellm/caching/qdrant_semantic_cache.py \
-              --replace-warn \
-                'prompt += message["content"]' \
-                'prompt += message["content"] if isinstance(message["content"], str) else " ".join(p["text"] for p in (message["content"] or []) if isinstance(p, dict) and p.get("type") == "text")'
-          '';
-        });
-
         enable = true;
         port = 4000;
 
@@ -129,17 +120,7 @@
         };
 
         settings = {
-          model_list = map mkModel models ++ [
-            {
-              model_name = "ollama-embedding-model";
-              litellm_params = {
-                model = "ollama/mxbai-embed-large";
-                api_base = "http://localhost:11434";
-                drop_params = true;
-                stream = false;
-              };
-            }
-          ];
+          model_list = map mkModel models;
 
           litellm_settings = {
             set_verbose = true;
@@ -151,42 +132,6 @@
             request_cache_max_entries = 10000;
             max_parallel_requests = 32;
             request_timeout = 120000;
-
-            cache = true;
-            cache_params = {
-              # type = "redis-semantic"; # Can't use it yet. Error: `ModuleNotFoundError: No module named 'redisvl'`
-              # See here: <https://github.com/NixOS/nixpkgs/blob/3da2922a907d285ff3d82bc7654f0ae483ad1b0f/pkgs/development/python-modules/litellm/default.nix#L115>
-              # type = "redis";
-              type = "qdrant-semantic"; # qdrant-semantic | redis[-semantic]
-              # host = "127.0.0.1";
-              # port = 6379;
-
-              ttl = 3600;
-              mode = "default_on";
-
-              namespace = "litellm";
-
-              redis_semantic_cache_embedding_model = "ollama-embedding-model";
-              qdrant_semantic_cache_embedding_model = "ollama-embedding-model";
-
-              supported_call_types = [
-                "completion"
-                "acompletion"
-                "text_completion"
-                "atext_completion"
-                "embedding"
-                "aembedding"
-              ];
-
-              qdrant_api_base = "http://localhost:6333";
-              qdrant_collection_name = "litellm-semantic-1024";
-              qdrant_quantization_config = "binary";
-              qdrant_semantic_cache_vector_size = 1024;
-
-              similarity_threshold = 0.92;
-
-              max_connections = 128;
-            };
           };
 
           router_settings = {
@@ -218,18 +163,9 @@
       #   settings.maxmemory-policy = "allkeys-lru";
       # };
 
-      services.qdrant = {
-        enable = true;
-
-        settings = {
-          storage.optimizers.indexing_threshold_kb = 0; # Always build HNSW index.
-        };
-      };
-
       services.ollama = {
         enable = true;
         package = pkgs.ollama-cuda;
-        loadModels = [ "mxbai-embed-large" ];
 
         environmentVariables = {
           OLLAMA_NUM_PARALLEL = "4";
