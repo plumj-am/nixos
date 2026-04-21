@@ -341,6 +341,16 @@
         context = 262144;
       }
       {
+        name = "mimo-v2.5-pro";
+        id = "openai/mimo-v2.5-pro";
+        context = 1048576;
+      }
+      {
+        name = "mimo-v2.5";
+        id = "openai/mimo-v2.5";
+        context = 262144;
+      }
+      {
         name = "qwen3.6-plus";
         id = "openai/qwen3.6-plus";
         context = 1048576;
