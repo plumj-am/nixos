@@ -59,7 +59,7 @@ export default function readOnlyExtension(pi: ExtensionAPI): void {
 
 	pi.registerShortcut(Key.ctrlAlt("r"), {
 		description: "Toggle read-only mode",
-		handler: async (_args, ctx) => {
+		handler: async (ctx) => {
 			readOnlyEnabled = !readOnlyEnabled
 
 			if (readOnlyEnabled) {
