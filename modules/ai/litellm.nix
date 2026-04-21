@@ -2,26 +2,26 @@
   # Not available as a service on nix-darwin need another solution.
   flake.modules.nixos.litellm =
     {
-      pkgs,
       lib,
       config,
       ...
     }:
     let
       inherit (lib.modules) mkForce;
-      inherit (lib.lists) map;
+      inherit (lib.lists) map filter elem;
       inherit (config.age) secrets;
 
       mkModel =
         {
-          modelName,
-          modelFull,
+          name,
+          id,
           stream ? true,
+          ...
         }:
         {
-          model_name = modelName;
+          model_name = name;
           litellm_params = {
-            model = modelFull;
+            model = id;
             api_base = "https://opencode.ai/zen/go/v1";
             api_key = "os.environ/OPENCODE_GO_KEY";
             modify_params = true;
@@ -30,51 +30,13 @@
           };
         };
 
-      models = [
-        {
-          modelName = "minimax-m2.7";
-          modelFull = "openai/minimax-m2.7";
-        }
-        {
-          modelName = "minimax-m2.5";
-          modelFull = "openai/minimax-m2.5";
-        }
+      litellmModels = config.ai.models.litellm;
 
-        {
-          modelName = "glm-5.1";
-          modelFull = "zai/glm-5.1";
-        }
-        {
-          modelName = "glm-5";
-          modelFull = "zai/glm-5";
-        }
-        {
-          modelName = "kimi-k2.5";
-          modelFull = "moonshot/kimi-k2.5";
-          stream = false;
-        }
-        {
-          modelName = "kimi-k2.6";
-          modelFull = "moonshot/kimi-k2.6";
-          stream = false;
-        }
-        {
-          modelName = "mimo-v2-pro";
-          modelFull = "openai/mimo-v2-pro";
-        }
-        {
-          modelName = "mimo-v2-omni";
-          modelFull = "openai/mimo-v2-omni";
-        }
-        {
-          modelName = "qwen3.6-plus";
-          modelFull = "openai/qwen3.6-plus";
-        }
-        {
-          modelName = "qwen3.5-plus";
-          modelFull = "openai/qwen3.5-plus";
-        }
-      ];
+      enabledModels =
+        if litellmModels.enabledIDs == [ ] then
+          litellmModels.all
+        else
+          filter (m: elem m.id litellmModels.enabledIDs) litellmModels.all;
     in
     {
       age.secrets.opencodeGoEnvironment = {
@@ -120,7 +82,7 @@
         };
 
         settings = {
-          model_list = map mkModel models;
+          model_list = map mkModel enabledModels;
 
           litellm_settings = {
             set_verbose = true;
@@ -156,41 +118,5 @@
           };
         };
       };
-
-      # services.redis.servers."litellm" = {
-      #   enable = true;
-      #   port = 6379;
-      #   settings.maxmemory-policy = "allkeys-lru";
-      # };
-
-      services.ollama = {
-        enable = true;
-        package = pkgs.ollama-cuda;
-
-        environmentVariables = {
-          OLLAMA_NUM_PARALLEL = "4";
-          OLLAMA_MAX_LOADED_MODELS = "2";
-        };
-      };
-
-      systemd.services.ollama.serviceConfig = {
-        Restart = "always";
-      };
-      systemd.services.litellm.serviceConfig = {
-        Restart = "always";
-        RestartSec = "5s";
-        StartLimitIntervalSec = "2min";
-        StartLimitBurst = 5;
-        TimeoutStartSec = "120s";
-      };
-
-      systemd.services.litellm.after = [
-        "redis-litellm.service"
-        "ollama.service"
-      ];
-      systemd.services.litellm.wants = [
-        "redis-litellm.service"
-        "ollama.service"
-      ];
     };
 }

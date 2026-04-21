@@ -4,11 +4,46 @@
       inputs,
       pkgs,
       lib,
+      config,
       ...
     }:
     let
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
+      inherit (lib.lists) filter elem;
+
+      getEnabledList =
+        models:
+        let
+          ids = models.enabledIDs or null;
+        in
+        if ids == null || ids == [ ] then
+          models.all
+        else
+          filter (m: elem m.id models.enabledIDs) models.all;
+
+      mkModel =
+        {
+          id,
+          context,
+          reasoning,
+          ...
+        }:
+        {
+          inherit id reasoning;
+          contextWindow = context;
+        };
+
+      mkOllamaModel =
+        m:
+        (mkModel m)
+        // {
+          name = m.name;
+          compat.supportsDeveloperRole = m.developerRole;
+        };
+
+      enabledlitellmModels = getEnabledList config.ai.models.litellm;
+      enabledOllamaModels = getEnabledList config.ai.models.local;
     in
     {
       age.secrets.opencodeGoKey = {
@@ -47,62 +82,19 @@
             ".pi/agent/models.json" = {
               generator = pkgs.writers.writeJSON "pi-agent-config.json";
               value = {
-                providers.litellm = {
-                  baseUrl = "http://localhost:4000";
-                  api = "openai-completions";
-                  apiKey = "dummy";
-                  models = [
-                    {
-                      id = "minimax-m2.7";
-                      reasoning = true;
-                      contextWindow = 204800;
-                    }
-                    {
-                      id = "minimax-m2.5";
-                      reasoning = true;
-                      contextWindow = 204800;
-                    }
-                    {
-                      id = "glm-5.1";
-                      reasoning = true;
-                      contextWindow = 204800;
-                    }
-                    {
-                      id = "glm-5";
-                      reasoning = true;
-                      contextWindow = 204800;
-                    }
-                    {
-                      id = "kimi-k2.5";
-                      reasoning = true;
-                      contextWindow = 262144;
-                    }
-                    {
-                      id = "kimi-k2.6";
-                      reasoning = true;
-                      contextWindow = 262144;
-                    }
-                    {
-                      id = "mimo-v2-pro";
-                      reasoning = true;
-                      contextWindow = 1048576;
-                    }
-                    {
-                      id = "mimo-v2-omni";
-                      reasoning = true;
-                      contextWindow = 262144;
-                    }
-                    {
-                      id = "qwen3.6-plus";
-                      reasoning = true;
-                      contextWindow = 1048576;
-                    }
-                    {
-                      id = "qwen3.5-plus";
-                      reasoning = true;
-                      contextWindow = 262144;
-                    }
-                  ];
+                providers = {
+                  litellm = {
+                    baseUrl = "http://localhost:4000";
+                    api = "openai-completions";
+                    apiKey = "dummy";
+                    models = map mkModel enabledlitellmModels;
+                  };
+                  ollama = {
+                    baseUrl = "http://localhost:11434/v1";
+                    api = "openai-completions";
+                    apiKey = "dummy";
+                    models = map mkOllamaModel enabledOllamaModels;
+                  };
                 };
               };
             };
@@ -127,7 +119,7 @@
               type = "copy"; # Sometimes needs to write to config.
               generator = pkgs.writers.writeJSON "pi-agent-config.json";
               value = {
-                defaultProvider = "litellm";
+                defaultProvider = "opencode-go";
                 defaultModel = "kimi-k2.6";
                 enabledModels = [
                   "minimax-*"
