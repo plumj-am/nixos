@@ -181,7 +181,7 @@
               $env.config.shell_integration.osc2 = true
               $env.config.shell_integration.osc7 = true
               $env.config.shell_integration.osc8 = true
-              $env.config.shell_integration.osc9_9 = true
+              $env.config.shell_integration.osc9_9 = false # Conflicts with kitty.
               $env.config.shell_integration.osc133 = true
               $env.config.shell_integration.osc633 = true
               $env.config.shell_integration.reset_application_mode = true
@@ -276,6 +276,7 @@
               }
 
               $env.config.hooks.pre_prompt = [
+                {|| print "" } # Blank line before prompt.
                 {
                   if not (which direnv | is-empty) {
                     direnv export json | from json | default {} | load-env
@@ -408,7 +409,6 @@
                 				}
 
                 				let left_prompt = [
-                				  (char nl)
                 					$status
                 					$host
                 					" "
@@ -417,7 +417,6 @@
               					] | str join
 
               					let right_prompt = [
-              					  "\e[1B" # Move cursor down one line to align with left prompt.
               					  (if ($cmd_duration | is-not-empty) {
                 					  [
                     					$cmd_duration
