@@ -224,8 +224,20 @@ export default function (pi: ExtensionAPI) {
 		return singleCheck(checkCmd)
 	}
 
+	// Lightweight glob matcher for command strings (not file paths).
+	// Unlike path.matchesGlob, * here matches anything including / and spaces.
+	function matchGlob(str: string, pattern: string): boolean {
+		const re = pattern
+			.replace(/[.+^${}()|[\]\\]/g, "\\$&")
+			.replace(/\*\*/g, "{{GLOBSTAR}}")
+			.replace(/\*/g, ".*")
+			.replace(/\?/g, ".")
+			.replace(/{{GLOBSTAR}}/g, ".*")
+		return new RegExp(`^${re}$`).test(str)
+	}
+
 	const isAllowedSingle = (command: string): boolean =>
-		allowedPatterns.some((p) => matchesGlob(command, p))
+		allowedPatterns.some((p) => matchGlob(command, p))
 
 	function isAllowed(command: string, cwd: string): boolean {
 		return checkCommand(command, cwd, isAllowedSingle, "every")
