@@ -68,8 +68,6 @@
             cat = "${getExe pkgs.bat} --theme ${theme.bat}";
             less = "${getExe pkgs.bat} --plain";
 
-            mosh = "mosh --no-init";
-
             ns = "niri-session";
 
             h = "hx";

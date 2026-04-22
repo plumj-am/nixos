@@ -32,8 +32,6 @@ let
                   IdentityFile ${config.directory}/.ssh/id
               '';
           };
-
-          packages = singleton pkgs.mosh;
         };
     };
 in
