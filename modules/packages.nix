@@ -44,7 +44,7 @@ in
       pkgs.bitwarden-desktop
       pkgs.brave
       pkgs.obs-studio
-      pkgs.thunderbird
+      # pkgs.thunderbird
       pkgs.wasistlos
     ];
 

@@ -53,7 +53,7 @@
       inputs.nixpkgs.follows = "os";
     };
     nixos-core = {
-      url = "github:feel-co/nixos-core/notashelf/push-trvqyswxlpww";
+      url = "github:feel-co/nixos-core";
       inputs.nixpkgs.follows = "os";
     };
     nix-index = {
