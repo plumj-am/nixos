@@ -65,7 +65,7 @@
           # Patch kio-extras at the kdePackages *scope* level so Dolphin
           # et al. rebuild against the perl-free variant.
           kdePackages = prev.kdePackages.overrideScope (
-            kfinal: kprev: {
+            _kfinal: kprev: {
               kio-extras = kprev.kio-extras.overrideAttrs (old: {
                 postPatch = (old.postPatch or "") + ''
                   substituteInPlace CMakeLists.txt \
