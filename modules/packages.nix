@@ -41,7 +41,6 @@ in
   flake.modules.nixos.packages-extra-gui =
     { pkgs, ... }:
     mkHjemPackages [
-      pkgs.bitwarden-desktop
       pkgs.brave
       pkgs.obs-studio
       # pkgs.thunderbird
@@ -55,7 +54,6 @@ in
       pkgs.deno
       pkgs.docker
       pkgs.docker-compose
-      pkgs.exercism
       pkgs.pnpm
       pkgs.deadnix
       pkgs.treefmt
