@@ -1,5 +1,8 @@
 import { homedir, matchesGlob, relative, resolve } from "node:path"
-import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent"
+import type {
+	ExtensionAPI,
+	ExtensionContext,
+} from "@mariozechner/pi-coding-agent"
 import { Key } from "@mariozechner/pi-tui"
 
 // Read-only allowlist patterns (strict mode)
@@ -16,6 +19,7 @@ export const allowedPatterns: string[] = [
 	"ls*",
 	"rg*",
 	"sg*",
+	"sort*",
 	"tail*",
 	"tree*",
 	"which*",
@@ -130,39 +134,11 @@ export const forbiddenPathPatterns: string[] = [
 
 export const allowedExtraCwds: string[] = ["/tmp"]
 
-const forbiddenPathPatternsLower: string[] = forbiddenPathPatterns.map((p) => p.toLowerCase())
+const forbiddenPathPatternsLower: string[] = forbiddenPathPatterns.map((p) =>
+	p.toLowerCase()
+)
 
 const PATH_EXTRACTOR = /['"]?([^\s'"&|;]+)['"]?/g
-
-// Yolo mode: block only truly dangerous commands
-export const dangerousPatterns: string[] = [
-	"rm -rf /*",
-	"rm -r /*",
-	"dd if=*",
-	"mkfs.*",
-	"ddrescue*",
-	":*>*/dev/sd*",
-	"shred*",
-	"mke2fs*",
-	"format drive*",
-	"format disk*",
-	"format usb*",
-	"format floppy*",
-	"fdisk /dev/sd*",
-	"parted*--fix-table*",
-	"rm -r* /home*",
-	"rm -r* /root*",
-	"rm -r* /etc*",
-	"rm -r* /usr*",
-	"rm -r* /var*",
-	"rm -r* /sys*",
-	"rm -r* /proc*",
-	"rm -r* /opt*",
-	"rm -r* /boot*",
-	"rm -r* /dev*",
-]
-
-let yoloModeEnabled = false
 
 export default function (pi: ExtensionAPI) {
 	function isSafeCwdPrefix(command: string, cwd: string): string | null {
@@ -250,38 +226,9 @@ export default function (pi: ExtensionAPI) {
 	const isAllowedSingle = (command: string): boolean =>
 		allowedPatterns.some((p) => matchesGlob(command, p))
 
-	const isDangerousSingle = (command: string): boolean =>
-		dangerousPatterns.some((p) => matchesGlob(command, p))
-
 	function isAllowed(command: string, cwd: string): boolean {
 		return checkCommand(command, cwd, isAllowedSingle, "every")
 	}
-
-	function isDangerous(command: string, cwd: string): boolean {
-		return checkCommand(command, cwd, isDangerousSingle, "some")
-	}
-
-	function toggleYolo(ctx: ExtensionContext) {
-		yoloModeEnabled = !yoloModeEnabled
-		if (yoloModeEnabled) {
-			ctx.ui.notify("Yolo mode enabled. Only truly dangerous commands blocked.")
-			ctx.ui.setStatus("yolo", ctx.ui.theme.fg("warning", "⚡ yolo"))
-		} else {
-			ctx.ui.notify("Yolo mode disabled. Normal restrictions restored.")
-			ctx.ui.setStatus("yolo", undefined)
-		}
-	}
-
-	pi.registerCommand("yolo", {
-		description:
-			"Toggle yolo mode (minimal restrictions, block only very bad commands)",
-		handler: async (_args, ctx) => toggleYolo(ctx),
-	})
-
-	pi.registerShortcut(Key.ctrlAlt("y"), {
-		description: "Toggle yolo mode",
-		handler: async (ctx) => toggleYolo(ctx),
-	})
 
 	pi.on("tool_call", async (event, ctx) => {
 		if (event.toolName !== "bash") return undefined
@@ -295,17 +242,6 @@ export default function (pi: ExtensionAPI) {
 				block: true,
 				reason: `Forbidden path: ${forbiddenPath}`,
 			}
-		}
-
-		// Yolo mode: block only dangerous commands
-		if (yoloModeEnabled) {
-			if (isDangerous(command, ctx.cwd)) {
-				return {
-					block: true,
-					reason: `Yolo mode blocked dangerous command: ${command}`,
-				}
-			}
-			return undefined
 		}
 
 		if (isAllowed(command, ctx.cwd)) return undefined
@@ -324,34 +260,5 @@ export default function (pi: ExtensionAPI) {
 		}
 
 		return undefined
-	})
-
-	// Reset yolo mode on new session
-	pi.on("session_start", async (_event, ctx) => {
-		yoloModeEnabled = false
-		ctx.ui.setStatus("yolo", undefined)
-	})
-
-	// Inject context before agent starts
-	pi.on("before_agent_start", async (_event, ctx) => {
-		if (!yoloModeEnabled) return undefined
-
-		if (ctx.hasUI) {
-			ctx.ui.setStatus("yolo", ctx.ui.theme.fg("warning", "⚡ yolo"))
-		}
-
-		return {
-			message: {
-				customType: "yolo-mode-context",
-				content: `[YOLO MODE ACTIVE]
-Minimal restrictions. Only truly dangerous commands blocked:
-- \`rm -rf /\`
-- \`dd if=...\`
-- \`mkfs.*\`, \`fdisk /dev/sd...\`, etc.
-
-Normal file operations allowed. Use with caution.`,
-				display: false,
-			},
-		}
 	})
 }
