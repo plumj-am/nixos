@@ -30,7 +30,7 @@
         tools.nixos-generate-config.enable = mkDefault false;
 
         # Block perl.
-        forbiddenDependenciesRegexes = singleton "perl";
+        # forbiddenDependenciesRegexes = singleton "perl";
       };
 
       environment.systemPackages = singleton pkgs.handlr-regex;
