@@ -101,7 +101,7 @@
               ''
                 #!${getExe pkgs.nushell}
 
-                def main [tool?: string] {
+                def --wrapped main [tool?: string, ...rest] {
                   let tool = if ($tool | is-empty) {
                     input $"Tool to run in (^pwd)? " | str trim
                   } else { $tool }
@@ -137,7 +137,7 @@
                     --setenv SSL_CERT_FILE /etc/ssl/certs/ca-certificates.crt
                     --setenv OPENCODE_API_KEY (^cat /run/agenix/opencodeGoKey)
                     --setenv IN_BWRAP 1
-                    -- $tool)
+                    -- $tool ...$rest)
                 }
               '';
         in
