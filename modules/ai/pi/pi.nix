@@ -4,46 +4,11 @@
       inputs,
       pkgs,
       lib,
-      config,
       ...
     }:
     let
-      inherit (lib.lists) singleton subtractLists;
+      inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
-      inherit (lib.lists) filter elem;
-
-      getEnabledList =
-        models:
-        let
-          ids = models.enabledIDs or null;
-        in
-        if ids == null || ids == [ ] then
-          models.all
-        else
-          filter (m: elem m.id models.enabledIDs) models.all;
-
-      mkModel =
-        {
-          id,
-          context,
-          reasoning,
-          ...
-        }:
-        {
-          inherit id reasoning;
-          contextWindow = context;
-        };
-
-      mkOllamaModel =
-        m:
-        (mkModel m)
-        // {
-          inherit (m) name;
-          compat.supportsDeveloperRole = m.developerRole;
-        };
-
-      enabledLitellmModels = getEnabledList config.ai.models.litellm;
-      enabledOllamaModels = getEnabledList config.ai.models.local;
     in
     {
       age.secrets.opencodeGoKey = {
@@ -94,12 +59,6 @@
                 in
                 {
                   providers = {
-                    litellm = mkLocalProvider "http://localhost:4000" {
-                      models = map mkModel enabledLitellmModels;
-                    };
-                    ollama = mkLocalProvider "http://localhost:11434/v1" {
-                      models = map mkOllamaModel enabledOllamaModels;
-                    };
                     llama-cpp = mkLocalProvider "http://localhost:11435/v1" {
                       models = [
                         {
@@ -133,17 +92,17 @@
               type = "copy"; # Sometimes needs to write to config.
               generator = pkgs.writers.writeJSON "pi-agent-config.json";
               value = {
-                defaultProvider = "litellm";
-                defaultModel = "moonshot/kimi-k2.6";
-                enabledModels =
-                  map (m: m.id) enabledLitellmModels
-                  ++ [
-                    "unsloth/Qwen3.6-35B-A3B:UD-IQ3_XXS"
-                  ]
-                  |> subtractLists [
-                    "openai/mimo-v2-pro"
-                    "openai/mimo-v2-omni"
-                  ];
+                defaultProvider = "opencode-go";
+                defaultModel = "kimi-k2.6";
+                enabledModels = [
+                  "kimi-k2*"
+                  "qwen3*"
+                  "minimax*"
+                  "mimo-v2.5*"
+                  "deepseek*"
+
+                  "unsloth/Qwen3.6-35B-A3B:UD-IQ3_XXS"
+                ];
 
                 quietStartup = true;
                 hideThinkingBlock = true;

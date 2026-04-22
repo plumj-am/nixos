@@ -8,8 +8,83 @@
     }:
     let
       inherit (lib.modules) mkForce;
-      inherit (lib.lists) map filter elem;
       inherit (config.age) secrets;
+
+      models = [
+        {
+          name = "minimax-m2.7";
+          id = "openai/minimax-m2.7";
+          context = 204800;
+        }
+        {
+          name = "minimax-m2.5";
+          id = "openai/minimax-m2.5";
+          context = 204800;
+        }
+
+        {
+          name = "glm-5.1";
+          id = "zai/glm-5.1";
+          context = 204800;
+        }
+        {
+          name = "glm-5";
+          id = "zai/glm-5";
+          context = 204800;
+        }
+        {
+          name = "kimi-k2.5";
+          id = "moonshot/kimi-k2.5";
+          stream = false;
+          context = 262144;
+        }
+        {
+          name = "kimi-k2.6";
+          id = "moonshot/kimi-k2.6";
+          stream = false;
+          context = 262144;
+        }
+        {
+          name = "mimo-v2-pro";
+          id = "openai/mimo-v2-pro";
+          context = 1048576;
+        }
+        {
+          name = "mimo-v2-omni";
+          id = "openai/mimo-v2-omni";
+          context = 262144;
+        }
+        {
+          name = "mimo-v2.5-pro";
+          id = "openai/mimo-v2.5-pro";
+          context = 1048576;
+        }
+        {
+          name = "mimo-v2.5";
+          id = "openai/mimo-v2.5";
+          context = 262144;
+        }
+        {
+          name = "qwen3.6-plus";
+          id = "openai/qwen3.6-plus";
+          context = 1048576;
+        }
+        {
+          name = "qwen3.5-plus";
+          id = "openai/qwen3.5-plus";
+          context = 262144;
+        }
+        {
+          name = "deepseek-v4-pro";
+          id = "openai/deepseek-v4-pro";
+          context = 1048576;
+        }
+        {
+          name = "deepseek-v4-flash";
+          id = "openai/deepseek-v4-flash";
+          context = 1048576;
+        }
+      ];
 
       mkModel =
         {
@@ -29,14 +104,6 @@
             inherit stream;
           };
         };
-
-      litellmModels = config.ai.models.litellm;
-
-      enabledModels =
-        if litellmModels.enabledIDs == [ ] then
-          litellmModels.all
-        else
-          filter (m: elem m.id litellmModels.enabledIDs) litellmModels.all;
     in
     {
       age.secrets.opencodeGoEnvironment = {
@@ -82,7 +149,7 @@
         };
 
         settings = {
-          model_list = map mkModel enabledModels;
+          model_list = map mkModel models;
 
           litellm_settings = {
             set_verbose = true;
