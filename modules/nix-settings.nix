@@ -64,6 +64,7 @@ in
           "cgroups"
         ];
 
+        # allow-import-from-derivation = false;
         use-cgroups = true;
         builders-use-substitutes = true;
         flake-registry = "";
