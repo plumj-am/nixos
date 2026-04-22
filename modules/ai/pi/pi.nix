@@ -38,7 +38,7 @@
         m:
         (mkModel m)
         // {
-          name = m.name;
+          inherit (m) name;
           compat.supportsDeveloperRole = m.developerRole;
         };
 
