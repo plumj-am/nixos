@@ -36,7 +36,6 @@ in
       nix-distributed-builds
       nix-settings-extra-desktop
       object-storage
-      ollama
       opencode
       packages-extra-linux
       packages-extra-gui
