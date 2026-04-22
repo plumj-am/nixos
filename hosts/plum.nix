@@ -37,6 +37,7 @@ in
       tangled-spindle
       uptime-kuma
       website-personal
+      zellij
       { hardware.facter.reportPath = ./facter/plum.json; }
       {
         config = mkConfig inputs "plum" "x86_64-linux" {

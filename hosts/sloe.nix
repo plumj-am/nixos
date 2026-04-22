@@ -26,6 +26,7 @@ in
       sudo-extra-server
       syncthing
       users-extra
+      zellij
       { hardware.facter.reportPath = ./facter/sloe.json; }
       # TODO: Fix properly. Issue caused by using sdX I think.
       # It changes the boot device by itself occasionally.

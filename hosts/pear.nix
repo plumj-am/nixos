@@ -17,6 +17,7 @@ in
       # object-storage
       sudo-extra-desktop
       wsl
+      zellij
       {
         config = mkConfig inputs "pear" "x86_64-linux" {
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL2/Pg/5ohT3Dacnzjw9pvkeoQ1hEFwG5l1vRkr3v2sQ root@pear";

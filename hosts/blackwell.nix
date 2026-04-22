@@ -21,6 +21,7 @@ in
       radicle-node
       rust
       sudo-extra-server
+      zellij
       {
         config = mkConfig inputs "blackwell" "x86_64-linux" {
           # nix-builder = {
