@@ -1,4 +1,5 @@
-import { homedir, matchesGlob, relative, resolve } from "node:path"
+import { matchesGlob, relative, resolve } from "node:path"
+import { homedir } from "node:os"
 import type {
 	ExtensionAPI,
 	ExtensionContext,
