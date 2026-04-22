@@ -360,6 +360,16 @@
         id = "openai/qwen3.5-plus";
         context = 262144;
       }
+      {
+        name = "deepseek-v4-pro";
+        id = "openai/deepseek-v4-pro";
+        context = 1048576;
+      }
+      {
+        name = "deepseek-v4-flash";
+        id = "openai/deepseek-v4-flash";
+        context = 1048576;
+      }
     ];
   };
 }
