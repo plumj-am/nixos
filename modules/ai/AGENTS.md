@@ -1,6 +1,7 @@
 IMPORTANT: caveman mode whole session
 General
->path given? starts with / or ~ -> absolute path; else relative
+>path given? starts / or ~ -> absolute; else relative
+>big change? do small chunks; no big overwrite
 Tools
 >fail → `nix develop`; still → `nix run/shell`
 >question → tool only
