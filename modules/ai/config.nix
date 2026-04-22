@@ -96,6 +96,7 @@
     ai.models.local.enabledIDs = [
       "huihui_ai/qwen3.6-abliterated:35b"
       "mistral-nemo:12b"
+      "huggingface.co/unsloth/Qwen3.6-35B-A3B-GGUF:UD-IQ3_XXS"
     ];
 
     ai.models.litellm.enabledIDs = [ ];
@@ -136,6 +137,12 @@
         name = "qwen3.6-abliterated:35b";
         id = "huihui_ai/qwen3.6-abliterated:35b";
         size = "24GB";
+        context = 262144;
+      }
+      {
+        name = "qwen3.6-35B-A3B-UD-IQ3_XXS";
+        id = "huggingface.co/unsloth/Qwen3.6-35B-A3B-GGUF:UD-IQ3_XXS";
+        size = "13.2GB";
         context = 262144;
       }
 

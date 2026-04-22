@@ -31,6 +31,7 @@ in
       kitty
       linux-kernel-zen
       litellm
+      llama-cpp
       mprocs
       nix-distributed-builds
       nix-settings-extra-desktop
