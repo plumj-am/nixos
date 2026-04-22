@@ -83,6 +83,7 @@ in
                 bufferline = "multiple";
                 completion-timeout = 5;
                 completion-replace = true;
+                completion-trigger-len = 1;
                 color-modes = true;
                 cursorline = true;
                 file-picker.hidden = false;
@@ -109,16 +110,6 @@ in
                   characters.tab = "→";
                   render.tab = "all";
                 };
-
-                auto-pairs = {
-                  "\"" = "\"";
-                  "'" = "'";
-                  "`" = "`";
-                  "(" = ")";
-                  "{" = "}";
-                  "[" = "]";
-                  "<" = ">";
-                };
               };
 
               keys = {
@@ -130,8 +121,6 @@ in
                   "@" = "replay_macro";
 
                   "C-X" = "select_line_above";
-
-                  "C-a" = "@*%s<ret>";
 
                   "D" = "extend_to_line_end";
 
@@ -149,8 +138,6 @@ in
 
                   "C-X" = "select_line_above";
 
-                  "C-a" = "@*%s<ret>";
-
                   "D" = "extend_to_line_end";
 
                   "space"."B" =
@@ -165,18 +152,6 @@ in
                     k = "@:sh mkdir <C-r>%";
                     m = "@:sh mv <C-r>% <C-r>%";
                     c = "@:sh cp <C-r>% <C-r>%";
-                  };
-
-                  # Like `ci<char>` in vim.
-                  m = {
-                    "(" = "@lf)hmi)";
-                    ")" = "@lf)hmi)";
-                    "{" = "@lf}hmi}";
-                    "}" = "@lf}hmi}";
-                    "[" = "@lf]hmi]";
-                    "]" = "@lf]hmi]";
-                    "'" = "@lf'lmi'";
-                    "\"" = "@lf\"lmi\"";
                   };
                 };
               };
