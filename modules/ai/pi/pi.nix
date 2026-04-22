@@ -8,7 +8,7 @@
       ...
     }:
     let
-      inherit (lib.lists) singleton;
+      inherit (lib.lists) singleton subtractLists;
       inherit (lib.meta) getExe;
       inherit (lib.lists) filter elem;
 
@@ -42,7 +42,7 @@
           compat.supportsDeveloperRole = m.developerRole;
         };
 
-      enabledlitellmModels = getEnabledList config.ai.models.litellm;
+      enabledLitellmModels = getEnabledList config.ai.models.litellm;
       enabledOllamaModels = getEnabledList config.ai.models.local;
     in
     {
@@ -81,22 +81,36 @@
 
             ".pi/agent/models.json" = {
               generator = pkgs.writers.writeJSON "pi-agent-config.json";
-              value = {
-                providers = {
-                  litellm = {
-                    baseUrl = "http://localhost:4000";
-                    api = "openai-completions";
-                    apiKey = "dummy";
-                    models = map mkModel enabledlitellmModels;
-                  };
-                  ollama = {
-                    baseUrl = "http://localhost:11434/v1";
-                    api = "openai-completions";
-                    apiKey = "dummy";
-                    models = map mkOllamaModel enabledOllamaModels;
+              value =
+                let
+                  mkLocalProvider =
+                    baseUrl: rest:
+                    {
+                      inherit baseUrl;
+                      api = "openai-completions";
+                      apiKey = "dummy";
+                    }
+                    // rest;
+                in
+                {
+                  providers = {
+                    litellm = mkLocalProvider "http://localhost:4000" {
+                      models = map mkModel enabledLitellmModels;
+                    };
+                    ollama = mkLocalProvider "http://localhost:11434/v1" {
+                      models = map mkOllamaModel enabledOllamaModels;
+                    };
+                    llama-cpp = mkLocalProvider "http://localhost:11435/v1" {
+                      models = [
+                        {
+                          id = "unsloth/Qwen3.6-35B-A3B:UD-IQ3_XXS";
+                          contextWindow = 131072;
+                          compat.supportsDeveloperRole = false;
+                        }
+                      ];
+                    };
                   };
                 };
-              };
             };
 
             # To test later but idk why it has to be via MCP...
@@ -121,11 +135,15 @@
               value = {
                 defaultProvider = "litellm";
                 defaultModel = "moonshot/kimi-k2.6";
-                enabledModels = [
-                  "minimax-*"
-                  "kimi-*"
-                  "qwen3*"
-                ];
+                enabledModels =
+                  map (m: m.id) enabledLitellmModels
+                  ++ [
+                    "unsloth/Qwen3.6-35B-A3B:UD-IQ3_XXS"
+                  ]
+                  |> subtractLists [
+                    "openai/mimo-v2-pro"
+                    "openai/mimo-v2-omni"
+                  ];
 
                 quietStartup = true;
                 hideThinkingBlock = true;
