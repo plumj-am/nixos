@@ -165,6 +165,7 @@
             ".pi/agent/extensions/read-only-mode.ts".source = ./extensions/read-only-mode.ts;
             ".pi/agent/extensions/zellij-attention.ts".source = ./extensions/zellij-attention.ts;
             ".pi/agent/extensions/caveman.ts".source = ./extensions/caveman.ts;
+            ".pi/agent/extensions/tps-status.ts".source = ./extensions/tps-status.ts;
 
             ".pi/agent/skills/caveman".source = ./skills/caveman;
             ".pi/agent/skills/gh-grep".source = ./skills/gh-grep; # Taken from <https://github.com/huynguyen03dev/opencode-setup/tree/main/skills/gh-grep>
