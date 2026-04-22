@@ -219,20 +219,56 @@ export default function (pi: ExtensionAPI) {
 		return command.split(/\s*&&\s*/).map((s) => s.trim()).filter(Boolean)
 	}
 
+	function splitPipes(command: string): string[] {
+		return command.split(/\s*\|\s*/).map((s) => s.trim()).filter(Boolean)
+	}
+
 	function isAllowed(command: string, cwd: string): boolean {
 		// Try stripping safe cwd prefix first
 		const safeRest = isSafeCwdPrefix(command, cwd)
 		const checkCmd = safeRest !== null ? safeRest : command
-		const parts = splitChain(checkCmd)
-		return parts.every((part) => allowedPatterns.some((p) => p.test(part)))
+
+		// Check && chain - all parts must be allowed
+		const chainParts = splitChain(checkCmd)
+		if (chainParts.length > 1) {
+			return chainParts.every((part) => isAllowedSingle(part, cwd))
+		}
+
+		// Check | pipes - all parts must be allowed
+		const pipeParts = splitPipes(checkCmd)
+		if (pipeParts.length > 1) {
+			return pipeParts.every((part) => isAllowedSingle(part, cwd))
+		}
+
+		return isAllowedSingle(checkCmd, cwd)
+	}
+
+	function isAllowedSingle(command: string): boolean {
+		return allowedPatterns.some((p) => p.test(command))
 	}
 
 	function isDangerous(command: string, cwd: string): boolean {
 		// Try stripping safe cwd prefix first
 		const safeRest = isSafeCwdPrefix(command, cwd)
 		const checkCmd = safeRest !== null ? safeRest : command
-		const parts = splitChain(checkCmd)
-		return parts.some((part) => dangerousPatterns.some((p) => p.test(part)))
+
+		// Check && chain
+		const chainParts = splitChain(checkCmd)
+		if (chainParts.length > 1) {
+			return chainParts.some((part) => isDangerousSingle(part, cwd))
+		}
+
+		// Check | pipes
+		const pipeParts = splitPipes(checkCmd)
+		if (pipeParts.length > 1) {
+			return pipeParts.some((part) => isDangerousSingle(part, cwd))
+		}
+
+		return isDangerousSingle(checkCmd, cwd)
+	}
+
+	function isDangerousSingle(command: string): boolean {
+		return dangerousPatterns.some((p) => p.test(command))
 	}
 
 	pi.registerCommand("yolo", {
