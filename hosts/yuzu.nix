@@ -35,6 +35,7 @@ in
       # lmstudio
       mprocs
       nextcloud-client
+      nuke
       # ollama
       omp
       opencode
@@ -47,7 +48,6 @@ in
       quickshell
       radicle
       radicle-node
-      raperl
       rio
       rust
       rust-desktop

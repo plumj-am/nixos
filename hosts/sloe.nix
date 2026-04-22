@@ -21,9 +21,9 @@ in
       hermes
       nextcloud
       nginx
+      nuke
       openssh-extra-users
       radicle-node
-      raperl
       rust
       shed
       sops

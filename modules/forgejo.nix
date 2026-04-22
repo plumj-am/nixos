@@ -35,8 +35,6 @@
         message = "The forgejo module should only be used on the 'plum' host, but you're trying to enable it on '${hostName}'.";
       };
 
-      environment.systemPackages = singleton pkgs.forgejo;
-
       services.openssh.settings = {
         AllowUsers = singleton "forgejo";
         AllowGroups = singleton "forgejo";
@@ -49,7 +47,7 @@
       };
 
       services.restic.backups.forgejo = mkResticBackup "forgejo" {
-        paths = [ "/var/lib/forgejo" ];
+        paths = singleton "/var/lib/forgejo";
         timerConfig = {
           OnCalendar = "hourly";
           Persistent = true;
@@ -63,7 +61,15 @@
             # ./patches/0001-lix-Make-a-Code-Review-Gerrit-tab.patch
             ./patches/0002-lix-link-gerrit-cl-and-change-ids.patch
           ];
+
+          # - no network in sandbox
+          # - perl banned (see ./nuke.nix)
+          checkFlags = (old.checkFlags or [ ]) ++ [
+            "-skip"
+            "TestGrepCanHazRegexOnDemand|TestCaptcha|TestDNSUpdate"
+          ];
         });
+
         lfs.enable = true;
 
         user = "forgejo";
