@@ -257,7 +257,7 @@ in
                     {
                       name = "markdown";
                       auto-format = true;
-                      language-servers = singleton "marksman";
+                      language-servers = singleton "markdown-oxide";
                     }
                     {
                       name = "just";
@@ -498,7 +498,7 @@ in
           pkgs.sqruff
 
           # Markdown
-          pkgs.marksman
+          pkgs.markdown-oxide
 
           # Just
           pkgs.just-lsp
