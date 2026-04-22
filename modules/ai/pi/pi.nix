@@ -119,8 +119,8 @@
               type = "copy"; # Sometimes needs to write to config.
               generator = pkgs.writers.writeJSON "pi-agent-config.json";
               value = {
-                defaultProvider = "opencode-go";
-                defaultModel = "kimi-k2.6";
+                defaultProvider = "litellm";
+                defaultModel = "moonshot/kimi-k2.6";
                 enabledModels = [
                   "minimax-*"
                   "kimi-*"
