@@ -111,6 +111,38 @@
           };
 
           # q4 tps | ctx max | load
+          # ~0     | 262144  | ~0
+          "unsloth/Qwen3.6-27B:UD-IQ3_XXS" = mkUnslothQwen "Qwen3.6-27B-GGUF:UD-IQ3_XXS" {
+            cache-type-k = "q8_0";
+            cache-type-v = "q8_0";
+            ctx-size = "131072"; # 262144 max - untested
+          };
+
+          # q4 tps | ctx max | load
+          # ~0     | 262144  | ~0
+          "unsloth/Qwen3.6-27B:IQ4_XS" = mkUnslothQwen "Qwen3.6-27B-GGUF:IQ4_XS" {
+            cache-type-k = "q8_0";
+            cache-type-v = "q8_0";
+            ctx-size = "131072"; # 262144 max - untested
+          };
+
+          # q4 tps | ctx max | load
+          # ~0     | 262144  | ~0
+          "unsloth/Qwen3.6-27B:UD-Q4_K_XL" = mkUnslothQwen "Qwen3.6-27B-GGUF:UD-Q4_K_XL" {
+            cache-type-k = "q8_0";
+            cache-type-v = "q8_0";
+            ctx-size = "131072"; # 262144 max - untested
+          };
+
+          # q4 tps | ctx max | load
+          # ~0     | 262144  | ~0
+          "unsloth/Qwen3.6-27B:UD-Q4_XS" = mkUnslothQwen "Qwen3.6-27B-GGUF:UD-IQ4_XS" {
+            cache-type-k = "q8_0";
+            cache-type-v = "q8_0";
+            ctx-size = "131072"; # 262144 max - untested
+          };
+
+          # q4 tps | ctx max | load
           # ~1.3   | 4096    | ~0
           "Jackrong/Qwopus3.6-27B-v1-preview:Q3_K_L" = cpuMoeOffload // {
             hf-repo = "Jackrong/Qwopus3.6-27B-v1-preview-GGUF:Q3_K_L";
