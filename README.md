@@ -1,9 +1,5 @@
 # PlumJam's Dendritic NixOS Configuration
 
-> [!WARNING]
-> Subject to major changes. This is not a finished state and some things are
-> still being migrated from my old config.
-
 Dendritic NixOS configurations for 8 personal machines:
 
 | Name      | System  | Platform       | Follows                  | Active |
@@ -227,10 +223,6 @@ on 2026-02-01. I'd like to mention that it is an excellent tool! I just didn't
 really need it and I already use generators or write config files directly for
 the most part anyway.
 
-Modules that are yet to be migrated live in `modules/_to-migrate/`. The
-underscore prefix tells my `importTree` function to ignore this directory so we
-can easily migrate them gradually without breaking builds.
-
 Inputs use different names to what you might expect:
 
 - nixpkgs -> os
@@ -276,8 +268,6 @@ The structure of the repository and a few key files are highlighted below:
 ├── modules/           # All modules live in here
 │   ├── theme.nix      # System-wide theming
 │   ├── ...
-│   ├── _to-migrate/   # Modules waiting for migration to new dendritic setup
-│   │   └── ...
 │   ├── ai/            # AI tools
 │   │   └── ...
 │   └── quickshell/    # Quickshell configs
