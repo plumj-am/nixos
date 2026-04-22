@@ -64,6 +64,7 @@ in
           "cgroups"
         ];
 
+        # allow-import-from-derivation = false;
         auto-optimise-store = true;
         use-cgroups = true;
         builders-use-substitutes = true;
