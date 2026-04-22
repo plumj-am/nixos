@@ -75,8 +75,92 @@
               });
             }
           );
+
+          # From PlumJam
+
+          # Anything that asks for pkgs.git gets the perl-free build.
+          git = prev.git.override {
+            perlSupport = false;
+            withManual = false;
+            pythonSupport = false;
+            osxkeychainSupport = false;
+            withpcre2 = false;
+          };
+
+          # hspell: multispell is a perl script.
+          hspell = prev.hspell.overrideAttrs (old: {
+            postInstall = (old.postInstall or "") + ''
+              rm -f $out/bin/multispell
+            '';
+          });
+
+          # radicle-httpd wraps with full git (and man-db/xdg-utils).
+          # man-db and xdg-utils are fine; git is the perl carrier.
+          radicle-httpd = prev.radicle-httpd.overrideAttrs (old: {
+            postFixup = ''
+              for program in $out/bin/* ; do
+                wrapProgram "$program" \
+                  --prefix PATH : "${
+                    lib.makeBinPath [
+                      final.gitMinimal
+                      final.man-db
+                      final.xdg-utils
+                    ]
+                  }"
+              done
+            '';
+          });
+
+          # Qt5 scope may still be used by legacy packages.
+          libsForQt5 = prev.libsForQt5.overrideScope (
+            kfinal: kprev:
+            optionalAttrs (kprev ? kio-extras) {
+              kio-extras = kprev.kio-extras.overrideAttrs (old: {
+                postPatch = (old.postPatch or "") + ''
+                  substituteInPlace CMakeLists.txt \
+                    --replace-fail 'add_subdirectory( info )' \
+                                   '# add_subdirectory( info )  # perl-free closure'
+                '';
+              });
+            }
+          );
+
+          # GNU parallel is written in perl.  This stub lets you discover
+          # what still pulls it via `nix why-depends`.
+          parallel = final.writeShellScriptBin "parallel" ''
+            echo "GNU parallel disabled because it requires perl." >&2
+            echo "Run 'nix why-depends /run/current-system nixpkgs#parallel' to find the culprit." >&2
+            exit 1
+          '';
+
+          # FHS envs (Steam, Vial AppImage, etc.) explicitly include perl
+          # in their target package lists.  Strip it out globally.
+          #   buildFHSEnv =
+          #     args:
+          #     let
+          #       noPerl = p: (p.pname or "") != "perl";
+          #       filteredTargetPkgs =
+          #         if args ? targetPkgs then
+          #           if builtins.isFunction args.targetPkgs then
+          #             pkgs: filter noPerl (args.targetPkgs pkgs)
+          #           else if builtins.isList args.targetPkgs then
+          #             filter noPerl args.targetPkgs
+          #           else
+          #             args.targetPkgs
+          #         else
+          #           null;
+          #     in
+          #     prev.buildFHSEnv (
+          #       args
+          #       // optionalAttrs (filteredTargetPkgs != null) {
+          #         targetPkgs = filteredTargetPkgs;
+          #       }
+          #     );
         }
         // optionalAttrs prev.stdenv.hostPlatform.isLinux {
+
+          # From <https://github.com/amaanq/dotfiles/blob/b4a94b33395ea6ed4b0949be65b954d9071058b2/modules/common/nixpkgs.nix>
+
           xdg-utils = final.symlinkJoin {
             name = "xdg-utils-handlr-shim-${prev.handlr-regex.version or "0"}";
             paths = [
@@ -119,7 +203,7 @@
           # built shared object has no UI, so we strip webkit and tell JUCE
           # to skip web.
           rnnoise-plugin = prev.rnnoise-plugin.overrideAttrs (old: {
-            buildInputs = filter (p: (p.pname or "") != "webkitgtk") <| old.buildInputs or [ ];
+            buildInputs = filter (p: (p.pname or "") != "webkitgtk") (old.buildInputs or [ ]);
             cmakeFlags = (old.cmakeFlags or [ ]) ++ [ "-DJUCE_WEB_BROWSER=0" ];
           });
         }
