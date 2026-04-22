@@ -62,6 +62,7 @@ in
           "pipe-operators"
         ];
 
+        # allow-import-from-derivation = false;
         builders-use-substitutes = true;
         flake-registry = "";
         http-connections = 0;
