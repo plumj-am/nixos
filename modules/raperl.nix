@@ -33,7 +33,18 @@
         # forbiddenDependenciesRegexes = singleton "perl";
       };
 
-      environment.systemPackages = singleton pkgs.handlr-regex;
+      environment.systemPackages =
+        singleton
+        <| pkgs.symlinkJoin {
+          name = "handlr-wrapped";
+          paths = singleton pkgs.handlr-regex;
+          buildInputs = singleton pkgs.makeWrapper;
+          postBuild = # sh
+            ''
+              wrapProgram $out/bin/handlr \
+                --add-flags "--disable-notifications"
+            '';
+        };
 
       nixpkgs.overlays = singleton (
         final: prev:
@@ -70,10 +81,10 @@
             name = "xdg-utils-handlr-shim-${prev.handlr-regex.version or "0"}";
             paths = [
               final.xdg-user-dirs
-              (final.writeShellScriptBin "xdg-open" ''exec ${final.handlr-regex}/bin/handlr open "$@"'')
-              (final.writeShellScriptBin "xdg-mime" ''exec ${final.handlr-regex}/bin/handlr mime "$@"'')
-              (final.writeShellScriptBin "xdg-settings" ''exec ${final.handlr-regex}/bin/handlr get "$@"'')
-              (final.writeShellScriptBin "xdg-email" ''exec ${final.handlr-regex}/bin/handlr open "mailto:$*"'')
+              (final.writeShellScriptBin "xdg-open" ''exec ${final.handlr-regex}/bin/handlr --disable-notifications open "$@"'')
+              (final.writeShellScriptBin "xdg-mime" ''exec ${final.handlr-regex}/bin/handlr --disable-notifications mime "$@"'')
+              (final.writeShellScriptBin "xdg-settings" ''exec ${final.handlr-regex}/bin/handlr --disable-notifications get "$@"'')
+              (final.writeShellScriptBin "xdg-email" ''exec ${final.handlr-regex}/bin/handlr --disable-notifications open "mailto:$*"'')
 
               # These are install-time helpers that are not used on NixOS.
               (final.writeShellScriptBin "xdg-desktop-menu" "exit 0")
