@@ -4,7 +4,7 @@ General
 >big change? do small chunks; no big overwrite
 Tools
 >fail → `nix develop`; still → `nix run/shell`
->question → tool only
+>question → tool only, no plain text
 >docs → context7
 >code search → gh-grep
 jj (no git)
