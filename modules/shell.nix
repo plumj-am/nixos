@@ -93,8 +93,7 @@
 
           aliases = defaultAliases // osConfig.shellAliases;
 
-          home = config.directory;
-          user = config.user;
+          inherit (config) directory user;
           bwrapper =
             pkgs.writeScriptBin "bwrapper"
               # nu
@@ -107,11 +106,11 @@
                   } else { $tool }
 
                   (bwrap
-                    --dir ${home}
+                    --dir ${directory}
                     --dir /etc
                     --dir /etc/ssl
                     --dir /etc/ssl/certs
-                    --ro-bind ${home}/.config ${home}/.config
+                    --ro-bind ${directory}/.config ${directory}/.config
                     --ro-bind /nix/store /nix/store
                     --ro-bind /run/agenix/opencodeGoKey /run/agenix/opencodeGoKey
                     --ro-bind /run/current-system /run/current-system
@@ -121,12 +120,12 @@
                     --ro-bind /etc/hosts /etc/hosts
                     --ro-bind ${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt /etc/ssl/certs/ca-certificates.crt
                     --bind (^pwd) (^pwd)
-                    --bind ${home}/.pi ${home}/.pi
-                    --bind ${home}/.claude ${home}/.claude
-                    --bind ${home}/nixos ${home}/nixos
-                    --bind ${home}/.cache ${home}/.cache
-                    --bind ${home}/.local ${home}/.local
-                    --bind ${home}/.config/nushell ${home}/.config/nushell
+                    --bind ${directory}/.pi ${directory}/.pi
+                    --bind ${directory}/.claude ${directory}/.claude
+                    --bind ${directory}/nixos ${directory}/nixos
+                    --bind ${directory}/.cache ${directory}/.cache
+                    --bind ${directory}/.local ${directory}/.local
+                    --bind ${directory}/.config/nushell ${directory}/.config/nushell
                     --tmpfs /tmp
                     --proc /proc
                     --dev /dev
