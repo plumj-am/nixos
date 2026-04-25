@@ -62,7 +62,7 @@
 
           # Another that doesn't follow XDG spec, amazing...
           files = {
-            ".pi/agent/AGENTS.md" = {
+            ".pi/agent/APPEND_SYSTEM.md" = {
               type = "copy";
               source = ../AGENTS.md;
             };
