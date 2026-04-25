@@ -1,149 +1,165 @@
-import { homedir } from "node:path"
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent"
+import { homedir, matchesGlob, relative, resolve } from "node:path"
+import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent"
 import { Key } from "@mariozechner/pi-tui"
 
 // Read-only allowlist patterns (strict mode)
-export const allowedPatterns: RegExp[] = [
-	/^ag /,
-	/^bat /,
-	/^cat /,
-	/^fd /,
-	/^find /,
-	/^fzf /,
-	/^grep /,
-	/^head /,
-	/^less /,
-	/^ls /,
-	/^rg /,
-	/^sg /,
-	/^tail /,
-	/^tree /,
-	/^which /,
-	/^command /,
+export const allowedPatterns: string[] = [
+	"ag*",
+	"bat*",
+	"cat*",
+	"fd*",
+	"find*",
+	"fzf*",
+	"grep*",
+	"head*",
+	"less*",
+	"ls*",
+	"rg*",
+	"sg*",
+	"tail*",
+	"tree*",
+	"which*",
+	"command*",
 
-	/^jj bookmark list /,
-	/^jj commit -m /,
-	/^jj commit --message /,
-	/^jj desc -m /,
-	/^jj desc --message /,
-	/^jj diff /,
-	/^jj evolog /,
-	/^jj file list /,
-	/^jj file search /,
-	/^jj file show /,
-	/^jj git colocation status /,
-	/^jj git remote list /,
-	/^jj git root /,
-	/^jj help /,
-	/^jj interdiff /,
-	/^jj log /,
-	/^jj new -m /,
-	/^jj new --message /,
-	/^jj op diff /,
-	/^jj op log /,
-	/^jj op show /,
-	/^jj operation diff /,
-	/^jj operation log /,
-	/^jj operation show /,
-	/^jj resolve --list/,
-	/^jj root /,
-	/^jj show /,
-	/^jj sparse list /,
-	/^jj st$/,
-	/^jj status$/,
-	/^jj tag list /,
-	/^jj util config-schema/,
-	/^jj version/,
-	/^jj workspace list /,
-	/^jj workspace root /,
+	"jj bookmark list*",
+	"jj commit -m*",
+	"jj commit --message*",
+	"jj desc -m*",
+	"jj desc --message*",
+	"jj diff*",
+	"jj evolog*",
+	"jj file list*",
+	"jj file search*",
+	"jj file show*",
+	"jj git colocation status*",
+	"jj git remote list*",
+	"jj git root*",
+	"jj help*",
+	"jj interdiff*",
+	"jj log*",
+	"jj new -m*",
+	"jj new --message*",
+	"jj op diff*",
+	"jj op log*",
+	"jj op show*",
+	"jj operation diff*",
+	"jj operation log*",
+	"jj operation show*",
+	"jj resolve --list*",
+	"jj root*",
+	"jj show*",
+	"jj sparse list*",
+	"jj st",
+	"jj status",
+	"jj tag list*",
+	"jj util config-schema*",
+	"jj version*",
+	"jj workspace list*",
+	"jj workspace root*",
 
-	/^git branch --list/,
-	/^git branch --show-current/,
-	/^git diff /,
-	/^git log /,
-	/^git status /,
+	"git branch --list*",
+	"git branch --show-current*",
+	"git diff*",
+	"git log*",
+	"git status*",
 
-	/^cargo check /,
-	/^cargo clippy /,
-	/^cargo fmt /,
-	/^cargo nextest /,
-	/^cargo test /,
-	/^cargo tree /,
+	"cargo check*",
+	"cargo clippy*",
+	"cargo fmt*",
+	"cargo nextest*",
+	"cargo test*",
+	"cargo tree*",
 
-	/^curl http:\/\/localhost/,
-	/^curl -s http:\/\/localhost/,
-	/^curl -X GET http:\/\/localhost/,
-	/^curl -s -X GET http:\/\/localhost/,
-	/^curl -X POST http:\/\/localhost/,
-	/^curl -s -X POST http:\/\/localhost/,
-	/^curl -X PUT http:\/\/localhost/,
-	/^curl -s -X PUT http:\/\/localhost/,
-	/^curl -X DELETE http:\/\/localhost/,
-	/^curl -s -X DELETE http:\/\/localhost/,
+	"curl http://localhost*",
+	"curl -s http://localhost*",
+	"curl -X GET http://localhost*",
+	"curl -s -X GET http://localhost*",
+	"curl -X POST http://localhost*",
+	"curl -s -X POST http://localhost*",
+	"curl -X PUT http://localhost*",
+	"curl -s -X PUT http://localhost*",
+	"curl -X DELETE http://localhost*",
+	"curl -s -X DELETE http://localhost*",
 
-	/^fj actions tasks /,
-	/^fj issue search /,
-	/^fj issue view /,
-	/^fj pr list /,
-	/^fj repo view /,
-	/^fj wiki contents /,
-	/^fj wiki view /,
+	"fj actions tasks*",
+	"fj issue search*",
+	"fj issue view*",
+	"fj pr list*",
+	"fj repo view*",
+	"fj wiki contents*",
+	"fj wiki view*",
+
+	"npx tsc*",
+	"node --check*",
 ]
 
 // Forbidden path patterns (strict mode)
-export const forbiddenPathPatterns: RegExp[] = [
-	/\/run\/agenix/i,
-	/\.env/,
-	/\.env\./,
-	/\.ssh\//,
-	/\.gnupg\//,
-	/\.aws\//,
-	/\.netrc/,
-	/\.npmrc/,
-	/\.pypirc/,
-	/\.cargo\/credentials/,
-	/\.config\/gcloud/,
-	/\.config\/azure/,
-	/\.config\/aws/,
-	/\.kube\//,
-	/\.terraform.d/,
-	/\.terragrunt-cache/,
-	/\/etc\/shadow/,
-	/\/etc\/sudoers/,
-	/\/etc\/passwd/,
-	/\/etc\/group/,
-	/\/root\/\.ssh/,
-	/\/root\/\.gnupg/,
-	/\/home\/[^\/]+\/\.ssh/,
-	/\/home\/[^\/]+\/\.gnupg/,
-	/kubeconfig/,
-	/vaulttoken/,
-	/vaultsecret/,
-	/GITHUB_TOKEN/,
-	/AWS_ACCESS_KEY/,
-	/AWS_SECRET_KEY/,
-	/EDITOR.*vim.*\.swp$/,
+export const forbiddenPathPatterns: string[] = [
+	"**/run/agenix",
+	"**/.env",
+	"**/.env.*",
+	"**/.ssh/**",
+	"**/.gnupg/**",
+	"**/.aws/**",
+	"**/.netrc",
+	"**/.npmrc",
+	"**/.pypirc",
+	"**/.cargo/credentials",
+	"**/.config/gcloud",
+	"**/.config/azure",
+	"**/.config/aws",
+	"**/.kube/**",
+	"**/.terraform.d",
+	"**/.terragrunt-cache",
+	"/etc/shadow",
+	"/etc/sudoers",
+	"/etc/passwd",
+	"/etc/group",
+	"/root/.ssh/**",
+	"/root/.gnupg/**",
+	"/home/*/.ssh/**",
+	"/home/*/.gnupg/**",
+	"**/kubeconfig",
+	"**/vaulttoken",
+	"**/vaultsecret",
+	"**/GITHUB_TOKEN",
+	"**/AWS_ACCESS_KEY",
+	"**/AWS_SECRET_KEY",
+	"*EDITOR*vim*.swp",
 ]
 
-export const allowedExtraCwds: string[] = [
-	"/tmp",
-	"/tmp/",
-]
+export const allowedExtraCwds: string[] = ["/tmp"]
+
+const forbiddenPathPatternsLower: string[] = forbiddenPathPatterns.map((p) => p.toLowerCase())
+
+const PATH_EXTRACTOR = /['"]?([^\s'"&|;]+)['"]?/g
 
 // Yolo mode: block only truly dangerous commands
-export const dangerousPatterns: RegExp[] = [
-	/^rm\s+-rf\s+\//,
-	/^rm\s+-rf\s+\/\s*$/,
-	/^dd\s+if=/,
-	/^mkfs\./,
-	/^ddrescue/,
-	/:\s*>;*\s*\/dev\/sd/,
-	/^shred/,
-	/^mke2fs/,
-	/^format\s+(drive|disk|usb|floppy)/i,
-	/^fdisk\s+\/dev\/sd/,
-	/^parted.*--fix-table/i,
-	/rm\s+-[rf]+\s+(['"]|\/?)(home|root|etc|usr|var|sys|proc|opt|boot|dev)\1/i,
+export const dangerousPatterns: string[] = [
+	"rm -rf /*",
+	"rm -r /*",
+	"dd if=*",
+	"mkfs.*",
+	"ddrescue*",
+	":*>*/dev/sd*",
+	"shred*",
+	"mke2fs*",
+	"format drive*",
+	"format disk*",
+	"format usb*",
+	"format floppy*",
+	"fdisk /dev/sd*",
+	"parted*--fix-table*",
+	"rm -r* /home*",
+	"rm -r* /root*",
+	"rm -r* /etc*",
+	"rm -r* /usr*",
+	"rm -r* /var*",
+	"rm -r* /sys*",
+	"rm -r* /proc*",
+	"rm -r* /opt*",
+	"rm -r* /boot*",
+	"rm -r* /dev*",
 ]
 
 let yoloModeEnabled = false
@@ -158,46 +174,31 @@ export default function (pi: ExtensionAPI) {
 		const cdPath = match[1]
 		const rest = match[2]
 
-		// Resolve the cd target
-		let targetPath: string
-		if (cdPath.startsWith("/")) {
-			targetPath = cdPath
-		} else if (cdPath === "~" || cdPath.startsWith("~/")) {
-			targetPath = homedir() + cdPath.slice(1)
-		} else {
-			targetPath = cwd + "/" + cdPath
-		}
+		const targetPath = cdPath.startsWith("~")
+			? resolve(homedir(), cdPath.slice(cdPath.startsWith("~/") ? 2 : 1))
+			: resolve(cwd, cdPath)
 
-		// Normalize and check if it's cwd or a subdirectory
-		const normalizedTarget = targetPath.replace(/\/$/, "")
-		const normalizedCwd = cwd.replace(/\/$/, "")
+		const normCwd = resolve(cwd)
+		const rel = relative(normCwd, targetPath)
+		const isWithinCwd = rel === "" || !rel.startsWith("..")
 
-		// Must be cwd or child of cwd
-		if (
-			normalizedTarget !== normalizedCwd &&
-			!normalizedTarget.startsWith(normalizedCwd + "/")
-		) {
-			// Check extra allowed cwds
+		if (!isWithinCwd) {
 			const isExtraAllowed = allowedExtraCwds.some((allowed) => {
-				const normAllowed = allowed.replace(/\/$/, "")
-				return normalizedTarget === normAllowed ||
-					normalizedTarget.startsWith(normAllowed + "/")
+				const normAllowed = resolve(allowed)
+				const relExtra = relative(normAllowed, targetPath)
+				return relExtra === "" || !relExtra.startsWith("..")
 			})
-			if (!isExtraAllowed) {
-				return null
-			}
+			if (!isExtraAllowed) return null
 		}
 
 		return rest
 	}
 
 	function isForbiddenPath(command: string): string | null {
-		// Extract file paths from the command
-		const pathPattern = /['"]?([^\s'"&|;]+)['"]?/g
-		let match
-		while ((match = pathPattern.exec(command)) !== null) {
-			const path = match[1]
-			// Skip URLs, domains, and common non-path patterns
+		PATH_EXTRACTOR.lastIndex = 0
+		let pathMatch
+		while ((pathMatch = PATH_EXTRACTOR.exec(command)) !== null) {
+			const path = pathMatch[1]
 			if (
 				path.startsWith("http://") ||
 				path.startsWith("https://") ||
@@ -206,8 +207,9 @@ export default function (pi: ExtensionAPI) {
 			) {
 				continue
 			}
-			for (const pattern of forbiddenPathPatterns) {
-				if (pattern.test(path)) {
+			const lowerPath = path.toLowerCase()
+			for (let i = 0; i < forbiddenPathPatternsLower.length; i++) {
+				if (matchesGlob(lowerPath, forbiddenPathPatternsLower[i])) {
 					return path
 				}
 			}
@@ -223,97 +225,62 @@ export default function (pi: ExtensionAPI) {
 		return command.split(/\s*\|\s*/).map((s) => s.trim()).filter(Boolean)
 	}
 
-	function isAllowed(command: string, cwd: string): boolean {
-		// Try stripping safe cwd prefix first
+	function checkCommand(
+		command: string,
+		cwd: string,
+		singleCheck: (cmd: string) => boolean,
+		mode: "every" | "some",
+	): boolean {
 		const safeRest = isSafeCwdPrefix(command, cwd)
 		const checkCmd = safeRest !== null ? safeRest : command
 
-		// Check && chain - all parts must be allowed
 		const chainParts = splitChain(checkCmd)
 		if (chainParts.length > 1) {
-			return chainParts.every((part) => isAllowedSingle(part, cwd))
+			return chainParts[mode]((part) => singleCheck(part))
 		}
 
-		// Check | pipes - all parts must be allowed
 		const pipeParts = splitPipes(checkCmd)
 		if (pipeParts.length > 1) {
-			return pipeParts.every((part) => isAllowedSingle(part, cwd))
+			return pipeParts[mode]((part) => singleCheck(part))
 		}
 
-		return isAllowedSingle(checkCmd, cwd)
+		return singleCheck(checkCmd)
 	}
 
-	function isAllowedSingle(command: string): boolean {
-		return allowedPatterns.some((p) => p.test(command))
+	const isAllowedSingle = (command: string): boolean =>
+		allowedPatterns.some((p) => matchesGlob(command, p))
+
+	const isDangerousSingle = (command: string): boolean =>
+		dangerousPatterns.some((p) => matchesGlob(command, p))
+
+	function isAllowed(command: string, cwd: string): boolean {
+		return checkCommand(command, cwd, isAllowedSingle, "every")
 	}
 
 	function isDangerous(command: string, cwd: string): boolean {
-		// Try stripping safe cwd prefix first
-		const safeRest = isSafeCwdPrefix(command, cwd)
-		const checkCmd = safeRest !== null ? safeRest : command
-
-		// Check && chain
-		const chainParts = splitChain(checkCmd)
-		if (chainParts.length > 1) {
-			return chainParts.some((part) => isDangerousSingle(part, cwd))
-		}
-
-		// Check | pipes
-		const pipeParts = splitPipes(checkCmd)
-		if (pipeParts.length > 1) {
-			return pipeParts.some((part) => isDangerousSingle(part, cwd))
-		}
-
-		return isDangerousSingle(checkCmd, cwd)
+		return checkCommand(command, cwd, isDangerousSingle, "some")
 	}
 
-	function isDangerousSingle(command: string): boolean {
-		return dangerousPatterns.some((p) => p.test(command))
+	function toggleYolo(ctx: ExtensionContext) {
+		yoloModeEnabled = !yoloModeEnabled
+		if (yoloModeEnabled) {
+			ctx.ui.notify("Yolo mode enabled. Only truly dangerous commands blocked.")
+			ctx.ui.setStatus("yolo", ctx.ui.theme.fg("warning", "⚡ yolo"))
+		} else {
+			ctx.ui.notify("Yolo mode disabled. Normal restrictions restored.")
+			ctx.ui.setStatus("yolo", undefined)
+		}
 	}
 
 	pi.registerCommand("yolo", {
 		description:
 			"Toggle yolo mode (minimal restrictions, block only very bad commands)",
-		handler: async (_args, ctx) => {
-			yoloModeEnabled = !yoloModeEnabled
-
-			if (yoloModeEnabled) {
-				ctx.ui.notify(
-					"Yolo mode enabled. Only truly dangerous commands blocked.",
-				)
-				ctx.ui.setStatus(
-					"yolo",
-					ctx.ui.theme.fg("warning", "⚡ yolo"),
-				)
-			} else {
-				ctx.ui.notify(
-					"Yolo mode disabled. Normal restrictions restored.",
-				)
-				ctx.ui.setStatus("yolo", undefined)
-			}
-		},
+		handler: async (_args, ctx) => toggleYolo(ctx),
 	})
 
 	pi.registerShortcut(Key.ctrlAlt("y"), {
 		description: "Toggle yolo mode",
-		handler: async (ctx) => {
-			yoloModeEnabled = !yoloModeEnabled
-
-			if (yoloModeEnabled) {
-				ctx.ui.notify(
-					"Yolo mode enabled. Only truly dangerous commands blocked.",
-				)
-				ctx.ui.setStatus(
-					"yolo",
-					ctx.ui.theme.fg("warning", "⚡ yolo"),
-				)
-			} else {
-				ctx.ui.notify(
-					"Yolo mode disabled. Normal restrictions restored.",
-				)
-				ctx.ui.setStatus("yolo", undefined)
-			}
-		},
+		handler: async (ctx) => toggleYolo(ctx),
 	})
 
 	pi.on("tool_call", async (event, ctx) => {
