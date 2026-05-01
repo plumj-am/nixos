@@ -1,5 +1,6 @@
 import { matchesGlob, relative, resolve } from "node:path"
 import { homedir } from "node:os"
+import { appendFileSync, mkdirSync } from "node:fs"
 import type {
 	ExtensionAPI,
 	ExtensionContext,
@@ -30,6 +31,7 @@ export const allowedPatterns: string[] = [
 	"tail*",
 	"tree*",
 	"true",
+	"wait*",
 	"wc*",
 	"which*",
 	"command*",
@@ -149,6 +151,24 @@ const forbiddenPathPatternsLower: string[] = forbiddenPathPatterns.map((p) =>
 )
 
 const PATH_EXTRACTOR = /['"]?([^\s'"&|;]+)['"]?/g
+
+const BLOCKED_LOG_DIR = resolve(homedir(), ".local", "share", "pi")
+const BLOCKED_LOG_PATH = resolve(BLOCKED_LOG_DIR, "blocked-commands.log")
+
+function logBlockedCommand(
+	command: string,
+	cwd: string,
+	reason: string,
+): void {
+	try {
+		mkdirSync(BLOCKED_LOG_DIR, { recursive: true })
+		const timestamp = new Date().toISOString()
+		const entry = `[${timestamp}] BLOCKED\n  command: ${command}\n  cwd: ${cwd}\n  reason: ${reason}\n\n`
+		appendFileSync(BLOCKED_LOG_PATH, entry)
+	} catch {
+		// silently ignore logging failures
+	}
+}
 
 function updateTimeoutStatus(ctx: ExtensionContext): void {
 	if (autoDenyTimeoutEnabled) {
@@ -344,16 +364,20 @@ export default function (pi: ExtensionAPI) {
 		// Check forbidden paths first (always enforced)
 		const forbiddenPath = isForbiddenPath(command)
 		if (forbiddenPath) {
+			const reason = `Forbidden path: ${forbiddenPath}`
+			logBlockedCommand(command, ctx.cwd, reason)
 			return {
 				block: true,
-				reason: `Forbidden path: ${forbiddenPath}`,
+				reason,
 			}
 		}
 
 		if (isAllowed(command, ctx.cwd)) return undefined
 
 		if (!ctx.hasUI) {
-			return { block: true, reason: "Command not in allowlist (no UI)" }
+			const reason = "Command not in allowlist (no UI)"
+			logBlockedCommand(command, ctx.cwd, reason)
+			return { block: true, reason }
 		}
 
 		const selectOptions = autoDenyTimeoutEnabled
@@ -367,11 +391,13 @@ export default function (pi: ExtensionAPI) {
 
 		if (choice !== "Yes") {
 			const sec = Math.round(autoDenyTimeoutMs / 1000)
+			const reason = choice === undefined && autoDenyTimeoutEnabled
+				? `Timed out after ${sec}s. You can try an alternative command`
+				: "Blocked by user"
+			logBlockedCommand(command, ctx.cwd, reason)
 			return {
 				block: true,
-				reason: choice === undefined && autoDenyTimeoutEnabled
-					? `Timed out after ${sec}s. You can try an alternative command`
-					: "Blocked by user",
+				reason,
 			}
 		}
 
