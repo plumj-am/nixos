@@ -19,6 +19,7 @@ in
       nix-settings-extra-server
       object-storage
       openssh-extra-users
+      pi
       radicle-ci-runner
       radicle-node
       rust
