@@ -29,7 +29,6 @@ in
       hardware-desktop
       jujutsu-extra
       kitty
-      linux-kernel-zen
       litellm
       mprocs
       nix-settings-extra-desktop

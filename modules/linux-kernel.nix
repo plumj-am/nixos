@@ -1,5 +1,5 @@
-let
-  commonModule = {
+{
+  flake.modules.nixos.linux-kernel = {
     # Credits from me:
     # - https://github.com/RGBCube/ncc/blob/c5714110d951f57e66d5ee47a244c0a93f3406a1/modules/linux/kernel.nix
     # From RGBCube:
@@ -136,20 +136,4 @@ let
     ];
 
   };
-in
-{
-
-  flake.modules.nixos.linux-kernel-latest =
-    { pkgs, ... }:
-    {
-      imports = [ commonModule ];
-      boot.kernelPackages = pkgs.linuxPackages_latest;
-    };
-
-  flake.modules.nixos.linux-kernel-zen =
-    { pkgs, ... }:
-    {
-      imports = [ commonModule ];
-      boot.kernelPackages = pkgs.linuxKernel.packages.linux_zen;
-    };
 }

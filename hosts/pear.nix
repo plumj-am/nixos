@@ -12,7 +12,6 @@ in
 
       desktop-tools
       jujutsu-extra
-      linux-kernel-zen
       nix-distributed-builds
       # object-storage
       sudo-extra-desktop

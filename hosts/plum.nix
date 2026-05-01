@@ -18,7 +18,6 @@ in
       freshrss-server
       forgejo-action-runner
       goatcounter
-      linux-kernel-latest
       matrix
       nginx
       nix-distributed-builder

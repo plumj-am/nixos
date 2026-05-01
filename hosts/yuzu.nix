@@ -29,7 +29,6 @@ in
       haskell
       jujutsu-extra
       kitty
-      linux-kernel-zen
       litellm
       llama-cpp
       mprocs

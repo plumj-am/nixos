@@ -14,7 +14,6 @@ in
       boot-grub
       disks-server
       forgejo-action-runner
-      linux-kernel-latest
       nginx
       nix-distributed-builder
       nix-distributed-builds

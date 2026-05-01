@@ -36,6 +36,7 @@ in
         disks-extra-zram-swap
         dynamic-binaries
         locale
+        linux-kernel
         netrc
         networking
         rebuild
