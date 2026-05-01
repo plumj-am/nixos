@@ -6,6 +6,9 @@ import type {
 } from "@mariozechner/pi-coding-agent"
 import { Key } from "@mariozechner/pi-tui"
 
+let autoDenyTimeoutEnabled = true
+let autoDenyTimeoutMs = 30000
+
 // Read-only allowlist patterns (strict mode)
 export const allowedPatterns: string[] = [
 	"ag*",
@@ -141,6 +144,18 @@ const forbiddenPathPatternsLower: string[] = forbiddenPathPatterns.map((p) =>
 
 const PATH_EXTRACTOR = /['"]?([^\s'"&|;]+)['"]?/g
 
+function updateTimeoutStatus(ctx: ExtensionContext): void {
+	if (autoDenyTimeoutEnabled) {
+		const sec = Math.round(autoDenyTimeoutMs / 1000)
+		ctx.ui.setStatus(
+			"perm-timeout",
+			ctx.ui.theme.fg("warning", `⏱ ${sec}s`),
+		)
+	} else {
+		ctx.ui.setStatus("perm-timeout", undefined)
+	}
+}
+
 export default function (pi: ExtensionAPI) {
 	function isSafeCwdPrefix(command: string, cwd: string): string | null {
 		const match = command.match(
@@ -243,6 +258,60 @@ export default function (pi: ExtensionAPI) {
 		return checkCommand(command, cwd, isAllowedSingle, "every")
 	}
 
+	pi.registerCommand("perm-timeout", {
+		description:
+			"Toggle or set permission timeout auto-deny (e.g. /perm-timeout 10)",
+		handler: async (args, ctx) => {
+			const trimmed = args?.trim() ?? ""
+			if (!trimmed) {
+				// Toggle with current/default timeout
+				autoDenyTimeoutEnabled = !autoDenyTimeoutEnabled
+			} else if (trimmed === "off" || trimmed === "0") {
+				autoDenyTimeoutEnabled = false
+			} else {
+				const sec = Number.parseInt(trimmed, 10)
+				if (Number.isNaN(sec) || sec <= 0) {
+					ctx.ui.notify(
+						`Invalid timeout: "${trimmed}". Use seconds (e.g. 10) or "off"`,
+						"error",
+					)
+					return
+				}
+				autoDenyTimeoutMs = sec * 1000
+				autoDenyTimeoutEnabled = true
+			}
+			updateTimeoutStatus(ctx)
+			const sec = Math.round(autoDenyTimeoutMs / 1000)
+			ctx.ui.notify(
+				autoDenyTimeoutEnabled
+					? `Permission timeout enabled (${sec}s auto-deny)`
+					: "Permission timeout disabled (wait forever)",
+				"info",
+			)
+		},
+	})
+
+	pi.registerShortcut(Key.ctrlAlt("t"), {
+		description: "Toggle permission timeout auto-deny",
+		handler: async (ctx) => {
+			autoDenyTimeoutEnabled = !autoDenyTimeoutEnabled
+			updateTimeoutStatus(ctx)
+			const sec = Math.round(autoDenyTimeoutMs / 1000)
+			ctx.ui.notify(
+				autoDenyTimeoutEnabled
+					? `Permission timeout enabled (${sec}s auto-deny)`
+					: "Permission timeout disabled (wait forever)",
+				"info",
+			)
+		},
+	})
+
+	pi.on("session_start", async (_event, ctx) => {
+		autoDenyTimeoutEnabled = true
+		autoDenyTimeoutMs = 30000
+		updateTimeoutStatus(ctx)
+	})
+
 	pi.on("tool_call", async (event, ctx) => {
 		if (event.toolName !== "bash") return undefined
 
@@ -263,13 +332,23 @@ export default function (pi: ExtensionAPI) {
 			return { block: true, reason: "Command not in allowlist (no UI)" }
 		}
 
+		const selectOptions = autoDenyTimeoutEnabled
+			? { timeout: autoDenyTimeoutMs }
+			: undefined
 		const choice = await ctx.ui.select(
 			`⚠️ Command not in allowlist:\n\n  ${command}\n\nAllow?`,
 			["Yes", "No"],
+			selectOptions,
 		)
 
 		if (choice !== "Yes") {
-			return { block: true, reason: "Blocked by user" }
+			const sec = Math.round(autoDenyTimeoutMs / 1000)
+			return {
+				block: true,
+				reason: choice === undefined && autoDenyTimeoutEnabled
+					? `Timed out after ${sec}s. You can try an alternative command`
+					: "Blocked by user",
+			}
 		}
 
 		return undefined
