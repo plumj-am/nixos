@@ -19,6 +19,7 @@ def --wrapped rsync-files [...rest: string] {
       --delete-missing-args
       --human-readable
       --delay-updates
+      --rsh "ssh -o RemoteCommand=none"
       ...$rest)
 }
 
@@ -65,13 +66,13 @@ def --wrapped main [
 
       try {
          print-notify $"Removing old configuration files on ($remote)."
-         ssh -o ConnectTimeout=10 -tt $"jam@($remote)" "rm --recursive --force nixos"
+         ssh -o ConnectTimeout=10 -o RemoteCommand=none -tt $"jam@($remote)" "rm --recursive --force nixos"
 
          print-notify $"Copying new configuration files to ($remote)."
          jj file list | rsync-files --files-from - ./ $"jam@($remote):nixos"
 
          print-notify $"Starting rebuild on ($remote)."
-         ssh -o ConnectTimeout=10 -qtt $"jam@($remote)" ./nixos/rebuild.nu
+         ssh -o ConnectTimeout=10 -o RemoteCommand=none -qtt $"jam@($remote)" ./nixos/rebuild.nu
 
          true
       } catch {|e|

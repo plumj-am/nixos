@@ -28,6 +28,7 @@
       shellAliases = {
         "zellij-ide" = "zellij --layout ~/.config/zellij/layouts/ide.kdl";
         "zellij-3t2b" = "zellij --layout ~/.config/zellij/layouts/3t2b.kdl";
+        "zellij-detach" = "zellij action detach";
       };
 
       hjem.extraModule =
