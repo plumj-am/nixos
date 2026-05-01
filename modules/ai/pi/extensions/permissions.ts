@@ -12,8 +12,11 @@ let autoDenyTimeoutMs = 30000
 // Read-only allowlist patterns (strict mode)
 export const allowedPatterns: string[] = [
 	"ag*",
+	"awk*",
 	"bat*",
 	"cat*",
+	"echo*",
+	"false",
 	"fd*",
 	"find*",
 	"fzf*",
@@ -26,6 +29,8 @@ export const allowedPatterns: string[] = [
 	"sort*",
 	"tail*",
 	"tree*",
+	"true",
+	"wc*",
 	"which*",
 	"command*",
 
@@ -97,8 +102,9 @@ export const allowedPatterns: string[] = [
 	"fj wiki contents*",
 	"fj wiki view*",
 
-	"npx tsc*",
+	"fasm*",
 	"node --check*",
+	"npx tsc*",
 ]
 
 // Forbidden path patterns (strict mode)
@@ -213,8 +219,15 @@ export default function (pi: ExtensionAPI) {
 		return command.split(/\s*&&\s*/).map((s) => s.trim()).filter(Boolean)
 	}
 
+	function splitOr(command: string): string[] {
+		return command.split(/\s*\|\|\s*/).map((s) => s.trim()).filter(Boolean)
+	}
+
 	function splitPipes(command: string): string[] {
-		return command.split(/\s*\|\s*/).map((s) => s.trim()).filter(Boolean)
+		return command
+			.split(/\s*(?<!\|)\|\s*(?!\|)/)
+			.map((s) => s.trim())
+			.filter(Boolean)
 	}
 
 	function checkCommand(
@@ -228,12 +241,23 @@ export default function (pi: ExtensionAPI) {
 
 		const chainParts = splitChain(checkCmd)
 		if (chainParts.length > 1) {
-			return chainParts[mode]((part) => singleCheck(part))
+			return chainParts[mode]((part) =>
+				checkCommand(part, cwd, singleCheck, mode)
+			)
+		}
+
+		const orParts = splitOr(checkCmd)
+		if (orParts.length > 1) {
+			return orParts[mode]((part) =>
+				checkCommand(part, cwd, singleCheck, mode)
+			)
 		}
 
 		const pipeParts = splitPipes(checkCmd)
 		if (pipeParts.length > 1) {
-			return pipeParts[mode]((part) => singleCheck(part))
+			return pipeParts[mode]((part) =>
+				checkCommand(part, cwd, singleCheck, mode)
+			)
 		}
 
 		return singleCheck(checkCmd)
