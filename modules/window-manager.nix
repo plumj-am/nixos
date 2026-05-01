@@ -112,6 +112,7 @@
                 match app-id=r#"^steam_app_*"#
                 opacity 1.0
                 open-on-workspace "games"
+                open-fullscreen true
                 border {
                   off
                 }
@@ -251,6 +252,7 @@
 
                 Mod+F { expand-column-to-available-width; }
                 Mod+Shift+F { maximize-column; }
+                Mod+Shift+Ctrl+F { fullscreen-window; }
                 Mod+Shift+C { center-visible-columns; }
                 Mod+Shift+T { toggle-window-floating; }
                 Mod+Shift+Ctrl+T { switch-focus-between-floating-and-tiling; }
