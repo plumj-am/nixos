@@ -47,6 +47,15 @@ function formatLevel(level: CavemanLevel): string {
 }
 
 export default function (pi: ExtensionAPI) {
+	function updateCavemanStatus(ctx: { hasUI: boolean; ui: { setStatus: (id: string, text: string | undefined) => void; theme: { fg: (color: string, text: string) => string } } }): void {
+		if (!ctx.hasUI) return
+		if (currentLevel === "off") {
+			ctx.ui.setStatus("caveman", undefined)
+		} else {
+			ctx.ui.setStatus("caveman", ctx.ui.theme.fg("muted", "🪨 caveman"))
+		}
+	}
+
 	// Register /caveman command
 	pi.registerCommand("caveman", {
 		description: "Toggle caveman mode - speak like caveman, fewer tokens",
@@ -77,31 +86,30 @@ export default function (pi: ExtensionAPI) {
 				}
 			}
 			ctx.ui.notify(formatLevel(currentLevel), "info")
+			updateCavemanStatus(ctx)
 		},
 	})
 
-	// Apply caveman mode by injecting a user message with instructions
-	pi.on("before_agent_start", async (event, ctx) => {
+	// Inject caveman instructions as a hidden custom message (more salient than system prompt)
+	pi.on("before_agent_start", async () => {
 		if (currentLevel === "off") return
 
 		const instruction = INSTRUCTIONS[currentLevel]
 		if (!instruction) return
 
-		if (ctx.hasUI) {
-			ctx.ui.setStatus("caveman", ctx.ui.theme.fg("muted", "🪨 caveman"))
-		}
-
-		// Inject a user message that contains the caveman instructions
-		// This ensures the LLM sees it as part of the conversation
 		return {
-			systemPrompt: event.systemPrompt +
-				`\n\n[CAVEMAN MODE ACTIVE]\n${instruction}\n`,
+			message: {
+				customType: "caveman",
+				content: `[CAVEMAN MODE ACTIVE]\n${instruction}`,
+				display: false,
+			},
 		}
 	})
 
-	// Reset on new session
+	// Set status on new session so user sees caveman is active immediately
 	pi.on("session_start", async (_event, ctx) => {
 		currentLevel = "ultra"
+		updateCavemanStatus(ctx)
 	})
 
 	// Auto-detect caveman triggers
@@ -126,6 +134,7 @@ export default function (pi: ExtensionAPI) {
 
 				currentLevel = level
 				ctx.ui.notify(formatLevel(currentLevel), "info")
+				updateCavemanStatus(ctx)
 				break
 			}
 		}
@@ -136,6 +145,7 @@ export default function (pi: ExtensionAPI) {
 			if (text.includes(stop)) {
 				currentLevel = "off"
 				ctx.ui.notify("Caveman go away.", "info")
+				updateCavemanStatus(ctx)
 				break
 			}
 		}
