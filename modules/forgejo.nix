@@ -215,6 +215,8 @@
           client_max_body_size 75M;
         '';
         locations."/".proxyPass = "http://[::1]:${toString port}";
+
+        locations."= /robots.txt".alias = ./robots.txt;
       };
 
       services.gitea-mq = {
