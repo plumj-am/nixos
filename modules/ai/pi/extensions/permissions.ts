@@ -16,6 +16,7 @@ export const allowedPatterns: string[] = [
 	"awk*",
 	"bat*",
 	"cat*",
+	"command*",
 	"echo*",
 	"false",
 	"fd*",
@@ -34,7 +35,7 @@ export const allowedPatterns: string[] = [
 	"wait*",
 	"wc*",
 	"which*",
-	"command*",
+	"xargs*"
 
 	"jj bookmark list*",
 	"jj commit -m*",
@@ -380,27 +381,34 @@ export default function (pi: ExtensionAPI) {
 			return { block: true, reason }
 		}
 
-		const selectOptions = autoDenyTimeoutEnabled
-			? { timeout: autoDenyTimeoutMs }
+		const ac = new AbortController()
+		const timeoutId = autoDenyTimeoutEnabled
+			? setTimeout(() => ac.abort(), autoDenyTimeoutMs)
 			: undefined
+
 		const choice = await ctx.ui.select(
 			`⚠️ Command not in allowlist:\n\n  ${command}\n\nAllow?`,
 			["Yes", "No"],
-			selectOptions,
+			{ signal: ac.signal },
 		)
 
-		if (choice !== "Yes") {
-			const sec = Math.round(autoDenyTimeoutMs / 1000)
-			const reason = choice === undefined && autoDenyTimeoutEnabled
-				? `Timed out after ${sec}s. You can try an alternative command`
-				: "Blocked by user"
-			logBlockedCommand(command, ctx.cwd, reason)
-			return {
-				block: true,
-				reason,
-			}
+		clearTimeout(timeoutId)
+
+		if (choice === "Yes") {
+			return undefined
 		}
 
-		return undefined
+		if (choice === "No") {
+			logBlockedCommand(command, ctx.cwd, "Blocked by user")
+			return { block: true, reason: "Blocked by user" }
+		}
+
+		// choice === undefined: either timeout (signal aborted) or user cancelled
+		const sec = Math.round(autoDenyTimeoutMs / 1000)
+		const reason = autoDenyTimeoutEnabled && ac.signal.aborted
+			? `Timed out after ${sec}s. You can try an alternative command`
+			: "Blocked by user"
+		logBlockedCommand(command, ctx.cwd, reason)
+		return { block: true, reason }
 	})
 }
