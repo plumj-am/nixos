@@ -80,9 +80,15 @@
         };
       };
 
-      services.buildbot-master.extraConfig = ''
-        c["protocols"] = {"pb": {"port": "tcp:9989:interface=\\:\\:"}}
-      '';
+      services.buildbot-master.extraConfig = # python
+        ''
+          c["protocols"] = {"pb": {"port": "tcp:9989:interface=\\:\\:"}}
+
+          c['www']['ui_default_config'] = {
+            'Home.sidebar_menu_groups_expand_behavior': "Always expand",
+            'Builders.show_workers_name': True,
+          }
+        '';
 
       networking.firewall.allowedTCPPorts = singleton 9989;
 
@@ -111,6 +117,8 @@
       age.secrets = {
         buildbotMasterPassword.rekeyFile = ../secrets/buildbot-master-password.age;
       };
+
+      nix.settings.trusted-users = singleton "buildbot-worker";
 
       services.buildbot-nix.worker = {
         enable = true;
