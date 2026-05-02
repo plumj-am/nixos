@@ -1,59 +1,50 @@
 let
-  sshConfigBase =
-    {
-      pkgs,
-      lib,
-      ...
-    }:
-    let
-      inherit (lib.lists) singleton;
-    in
-    {
-      hjem.extraModule =
-        { config, ... }:
-        {
-          # HACK: Use copy type to prevent permissions issues on the resulting symlink.
-          # Otherwise we get this error:
-          # "Bad owner or permissions on /home/jam/.ssh/config"
-          files.".ssh/config" = {
-            permissions = "0600";
-            type = "copy";
-            text = # ssh
-              ''
-                StrictHostKeyChecking accept-new
-                IdentitiesOnly yes
+  sshConfigBase = {
+    hjem.extraModule =
+      { config, ... }:
+      {
+        # HACK: Use copy type to prevent permissions issues on the resulting symlink.
+        # Otherwise we get this error:
+        # "Bad owner or permissions on /home/jam/.ssh/config"
+        files.".ssh/config" = {
+          permissions = "0600";
+          type = "copy";
+          text = # ssh
+            ''
+              StrictHostKeyChecking accept-new
+              IdentitiesOnly yes
 
-                Host *
-                  SetEnv COLORTERM="truecolor" TERM="xterm-256color"
-                  ControlMaster auto
-                  ControlPersist 60m
-                  ServerAliveCountMax 2
-                  ServerAliveInterval 60
-                  IdentityFile ${config.directory}/.ssh/id
+              Host *
+                SetEnv COLORTERM="truecolor" TERM="xterm-256color"
+                ControlMaster auto
+                ControlPersist 60m
+                ServerAliveCountMax 2
+                ServerAliveInterval 60
+                IdentityFile ${config.directory}/.ssh/id
 
-                Host date
-                  RequestTTY yes
-                  RemoteCommand zellij attach --create date
+              Host date
+                RequestTTY yes
+                RemoteCommand zellij attach --create date
 
-                Host kiwi
-                  RequestTTY yes
-                  RemoteCommand zellij attach --create kiwi
+              Host kiwi
+                RequestTTY yes
+                RemoteCommand zellij attach --create kiwi
 
-                Host plum
-                  RequestTTY yes
-                  RemoteCommand zellij attach --create plum
+              Host plum
+                RequestTTY yes
+                RemoteCommand zellij attach --create plum
 
-                Host sloe
-                  RequestTTY yes
-                  RemoteCommand zellij attach --create sloe
+              Host sloe
+                RequestTTY yes
+                RemoteCommand zellij attach --create sloe
 
-                Host yuzu
-                  RequestTTY yes
-                  RemoteCommand zellij attach --create yuzu
-              '';
-          };
+              Host yuzu
+                RequestTTY yes
+                RemoteCommand zellij attach --create yuzu
+            '';
         };
-    };
+      };
+  };
 in
 {
   flake.modules.nixos.ssh = {
