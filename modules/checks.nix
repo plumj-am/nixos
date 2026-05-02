@@ -68,18 +68,6 @@
               touch $out
             '';
 
-        # Don't use legacy imports.
-        nix-path =
-          pkgs.runCommand "nix-path"
-            {
-              # nativeBuildInputs = [ pkgs.grep ];
-            }
-            ''
-              ! grep -r "import <nixpkgs>" ${../.}/modules/ --exclude=checks.nix || exit 1
-              ! grep -r "import <nixos>" ${../.}/modules/ --exclude=checks.nix || exit 1
-              touch $out
-            '';
-
         # TODO: Setup treefmt for yml, qml, etc. formatting.
         nixfmt =
           pkgs.runCommand "nixfmt"
