@@ -1,6 +1,32 @@
+{ self, ... }:
 {
   perSystem =
-    { pkgs, ... }:
+    {
+      pkgs,
+      lib,
+      system,
+      ...
+    }:
+    let
+      inherit (lib.attrsets) mapAttrs' filterAttrs nameValuePair;
+      inherit (lib.lists) elem;
+
+      # Evaluate NixOS configurations matching the current system e.g. x86_64-linux as checks.
+      nixosMachines =
+        mapAttrs' (
+          name: nixosConfig: nameValuePair "nixos-${name}" nixosConfig.config.system.build.toplevel
+        )
+        <| filterAttrs (
+          _: config: config.pkgs.stdenv.hostPlatform.system == system
+        ) self.nixosConfigurations;
+
+      # Evaluate packages as checks.
+      blacklistPackages = [ ];
+      packages =
+        mapAttrs' (n: nameValuePair "package-${n}")
+        <| filterAttrs (n: _: !(elem n blacklistPackages))
+        <| self.packages.${system} or { };
+    in
     {
       checks = {
         statix =
@@ -64,6 +90,8 @@
               nixfmt --check ${../.}
               touch $out
             '';
-      };
+      }
+      // nixosMachines
+      // packages;
     };
 }
