@@ -35,8 +35,6 @@ in
       rust
       sudo-extra-server
       syncthing
-      tangled-knot
-      tangled-spindle
       uptime-kuma
       website-personal
       zellij

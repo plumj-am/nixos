@@ -99,9 +99,5 @@
       url = "github:plumj-am/run0-sudo-shim";
       inputs.nixpkgs.follows = "os";
     };
-    tangled = {
-      url = "git+https://tangled.org/tangled.org/core";
-      inputs.nixpkgs.follows = "os";
-    };
   };
 }
