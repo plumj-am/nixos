@@ -1,5 +1,9 @@
 let
   sshConfigBase = {
+    shellAliases = {
+      zzh = "ssh -o RequestTTY=yes -o RemoteCommand='zellij attach --create'";
+    };
+
     hjem.extraModule =
       { config, ... }:
       {
@@ -21,26 +25,6 @@ let
                 ServerAliveCountMax 2
                 ServerAliveInterval 60
                 IdentityFile ${config.directory}/.ssh/id
-
-              Host date
-                RequestTTY yes
-                RemoteCommand zellij attach --create date
-
-              Host kiwi
-                RequestTTY yes
-                RemoteCommand zellij attach --create kiwi
-
-              Host plum
-                RequestTTY yes
-                RemoteCommand zellij attach --create plum
-
-              Host sloe
-                RequestTTY yes
-                RemoteCommand zellij attach --create sloe
-
-              Host yuzu
-                RequestTTY yes
-                RemoteCommand zellij attach --create yuzu
             '';
         };
       };
