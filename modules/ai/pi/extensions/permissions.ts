@@ -24,6 +24,7 @@ export const allowedPatterns: string[] = [
 	"fzf*",
 	"grep*",
 	"head*",
+	"hyperfine*",
 	"less*",
 	"ls*",
 	"rg*",
@@ -35,7 +36,7 @@ export const allowedPatterns: string[] = [
 	"wait*",
 	"wc*",
 	"which*",
-	"xargs*"
+	"xargs*",
 
 	"jj bookmark list*",
 	"jj commit -m*",
@@ -79,6 +80,7 @@ export const allowedPatterns: string[] = [
 	"git log*",
 	"git status*",
 
+	"cargo build*",
 	"cargo check*",
 	"cargo clippy*",
 	"cargo fmt*",
@@ -96,6 +98,9 @@ export const allowedPatterns: string[] = [
 	"curl -s -X PUT http://localhost*",
 	"curl -X DELETE http://localhost*",
 	"curl -s -X DELETE http://localhost*",
+
+	"nix eval*",
+	"nix flake check*",
 
 	"fj actions tasks*",
 	"fj issue search*",
@@ -164,7 +169,8 @@ function logBlockedCommand(
 	try {
 		mkdirSync(BLOCKED_LOG_DIR, { recursive: true })
 		const timestamp = new Date().toISOString()
-		const entry = `[${timestamp}] BLOCKED\n  command: ${command}\n  cwd: ${cwd}\n  reason: ${reason}\n\n`
+		const entry =
+			`[${timestamp}] BLOCKED\n  command: ${command}\n  cwd: ${cwd}\n  reason: ${reason}\n\n`
 		appendFileSync(BLOCKED_LOG_PATH, entry)
 	} catch {
 		// silently ignore logging failures
@@ -236,19 +242,93 @@ export default function (pi: ExtensionAPI) {
 		return null
 	}
 
+	function splitRespectingQuotes(
+		command: string,
+		delimiter: string,
+	): string[] {
+		const parts: string[] = []
+		let current = ""
+		let inSingleQuote = false
+		let inDoubleQuote = false
+
+		for (let i = 0; i < command.length; i++) {
+			const char = command[i]
+
+			if (char === "\\") {
+				current += char + (command[i + 1] ?? "")
+				i++
+				continue
+			}
+
+			if (char === "'" && !inDoubleQuote) {
+				inSingleQuote = !inSingleQuote
+			} else if (char === '"' && !inSingleQuote) {
+				inDoubleQuote = !inDoubleQuote
+			}
+
+			if (
+				!inSingleQuote &&
+				!inDoubleQuote &&
+				command.startsWith(delimiter, i)
+			) {
+				parts.push(current.trim())
+				current = ""
+				i += delimiter.length - 1
+				continue
+			}
+
+			current += char
+		}
+
+		parts.push(current.trim())
+		return parts.filter(Boolean)
+	}
+
 	function splitChain(command: string): string[] {
-		return command.split(/\s*&&\s*/).map((s) => s.trim()).filter(Boolean)
+		return splitRespectingQuotes(command, "&&")
 	}
 
 	function splitOr(command: string): string[] {
-		return command.split(/\s*\|\|\s*/).map((s) => s.trim()).filter(Boolean)
+		return splitRespectingQuotes(command, "||")
 	}
 
 	function splitPipes(command: string): string[] {
-		return command
-			.split(/\s*(?<!\|)\|\s*(?!\|)/)
-			.map((s) => s.trim())
-			.filter(Boolean)
+		const parts: string[] = []
+		let current = ""
+		let inSingleQuote = false
+		let inDoubleQuote = false
+
+		for (let i = 0; i < command.length; i++) {
+			const char = command[i]
+
+			if (char === "\\") {
+				current += char + (command[i + 1] ?? "")
+				i++
+				continue
+			}
+
+			if (char === "'" && !inDoubleQuote) {
+				inSingleQuote = !inSingleQuote
+			} else if (char === '"' && !inSingleQuote) {
+				inDoubleQuote = !inDoubleQuote
+			}
+
+			if (!inSingleQuote && !inDoubleQuote && char === "|") {
+				if (command[i + 1] === "|") {
+					current += "||"
+					i++
+				} else {
+					parts.push(current.trim())
+					current = ""
+				}
+				continue
+			}
+
+			current += char
+		}
+
+		parts.push(current.trim())
+		return parts.filter(Boolean)
 	}
 
 	function checkCommand(
@@ -381,18 +461,16 @@ export default function (pi: ExtensionAPI) {
 			return { block: true, reason }
 		}
 
-		const ac = new AbortController()
-		const timeoutId = autoDenyTimeoutEnabled
-			? setTimeout(() => ac.abort(), autoDenyTimeoutMs)
+		const selectOptions = autoDenyTimeoutEnabled
+			? { timeout: autoDenyTimeoutMs }
 			: undefined
+		const start = Date.now()
 
 		const choice = await ctx.ui.select(
 			`⚠️ Command not in allowlist:\n\n  ${command}\n\nAllow?`,
 			["Yes", "No"],
-			{ signal: ac.signal },
+			selectOptions,
 		)
-
-		clearTimeout(timeoutId)
 
 		if (choice === "Yes") {
 			return undefined
@@ -403,9 +481,10 @@ export default function (pi: ExtensionAPI) {
 			return { block: true, reason: "Blocked by user" }
 		}
 
-		// choice === undefined: either timeout (signal aborted) or user cancelled
+		// choice === undefined: either timeout or user cancelled
+		const elapsed = Date.now() - start
 		const sec = Math.round(autoDenyTimeoutMs / 1000)
-		const reason = autoDenyTimeoutEnabled && ac.signal.aborted
+		const reason = autoDenyTimeoutEnabled && elapsed >= autoDenyTimeoutMs - 500
 			? `Timed out after ${sec}s. You can try an alternative command`
 			: "Blocked by user"
 		logBlockedCommand(command, ctx.cwd, reason)
