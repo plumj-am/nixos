@@ -14,10 +14,11 @@
       inherit (config.age) secrets;
 
       bucket = "plumjam";
+      prefix = "nix";
       endpoint = "fsn1.your-objectstorage.com";
       s3Args = "&priority=10&multipart-upload=true&multipart-threshold=50M&multipart-chunk-size=10M";
-      s3Cache = "s3://${bucket}?endpoint=${endpoint}${s3Args}";
-      # s3Cache = "s3://${bucket}${endpoint}${s3Args}"; # TODO: After 2.34 is fixed.
+      s3Cache = "s3://${bucket}/${prefix}?endpoint=${endpoint}${s3Args}";
+      # s3Cache = "s3://${bucket}/${prefix}${endpoint}${s3Args}"; # TODO: After 2.34 is fixed.
 
       # Upload queue processor script.
       uploadProcessor = pkgs.writeShellScriptBin "nix-upload-processor" ''
