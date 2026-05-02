@@ -225,12 +225,14 @@
         externalUrl = "https://mq.${domain}";
         listenAddr = "127.0.0.1:${toString mqPort}";
         databaseUrl = "postgres:///gitea-mq?host=/run/postgresql";
+        logLevel = "debug";
 
         giteaTokenFile = secrets.forgejoAccessToken.path;
         webhookSecretFile = secrets.buildbotWebhookSecret.path;
       };
 
       services.nginx.virtualHosts."mq.${domain}" = merge config.services.nginx.sslTemplate {
+        basicAuthFile = config.age.secrets.ciHtpasswd.path;
         locations."/".proxyPass = "http://127.0.0.1:${toString mqPort}";
       };
     };
