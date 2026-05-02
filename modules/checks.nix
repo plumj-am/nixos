@@ -21,7 +21,8 @@
         ) self.nixosConfigurations;
 
       # Evaluate packages as checks.
-      blacklistPackages = [ ];
+      # Need to fix IFD in rsh.
+      blacklistPackages = [ "rad-seed-helper" ];
       packages =
         mapAttrs' (n: nameValuePair "package-${n}")
         <| filterAttrs (n: _: !(elem n blacklistPackages))
