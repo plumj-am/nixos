@@ -201,7 +201,8 @@ in
             relay = "always";
             seedingPolicy = {
               scope = "followed";
-              default = if hostName == "plum" then "allow" else "block";
+              # Sloe has ~2TB to work with so I don't mind it seeding everything.
+              default = if hostName == "sloe" then "allow" else "block";
             };
           };
         };
