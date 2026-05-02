@@ -288,6 +288,9 @@
 
               try { source $"($nu.cache-dir)/carapace.nu" }
               try { source $"($nu.cache-dir)/jj.nu" }
+
+              def rebuild-all [] {
+                cd /home/jam/nixos; zellij run --in-place -- ./rebuild.nu; zellij run --near-current-pane -- ./rebuild.nu --remote date; zellij run --near-current-pane -- ./rebuild.nu --remote plum; zellij run --near-current-pane -- ./rebuild.nu --remote kiwi; zellij run --near-current-pane -- ./rebuild.nu --remote sloe; }
             '';
 
           xdg.config.files."nushell/env.nu".text =

@@ -6,9 +6,10 @@
       ...
     }:
     let
-      inherit (lib.lists) singleton;
+      inherit (lib.lists) filter singleton;
       inherit (lib.modules) mkIf;
       inherit (config.age) secrets;
+      inherit (config.networking) hostName;
 
       port = 5000;
 
@@ -42,7 +43,8 @@
 
       nix.settings = {
         trusted-users = [ "harmonia" ];
-        extra-substituters = map (h: "http://${h}.taild29fec.ts.net:${toString port}") hosts;
+        extra-substituters =
+          map (h: "http://${h}.taild29fec.ts.net:${toString port}") <| filter (h: h != hostName) hosts;
         # TODO: dedupe here and ./object-storage.nix.
         trusted-public-keys = [
           "yuzu-store.plumj.am:rRhcZfgv1nSDQxDhgzaudcpyl/JtqoEf4QOsPble7S8="
