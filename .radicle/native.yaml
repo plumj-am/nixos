@@ -1,3 +1,0 @@
-shell: |
-    nix run github:juspay/omnix -- ci run --include-all-dependencies --github-output
-    cat result | jq .result.ROOT.build.byName
