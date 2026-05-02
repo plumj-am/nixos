@@ -1,3 +1,4 @@
+{ inputs, ... }:
 {
   flake.modules.nixos.forgejo =
     {
@@ -9,13 +10,19 @@
     let
       inherit (lib.lists) singleton;
       inherit (lib) mkForce;
-      inherit (config.networking) domain hostName;
       inherit (config.myLib) merge mkResticBackup;
+      inherit (config.age) secrets;
+      inherit (config.networking) domain hostName;
 
       fqdn = "git.${domain}";
       port = 8001;
+      mqPort = 8006;
     in
     {
+      imports = singleton inputs.gitea-mq.nixosModules.default;
+
+      services.postgresql.ensure = singleton "gitea-mq";
+
       assertions = [
         {
           assertion = hostName == "plum";
@@ -168,6 +175,7 @@
           group = "renovate";
           mode = "600";
         };
+        forgejoAccessToken.rekeyFile = ../secrets/forgejo-access-token.age;
       };
 
       users.users.renovate = {
@@ -207,6 +215,23 @@
           client_max_body_size 75M;
         '';
         locations."/".proxyPass = "http://[::1]:${toString port}";
+      };
+
+      services.gitea-mq = {
+        enable = true;
+        giteaUrl = "https://${fqdn}";
+
+        repos = [ "PlumJam/docpad" ];
+        externalUrl = "https://mq.${domain}";
+        listenAddr = "127.0.0.1:${toString mqPort}";
+        databaseUrl = "postgres:///gitea-mq?host=/run/postgresql";
+
+        giteaTokenFile = secrets.forgejoAccessToken.path;
+        webhookSecretFile = secrets.buildbotWebhookSecret.path;
+      };
+
+      services.nginx.virtualHosts."mq.${domain}" = merge config.services.nginx.sslTemplate {
+        locations."/".proxyPass = "http://127.0.0.1:${toString mqPort}";
       };
     };
 }

@@ -78,6 +78,10 @@
           clientSecretFile = secrets.buildbotOauthSecret.path;
           cookieSecretFile = secrets.buildbotCookieSecret.path;
         };
+
+        branches = {
+          mergeQueue.matchGlob = "gitea-mq/*";
+        };
       };
 
       services.buildbot-master.extraConfig = # python

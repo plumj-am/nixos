@@ -22,6 +22,10 @@
       url = "github:nix-community/buildbot-nix";
       inputs.nixpkgs.follows = "os";
     };
+    gitea-mq = {
+      url = "github:Mic92/gitea-mq";
+      inputs.nixpkgs.follows = "os";
+    };
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "os";

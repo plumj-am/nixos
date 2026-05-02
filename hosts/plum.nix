@@ -28,6 +28,7 @@ in
       nix-settings-extra-server
       object-storage
       opengist
+      postgres
       radicle-ci-host
       # radicle-ci-runner
       radicle-explorer
