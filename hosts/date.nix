@@ -13,6 +13,7 @@ in
       ai-extra
       audio
       boot-systemd
+      buildbot-worker
       claude-code
       desktop-gui
       desktop-tools

@@ -12,6 +12,7 @@ in
 
       acme
       boot-grub
+      buildbot-worker
       disks-server
       forgejo-action-runner
       nginx

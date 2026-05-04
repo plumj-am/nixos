@@ -18,6 +18,10 @@
         nixpkgs.follows = "os";
       };
     };
+    buildbot-nix = {
+      url = "github:nix-community/buildbot-nix";
+      inputs.nixpkgs.follows = "os";
+    };
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "os";

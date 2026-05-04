@@ -12,6 +12,8 @@ in
 
       acme
       boot-grub
+      buildbot-master
+      buildbot-worker
       cinny
       disks-server
       forgejo
