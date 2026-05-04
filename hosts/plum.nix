@@ -20,6 +20,7 @@ in
       freshrss-server
       forgejo-action-runner
       goatcounter
+      harmonia
       matrix
       nginx
       nix-distributed-builder

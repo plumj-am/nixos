@@ -11,6 +11,7 @@ in
       aspectsBase
 
       desktop-tools
+      harmonia
       jujutsu-extra
       nix-distributed-builds
       # object-storage

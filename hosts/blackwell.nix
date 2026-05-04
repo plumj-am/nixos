@@ -14,6 +14,7 @@ in
       buildbot-worker
       disks-server
       forgejo-action-runner
+      harmonia
       # nix-distributed-builder
       nix-distributed-builds
       nix-settings-extra-server

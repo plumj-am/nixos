@@ -15,6 +15,7 @@ in
       buildbot-worker
       disks-server
       forgejo-action-runner
+      harmonia
       nginx
       nix-distributed-builder
       nix-distributed-builds

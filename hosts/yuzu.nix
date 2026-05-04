@@ -25,6 +25,7 @@ in
       games
       gammastep
       graphics
+      harmonia
       hardware-desktop
       haskell
       jujutsu-extra

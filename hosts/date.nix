@@ -27,6 +27,7 @@ in
       games
       gammastep
       graphics
+      harmonia
       hardware-desktop
       jujutsu-extra
       kitty
