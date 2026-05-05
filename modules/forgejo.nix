@@ -219,7 +219,7 @@
 
       services.gitea-mq = {
         enable = true;
-        giteaUrl = "https://${fqdn}";
+        giteaUrl = "http://[::1]:${toString port}";
 
         repos = [ "PlumJam/docpad" ];
         externalUrl = "https://mq.${domain}";
