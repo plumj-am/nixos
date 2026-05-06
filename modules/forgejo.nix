@@ -183,6 +183,7 @@
           group = "nginx";
           mode = "0400";
         };
+        giteamqWebhookSecret.rekeyFile = ../secrets/gitea-mq-webhook-secret.age;
       };
 
       users.users.renovate = {
@@ -237,7 +238,7 @@
         logLevel = "debug";
 
         giteaTokenFile = secrets.forgejoAccessToken.path;
-        webhookSecretFile = secrets.buildbotWebhookSecret.path;
+        webhookSecretFile = secrets.giteamqWebhookSecret.path;
       };
 
       services.nginx.virtualHosts."mq.${domain}" = merge config.services.nginx.sslTemplate {
