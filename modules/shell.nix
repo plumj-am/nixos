@@ -117,6 +117,7 @@
                     --ro-bind /etc/nsswitch.conf /etc/nsswitch.conf
                     --ro-bind /etc/hosts /etc/hosts
                     --ro-bind ${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt /etc/ssl/certs/ca-certificates.crt
+                    --ro-bind /etc/nix/nix.conf /etc/nix/nix.conf
                     --bind (^pwd) (^pwd)
                     --bind ${directory}/.pi ${directory}/.pi
                     --bind ${directory}/.claude ${directory}/.claude
