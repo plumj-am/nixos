@@ -229,13 +229,14 @@
 
       services.gitea-mq = {
         enable = true;
-        giteaUrl = "http://[::1]:${toString port}";
+        giteaUrl = "https://${fqdn}";
 
         repos = [ "PlumJam/docpad" ];
         externalUrl = "https://mq.${domain}";
         listenAddr = "127.0.0.1:${toString mqPort}";
         databaseUrl = "postgres:///gitea-mq?host=/run/postgresql";
         logLevel = "debug";
+        hideRefFromClients = false;
 
         giteaTokenFile = secrets.forgejoAccessToken.path;
         webhookSecretFile = secrets.giteamqWebhookSecret.path;
