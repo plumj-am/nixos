@@ -1,0 +1,13 @@
+--- a/buildbot_nix/__init__.py
++++ b/buildbot_nix/__init__.py
+@@ -283,8 +283,8 @@ class NixConfigurator(Configurator):
+         # Setup database components
+         config["services"].append(DatabaseSetupService())
+ 
+-        # Setup build canceller
+-        config["services"].append(create_build_canceller(succeeded_projects))
++        # Build canceller disabled — in-progress builds are not cancelled on new commits.
++        pass
+ 
+         # Setup systemd secrets
+         credentials_directory = os.environ.get("CREDENTIALS_DIRECTORY", "./secrets")

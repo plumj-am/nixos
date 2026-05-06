@@ -22,6 +22,7 @@
         orig.overrideAttrs (old: {
           patches = (old.patches or [ ]) ++ [
             ./patches/buildbot-nix-gcroot-warning.patch
+            ./patches/buildbot-nix-no-cancel.patch
           ];
           postPatch = (old.postPatch or "") + ''
             substituteInPlace buildbot_nix/nix_build.py \
