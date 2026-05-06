@@ -52,9 +52,6 @@
       users.users.syncthing.extraGroups = [ "radicle" ];
 
       systemd.tmpfiles.rules = [
-        "d /var/lib/radicle-ci 2775 radicle radicle -"
-        "d /var/lib/radicle-ci/adapters 2775 radicle radicle -"
-        "d /var/lib/radicle-ci/reports 2775 radicle radicle -"
         "d /var/backups 0700 syncthing syncthing -"
         "d /var/backups/onx 0700 syncthing syncthing -"
       ];
@@ -70,25 +67,6 @@
           };
 
           folders = {
-            radicle-ci-adapters = {
-              path = "/var/lib/radicle-ci/adapters";
-              devices = allDevices;
-              ignorePerms = true;
-              ignorePatterns = [
-                "native/**/src"
-                ".tmp*"
-              ];
-            };
-
-            radicle-ci-reports = {
-              path = "/var/lib/radicle-ci/reports";
-              devices = allDevices;
-              ignorePerms = true;
-              ignorePatterns = [
-                ".tmp*"
-              ];
-            };
-
             onx-backup = {
               path = "/var/backups/onx";
               devices = [

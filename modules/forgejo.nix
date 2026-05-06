@@ -176,6 +176,13 @@
           mode = "600";
         };
         forgejoAccessToken.rekeyFile = ../secrets/forgejo-access-token.age;
+
+        giteamqHtpasswd = {
+          rekeyFile = ../secrets/gitea-mq-htpasswd.age;
+          owner = "nginx";
+          group = "nginx";
+          mode = "0400";
+        };
       };
 
       users.users.renovate = {
@@ -234,8 +241,10 @@
       };
 
       services.nginx.virtualHosts."mq.${domain}" = merge config.services.nginx.sslTemplate {
-        basicAuthFile = config.age.secrets.ciHtpasswd.path;
-        locations."/".proxyPass = "http://127.0.0.1:${toString mqPort}";
+        locations."/" = {
+          # basicAuthFile = config.age.secrets.giteamqHtpasswd.path;
+          proxyPass = "http://127.0.0.1:${toString mqPort}";
+        };
       };
     };
 }

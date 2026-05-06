@@ -22,7 +22,6 @@ in
       object-storage
       openssh-extra-users
       pi
-      radicle-ci-runner
       radicle-node
       rust
       sudo-extra-server

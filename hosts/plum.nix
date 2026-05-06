@@ -29,8 +29,6 @@ in
       object-storage
       opengist
       postgres
-      radicle-ci-host
-      # radicle-ci-runner
       radicle-explorer
       radicle-node
       rust
