@@ -113,6 +113,9 @@ export const allowedPatterns: string[] = [
 	"fj wiki view*",
 
 	"fasm*",
+	"go build*",
+	"go fmt*",
+	"go test*",
 	"node --check*",
 	"npx tsc*",
 ]
@@ -397,7 +400,9 @@ export default function (pi: ExtensionAPI) {
 
 	function extractLoopBody(command: string): string | null {
 		const trimmed = command.trim()
-		if (!trimmed.startsWith("for ") && !trimmed.startsWith("while ")) return null
+		if (!trimmed.startsWith("for ") && !trimmed.startsWith("while ")) {
+			return null
+		}
 		const doMatch = trimmed.match(/;\s*do\s/)
 		if (!doMatch) return null
 		const doneMatch = trimmed.match(/;\s*done\s*$/)
