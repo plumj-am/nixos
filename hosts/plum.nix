@@ -49,13 +49,10 @@ in
             ];
           };
 
-          nix-builder = {
+          systemSpecs = {
             cores = 4;
             speedFactor = 3;
-          };
-
-          forgejo-action-runner = {
-            strong = true;
+            runner.strong = true;
           };
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBH1S3dhOYCCltqrseHc3YZFHc9XU90PsvDo7frzUGrr root@plum";

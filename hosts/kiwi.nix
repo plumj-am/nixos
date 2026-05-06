@@ -37,7 +37,7 @@ in
             ];
           };
 
-          nix-builder = {
+          systemSpecs = {
             cores = 2;
             speedFactor = 2;
           };

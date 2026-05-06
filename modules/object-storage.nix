@@ -177,7 +177,11 @@
           RestartSec = "10s";
           StateDirectory = "nix-upload-queue";
           StateDirectoryMode = "0755";
-          CPUQuota = "50%";
+          CPUQuota =
+            let
+              cores = config.systemSpecs.cores;
+            in
+            "${toString (cores * 50)}%";
         };
 
         environment = {

@@ -58,13 +58,10 @@ in
         config = mkConfig inputs "date" "x86_64-linux" {
           diskConfig.swapSize = "18G";
 
-          nix-builder = {
-            cores = 8;
+          systemSpecs = {
+            cores = 12;
             speedFactor = 4;
-          };
-
-          forgejo-action-runner = {
-            strong = true;
+            runner.strong = true;
           };
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEzfoVKZDyiyyMiX1JRFaaTELspG25MlLNq0kI2AANTa root@date";

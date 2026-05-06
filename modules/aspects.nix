@@ -40,6 +40,7 @@ in
         netrc
         networking
         rebuild
+        system-specs
         yubikey
       ]);
   };

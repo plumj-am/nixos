@@ -35,13 +35,10 @@ in
       {
         config = mkConfig inputs "sloe" "x86_64-linux" {
 
-          nix-builder = {
+          systemSpecs = {
             cores = 12;
             speedFactor = 5;
-          };
-
-          forgejo-action-runner = {
-            strong = true;
+            runner.strong = true;
           };
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK42xzC/vWHZC9SiU/8IBBd2pn7mggBYFQ8themKAic/ root@sloe";

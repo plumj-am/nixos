@@ -8,8 +8,6 @@ let
       ...
     }:
     let
-      inherit (lib.types) bool;
-      inherit (lib.options) mkOption;
       inherit (lib.lists) optional singleton;
       inherit (config.networking) hostName;
 
@@ -23,14 +21,6 @@ let
       ];
     in
     {
-      options.forgejo-action-runner = {
-        strong = mkOption {
-          type = bool;
-          default = false;
-          description = "If the system is powerful enough to handle heavier workloads";
-        };
-      };
-
       config = {
         users.users.gitea-runner = {
           description = "gitea-runner";
@@ -47,7 +37,7 @@ let
             tokenFile = config.age.secrets.forgejoRunnerToken.path;
             inherit name url;
 
-            labels = defaultLabels ++ optional config.forgejo-action-runner.strong "strong:host";
+            labels = defaultLabels ++ optional config.systemSpecs.runner.strong "strong:host";
 
             settings = {
               runner = {

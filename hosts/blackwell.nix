@@ -25,10 +25,10 @@ in
       zellij
       {
         config = mkConfig inputs "blackwell" "x86_64-linux" {
-          # nix-builder = {
-          #   cores = 2;
-          #   speedFactor = 1;
-          # };
+          systemSpecs = {
+            cores = 2;
+            speedFactor = 1;
+          };
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGSi4SKhqze7ZzhJFcUF9KW/4nXX1MfvZjUqrYWNDi9c root@blackwell";
 
