@@ -395,6 +395,18 @@ export default function (pi: ExtensionAPI) {
 		return parts.filter(Boolean)
 	}
 
+	function extractLoopBody(command: string): string | null {
+		const trimmed = command.trim()
+		if (!trimmed.startsWith("for ") && !trimmed.startsWith("while ")) return null
+		const doMatch = trimmed.match(/;\s*do\s/)
+		if (!doMatch) return null
+		const doneMatch = trimmed.match(/;\s*done\s*$/)
+		if (!doneMatch) return null
+		const bodyStart = doMatch.index! + doMatch[0].length
+		const bodyEnd = trimmed.length - doneMatch[0].length
+		return trimmed.slice(bodyStart, bodyEnd).trim()
+	}
+
 	function checkCommand(
 		command: string,
 		cwd: string,
@@ -403,6 +415,11 @@ export default function (pi: ExtensionAPI) {
 	): boolean {
 		const safeRest = isSafeCwdPrefix(command, cwd)
 		const checkCmd = safeRest !== null ? safeRest : command
+
+		const loopBody = extractLoopBody(checkCmd)
+		if (loopBody !== null) {
+			return checkCommand(loopBody, cwd, singleCheck, mode)
+		}
 
 		const lineParts = splitLines(checkCmd)
 		if (lineParts.length > 1) {
