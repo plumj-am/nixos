@@ -99,8 +99,10 @@ export const allowedPatterns: string[] = [
 	"curl -X DELETE http://localhost*",
 	"curl -s -X DELETE http://localhost*",
 
-	"nix eval*",
-	"nix flake check*",
+	"nix*build*",
+	"nix*eval*",
+	"nix*flake check*",
+	"nix*log*",
 
 	"fj actions tasks*",
 	"fj issue search*",
@@ -292,6 +294,10 @@ export default function (pi: ExtensionAPI) {
 		return splitRespectingQuotes(command, "||")
 	}
 
+	function splitSemicolons(command: string): string[] {
+		return splitRespectingQuotes(command, ";")
+	}
+
 	function splitPipes(command: string): string[] {
 		const parts: string[] = []
 		let current = ""
@@ -331,6 +337,64 @@ export default function (pi: ExtensionAPI) {
 		return parts.filter(Boolean)
 	}
 
+	function stripAssignments(command: string): string {
+		let str = command.trim()
+		while (true) {
+			const m = str.match(
+				/^([A-Za-z_][A-Za-z0-9_]*)=(?:\$\([^)]*\)|`[^`]*`|'[^']*'|"[^"]*"|[^\s'"`])+\s*/,
+			)
+			if (!m) break
+			str = str.slice(m[0].length)
+		}
+		return str.trim()
+	}
+
+	function splitLines(command: string): string[] {
+		const parts: string[] = []
+		let current = ""
+		let inSingleQuote = false
+		let inDoubleQuote = false
+		let parenDepth = 0
+
+		for (let i = 0; i < command.length; i++) {
+			const char = command[i]
+
+			if (char === "\\") {
+				current += char + (command[i + 1] ?? "")
+				i++
+				continue
+			}
+
+			if (char === "'" && !inDoubleQuote) {
+				inSingleQuote = !inSingleQuote
+			} else if (char === '"' && !inSingleQuote) {
+				inDoubleQuote = !inDoubleQuote
+			} else if (!inSingleQuote && !inDoubleQuote) {
+				if (char === "$" && command[i + 1] === "(") {
+					parenDepth++
+				} else if (char === ")" && parenDepth > 0) {
+					parenDepth--
+				}
+			}
+
+			if (
+				!inSingleQuote &&
+				!inDoubleQuote &&
+				parenDepth === 0 &&
+				char === "\n"
+			) {
+				parts.push(current.trim())
+				current = ""
+				continue
+			}
+
+			current += char
+		}
+
+		parts.push(current.trim())
+		return parts.filter(Boolean)
+	}
+
 	function checkCommand(
 		command: string,
 		cwd: string,
@@ -339,6 +403,20 @@ export default function (pi: ExtensionAPI) {
 	): boolean {
 		const safeRest = isSafeCwdPrefix(command, cwd)
 		const checkCmd = safeRest !== null ? safeRest : command
+
+		const lineParts = splitLines(checkCmd)
+		if (lineParts.length > 1) {
+			return lineParts[mode]((part) =>
+				checkCommand(part, cwd, singleCheck, mode)
+			)
+		}
+
+		const semiParts = splitSemicolons(checkCmd)
+		if (semiParts.length > 1) {
+			return semiParts[mode]((part) =>
+				checkCommand(part, cwd, singleCheck, mode)
+			)
+		}
 
 		const chainParts = splitChain(checkCmd)
 		if (chainParts.length > 1) {
@@ -373,11 +451,24 @@ export default function (pi: ExtensionAPI) {
 			.replace(/\*/g, ".*")
 			.replace(/\?/g, ".")
 			.replace(/{{GLOBSTAR}}/g, ".*")
-		return new RegExp(`^${re}$`).test(str)
+		return new RegExp(`^${re}$`, "s").test(str)
 	}
 
-	const isAllowedSingle = (command: string): boolean =>
-		allowedPatterns.some((p) => matchGlob(command, p))
+	function isAllowedSingle(command: string): boolean {
+		if (allowedPatterns.some((p) => matchGlob(command, p))) return true
+		const stripped = stripAssignments(command)
+		if (
+			stripped &&
+			stripped !== command &&
+			allowedPatterns.some((p) => matchGlob(stripped, p))
+		) {
+			return true
+		}
+		const subMatch = command.match(/\$\(([\s\S]*?)\)/) ||
+			command.match(/`([\s\S]*?)`/)
+		if (subMatch) return isAllowedSingle(subMatch[1])
+		return false
+	}
 
 	function isAllowed(command: string, cwd: string): boolean {
 		return checkCommand(command, cwd, isAllowedSingle, "every")
@@ -484,9 +575,10 @@ export default function (pi: ExtensionAPI) {
 		// choice === undefined: either timeout or user cancelled
 		const elapsed = Date.now() - start
 		const sec = Math.round(autoDenyTimeoutMs / 1000)
-		const reason = autoDenyTimeoutEnabled && elapsed >= autoDenyTimeoutMs - 500
-			? `Timed out after ${sec}s. You can try an alternative command`
-			: "Blocked by user"
+		const reason =
+			autoDenyTimeoutEnabled && elapsed >= autoDenyTimeoutMs - 500
+				? `Timed out after ${sec}s. You can try an alternative command`
+				: "Blocked by user"
 		logBlockedCommand(command, ctx.cwd, reason)
 		return { block: true, reason }
 	})
