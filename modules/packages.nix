@@ -44,7 +44,6 @@ in
       pkgs.brave
       pkgs.obs-studio
       # pkgs.thunderbird
-      pkgs.wasistlos
     ];
 
   flake.modules.nixos.packages-extra-cli =
