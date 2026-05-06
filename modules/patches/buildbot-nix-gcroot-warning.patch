@@ -1,0 +1,29 @@
+--- a/buildbot_nix/nix_build.py
++++ b/buildbot_nix/nix_build.py
+@@ -168,6 +168,7 @@ class ProcessSkippedBuilds(buildstep.ShellMixin, steps.BuildStep):
+             return util.SKIPPED
+ 
+         # Register gcroots for all skipped builds
++        gcroot_failures = False
+         for attr, out_path in skipped_outputs.items():
+             gcroot_path = f"/nix/var/nix/gcroots/per-user/{self.gcroots_user}/{self.project.name}/{attr}"
+             cmd = await self.makeRemoteShellCommand(
+@@ -180,7 +181,8 @@ class ProcessSkippedBuilds(buildstep.ShellMixin, steps.BuildStep):
+             )
+             await self.runCommand(cmd)
+             if cmd.didFail():
+-                return util.FAILURE
++                gcroot_failures = True
++                continue
+ 
+         # Update build outputs if configured and conditions are met
+         if (
+@@ -203,7 +205,7 @@ class ProcessSkippedBuilds(buildstep.ShellMixin, steps.BuildStep):
+                     )
+                     return util.FAILURE
+ 
+-        return util.SUCCESS
++        return util.WARNINGS if gcroot_failures else util.SUCCESS
+ 
+ 
+ def _gcroot_already_points_to(gc_root: str, out_path: str) -> bool:

@@ -20,6 +20,9 @@
           ) { buildbot-gitea = config.services.buildbot-nix.packages.buildbot-gitea; };
         in
         orig.overrideAttrs (old: {
+          patches = (old.patches or [ ]) ++ [
+            ./patches/buildbot-nix-gcroot-warning.patch
+          ];
           postPatch = (old.postPatch or "") + ''
             substituteInPlace buildbot_nix/nix_build.py \
               --replace-fail \
