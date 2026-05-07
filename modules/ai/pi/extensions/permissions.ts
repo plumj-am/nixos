@@ -207,7 +207,7 @@ export default function (pi: ExtensionAPI) {
 		)
 		if (!match) return null
 
-		const cdPath = match[1]
+		const cdPath = match[1].trim()
 		const rest = match[2]
 
 		const targetPath = cdPath.startsWith("~")
@@ -615,11 +615,28 @@ export default function (pi: ExtensionAPI) {
 				}
 
 				function handleInput(data: string) {
+					// Clear timeout while user types - restart on exit edit
+					function clearTypingTimeout() {
+						if (timeoutId) {
+							clearTimeout(timeoutId)
+							timeoutId = undefined
+						}
+					}
+					function restartTypingTimeout() {
+						if (autoDenyTimeoutEnabled && !timeoutId) {
+							timeoutId = setTimeout(() => {
+								done("timeout")
+							}, autoDenyTimeoutMs)
+						}
+					}
+
 					if (editMode) {
+						clearTypingTimeout()
 						if (matchesKey(data, Key.escape)) {
 							editMode = false
 							editor.setText("")
 							refresh()
+							restartTypingTimeout()
 							return
 						}
 						editor.handleInput(data)
@@ -639,6 +656,7 @@ export default function (pi: ExtensionAPI) {
 					}
 					if (matchesKey(data, Key.tab)) {
 						editMode = true
+						clearTypingTimeout()
 						refresh()
 						return
 					}
