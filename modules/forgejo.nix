@@ -21,7 +21,7 @@
     {
       imports = singleton inputs.gitea-mq.nixosModules.default;
 
-      services.postgresql.ensure = singleton "gitea-mq";
+      # services.postgresql.ensure = singleton "gitea-mq"; # Until Forgejo is supported.
 
       assertions = [
         {
@@ -228,7 +228,7 @@
       };
 
       services.gitea-mq = {
-        enable = true;
+        enable = false; # Until Forgejo is supported.
         giteaUrl = "https://${fqdn}";
 
         repos = [ "PlumJam/docpad" ];
