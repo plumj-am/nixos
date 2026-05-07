@@ -68,6 +68,8 @@
             cat = "${getExe pkgs.bat} --theme ${theme.bat}";
             less = "${getExe pkgs.bat} --plain";
 
+            nfc = "nix flake check --log-format internal-json -v err>| nom --json";
+
             ns = "niri-session";
 
             h = "hx";
