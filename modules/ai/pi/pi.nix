@@ -222,10 +222,20 @@
                 shellPath = getExe pkgs.bash;
 
                 packages = [
-                  "git:github.com/nicobailon/pi-interview-tool"
-                  "git:github.com/apmantza/GreedySearch-pi"
                   {
                     source = "git:github.com/apmantza/pi-free";
+                    extensions = [ "index.ts" ];
+                    themes = [ ];
+                    skills = [ ];
+                  }
+                  {
+                    source = "git:github.com/nicobailon/pi-interview-tool";
+                    extensions = [ "index.ts" ];
+                    themes = [ ];
+                    skills = [ ];
+                  }
+                  {
+                    source = "git:github.com/samfoy/pi-memory";
                     extensions = [ "index.ts" ];
                     themes = [ ];
                     skills = [ ];
@@ -234,6 +244,7 @@
                     source = "git:github.com/netresearch/context7-skill";
                     extensions = [ ];
                     themes = [ ];
+                    skills = [ "context7" ];
                   }
                   {
                     source = "git:github.com/mitsuhiko/agent-stuff";
