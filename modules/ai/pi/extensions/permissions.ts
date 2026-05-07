@@ -5,7 +5,13 @@ import type {
 	ExtensionAPI,
 	ExtensionContext,
 } from "@mariozechner/pi-coding-agent"
-import { Key } from "@mariozechner/pi-tui"
+import {
+	Key,
+	matchesKey,
+	type EditorTheme,
+	Editor,
+	truncateToWidth,
+} from "@mariozechner/pi-tui"
 
 let autoDenyTimeoutEnabled = true
 let autoDenyTimeoutMs = 30000
@@ -574,33 +580,220 @@ export default function (pi: ExtensionAPI) {
 			return { block: true, reason }
 		}
 
-		const selectOptions = autoDenyTimeoutEnabled
-			? { timeout: autoDenyTimeoutMs }
-			: undefined
-		const start = Date.now()
-
-		const choice = await ctx.ui.select(
-			`⚠️ Command not in allowlist:\n\n  ${command}\n\nAllow?`,
-			["Yes", "No"],
-			selectOptions,
-		)
-
-		if (choice === "Yes") {
-			return undefined
+		interface PermissionResult {
+			choice: "Yes" | "No"
+			message?: string
 		}
 
-		if (choice === "No") {
+		const result = await ctx.ui.custom<PermissionResult | null | "timeout">(
+			(tui, theme, _kb, done) => {
+				let optionIndex = 0
+				let editMode = false
+				let cachedLines: string[] | undefined
+				const options = ["Yes", "No"]
+
+				const editorTheme: EditorTheme = {
+					borderColor: (s) => theme.fg("accent", s),
+					selectList: {
+						selectedPrefix: (t) => theme.fg("accent", t),
+						selectedText: (t) => theme.fg("accent", t),
+						description: (t) => theme.fg("muted", t),
+						scrollInfo: (t) => theme.fg("dim", t),
+						noMatch: (t) => theme.fg("warning", t),
+					},
+				}
+				const editor = new Editor(tui, editorTheme)
+
+				editor.onSubmit = () => {
+					const msg = editor.getText().trim()
+					done({ choice: options[optionIndex] as "Yes" | "No", message: msg || undefined })
+				}
+
+				function refresh() {
+					cachedLines = undefined
+					tui.requestRender()
+				}
+
+				function handleInput(data: string) {
+					if (editMode) {
+						if (matchesKey(data, Key.escape)) {
+							editMode = false
+							editor.setText("")
+							refresh()
+							return
+						}
+						editor.handleInput(data)
+						refresh()
+						return
+					}
+
+					if (matchesKey(data, Key.up)) {
+						optionIndex = Math.max(0, optionIndex - 1)
+						refresh()
+						return
+					}
+					if (matchesKey(data, Key.down)) {
+						optionIndex = Math.min(options.length - 1, optionIndex + 1)
+						refresh()
+						return
+					}
+					if (matchesKey(data, Key.tab)) {
+						editMode = true
+						refresh()
+						return
+					}
+					if (matchesKey(data, Key.enter)) {
+						done({ choice: options[optionIndex] as "Yes" | "No" })
+						return
+					}
+					if (matchesKey(data, Key.escape)) {
+						done(null)
+						return
+					}
+				}
+
+				function render(width: number): string[] {
+					if (cachedLines) return cachedLines
+
+					const lines: string[] = []
+					const add = (s: string) => lines.push(truncateToWidth(s, width))
+
+					add(theme.fg("accent", "─".repeat(width)))
+					add(theme.fg("warning", " ⚠️  Command not in allowlist:"))
+					lines.push("")
+					for (const line of command.split("\n")) {
+						add(`  ${theme.fg("text", line)}`)
+					}
+					lines.push("")
+					add(theme.fg("text", " Allow?"))
+					lines.push("")
+
+					for (let i = 0; i < options.length; i++) {
+						const selected = i === optionIndex
+						const prefix = selected ? theme.fg("accent", "> ") : "  "
+						if (selected && editMode) {
+							add(prefix + theme.fg("accent", `${options[i]} ✎`))
+						} else if (selected) {
+							add(prefix + theme.fg("accent", options[i]))
+						} else {
+							add(`  ${theme.fg("text", options[i])}`)
+						}
+					}
+
+					if (editMode) {
+						lines.push("")
+						add(theme.fg("muted", " Message (optional):"))
+						for (const line of editor.render(width - 2)) {
+							add(` ${line}`)
+						}
+					}
+
+					lines.push("")
+					if (editMode) {
+						add(theme.fg("dim", " Enter to submit • Esc to go back"))
+					} else {
+						add(theme.fg("dim", " ↑↓ navigate • Enter to confirm • Tab to add message • Esc to cancel"))
+					}
+					add(theme.fg("accent", "─".repeat(width)))
+
+					cachedLines = lines
+					return lines
+				}
+
+				let timeoutId: ReturnType<typeof setTimeout> | undefined
+				if (autoDenyTimeoutEnabled) {
+					timeoutId = setTimeout(() => {
+						done("timeout")
+					}, autoDenyTimeoutMs)
+				}
+
+				const resolve = (value: PermissionResult | null | "timeout") => {
+					if (timeoutId) {
+						clearTimeout(timeoutId)
+						timeoutId = undefined
+					}
+					done(value)
+				}
+
+				// Patch done calls inside closures to use resolve
+				editor.onSubmit = () => {
+					const msg = editor.getText().trim()
+					resolve({ choice: options[optionIndex] as "Yes" | "No", message: msg || undefined })
+				}
+
+				return {
+					render,
+					invalidate: () => {
+						cachedLines = undefined
+					},
+					handleInput(data: string) {
+						if (editMode) {
+							if (matchesKey(data, Key.escape)) {
+								editMode = false
+								editor.setText("")
+								refresh()
+								return
+							}
+							editor.handleInput(data)
+							refresh()
+							return
+						}
+
+						if (matchesKey(data, Key.up)) {
+							optionIndex = Math.max(0, optionIndex - 1)
+							refresh()
+							return
+						}
+						if (matchesKey(data, Key.down)) {
+							optionIndex = Math.min(options.length - 1, optionIndex + 1)
+							refresh()
+							return
+						}
+						if (matchesKey(data, Key.tab)) {
+							editMode = true
+							refresh()
+							return
+						}
+						if (matchesKey(data, Key.enter)) {
+							resolve({ choice: options[optionIndex] as "Yes" | "No" })
+							return
+						}
+						if (matchesKey(data, Key.escape)) {
+							resolve(null)
+							return
+						}
+					},
+					cleanup: () => {
+						if (timeoutId) {
+							clearTimeout(timeoutId)
+							timeoutId = undefined
+						}
+					},
+				}
+			},
+		)
+
+		if (result === "timeout") {
+			const sec = Math.round(autoDenyTimeoutMs / 1000)
+			const reason = `Timed out after ${sec}s. You can try an alternative command`
+			logBlockedCommand(command, ctx.cwd, reason)
+			return { block: true, reason }
+		}
+
+		if (result === null || result === undefined) {
 			logBlockedCommand(command, ctx.cwd, "Blocked by user")
 			return { block: true, reason: "Blocked by user" }
 		}
 
-		// choice === undefined: either timeout or user cancelled
-		const elapsed = Date.now() - start
-		const sec = Math.round(autoDenyTimeoutMs / 1000)
-		const reason =
-			autoDenyTimeoutEnabled && elapsed >= autoDenyTimeoutMs - 500
-				? `Timed out after ${sec}s. You can try an alternative command`
-				: "Blocked by user"
+		if (result.choice === "Yes") {
+			if (result.message) {
+				ctx.ui.notify(`Approved: ${result.message}`, "info")
+			}
+			return undefined
+		}
+
+		// result.choice === "No"
+		const reason = result.message ? `Blocked by user: ${result.message}` : "Blocked by user"
 		logBlockedCommand(command, ctx.cwd, reason)
 		return { block: true, reason }
 	})
