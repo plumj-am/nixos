@@ -204,7 +204,7 @@
           platform = "forgejo";
           endpoint = "https://git.plumj.am";
           autodiscover = true;
-          autodiscoverFilter = [ "PlumJam/docpad" ];
+          autodiscoverFilter = [ "PlumWorks/grove" ];
           onboardingPrTitle = "renovate: Configure";
           configFileNames = [ ".forgejo/renovate.json" ];
           productLinks = { };
@@ -231,7 +231,7 @@
         enable = false; # Until Forgejo is supported.
         giteaUrl = "https://${fqdn}";
 
-        repos = [ "PlumJam/docpad" ];
+        repos = [ "PlumWorks/grove" ];
         externalUrl = "https://mq.${domain}";
         listenAddr = "127.0.0.1:${toString mqPort}";
         databaseUrl = "postgres:///gitea-mq?host=/run/postgresql";
