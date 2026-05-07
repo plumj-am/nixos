@@ -109,8 +109,13 @@
                     --dir /etc/ssl
                     --dir /etc/ssl/certs
                     --ro-bind ${directory}/.config ${directory}/.config
-                    --ro-bind /nix/store /nix/store
                     --ro-bind /run/agenix/opencodeGoKey /run/agenix/opencodeGoKey
+                    --ro-bind /run/agenix/nvidiaNimKey /run/agenix/nvidiaNimKey
+                    --ro-bind /run/agenix/codestralKey /run/agenix/codestralKey
+                    --ro-bind /run/agenix/llm7Key /run/agenix/llm7Key
+                    --ro-bind /run/agenix/openrouterKey /run/agenix/openrouterKey
+                    --ro-bind /run/agenix/ollamaKey /run/agenix/ollamaKey
+                    --ro-bind /run/agenix/sambanovaKey /run/agenix/sambanovaKey
                     --ro-bind /run/current-system /run/current-system
                     --ro-bind /etc/profiles/per-user/${user}/bin /etc/profiles/per-user/${user}/bin
                     --ro-bind /etc/resolv.conf /etc/resolv.conf
@@ -119,6 +124,7 @@
                     --ro-bind ${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt /etc/ssl/certs/ca-certificates.crt
                     --ro-bind /etc/nix/nix.conf /etc/nix/nix.conf
                     --bind (^pwd) (^pwd)
+                    --bind /nix/store /nix/store # I think this prevents spamming ~/.local/share/nix.
                     --bind ${directory}/.pi ${directory}/.pi
                     --bind ${directory}/.claude ${directory}/.claude
                     --bind ${directory}/nixos ${directory}/nixos
@@ -134,6 +140,12 @@
                     --cap-drop all
                     --setenv SSL_CERT_FILE /etc/ssl/certs/ca-certificates.crt
                     --setenv OPENCODE_API_KEY (^cat /run/agenix/opencodeGoKey)
+                    --setenv NVIDIA_API_KEY (^cat /run/agenix/nvidiaNimKey)
+                    --setenv CODESTRAL_API_KEY (^cat /run/agenix/codestralKey)
+                    --setenv LLM7_API_KEY (^cat /run/agenix/llm7Key)
+                    --setenv OPENROUTER_API_KEY (^cat /run/agenix/openrouterKey)
+                    --setenv OLLAMA_API_KEY (^cat /run/agenix/ollamaKey)
+                    --setenv SAMBANOVA_API_KEY (^cat /run/agenix/sambanovaKey)
                     --setenv IN_BWRAP 1
                     -- $tool ...$rest)
                 }
