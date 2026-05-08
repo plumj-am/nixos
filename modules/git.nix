@@ -10,6 +10,8 @@
       inherit (lib.meta) getExe;
     in
     {
+      shellAliases.git-graph = ''git log --graph --full-history --pretty=format:"%h%  %d%x20%s"'';
+
       hjem.extraModule = {
         packages = [
           pkgs.gh

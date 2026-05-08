@@ -59,25 +59,12 @@
 
             tree = "eza --tree --git-ignore --group-directories-first";
 
-            git-graph = ''git log --graph --full-history --pretty=format:"%h%  %d%x20%s"'';
-
-            fj = "fj --host https://git.plumj.am";
-
             oops = "nix run nixpkgs#sqlite -- ${config.xdg.config.directory}/nushell/history.sqlite3 'DELETE FROM history WHERE rowid IN (SELECT rowid FROM history ORDER BY rowid DESC LIMIT 5);'";
 
             cat = "${getExe pkgs.bat} --theme ${theme.bat}";
             less = "${getExe pkgs.bat} --plain";
 
             nfc = "nix flake check --log-format internal-json -v err>| nom --json";
-
-            ns = "niri-session";
-
-            h = "hx";
-            e = "hx"; # editor
-
-            j = "jj";
-            lj = "lazyjj";
-            ju = "jjui";
 
             rebuild = "${config.directory}/nixos/rebuild.nu";
 

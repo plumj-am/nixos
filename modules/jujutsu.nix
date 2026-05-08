@@ -11,6 +11,11 @@
       inherit (config) theme;
     in
     {
+      shellAliases = {
+        lj = "lazyjj";
+        ju = "jjui";
+      };
+
       hjem.extraModule =
         { osConfig, config, ... }:
         {
@@ -384,7 +389,7 @@
           pkgs.jjui
 
           # GUI
-          pkgs.gg-jj
+          # pkgs.gg-jj
         ];
       };
     };

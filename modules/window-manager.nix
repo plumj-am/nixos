@@ -19,6 +19,8 @@
       quickshellPath = "/home/jam/nixos/modules/quickshell/shell";
     in
     {
+      shellAliases.ns = "niri-session";
+
       xdg.portal = {
         enable = true;
         config = {

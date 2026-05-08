@@ -310,7 +310,7 @@ in
     in
     {
       hjem.extraModule = {
-        packages = singleton pkgs.radicle-desktop;
+        # packages = singleton pkgs.radicle-desktop;
       };
     };
 

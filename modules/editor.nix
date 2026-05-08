@@ -67,6 +67,11 @@ in
       themes.base16_custom.inherits = "base16_default";
     in
     {
+      shellAliases = {
+        h = "hx";
+        e = "hx"; # editor
+      };
+
       hjem.extraModule = {
         packages = [
           pkgs.helix

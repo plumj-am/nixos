@@ -18,6 +18,8 @@
           mode = "600";
         };
 
+        shellAliases.fj = "fj --host https://git.plumj.am";
+
         hjem.extraModule = {
           packages = singleton pkgs.forgejo-cli;
 
