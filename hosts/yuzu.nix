@@ -50,6 +50,7 @@ in
       radicle-node
       radicle-tui
       raperl
+      rio
       rust-desktop
       rss-tui
       sudo-extra-desktop
