@@ -22,6 +22,10 @@
       url = "github:nix-community/buildbot-nix";
       inputs.nixpkgs.follows = "os";
     };
+    gerrit = {
+      url = "git+https://git.afnix.fr/afnix/nix-gerrit";
+      inputs.nixpkgs.follows = "os";
+    };
     gitea-mq = {
       url = "github:Mic92/gitea-mq";
       inputs.nixpkgs.follows = "os";

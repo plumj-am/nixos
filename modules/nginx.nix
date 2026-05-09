@@ -84,6 +84,10 @@
         recommendedProxySettings = true;
         recommendedTlsSettings = true;
 
+        appendHttpConfig = ''
+          add_header Permissions-Policy "interest-cohort=()";
+        '';
+
         commonHttpConfig = # nginx
           ''
             map $scheme $hsts_header {

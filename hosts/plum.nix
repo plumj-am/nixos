@@ -19,6 +19,7 @@ in
       forgejo
       freshrss-server
       forgejo-action-runner
+      gerrit
       # git-next
       goatcounter
       harmonia

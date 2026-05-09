@@ -1,0 +1,169 @@
+{
+  flake.modules.nixos.gerrit =
+    {
+      inputs,
+      pkgs,
+      lib,
+      lib',
+      config,
+      ...
+    }:
+    let
+      inherit (lib.modules) mkForce;
+      inherit (lib.lists) singleton;
+      inherit (lib') merge;
+      inherit (config.myLib) mkResticBackup;
+      inherit (config.networking) domain;
+
+      port = 8011;
+    in
+    {
+      age.secrets = {
+        gerritSecureConfig = {
+          rekeyFile = ../secrets/gerrit-secure-config.age;
+          owner = "git";
+          group = "git";
+        };
+      };
+
+      services.restic.backups.gerrit = mkResticBackup "gerrit" {
+        paths = [ "/var/lib/gerrit" ];
+        exclude = [ "/var/lib/gerrit/tmp" ];
+        timerConfig = {
+          OnCalendar = "hourly";
+          Persistent = true;
+        };
+      };
+
+      systemd.services.gerrit-keys = {
+        enable = true;
+        before = [ "gerrit.service" ];
+        wantedBy = [ "gerrit.service" ];
+        after = [ "network.target" ];
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+          WorkingDirectory = "/var/lib/gerrit";
+        };
+        script = ''
+          ln --symbolic --force ${config.age.secrets.gerritSecureConfig.path} etc/secure.config
+        '';
+      };
+
+      users.users.git = {
+        isSystemUser = true;
+        group = "git";
+        home = "/var/lib/gerrit";
+        createHome = false;
+      };
+      users.groups.git = { };
+
+      systemd.services.gerrit.serviceConfig = {
+        DynamicUser = mkForce false;
+        User = "git";
+        Group = "git";
+      };
+      services.gerrit = {
+        enable = true;
+
+        serverId = "e731e7e0-0873-4a69-a2b4-77a527800a3a";
+        jvmHeapLimit = "1024m";
+        listenAddress = "[::]:${toString port}";
+
+        builtinPlugins = [
+          "download-commands"
+          "hooks"
+          "replication"
+        ];
+        plugins = [
+          inputs.gerrit.packages.${pkgs.stdenv.hostPlatform.system}.oauth
+          inputs.gerrit.packages.${pkgs.stdenv.hostPlatform.system}.code-owners
+        ];
+
+        settings = {
+          auth = {
+            type = "OAUTH";
+            trustedOpenID = "^.*$";
+            contributerAgreements = false;
+            userNameCaseInsensitive = true;
+            gitBasicAuthPolicy = "HTTP";
+          };
+          oauth.allowRegisterNewEmail = true;
+
+          httpd.listenUrl = "proxy-https://[::]:${toString port}";
+
+          sshd = {
+            listenAddress = "[::]:29418";
+            advertisedAddress = "gerrit.plumj.am:29418";
+          };
+
+          cache.web_sessions.maxAge = "3 months";
+
+          change = {
+            addChangeReviewFootersToCommitMessage = true;
+            allowBlame = true;
+            allowMarkdownBase64ImagesInComments = true;
+            enableAttentionSet = true;
+            enableAssignee = false;
+            diff3ConflictView = true;
+          };
+
+          commentlink = {
+            changeid = {
+              match = "(I[0-9a-f]{8,40})";
+              link = "/q/$1";
+            };
+            forgejo = {
+              match = "#(\\d+)";
+              link = "https://git.plumj.am/PlumWorks/grove/issues/$1";
+            };
+          };
+
+          download.command = [
+            "checkout"
+            "cherry_pick"
+            "format_patch"
+            "pull"
+          ];
+
+          gerrit = {
+            canonicalWebUrl = "https://gerrit.plumj.am";
+            docUrl = "/Documentation";
+          };
+
+          plugin.code-owners = {
+            # A Code-Review +2 vote is required from a code owner.
+            requiredApproval = "Code-Review+2";
+            # The OWNERS check can be overriden using an Owners-Override vote.
+            overrideApproval = "Owners-Override+1";
+            # People implicitly approve their own changes automatically.
+            enableImplicitApprovals = "TRUE";
+            disabledBranch = "refs/meta/config";
+          };
+
+          user = {
+            name = "Gerrit";
+            email = "gerrit@plumj.am";
+          };
+        };
+      };
+
+      networking.firewall.allowedTCPPorts = singleton 29418;
+
+      services.nginx.recommendedProxySettings = mkForce false;
+      services.nginx.virtualHosts."gerrit.${domain}" = merge config.services.nginx.sslTemplate {
+        locations."/" = {
+          proxyPass = "http://localhost:${toString port}";
+          extraConfig = # nginx
+            ''
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header Host $host:443;
+              proxy_buffering off;
+              proxy_read_timeout 3600;
+              proxy_cookie_path / /; # Reset from commonHttpConfig in ./nginx.nix
+              # Gerrit should be left to handle it's own cookies or it breaks oauth.
+            '';
+        };
+      };
+    };
+}

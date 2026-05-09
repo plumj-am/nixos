@@ -332,6 +332,26 @@
         "type": "github"
       }
     },
+    "gerrit": {
+      "inputs": {
+        "nixpkgs": [
+          "os"
+        ]
+      },
+      "locked": {
+        "lastModified": 1769786825,
+        "narHash": "sha256-q9aIvIKBBvc2HqwNDf2qUDv88wkCurczSuty1xiHzMc=",
+        "ref": "refs/heads/main",
+        "rev": "d223099f23d8ace53eb309e40046c5086c4473fb",
+        "revCount": 39,
+        "type": "git",
+        "url": "https://git.afnix.fr/afnix/nix-gerrit"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://git.afnix.fr/afnix/nix-gerrit"
+      }
+    },
     "git-hooks": {
       "inputs": {
         "flake-compat": "flake-compat_2",
@@ -831,6 +851,7 @@
         "buildbot-nix": "buildbot-nix",
         "disko": "disko",
         "fenix": "fenix",
+        "gerrit": "gerrit",
         "gitea-mq": "gitea-mq",
         "hjem": "hjem",
         "homebrew": "homebrew",
