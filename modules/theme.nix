@@ -123,13 +123,13 @@ let
           size.medium = 14;
           size.big = 16;
 
-          # mono.name = "Iosevka Nerd Font Mono";
-          # mono.family = "Iosevka";
-          # mono.package = pkgs.nerd-fonts.iosevka;
+          mono.name = "Iosevka Nerd Font Mono";
+          mono.family = "Iosevka";
+          mono.package = pkgs.nerd-fonts.iosevka;
 
-          mono.name = "Maple Mono NF";
-          mono.family = "Maple Mono";
-          mono.package = pkgs.maple-mono.NF;
+          # mono.name = "Maple Mono NF";
+          # mono.family = "Maple Mono";
+          # mono.package = pkgs.maple-mono.NF;
 
           # mono.name = "Hasklug Nerd Font Mono";
           # mono.family = "Hasklug";
