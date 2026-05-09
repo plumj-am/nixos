@@ -1,0 +1,31 @@
+#:schema https://docs.jj-vcs.dev/latest/config-schema.json
+
+# Copy to repo use Gerrit to have automatic Change-Id appending.
+# Edit the repo config with `jj config edit --repo`.
+# Sadly there is no way to do this conditionally based on the current repo with
+# the templating language.
+
+[gerrit]
+default-remote        = "origin"
+default-remote-branch = "master"
+
+[templates]
+commit_trailers = """
+    format_signed_off_by_trailer(self) ++
+    if(
+      !trailers.contains_key("Change-Id"),
+      format_gerrit_change_id_trailer(self)
+    )
+"""
+
+[revset-aliases]
+# stack(x, n) is the set of mutable commits reachable from 'x', with 'n'
+# parents. 'n' is often useful to customize the display and return set for
+# certain operations. 'x' can be used to target the set of 'roots' to traverse,
+# e.g. @ is the current stack.
+"stack()"     = "ancestors(reachable(@, mutable()), 2)"
+"stack(x)"    = "ancestors(reachable(x, mutable()), 2)"
+"stack(x, n)" = "ancestors(reachable(x, mutable()), n)"
+
+[revsets]
+log = "stack(@)"
