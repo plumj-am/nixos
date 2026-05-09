@@ -183,7 +183,12 @@
           mode = "600";
         };
         forgejoAccessToken.rekeyFile = ../secrets/forgejo-access-token.age;
-
+        renovateGerritHttpPassword = {
+          rekeyFile = ../secrets/renovate-gerrit-http-password.age;
+          owner = "renovate";
+          group = "renovate";
+          mode = "600";
+        };
         giteamqHtpasswd = {
           rekeyFile = ../secrets/gitea-mq-htpasswd.age;
           owner = "nginx";
@@ -208,10 +213,11 @@
         ];
         schedule = "*:0/10";
         settings = {
-          platform = "forgejo";
-          endpoint = "https://git.plumj.am";
+          platform = "gerrit";
+          endpoint = "https://gerrit.plumj.am";
+          username = "renovate"; # For Gerrit ONLY otherwise let renovate determine automatically.
           autodiscover = true;
-          autodiscoverFilter = [ "PlumWorks/grove" ];
+          autodiscoverFilter = [ "grove" ];
           onboardingPrTitle = "renovate: Configure";
           configFileNames = [ ".forgejo/renovate.json" ];
           productLinks = { };
@@ -221,6 +227,7 @@
           RENOVATE_TOKEN = config.age.secrets.renovateBotToken.path;
           RENOVATE_GITHUB_COM_TOKEN = config.age.secrets.renovateGitHubToken.path;
           RENOVATE_GIT_PRIVATE_KEY = config.age.secrets.renovateSigningKey.path;
+          RENOVATE_PASSWORD = config.age.secrets.renovateGerritHttpPassword.path;
         };
       };
 
