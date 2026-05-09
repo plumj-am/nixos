@@ -136,7 +136,6 @@
                             cwd "/"
                             root_dirs "${config.directory}/projects"
                             individual_dirs "${config.directory}/nixos;${config.directory}/notes"
-                            ignore_dirs "${config.directory}/projects/docpad"
                             session_layout "default"
                           }
                           SwitchToMode "locked";
