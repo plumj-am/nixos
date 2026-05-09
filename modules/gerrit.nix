@@ -24,6 +24,11 @@
           owner = "git";
           group = "git";
         };
+        gerritBuildbotSshKey = {
+          rekeyFile = ../secrets/gerrit-buildbot-ssh-key.age;
+          owner = "buildbot";
+          mode = "600";
+        };
         gerritReplicationKey = {
           rekeyFile = ../secrets/gerrit-replication-key.age;
           owner = "git";
@@ -83,6 +88,13 @@
       };
       services.gerrit = {
         enable = true;
+        package = (inputs.gerrit.packages.${pkgs.stdenv.hostPlatform.system}.gerrit).overrideAttrs (old: {
+          # Remove the patch that appends version string with "-dirty-nix" so buildbot can
+          # correctly send status updates to Gerrit.
+          postPatch =
+            lib.replaceStrings [ "sed -Ei 's,^(STABLE_BUILD_GERRIT_LABEL.*)$,\\1-dirty-nix,' .version" ] [ "" ]
+              old.postPatch;
+        });
 
         serverId = "e731e7e0-0873-4a69-a2b4-77a527800a3a";
         jvmHeapLimit = "1024m";

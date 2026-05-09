@@ -91,6 +91,52 @@
 
       services.buildbot-master.extraConfig = # python
         ''
+          from buildbot.plugins import changes, reporters, schedulers, util
+
+          # Pull in change events from Gerrit
+          c['change_source'] = [
+              changes.GerritChangeSource(
+                  gerritserver='gerrit.plumj.am',
+                  gerritport=29418,
+                  username='buildbot',
+                  identity_file='/run/agenix/gerritBuildbotSshKey',
+                  handled_events=["patchset-created", "change-restored", "ref-updated"],
+              )
+          ]
+
+          c['schedulers'] = [
+              schedulers.AnyBranchScheduler(
+                  name="grove-gerrit-upload-master",
+                  change_filter=util.GerritChangeFilter(
+                      branch='master',
+                      eventtype='patchset-created',
+                  ),
+                  treeStableTimer=30, # Give time for Gerrit replication to complete.
+                  builderNames=["PlumWorks/grove/nix-eval"],
+              ),
+              # TODO: Doesn't work yet. Maybe we just accept it and let buildbot run after
+              # changes get replicated to Forgejo so the status is easy to see?
+              schedulers.AnyBranchScheduler(
+                  name="grove-gerrit-merge-master",
+                  change_filter=util.GerritChangeFilter(
+                      branch='master',
+                      eventtype='ref-updated',
+                  ),
+                  treeStableTimer=30, # Give time for Gerrit replication to complete.
+                  builderNames=["PlumWorks/grove/nix-eval"],
+              )
+          ]
+
+          # Report build results back as Verified votes
+          c['services'].append(
+              reporters.GerritStatusPush(
+                  server='gerrit.plumj.am',
+                  username='buildbot',
+                  port=29418,
+                  identity_file='/run/agenix/gerritBuildbotSshKey',
+              )
+          )
+
           c["protocols"] = {"pb": {"port": "tcp:9989:interface=\\:\\:"}}
 
           c['www']['ui_default_config'] = {
