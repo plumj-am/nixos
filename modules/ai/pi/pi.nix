@@ -216,6 +216,10 @@
                 quietStartup = true;
                 hideThinkingBlock = true;
 
+                # Send all queued messages at once.
+                steeringMode = "all";
+                followUpMode = "all";
+
                 enableInstallTelemetry = false;
                 editorPaddingX = 1;
 
