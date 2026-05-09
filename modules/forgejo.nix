@@ -1,4 +1,3 @@
-{ inputs, ... }:
 {
   flake.modules.nixos.forgejo =
     {
@@ -11,24 +10,16 @@
       inherit (lib.lists) singleton;
       inherit (lib) mkForce;
       inherit (config.myLib) merge mkResticBackup;
-      inherit (config.age) secrets;
       inherit (config.networking) domain hostName;
 
       fqdn = "git.${domain}";
       port = 8001;
-      mqPort = 8006;
     in
     {
-      imports = singleton inputs.gitea-mq.nixosModules.default;
-
-      # services.postgresql.ensure = singleton "gitea-mq"; # Until Forgejo is supported.
-
-      assertions = [
-        {
-          assertion = hostName == "plum";
-          message = "The forgejo module should only be used on the 'plum' host, but you're trying to enable it on '${hostName}'.";
-        }
-      ];
+      assertions = singleton {
+        assertion = hostName == "plum";
+        message = "The forgejo module should only be used on the 'plum' host, but you're trying to enable it on '${hostName}'.";
+      };
 
       system.activationScripts.forgejo-setup-keys = lib.stringAfter [ "agenix" ] ''
         ln --symbolic --force ${config.age.secrets.forgejoSigningKey.path} /run/agenix/forgejo-signing-key
@@ -157,80 +148,6 @@
           };
       };
 
-      age.secrets = {
-        renovateBotToken = {
-          rekeyFile = ../secrets/renovate-bot-token.age;
-          owner = "renovate";
-          group = "renovate";
-          mode = "600";
-        };
-        renovateGitHubToken = {
-          rekeyFile = ../secrets/renovate-github-token.age;
-          owner = "renovate";
-          group = "renovate";
-          mode = "600";
-        };
-        renovateSigningKey = {
-          rekeyFile = ../secrets/renovate-signing-key.age;
-          owner = "renovate";
-          group = "renovate";
-          mode = "600";
-        };
-        renovateSigningKeyPub = {
-          rekeyFile = ../secrets/renovate-signing-key-pub.age;
-          owner = "renovate";
-          group = "renovate";
-          mode = "600";
-        };
-        forgejoAccessToken.rekeyFile = ../secrets/forgejo-access-token.age;
-        renovateGerritHttpPassword = {
-          rekeyFile = ../secrets/renovate-gerrit-http-password.age;
-          owner = "renovate";
-          group = "renovate";
-          mode = "600";
-        };
-        giteamqHtpasswd = {
-          rekeyFile = ../secrets/gitea-mq-htpasswd.age;
-          owner = "nginx";
-          group = "nginx";
-          mode = "0400";
-        };
-        giteamqWebhookSecret.rekeyFile = ../secrets/gitea-mq-webhook-secret.age;
-      };
-
-      users.users.renovate = {
-        isSystemUser = true;
-        group = "renovate";
-      };
-      users.groups.renovate = { };
-
-      systemd.services.renovate.serviceConfig.DynamicUser = mkForce false;
-      services.renovate = {
-        enable = true;
-        runtimePackages = [
-          pkgs.cargo # I don't think it not being nightly matters here.
-          pkgs.openssh # For ssh-keygen.
-        ];
-        schedule = "*:0/10";
-        settings = {
-          platform = "gerrit";
-          endpoint = "https://gerrit.plumj.am";
-          username = "renovate"; # For Gerrit ONLY otherwise let renovate determine automatically.
-          autodiscover = true;
-          autodiscoverFilter = [ "grove" ];
-          onboardingPrTitle = "renovate: Configure";
-          configFileNames = [ ".forgejo/renovate.json" ];
-          productLinks = { };
-        };
-
-        credentials = {
-          RENOVATE_TOKEN = config.age.secrets.renovateBotToken.path;
-          RENOVATE_GITHUB_COM_TOKEN = config.age.secrets.renovateGitHubToken.path;
-          RENOVATE_GIT_PRIVATE_KEY = config.age.secrets.renovateSigningKey.path;
-          RENOVATE_PASSWORD = config.age.secrets.renovateGerritHttpPassword.path;
-        };
-      };
-
       services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
         extraConfig = ''
           ${config.services.nginx.goatCounterTemplate}
@@ -239,28 +156,6 @@
         locations."/".proxyPass = "http://[::1]:${toString port}";
 
         locations."= /robots.txt".alias = ./robots.txt;
-      };
-
-      services.gitea-mq = {
-        enable = false; # Until Forgejo is supported.
-        giteaUrl = "https://${fqdn}";
-
-        repos = [ "PlumWorks/grove" ];
-        externalUrl = "https://mq.${domain}";
-        listenAddr = "127.0.0.1:${toString mqPort}";
-        databaseUrl = "postgres:///gitea-mq?host=/run/postgresql";
-        logLevel = "debug";
-        hideRefFromClients = false;
-
-        giteaTokenFile = secrets.forgejoAccessToken.path;
-        webhookSecretFile = secrets.giteamqWebhookSecret.path;
-      };
-
-      services.nginx.virtualHosts."mq.${domain}" = merge config.services.nginx.sslTemplate {
-        locations."/" = {
-          # basicAuthFile = config.age.secrets.giteamqHtpasswd.path;
-          proxyPass = "http://127.0.0.1:${toString mqPort}";
-        };
       };
     };
 }

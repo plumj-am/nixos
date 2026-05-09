@@ -21,6 +21,7 @@ in
       forgejo-action-runner
       gerrit
       # git-next
+      gitea-mq
       goatcounter
       harmonia
       matrix
@@ -33,6 +34,7 @@ in
       postgres
       radicle-explorer
       radicle-node
+      renovate
       rust
       sudo-extra-server
       syncthing
