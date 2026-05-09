@@ -167,7 +167,7 @@
               ];
               # Take content from any change, and move it into @.
               # - jj consume xyz path/to/file`
-              consume = [
+              aliases.consume = [
                 "squash"
                 "--into"
                 "@"
@@ -175,7 +175,7 @@
               ];
               # Eject content from @ into any other change.
               # - jj eject xyz --interactive
-              eject = [
+              aliases.eject = [
                 "squash"
                 "--from"
                 "@"
@@ -231,7 +231,10 @@
               ];
 
               aliases.d = [ "diff" ];
-              aliases.ds = [ "diff --stat" ];
+              aliases.ds = [
+                "diff"
+                "--stat"
+              ];
 
               aliases.l = [ "log" ];
               aliases.la = [
@@ -359,17 +362,17 @@
                 # commits are mutable by definition.
                 "open()" = "stack(trunk().. & mine(), 1)";
 
-                # the set of 'ready()' commits. defined as the set of open commits, but nothing
-                # that is blacklisted or any of their children.
+                # the set of 'ready()' commits. defined as the set of open commits, for the current
+                # stack, but nothing that is blacklisted.
                 #
-                # often used with gerrit, which you can use to submit whole stacks at once:
+                # often used with Gerrit, which you can use to submit whole stacks at once:
                 #
                 # - jj gerrit upload -r 'ready()' --dry-run
-                "ready()" = "open() ~ blacklist()::";
+                "ready()" = "ancestors(reachable(@, mutable()), 1) ~ blacklist()";
               };
 
               # revsets.log = "present(@) | present(trunk()) | ancestors(remote_bookmarks().. | @.., 6)";
-              revsets.log = "stack(@)";
+              revsets.log = "stacks()";
 
               template-aliases."in_branch(commit)" = # python
                 ''
