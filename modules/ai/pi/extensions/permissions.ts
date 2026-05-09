@@ -6,10 +6,10 @@ import type {
 	ExtensionContext,
 } from "@mariozechner/pi-coding-agent"
 import {
+	Editor,
+	type EditorTheme,
 	Key,
 	matchesKey,
-	type EditorTheme,
-	Editor,
 	truncateToWidth,
 } from "@mariozechner/pi-tui"
 
@@ -108,6 +108,7 @@ export const allowedPatterns: string[] = [
 	"nix*build*",
 	"nix*eval*",
 	"nix*flake check*",
+	"nix*flake metadata*",
 	"nix*log*",
 
 	"fj actions tasks*",
@@ -606,7 +607,10 @@ export default function (pi: ExtensionAPI) {
 
 				editor.onSubmit = () => {
 					const msg = editor.getText().trim()
-					done({ choice: options[optionIndex] as "Yes" | "No", message: msg || undefined })
+					done({
+						choice: options[optionIndex] as "Yes" | "No",
+						message: msg || undefined,
+					})
 				}
 
 				function refresh() {
@@ -650,7 +654,10 @@ export default function (pi: ExtensionAPI) {
 						return
 					}
 					if (matchesKey(data, Key.down)) {
-						optionIndex = Math.min(options.length - 1, optionIndex + 1)
+						optionIndex = Math.min(
+							options.length - 1,
+							optionIndex + 1,
+						)
 						refresh()
 						return
 					}
@@ -674,7 +681,8 @@ export default function (pi: ExtensionAPI) {
 					if (cachedLines) return cachedLines
 
 					const lines: string[] = []
-					const add = (s: string) => lines.push(truncateToWidth(s, width))
+					const add = (s: string) =>
+						lines.push(truncateToWidth(s, width))
 
 					add(theme.fg("accent", "─".repeat(width)))
 					add(theme.fg("warning", " ⚠️  Command not in allowlist:"))
@@ -688,7 +696,9 @@ export default function (pi: ExtensionAPI) {
 
 					for (let i = 0; i < options.length; i++) {
 						const selected = i === optionIndex
-						const prefix = selected ? theme.fg("accent", "> ") : "  "
+						const prefix = selected
+							? theme.fg("accent", "> ")
+							: "  "
 						if (selected && editMode) {
 							add(prefix + theme.fg("accent", `${options[i]} ✎`))
 						} else if (selected) {
@@ -708,9 +718,15 @@ export default function (pi: ExtensionAPI) {
 
 					lines.push("")
 					if (editMode) {
-						add(theme.fg("dim", " Enter to submit • Esc to go back"))
+						add(theme.fg(
+							"dim",
+							" Enter to submit • Esc to go back",
+						))
 					} else {
-						add(theme.fg("dim", " ↑↓ navigate • Enter to confirm • Tab to add message • Esc to cancel"))
+						add(theme.fg(
+							"dim",
+							" ↑↓ navigate • Enter to confirm • Tab to add message • Esc to cancel",
+						))
 					}
 					add(theme.fg("accent", "─".repeat(width)))
 
@@ -725,7 +741,9 @@ export default function (pi: ExtensionAPI) {
 					}, autoDenyTimeoutMs)
 				}
 
-				const resolve = (value: PermissionResult | null | "timeout") => {
+				const resolve = (
+					value: PermissionResult | null | "timeout",
+				) => {
 					if (timeoutId) {
 						clearTimeout(timeoutId)
 						timeoutId = undefined
@@ -736,7 +754,10 @@ export default function (pi: ExtensionAPI) {
 				// Patch done calls inside closures to use resolve
 				editor.onSubmit = () => {
 					const msg = editor.getText().trim()
-					resolve({ choice: options[optionIndex] as "Yes" | "No", message: msg || undefined })
+					resolve({
+						choice: options[optionIndex] as "Yes" | "No",
+						message: msg || undefined,
+					})
 				}
 
 				return {
@@ -763,7 +784,10 @@ export default function (pi: ExtensionAPI) {
 							return
 						}
 						if (matchesKey(data, Key.down)) {
-							optionIndex = Math.min(options.length - 1, optionIndex + 1)
+							optionIndex = Math.min(
+								options.length - 1,
+								optionIndex + 1,
+							)
 							refresh()
 							return
 						}
@@ -773,7 +797,9 @@ export default function (pi: ExtensionAPI) {
 							return
 						}
 						if (matchesKey(data, Key.enter)) {
-							resolve({ choice: options[optionIndex] as "Yes" | "No" })
+							resolve({
+								choice: options[optionIndex] as "Yes" | "No",
+							})
 							return
 						}
 						if (matchesKey(data, Key.escape)) {
@@ -793,7 +819,8 @@ export default function (pi: ExtensionAPI) {
 
 		if (result === "timeout") {
 			const sec = Math.round(autoDenyTimeoutMs / 1000)
-			const reason = `Timed out after ${sec}s. You can try an alternative command`
+			const reason =
+				`Timed out after ${sec}s. You can try an alternative command`
 			logBlockedCommand(command, ctx.cwd, reason)
 			return { block: true, reason }
 		}
@@ -811,7 +838,9 @@ export default function (pi: ExtensionAPI) {
 		}
 
 		// result.choice === "No"
-		const reason = result.message ? `Blocked by user: ${result.message}` : "Blocked by user"
+		const reason = result.message
+			? `Blocked by user: ${result.message}`
+			: "Blocked by user"
 		logBlockedCommand(command, ctx.cwd, reason)
 		return { block: true, reason }
 	})
