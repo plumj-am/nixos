@@ -195,7 +195,7 @@
               generator = pkgs.writers.writeJSON "pi-agent-config.json";
               value = {
                 defaultProvider = "opencode-go";
-                defaultModel = "kimi-k2.6";
+                defaultModel = "deepseek-v4-flash";
                 enabledModels = [
                   "*kimi-k2*"
                   "*qwen3.*"
@@ -234,12 +234,6 @@
                   }
                   {
                     source = "git:github.com/nicobailon/pi-interview-tool";
-                    extensions = [ "index.ts" ];
-                    themes = [ ];
-                    skills = [ ];
-                  }
-                  {
-                    source = "git:github.com/samfoy/pi-memory";
                     extensions = [ "index.ts" ];
                     themes = [ ];
                     skills = [ ];
