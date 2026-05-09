@@ -31,7 +31,9 @@
           bind = "[::]:${toString port}";
           workers = 4;
           max_connection_rate = 256;
-          priority = 5;
+          priority = 42;
+          # Lower priority than nix-community.cachix.org so we only fallback to our
+          # slower caches if necessary.
         };
       };
 

@@ -7,7 +7,7 @@
       ...
     }:
     let
-      inherit (lib.modules) mkIf mkBefore;
+      inherit (lib.modules) mkIf;
       inherit (lib.meta) getExe;
       inherit (lib.attrsets) optionalAttrs;
 
@@ -16,7 +16,9 @@
       bucket = "plumjam";
       prefix = "nix";
       endpoint = "fsn1.your-objectstorage.com";
-      s3Args = "&priority=10&multipart-upload=true&multipart-threshold=50M&multipart-chunk-size=10M";
+      # Priority 43 so it's after nix-community.cachix.org and our harmonia caches.
+      # This is much slower so it's best to have it as a last resort.
+      s3Args = "&priority=43&multipart-upload=true&multipart-threshold=50M&multipart-chunk-size=10M";
       s3Cache = "s3://${bucket}/${prefix}?endpoint=${endpoint}${s3Args}";
       # s3Cache = "s3://${bucket}/${prefix}${endpoint}${s3Args}"; # TODO: After 2.34 is fixed.
 
@@ -192,7 +194,7 @@
       };
 
       nix.settings = {
-        substituters = mkBefore [ s3Cache ];
+        substituters = [ s3Cache ];
 
         extra-trusted-public-keys = [
           "yuzu-store.plumj.am:rRhcZfgv1nSDQxDhgzaudcpyl/JtqoEf4QOsPble7S8="
