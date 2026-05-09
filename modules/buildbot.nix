@@ -84,6 +84,7 @@
         };
 
         branches = {
+          next.matchGlob = "next";
           mergeQueue.matchGlob = "gitea-mq/*";
         };
       };

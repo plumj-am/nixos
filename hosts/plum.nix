@@ -19,6 +19,7 @@ in
       forgejo
       freshrss-server
       forgejo-action-runner
+      # git-next
       goatcounter
       harmonia
       matrix
