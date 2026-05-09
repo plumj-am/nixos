@@ -1,0 +1,27 @@
+From 0edb45d9dc9a2688c8b66a21df2a555f864fb81c Mon Sep 17 00:00:00 2001
+From: Jade Lovelace <software@lfcode.ca>
+Date: Thu, 16 May 2024 18:15:54 -0700
+Subject: [PATCH 1/2] lix: Make a Code Review (Gerrit) tab
+
+---
+ templates/repo/header.tmpl | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/templates/repo/header.tmpl b/templates/repo/header.tmpl
+index 21017415c1..c5a36b2203 100644
+--- a/templates/repo/header.tmpl
++++ b/templates/repo/header.tmpl
+@@ -99,6 +99,11 @@
+ 					</a>
+ 				{{end}}
+
++				{{if and (eq .Repository.Name "grove") (eq .Repository.OwnerName "PlumWorks")}}
++					<a class="item" href="https://gerrit.plumj.am/q/project:grove">
++						{{svg "octicon-code-review"}} Code Review (Gerrit)
++					</a>
++				{{end}}
+ 				{{if .Permission.CanRead $.UnitTypeExternalTracker}}
+ 					<a class="{{if .PageIsIssueList}}active {{end}}item" href="{{.RepoExternalIssuesLink}}" target="_blank" rel="noopener noreferrer">
+ 						{{svg "octicon-link-external"}} {{ctx.Locale.Tr "repo.issues"}}
+--
+2.45.1

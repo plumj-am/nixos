@@ -56,7 +56,12 @@
 
       services.forgejo = {
         enable = true;
-        package = pkgs.forgejo; # The service version is ~11 so better to specify and get the latest.
+        package = pkgs.forgejo.overrideAttrs (old: {
+          patches = old.patches ++ [
+            ./patches/0001-lix-Make-a-Code-Review-Gerrit-tab.patch
+            ./patches/0002-lix-link-gerrit-cl-and-change-ids.patch
+          ];
+        });
         lfs.enable = true;
 
         user = "forgejo";

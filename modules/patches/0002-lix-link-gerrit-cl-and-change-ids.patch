@@ -1,0 +1,113 @@
+From c560d6e110377fb6f42e841a0bd35f80c0f2eb29 Mon Sep 17 00:00:00 2001
+From: Jade Lovelace <software@lfcode.ca>
+Date: Thu, 16 May 2024 19:56:25 -0700
+Subject: [PATCH 2/2] lix: link gerrit cl/ and change-ids
+
+This code is a bit dubious but you know, golang
+
+Co-authored-by: Ryan Lahfa <raito@lix.systems>
+---
+ modules/markup/html.go | 59 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
+
+diff --git a/modules/markup/html.go b/modules/markup/html.go
+index 2e65827bf7..2d474077a5 100644
+--- a/modules/markup/html.go
++++ b/modules/markup/html.go
+@@ -50,6 +50,20 @@ var (
+ 	// so that abbreviated hash links can be used as well. This matches git and GitHub usability.
+ 	hashCurrentPattern = regexp.MustCompile(`(?:\s|^|\(|\[)([0-9a-f]{7,64})(?:\s|$|\)|\]|[.,:](\s|$))`)
+
++	// Gerrit change ID pattern
++	changeIdPattern = GerritPattern{
++		urlMatch:     1,
++		displayMatch: 1,
++		pattern:      regexp.MustCompile(`(?:\s|^|\(|\[)(I[0-9a-f]{8,40})(?:\s|$|\)|\]|[.,](\s|$))`),
++	}
++
++	// Gerrit cl/ pattern
++	clSlashPattern = GerritPattern{
++		urlMatch:     2,
++		displayMatch: 1,
++		pattern:      regexp.MustCompile(`(?:^|[\s\]\[(){},.;:!?])(cl/([0-9]{0,6}))(?:$|[\s\]\[(){},.;:!?])`),
++	}
++
+ 	// shortLinkPattern matches short but difficult to parse [[name|link|arg=test]] syntax
+ 	shortLinkPattern = regexp.MustCompile(`\[\[(.*?)\]\](\w*)`)
+
+@@ -77,6 +91,14 @@ var (
+ 	InlineCodeBlockRegex = regexp.MustCompile("`[^`]+`")
+ )
+
++type GerritPattern struct {
++	// The match group to put in the URL
++	urlMatch int
++	// The match group to render as the link
++	displayMatch int
++	pattern      *regexp.Regexp
++}
++
+ // CSS class for action keywords (e.g. "closes: #1")
+ const keywordClass = "issue-keyword"
+
+@@ -152,7 +175,8 @@ var defaultProcessors = []processor{
+ 	issueIndexPatternProcessor,
+ 	commitCrossReferencePatternProcessor,
+ 	hashCurrentPatternProcessor,
++	gerritCLPatternProcessor,
+ 	fediAddressProcessor,
+ 	emailAddressProcessor,
+ 	emojiProcessor,
+ 	emojiShortCodeProcessor,
+@@ -179,6 +202,7 @@ var commitMessageProcessors = []processor{
+ 	issueIndexPatternProcessor,
+ 	commitCrossReferencePatternProcessor,
+ 	hashCurrentPatternProcessor,
++	gerritCLPatternProcessor,
+ 	emailAddressProcessor,
+ 	emojiProcessor,
+ 	emojiShortCodeProcessor,
+@@ -788,6 +812,41 @@ func shortLinkProcessor(ctx *RenderContext, node *html.Node) {
+ 	}
+ }
+
++func gerritCLPatternProcessor(ctx *RenderContext, node *html.Node) {
++	if ctx.Metas == nil || node == nil {
++		return
++	}
++
++	pats := []*GerritPattern{
++		&changeIdPattern,
++		&clSlashPattern,
++	}
++
++	next := node.NextSibling
++	for node != nil && node != next {
++		for _, pat := range pats {
++			m := pat.pattern.FindStringSubmatchIndex(node.Data)
++			if m == nil {
++				continue
++			}
++
++			linkPart := node.Data[m[pat.urlMatch*2]:m[pat.urlMatch*2+1]]
++			linkNamePart := node.Data[m[pat.displayMatch*2]:m[pat.displayMatch*2+1]]
++			link := util.URLJoin("https://gerrit.plumj.am/q", linkPart)
++			replaceContent(node, m[pat.displayMatch*2], m[pat.displayMatch*2+1], createCodeLink(link, linkNamePart, ""))
++		}
++
++		// FIXME: I don't understand how any of this stuff was supposed to work to
++		// begin with, since it seems like it returns if it doesn't just match in
++		// the first node???!
++		if node.NextSibling == nil {
++			return
++		}
++
++		node = node.NextSibling.NextSibling
++	}
++}
++
+ func fullIssuePatternProcessor(ctx *RenderContext, node *html.Node) {
+ 	if ctx.Metas == nil {
+ 		return
+--
+2.47.0
