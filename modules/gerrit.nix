@@ -24,6 +24,11 @@
           owner = "git";
           group = "git";
         };
+        gerritReplicationKey = {
+          rekeyFile = ../secrets/gerrit-replication-key.age;
+          owner = "git";
+          group = "git";
+        };
       };
 
       services.restic.backups.gerrit = mkResticBackup "gerrit" {
@@ -46,6 +51,19 @@
           WorkingDirectory = "/var/lib/gerrit";
         };
         script = ''
+          mkdir -p /var/lib/gerrit/.ssh
+          cp ${config.age.secrets.gerritReplicationKey.path} /var/lib/gerrit/.ssh/id_replication
+          cat > /var/lib/gerrit/.ssh/config <<EOF
+          Host *
+            IdentityFile /var/lib/gerrit/.ssh/id_replication
+          EOF
+          chmod 600 /var/lib/gerrit/.ssh/id_replication
+          chmod 600 /var/lib/gerrit/.ssh/config
+          chmod 700 /var/lib/gerrit/.ssh
+          cp -L /etc/ssh/ssh_known_hosts /var/lib/gerrit/.ssh/known_hosts
+          chmod 600 /var/lib/gerrit/.ssh/known_hosts
+          chown -R git:git /var/lib/gerrit/.ssh
+
           ln --symbolic --force ${config.age.secrets.gerritSecureConfig.path} etc/secure.config
         '';
       };
@@ -144,6 +162,30 @@
           user = {
             name = "Gerrit";
             email = "gerrit@plumj.am";
+          };
+        };
+
+        replicationSettings = {
+          gerrit.replicateOnStartup = true;
+          remote.forgejo = {
+            url = "forgejo@git.plumj.am:PlumWorks/grove.git";
+            push = [
+              "+refs/heads/*:refs/heads/*"
+              "+refs/tags/*:refs/tags/*"
+              "+refs/changes/*:refs/changes/*" # Necessary for buildbot to pick it up.
+              "+refs/meta/config:refs/meta/config"
+            ];
+
+            # Keep an eye on this and ./buildbot.nix ->  grove-gerrit scheduler -> treeStableTimer
+            # If the gap is too small, buildbot won't have a ref to fetch for the build and the
+            # git step will fail.
+            replicationDelay = 1;
+            timeout = 30;
+            threads = 3;
+            remoteNameStyle = "dash";
+            mirror = false;
+            replicatePermissions = true;
+            projects = [ "grove" ];
           };
         };
       };

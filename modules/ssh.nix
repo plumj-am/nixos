@@ -92,7 +92,12 @@ in
             inherit name;
             value.publicKey = keys.${name};
           }) hosts
-        );
+        )
+        // {
+          "git.plumj.am" = {
+            publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBH1S3dhOYCCltqrseHc3YZFHc9XU90PsvDo7frzUGrr gerrit-replication";
+          };
+        };
     };
 
   flake.modules.nixos.openssh-extra-users =
