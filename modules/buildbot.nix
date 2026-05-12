@@ -89,9 +89,56 @@
         };
       };
 
+      # Much taken from: <https://git.lix.systems/lix-project/buildbot-nix/src/branch/main/buildbot_nix/__init__.py>
       services.buildbot-master.extraConfig = # python
         ''
           from buildbot.plugins import changes, reporters, schedulers, util
+          from buildbot.reporters.generators.build import BuildStatusGenerator
+          from buildbot.reporters.message import MessageFormatterFunction
+
+          def gerritReviewFmt(url, data):
+              if 'build' not in data:
+                  raise ValueError('`build` is supposed to be present to format a build')
+
+              build = data['build']
+              if 'builder' not in build and 'name' not in build['builder']:
+                  raise ValueError('either `builder` or `builder.name` is not present in the build dictionary, unexpected format request')
+
+              builderName = build['builder']['name']
+
+              if len(build['results']) != 1:
+                  raise ValueError('this review request contains more than one build results, unexpected format request')
+
+              result = build['results'][0]
+              if result == util.RETRY:
+                  return dict()
+
+              if builderName != f'{build["properties"].get("event.project")}/nix-eval':
+                  return dict()
+
+              failed = build['properties'].get('failed_builds', [[]])[0]
+
+              labels = {
+                  'Verified': -1 if result != util.SUCCESS else 1,
+              }
+
+              message =  "Buildbot finished compiling your patchset!\n"
+              message += "The result is: %s\n" % util.Results[result].upper()
+              if result != util.SUCCESS:
+                  message += "\nFailed checks:\n"
+                  for check, how, urls in failed:
+                      if not urls:
+                          message += "  "
+                      message += f" - {check}: {how}"
+                      if urls:
+                          message += f" (see {', '.join(urls)})"
+                      message += "\n"
+
+              if url:
+                  message += "\nFor more details visit:\n"
+                  message += build['url'] + "\n"
+
+              return dict(message=message, labels=labels)
 
           # Pull in change events from Gerrit
           c['change_source'] = [
@@ -134,6 +181,16 @@
                   username='buildbot',
                   port=29418,
                   identity_file='/run/agenix/gerritBuildbotSshKey',
+                  generators=[
+                    BuildStatusGenerator(
+                      message_formatter=MessageFormatterFunction(
+                        lambda data: gerritReviewFmt(self.url, data),
+                        "plain",
+                        want_properties=True,
+                        want_steps=True,
+                      ),
+                    ),
+                  ],
               )
           )
 
