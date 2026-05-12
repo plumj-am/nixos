@@ -101,9 +101,13 @@
         listenAddress = "[::]:${toString port}";
 
         builtinPlugins = [
+          "commit-message-length-validator"
           "download-commands"
+          "gitiles"
           "hooks"
           "replication"
+          "reviewnotes"
+          "webhooks"
         ];
         plugins = [
           inputs.gerrit.packages.${pkgs.stdenv.hostPlatform.system}.oauth
@@ -149,6 +153,13 @@
             };
           };
 
+          commitmessage = {
+            maxSubjectLength = 65;
+            maxLineLength = 80;
+            longLinesThreshold = 33;
+            rejectTooLong = true;
+          };
+
           download.command = [
             "checkout"
             "cherry_pick"
@@ -161,20 +172,23 @@
             docUrl = "/Documentation";
           };
 
-          plugin.code-owners = {
-            # A Code-Review +2 vote is required from a code owner.
-            requiredApproval = "Code-Review+2";
-            # The OWNERS check can be overriden using an Owners-Override vote.
-            overrideApproval = "Owners-Override+1";
-            # People implicitly approve their own changes automatically.
-            enableImplicitApprovals = "TRUE";
-            disabledBranch = "refs/meta/config";
+          plugin = {
+            code-owners = {
+              # A Code-Review +2 vote is required from a code owner.
+              requiredApproval = "Code-Review+2";
+              # The OWNERS check can be overriden using an Owners-Override vote.
+              overrideApproval = "Owners-Override+1";
+              # People implicitly approve their own changes automatically.
+              enableImplicitApprovals = "TRUE";
+              disabledBranch = "refs/meta/config";
+            };
           };
 
           user = {
             name = "Gerrit";
             email = "gerrit@plumj.am";
           };
+
         };
 
         replicationSettings = {
