@@ -25,6 +25,14 @@ let
                 ServerAliveCountMax 2
                 ServerAliveInterval 60
                 IdentityFile ${config.directory}/.ssh/id
+
+              Host gerrit
+                HostName gerrit.plumj.am
+                ControlMaster auto
+                ControlPersist 60m
+                User plumj-am
+                Port 29418
+                IdentityFile ${config.directory}/.ssh/id
             '';
         };
       };
