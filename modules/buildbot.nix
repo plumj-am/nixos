@@ -92,11 +92,14 @@
       # Much taken from: <https://git.lix.systems/lix-project/buildbot-nix/src/branch/main/buildbot_nix/__init__.py>
       services.buildbot-master.extraConfig = # python
         ''
+          from twisted.python import log
           from buildbot.plugins import changes, reporters, schedulers, util
           from buildbot.reporters.generators.build import BuildStatusGenerator
           from buildbot.reporters.message import MessageFormatterFunction
 
           def gerritReviewFmt(url, data):
+              log.msg(f"GERRIT DATA: {data}")
+
               if 'build' not in data:
                   raise ValueError('`build` is supposed to be present to format a build')
 
@@ -106,14 +109,12 @@
 
               builderName = build['builder']['name']
 
-              if len(build['results']) != 1:
-                  raise ValueError('this review request contains more than one build results, unexpected format request')
+              result = build['results']
 
-              result = build['results'][0]
               if result == util.RETRY:
                   return dict()
 
-              if builderName != f'{build["properties"].get("event.project")}/nix-eval':
+              if builderName != f'PlumWorks/{build["properties"].get("event.project")}/nix-eval':
                   return dict()
 
               failed = build['properties'].get('failed_builds', [[]])[0]
@@ -147,7 +148,8 @@
                   gerritport=29418,
                   username='buildbot',
                   identity_file='/run/agenix/gerritBuildbotSshKey',
-                  handled_events=["patchset-created", "change-restored", "ref-updated"],
+                  handled_events=["patchset-created", "change-restored"],
+                  # ref-updated?
               )
           ]
 
@@ -163,33 +165,39 @@
               ),
               # TODO: Doesn't work yet. Maybe we just accept it and let buildbot run after
               # changes get replicated to Forgejo so the status is easy to see?
-              schedulers.AnyBranchScheduler(
-                  name="grove-gerrit-merge-master",
-                  change_filter=util.GerritChangeFilter(
-                      branch='master',
-                      eventtype='ref-updated',
-                  ),
-                  treeStableTimer=30, # Give time for Gerrit replication to complete.
-                  builderNames=["PlumWorks/grove/nix-eval"],
-              )
+              # schedulers.AnyBranchScheduler(
+              #     name="grove-gerrit-merge-master",
+              #     change_filter=util.GerritChangeFilter(
+              #         branch='master',
+              #         eventtype='ref-updated',
+              #     ),
+              #     treeStableTimer=30, # Give time for Gerrit replication to complete.
+              #     builderNames=["PlumWorks/grove/nix-eval"],
+              # )
           ]
 
-          # Report build results back as Verified votes
           c['services'].append(
+              # Report build results back as Verified votes
+              # NOTE: For future me:
+              # `Could not send status "failure" for ssh://buildbot@gerrit.plumj.am:29418/grove at e20b193e5cb9857e2de8836bdb6cd7547d64cb72: 404 : GetUserByName`
+              # is not related to Gerrit!! It's caused by buildbot-nix trying to
+              # notify Forgejo because we have it configured for that. It fails
+              # because this change actually comes from Gerrit and it's trying to
+              # send a Gitea/Forgejo request.
               reporters.GerritStatusPush(
-                  server='gerrit.plumj.am',
-                  username='buildbot',
+                  'gerrit.plumj.am',
+                  'buildbot',
                   port=29418,
                   identity_file='/run/agenix/gerritBuildbotSshKey',
                   generators=[
-                    BuildStatusGenerator(
-                      message_formatter=MessageFormatterFunction(
-                        lambda data: gerritReviewFmt(self.url, data),
-                        "plain",
-                        want_properties=True,
-                        want_steps=True,
+                      BuildStatusGenerator(
+                          message_formatter=MessageFormatterFunction(
+                            lambda data: gerritReviewFmt('https://buildbot.plumj.am', data),
+                            "plain",
+                            want_properties=True,
+                            want_steps=True,
+                          ),
                       ),
-                    ),
                   ],
               )
           )
