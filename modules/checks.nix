@@ -8,7 +8,8 @@
     }:
     let
       inherit (lib.attrsets) mapAttrs' filterAttrs nameValuePair;
-      inherit (lib.lists) elem;
+      inherit (lib.lists) elem singleton;
+      inherit (lib.fixedPoints) fix;
 
       sys = pkgs.stdenv.hostPlatform.system;
 
@@ -21,7 +22,7 @@
 
       # Evaluate packages as checks.
       # Need to fix IFD in rsh.
-      blacklistPackages = [ "rad-seed-helper" ];
+      blacklistPackages = singleton "rad-seed-helper";
       packages =
         mapAttrs' (n: nameValuePair "package-${n}")
         <| filterAttrs (n: _: !(elem n blacklistPackages))
@@ -30,11 +31,13 @@
     {
       checks = {
         statix =
+          # For experimental pipe-operators support.
           pkgs.runCommand "statix-check"
             {
-              nativeBuildInputs = [
-                # For experimental pipe-operators support.
-                (pkgs.statix.overrideAttrs rec {
+              nativeBuildInputs =
+                singleton
+                <| pkgs.statix.overrideAttrs
+                <| fix (this: {
                   src = pkgs.fetchFromGitHub {
                     owner = "oppiliappan";
                     repo = "statix";
@@ -43,11 +46,10 @@
                   };
 
                   cargoDeps = pkgs.rustPlatform.importCargoLock {
-                    lockFile = src + "/Cargo.lock";
+                    lockFile = this.src + "/Cargo.lock";
                     allowBuiltinFetchGit = true;
                   };
-                })
-              ];
+                });
             }
             ''
               cat > statix.toml <<'EOF'
@@ -61,7 +63,7 @@
         deadnix =
           pkgs.runCommand "deadnix-check"
             {
-              nativeBuildInputs = [ pkgs.deadnix ];
+              nativeBuildInputs = singleton pkgs.deadnix;
             }
             ''
               deadnix --fail ${../.}
@@ -72,7 +74,7 @@
         nixfmt =
           pkgs.runCommand "nixfmt"
             {
-              nativeBuildInputs = [ pkgs.nixfmt ];
+              nativeBuildInputs = singleton pkgs.nixfmt;
             }
             ''
               nixfmt --check ${../.}
