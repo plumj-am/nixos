@@ -41,7 +41,7 @@ in
   flake.modules.nixos.packages-extra-gui =
     { pkgs, ... }:
     mkHjemPackages [
-      pkgs.brave
+      # pkgs.brave
       pkgs.obs-studio
       # pkgs.thunderbird
     ];

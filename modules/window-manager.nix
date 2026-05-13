@@ -88,7 +88,7 @@
               }
 
               window-rule {
-                match app-id=r#"^(zen-.*|org\.qutebrowser\.qutebrowser|brave-browser)$"#
+                match app-id=r#"^(zen-.*|org\.qutebrowser\.qutebrowser|brave-browser|helium)$"#
                 open-maximized true
                 open-on-workspace "browser"
               }

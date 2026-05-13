@@ -112,10 +112,10 @@ def reload-applications [] {
    $failure_count += (pkill -USR2 ghostty | complete | get exit_code) | det-failure
    $failure_count += (pkill -USR1 hx | complete | get exit_code) | det-failure
    $failure_count += (pkill -USR2 opencode | complete | get exit_code) | det-failure
-   $failure_count += (pkill -SIGTERM brave | complete | get exit_code) | det-failure
-   sleep 1sec
-   $failure_count += (niri msg action do-screen-transition --delay-ms 500 | complete | get exit_code) | det-failure
-   $failure_count += (niri msg action spawn -- brave | complete | get exit_code) | det-failure
+   # $failure_count += (pkill -SIGTERM brave | complete | get exit_code) | det-failure
+   # sleep 1sec
+   # $failure_count += (niri msg action do-screen-transition --delay-ms 500 | complete | get exit_code) | det-failure
+   # $failure_count += (niri msg action spawn -- brave | complete | get exit_code) | det-failure
 
    if $failure_count > 0 {
       print-notify $"($failure_count) reloads failed in 'reload-applications'. Exiting."
