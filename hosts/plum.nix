@@ -39,6 +39,7 @@ in
       sudo-extra-server
       syncthing
       uptime-kuma
+      users-extra
       website-personal
       zellij
       { hardware.facter.reportPath = ./facter/plum.json; }
