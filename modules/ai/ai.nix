@@ -1158,7 +1158,6 @@ in
 
   flake.modules.common.ai-extra =
     {
-      inputs,
       pkgs,
       ...
     }:
@@ -1170,7 +1169,6 @@ in
         in
         {
           packages = [
-            inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.agentfs
             pkgs.codex
             pkgs.gemini-cli
             pkgs.qwen-code
