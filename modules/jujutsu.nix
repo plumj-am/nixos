@@ -432,18 +432,41 @@
             generator = pkgs.writers.writeTOML "jjui-config.toml";
             value = {
               preview = {
-                position = "right";
+                position = "bottom";
                 show_at_start = true;
               };
 
-              actions = singleton {
-                name = "tug";
-                lua = # lua
-                  ''
-                    jj_async("tug")
-                    revisions.refresh()
-                  '';
-              };
+              actions = [
+                {
+                  name = "tug";
+                  lua = # lua
+                    ''
+                      jj_async("tug")
+                      revisions.refresh()
+                    '';
+                }
+                {
+                  name = "gerrit-upload";
+                  lua = # lua
+                    ''
+                      local args = input({
+                        title = "jj gerrit upload <args>",
+                        prompt = "Arguments: "
+                      })
+
+                      if args ~= nil and args ~= "" then
+                      local argv = {"gerrit", "upload"}
+                        for arg in string.gmatch(args, "%S+") do
+                          table.insert(argv, arg)
+                        end
+
+                        jj_async(argv)
+                        revisions.refresh()
+                      end
+
+                    '';
+                }
+              ];
 
               bindings = [
                 {
@@ -458,8 +481,15 @@
                   scope = "revisions.details";
                   desc = "toggle preview bottom/right";
                 }
+                {
+                  key = singleton "G";
+                  action = "gerrit-upload";
+                  scope = "revisions";
+                  desc = "gerrit upload";
+                }
               ];
 
+              ui.flash_message_display_seconds = 15;
               ui.colors."selected".bg = "#${theme.colors.base01}";
             };
           };
