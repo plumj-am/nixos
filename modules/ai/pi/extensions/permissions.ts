@@ -37,6 +37,7 @@ export const allowedPatterns: string[] = [
 	"sg*",
 	"sort*",
 	"tail*",
+	"timeout*",
 	"tree*",
 	"true",
 	"wait*",
