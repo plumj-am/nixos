@@ -107,7 +107,11 @@ let
   extensions.sponsorblock.id = "mnjggcdmjocbbbhaepdhchncahnbgone";
 
   # VISUALS
-  extensions.dark-reader.id = "eimadpbcbfnmbkopoojfekhnkhdbieeh";
+  extensions.dark-reader = {
+    id = "eimadpbcbfnmbkopoojfekhnkhdbieeh";
+
+    settings.toolbar_pin = "force_pinned";
+  };
   extensions.stylus.id = "clngdbkpkpeebahjckkjfobafhncgmne";
   extensions.refined-github.id = "hlepfoohegkhhmjieoechaddaejaokhf";
 
@@ -118,6 +122,7 @@ let
   # SERVICES
   extensions.floccus.id = "fnaicdffflnofjppbagibeoednhnbjhg";
   # extensions.kagi.id = "cdglnehniifkbagbbombnjghhcihifij";
+  # <https://github.com/keepassxreboot/keepassxc-browser/blob/develop/keepassxc-browser/managed_storage.json>
   extensions.keepassxc-browser = {
     id = "oboonakemofpalcgghocfoadofidjkkk";
 
@@ -126,7 +131,7 @@ let
     policy.settings = fix (settings: {
       autoFillRelevantCredential = true;
 
-      defaultGroup = "Passwords";
+      defaultGroup = "Root/Web";
       defaultPasskeyGroup = settings.defaultGroup;
 
       downloadFaviconAfterSave = true;
