@@ -129,6 +129,18 @@ export const allowedPatterns: string[] = [
 	"npx tsc*",
 ]
 
+// Commands that are forbidden and show a replacement instruction instead
+export const forbiddenCommandsWithAlternatives: Array<{
+	command: string
+	reason: string
+}> = [
+	{
+		command: "sed*",
+		reason:
+			"Use `read` with `offset` parameter instead of sed to read specific lines. Use the edit tool for edits.",
+	},
+]
+
 // Forbidden path patterns (strict mode)
 export const forbiddenPathPatterns: string[] = [
 	"**/run/agenix",
@@ -572,6 +584,15 @@ export default function (pi: ExtensionAPI) {
 			return {
 				block: true,
 				reason,
+			}
+		}
+
+		// Check forbidden commands with alternatives — block and tell agent what to do instead
+		for (const entry of forbiddenCommandsWithAlternatives) {
+			if (matchGlob(command, entry.command)) {
+				const reason = `Don't use this command. ${entry.reason}`
+				logBlockedCommand(command, ctx.cwd, reason)
+				return { block: true, reason }
 			}
 		}
 
