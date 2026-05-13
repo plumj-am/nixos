@@ -4,6 +4,7 @@ General
 >big change? do small chunks; no big overwrite
 Tools
 >no `sed`, use read+offset
+>timeout? use builtin tool, no timeout command
 >fail → `nix develop`; still → `nix run/shell`
 >question → tool only, no plain text
 >docs → context7
