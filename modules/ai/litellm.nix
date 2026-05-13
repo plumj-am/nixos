@@ -10,18 +10,21 @@
       inherit (lib.modules) mkForce;
       inherit (config.age) secrets;
 
+      # Check with:
+      # curl -s https://opencode.ai/zen/go/v1/models -H (cat /run/agenix/opencodeGoKey) | jq '.data[].id'
       models = [
+        # MINIMAX works
         {
           name = "minimax-m2.7";
-          id = "openai/minimax-m2.7";
+          id = "anthropic/minimax-m2.7";
           context = 204800;
         }
         {
           name = "minimax-m2.5";
-          id = "openai/minimax-m2.5";
+          id = "anthropic/minimax-m2.5";
           context = 204800;
         }
-
+        # GLM does not work yet
         {
           name = "glm-5.1";
           id = "zai/glm-5.1";
@@ -32,18 +35,18 @@
           id = "zai/glm-5";
           context = 204800;
         }
+        # KIMI works
         {
           name = "kimi-k2.5";
           id = "moonshot/kimi-k2.5";
-          stream = false;
           context = 262144;
         }
         {
           name = "kimi-k2.6";
           id = "moonshot/kimi-k2.6";
-          stream = false;
           context = 262144;
         }
+        # MIMO does not work yet
         {
           name = "mimo-v2-pro";
           id = "openai/mimo-v2-pro";
@@ -64,25 +67,33 @@
           id = "openai/mimo-v2.5";
           context = 262144;
         }
+        # QWEN does not work yet
         {
           name = "qwen3.6-plus";
-          id = "openai/qwen3.6-plus";
+          id = "alibaba/qwen3.6-plus";
           context = 1048576;
         }
         {
           name = "qwen3.5-plus";
-          id = "openai/qwen3.5-plus";
+          id = "alibaba/qwen3.5-plus";
           context = 262144;
         }
+        # DEEPSEEK works
         {
           name = "deepseek-v4-pro";
-          id = "openai/deepseek-v4-pro";
+          id = "deepseek/deepseek-v4-pro";
           context = 1048576;
         }
         {
           name = "deepseek-v4-flash";
-          id = "openai/deepseek-v4-flash";
+          id = "deepseek/deepseek-v4-flash";
           context = 1048576;
+        }
+        # HY3 does not work yet
+        {
+          name = "hy3-preview";
+          id = "openai/hy3-preview";
+          context = 262144;
         }
       ];
 
@@ -90,17 +101,20 @@
         {
           name,
           id,
-          stream ? true,
+          stream ? false,
+          needsMessagesEndpoint ? false,
           ...
         }:
         {
           model_name = name;
           litellm_params = {
             model = id;
-            api_base = "https://opencode.ai/zen/go/v1";
+            api_base = "https://opencode.ai/zen/go/v1/${
+              if needsMessagesEndpoint then "messages" else "chat/completions"
+            }";
             api_key = "os.environ/OPENCODE_GO_KEY";
-            modify_params = true;
-            drop_params = false;
+            # modify_params = true;
+            drop_params = true;
             inherit stream;
           };
         };
@@ -154,8 +168,10 @@
           litellm_settings = {
             set_verbose = true;
 
-            drop_params = true;
             telemetry = false;
+
+            modify_params = false;
+            drop_params = true;
 
             enable_request_caching = true;
             request_cache_max_entries = 10000;
