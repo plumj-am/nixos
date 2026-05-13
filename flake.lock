@@ -532,6 +532,26 @@
         "type": "github"
       }
     },
+    "helium": {
+      "inputs": {
+        "nixpkgs": [
+          "os"
+        ]
+      },
+      "locked": {
+        "lastModified": 1779479807,
+        "narHash": "sha256-9QO0OOHX7IHNnISiRTo+LMRxa87r2b40p9EJI9TqqYw=",
+        "owner": "amaanq",
+        "repo": "helium-flake",
+        "rev": "4a81485a3adc4c8d96f65934a71f353fec069029",
+        "type": "github"
+      },
+      "original": {
+        "owner": "amaanq",
+        "repo": "helium-flake",
+        "type": "github"
+      }
+    },
     "hjem": {
       "inputs": {
         "nix-darwin": [
@@ -977,6 +997,7 @@
         "gerrit": "gerrit",
         "gerrit-autosubmit": "gerrit-autosubmit",
         "gitea-mq": "gitea-mq",
+        "helium": "helium",
         "hjem": "hjem",
         "homebrew": "homebrew",
         "homebrew-cask": "homebrew-cask",
@@ -992,7 +1013,8 @@
         "parts": "parts",
         "qml-niri": "qml-niri",
         "quickshell": "quickshell",
-        "run0-sudo-shim": "run0-sudo-shim"
+        "run0-sudo-shim": "run0-sudo-shim",
+        "ublock": "ublock"
       }
     },
     "run0-sudo-shim": {
@@ -1296,6 +1318,22 @@
       "original": {
         "owner": "numtide",
         "repo": "treefmt-nix",
+        "type": "github"
+      }
+    },
+    "ublock": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1773215647,
+        "narHash": "sha256-J1vuWKQNWgqJs36Tq05+nsCUjGAcWEK5DvDJsTmlECE=",
+        "owner": "imputnet",
+        "repo": "uBlock",
+        "rev": "3e4f46930086c87a58294b3a87582e5003516882",
+        "type": "github"
+      },
+      "original": {
+        "owner": "imputnet",
+        "repo": "uBlock",
         "type": "github"
       }
     }

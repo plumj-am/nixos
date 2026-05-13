@@ -42,6 +42,10 @@
       url = "github:nix-community/fenix";
       inputs.nixpkgs.follows = "os";
     };
+    helium = {
+      url = "github:amaanq/helium-flake";
+      inputs.nixpkgs.follows = "os";
+    };
     hjem = {
       url = "github:feel-co/hjem";
       inputs = {
@@ -110,6 +114,10 @@
     run0-sudo-shim = {
       url = "github:plumj-am/run0-sudo-shim";
       inputs.nixpkgs.follows = "os";
+    };
+    ublock = {
+      url = "github:imputnet/uBlock";
+      flake = false;
     };
   };
 }
