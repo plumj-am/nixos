@@ -1,5 +1,7 @@
 {
   flake.modules.nixos.linux-kernel = {
+    security.lockKernelModules = true;
+
     # Credits from me:
     # - https://github.com/RGBCube/ncc/blob/c5714110d951f57e66d5ee47a244c0a93f3406a1/modules/linux/kernel.nix
     # From RGBCube:
