@@ -296,8 +296,8 @@
         workers =
           if hostName == "kiwi" then # Weak server so only 1 core
             1
-          else if hostName == "yuzu" then # Main desktop but let buildbot use a couple of cores
-            2
+          else if hostName == "yuzu" then # Main desktop but let buildbot use 6/20 cores when online
+            6
           else
             0; # Determined automatically based on CPU core count.
 
