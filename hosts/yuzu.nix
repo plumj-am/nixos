@@ -25,6 +25,7 @@ in
       forgejo-cli
       games
       gammastep
+      ghostty
       graphics
       harmonia
       hardware-desktop
