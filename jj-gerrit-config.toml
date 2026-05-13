@@ -52,11 +52,8 @@ commit_trailers = """
 # Same as above but shows parents for a nice UI view
 "work_ui()" = "work() | trunk_head()"
 
-# All commits in current stack (linearized by @ ancestry)
-# "stack_members()" = "ancestors(@, 1000) & work()";
-# This version should handle detached commits better and does not assume
-# @ is somewhere in the stack.
-"stack_members()" = "ancestors(closest(work()), 1000) & work()"
+# All commits in current stack — descendants of trunk, filtered to work.
+"stack_members()" = "descendants(trunk(), 1000) & work()"
 
 # Root of current stack
 # ::@ & enforces linearity
@@ -76,4 +73,4 @@ commit_trailers = """
 "ready()" = "open() ~ blacklist()"
 
 [revsets]
-log = "stack()"
+log = "work_ui()"
