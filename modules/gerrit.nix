@@ -91,7 +91,7 @@
       };
       services.gerrit = {
         enable = true;
-        package = (inputs.gerrit.packages.${pkgs.stdenv.hostPlatform.system}.gerrit).overrideAttrs (old: {
+        package = inputs.gerrit.packages.${pkgs.stdenv.hostPlatform.system}.gerrit.overrideAttrs (old: {
           # Remove the patch that appends version string with "-dirty-nix" so buildbot can
           # correctly send status updates to Gerrit.
           postPatch =
