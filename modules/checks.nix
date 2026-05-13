@@ -4,21 +4,20 @@
     {
       pkgs,
       lib,
-      system,
       ...
     }:
     let
       inherit (lib.attrsets) mapAttrs' filterAttrs nameValuePair;
       inherit (lib.lists) elem;
 
+      sys = pkgs.stdenv.hostPlatform.system;
+
       # Evaluate NixOS configurations matching the current system e.g. x86_64-linux as checks.
       nixosMachines =
         mapAttrs' (
           name: nixosConfig: nameValuePair "nixos-${name}" nixosConfig.config.system.build.toplevel
         )
-        <| filterAttrs (
-          _: config: config.pkgs.stdenv.hostPlatform.system == system
-        ) self.nixosConfigurations;
+        <| filterAttrs (_: config: config.pkgs.stdenv.hostPlatform.system == sys) self.nixosConfigurations;
 
       # Evaluate packages as checks.
       # Need to fix IFD in rsh.
@@ -26,7 +25,7 @@
       packages =
         mapAttrs' (n: nameValuePair "package-${n}")
         <| filterAttrs (n: _: !(elem n blacklistPackages))
-        <| self.packages.${system} or { };
+        <| self.packages.${sys} or { };
     in
     {
       checks = {
