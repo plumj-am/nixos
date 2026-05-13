@@ -1,6 +1,7 @@
 {
   flake.modules.common.rio =
     {
+      inputs,
       pkgs,
       lib,
       lib',
@@ -16,7 +17,7 @@
     {
       hjem.extraModule = {
         packages = [
-          pkgs.rio
+          inputs.rio.packages.${pkgs.stdenv.hostPlatform.system}.rio
 
           (mkDesktopEntry {
             name = "Zellij-Rio";

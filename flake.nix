@@ -107,6 +107,10 @@
         quickshell.follows = "quickshell";
       };
     };
+    rio = {
+      url = "github:raphamorim/rio";
+      inputs.nixpkgs.follows = "os";
+    };
     quickshell = {
       url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
       inputs.nixpkgs.follows = "os";

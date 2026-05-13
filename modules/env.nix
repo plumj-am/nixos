@@ -10,7 +10,6 @@
         SHELL = getExe pkgs.nushell;
         TERMINAL = "zellij";
         TERM_PROGRAM = "zellij";
-        WGPU_BACKEND = "gl";
         SSH_AUTH_SOCK = "/run/user/1000/ssh-agent";
       };
     in
