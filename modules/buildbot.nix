@@ -89,7 +89,7 @@
         };
       };
 
-      # Much taken from: <https://git.lix.systems/lix-project/buildbot-nix/src/branch/main/buildbot_nix/__init__.py>
+      # Gerrit integration for grove repo. See: ./GERRIT_BUILDBOT.md
       services.buildbot-master.extraConfig = # python
         ''
           from twisted.python import log
@@ -97,24 +97,37 @@
           from buildbot.reporters.generators.build import BuildStatusGenerator
           from buildbot.reporters.message import MessageFormatterFunction
 
-          def gerritReviewFmt(url, data):
-              log.msg(f"GERRIT DATA: {data}")
+          # --- Build Canceller: gerrit-aware branch key ---
+          # Groups gerrit refs by change number (strips patchset), passes through
+          # regular branches and PR refs unchanged.
+          def gerritBranchKey(b):
+              ref = b['branch']
+              if ref.startswith('refs/changes/'):
+                  return ref.rsplit('/', 1)[0]  # refs/changes/12/3456/1 → refs/changes/12/3456
+              if ref.startswith(('refs/pull/', 'refs/merge-requests/')):
+                  return ref.rsplit('/', 1)[0]  # refs/pull/123/merge → refs/pull/123
+              return ref
 
+          # --- Gerrit Status Report Formatter ---
+          # Sends Verified +/-1 votes to Gerrit. Only fires for builds marked
+          # with the `gerrit_change` property.
+          def gerritReviewFmt(url, data):
               if 'build' not in data:
                   raise ValueError('`build` is supposed to be present to format a build')
 
               build = data['build']
-              if 'builder' not in build and 'name' not in build['builder']:
-                  raise ValueError('either `builder` or `builder.name` is not present in the build dictionary, unexpected format request')
-
-              builderName = build['builder']['name']
-
               result = build['results']
 
               if result == util.RETRY:
                   return dict()
 
-              if builderName != f'PlumWorks/{build["properties"].get("event.project")}/nix-eval':
+              # Only report on gerrit-originated builds
+              if not build['properties'].get('gerrit_change', False):
+                  return dict()
+
+              # Only report on nix-eval (top-level build; sub-builds trigger duplicate reports)
+              builderName = build['builder']['name']
+              if not builderName.endswith('/nix-eval'):
                   return dict()
 
               failed = build['properties'].get('failed_builds', [[]])[0]
@@ -141,7 +154,8 @@
 
               return dict(message=message, labels=labels)
 
-          # Pull in change events from Gerrit
+          # --- Gerrit Change Source ---
+          # Detects patchset-created and change-restored events via Gerrit SSH stream.
           c['change_source'] = [
               changes.GerritChangeSource(
                   gerritserver='gerrit.plumj.am',
@@ -149,10 +163,15 @@
                   username='buildbot',
                   identity_file='/run/agenix/gerritBuildbotSshKey',
                   handled_events=["patchset-created", "change-restored"],
-                  # ref-updated?
               )
           ]
 
+          # --- Gerrit Schedulers ---
+          # NOTE: Reuses gitea builders (PlumWorks/grove/nix-eval). Checkout uses
+          # steps.Git from Forgejo URL — relies on Gerrit→Forgejo replication
+          # completing within treeStableTimer (30s).
+          # Post-merge (ref-updated) builds are handled by Gitea webhooks after
+          # Gerrit replication updates Forgejo's default branch.
           c['schedulers'] = [
               schedulers.AnyBranchScheduler(
                   name="grove-gerrit-upload-master",
@@ -160,30 +179,18 @@
                       branch='master',
                       eventtype='patchset-created',
                   ),
-                  treeStableTimer=30, # Give time for Gerrit replication to complete.
+                  treeStableTimer=30,
                   builderNames=["PlumWorks/grove/nix-eval"],
+                  properties={
+                      "event.project": "grove",
+                      "project": "grove",
+                      "gerrit_change": True,
+                  },
               ),
-              # TODO: Doesn't work yet. Maybe we just accept it and let buildbot run after
-              # changes get replicated to Forgejo so the status is easy to see?
-              # schedulers.AnyBranchScheduler(
-              #     name="grove-gerrit-merge-master",
-              #     change_filter=util.GerritChangeFilter(
-              #         branch='master',
-              #         eventtype='ref-updated',
-              #     ),
-              #     treeStableTimer=30, # Give time for Gerrit replication to complete.
-              #     builderNames=["PlumWorks/grove/nix-eval"],
-              # )
           ]
 
+          # --- Gerrit Status Reporter (Verified vote) ---
           c['services'].append(
-              # Report build results back as Verified votes
-              # NOTE: For future me:
-              # `Could not send status "failure" for ssh://buildbot@gerrit.plumj.am:29418/grove at e20b193e5cb9857e2de8836bdb6cd7547d64cb72: 404 : GetUserByName`
-              # is not related to Gerrit!! It's caused by buildbot-nix trying to
-              # notify Forgejo because we have it configured for that. It fails
-              # because this change actually comes from Gerrit and it's trying to
-              # send a Gitea/Forgejo request.
               reporters.GerritStatusPush(
                   'gerrit.plumj.am',
                   'buildbot',
@@ -192,21 +199,42 @@
                   generators=[
                       BuildStatusGenerator(
                           message_formatter=MessageFormatterFunction(
-                            lambda data: gerritReviewFmt('https://buildbot.plumj.am', data),
-                            "plain",
-                            want_properties=True,
-                            want_steps=True,
+                              lambda data: gerritReviewFmt('https://buildbot.plumj.am', data),
+                              "plain",
+                              want_properties=True,
+                              want_steps=True,
                           ),
                       ),
                   ],
               )
           )
 
+          # --- Build Canceller ---
+          # Replaces upstream canceller (disabled via removed patch). Dynamically
+          # discovers all nix-eval builders at config time and cancels in-progress
+          # builds when a new change arrives for the same branch/ref-group.
+          eval_builders = [
+              b.name for b in c.get('builders', [])
+              if b.name.endswith('/nix-eval')
+          ]
+          if eval_builders:
+              c['services'].append(
+                  util.OldBuildCanceller(
+                      "build_canceller",
+                      filters=[
+                          (eval_builders, util.SourceStampFilter(filter_fn=lambda ss: True))
+                      ],
+                      branch_key=gerritBranchKey,
+                  )
+              )
+
+          # --- Protocols (worker connection) ---
           c["protocols"] = {"pb": {"port": "tcp:9989:interface=\\:\\:"}}
 
+          # --- UI ---
           c['www']['ui_default_config'] = {
-            'Home.sidebar_menu_groups_expand_behavior': "Always expand",
-            'Builders.show_workers_name': True,
+              'Home.sidebar_menu_groups_expand_behavior': "Always expand",
+              'Builders.show_workers_name': True,
           }
         '';
 
