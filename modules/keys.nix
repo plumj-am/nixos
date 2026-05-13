@@ -33,6 +33,8 @@ let
 
         sloe = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK42xzC/vWHZC9SiU/8IBBd2pn7mggBYFQ8themKAic/ root@sloe";
         sloe-jam-radicle = "";
+
+        buildbot-gerrit = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHW+oJ81WF0EFDBnXfcNLTqBGxKVBaPyWHxFSuyW5oks buildbot@gerrit";
       };
     in
     {

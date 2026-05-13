@@ -19,6 +19,10 @@ commit_trailers = """
 """
 
 [revset-aliases]
+# trunk() by default resolves to the latest 'main'/'master' remote bookmark. May
+# require customization for repos like nixpkgs.
+"trunk()" = "latest((present(main) | present(master)) & remote_bookmarks())"
+
 # stack(x, n) is the set of mutable commits reachable from 'x', with 'n'
 # parents. 'n' is often useful to customize the display and return set for
 # certain operations. 'x' can be used to target the set of 'roots' to traverse,
@@ -26,6 +30,10 @@ commit_trailers = """
 "stack()"     = "ancestors(reachable(@, mutable()), 2)"
 "stack(x)"    = "ancestors(reachable(x, mutable()), 2)"
 "stack(x, n)" = "ancestors(reachable(x, mutable()), n)"
+# Shows all the current open stacks against the trunk (master/main).
+# 'n' is used the same way as above, to adjust depth.
+"stacks()"  = "ancestors(reachable(trunk()::, mutable()), 2)"
+"stacks(n)" = "ancestors(reachable(trunk()::, mutable()), n)"
 
 [revsets]
 log = "stack(@)"

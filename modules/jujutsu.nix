@@ -345,6 +345,10 @@
                 "stack()" = "ancestors(reachable(@, mutable()), 2)";
                 "stack(x)" = "ancestors(reachable(x, mutable()), 2)";
                 "stack(x, n)" = "ancestors(reachable(x, mutable()), n)";
+                # Shows all the current open stacks against the trunk (master/main).
+                # 'n' is used the same way as above, to adjust depth.
+                "stacks()" = "ancestors(reachable(trunk()::, mutable()), 2)";
+                "stacks(n)" = "ancestors(reachable(trunk()::, mutable()), n)";
 
                 # The current set of "open" works. It is defined as:
                 #
