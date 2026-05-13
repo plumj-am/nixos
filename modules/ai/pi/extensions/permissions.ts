@@ -111,6 +111,7 @@ export const allowedPatterns: string[] = [
 	"nix*flake check*",
 	"nix*flake metadata*",
 	"nix*log*",
+	"nix search*",
 
 	"fj actions tasks*",
 	"fj issue search*",
