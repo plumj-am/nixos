@@ -94,8 +94,10 @@
         ''
           from twisted.python import log
           from buildbot.plugins import changes, reporters, schedulers, util
-          from buildbot.reporters.generators.build import BuildStatusGenerator
-          from buildbot.reporters.message import MessageFormatterFunction
+          from buildbot.reporters.gerrit import (
+              GerritBuildStartStatusGenerator,
+              GerritBuildEndStatusGenerator,
+          )
 
           # --- Build Canceller: gerrit-aware branch key ---
           # Groups gerrit refs by change number (strips patchset), passes through
@@ -108,37 +110,44 @@
                   return ref.rsplit('/', 1)[0]  # refs/pull/123/merge → refs/pull/123
               return ref
 
-          # --- Gerrit Status Report Formatter ---
-          # Sends Verified +/-1 votes to Gerrit. Only fires for builds marked
-          # with the `gerrit_change` property.
-          def gerritReviewFmt(url, data):
-              if 'build' not in data:
-                  raise ValueError('`build` is supposed to be present to format a build')
-
-              build = data['build']
-              result = build['results']
-
-              if result == util.RETRY:
+          # --- Gerrit Start Callback (Pending) ---
+          # Signature: (builderName, build, callback_arg) → dict(message, labels) | None
+          def gerritStartCB(builderName, build, callback_arg):
+              props = build.get('properties', {})
+              # Check for gerrit-specific property (set by GerritChangeSource,
+              # always present on gerrit-triggered builds)
+              if not props.get('event.change.project'):
                   return dict()
-
-              # Only report on gerrit-originated builds
-              if not build['properties'].get('gerrit_change', False):
+              if not builderName.endswith('/nix-eval'):
                   return dict()
+              msg = "Buildbot started building your patchset.\n"
+              msg += f"For more details visit: {build.get('url', callback_arg)}\n"
+              log.msg(f"gerritStartCB: sending Verified:0 for {builderName}")
+              return dict(message=msg, labels={'Verified': 0})
 
-              # Only report on nix-eval (top-level build; sub-builds trigger duplicate reports)
-              builderName = build['builder']['name']
+          # --- Gerrit End Callback (Success/Failure) ---
+          # Signature: (builderName, build, results, master, callback_arg) → dict(message, labels) | None
+          def gerritEndCB(builderName, build, results, master, callback_arg):
+              props = build.get('properties', {})
+              log.msg(f"gerritEndCB: builder={builderName} results={results}")
+              # Check for gerrit-specific property (set by GerritChangeSource)
+              if not props.get('event.change.project'):
+                  return dict()
               if not builderName.endswith('/nix-eval'):
                   return dict()
 
-              failed = build['properties'].get('failed_builds', [[]])[0]
+              if results == util.RETRY:
+                  return dict()
+
+              failed = props.get('failed_builds', [[]])[0]
 
               labels = {
-                  'Verified': -1 if result != util.SUCCESS else 1,
+                  'Verified': -1 if results != util.SUCCESS else 1,
               }
 
-              message =  "Buildbot finished compiling your patchset!\n"
-              message += "The result is: %s\n" % util.Results[result].upper()
-              if result != util.SUCCESS:
+              message = "Buildbot finished compiling your patchset!\n"
+              message += "The result is: %s\n" % util.Results[results].upper()
+              if results != util.SUCCESS:
                   message += "\nFailed checks:\n"
                   for check, how, urls in failed:
                       if not urls:
@@ -148,10 +157,10 @@
                           message += f" (see {', '.join(urls)})"
                       message += "\n"
 
-              if url:
-                  message += "\nFor more details visit:\n"
-                  message += build['url'] + "\n"
+              message += "\nFor more details visit:\n"
+              message += build['url'] + "\n"
 
+              log.msg(f"gerritEndCB: sending labels={labels} for {builderName}")
               return dict(message=message, labels=labels)
 
           # --- Gerrit Change Source ---
@@ -172,7 +181,8 @@
           # completing within treeStableTimer (30s).
           # Post-merge (ref-updated) builds are handled by Gitea webhooks after
           # Gerrit replication updates Forgejo's default branch.
-          c['schedulers'] = [
+          c.setdefault('schedulers', [])
+          c['schedulers'].append(
               schedulers.AnyBranchScheduler(
                   name="grove-gerrit-upload-master",
                   change_filter=util.GerritChangeFilter(
@@ -187,9 +197,10 @@
                       "gerrit_change": True,
                   },
               ),
-          ]
+          )
 
-          # --- Gerrit Status Reporter (Verified vote) ---
+          # --- Gerrit Status Reporter ---
+          # Posts Verified: 0 on build start (pending), Verified: ±1 on completion.
           c['services'].append(
               reporters.GerritStatusPush(
                   'gerrit.plumj.am',
@@ -197,13 +208,19 @@
                   port=29418,
                   identity_file='/run/agenix/gerritBuildbotSshKey',
                   generators=[
-                      BuildStatusGenerator(
-                          message_formatter=MessageFormatterFunction(
-                              lambda data: gerritReviewFmt('https://buildbot.plumj.am', data),
-                              "plain",
-                              want_properties=True,
-                              want_steps=True,
-                          ),
+                      GerritBuildStartStatusGenerator(
+                          callback=gerritStartCB,
+                          callback_arg='https://buildbot.plumj.am',
+                          builders=None,
+                          want_steps=False,
+                          want_logs=False,
+                      ),
+                      GerritBuildEndStatusGenerator(
+                          callback=gerritEndCB,
+                          callback_arg=None,
+                          builders=None,
+                          want_steps=True,
+                          want_logs=False,
                       ),
                   ],
               )
