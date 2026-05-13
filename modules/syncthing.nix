@@ -1,10 +1,7 @@
 {
 
   flake.modules.nixos.syncthing =
-    { lib, ... }:
     let
-      inherit (lib.attrsets) attrNames;
-
       devices = {
         # blackwell = {
         #   id = "COZUXV4-HYFNNR2-APPQQL3-7QUUZFN-6VXGKOI-YSYS5VQ-3TAHZ6Y-P2USQAO";
@@ -45,12 +42,8 @@
 
         };
       };
-
-      allDevices = attrNames devices;
     in
     {
-      users.users.syncthing.extraGroups = [ "radicle" ];
-
       systemd.tmpfiles.rules = [
         "d /var/backups 0700 syncthing syncthing -"
         "d /var/backups/onx 0700 syncthing syncthing -"
