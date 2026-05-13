@@ -50,7 +50,13 @@
       };
       users.groups.renovate = { };
 
-      systemd.services.renovate.serviceConfig.DynamicUser = mkForce false;
+      # How tf does this use 600M by default...
+      systemd.services.renovate.serviceConfig = {
+        DynamicUser = mkForce false;
+
+        MemoryHigh = "128M";
+        MemoryMax = "256M";
+      };
       services.renovate = {
         enable = true;
         runtimePackages = [
