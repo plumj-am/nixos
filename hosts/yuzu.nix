@@ -28,6 +28,7 @@ in
       harmonia
       hardware-desktop
       haskell
+      helium
       jujutsu-extra
       keepassxc
       kitty

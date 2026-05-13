@@ -1,0 +1,464 @@
+# Credit: <https://github.com/RGBCube/ncc/blob/287d7aecf7469bb206ba2708d073d36b87be999e/modules/web-browser.mod.nix>
+{ inputs, lib, ... }:
+let
+  inherit (lib.attrsets)
+    attrNames
+    concatMapAttrs
+    filterAttrs
+    getAttr
+    hasAttr
+    mapAttrsToList
+    optionalAttrs
+    ;
+  inherit (lib.lists)
+    filter
+    foldr
+    singleton
+    ;
+  inherit (lib.trivial)
+    const
+    importJSON
+    warn
+    ;
+  inherit (lib.fixedPoints) fix;
+  inherit (lib.strings) hasInfix;
+
+  # UNSLOP
+  extensions.consent-o-matic.id = "mdjildafknihdffpkfmmpnpoiajfjnjd";
+  extensions.ublock-origin =
+    let
+      assets = importJSON "${inputs.ublock}/assets/assets.json";
+
+      filterLists =
+        (
+          assets
+          |> filterAttrs (_: spec: (spec.content or null) == "filters" && (spec.group or null) != "regions")
+          |> attrNames
+          |> filter (name: name != "ublock-experimental")
+        )
+        ++ [
+          "TUR-0"
+          "user-filters"
+
+          "https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/BrowseWebsitesWithoutLoggingIn.txt"
+          "https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/ClearURLs%20for%20uBo/clear_urls_uboified.txt"
+          "https://raw.githubusercontent.com/DandelionSprout/adfilt/refs/heads/master/LegitimateURLShortener.txt"
+          "https://raw.githubusercontent.com/yokoffing/filterlists/refs/heads/main/annoyance_list.txt"
+          "https://raw.githubusercontent.com/yokoffing/filterlists/refs/heads/main/click2load.txt"
+          "https://raw.githubusercontent.com/yokoffing/filterlists/refs/heads/main/privacy_essentials.txt"
+        ];
+
+      filters = [
+        # YOUTUBE SHORTS -> WATCH
+        ''||youtube.com/shorts/$document,uritransform=/^https:\/\/(?:www\.|m\.)?youtube\.com\/shorts\/([^\/?#]+)/https:\/\/www.youtube.com\/watch?v=\$1/''
+
+        # OLD REDDIT
+        "@@||reddit.com/media$document"
+        "@@||reddit.com/mod$document"
+        "@@||reddit.com/poll$document"
+        "@@||reddit.com/settings$document"
+        "@@||reddit.com/topics$document"
+        "@@||reddit.com/community-points$document"
+        "@@||reddit.com/appeal$document"
+        "@@||reddit.com/appeals$document"
+        "@@||reddit.com/notifications$document"
+        "@@||reddit.com/message/compose/$document"
+        "@@||reddit.com/mail^$document"
+        "@@||reddit.com/answers^$document"
+        "@@||reddit.com/r/subreddit^$document"
+        ''@@/^https:\/\/\w*\.?reddit\.com\/r\/[A-Za-z0-9_]+\/s\//$document''
+        ''@@/^https:\/\/\w*\.?reddit\.com\/.*[?&]new_reddit=true(?:$|[&#])/$document''
+
+        ''||reddit.com/gallery/$document,uritransform=/^https:\/\/(?:www\.|np\.|amp\.|i\.)?reddit\.com\/gallery\/(.*)/https:\/\/old.reddit.com\/comments\/\$1/''
+        ''||reddit.com^$document,uritransform=/^https:\/\/(?:www\.|np\.|amp\.|i\.)?reddit\.com\/(?!gallery\/)/https:\/\/old.reddit.com\//''
+
+        "old.reddit.com##:is(#eu-cookie-policy, #redesign-beta-optin-btn)"
+      ];
+    in
+    {
+      id = "blockjmkbacgjkknlgpkjjiijinjdanf";
+      preinstalled = true;
+
+      settings.toolbar_pin = "force_pinned";
+
+      policy = {
+        toOverwrite.filterLists =
+          filter (name: !(hasInfix "://" name || name == "user-filters" || hasAttr name assets)) filterLists
+          |> foldr (name: warn "helium: unknown ublock filter list: ${name}") filterLists;
+
+        toOverwrite.filters = filters;
+
+        userSettings = [
+          [
+            "userFiltersTrusted"
+            "true"
+          ]
+        ];
+      };
+    };
+
+  # YOUTUBE
+  extensions.dearrow.id = "enamippconapkdmgfgjchkhakpfinmaj";
+  extensions.sponsorblock.id = "mnjggcdmjocbbbhaepdhchncahnbgone";
+
+  # VISUALS
+  extensions.dark-reader.id = "eimadpbcbfnmbkopoojfekhnkhdbieeh";
+  extensions.stylus.id = "clngdbkpkpeebahjckkjfobafhncgmne";
+  extensions.refined-github.id = "hlepfoohegkhhmjieoechaddaejaokhf";
+
+  # NAVIGATION
+  extensions.violentmonkey.id = "jinjaccalgkegednnccohejagnlnfdag";
+  extensions.vimium-c.id = "hfjbmagddngcpeloejdejnfgbamkjaeg";
+
+  # SERVICES
+  extensions.floccus.id = "fnaicdffflnofjppbagibeoednhnbjhg";
+  # extensions.kagi.id = "cdglnehniifkbagbbombnjghhcihifij";
+  extensions.keepassxc-browser = {
+    id = "oboonakemofpalcgghocfoadofidjkkk";
+
+    settings.toolbar_pin = "force_pinned";
+
+    policy.settings = fix (settings: {
+      autoFillRelevantCredential = true;
+
+      defaultGroup = "Passwords";
+      defaultPasskeyGroup = settings.defaultGroup;
+
+      downloadFaviconAfterSave = true;
+      passkeys = true;
+
+      useCompactMode = true;
+      useMonochromeToolbarIcon = true;
+      usePasswordGeneratorIcons = true;
+    });
+  };
+
+  policy = {
+    # EXTENSIONS
+    ExtensionInstallBlocklist = singleton "*";
+
+    ExtensionInstallAllowlist = policy.ExtensionInstallForcelist;
+    ExtensionInstallForcelist =
+      extensions
+      |> filterAttrs (_: extension: !(extension.preinstalled or false))
+      |> mapAttrsToList (const <| getAttr "id");
+
+    ExtensionInstallSources = singleton "https://services.helium.imput.net/*";
+
+    ExtensionSettings =
+      extensions
+      |> concatMapAttrs (
+        _: extension: optionalAttrs (extension ? settings) { ${extension.id} = extension.settings; }
+      );
+
+    "3rdparty".extensions =
+      extensions
+      |> concatMapAttrs (
+        _: extension: optionalAttrs (extension ? policy) { ${extension.id} = extension.policy; }
+      );
+
+    DefaultBrowserSettingEnabled = false;
+
+    DeveloperToolsAvailability = 1;
+
+    # "Continue where you left off" can't be set declaratively on a consumer machine:
+    # - Preference `session.restore_on_startup` is HMAC-tracked, writing it externally trips Chromium's reset popup.
+    # - Policy `RestoreOnStartup` is restricted by upstream Chromium to AD-joined / Cloud-Management-enrolled
+    #   devices only (anti-hijack mitigation), so the managed plist value is loaded then ignored.
+    #
+    # TODO: Remove this comment when Helium on MacOS gets a toggle to disable these checks with an environment variable.
+    RestoreOnStartup = 1;
+
+    # BOOKMARKS
+    ManagedBookmarks =
+      let
+        mkFolder = name: children: { inherit name children; };
+
+        mkBookmark = name: url: { inherit name url; };
+
+        mkScriptlet =
+          name: javascript:
+          mkBookmark name (
+            "javascript:"
+            + javascript
+            # js
+            + ''
+              void undefined;
+            ''
+          );
+      in
+      [
+        { toplevel_name = "Tools"; }
+
+        (mkFolder "Reverse Image" (
+          let
+            mkReverse =
+              name: prefix:
+              mkScriptlet name # js
+                ''
+                  document.addEventListener("click", function handler(event) {
+                    let image = event.target.closest("img");
+                    if (!image) return;
+
+                    event.preventDefault();
+                    event.stopPropagation();
+                    document.removeEventListener("click", handler, true);
+
+                    window.open("${prefix}" + encodeURIComponent(image.src));
+                  }, true);
+                '';
+          in
+          [
+            (mkReverse "Yandex" "https://yandex.com/images/search?rpt=imageview&url=")
+            (mkReverse "Google Lens" "https://lens.google.com/uploadbyurl?url=")
+            (mkReverse "Bing" "https://www.bing.com/images/search?view=detailv2&iss=sbi&q=imgurl:")
+            (mkReverse "TinEye" "https://www.tineye.com/search?url=")
+          ]
+        ))
+
+        (mkFolder "Nuke" [
+          (mkScriptlet "Sticky Elements" # js
+            ''
+              document.querySelectorAll("body *").forEach((element) => {
+                let position = getComputedStyle(element).position;
+                if (position === "fixed" || position === "sticky") element.parentNode.removeChild(element);
+              });
+
+              document.documentElement.style.overflow = "auto";
+              document.body.style.overflow = "auto";
+            ''
+          )
+
+          (mkScriptlet "Copy Paste Restrictions" # js
+            ''
+              ["copy", "cut", "paste", "selectstart", "contextmenu", "dragstart"].forEach((eventName) => {
+                document.addEventListener(eventName, (event) => event.stopPropagation(), true);
+              });
+
+              document.querySelectorAll("*").forEach((element) => {
+                element.style.userSelect = "auto";
+                element.style.webkitUserSelect = "auto";
+              });
+            ''
+          )
+        ])
+
+        (mkFolder "Toggle" (
+          let
+            mkIndication =
+              text: # js
+              ''
+                {
+                  let indication = document.body.appendChild(document.createElement("div"));
+                  indication.textContent = ${text};
+
+                  Object.assign(indication.style, {
+                    position: "fixed",
+                    top: "0",
+                    left: "0",
+
+                    zIndex: "calc(infinity)",
+
+                    padding: "8px 16px",
+                    borderRadius: "8px",
+
+                    colorScheme: "light dark",
+                    background: "Canvas",
+                    color: "CanvasText",
+                    font: "14px/1 system-ui",
+
+                    pointerEvents: "none",
+                  });
+
+                  indication.animate(
+                    [
+                      { opacity: 1, offset: 0.6, easing: "cubic-bezier(0.4, 0, 0.2, 1)" },
+                      { opacity: 0, offset: 1 },
+                    ],
+                    { duration: 1500, fill: "forwards" },
+                  )
+                  .finished
+                  .then(() => indication.remove());
+                }
+              '';
+          in
+          [
+            (mkScriptlet "Password Inputs" # js
+              ''
+                let shown = false;
+                document.querySelectorAll("input").forEach((input) => {
+                  if (input.type === "password") {
+                    input.dataset.wasPassword = "";
+                    input.type = "text";
+                    shown = true;
+                  } else if ("wasPassword" in input.dataset) {
+                    delete input.dataset.wasPassword;
+                    input.type = "password";
+                  }
+                });
+
+                ${mkIndication /* js */ ''"Passwords " + (shown ? "shown" : "hidden")''}
+              ''
+            )
+
+            (mkScriptlet "Design Mode" # js
+              ''
+                document.designMode = document.designMode === "on" ? "off" : "on";
+
+                ${mkIndication /* js */ ''"Design mode " + document.designMode''}
+              ''
+            )
+          ]
+        ))
+      ];
+
+    # SEARCH
+    DefaultSearchProviderEnabled = true;
+    DefaultSearchProviderName = "DuckDuckGo";
+    DefaultSearchProviderSearchURL = "https://duckduckgo.com/?q={searchTerms}";
+    # DefaultSearchProviderSuggestURL = "https://kagi.com/api/autosuggest?q={searchTerms}";
+    SearchSuggestEnabled = true;
+
+    SiteSearchSettings = [
+      {
+        name = "Lib.rs";
+        shortcut = "!rs";
+        url = "https://lib.rs/search?q={searchTerms}";
+      }
+      {
+        name = "Searchix";
+        shortcut = "!no";
+        url = "https://searchix.ovh/?query={searchTerms}";
+      }
+    ];
+  };
+
+  preferences = {
+    helium.completed_onboarding = true;
+    helium.services.user_consented = true;
+
+    helium.browser.layout = 2; # Vertical.
+    helium.browser.rounded_frame = false;
+
+    helium.browser.new_tab_next_to_active = true;
+
+    bookmark_bar.show_on_all_tabs = true;
+    bookmark_bar.show_tab_groups = false;
+
+    download.prompt_for_download = true; # Ask where to save each time.
+
+    # `extensions.settings` is HMAC-tracked. Writing it externally trips Chromium's reset popup warning.
+    # No policy equivalent for per-extension incognito. Toggle manually in helium://extensions for now.
+    #
+    # extensions.settings =
+    #   extensions |> concatMapAttrs (_: extension: { ${extension.id}.incognito = true; });
+  };
+in
+{
+  flake.modules.darwin.helium =
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
+    let
+      inherit (lib.attrsets) mapAttrsToList;
+      inherit (lib.generators) toPlist;
+      inherit (lib.meta) getExe;
+      inherit (lib.modules) mkAfter;
+      inherit (lib.strings) toJSON;
+
+      policyFiles = [
+        {
+          path = "/Library/Managed Preferences/net.imput.helium.plist";
+          content = toPlist { escape = true; } policy;
+        }
+      ]
+      ++ (
+        policy."3rdparty".extensions
+        |> mapAttrsToList (
+          id: extensionPolicy: {
+            path = "/Library/Managed Preferences/net.imput.helium.extensions.${id}.plist";
+            content = toPlist { escape = true; } extensionPolicy;
+          }
+        )
+      );
+    in
+    {
+      system.activationScripts.script.text = mkAfter ''
+        ${config.system.activationScripts.helium.text}
+      '';
+      system.activationScripts.helium.text = "${getExe pkgs.nushell} ${
+        pkgs.writeText "helium-policy.nu" # nu
+          ''
+            print "setting up helium policy..."
+
+            mkdir `/Library/Managed Preferences`
+
+            for entry in (r#'${toJSON policyFiles}'# | from json) {
+              $entry.content | save --force $entry.path
+              ^chown root:wheel $entry.path
+              ^chmod 0644 $entry.path
+            }
+
+            (^sudo
+              --user (ls --long /dev/console | get 0.user)
+              ${getExe pkgs.defaultbrowser} helium)
+          ''
+      }";
+
+      hjem.extraModule = {
+        files."Library/Application Support/net.imput.helium/Default/Preferences" = {
+          type = "copy";
+          text = toJSON preferences;
+        };
+      };
+    };
+
+  flake.modules.nixos.helium =
+    { lib, ... }:
+    let
+      inherit (lib.strings) toJSON;
+      inherit (lib.attrsets) genAttrs;
+      inherit (lib.trivial) const flip;
+    in
+    {
+      environment.etc."chromium/policies/managed/policies.json".text = toJSON policy;
+
+      hjem.extraModule = {
+        xdg.config.files."helium/Default/Preferences" = {
+          type = "copy";
+          text = toJSON preferences;
+        };
+
+        xdg.mime-apps.default-applications = flip genAttrs (const "helium.desktop") [
+          "application/pdf"
+          "application/rdf+xml"
+          "application/rss+xml"
+          "application/xhtml+xml"
+          "application/xhtml_xml"
+          "application/xml"
+          "image/gif"
+          "image/jpeg"
+          "image/png"
+          "image/webp"
+          "text/html"
+          "text/xml"
+          "x-scheme-handler/http"
+          "x-scheme-handler/https"
+        ];
+      };
+    };
+
+  flake.modules.common.helium =
+    { pkgs, lib, ... }:
+    let
+      inherit (lib.lists) singleton;
+    in
+    {
+      hjem.extraModule = {
+        packages = singleton inputs.helium.packages.${pkgs.system}.default;
+      };
+    };
+}
