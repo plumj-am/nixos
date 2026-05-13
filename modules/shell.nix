@@ -1,6 +1,7 @@
 {
   flake.modules.common.shell =
     {
+      inputs,
       pkgs,
       lib,
       ...
@@ -13,6 +14,21 @@
       inherit (lib.modules) mkAfter mkIf;
     in
     {
+      imports = singleton inputs.inshellah.nixosModules.default;
+
+      config.programs.inshellah = {
+        enable = true;
+
+        # additional read-only completion directories to search
+        extraDirs = [ ];
+        # commands to skip entirely during indexing (problematic tools)
+        ignoreCommands = [ ];
+        # commands to skip manpage parsing - uses --help instead
+        helpOnlyCommands = [ ];
+        # extra packages to scrape alongside the system profile e.g. pkgs.git
+        extraScrapePackages = [ ];
+      };
+
       config.environment.shells = singleton <| getExe pkgs.nushell;
 
       options.shellAliases = mkOption {

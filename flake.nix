@@ -64,6 +64,11 @@
       url = "github:homebrew/homebrew-cask";
       flake = false;
     };
+    inshellah = {
+      url = "github:manic-systems/inshellah";
+      inputs.nixpkgs.follows = "os";
+
+    };
     llm-agents = {
       url = "github:numtide/llm-agents.nix";
       inputs.nixpkgs.follows = "os";
