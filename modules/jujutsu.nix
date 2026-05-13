@@ -374,8 +374,8 @@
                 "ready()" = "open() ~ blacklist()";
               };
 
-              # revsets.log = "present(@) | present(trunk()) | ancestors(remote_bookmarks().. | @.., 6)";
-              revsets.log = "work_ui()";
+              revsets.log = "present(@) | present(trunk()) | ancestors(remote_bookmarks().. | @.., 6)";
+              # revsets.log = "work_ui()"; # Do this in per repo config.
 
               template-aliases."in_branch(commit)" = # python
                 ''
