@@ -326,7 +326,7 @@ let
     DefaultSearchProviderEnabled = true;
     DefaultSearchProviderName = "DuckDuckGo";
     DefaultSearchProviderSearchURL = "https://duckduckgo.com/?q={searchTerms}";
-    # DefaultSearchProviderSuggestURL = "https://kagi.com/api/autosuggest?q={searchTerms}";
+    DefaultSearchProviderSuggestURL = "https://ac.duckduckgo.com/ac/?q={searchTerms}&type=list";
     SearchSuggestEnabled = true;
 
     SiteSearchSettings = [
