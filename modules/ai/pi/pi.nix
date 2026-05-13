@@ -233,12 +233,6 @@
                     skills = [ ];
                   }
                   {
-                    source = "git:github.com/nicobailon/pi-interview-tool";
-                    extensions = [ "index.ts" ];
-                    themes = [ ];
-                    skills = [ ];
-                  }
-                  {
                     source = "git:github.com/netresearch/context7-skill";
                     extensions = [ ];
                     themes = [ ];
@@ -247,6 +241,7 @@
                   {
                     source = "git:github.com/mitsuhiko/agent-stuff";
                     extensions = [
+                      "answer.ts"
                       "btw.ts"
                       "context.ts"
                       "loop.ts"
