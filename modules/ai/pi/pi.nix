@@ -226,12 +226,12 @@
                 shellPath = getExe pkgs.bash;
 
                 packages = [
-                  {
-                    source = "git:github.com/apmantza/pi-free";
-                    extensions = [ "index.ts" ];
-                    themes = [ ];
-                    skills = [ ];
-                  }
+                  # {
+                  #   source = "git:github.com/apmantza/pi-free";
+                  #   extensions = [ "index.ts" ];
+                  #   themes = [ ];
+                  #   skills = [ ];
+                  # }
                   {
                     source = "git:github.com/netresearch/context7-skill";
                     extensions = [ ];
