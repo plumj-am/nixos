@@ -16,7 +16,9 @@
         nix.buildMachines =
           inputs.self.nixosConfigurations
           |> attrsToList
-          |> filter ({ name, value }: name != config.networking.hostName && value.config.systemSpecs.builder.enable)
+          |> filter (
+            { name, value }: name != config.networking.hostName && value.config.systemSpecs.builder.enable
+          )
           |> map (
             { name, value }:
             {
