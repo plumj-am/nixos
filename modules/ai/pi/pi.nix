@@ -246,9 +246,10 @@
                       "context.ts"
                       "loop.ts"
                       "multi-edit.ts"
+                      "todos.ts"
                     ];
                     themes = [ ];
-                    skills = [ ];
+                    skills = [ "librarian" ];
                   }
                 ];
               };
