@@ -49,7 +49,6 @@ in
   flake.modules.nixos.packages-extra-cli =
     { pkgs, ... }:
     mkHjemPackages [
-      pkgs.bitwarden-cli
       pkgs.deno
       pkgs.docker
       pkgs.docker-compose
