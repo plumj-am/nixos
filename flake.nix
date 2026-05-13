@@ -26,6 +26,10 @@
       url = "git+https://git.afnix.fr/afnix/nix-gerrit";
       inputs.nixpkgs.follows = "os";
     };
+    gerrit-autosubmit = {
+      url = "git+https://git.plumj.am/plumjam/gerrit-autosubmit";
+      inputs.nixpkgs.follows = "os";
+    };
     gitea-mq = {
       url = "github:Mic92/gitea-mq";
       inputs.nixpkgs.follows = "os";

@@ -18,6 +18,8 @@
       port = 8011;
     in
     {
+      imports = [ inputs.gerrit-autosubmit.nixosModules.default ];
+
       age.secrets = {
         gerritSecureConfig = {
           rekeyFile = ../secrets/gerrit-secure-config.age;
@@ -34,6 +36,7 @@
           owner = "git";
           group = "git";
         };
+        gerritAutosubmitEnvironment.rekeyFile = ../secrets/gerrit-autosubmit-environment.age;
       };
 
       services.restic.backups.gerrit = mkResticBackup "gerrit" {
@@ -214,6 +217,13 @@
             projects = [ "grove" ];
           };
         };
+      };
+
+      services.gerrit-autosubmit = {
+        enable = true;
+        gerritUrl = "https://gerrit.plumj.am";
+        gerritUsername = "autosubmit-bot";
+        secretsFile = config.age.secrets.gerritAutosubmitEnvironment.path;
       };
 
       networking.firewall.allowedTCPPorts = singleton 29418;
