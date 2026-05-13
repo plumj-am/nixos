@@ -50,6 +50,7 @@ let
 
       filters = [
         # YOUTUBE SHORTS -> WATCH
+        # regex
         ''||youtube.com/shorts/$document,uritransform=/^https:\/\/(?:www\.|m\.)?youtube\.com\/shorts\/([^\/?#]+)/https:\/\/www.youtube.com\/watch?v=\$1/''
 
         # OLD REDDIT
@@ -66,10 +67,14 @@ let
         "@@||reddit.com/mail^$document"
         "@@||reddit.com/answers^$document"
         "@@||reddit.com/r/subreddit^$document"
+        # regex
         ''@@/^https:\/\/\w*\.?reddit\.com\/r\/[A-Za-z0-9_]+\/s\//$document''
+        # regex
         ''@@/^https:\/\/\w*\.?reddit\.com\/.*[?&]new_reddit=true(?:$|[&#])/$document''
 
+        # regex
         ''||reddit.com/gallery/$document,uritransform=/^https:\/\/(?:www\.|np\.|amp\.|i\.)?reddit\.com\/gallery\/(.*)/https:\/\/old.reddit.com\/comments\/\$1/''
+        # regex
         ''||reddit.com^$document,uritransform=/^https:\/\/(?:www\.|np\.|amp\.|i\.)?reddit\.com\/(?!gallery\/)/https:\/\/old.reddit.com\//''
 
         "old.reddit.com##:is(#eu-cookie-policy, #redesign-beta-optin-btn)"
@@ -409,6 +414,17 @@ in
       }";
 
       hjem.extraModule = {
+        files."Library/Application Support/net.imput.helium/NativeMessagingHosts/org.keepassxc.keepassxc_browser.json".text =
+          toJSON {
+            name = "org.keepassxc.keepassxc_browser";
+            description = "KeePassXC integration with native messaging support";
+            path = "/Applications/KeePassXC.app/Contents/MacOS/keepassxc-proxy";
+            type = "stdio";
+            allowed_origins = [
+              "chrome-extension://oboonakemofpalcgghocfoadofidjkkk/"
+            ];
+          };
+
         files."Library/Application Support/net.imput.helium/Default/Preferences" = {
           type = "copy";
           text = toJSON preferences;
@@ -417,13 +433,25 @@ in
     };
 
   flake.modules.nixos.helium =
-    { lib, ... }:
+    { lib, pkgs, ... }:
     let
       inherit (lib.strings) toJSON;
       inherit (lib.attrsets) genAttrs;
       inherit (lib.trivial) const flip;
     in
     {
+      environment.etc."chromium/native-messaging-hosts/org.keepassxc.keepassxc_browser.json".text =
+        toJSON
+          {
+            name = "org.keepassxc.keepassxc_browser";
+            description = "KeePassXC integration with native messaging support";
+            path = "${pkgs.keepassxc}/bin/keepassxc-proxy";
+            type = "stdio";
+            allowed_origins = [
+              "chrome-extension://oboonakemofpalcgghocfoadofidjkkk/"
+            ];
+          };
+
       environment.etc."chromium/policies/managed/policies.json".text = toJSON policy;
 
       hjem.extraModule = {
