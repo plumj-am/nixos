@@ -103,7 +103,7 @@
           # Groups gerrit refs by change number (strips patchset), passes through
           # regular branches and PR refs unchanged.
           def gerritBranchKey(b):
-              ref = b['branch']
+              ref = b.get('branch') or ''' # escaped for Nix lines
               if ref.startswith('refs/changes/'):
                   return ref.rsplit('/', 1)[0]  # refs/changes/12/3456/1 → refs/changes/12/3456
               if ref.startswith(('refs/pull/', 'refs/merge-requests/')):
