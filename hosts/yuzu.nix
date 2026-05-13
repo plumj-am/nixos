@@ -29,6 +29,7 @@ in
       hardware-desktop
       haskell
       jujutsu-extra
+      keepassxc
       kitty
       litellm
       llama-cpp
@@ -79,6 +80,7 @@ in
               owner = "jam";
               mode = "600";
             };
+            resticPassword.rekeyFile = ../secrets/restic-password.age;
           };
 
           system.stateVersion = "26.05";

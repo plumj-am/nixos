@@ -3,12 +3,12 @@
   flake.modules.nixos.syncthing =
     let
       devices = {
-        # blackwell = {
-        #   id = "COZUXV4-HYFNNR2-APPQQL3-7QUUZFN-6VXGKOI-YSYS5VQ-3TAHZ6Y-P2USQAO";
-        #   addresses = [ "tcp://blackwell.taild29fec.ts.net:22000" ];
-        # };
+        blackwell = {
+          id = "";
+          addresses = [ "tcp://blackwell.taild29fec.ts.net:22000" ];
+        };
         date = {
-          id = "VK2BBSF-26UT4M4-4ZGRZDQ-OKWDEJS-FSV5OXB-M7K2Z6S-R4A6L6R-4WI2SAC";
+          id = "BVND7WF-QAPBTO3-N22MJMT-SLO35ES-7CTST5I-ANUN6ZW-4P3D3OU-O5E7EAS";
           addresses = [ "tcp://date.taild29fec.ts.net:22000" ];
         };
         kiwi = {
@@ -24,15 +24,15 @@
           addresses = [ "tcp://pear.taild29fec.ts.net:22000" ];
         };
         plum = {
-          id = "INKVUCX-QTQRO26-TG3HMMR-CVGOU4L-4JWGU7H-FDPW6QI-EWVJLMB-4GUQIA4";
+          id = "";
           addresses = [ "tcp://plum.taild29fec.ts.net:22000" ];
         };
         sloe = {
-          id = "OL4HTIF-PU3A7G4-K7QXABE-FUIFI3U-JHEKRSV-AKEPZU6-6Y5CXA2-KMMKQA4";
+          id = "";
           addresses = [ "tcp://sloe.taild29fec.ts.net:22000" ];
         };
         yuzu = {
-          id = "JL3HLSF-2JP4K7Y-MHDQWLQ-USTAS4D-W4LQNSK-BKR4PD5-Q72IUMR-H7MYIA5";
+          id = "R2J6HGL-FX7UB2G-55WVDS3-QD54GPO-QCQADZM-X4WUP7R-D2LOZTD-HFDIWAQ";
           addresses = [ "tcp://yuzu.taild29fec.ts.net:22000" ];
         };
 
@@ -45,12 +45,14 @@
     in
     {
       systemd.tmpfiles.rules = [
-        "d /var/backups 0700 syncthing syncthing -"
-        "d /var/backups/onx 0700 syncthing syncthing -"
+        "d /var/backups 0600 jam users -"
+        "d /var/backups/onx 0600 jam users -"
       ];
 
       services.syncthing = {
         enable = true;
+        user = "jam";
+        dataDir = "/home/jam";
         settings = {
           inherit devices;
 

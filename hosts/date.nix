@@ -30,6 +30,7 @@ in
       harmonia
       hardware-desktop
       jujutsu-extra
+      keepassxc
       kitty
       litellm
       mprocs
@@ -72,6 +73,7 @@ in
               rekeyFile = ../secrets/plum-rss-api-password.age;
               owner = "jam";
             };
+            resticPassword.rekeyFile = ../secrets/restic-password.age;
           };
 
           # Used as a server when not used as a laptop.
