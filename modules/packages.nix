@@ -43,7 +43,7 @@ in
     mkHjemPackages [
       # pkgs.brave
       pkgs.obs-studio
-      # pkgs.thunderbird
+      pkgs.thunderbird
     ];
 
   flake.modules.nixos.packages-extra-cli =
