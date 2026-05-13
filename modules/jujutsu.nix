@@ -341,38 +341,41 @@
                 # require customization for repos like nixpkgs.
                 "trunk()" = "latest((present(main) | present(master)) & remote_bookmarks())";
 
-                # stack(x, n) is the set of mutable commits reachable from 'x', with 'n'
-                # parents. 'n' is often useful to customize the display and return set for
-                # certain operations. 'x' can be used to target the set of 'roots' to traverse,
-                # e.g. @ is the current stack.
-                "stack()" = "ancestors(reachable(@, mutable()), 2)";
-                "stack(x)" = "ancestors(reachable(x, mutable()), 2)";
-                "stack(x, n)" = "ancestors(reachable(x, mutable()), n)";
-                # Shows all the current open stacks against the trunk (master/main).
-                # 'n' is used the same way as above, to adjust depth.
-                "stacks()" = "ancestors(reachable(trunk()::, mutable()), 2)";
-                "stacks(n)" = "ancestors(reachable(trunk()::, mutable()), n)";
+                # Collapsed trunk - removes full ancestry
+                "trunk_head()" = "heads(trunk())";
 
-                # The current set of "open" works. It is defined as:
-                #
-                # - given the set of commits not in trunk, that are written by me,
-                # - calculate the given stack() for each of those commits
-                #
-                # n = 1, meaning that nothing from `trunk()` is included, so all resulting
-                # commits are mutable by definition.
-                "open()" = "stack(trunk().. & mine(), 1)";
+                # All current open stacks of work
+                "work()" = "mine() & mutable() & ~immutable_heads()";
 
-                # the set of 'ready()' commits. defined as the set of open commits, for the current
-                # stack, but nothing that is blacklisted.
-                #
-                # often used with Gerrit, which you can use to submit whole stacks at once:
-                #
-                # - jj gerrit upload -r 'ready()' --dry-run
-                "ready()" = "ancestors(reachable(@, mutable()), 1) ~ blacklist()";
+                # Same as above but shows parents for a nice UI view
+                "work_ui()" = "work() | trunk_head()";
+
+                # All commits in current stack (linearized by @ ancestry)
+                # "stack_members()" = "ancestors(@, 1000) & work()";
+                # This version should handle detached commits better and does not assume
+                # @ is somewhere in the stack.
+                "stack_members()" = "ancestors(closest(work()), 1000) & work()";
+
+                # Root of current stack
+                # ::@ & enforces linearity
+                # Otherwise, it can be ambiguous and break if history is not linear.
+                "stack_root()" = "roots(::@ & stack_members())";
+
+                # Entire current stack
+                "stack()" = "stack_members()";
+
+                # Useful derived forms
+                "stack_tip()" = "heads(stack())";
+
+                # Open changes = current stack only
+                "open()" = "stack()";
+
+                # Ready to push
+                "ready()" = "open() ~ blacklist()";
               };
 
               # revsets.log = "present(@) | present(trunk()) | ancestors(remote_bookmarks().. | @.., 6)";
-              revsets.log = "stacks()";
+              revsets.log = "work_ui()";
 
               template-aliases."in_branch(commit)" = # python
                 ''
