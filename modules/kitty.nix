@@ -36,6 +36,8 @@
             allow_remote_control = "yes";
             confirm_os_window_close = 0;
 
+            macos_option_as_alt = "yes";
+
             scrollback_lines = 100000;
             scrollback_pager = "bat --chop-long-lines";
 
