@@ -231,7 +231,6 @@
                       sessionizer
                       attention
                       zjstatus
-                      zjstatus-hints
                     };
 
                     plugins {
@@ -251,10 +250,8 @@
 
                     		format_left "{mode}#[bg=#d5c4a1,fg=#665c54] {session} "
                     		format_center "{tabs}"
-                    		format_right "{pipe_zjstatus_hints}"
 
                     		format_space ""
-                        pipe_zjstatus_hints_format "{output}"
 
                   		  mode_normal "${modeTemplate "NOR" "#b8bb26"}"
                   		  mode_locked "${modeTemplate "LOC" "#665c54"}"
@@ -268,13 +265,6 @@
                   		  tab_normal "#[bg=#d5c4a1,fg=#665c54] {index}:{name} "
                   		  tab_active "#[bg=#665c54,fg=#d5c4a1,bold] {index}:{name}* "
                 		  }
-
-                      zjstatus-hints location="https://github.com/b0o/zjstatus-hints/releases/latest/download/zjstatus-hints.wasm" {
-                        max_length 0
-                        overflow_str "..."
-                        pipe_name "zjstatus_hints"
-                        hide_in_base_mode false
-                      }
                     }
               '';
 
@@ -345,10 +335,6 @@
                   ReadCliPipes
                   MessageAndLaunchOtherPlugins
                   ChangeApplicationState
-                  ReadApplicationState
-              }
-              "https://github.com/b0o/zjstatus-hints/releases/latest/download/zjstatus-hints.wasm" {
-                  MessageAndLaunchOtherPlugins
                   ReadApplicationState
               }
             '';
