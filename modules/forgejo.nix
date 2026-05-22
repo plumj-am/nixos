@@ -144,7 +144,7 @@
               DESCRIPTION = description;
             };
 
-            webhook.ALLOWED_HOST_LIST = "127.0.0.1,::1,localhost";
+            webhook.ALLOWED_HOST_LIST = "127.0.0.1,::1,localhost,buildbot.plumj.am";
           };
       };
 
