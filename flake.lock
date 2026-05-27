@@ -1139,6 +1139,26 @@
         "type": "github"
       }
     },
+    "rom": {
+      "inputs": {
+        "nixpkgs": [
+          "os"
+        ]
+      },
+      "locked": {
+        "lastModified": 1779658608,
+        "narHash": "sha256-grGAO71ziTrX26NpjAgYF+Ke4yQfzImC0HojO7xdwv0=",
+        "owner": "manic-systems",
+        "repo": "rom",
+        "rev": "705ea50f5b595453a14cefff56a73d0db33c0b01",
+        "type": "github"
+      },
+      "original": {
+        "owner": "manic-systems",
+        "repo": "rom",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "age": "age",
@@ -1169,6 +1189,7 @@
         "qml-niri": "qml-niri",
         "quickshell": "quickshell",
         "rio": "rio",
+        "rom": "rom",
         "run0-sudo-shim": "run0-sudo-shim",
         "ublock": "ublock",
         "zyouz": "zyouz"

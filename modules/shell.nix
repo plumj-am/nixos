@@ -80,7 +80,7 @@
             cat = "${getExe pkgs.bat} --theme ${theme.bat}";
             less = "${getExe pkgs.bat} --plain";
 
-            nfc = "nix flake check --log-format internal-json -v err>| nom --json";
+            nfc = "nix flake check --log-format internal-json -v err>| rom --json";
 
             rebuild = "${config.directory}/nixos/rebuild.nu";
 

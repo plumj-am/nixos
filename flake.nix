@@ -124,6 +124,10 @@
       url = "github:raphamorim/rio";
       inputs.nixpkgs.follows = "os";
     };
+    rom = {
+      url = "github:manic-systems/rom";
+      inputs.nixpkgs.follows = "os";
+    };
     quickshell = {
       url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
       inputs.nixpkgs.follows = "os";
