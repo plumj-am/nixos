@@ -164,6 +164,29 @@
         "type": "github"
       }
     },
+    "circus": {
+      "inputs": {
+        "crane": "crane",
+        "nixpkgs": [
+          "os"
+        ],
+        "rust-overlay": "rust-overlay"
+      },
+      "locked": {
+        "lastModified": 1779903126,
+        "narHash": "sha256-2P0OeYUwuwK+0f0Q/PUnbxFuxRN0eK0y40LM577KX6k=",
+        "owner": "plumj-am",
+        "repo": "circus",
+        "rev": "349cf75c8b55c93dcb999226d38f94138d214be4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "plumj-am",
+        "ref": "tmp",
+        "repo": "circus",
+        "type": "github"
+      }
+    },
     "crane": {
       "locked": {
         "lastModified": 1779130139,
@@ -180,6 +203,21 @@
       }
     },
     "crane_2": {
+      "locked": {
+        "lastModified": 1779130139,
+        "narHash": "sha256-BLrtr42azquO7MdGFU5a7KiMl3YpFlTeIXqy1fT5GlQ=",
+        "owner": "ipetkov",
+        "repo": "crane",
+        "rev": "edb38893982a3338972bb4a2ec7ce7c29ba10fd9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ipetkov",
+        "repo": "crane",
+        "type": "github"
+      }
+    },
+    "crane_3": {
       "locked": {
         "lastModified": 1768319649,
         "narHash": "sha256-VFkNyxHxkqGp8gf8kfFMW1j6XeBy609kv6TE9uF/0Js=",
@@ -441,7 +479,7 @@
     "gerrit-autosubmit": {
       "inputs": {
         "advisory-db": "advisory-db",
-        "crane": "crane",
+        "crane": "crane_2",
         "fenix": "fenix_2",
         "flake-parts": "flake-parts",
         "nixpkgs": [
@@ -714,7 +752,7 @@
         "nixpkgs": [
           "os"
         ],
-        "rust-overlay": "rust-overlay"
+        "rust-overlay": "rust-overlay_2"
       },
       "locked": {
         "lastModified": 1778389445,
@@ -870,13 +908,13 @@
     },
     "nu-lint": {
       "inputs": {
-        "crane": "crane_2",
+        "crane": "crane_3",
         "flake-utils": "flake-utils",
         "git-hooks": "git-hooks",
         "nixpkgs": [
           "os"
         ],
-        "rust-overlay": "rust-overlay_2"
+        "rust-overlay": "rust-overlay_3"
       },
       "locked": {
         "lastModified": 1777713052,
@@ -1046,7 +1084,7 @@
         "nixpkgs": [
           "os"
         ],
-        "rust-overlay": "rust-overlay_3",
+        "rust-overlay": "rust-overlay_4",
         "systems": "systems_4"
       },
       "locked": {
@@ -1068,6 +1106,7 @@
         "age": "age",
         "age-rekey": "age-rekey",
         "buildbot-nix": "buildbot-nix",
+        "circus": "circus",
         "disko": "disko",
         "fenix": "fenix",
         "gerrit": "gerrit",
@@ -1102,7 +1141,7 @@
         "nixpkgs": [
           "os"
         ],
-        "rust-overlay": "rust-overlay_4",
+        "rust-overlay": "rust-overlay_5",
         "treefmt-nix": "treefmt-nix_6"
       },
       "locked": {
@@ -1156,6 +1195,27 @@
     "rust-overlay": {
       "inputs": {
         "nixpkgs": [
+          "circus",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1779851998,
+        "narHash": "sha256-UkkMh3bX9QW4Luqkm98nUaOqKWrU6i65mUnph3WeSSw=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "6cddd512fa2bf7231f098d3a2f92f6e4cff71e0a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
+      }
+    },
+    "rust-overlay_2": {
+      "inputs": {
+        "nixpkgs": [
           "niri",
           "nixpkgs"
         ]
@@ -1174,7 +1234,7 @@
         "type": "github"
       }
     },
-    "rust-overlay_2": {
+    "rust-overlay_3": {
       "inputs": {
         "nixpkgs": [
           "nu-lint",
@@ -1195,7 +1255,7 @@
         "type": "github"
       }
     },
-    "rust-overlay_3": {
+    "rust-overlay_4": {
       "inputs": {
         "nixpkgs": [
           "rio",
@@ -1216,7 +1276,7 @@
         "type": "github"
       }
     },
-    "rust-overlay_4": {
+    "rust-overlay_5": {
       "inputs": {
         "nixpkgs": [
           "run0-sudo-shim",

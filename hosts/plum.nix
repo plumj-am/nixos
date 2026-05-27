@@ -15,6 +15,7 @@ in
       buildbot-master
       buildbot-worker
       cinny
+      circus
       disks-server
       forgejo
       freshrss-server
