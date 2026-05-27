@@ -266,8 +266,6 @@
 
             ".pi/agent/skills/caveman".source = ./skills/caveman;
             ".pi/agent/skills/gh-grep".source = ./skills/gh-grep; # Taken from <https://github.com/huynguyen03dev/opencode-setup/tree/main/skills/gh-grep>
-
-            ".pi/agent/agents".source = ./agents;
           };
         };
     };
