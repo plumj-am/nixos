@@ -173,11 +173,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1779903126,
-        "narHash": "sha256-2P0OeYUwuwK+0f0Q/PUnbxFuxRN0eK0y40LM577KX6k=",
+        "lastModified": 1779929875,
+        "narHash": "sha256-oTNKQe8eCaKAi5qgDzHkfq4StdIkx7cWv1ChnpKaowg=",
         "owner": "plumj-am",
         "repo": "circus",
-        "rev": "349cf75c8b55c93dcb999226d38f94138d214be4",
+        "rev": "ba29c0e40c78774f218e33d98bd97e8ec1899b80",
         "type": "github"
       },
       "original": {

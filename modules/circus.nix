@@ -35,6 +35,10 @@
           rekeyFile = ../secrets/circus-plumjam-password.age;
           owner = "circus";
         };
+        circusForgejoToken = {
+          rekeyFile = ../secrets/circus-forgejo-token.age;
+          owner = "circus";
+        };
       };
 
       services.postgresql.ensureDatabases = singleton "circus";
@@ -303,7 +307,7 @@
           apiKeys = [
             {
               name = "git.plumj.am/PlumJam token";
-              key = ""; # needs to be a secret
+              keyFile = config.age.secrets.circusForgejoToken.path;
               # admin (default), read-only, create-projects, eval-jobset,
               # cancel-build, restart-jobs, bump-to-front.
               role = "admin";
