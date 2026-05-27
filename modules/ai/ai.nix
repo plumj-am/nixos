@@ -247,6 +247,7 @@ in
     {
       pkgs,
       lib,
+      config,
       ...
     }:
     let
@@ -255,6 +256,7 @@ in
       inherit (lib.meta) getExe getExe';
       inherit (lib.strings) toJSON;
       inherit (lib.trivial) const;
+      inherit (config.age) secrets;
     in
     {
       # THANK YOU FOR THIS ENTIRE THING!!
@@ -266,6 +268,18 @@ in
           # TODO: Retarded 500k loc crap refuses to follow XDG spec.
           # I will fix this system-wide when I cba figuring out how to do it well.
           files = {
+            # Helper script for adding MCP servers.
+            # Should probably use writeScriptBin but idc, I run it once.
+            "extra-ai-tools-setup" = {
+              text = # nu
+                ''
+                  #!/usr/bin/env nu
+                  try { claude mcp add -s user -t http context7 https://mcp.context7.com/mcp --header $"CONTEXT7_API_KEY: (cat ${secrets.context7Key.path})" }
+                  try { npx skills add JuliusBrussee/caveman --agent pi }
+                '';
+              executable = true;
+            };
+
             ".claude/CLAUDE.md" = {
               type = "copy";
               source = ./CLAUDE_AGENTS.md;
@@ -1153,38 +1167,6 @@ in
               pkgs.socat
               pkgs.bubblewrap
             ];
-        };
-    };
-
-  flake.modules.common.ai-extra =
-    {
-      pkgs,
-      ...
-    }:
-    {
-      hjem.extraModule =
-        { osConfig, ... }:
-        let
-          inherit (osConfig.age) secrets;
-        in
-        {
-          packages = [
-            pkgs.codex
-            pkgs.gemini-cli
-            pkgs.qwen-code
-          ];
-
-          # Helper script for adding MCP servers.
-          # Should probably use writeScriptBin but idc, I run it once.
-          files."extra-ai-tools-setup" = {
-            text = # nu
-              ''
-                #!/usr/bin/env nu
-                try { claude mcp add -s user -t http context7 https://mcp.context7.com/mcp --header $"CONTEXT7_API_KEY: (cat ${secrets.context7Key.path})" }
-                try { npx skills add JuliusBrussee/caveman --agent pi }
-              '';
-            executable = true;
-          };
         };
     };
 }

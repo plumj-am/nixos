@@ -10,7 +10,6 @@ in
     modules = with inputs.self.modules.darwin; [
       aspectsBase
 
-      ai-extra
       app-launcher
       claude-code
       editor-extra

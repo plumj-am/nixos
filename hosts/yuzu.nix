@@ -10,7 +10,6 @@ in
     modules = with inputs.self.modules.nixos; [
       aspectsBase
 
-      ai-extra
       audio
       boot-systemd
       buildbot-worker
