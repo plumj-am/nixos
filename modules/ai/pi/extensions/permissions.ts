@@ -85,6 +85,7 @@ export const allowedPatterns: string[] = [
 	"git branch --show-current*",
 	"git diff*",
 	"git log*",
+	"git show*",
 	"git status*",
 
 	"cargo build*",
