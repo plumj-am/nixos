@@ -171,7 +171,7 @@
             bwrapper
 
             pkgs.bash
-            pkgs.direnv
+            # pkgs.direnv
             pkgs.nushell
             pkgs.zoxide
 
@@ -185,7 +185,7 @@
             '';
           };
 
-          xdg.config.files."direnv/lib/nix-direnv.sh".source = "${pkgs.nix-direnv}/share/nix-direnv/direnvrc";
+          # xdg.config.files."direnv/lib/nix-direnv.sh".source = "${pkgs.nix-direnv}/share/nix-direnv/direnvrc";
 
           xdg.config.files."nushell/config.nu".text =
             # nu
@@ -288,9 +288,9 @@
               $env.config.hooks.env_change.PWD = [
                 { |before, after| zellij-update-tabname }
                 {||
-                  if (which direnv | is-empty) { return }
-
-                  direnv export json | from json | default {} | load-env
+                  if (which cade | is-not-empty) {
+                    $env.__CADE_STATUS = ^cade status
+                  }
                 }
               ]
 
@@ -299,10 +299,9 @@
               }
 
               $env.config.hooks.pre_prompt = [
-                {
-                  if not (which direnv | is-empty) {
-                    direnv export json | from json | default {} | load-env
-                    $env.PATH = ($env.PATH | split row (char env_sep))
+                {||
+                  if (which cade | is-not-empty) {
+                    $env.__CADE_STATUS = ^cade status
                   }
                 }
               ]
@@ -417,11 +416,23 @@
               						$" (ansi '${base0A}')($cmd_duration)"
                 				}
 
+                				# See pre_prompt hook.
+                				let cade_status = $env.__CADE_STATUS? | default ""
+                				let cade = if ($cade_status) =~ 'active:  yes' {
+                				  $"\((ansi green)cade(ansi rst)\)"
+                				} else if ($cade_status =~ 'active:  no') and ($cade_status =~ 'root:    none') {
+                				  ""
+                				} else {
+                				  $"\((ansi red)cade(ansi rst)\)"
+                				}
+
                 				let left_prompt = [
                 					$status
                 					$host
                 					" "
                 					$directory
+                					" "
+                					$cade
                 					(char nl)
               					] | str join
 
