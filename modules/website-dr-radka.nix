@@ -68,9 +68,10 @@
         };
 
         virtualHosts.${domain} = merge config.services.nginx.sslTemplate {
-          extraConfig = ''
-            ${config.services.nginx.goatCounterTemplate}
-          '';
+          # TODO: fix goatcounter
+          # extraConfig = ''
+          #   ${config.services.nginx.goatCounterTemplate}
+          # '';
 
           locations."/" = {
             proxyPass = "http://0.0.0.0:${toString app_port}";
