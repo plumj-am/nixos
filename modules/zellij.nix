@@ -13,7 +13,7 @@
 
       # This is probably ass, I just asked the slop machine to do it and it works lol.
       # https://github.com/zellij-org/zellij/pull/5049
-      zellij-patched = pkgs.zellij.overrideAttrs (oldAttrs: {
+      zellij-patched = pkgs.zellij.unwrapped.overrideAttrs (oldAttrs: {
         postPatch = (oldAttrs.postPatch or "") + ''
           patch -p1 < ${
             pkgs.fetchurl {
