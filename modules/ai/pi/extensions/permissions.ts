@@ -15,6 +15,7 @@ import {
 
 let autoDenyTimeoutEnabled = true
 let autoDenyTimeoutMs = 30000
+let yoloMode = false
 
 // Read-only allowlist patterns (strict mode)
 export const allowedPatterns: string[] = [
@@ -50,6 +51,8 @@ export const allowedPatterns: string[] = [
 	"jj commit --message*",
 	"jj desc -m*",
 	"jj desc --message*",
+	"jj describe -m*",
+	"jj describe --message*",
 	"jj diff*",
 	"jj evolog*",
 	"jj file list*",
@@ -73,8 +76,8 @@ export const allowedPatterns: string[] = [
 	"jj root*",
 	"jj show*",
 	"jj sparse list*",
-	"jj st",
-	"jj status",
+	"jj st*",
+	"jj status*",
 	"jj tag list*",
 	"jj util config-schema*",
 	"jj version*",
@@ -157,6 +160,8 @@ export const forbiddenPathPatterns: string[] = [
 	"**/run/agenix",
 	"**/.env",
 	"**/.env.*",
+	"**/.envrc",
+	"**/.envrc.*",
 	"**/.ssh/**",
 	"**/.gnupg/**",
 	"**/.aws/**",
@@ -185,6 +190,489 @@ export const forbiddenPathPatterns: string[] = [
 	"**/AWS_ACCESS_KEY",
 	"**/AWS_SECRET_KEY",
 	"*EDITOR*vim*.swp",
+]
+
+// Commands that are always blocked regardless of yolo mode
+// This is a comprehensive blocklist. Err on the side of caution.
+export const veryDangerousCommands: string[] = [
+	// ====== Filesystem destruction ======
+	"rm -rf /",
+	"rm -rf /*",
+	"rm -rf --no-preserve-root*",
+	"rm -rf /boot*",
+	"rm -rf /bin*",
+	"rm -rf /sbin*",
+	"rm -rf /lib*",
+	"rm -rf /etc*",
+	"rm -rf /usr*",
+	"rm -rf /var*",
+	"rm -rf /opt*",
+	"rm -rf /nix*",
+	"rm -rf /System*",
+	"rm -rf /nix/store/*",
+	"rm -rf /nix/var/*",
+	"rm -rf /dev/*",
+	"rm -rf /proc/*",
+	"rm -rf /sys/*",
+	"rm -rf /run/*",
+
+	// ====== Block device destruction ======
+	"dd if=*of=/dev/sd*",
+	"dd if=*of=/dev/nvme*",
+	"dd if=*of=/dev/vd*",
+	"dd if=*of=/dev/mmc*",
+	"dd if=*of=/dev/loop*",
+	"dd if=*of=/dev/mapper/*",
+	"dd if=*of=/dev/md*",
+	"dd if=*of=/dev/zram*",
+	"dd if=*of=/dev/disk/*",
+	"wipefs -a*",
+	"wipefs -fa*",
+	"blkdiscard /dev/*",
+	"hdparm --wipe*",
+	"sgdisk --zap-all*",
+	"sgdisk -o*",
+
+	// ====== Partitioning / formatting ======
+	"mkfs*",
+	"mkfs.ext*",
+	"mkfs.btrfs*",
+	"mkfs.xfs*",
+	"mkfs.fat*",
+	"mkfs.vfat*",
+	"mkfs.ntfs*",
+	"mkfs.reiserfs*",
+	"mkfs.zfs*",
+	"mkfs.f2fs*",
+	"mke2fs*",
+	"mkswap /dev/*",
+	"fdisk /dev/sd*",
+	"fdisk /dev/nvme*",
+	"fdisk /dev/vd*",
+	"fdisk /dev/mmc*",
+	"fdisk /dev/loop*",
+	"fdisk /dev/mapper/*",
+	"fdisk /dev/md*",
+	"cfdisk /dev/*",
+	"sfdisk /dev/*",
+	"parted /dev/*",
+	"parted -s /dev/*",
+	"partprobe /dev/*",
+	"gdisk /dev/sd*",
+	"gdisk /dev/nvme*",
+
+	// ====== LVM destruction ======
+	"pvcreate /dev/*",
+	"vgcreate *",
+	"lvcreate *",
+	"pvremove /dev/*",
+	"pvremove --force*",
+	"vgremove *",
+	"vgremove --force*",
+	"lvremove *",
+	"lvremove --force*",
+	"lvchange -an*",
+	"vgchange -an*",
+	"pvchange -x n*",
+	"lvresize * /dev/*",
+	"pvmove *",
+
+	// ====== RAID ======
+	"mdadm --create*",
+	"mdadm --stop*",
+	"mdadm --zero-superblock*",
+	"mdadm --fail*",
+	"mdadm --remove*",
+	"mdadm --manage --stop*",
+
+	// ====== ZFS ======
+	"zpool destroy*",
+	"zfs destroy -r*",
+	"zpool create*",
+	"zpool remove*",
+	"zpool offline /dev/*",
+	"zpool labelclear*",
+	"zpool split*",
+
+	// ====== Btrfs ======
+	"btrfs device remove*",
+	"btrfs device delete*",
+	"btrfs balance start -dusage=0*",
+	"btrfs balance start --full-balances*",
+	"btrfs subvolume delete /",
+	"btrfs subvolume delete /*",
+
+	// ====== Encryption ======
+	"cryptsetup luksFormat /dev/*",
+	"cryptsetup luksRemoveKey /dev/*",
+	"cryptsetup luksErase /dev/*",
+	"cryptsetup erase /dev/*",
+	"cryptsetup reencrypt /dev/*",
+	"cryptsetup convert*",
+
+	// ====== System permissions destruction ======
+	"chmod -R 0 /",
+	"chmod -R 0 /*",
+	"chmod -R 000 /",
+	"chmod -R 000 /*",
+	"chmod 0 /*",
+	"chmod 0 /",
+	"chmod 000 /*",
+	"chmod 000 /",
+	"chmod -R 777 /",
+	"chmod -R a+rwx /*",
+	"chown -R 0:0 /",
+	"chown -R 0:0 /*",
+	"chown -R root:root /*",
+	"chown -R nobody:nogroup /*",
+	"chmod 0 /etc*",
+	"chmod -R 0 /nix*",
+
+	// ====== Remount / unmount ======
+	"mount -o remount,ro /",
+	"mount -o remount,ro /*",
+	"mount -t tmpfs tmpfs /",
+	"mount -t tmpfs tmpfs /*",
+	"mount --bind /dev/null /etc*",
+	"umount /",
+	"umount /*",
+	"umount -a",
+	"umount -f /",
+	"umount -l /",
+	"umount -R /",
+	"swapoff -a",
+	"swapoff /dev/*",
+
+	// ====== Kernel manipulation ======
+	"sysctl -w kernel*",
+	"sysctl -w vm*",
+	"sysctl -w net.ipv*",
+	"echo c > /proc/sysrq-trigger",
+	"echo b > /proc/sysrq-trigger",
+	"echo o > /proc/sysrq-trigger",
+	"echo i > /proc/sysrq-trigger",
+	"echo s > /proc/sysrq-trigger",
+	"echo u > /proc/sysrq-trigger",
+	"echo 1 > /proc/sys/kernel/sysrq",
+	"echo 0 > /proc/sys/kernel/sysrq",
+	"modprobe -r*",
+	"rmmod *",
+	"insmod *",
+	"kexec*",
+
+	// ====== Boot / power management ======
+	"shutdown*",
+	"poweroff*",
+	"reboot*",
+	"halt*",
+	"init 0",
+	"init 6",
+	"init 1",
+	"telinit 0",
+	"telinit 6",
+	"telinit 1",
+	"systemctl poweroff",
+	"systemctl reboot",
+	"systemctl halt",
+	"systemctl kexec",
+	"systemctl emergency",
+	"systemctl rescue",
+	"systemctl soft-reboot",
+	"systemctl exit",
+	"systemctl switch-root*",
+
+	// ====== Network destruction ======
+	"iptables -F",
+	"iptables -F*",
+	"iptables -X",
+	"iptables -P INPUT DROP",
+	"iptables -P INPUT ACCEPT",
+	"iptables -P FORWARD DROP",
+	"iptables -P OUTPUT DROP",
+	"iptables -t nat -F",
+	"iptables -t mangle -F",
+	"ip6tables -F",
+	"ip6tables -X",
+	"ip6tables -P*DROP",
+	"iptables-save",
+	"iptables-restore*",
+	"nft flush ruleset",
+	"nft delete table*",
+	"ip link set * down",
+	"ip link set lo down",
+	"ip link delete *",
+	"ip addr flush *",
+	"ip route del default*",
+	"ip route flush *",
+	"route del default*",
+	"route add default*",
+	"ifconfig * down",
+	"ifconfig * 0.0.0.0",
+	"ifdown *",
+	"iw dev * disconnect",
+	"iw dev * del",
+	"rfkill block all",
+	"rfkill unblock all",
+	"systemctl stop NetworkManager",
+	"systemctl disable NetworkManager",
+	"systemctl stop systemd-networkd",
+	"systemctl disable systemd-networkd",
+	"systemctl stop networking",
+	"systemctl disable networking",
+	"systemctl stop nscd",
+	"systemctl stop resolved",
+	"systemctl disable resolved",
+	"resolvectl dns *",
+	"resolvectl domain *",
+	"ufw disable",
+	"ufw reset",
+	"ufw --force reset",
+	"systemctl stop ufw",
+	"systemctl disable ufw",
+	"systemctl stop firewalld",
+	"systemctl disable firewalld",
+	"firewall-cmd --complete-reload",
+
+	// ====== Security subsystem ======
+	"setenforce 0",
+	"setenforce Permissive",
+	"setenforce permissive",
+	"echo 0 > /selinux/enforce",
+	"systemctl stop selinux*",
+	"systemctl disable selinux*",
+	"aa-disable *",
+	"aa-complain *",
+	"apparmor_parser -R*",
+	"systemctl stop apparmor*",
+	"systemctl disable apparmor*",
+	"pam-auth-update --remove*",
+	"semanage permissive*",
+
+	// ====== User / auth destruction ======
+	"passwd -d*",
+	"passwd -l*",
+	"passwd -u*",
+	"passwd root*",
+	"passwd * NOPASSWD*",
+	"usermod -L*",
+	"usermod -p ''*",
+	"usermod -s /bin/false*",
+	"usermod -G ''*",
+	"userdel -r*",
+	"userdel -f*",
+	"groupdel*",
+	"chage -E 0*",
+	"chage -E -1*",
+	"chpasswd*",
+	"newusers*",
+
+	// ====== SSH / remote access ======
+	"rm -rf /etc/ssh*",
+	"rm -rf ~/.ssh*",
+	"chmod 0 /etc/ssh*",
+	"chmod 0 ~/.ssh*",
+	"echo PermitRootLogin*",
+	"echo PasswordAuthentication*",
+	"sed -i *PermitRootLogin*",
+	"sed -i *PasswordAuthentication*",
+	"sed -i *PubkeyAuthentication*",
+	"systemctl stop sshd",
+	"systemctl disable sshd",
+	"systemctl stop ssh",
+	"systemctl disable ssh",
+	"systemctl stop dropbear",
+	"systemctl disable dropbear",
+
+	// ====== Service destruction ======
+	"systemctl disable dbus*",
+	"systemctl stop dbus*",
+	"systemctl disable systemd-journald*",
+	"systemctl stop systemd-journald*",
+	"systemctl disable systemd-logind*",
+	"systemctl stop systemd-logind*",
+	"systemctl disable systemd-udevd*",
+	"systemctl stop systemd-udevd*",
+	"systemctl disable polkit*",
+	"systemctl stop polkit*",
+	"systemctl disable accounts-daemon*",
+	"systemctl stop accounts-daemon*",
+	"systemctl mask *",
+
+	// ====== Process destruction ======
+	"kill -9 -1",
+	"kill -9 1",
+	"killall -9*",
+	"killall -r*",
+	"kill -9 $(pidof *)",
+	"kill -9 $(pgrep *)",
+	"pkill -9*",
+	"pkill -f *",
+	"kill -STOP *",
+	"kill -TERM 1",
+
+	// ====== Package manager destruction ======
+	"nix-env -e *",
+	"nix-env --uninstall *",
+	"nix-env -e system*",
+	"nix-collect-garbage -d",
+	"nix-store --delete *",
+	"nix-store --gc *",
+	"nix-store --repair *",
+	"nix build --no-link --print-out-paths * | xargs rm -rf*",
+	"nix profile remove *",
+	"nix profile wipe-history*",
+	"dpkg --purge *",
+	"dpkg --remove *",
+	"dpkg -P *",
+	"apt-get remove *",
+	"apt-get purge *",
+	"apt-get autoremove*",
+	"apt-get --purge remove*",
+	"apt remove *",
+	"apt purge *",
+	"apt autoremove*",
+	"rpm -e *",
+	"rpm --erase *",
+	"pacman -Rdd *",
+	"pacman -Rsc *",
+	"pacman -Rns *",
+	"pacman -Scc",
+	"pacman -S --force*",
+	"pacstrap*",
+
+	// ====== Container destruction ======
+	"docker rm -f $(docker ps -aq)",
+	"docker rm -f $(docker container ls -q)",
+	"docker system prune -a*",
+	"docker system prune --volumes*",
+	"docker container prune -f*",
+	"docker image prune -a*",
+	"docker volume prune -a*",
+	"docker network prune*",
+	"docker compose down -v*",
+	"docker kill $(docker ps -q)",
+	"docker stop $(docker ps -q)",
+	"podman rm -fa*",
+	"podman system prune -af*",
+	"podman system reset*",
+	"podman pod rm -fa*",
+	"podman volume prune -af*",
+	"podman compose down -v*",
+	"podman kill -a*",
+	"runc delete*",
+	"containerd*",
+	"nerdctl system prune*",
+	"nerdctl volume prune*",
+
+	// ====== DB ======
+	"pg_drop*",
+	"dropdb*",
+	"dropuser*",
+	"psql -c *DROP DATABASE*",
+	"psql -c *DROP TABLE*",
+	"psql -c *TRUNCATE*",
+	"psql -c *DELETE FROM*users*",
+	"mysql -e *DROP DATABASE*",
+	"mysql -e *DROP TABLE*",
+	"mysqladmin drop*",
+	"mongosh --eval *db.dropDatabase*",
+	"mongosh --eval *db.drop*",
+	"redis-cli FLUSHALL",
+	"redis-cli FLUSHDB",
+	"redis-cli CONFIG SET *",
+	"redis-cli DEBUG SEGFAULT",
+	"redis-cli SHUTDOWN*",
+	"sqlite3 */var/lib/* .dump",
+	"sqlite3 */var/lib/* .drop*",
+
+	// ====== Firmware / hardware ======
+	"flashrom -w*",
+	"flashrom --write*",
+	"flashrom -E*",
+	"flashrom --erase*",
+	"fwupdmgr update*",
+	"fwupdmgr install*",
+	"fwupdmgr switch-branch*",
+	"fwupdmgr activate*",
+	"efibootmgr -B*",
+	"efibootmgr -b * -B",
+	"efibootmgr --delete-bootnum*",
+	"efibootmgr --create-only*",
+
+	// ====== Config overwrite ======
+	"*>/etc/fstab*",
+	"*>/etc/passwd*",
+	"*>/etc/shadow*",
+	"*>/etc/sudoers*",
+	"*>/etc/hosts*",
+	"*>/etc/hostname*",
+	"*>/etc/resolv.conf*",
+	"*>/etc/ssh/sshd_config*",
+	"*>/etc/nixos/*",
+	"*>/etc/systemd/*",
+	"*>/etc/default/*",
+	"*>/etc/modprobe.d/*",
+	"*>/etc/udev/rules.d/*",
+	"*>/etc/polkit-1/*",
+	"*>/etc/pam.d/*",
+	"*>/etc/selinux/*",
+	"*>/etc/nginx/*",
+	"*>/etc/NetworkManager/*",
+	"*>/etc/X11/*",
+	"*>/etc/environment*",
+	"*>/etc/profile*",
+	"*>/etc/locale.conf*",
+	"*>/etc/localtime*",
+
+	// ====== Critical symlink manipulation ======
+	"ln -sf /dev/null /etc*",
+	"ln -sf /dev/null ~/.ssh*",
+	"ln -sf /dev/zero /dev/sda",
+	"ln -sf /dev/null /var/log*",
+	"ln -sf /dev/null /var/lib*",
+	"mv /etc/*",
+	"mv /usr/*",
+	"mv /bin/*",
+	"mv /var/*",
+	"mv /lib/*",
+	"mv /opt/*",
+	"mv /boot/*",
+
+	// ====== Fork bomb / DoS ======
+	":(){ :|:& };:",
+	":() { : | : & };:",
+	"while true; do mkdir*; done",
+	":(){ :& };:",
+	"yes > /dev/null &",
+	"cat /dev/random > /dev/null &",
+
+	// ====== User communication / annoyance (security risk) ======
+	"write *",
+	"wall *",
+	"shutdown -k*", // fake shutdown
+
+	// ====== Log / journal destruction ======
+	"journalctl --rotate --vacuum-time=1s",
+	"journalctl --rotate --vacuum-size=1",
+	"journalctl --flush --rotate --vacuum*",
+	"rm -rf /var/log*",
+	"rm -rf /var/log/journal*",
+	"rm -rf /run/log*",
+	"rm -rf /var/crash*",
+	"rm -rf /var/spool*",
+	"rm -rf /var/mail*",
+	"rm -rf /var/backups*",
+
+	// ====== NixOS specific ======
+	"nixos-rebuild switch --rollback",
+	"nixos-rebuild boot --rollback",
+	"cp -r /etc/nixos",
+	"cp -r /etc/nixos/*",
+	"mv /etc/nixos*",
+	"rm -rf /etc/nixos*",
+	"nixos-enter*",
+	"nixos-install*",
+	"nixos-generate-config --force*",
 ]
 
 export const allowedExtraCwds: string[] = ["/tmp"]
@@ -224,6 +712,13 @@ function updateTimeoutStatus(ctx: ExtensionContext): void {
 	} else {
 		ctx.ui.setStatus("perm-timeout", undefined)
 	}
+}
+
+function updateYoloStatus(ctx: ExtensionContext): void {
+	ctx.ui.setStatus(
+		"yolo-mode",
+		yoloMode ? ctx.ui.theme.fg("error", "YOLO") : undefined,
+	)
 }
 
 export default function (pi: ExtensionAPI) {
@@ -508,6 +1003,169 @@ export default function (pi: ExtensionAPI) {
 		return new RegExp(`^${re}$`, "s").test(str)
 	}
 
+	// Normalize a single command for robust pattern matching:
+	//   - collapse runs of whitespace to single space
+	//   - strip leading path from command name (/bin/rm → rm)
+	//   - strip leading "command ", "sudo ", "doas "
+	//   - strip leading env var assignments (VAR=val cmd → cmd)
+	//   - remove backslash escaping (\x → x for any non-newline char)
+	function normalizeCommand(cmd: string): string {
+		// Remove backslash escaping before non-newline chars (bash: \x → x)
+		let s = cmd.replace(/\\(?!\n)/g, "")
+
+		// Collapse whitespace
+		s = s.trim().replace(/\s+/g, " ")
+
+		// Strip leading env var assignments
+		s = s.replace(
+			/^([A-Za-z_][A-Za-z0-9_]*=(?:\$\([^)]*\)|`[^`]*`|'[^']*'|"[^"]*"|[^\s"'`])+\s+)+/,
+			"",
+		)
+
+		// Strip leading "command "
+		s = s.replace(/^command\s+/, "")
+
+		// Strip leading privilege elevators
+		s = s.replace(/^sudo\s+(--\S+\s+)*/, "")
+		s = s.replace(/^doas\s+/, "")
+		s = s.replace(/^pkexec\s+/, "")
+		s = s.replace(/^run0\s+/, "")
+
+		// Strip leading "time ", "nohup ", "nice ", "stdbuf ", "ionice "
+		s = s.replace(/^(time|nohup|nice|stdbuf|ionice|chrt|taskset)\s+/, "")
+
+		// Strip leading path from first word (command name)
+		// e.g. /bin/rm → rm, /nix/store/xxx/bin/nix → nix
+		const parts = s.split(/(\s+)/)
+		if (parts.length > 0) {
+			const first = parts[0]
+			const slashIdx = first.lastIndexOf("/")
+			if (slashIdx >= 0) {
+				parts[0] = first.slice(slashIdx + 1)
+				s = parts.join("")
+			}
+		}
+
+		return s.trim()
+	}
+
+	// Extract inner command from shell -c / nix --command / eval wrappers.
+	// Returns an array of candidate commands to check.
+	function extractWrappedCommands(cmd: string): string[] {
+		const candidates: string[] = [cmd]
+
+		// sh -c "dangerous" (also bash, zsh, dash, ksh)
+		let m = cmd.match(
+			/^(sh|bash|zsh|dash|ksh)\s+-c\s+('([^']*)'|"((?:[^"\\]|\\.)*)"|(\S+))/,
+		)
+		if (m) {
+			const inner = m[3] ?? m[4] ?? m[5]
+			if (inner) candidates.push(inner)
+		}
+
+		// eval "dangerous"
+		m = cmd.match(/^eval\s+('([^']*)'|"((?:[^"\\]|\\.)*)"|(\S+))/)
+		if (m) {
+			const inner = m[2] ?? m[3] ?? m[4]
+			if (inner) candidates.push(inner)
+		}
+
+		// nix shell ... --command <dangerous> / nix develop ... -c <dangerous>
+		m = cmd.match(
+			/nix\s+(?:shell|develop|run|build|exec|profile)\s+.*?\s+(?:--command|-c)\s+(.+)/,
+		)
+		if (m) candidates.push(m[1])
+
+		// nix-shell (legacy) --command <dangerous> / --run <dangerous>
+		m = cmd.match(/nix-shell\s+.*?\s+(?:--command|--run)\s+(.+)/)
+		if (m) candidates.push(m[1])
+
+		// ssh user@host "dangerous" — extract the remote command
+		m = cmd.match(/ssh\s+\S+@\S+\s+('([^']*)'|"((?:[^"\\]|\\.)*)"|(\S.+))/)
+		if (m) {
+			const inner = m[2] ?? m[3] ?? m[4]
+			if (inner) candidates.push(inner)
+		}
+
+		// xargs ... <dangerous>
+		m = cmd.match(/xargs\s+(-I\S+\s+)?(.+)/)
+		if (m) candidates.push(m[2])
+
+		return candidates
+	}
+
+	// Create a relaxed version of a command by replacing $() and `` substitutions
+	// with dangerous-looking path tokens so patterns like "rm -rf /*" catch
+	// bypasses like `rm -rf "$(echo /)"` or `rm -rf $(echo /)/etc`.
+	// Also strips quotes wrapping substitutions so the path token connects cleanly.
+	function relaxSubstitutions(cmd: string): string {
+		let s = cmd
+			// Strip quotes wrapping substitutions: "$(x)" → $(x)
+			.replace(/"(\$\([^)]*\))"/g, "$1")
+			.replace(/"(`[^`]*`)"/g, "$1")
+		// Replace $(...) and `...` with /*/x which patterns with /* can match
+		s = s
+			.replace(/\$\([^)]*\)/g, "/*/x")
+			.replace(/`[^`]*`/g, "/*/x")
+		return s
+	}
+
+	// Check if ANY subcommand in a compound command matches a dangerous pattern.
+	// Splits on pipes, chains, semicolons, and newlines, normalizes each part,
+	// and unwraps shell -c / nix --command wrappers.
+	function matchesAnyDangerous(cmd: string): string | null {
+		// Split into individual subcommands using same logic as checkCommand
+		const subcommands = [
+			// First try the whole thing
+			cmd,
+			// Split on newlines
+			...splitLines(cmd),
+			// Split on semicolons
+			...splitSemicolons(cmd),
+			// Split on && chains
+			...splitChain(cmd),
+			// Split on || ors
+			...splitOr(cmd),
+		]
+
+		// Collect unique parts (split pipes within each part too)
+		const parts = new Set<string>()
+		for (const sub of subcommands) {
+			const piped = splitPipes(sub)
+			for (const p of piped) {
+				if (p.trim()) parts.add(p.trim())
+			}
+		}
+
+		// Check each sub-part AND any wrapped/embedded commands extracted from it
+		for (const part of parts) {
+			for (const candidate of extractWrappedCommands(part)) {
+				const norm = normalizeCommand(candidate)
+				if (!norm) continue
+				for (const pattern of veryDangerousCommands) {
+					if (matchGlob(norm, pattern)) {
+						return pattern
+					}
+				}
+			}
+
+			// Catch command substitution bypasses: rm -rf "$(echo /)"
+			// by relaxing substitutions to * and re-checking the full command
+			const relaxed = relaxSubstitutions(part)
+			if (relaxed !== part) {
+				const normRelaxed = normalizeCommand(relaxed)
+				if (normRelaxed) {
+					for (const pattern of veryDangerousCommands) {
+						if (matchGlob(normRelaxed, pattern)) {
+							return pattern
+						}
+					}
+				}
+			}
+		}
+
+		return null
+	}
 	function isAllowedSingle(command: string): boolean {
 		if (allowedPatterns.some((p) => matchGlob(command, p))) return true
 		const stripped = stripAssignments(command)
@@ -561,6 +1219,21 @@ export default function (pi: ExtensionAPI) {
 		},
 	})
 
+	pi.registerCommand("yolo", {
+		description:
+			"Toggle yolo mode — auto-approve commands not in allowlist (still blocks paths and very dangerous commands)",
+		handler: async (_args, ctx) => {
+			yoloMode = !yoloMode
+			updateYoloStatus(ctx)
+			ctx.ui.notify(
+				yoloMode
+					? "YOLO mode enabled — auto-approving non-allowlisted commands"
+					: "YOLO mode disabled",
+				yoloMode ? "warning" : "info",
+			)
+		},
+	})
+
 	pi.registerShortcut(Key.ctrlAlt("t"), {
 		description: "Toggle permission timeout auto-deny",
 		handler: async (ctx) => {
@@ -576,13 +1249,52 @@ export default function (pi: ExtensionAPI) {
 		},
 	})
 
+	pi.registerShortcut(Key.ctrlAlt("y"), {
+		description: "Toggle yolo mode",
+		handler: async (ctx) => {
+			yoloMode = !yoloMode
+			updateYoloStatus(ctx)
+			ctx.ui.notify(
+				yoloMode
+					? "YOLO mode enabled — auto-approving non-allowlisted commands"
+					: "YOLO mode disabled",
+				yoloMode ? "warning" : "info",
+			)
+		},
+	})
+
 	pi.on("session_start", async (_event, ctx) => {
 		autoDenyTimeoutEnabled = true
 		autoDenyTimeoutMs = 30000
+		yoloMode = false
 		updateTimeoutStatus(ctx)
+		updateYoloStatus(ctx)
 	})
 
+	function isPathForbidden(path: string): boolean {
+		const lowerPath = path.toLowerCase()
+		for (const pattern of forbiddenPathPatternsLower) {
+			if (matchesGlob(lowerPath, pattern)) return true
+		}
+		return false
+	}
+
 	pi.on("tool_call", async (event, ctx) => {
+		// Block read/edit/write tools on forbidden paths (always enforced)
+		if (
+			event.toolName === "read" || event.toolName === "edit" ||
+			event.toolName === "write"
+		) {
+			const path = event.input.path as string
+			if (path && isPathForbidden(path)) {
+				const reason = `Forbidden path: ${path}`
+				logBlockedCommand(`${event.toolName} ${path}`, ctx.cwd, reason)
+				return { block: true, reason }
+			}
+			// Path OK, allow (no further checks needed for these tools)
+			return undefined
+		}
+
 		if (event.toolName !== "bash") return undefined
 
 		const command = event.input.command as string
@@ -607,7 +1319,28 @@ export default function (pi: ExtensionAPI) {
 			}
 		}
 
+		// Check very dangerous commands (always enforced, even in yolo mode)
+		// Uses robust splitting + normalization to catch obfuscated variants.
+		const dangerousHit = matchesAnyDangerous(command)
+		if (dangerousHit) {
+			const reason =
+				`Very dangerous command blocked: ${dangerousHit}. This is never allowed.`
+			logBlockedCommand(command, ctx.cwd, reason)
+			return { block: true, reason }
+		}
+
 		if (isAllowed(command, ctx.cwd)) return undefined
+
+		// YOLO mode: auto-approve anything that passes path and command checks
+		if (yoloMode) {
+			ctx.ui.notify(
+				`YOLO-approved: ${command.slice(0, 80)}${
+					command.length > 80 ? "…" : ""
+				}`,
+				"warning",
+			)
+			return undefined
+		}
 
 		if (!ctx.hasUI) {
 			const reason = "Command not in allowlist (no UI)"
