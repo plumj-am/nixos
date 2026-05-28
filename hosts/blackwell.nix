@@ -13,6 +13,7 @@ in
       boot-grub
       buildbot-worker
       disks-server
+      disks-extra-zram-swap
       forgejo-action-runner
       harmonia
       ncro

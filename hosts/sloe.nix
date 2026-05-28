@@ -13,6 +13,7 @@ in
       boot-grub
       buildbot-worker
       disks-server
+      disks-extra-zram-swap
       forgejo-action-runner
       graphics
       harmonia
@@ -24,6 +25,7 @@ in
       openssh-extra-users
       pi
       radicle-node
+      raperl
       rust
       sudo-extra-server
       syncthing

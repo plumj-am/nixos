@@ -17,6 +17,7 @@ in
       cinny
       circus
       disks-server
+      disks-extra-zram-swap
       forgejo
       freshrss-server
       forgejo-action-runner
