@@ -170,7 +170,7 @@
             poll_interval = 5;
             build_timeout = 3600;
             strict_errors = false; # Abort on first error or not.
-            failed_paths_cache = true;
+            failed_paths_cache = false; # TODO: re-enable once working
             failed_paths_ttl = 86400; # 24h
             unsupported_timeout = 0; # For unsupported system build timeouts (useless, for Hydra compat).
             scheduling_strategy = "speed_factor_only"; # TODO: Check other options.
@@ -338,7 +338,7 @@
               {
                 enabled = true;
                 inherit name;
-                sshUri = "ssh://build@${name}";
+                sshUri = "ssh-ng://build@${name}";
                 systems = singleton value.config.nixpkgs.hostPlatform.system;
                 maxJobs = value.config.systemSpecs.cores;
                 speedFactor = value.config.systemSpecs.speedFactor;
@@ -349,7 +349,7 @@
                   "nixos-test"
                 ];
                 mandatoryFeatures = [ ];
-                sshKeyFile = "/root/.ssh/id";
+                sshKeyFile = config.age.secrets.id.path;
                 publicHostKey = config.age.rekey.hostPubkey;
               }
             );
