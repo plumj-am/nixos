@@ -92,6 +92,18 @@ def "main full-nixos-anywhere-setup" [--host: string --remote: string] {
    print "rebuild will not take place automatically, SSH to the machine to verify secrets etc."
 }
 
+def "main reset-circus-db" [] {
+   ssh root@plum "
+      sudo -u postgres dropdb circus
+      sudo -u postgres createdb -O circus circus
+      sudo -u circus circus-migrate up postgresql:///circus?host=/run/postgresql
+
+      systemctl restart circus-server.service
+      systemctl restart circus-queue-runner.service
+      systemctl restart circus-evaluator.service
+   "
+}
+
 # let reboot into installer again
 # find drives and mnt to /mnt and /mnt/boot
 # nixos-enter
