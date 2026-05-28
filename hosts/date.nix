@@ -28,6 +28,7 @@ in
       graphics
       harmonia
       hardware-desktop
+      helium
       jujutsu-extra
       keepassxc
       kitty
