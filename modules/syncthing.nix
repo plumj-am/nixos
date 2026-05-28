@@ -1,54 +1,34 @@
 {
-
   flake.modules.nixos.syncthing =
+    { lib, ... }:
     let
-      devices = {
-        blackwell = {
-          id = "";
-          addresses = [ "tcp://blackwell.taild29fec.ts.net:22000" ];
-        };
-        date = {
-          id = "BVND7WF-QAPBTO3-N22MJMT-SLO35ES-7CTST5I-ANUN6ZW-4P3D3OU-O5E7EAS";
-          addresses = [ "tcp://date.taild29fec.ts.net:22000" ];
-        };
-        kiwi = {
-          id = "";
-          addresses = [ "tcp://kiwi.taild29fec.ts.net:22000" ];
-        };
-        lime = {
-          id = "";
-          addresses = [ "tcp://lime.taild29fec.ts.net:22000" ];
-        };
-        pear = {
-          id = "";
-          addresses = [ "tcp://pear.taild29fec.ts.net:22000" ];
-        };
-        plum = {
-          id = "";
-          addresses = [ "tcp://plum.taild29fec.ts.net:22000" ];
-        };
-        sloe = {
-          id = "";
-          addresses = [ "tcp://sloe.taild29fec.ts.net:22000" ];
-        };
-        yuzu = {
-          id = "R2J6HGL-FX7UB2G-55WVDS3-QD54GPO-QCQADZM-X4WUP7R-D2LOZTD-HFDIWAQ";
-          addresses = [ "tcp://yuzu.taild29fec.ts.net:22000" ];
-        };
-        onx = {
-          id = "";
-          addresses = [ "tcp://onx.taild29fec.ts.net:22000" ];
-        };
-        jam-phone = {
-          id = "BFXWXLP-ELXJTG5-MWN6UXF-0DDGBM4-JXI3GQF-JDUFJM4-R4CVIBI-UAA03AJ";
-          addresses = [ "tcp://jam-phone.taild29fec.ts.net:22000" ];
-        };
+      inherit (lib.lists) singleton;
+      inherit (lib.attrsets) filterAttrs mapAttrs;
+
+      mkDevice = host: id: {
+        inherit id;
+        addresses = singleton "tcp://${host}.taild29fec.ts.net:22000";
       };
+
+      devices =
+        filterAttrs (_: v: v.id != "")
+        <| mapAttrs mkDevice {
+          blackwell = "";
+          date = "BVND7WF-QAPBTO3-N22MJMT-SLO35ES-7CTST5I-ANUN6ZW-4P3D3OU-O5E7EAS";
+          kiwi = "AWF34JY-6S36KPK-LU45ON5-RSEXMTR-BV7KHEP-AUFZQM7-QNXGLDW-UTUVOAW";
+          lime = "";
+          pear = "";
+          plum = "5A4RCFA-WW2UZCX-O2Z5K6T-RR7KGBF-BNLSH4G-F473CGF-VTVBQFD-3F7OBQV";
+          sloe = "L2XEYOJ-34LP234-CTOZMSE-VHLQBOZ-JFSPKTK-H33LAML-XKDA5PU-4TYKCQI";
+          yuzu = "R2J6HGL-FX7UB2G-55WVDS3-QD54GPO-QCQADZM-X4WUP7R-D2LOZTD-HFDIWAQ";
+          onx = "X4Z4IAK-RKPR7QB-CUEDDJ5-2MTQH3Y-U6ER27G-HYLZLQO-2RURC3F-6OM42QK";
+          jam-phone = "BFXWXLP-ELXJTG5-MWN6UXF-ODDGBM4-JXI3GQF-JDUFJM4-R4CVIBI-UAAO3AJ";
+        };
     in
     {
       systemd.tmpfiles.rules = [
-        "d /var/backups 0600 jam users -"
-        "d /var/backups/onx 0600 jam users -"
+        "d /var/backups 0770 jam users -"
+        "d /var/backups/onx 0770 jam users -"
       ];
 
       services.syncthing = {
@@ -61,15 +41,20 @@
           options = {
             relaysEnabled = true;
             localAnnounceEnabled = true;
+            urAccepted = -1; # Disable anonymous usage data prompt and permission.
           };
 
           folders = {
             onx-backup = {
+              id = "dp3tj-rnmrw";
               path = "/var/backups/onx";
               devices = [
-                "sloe"
+                "date"
                 "onx"
+                "sloe"
+                "yuzu"
               ];
+              type = "receiveonly";
               ignorePerms = true;
               versioning = {
                 type = "staggered";
