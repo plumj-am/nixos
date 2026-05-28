@@ -56,10 +56,13 @@ in
       };
 
       services.syncthing.settings.folders.keepassxc = {
+        label = "keepassxc";
+        id = "/home/jam/keepassxc";
         path = "/home/jam/keepassxc";
         devices = [
           "yuzu"
           "date"
+          "jam-phone"
           # "lime" # See below
         ];
         ignorePerms = true;

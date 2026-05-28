@@ -35,11 +35,13 @@
           id = "R2J6HGL-FX7UB2G-55WVDS3-QD54GPO-QCQADZM-X4WUP7R-D2LOZTD-HFDIWAQ";
           addresses = [ "tcp://yuzu.taild29fec.ts.net:22000" ];
         };
-
         onx = {
           id = "";
           addresses = [ "tcp://onx.taild29fec.ts.net:22000" ];
-
+        };
+        jam-phone = {
+          id = "BFXWXLP-ELXJTG5-MWN6UXF-0DDGBM4-JXI3GQF-JDUFJM4-R4CVIBI-UAA03AJ";
+          addresses = [ "tcp://jam-phone.taild29fec.ts.net:22000" ];
         };
       };
     in
