@@ -1,5 +1,7 @@
 { self, ... }:
 {
+  flake.hydraJobs = self.checks;
+
   perSystem =
     {
       pkgs,
