@@ -74,6 +74,7 @@
 
   flake.modules.nixos.users-extra =
     {
+      inputs,
       pkgs,
       lib,
       config,
@@ -107,6 +108,7 @@
             pkgs.sccache
             pkgs.gitMinimal
             pkgs.direnv
+            inputs.cade.packages.${pkgs.stdenv.hostPlatform.system}.default
           ];
           xdg.cache.files = mkForce { };
           xdg.config.files = mkForce { };
@@ -116,5 +118,4 @@
         };
       };
     };
-
 }

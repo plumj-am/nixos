@@ -22,6 +22,10 @@
       url = "github:nix-community/buildbot-nix";
       inputs.nixpkgs.follows = "os";
     };
+    cade = {
+      url = "github:manic-systems/cade";
+      inputs.nixpkgs.follows = "os";
+    };
     circus = {
       url = "github:plumj-am/circus?ref=tmp";
       inputs.nixpkgs.follows = "os";
@@ -71,7 +75,6 @@
     inshellah = {
       url = "github:manic-systems/inshellah";
       inputs.nixpkgs.follows = "os";
-
     };
     llm-agents = {
       url = "github:numtide/llm-agents.nix";

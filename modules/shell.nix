@@ -94,6 +94,16 @@
               }
             '';
 
+          cadeNushellIntegration = # nu
+            ''
+              source ${
+                pkgs.runCommand "cade-hook-nu" { }
+                  ''${
+                    getExe (inputs.cade.packages.${pkgs.stdenv.hostPlatform.system}.default)
+                  } hook nushell >> "$out"''
+              }
+            '';
+
           aliases = defaultAliases // osConfig.shellAliases;
 
           inherit (config) directory user;
@@ -164,6 +174,8 @@
             pkgs.direnv
             pkgs.nushell
             pkgs.zoxide
+
+            inputs.cade.packages.${pkgs.system}.default
           ];
 
           files.".zshrc" = mkIf osConfig.nixpkgs.hostPlatform.isDarwin {
@@ -299,7 +311,7 @@
               ${readFile ./nushell.functions.nu}
 
               ${zoxideNushellIntegration}
-
+              ${cadeNushellIntegration}
 
               def rebuild-all [] {
                 cd /home/jam/nixos; zellij run --in-place -- ./rebuild.nu; zellij run --near-current-pane -- ./rebuild.nu --remote date; zellij run --near-current-pane -- ./rebuild.nu --remote plum; zellij run --near-current-pane -- ./rebuild.nu --remote kiwi; zellij run --near-current-pane -- ./rebuild.nu --remote sloe; }
