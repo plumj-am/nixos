@@ -48,7 +48,7 @@ def --wrapped main [
       --fallback
       --option
       experimental-features
-      "flakes nix-command pipe-operators cgroups"
+      "auto-allocate-uids flakes nix-command pipe-operators cgroups"
    ]
 
    let nh_args = [
@@ -87,7 +87,7 @@ def --wrapped main [
          [ nh ]
       } else {
          print-notify "Command 'nh' not found, falling back to 'nix run nixpkgs#nh'."
-         [ nix --extra-experimental-features "nix-command flakes pipe-operators cgroups" run nixpkgs#nh -- ]
+         [ nix --extra-experimental-features "auto-allocate-uids nix-command flakes pipe-operators cgroups" run nixpkgs#nh -- ]
       }
 
       try { sudo ...$nh $config.cmd ...$nh_args; true } catch { false }

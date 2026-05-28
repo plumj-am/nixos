@@ -57,6 +57,7 @@ in
         ];
 
         experimental-features = [
+          "auto-allocate-uids" # For nspawn vm tests.
           "flakes"
           "nix-command"
           "pipe-operators"
@@ -81,6 +82,15 @@ in
 
         run-diff-hook = true;
         diff-hook = dixHook;
+
+        auto-allocate-uids = true;
+        system-features = [
+          "benchmark"
+          "big-parallel"
+          "kvm"
+          "nixos-test"
+          "uid-range" # For nspawn vm tests.
+        ];
       };
 
       nix.optimise.automatic = true;

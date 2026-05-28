@@ -33,6 +33,7 @@
                 "big-parallel"
                 "kvm"
                 "nixos-test"
+                "uid-range" # For nspawn vm tests.
               ];
               system = value.config.nixpkgs.hostPlatform.system;
             }
