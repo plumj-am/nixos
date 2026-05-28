@@ -137,6 +137,7 @@ export const allowedPatterns: string[] = [
 	"go test*",
 	"node --check*",
 	"npx tsc*",
+	"zig build*",
 ]
 
 // Commands that are forbidden and show a replacement instruction instead
