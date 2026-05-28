@@ -25,6 +25,7 @@ in
       radicle-node
       rust
       sudo-extra-server
+      syncthing
       s3-upload
       website-dr-radka
       zellij
