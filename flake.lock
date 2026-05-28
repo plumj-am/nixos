@@ -240,6 +240,21 @@
     },
     "crane_3": {
       "locked": {
+        "lastModified": 1780099841,
+        "narHash": "sha256-EVZd2RsbpreRUDSi9rBwPY+ZxoyMaiEBbZxxhljbaS4=",
+        "owner": "ipetkov",
+        "repo": "crane",
+        "rev": "0532eb17955225173906d671fb36306bdeb1e2dc",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ipetkov",
+        "repo": "crane",
+        "type": "github"
+      }
+    },
+    "crane_4": {
+      "locked": {
         "lastModified": 1768319649,
         "narHash": "sha256-VFkNyxHxkqGp8gf8kfFMW1j6XeBy609kv6TE9uF/0Js=",
         "owner": "ipetkov",
@@ -627,6 +642,29 @@
         "type": "github"
       }
     },
+    "harmonia": {
+      "inputs": {
+        "crane": "crane_3",
+        "nix": "nix",
+        "nixpkgs": [
+          "os"
+        ],
+        "treefmt-nix": "treefmt-nix_4"
+      },
+      "locked": {
+        "lastModified": 1780306099,
+        "narHash": "sha256-SKjUIxSvmEFYW+sMkFkyNVo4U5cOGwqZ48DTl0h8gDk=",
+        "owner": "nix-community",
+        "repo": "harmonia",
+        "rev": "bba51756f92a488d440e4c426747fb681abce4a7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "harmonia",
+        "type": "github"
+      }
+    },
     "helium": {
       "inputs": {
         "nixpkgs": [
@@ -770,7 +808,7 @@
           "os"
         ],
         "systems": "systems_3",
-        "treefmt-nix": "treefmt-nix_4"
+        "treefmt-nix": "treefmt-nix_5"
       },
       "locked": {
         "lastModified": 1778704168,
@@ -824,6 +862,22 @@
       "original": {
         "owner": "niri-wm",
         "repo": "niri",
+        "type": "github"
+      }
+    },
+    "nix": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1780240031,
+        "narHash": "sha256-qJYiSFeDdLBL6/3/mNydQZYovxpmL8e+eNASjmdirFc=",
+        "owner": "nixos",
+        "repo": "nix",
+        "rev": "a0bbed291e647b16c930fd83c0e4f2e019db0610",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "repo": "nix",
         "type": "github"
       }
     },
@@ -967,7 +1021,7 @@
     },
     "nu-lint": {
       "inputs": {
-        "crane": "crane_3",
+        "crane": "crane_4",
         "flake-utils": "flake-utils",
         "git-hooks": "git-hooks",
         "nixpkgs": [
@@ -1100,7 +1154,7 @@
         "quickshell": [
           "quickshell"
         ],
-        "treefmt-nix": "treefmt-nix_5"
+        "treefmt-nix": "treefmt-nix_6"
       },
       "locked": {
         "lastModified": 1777811434,
@@ -1192,6 +1246,7 @@
         "gerrit": "gerrit",
         "gerrit-autosubmit": "gerrit-autosubmit",
         "gitea-mq": "gitea-mq",
+        "harmonia": "harmonia",
         "helium": "helium",
         "hjem": "hjem",
         "homebrew": "homebrew",
@@ -1225,7 +1280,7 @@
           "os"
         ],
         "rust-overlay": "rust-overlay_5",
-        "treefmt-nix": "treefmt-nix_6"
+        "treefmt-nix": "treefmt-nix_7"
       },
       "locked": {
         "lastModified": 1774371810,
@@ -1551,6 +1606,27 @@
     "treefmt-nix_4": {
       "inputs": {
         "nixpkgs": [
+          "harmonia",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1780220602,
+        "narHash": "sha256-eynAfOmbmxJnkp7YewvCEbShNnnYJ9gLLqkzsYtBPeM=",
+        "owner": "numtide",
+        "repo": "treefmt-nix",
+        "rev": "db947814a175b7ca6ded66e21383d938df01c227",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "treefmt-nix",
+        "type": "github"
+      }
+    },
+    "treefmt-nix_5": {
+      "inputs": {
+        "nixpkgs": [
           "llm-agents",
           "nixpkgs"
         ]
@@ -1569,7 +1645,7 @@
         "type": "github"
       }
     },
-    "treefmt-nix_5": {
+    "treefmt-nix_6": {
       "inputs": {
         "nixpkgs": "nixpkgs_2"
       },
@@ -1587,7 +1663,7 @@
         "type": "github"
       }
     },
-    "treefmt-nix_6": {
+    "treefmt-nix_7": {
       "inputs": {
         "nixpkgs": [
           "run0-sudo-shim",

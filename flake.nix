@@ -42,6 +42,10 @@
       url = "github:Mic92/gitea-mq";
       inputs.nixpkgs.follows = "os";
     };
+    harmonia = {
+      url = "github:nix-community/harmonia";
+      inputs.nixpkgs.follows = "os";
+    };
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "os";
