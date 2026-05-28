@@ -161,13 +161,9 @@
             bwrapper
 
             pkgs.bash
-            pkgs.carapace
             pkgs.direnv
-            pkgs.fish
-            pkgs.inshellisense
             pkgs.nushell
             pkgs.zoxide
-            pkgs.zsh
           ];
 
           files.".zshrc" = mkIf osConfig.nixpkgs.hostPlatform.isDarwin {
@@ -304,8 +300,6 @@
 
               ${zoxideNushellIntegration}
 
-              try { source $"($nu.cache-dir)/carapace.nu" }
-              try { source $"($nu.cache-dir)/jj.nu" }
 
               def rebuild-all [] {
                 cd /home/jam/nixos; zellij run --in-place -- ./rebuild.nu; zellij run --near-current-pane -- ./rebuild.nu --remote date; zellij run --near-current-pane -- ./rebuild.nu --remote plum; zellij run --near-current-pane -- ./rebuild.nu --remote kiwi; zellij run --near-current-pane -- ./rebuild.nu --remote sloe; }
@@ -318,26 +312,7 @@
                 			use std/config ${theme.nushell}
                 			$env.config.color_config = (${theme.nushell})
 
-                			$env.CARAPACE_BRIDGES = "zsh,fish,bash,inshellisense,clap,jj,nu"
                 			mkdir $"($nu.cache-dir)"
-                			try { carapace _carapace nushell | save --force $"($nu.cache-dir)/carapace.nu" }
-
-                			try { jj util completion nushell | save --force $"($nu.cache-dir)/jj.nu" }
-
-                			# let carapace_completer = {|spans: list<string>|
-                  	# 		# If the current command is an alias, get it's expansion.
-                   #      let expanded_alias = (scope aliases | where name == $spans.0 | get -i 0 | get -i expansion)
-
-                   #      # Overwrite.
-                   #      let spans = (if $expanded_alias != null  {
-                   #          # put the first word of the expanded alias first in the span
-                   #          $spans | skip 1 | prepend ($expanded_alias | split row " " | take 1)
-                   #      } else { $spans })
-
-                   #      carapace $spans.0 nushell ...$spans
-                   #      | from json
-                   #      | if ($in | default [] | any {|| $in.display | str starts-with "ERR"}) { null } else { $in }
-                   #    }
 
                 			$env.LS_COLORS = (${pkgs.vivid}/bin/vivid generate ${theme.vivid})
 
