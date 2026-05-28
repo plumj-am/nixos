@@ -1,6 +1,7 @@
-{ inputs, ... }:
+{ inputs, lib, ... }:
 let
   inherit (inputs.self) mkConfig;
+  inherit (lib.lists) singleton;
 in
 {
   # Sloe | server | x86_64-linux | NixOS
@@ -42,6 +43,11 @@ in
             cores = 12;
             speedFactor = 5;
             runner.strong = true;
+          };
+
+          swapDevices = singleton {
+            device = "/swapfile";
+            size = 1024 * 32;
           };
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK42xzC/vWHZC9SiU/8IBBd2pn7mggBYFQ8themKAic/ root@sloe";

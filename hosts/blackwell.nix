@@ -1,6 +1,7 @@
-{ inputs, ... }:
+{ inputs, lib, ... }:
 let
   inherit (inputs.self) mkConfig;
+  inherit (lib.lists) singleton;
 in
 {
   # Blackwell | server | x86_64-linux | NixOS
@@ -30,6 +31,11 @@ in
           systemSpecs = {
             cores = 2;
             speedFactor = 1;
+          };
+
+          swapDevices = singleton {
+            device = "/swapfile";
+            size = 1024 * 2;
           };
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGSi4SKhqze7ZzhJFcUF9KW/4nXX1MfvZjUqrYWNDi9c root@blackwell";

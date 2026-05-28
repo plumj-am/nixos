@@ -1,6 +1,7 @@
-{ inputs, ... }:
+{ inputs, lib, ... }:
 let
   inherit (inputs.self) mkConfig;
+  inherit (lib.lists) singleton;
 in
 {
   # Kiwi | server | x86_64-linux | NixOS
@@ -44,6 +45,11 @@ in
           systemSpecs = {
             cores = 2;
             speedFactor = 2;
+          };
+
+          swapDevices = singleton {
+            device = "/swapfile";
+            size = 1024 * 2;
           };
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIElcSHxI64xqUUKEY83tKyzEH+fYT5JCWn3qCqtw16af root@kiwi";
