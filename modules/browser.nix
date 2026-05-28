@@ -121,7 +121,7 @@ let
 
   # SERVICES
   extensions.floccus.id = "fnaicdffflnofjppbagibeoednhnbjhg";
-  # extensions.kagi.id = "cdglnehniifkbagbbombnjghhcihifij";
+  extensions.kagi.id = "cdglnehniifkbagbbombnjghhcihifij";
   # <https://github.com/keepassxreboot/keepassxc-browser/blob/develop/keepassxc-browser/managed_storage.json>
   extensions.keepassxc-browser = {
     id = "oboonakemofpalcgghocfoadofidjkkk";
@@ -324,9 +324,9 @@ let
 
     # SEARCH
     DefaultSearchProviderEnabled = true;
-    DefaultSearchProviderName = "DuckDuckGo";
-    DefaultSearchProviderSearchURL = "https://duckduckgo.com/?q={searchTerms}";
-    DefaultSearchProviderSuggestURL = "https://ac.duckduckgo.com/ac/?q={searchTerms}&type=list";
+    DefaultSearchProviderName = "Kagi";
+    DefaultSearchProviderSearchURL = "https://kagi.com/search?q={searchTerms}";
+    DefaultSearchProviderSuggestURL = "https://kagi.com/api/autosuggest?q={searchTerms}";
     SearchSuggestEnabled = true;
 
     SiteSearchSettings = [
