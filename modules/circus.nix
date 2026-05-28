@@ -182,6 +182,11 @@
             scheduling_strategy = "speed_factor_only"; # TODO: Check other options.
             # psi_threshold = 50.0; # None or 0.0-100.0
             psi_check_timeout = 5;
+
+            rpc = {
+              bind = "0.0.0.0:8014";
+              auth_tokens = [ "5fc06cce2184c44d9082bff838c73351813b056894a9137387e774d48929cf4d" ];
+            };
           };
 
           signing = {
@@ -372,6 +377,57 @@
               proxy_set_header X-Forwarded-Proto $scheme;
               client_max_body_size 50M;
             '';
+        };
+      };
+    };
+
+  flake.modules.nixos.circus-agent =
+    {
+      inputs,
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
+    let
+      inherit (lib.lists) singleton;
+      inherit (config.age) secrets;
+      inherit (config.networking) hostName;
+      inherit (config) systemSpecs;
+
+      port = "8014";
+
+      circusPkgs = inputs.circus.packages.${pkgs.stdenv.hostPlatform.system};
+    in
+    {
+      imports = singleton inputs.circus.nixosModules.circus-agent;
+
+      age.secrets.circusAgentAuthToken = {
+        rekeyFile = ../secrets/circus-agent-auth-token.age;
+        owner = "circus-agent";
+        mode = "400";
+      };
+
+      services.circus-agent = {
+        enable = true;
+        package = circusPkgs.circus-agent;
+
+        authTokenFile = secrets.circusAgentAuthToken.path;
+
+        settings.agent = {
+          name = "circus-builder-${hostName}";
+          runner_url = "circus://0.0.0.0:${port}";
+
+          systems = singleton config.nixpkgs.hostPlatform.system;
+          supported_features = [
+            "benchmark"
+            "big-parallel"
+            "kvm"
+            "nixos-test"
+          ];
+          max_jobs = systemSpecs.cores;
+          speed_factor = systemSpecs.speedFactor;
+
         };
       };
     };
