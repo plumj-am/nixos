@@ -63,6 +63,10 @@
         workersFile = secrets.buildbotWorkersFile.path;
         httpBasicAuthPasswordFile = secrets.buildbotHttpBasicAuthPassword.path;
 
+        evalMaxMemorySize = 6144; # 6G - I wish I could adjust this per builder :/
+        # Current worst builder has 8G; best has 32G...
+        # Kiwi has 4G so I dropped it for now lol.
+
         gitea = {
           enable = true;
 
@@ -294,9 +298,9 @@
         # Must match the cores field in ../secrets/buildbot-workers-file.age
         # Doesn't matter if they are offline, they're simply not used.
         workers =
-          if hostName == "kiwi" then # Weak server so only 1 core
-            1
-          else if hostName == "yuzu" then # Main desktop but let buildbot use a couple of cores
+          # if hostName == "kiwi" then # Weak server so only 1 core
+          #   1
+          if hostName == "yuzu" then # Main desktop but let buildbot use a couple of cores
             2
           else
             0; # Determined automatically based on CPU core count.
