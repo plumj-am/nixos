@@ -340,6 +340,26 @@ let
         shortcut = "!no";
         url = "https://searchix.ovh/?query={searchTerms}";
       }
+      {
+        name = "My NixOS";
+        shortcut = "!mno";
+        url = "https://mynixos.com/search?q={searchTerms}";
+      }
+      {
+        name = "GitHub";
+        shortcut = "!gh";
+        url = "https://github.com/search?q={searchTerms}&type=repositories";
+      }
+      {
+        name = "Forgejo";
+        shortcut = "!fj";
+        url = "https://git.plumj.am/{searchTerms}";
+      }
+      {
+        name = "YouTube";
+        shortcut = "!yt";
+        url = "https://youtube.com/results?search_query={searchTerms}";
+      }
     ];
   };
 
