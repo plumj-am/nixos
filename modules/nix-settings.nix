@@ -61,8 +61,10 @@ in
           "flakes"
           "nix-command"
           "pipe-operators"
+          "cgroups"
         ];
 
+        use-cgroups = true;
         builders-use-substitutes = true;
         flake-registry = "";
         http-connections = 0;
@@ -102,11 +104,6 @@ in
     nix.gc = {
       dates = "weekly";
       persistent = true;
-    };
-
-    nix.settings = {
-      use-cgroups = true;
-      experimental-features = [ "cgroups" ];
     };
   };
 
