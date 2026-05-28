@@ -173,11 +173,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1779982571,
-        "narHash": "sha256-VGFypMJz87y1UT7kKyie20rAW+lmeB+Uz8kyoHSvr14=",
+        "lastModified": 1779993779,
+        "narHash": "sha256-8jrd6evpK4VxJQfScDwUi347ggxlz1lGEt3Xmy7wCeE=",
         "owner": "plumj-am",
         "repo": "circus",
-        "rev": "7608fb5ee74043f463506e58186e65f489d271af",
+        "rev": "86e7aefce2306db6e364ffce928cd252ff3a780d",
         "type": "github"
       },
       "original": {
@@ -441,6 +441,24 @@
     "flake-utils_2": {
       "inputs": {
         "systems": "systems_5"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "flake-utils_3": {
+      "inputs": {
+        "systems": "systems_6"
       },
       "locked": {
         "lastModified": 1731533236,
@@ -1152,7 +1170,8 @@
         "quickshell": "quickshell",
         "rio": "rio",
         "run0-sudo-shim": "run0-sudo-shim",
-        "ublock": "ublock"
+        "ublock": "ublock",
+        "zyouz": "zyouz"
       }
     },
     "run0-sudo-shim": {
@@ -1393,6 +1412,21 @@
         "type": "github"
       }
     },
+    "systems_6": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
     "treefmt-nix": {
       "inputs": {
         "nixpkgs": [
@@ -1529,6 +1563,28 @@
       "original": {
         "owner": "imputnet",
         "repo": "uBlock",
+        "type": "github"
+      }
+    },
+    "zyouz": {
+      "inputs": {
+        "flake-utils": "flake-utils_3",
+        "nixpkgs": [
+          "os"
+        ]
+      },
+      "locked": {
+        "lastModified": 1780012254,
+        "narHash": "sha256-ELPiUvklBCL6qmIFB5SVC5tAhhYCi7yz66WNZBNCRi4=",
+        "owner": "plumj-am",
+        "repo": "zyouz",
+        "rev": "ef76aebb8e10196576295fe9b8d9ed3e88ff93ef",
+        "type": "github"
+      },
+      "original": {
+        "owner": "plumj-am",
+        "ref": "tmp",
+        "repo": "zyouz",
         "type": "github"
       }
     }

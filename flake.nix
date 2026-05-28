@@ -136,5 +136,9 @@
       url = "github:imputnet/uBlock";
       flake = false;
     };
+    zyouz = {
+      url = "github:plumj-am/zyouz?ref=tmp";
+      inputs.nixpkgs.follows = "os";
+    };
   };
 }

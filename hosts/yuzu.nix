@@ -63,6 +63,7 @@ in
       theme-extra-scripts
       window-manager
       zellij
+      zyouz
       { hardware.facter.reportPath = ./facter/yuzu.json; }
       {
         config = mkConfig inputs "yuzu" "x86_64-linux" {
