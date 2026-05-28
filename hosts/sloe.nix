@@ -21,7 +21,6 @@ in
       nix-distributed-builder
       nix-distributed-builds
       nix-settings-extra-server
-      object-storage
       openssh-extra-users
       pi
       radicle-node
@@ -29,6 +28,7 @@ in
       rust
       sudo-extra-server
       syncthing
+      s3-upload
       users-extra
       zellij
       { hardware.facter.reportPath = ./facter/sloe.json; }

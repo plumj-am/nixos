@@ -87,7 +87,7 @@
 
       nix.settings = {
         # ncro must be the *only* substituter. Override both base and extra
-        # lists so that harmonia, object-storage, and nix-settings extras are
+        # lists so that harmonia, s3-upload, and nix-settings extras are
         # replaced.
         substituters = mkForce <| singleton ncroUrl;
         extra-substituters = mkForce [ ];

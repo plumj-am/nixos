@@ -39,7 +39,6 @@ in
       ncro
       nix-distributed-builds
       nix-settings-extra-desktop
-      object-storage
       opencode
       packages-extra-linux
       packages-extra-gui
@@ -59,6 +58,7 @@ in
       rss-tui
       sudo-extra-desktop
       syncthing
+      s3-upload
       theme-extra-fonts
       theme-extra-scripts
       window-manager

@@ -20,10 +20,10 @@ in
       # nix-distributed-builder
       nix-distributed-builds
       nix-settings-extra-server
-      object-storage
       radicle-node
       rust
       sudo-extra-server
+      s3-upload
       zellij
       {
         config = mkConfig inputs "blackwell" "x86_64-linux" {

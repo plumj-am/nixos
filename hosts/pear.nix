@@ -15,8 +15,8 @@ in
       jujutsu-extra
       ncro
       nix-distributed-builds
-      # object-storage
       sudo-extra-desktop
+      # s3-upload
       wsl
       zellij
       {

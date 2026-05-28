@@ -22,10 +22,10 @@ in
       nix-distributed-builder
       nix-distributed-builds
       nix-settings-extra-server
-      object-storage
       radicle-node
       rust
       sudo-extra-server
+      s3-upload
       website-dr-radka
       zellij
       { hardware.facter.reportPath = ./facter/kiwi.json; }

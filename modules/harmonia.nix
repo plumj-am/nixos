@@ -47,7 +47,7 @@
         trusted-users = [ "harmonia" ];
         extra-substituters =
           map (h: "http://${h}.taild29fec.ts.net:${toString port}") <| filter (h: h != hostName) hosts;
-        # TODO: dedupe here and ./object-storage.nix.
+        # TODO: dedupe here and ./s3-upload.nix.
         trusted-public-keys = [
           "yuzu-store.plumj.am:rRhcZfgv1nSDQxDhgzaudcpyl/JtqoEf4QOsPble7S8="
           "yuzu-store.plumj.am:p6zQw/rR/i1GxTNYE9nNMgReiy2PuDwpq6aXW0DKfoo=" # TODO: Remove after 2026-06-01

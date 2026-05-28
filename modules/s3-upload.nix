@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.object-storage =
+  flake.modules.nixos.s3-upload =
     {
       pkgs,
       config,

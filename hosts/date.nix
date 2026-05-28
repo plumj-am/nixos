@@ -37,7 +37,6 @@ in
       nix-settings-extra-desktop
       nix-distributed-builder
       nix-distributed-builds
-      object-storage
       opencode
       packages-extra-linux
       packages-extra-gui
@@ -50,6 +49,7 @@ in
       rss-tui
       sudo-extra-desktop
       syncthing
+      s3-upload
       theme-extra-fonts
       theme-extra-scripts
       window-manager
