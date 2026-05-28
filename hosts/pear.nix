@@ -13,6 +13,7 @@ in
       desktop-tools
       harmonia
       jujutsu-extra
+      ncro
       nix-distributed-builds
       # object-storage
       sudo-extra-desktop

@@ -26,6 +26,7 @@ in
       goatcounter
       harmonia
       matrix
+      ncro
       nginx
       nix-distributed-builder
       nix-distributed-builds

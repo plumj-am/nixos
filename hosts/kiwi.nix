@@ -16,6 +16,7 @@ in
       disks-server
       forgejo-action-runner
       harmonia
+      ncro
       nginx
       nix-distributed-builder
       nix-distributed-builds

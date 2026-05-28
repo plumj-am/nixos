@@ -81,6 +81,10 @@
       url = "github:niri-wm/niri";
       inputs.nixpkgs.follows = "os";
     };
+    ncro = {
+      url = "github:feel-co/ncro";
+      inputs.nixpkgs.follows = "os";
+    };
     nixos-core = {
       url = "github:feel-co/nixos-core";
       inputs.nixpkgs.follows = "os";

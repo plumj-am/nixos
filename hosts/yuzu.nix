@@ -36,6 +36,7 @@ in
       litellm
       llama-cpp
       mprocs
+      ncro
       nix-distributed-builds
       nix-settings-extra-desktop
       object-storage

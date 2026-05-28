@@ -15,6 +15,7 @@ in
       disks-server
       forgejo-action-runner
       harmonia
+      ncro
       # nix-distributed-builder
       nix-distributed-builds
       nix-settings-extra-server
