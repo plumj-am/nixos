@@ -20,15 +20,7 @@ Item {
     property bool positionTrackingEnabled: false
     readonly property string identity: activePlayer?.identity ?? ""
 
-    // Keep position updating while playing
-    property Timer _posUpdater: Timer {
-        running: root.isPlaying && root.positionTrackingEnabled
-        interval: 1000
-        repeat: true
-        onTriggered: {
-            if (root.activePlayer) root.activePlayer.positionChanged()
-        }
-    }
+    // Position auto-updated by the Mpris service.
 
     function _updateActivePlayer() {
         const players = Mpris.players.values

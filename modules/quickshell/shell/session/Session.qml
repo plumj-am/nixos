@@ -16,7 +16,7 @@ Item {
     anchors {
         right: parent.right
         verticalCenter: parent.verticalCenter
-        rightMargin: Common.Config.data.shell.enableOuterBorder ? Common.Config.data.shell.outerBorderSize - 0.05 : 0
+        rightMargin: Common.Config.data.shell.enableOuterBorder ? Common.Config.data.shell.outerBorderSize : 0
     }
 
     Behavior on implicitWidth {
@@ -80,7 +80,7 @@ Item {
                     color: mouseArea.containsMouse ? Qt.alpha(Common.Theme.accent, 0.2) : "transparent"
                     radius: Common.Theme.radius.small
 
-                    property real animProgress: root.open ? 1 : 0
+                    property real animProgress: 0
 
                     transform: Translate {
                         x: (1 - animProgress) * 120
@@ -89,6 +89,13 @@ Item {
                     Behavior on animProgress {
                         Common.NAnim {
                             duration: 200
+                        }
+                    }
+
+                    Connections {
+                        target: root
+                        function onOpenChanged() {
+                            animProgress = root.open ? 1 : 0;
                         }
                     }
 

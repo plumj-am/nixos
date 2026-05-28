@@ -86,7 +86,8 @@ PanelWindow {
     function selectEntry() {
         if (filteredEntries.length > 0 && filteredEntries[selectedIndex]) {
             var id = filteredEntries[selectedIndex].id;
-            copyProc.command = ["sh", "-c", "cliphist decode " + id + " | wl-copy"];
+            // Pass id as separate argv to avoid shell injection from clipboard content
+            copyProc.command = ["sh", "-c", "cliphist decode \"$1\" | wl-copy", "_", id];
             copyProc.running = true;
             isOpen = false;
         }
