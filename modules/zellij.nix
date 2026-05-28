@@ -18,7 +18,7 @@
           patch -p1 < ${
             pkgs.fetchurl {
               url = "https://github.com/zellij-org/zellij/pull/5049.diff";
-              hash = "sha256-qkC9if+TCWE8jLqRcfrALcvxE773N3KqWzDIY8jBb+A=";
+              hash = "sha256-fzwZTC79z+xJOOZ4g9Df0Y4pbrHoh3f7I8+AsQjkJLU=";
             }
           }
         '';
