@@ -44,6 +44,9 @@ in
       website-personal
       zellij
       { hardware.facter.reportPath = ./facter/plum.json; }
+      # TODO: Fix properly. Issue caused by using sdX I think.
+      # It changes the boot device by itself occasionally.
+      { disko.devices.disk.disk1.device = "/dev/sdb"; }
       {
         config = mkConfig inputs "plum" "x86_64-linux" {
           networking = {
