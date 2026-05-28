@@ -261,6 +261,7 @@
                   		  mode_resize "${modeTemplate "RES" "#8ec07c"}"
                   		  mode_scroll "${modeTemplate "SCR" "#fe8019"}"
                   		  mode_session "${modeTemplate "SES" "#d65d0e"}"
+                  		  mode_move "${modeTemplate "MOV" "#458588"}"
 
                   		  tab_normal "#[bg=#d5c4a1,fg=#665c54] {index}:{name} "
                   		  tab_active "#[bg=#665c54,fg=#d5c4a1,bold] {index}:{name}* "
