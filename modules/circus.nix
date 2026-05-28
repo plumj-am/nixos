@@ -95,6 +95,7 @@
             ];
             force_secure_cookies = true; # enable when behind HTTPS reverse proxy (nginx/caddy)
             # ldap = { }; None
+            config_editor_enabled = false;
           };
 
           cache = {
@@ -137,38 +138,6 @@
             max_concurrent_evals = 4;
             allow_ifd = false;
             strict_errors = false; # Abort on first error or not.
-          };
-
-          notifications = {
-            webhook_url = "";
-            github_token = "";
-            gitea_url = "https://git.plumj.am";
-            gitea_token = "";
-            gitlab_url = "";
-            gitlab_token = "";
-            email = {
-              smtp_host = "";
-              smtp_port = 0;
-              smtp_user = "";
-              smtp_password = "";
-              from_address = "";
-              to_addresses = [ "" ];
-              tls = false;
-              on_failure_only = false;
-            };
-            alerts = {
-              enabled = false;
-              error_threshold = 20.0;
-              time_window_minutes = 60;
-            };
-            slack = {
-              webhook_url = "";
-              on_failure_only = false;
-            };
-            enable_retry_queue = true;
-            max_retry_attempts = 5;
-            retention_days = 7;
-            retry_poll_interval = 5;
           };
 
           queue_runner = {
@@ -242,16 +211,6 @@
                 }
               ];
 
-              notifications = [
-                {
-                  enabled = false;
-                  notificationType = "webhook"; # github_status, email, gitlab_status, gitea_status, webhook.
-                  config = {
-                    # settingsType is TOML - need to check source probably.
-                  };
-                }
-              ];
-
               webhooks = [
                 {
                   enabled = false;
@@ -292,16 +251,6 @@
                   schedulingShares = 100; # Higher = higher priority.
                   keepNr = 3; # Number of recent successful evals to retain for GC pinning.
                   inputs = [ ]; # Determined automatically.
-                }
-              ];
-
-              notifications = [
-                {
-                  enabled = false;
-                  notificationType = "webhook"; # github_status, email, gitlab_stable, gitea_status, webhook.
-                  config = {
-                    # settingsType is TOML - need to check source probably.
-                  };
                 }
               ];
 
