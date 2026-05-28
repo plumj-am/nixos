@@ -44,14 +44,15 @@
           generator = toZON;
           value = {
             pane_gap = 0;
+            exit_on_focus_change = true;
 
             prefix_key = "ctrl-g";
             keymaps = [
               (mkKeymap "ctrl-q" "quit")
-              (mkKeymap "h" "focus_left")
-              (mkKeymap "j" "focus_down")
-              (mkKeymap "k" "focus_up")
-              (mkKeymap "l" "focus_right")
+              (mkKeymap "ctrl-h" "focus_left")
+              (mkKeymap "ctrl-j" "focus_down")
+              (mkKeymap "ctrl-k" "focus_up")
+              (mkKeymap "ctrl-l" "focus_right")
             ];
 
             layouts = [
