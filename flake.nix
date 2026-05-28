@@ -27,7 +27,7 @@
       inputs.nixpkgs.follows = "os";
     };
     circus = {
-      url = "github:plumj-am/circus?ref=tmp";
+      url = "github:manic-systems/circus";
       inputs.nixpkgs.follows = "os";
     };
     gerrit = {
