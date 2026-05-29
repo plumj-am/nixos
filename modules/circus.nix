@@ -39,6 +39,12 @@
           rekeyFile = ../secrets/circus-forgejo-token.age;
           owner = "circus";
         };
+        circusSshKey = {
+          rekeyFile = ../secrets/plum-circus-ssh-key.age;
+          owner = "circus";
+          group = "circus";
+          mode = "600";
+        };
       };
 
       services.postgresql.ensureDatabases = singleton "circus";
@@ -349,7 +355,7 @@
                   "nixos-test"
                 ];
                 mandatoryFeatures = [ ];
-                sshKeyFile = config.age.secrets.id.path;
+                sshKeyFile = config.age.secrets.circusSshKey.path;
                 publicHostKey = config.age.rekey.hostPubkey;
               }
             );

@@ -15,6 +15,7 @@ let
 
         plum = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBH1S3dhOYCCltqrseHc3YZFHc9XU90PsvDo7frzUGrr root@plum";
         plum-jam-radicle = "";
+        plum-circus = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFWlwKSbAX8+Lv/G56Y3l+lwZIddDX6ThIGuChP1HGE5 circus@plum";
 
         pear = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL2/Pg/5ohT3Dacnzjw9pvkeoQ1hEFwG5l1vRkr3v2sQ root@pear";
         pear-jam-radicle = "";
