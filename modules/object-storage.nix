@@ -10,24 +10,20 @@
       inherit (lib.modules) mkIf;
       inherit (lib.meta) getExe;
       inherit (lib.attrsets) optionalAttrs;
-
+      inherit (lib.lists) singleton;
       inherit (config.age) secrets;
 
       bucket = "plumjam";
       prefix = "nix";
       endpoint = "fsn1.your-objectstorage.com";
-      # Priority 43 so it's after nix-community.cachix.org and our harmonia caches.
-      # This is much slower so it's best to have it as a last resort.
       s3Args = "&priority=43&multipart-upload=true&multipart-threshold=50M&multipart-chunk-size=10M";
       s3Cache = "s3://${bucket}/${prefix}?endpoint=${endpoint}${s3Args}";
-      # s3Cache = "s3://${bucket}/${prefix}${endpoint}${s3Args}"; # TODO: After 2.34 is fixed.
 
-      # Upload queue processor script.
       uploadProcessor = pkgs.writeShellScriptBin "nix-upload-processor" ''
         #!/usr/bin/env bash
         set -eu
 
-        QUEUE_DIR=/var/cache/nix/upload-queue
+        QUEUE_DIR=/var/lib/nix-upload-queue
         QUEUE_FILE="$QUEUE_DIR/pending"
         PROCESSING="$QUEUE_DIR/processing"
         DONE="$QUEUE_DIR/done"
@@ -40,8 +36,14 @@
         export AWS_SECRET_ACCESS_KEY=$(cat "$AWS_SECRET_ACCESS_KEY_PATH")
         export AWS_EC2_METADATA_DISABLED=true
 
+        # Load already-uploaded paths into associative array to avoid slow grep per path.
+        declare -A DONE_PATHS
+        while IFS= read -r done_path; do
+          DONE_PATHS["$done_path"]=1
+        done < "$DONE"
+
         while true; do
-          # Move pending to processing.
+          # pending -> processing
           if [ -s "$QUEUE_FILE" ]; then
             count=$(wc -l < "$QUEUE_FILE")
             echo "Processing $count new path(s)"
@@ -49,23 +51,23 @@
             > "$QUEUE_FILE"
           fi
 
-          # Process each path.
+          # process
           while IFS= read -r path || [ -n "$path" ]; do
             [ -z "$path" ] && continue
             [ -d "$path" ] || continue
 
-            size=$(du -sb "$path" 2>/dev/null | ${getExe pkgs.gawk} '{print $1}' || echo "0")
-
-            # Check if done previously (avoid duplicates).
-            if grep -qx "$path" "$DONE" 2>/dev/null; then
+            # Check in-memory set before doing any work.
+            if [[ -v DONE_PATHS["$path"] ]]; then
               echo "Skipping $path (already uploaded)"
               continue
             fi
 
+            size=$(du -sb "$path" 2>/dev/null | ${getExe pkgs.gawk} '{print $1}' || echo "0")
             echo "Uploading $path ($((size / 1024)) KiB)"
-            if /run/current-system/sw/bin/nix copy --to "${s3Cache}" "$path" 2>&1; then
+            if ${getExe pkgs.nix} copy --to "${s3Cache}" "$path" 2>&1; then
               echo "Uploaded $path successfully"
               echo "$path" >> "$DONE"
+              DONE_PATHS["$path"]=1
             else
               echo "Failed to upload $path"
             fi
@@ -73,10 +75,14 @@
 
           > "$PROCESSING"
 
-          # Trim done file.
+          # Trim done file and reload array.
           if [ -s "$DONE" ]; then
             tail -n 1000 "$DONE" > "$DONE.tmp" || true
             mv "$DONE.tmp" "$DONE" || true
+            DONE_PATHS=()
+            while IFS= read -r done_path; do
+              DONE_PATHS["$done_path"]=1
+            done < "$DONE"
           fi
 
           sleep 5
@@ -86,8 +92,12 @@
         #!/usr/bin/env bash
         set -euo pipefail
 
-        # Minio client.
-        # Directory created by `systemd.tmpfiles.rules` to prevent root ownership.
+        export MC_CONFIG_DIR=${config.users.users.jam.home}/.mc
+        if [ -f /root/.aws/credentials ] && ${getExe pkgs.minio-client} alias list plumjam-fsn1 &>/dev/null; then
+          echo "S3 credentials already configured, skipping"
+          exit 0
+        fi
+
         ${getExe pkgs.minio-client} alias set plumjam-fsn1 \
           https://${endpoint} \
           "$(cat ${secrets.s3AccessKey.path})" \
@@ -95,19 +105,9 @@
           --api s3v4 \
           --path off
 
-        # Environment file for Nix S3 access.
-        mkdir -p /etc/nix
+        mkdir -p /root/.aws
         accessKey=$(cat ${secrets.s3AccessKey.path})
         secretKey=$(cat ${secrets.s3SecretKey.path})
-        cat > /etc/nix/s3-credentials <<EOF
-        AWS_ACCESS_KEY_ID=$accessKey
-        AWS_SECRET_ACCESS_KEY=$secretKey
-        AWS_EC2_METADATA_DISABLED=true
-        EOF
-        chmod 600 /etc/nix/s3-credentials
-
-        # AWS credentials file for AWS SDK credential chain.
-        mkdir -p /root/.aws
         cat > /root/.aws/credentials <<EOF
         [default]
         aws_access_key_id=$accessKey
@@ -136,8 +136,7 @@
             #!/bin/sh
             set -e
 
-            QUEUE_DIR=/var/cache/nix/upload-queue
-            mkdir -p "$QUEUE_DIR"
+            QUEUE_DIR=/var/lib/nix-upload-queue
 
             for output in $OUT_PATHS; do
               echo "$output" >> "$QUEUE_DIR/pending"
@@ -148,26 +147,23 @@
         };
       };
 
-      systemd.tmpfiles.rules = [
-        "d /home/jam/.mc 0755 jam users -"
-      ];
+      systemd.tmpfiles.rules = singleton "d ${config.users.users.jam.home}/.mc 0755 jam users -";
 
       system.activationScripts.s3-setup = {
-        deps = [ "agenix" ];
+        deps = singleton "agenix";
         text = ''
           echo "Setting up S3 credentials..."
           ${getExe setupScript}
         '';
       };
 
-      # Systemd service for continuous upload queue processing
       systemd.services.nix-upload-processor = {
         description = "Nix binary cache upload queue processor";
         after = [
           "network.target"
           "nix-daemon.socket"
         ];
-        wantedBy = [ "multi-user.target" ];
+        wantedBy = singleton "multi-user.target";
 
         serviceConfig = {
           ExecStart = "${getExe uploadProcessor}";
@@ -194,7 +190,7 @@
       };
 
       nix.settings = {
-        substituters = [ s3Cache ];
+        extra-substituters = singleton s3Cache;
 
         extra-trusted-public-keys = [
           "yuzu-store.plumj.am:rRhcZfgv1nSDQxDhgzaudcpyl/JtqoEf4QOsPble7S8="
