@@ -32,6 +32,9 @@
     {
       imports = singleton inputs.ncro.nixosModules.default;
 
+      systemd.services.ncro.serviceConfig.Environment = ''
+        AWS_EC2_METADATA_DISABLED=true
+      '';
       services.ncro = {
         enable = true;
         package = inputs.ncro.packages.${pkgs.system}.ncro;
