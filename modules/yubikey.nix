@@ -23,10 +23,6 @@ let
 
       services.pcscd.enable = true;
       programs.yubikey-manager.enable = true;
-      programs.yubikey-touch-detector = {
-        enable = true;
-        libnotify = true;
-      };
     };
 in
 {
