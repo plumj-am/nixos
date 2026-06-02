@@ -10,19 +10,6 @@
       inherit (lib.meta) getExe;
       inherit (lib.lists) singleton;
       inherit (config) theme;
-
-      # This is probably ass, I just asked the slop machine to do it and it works lol.
-      # https://github.com/zellij-org/zellij/pull/5049
-      zellij-patched = pkgs.zellij.unwrapped.overrideAttrs (oldAttrs: {
-        postPatch = (oldAttrs.postPatch or "") + ''
-          patch -p1 < ${
-            pkgs.fetchurl {
-              url = "https://github.com/zellij-org/zellij/pull/5049.diff";
-              hash = "sha256-fzwZTC79z+xJOOZ4g9Df0Y4pbrHoh3f7I8+AsQjkJLU=";
-            }
-          }
-        '';
-      });
     in
     {
       shellAliases = {
@@ -34,7 +21,7 @@
       hjem.extraModule =
         { osConfig, config, ... }:
         {
-          packages = singleton zellij-patched;
+          packages = singleton pkgs.zellij;
 
           xdg.config.files = {
             "zellij/config.kdl".text =
@@ -154,7 +141,7 @@
                       pane {
                         bind "d" { NewPane "Down"; SwitchToMode "locked"; }
                         bind "r" { NewPane "Right"; SwitchToMode "locked"; }
-                        bind "n" { NewPane "Stacked"; SwitchToMode "locked"; }
+                        bind "n" { NewPane "stacked"; SwitchToMode "locked"; }
                         bind "x" { CloseFocus; }
                         bind "f" { ToggleFocusFullscreen; }
                         bind "w" { ToggleFloatingPanes; }
