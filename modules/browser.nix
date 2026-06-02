@@ -511,7 +511,7 @@ in
     in
     {
       hjem.extraModule = {
-        packages = singleton inputs.helium.packages.${pkgs.system}.default;
+        packages = singleton inputs.helium.packages.${pkgs.stdenv.hostPlatform.system}.default;
       };
     };
 }

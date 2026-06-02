@@ -176,7 +176,7 @@
             pkgs.nushell
             pkgs.zoxide
 
-            inputs.cade.packages.${pkgs.system}.default
+            inputs.cade.packages.${pkgs.stdenv.hostPlatform.system}.default
           ];
 
           files.".zshrc" = mkIf osConfig.nixpkgs.hostPlatform.isDarwin {

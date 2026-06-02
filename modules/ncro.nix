@@ -37,7 +37,7 @@
       '';
       services.ncro = {
         enable = true;
-        package = inputs.ncro.packages.${pkgs.system}.ncro;
+        package = inputs.ncro.packages.${pkgs.stdenv.hostPlatform.system}.ncro;
 
         settings = {
           server = {
