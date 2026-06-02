@@ -170,6 +170,7 @@
 
                   "unsloth/Qwen3.6-35B-A3B:UD-IQ3_XXS"
                 ];
+                defaultThinkingLevel = "xhigh";
 
                 quietStartup = true;
                 hideThinkingBlock = true;
@@ -220,6 +221,7 @@
             ".pi/agent/extensions/read-only-mode.ts".source = ./extensions/read-only-mode.ts;
             ".pi/agent/extensions/zellij-attention.ts".source = ./extensions/zellij-attention.ts;
             ".pi/agent/extensions/caveman.ts".source = ./extensions/caveman.ts;
+            ".pi/agent/extensions/teleport.ts".source = ./extensions/teleport.ts;
             ".pi/agent/extensions/tps-status.ts".source = ./extensions/tps-status.ts;
 
             ".pi/agent/skills/caveman".source = ./skills/caveman;
