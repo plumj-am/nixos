@@ -34,6 +34,7 @@ export const allowedPatterns: string[] = [
 	"hyperfine*",
 	"less*",
 	"ls*",
+	"nl*",
 	"rg*",
 	"sg*",
 	"sort*",
