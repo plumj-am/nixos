@@ -33,6 +33,11 @@
               #"IosevkaNFM "
             ];
 
+            # TODO: remove after inotify bug is fixed in nixpkgs:
+            # <https://github.com/kovidgoyal/kitty/issues/10102>
+            # Or just keep it, I never change this config anyway lol.
+            auto_reload_config = -1;
+
             allow_remote_control = "yes";
             confirm_os_window_close = 0;
 
