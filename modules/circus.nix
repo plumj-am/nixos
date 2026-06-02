@@ -385,8 +385,8 @@ in
         "d /nix/var/nix/gcroots/per-user/circus 0755 circus circus -"
       ];
 
-      age.secrets.circusGerritPassword = {
-        rekeyFile = ../secrets/circus-gerrit-password.age;
+      age.secrets.circusEvaluatorGerritPassword = {
+        rekeyFile = ../secrets/circus-evaluator-gerrit-password.age;
         owner = "circus";
         mode = "400";
       };
