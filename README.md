@@ -26,6 +26,7 @@ Dendritic NixOS configurations for 8 personal machines:
   [flake-parts](https://github.com/hercules-ci/flake-parts)
 - [Hjem](https://github.com/feel-co/hjem) for $HOME management
 - No `specialArgs` or janky passing around of configs between layers[^4]
+- [tack](https://github.com/manic-systems/tack) for flake input management
 
 [^4]: Apart from inherit `specialArgs = { inherit inputs; };` for each host. It
     is necessary for any host configuration.
@@ -204,6 +205,12 @@ It has the following features (non-exhaustive):
 - Clipboard history drawer
 
 The configuration can be found in `modules/quickshell`.
+
+## Tack
+
+[tack](https://github.com/manic-systems/tack) manages my flake inputs in
+[`./.tack`]. I recommend checking out this project - there are a lot of features
+that make it a nice way to control flake inputs.
 
 ## Other comments
 
