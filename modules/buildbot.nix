@@ -298,13 +298,7 @@
 
         # Must match the cores field in ../secrets/buildbot-workers-file.age
         # Doesn't matter if they are offline, they're simply not used.
-        workers =
-          # if hostName == "kiwi" then # Weak server so only 1 core
-          #   1
-          if hostName == "yuzu" then # Main desktop but let buildbot use a couple of cores
-            2
-          else
-            0; # Determined automatically based on CPU core count.
+        workers = 0; # Determined automatically based on CPU core count.
 
         workerPasswordFile = secrets.buildbotMasterPassword.path;
       };
