@@ -102,7 +102,7 @@ in
     nix.nixPath = nixosNixPath;
 
     nix.gc = {
-      dates = "weekly";
+      dates = "*-*-01/14 00:00:00"; # Every 2 weeks.
       persistent = true;
     };
   };

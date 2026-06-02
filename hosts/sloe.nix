@@ -1,6 +1,7 @@
-{ inputs, ... }:
+{ inputs, lib, ... }:
 let
   inherit (inputs.self) mkConfig;
+  inherit (lib.modules) mkForce;
 in
 {
   # Sloe | server | x86_64-linux | NixOS
@@ -50,6 +51,12 @@ in
               path = "/swapfile";
               size = 1024 * 32;
             };
+          };
+
+          # Very large disk, can hold on to things for longer.
+          nix.gc = {
+            options = mkForce "--delete-older-than 14d";
+            dates = mkForce "*-*-01/14 00:00:00"; # Every 2 weeks.
           };
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK42xzC/vWHZC9SiU/8IBBd2pn7mggBYFQ8themKAic/ root@sloe";
