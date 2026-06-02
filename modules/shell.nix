@@ -85,6 +85,9 @@
             rebuild = "${config.directory}/nixos/rebuild.nu";
 
             nu-config-reference = "nu -c 'config nu --doc | nu-highlight | bat'";
+
+            # Frequently mistyped:
+            nxi = "nix";
           };
 
           zoxideNushellIntegration = # nu
