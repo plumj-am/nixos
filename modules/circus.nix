@@ -469,7 +469,7 @@ in
             failed_paths_cache = false; # TODO: re-enable once working
             failed_paths_ttl = 86400; # 24h
             unsupported_timeout = 0; # For unsupported system build timeouts (useless, for Hydra compat).
-            scheduling_strategy = "speed_factor_only"; # TODO: Check other options.
+            scheduling_strategy = "dynamic"; # Weighted by available slots: `(max_jobs - active) * speed_factor DESC`.
             # psi_threshold = 50.0; # None or 0.0-100.0
             psi_check_timeout = 5;
 
