@@ -242,20 +242,32 @@ in
                       name = "toml";
                       auto-format = true;
                       formatter.command = "taplo";
-                      formatter.args = [
-                        "fmt"
-                        "--option"
-                        "align_entries=true"
-                        "--option"
-                        "column_width=100"
-                        "--option"
-                        "compact_arrays=false"
-                        "--option"
-                        "reorder_inline_tables=true"
-                        "--option"
-                        "reorder_keys=true"
-                        "-"
-                      ];
+                      formatter.args =
+                        let
+                          configFile = (pkgs.formats.toml { }).generate "taplo.toml" {
+                            formatting = {
+                              align_entries = true;
+                              column_width = 100;
+                              compact_arrays = false;
+                              reorder_inline_tables = true;
+                              reorder_keys = true;
+                            };
+
+                            rule = [
+                              {
+                                include = [ "**/Cargo.toml" ];
+                                keys = [ "package" ];
+                                formatting.reorder_keys = false;
+                              }
+                            ];
+                          };
+                        in
+                        [
+                          "fmt"
+                          "--config"
+                          "${configFile}"
+                          "-"
+                        ];
                     }
                     {
                       name = "markdown";
