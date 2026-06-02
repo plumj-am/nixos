@@ -23,7 +23,7 @@
       inputs.nixpkgs.follows = "os";
     };
     cade = {
-      url = "github:manic-systems/cade";
+      url = "github:plumj-am/cade?ref=patch/PlumJam-zvnsyvnoovvu";
       inputs.nixpkgs.follows = "os";
     };
     circus = {

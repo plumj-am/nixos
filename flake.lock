@@ -156,15 +156,16 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1780372928,
-        "narHash": "sha256-jjlEBQ9MioO/6Couy+gCFpeTRvp6nTiEh2220hS5/gI=",
-        "owner": "manic-systems",
+        "lastModified": 1780532214,
+        "narHash": "sha256-SxW0HIh0ZuRBiEfGUzYSLiZ+ey7NBnPWQqNujwk869g=",
+        "owner": "plumj-am",
         "repo": "cade",
-        "rev": "41a9fdbe9fe5bf54c7d3a6e5a7212f3ca565de1b",
+        "rev": "252d3bfc5d1be76d7237d20250359fafd81e85e5",
         "type": "github"
       },
       "original": {
-        "owner": "manic-systems",
+        "owner": "plumj-am",
+        "ref": "patch/PlumJam-zvnsyvnoovvu",
         "repo": "cade",
         "type": "github"
       }
