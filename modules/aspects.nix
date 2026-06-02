@@ -1,6 +1,7 @@
 { inputs, ... }:
 let
   commonModuleNames = [
+    "ai-options"
     "disable-nix-documentation"
     "git"
     "env"
