@@ -27,7 +27,14 @@
         priority = 30;
       });
 
-      s3Url = "s3://plumjam/nix?endpoint=fsn1.your-objectstorage.com&scheme=https";
+      s3Urls = [
+        "s3://plumjam/nix?endpoint=fsn1.your-objectstorage.com&scheme=https"
+        "s3://nix?endpoint=s3.plumj.am&scheme=https"
+      ];
+      s3Upstreams = flip map s3Urls (s: {
+        inherit (s) url;
+        priority = 43;
+      });
     in
     {
       imports = singleton inputs.ncro.nixosModules.default;
@@ -62,11 +69,8 @@
               url = "https://cache.garnix.io";
               priority = 25;
             }
-            {
-              url = s3Url;
-              priority = 43;
-            }
           ]
+          ++ s3Upstreams
           ++ harmoniaUpstreams;
 
           cache = {

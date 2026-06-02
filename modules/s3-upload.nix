@@ -13,11 +13,23 @@
       inherit (lib.lists) singleton;
       inherit (config.age) secrets;
 
-      bucket = "plumjam";
-      prefix = "nix";
-      endpoint = "fsn1.your-objectstorage.com";
-      s3Args = "&priority=43&multipart-upload=true&multipart-threshold=50M&multipart-chunk-size=10M";
-      s3Cache = "s3://${bucket}/${prefix}?endpoint=${endpoint}${s3Args}";
+      s3SharedArgs = "&priority=43&multipart-upload=true&multipart-threshold=50M&multipart-chunk-size=10M";
+
+      fsn1Alias = "plumjam-fsn1";
+      fsn1Bucket = "plumjam";
+      fsn1Prefix = "nix";
+      fsn1Endpoint = "fsn1.your-objectstorage.com";
+      fsn1PathStyle = "off";
+      fsn1ApiVersion = "s3v4";
+      fsn1S3Cache = "s3://${fsn1Bucket}/${fsn1Prefix}?endpoint=${fsn1Endpoint}&profile=${fsn1Alias}${s3SharedArgs}";
+
+      garageAlias = "plumjam-garage-nix";
+      garageBucket = "nix";
+      garageEndpoint = "s3.plumj.am";
+      garageRegion = "garage";
+      garagePathStyle = "on";
+      garageApiVersion = "s3v4";
+      garageS3Cache = "s3://${garageBucket}?endpoint=${garageEndpoint}&profile=${garageAlias}&region=${garageRegion}${s3SharedArgs}";
 
       uploadProcessor = pkgs.writeShellScriptBin "nix-upload-processor" ''
         #!/usr/bin/env bash
@@ -31,10 +43,22 @@
         mkdir -p "$QUEUE_DIR"
         touch "$QUEUE_FILE" "$PROCESSING" "$DONE"
 
-        # Use env set by systemd.
-        export AWS_ACCESS_KEY_ID=$(cat "$AWS_ACCESS_KEY_ID_PATH")
-        export AWS_SECRET_ACCESS_KEY=$(cat "$AWS_SECRET_ACCESS_KEY_PATH")
         export AWS_EC2_METADATA_DISABLED=true
+
+        upload_to() {
+          local cache=$1 path=$2
+          case "$cache" in
+            *${fsn1Endpoint}*)
+              export AWS_ACCESS_KEY_ID=$(cat "$CREDENTIALS_DIRECTORY/s3-plumjam-fsn1-access-key")
+              export AWS_SECRET_ACCESS_KEY=$(cat "$CREDENTIALS_DIRECTORY/s3-plumjam-fsn1-secret-key")
+              ;;
+            *)
+              export AWS_ACCESS_KEY_ID=$(cat "$CREDENTIALS_DIRECTORY/s3-plumjam-garage-nix-access-key")
+              export AWS_SECRET_ACCESS_KEY=$(cat "$CREDENTIALS_DIRECTORY/s3-plumjam-garage-nix-secret-key")
+              ;;
+          esac
+          ${getExe pkgs.nix} copy --to "$cache" "$path" 2>&1
+        }
 
         # Load already-uploaded paths into associative array to avoid slow grep per path.
         declare -A DONE_PATHS
@@ -47,14 +71,14 @@
           if [ -s "$QUEUE_FILE" ]; then
             count=$(wc -l < "$QUEUE_FILE")
             echo "Processing $count new path(s)"
-            cat "$QUEUE_FILE" >> "$PROCESSING"
-            > "$QUEUE_FILE"
+            mv "$QUEUE_FILE" "$PROCESSING"
+            touch "$QUEUE_FILE"
           fi
 
           # process
           while IFS= read -r path || [ -n "$path" ]; do
             [ -z "$path" ] && continue
-            [ -d "$path" ] || continue
+            # [ -d "$path" ] || continue
 
             # Check in-memory set before doing any work.
             if [[ -v DONE_PATHS["$path"] ]]; then
@@ -64,12 +88,21 @@
 
             size=$(du -sb "$path" 2>/dev/null | ${getExe pkgs.gawk} '{print $1}' || echo "0")
             echo "Uploading $path ($((size / 1024)) KiB)"
-            if ${getExe pkgs.nix} copy --to "${s3Cache}" "$path" 2>&1; then
+            all_ok=true
+            for cache in "${fsn1S3Cache}" "${garageS3Cache}"; do
+              if upload_to "$cache" "$path"; then
+                echo "  -> $cache OK"
+              else
+                echo "  -> $cache FAILED"
+                all_ok=false
+              fi
+            done
+            if $all_ok; then
               echo "Uploaded $path successfully"
               echo "$path" >> "$DONE"
               DONE_PATHS["$path"]=1
             else
-              echo "Failed to upload $path"
+              echo "Failed to upload $path to one or more targets"
             fi
           done < "$PROCESSING"
 
@@ -88,124 +121,196 @@
           sleep 5
         done
       '';
-      setupScript = pkgs.writeShellScriptBin "s3-setup" ''
+      setupAwsCreds = pkgs.writeShellScriptBin "setup-aws-creds" ''
         #!/usr/bin/env bash
         set -euo pipefail
 
-        export MC_CONFIG_DIR=${config.users.users.jam.home}/.mc
-        if [ -f /root/.aws/credentials ] && ${getExe pkgs.minio-client} alias list plumjam-fsn1 &>/dev/null; then
-          echo "S3 credentials already configured, skipping"
-          exit 0
-        fi
+        dir=$1
+        user=$2
+        group=$3
+        mkdir -p "$dir"
 
-        ${getExe pkgs.minio-client} alias set plumjam-fsn1 \
-          https://${endpoint} \
-          "$(cat ${secrets.s3AccessKey.path})" \
-          "$(cat ${secrets.s3SecretKey.path})" \
-          --api s3v4 \
-          --path off
+        s3PlumjamFsn1AccessKey=$(cat ${secrets.s3PlumjamFsn1AccessKey.path})
+        s3PlumjamFsn1SecretKey=$(cat ${secrets.s3PlumjamFsn1SecretKey.path})
+        s3PlumjamGarageNixAccessKey=$(cat ${secrets.s3PlumjamGarageNixAccessKey.path})
+        s3PlumjamGarageNixSecretKey=$(cat ${secrets.s3PlumjamGarageNixSecretKey.path})
 
-        mkdir -p /root/.aws
-        accessKey=$(cat ${secrets.s3AccessKey.path})
-        secretKey=$(cat ${secrets.s3SecretKey.path})
-        cat > /root/.aws/credentials <<EOF
-        [default]
-        aws_access_key_id=$accessKey
-        aws_secret_access_key=$secretKey
+        cat > "$dir/credentials" <<EOF
+        [${fsn1Alias}]
+        aws_access_key_id=$s3PlumjamFsn1AccessKey
+        aws_secret_access_key=$s3PlumjamFsn1SecretKey
+        [${garageAlias}]
+        aws_access_key_id=$s3PlumjamGarageNixAccessKey
+        aws_secret_access_key=$s3PlumjamGarageNixSecretKey
+        region=${garageRegion}
         EOF
-        chmod 600 /root/.aws/credentials
+        chmod 600 "$dir/credentials"
+        chown $user:$group "$dir/credentials"
+      '';
 
-        echo "S3 setup complete."
-        echo "  Bucket: ${bucket}"
-        echo "  Endpoint: ${endpoint}"
-        echo "  Substituter: ${s3Cache}"
-        echo "  Signing key: ${if secrets ? nixStoreKey then "enabled" else "disabled"}"
+      setupMc = pkgs.writeShellScriptBin "setup-mc" ''
+        #!/usr/bin/env bash
+        set -euo pipefail
+
+        config_dir=$1
+        export MC_CONFIG_DIR="$config_dir"
+        mkdir -p "$config_dir"
+
+        ${getExe pkgs.minio-client} --quiet alias set ${fsn1Alias} \
+          https://${fsn1Endpoint} \
+          "$(cat ${secrets.s3PlumjamFsn1AccessKey.path})" \
+          "$(cat ${secrets.s3PlumjamFsn1SecretKey.path})" \
+          --api ${fsn1ApiVersion} \
+          --path ${fsn1PathStyle}
+
+        ${getExe pkgs.minio-client} --quiet alias set ${garageAlias} \
+          https://${garageEndpoint} \
+          "$(cat ${secrets.s3PlumjamGarageNixAccessKey.path})" \
+          "$(cat ${secrets.s3PlumjamGarageNixSecretKey.path})" \
+          --api ${garageApiVersion} \
+          --path ${garagePathStyle}
+
+        ${getExe pkgs.minio-client} --quiet ilm add --expire-days 60 ${fsn1Alias}/${fsn1Bucket}/${fsn1Prefix}
+        ${getExe pkgs.minio-client} --quiet ilm add --expire-days 60 ${garageAlias}/${garageBucket}
+      '';
+
+      setupScript = pkgs.writeShellScriptBin "s3-setup" ''
+                #!/usr/bin/env bash
+                set -eu
+
+                # jam
+                ${getExe setupAwsCreds} ${config.users.users.jam.home}/.aws jam users
+                ${getExe setupMc} ${config.users.users.jam.home}/.mc
+                chown -R jam:users ${config.users.users.jam.home}/.mc
+
+                # root
+                ${getExe setupAwsCreds} /root/.aws root root
+                ${getExe setupMc} /root/.mc
+
+                nix_cache_info=$(mktemp)
+                cat > "$nix_cache_info" << EOF
+        StoreDir: /nix/store
+        WantMassQuery: 1
+        Priority: 43
+        EOF
+
+                MC_CONFIG_DIR=/root/.mc \
+                ${getExe pkgs.minio-client} cp --quiet "$nix_cache_info" ${fsn1Alias}/${fsn1Bucket}/${fsn1Prefix}/nix-cache-info
+
+                MC_CONFIG_DIR=/root/.mc \
+                ${getExe pkgs.minio-client} cp --quiet "$nix_cache_info" ${garageAlias}/${garageBucket}/nix-cache-info
+
+                rm "$nix_cache_info"
+
+                echo "S3 setup complete."
+                echo "  Fsn1 Bucket: ${fsn1Bucket}"
+                echo "  Fsn1 Endpoint: ${fsn1Endpoint}"
+                echo "  Fsn1 Substituter: ${fsn1S3Cache}"
+                echo "  Garage Bucket: ${garageAlias}"
+                echo "  Garage Endpoint: ${garageEndpoint}"
+                echo "  Garage Substituter: ${garageS3Cache}"
+                echo "  Signing key: ${if secrets ? nixStoreKey then "enabled" else "disabled"}"
       '';
     in
-    mkIf (secrets ? s3AccessKey && secrets ? s3SecretKey) {
-      environment.systemPackages = [
-        pkgs.minio-client
-        setupScript
-        uploadProcessor
-      ];
+    mkIf
+      (
+        secrets ? s3PlumjamFsn1AccessKey
+        && secrets ? s3PlumjamFsn1SecretKey
+        && secrets ? s3PlumjamGarageNixAccessKey
+        && secrets ? s3PlumjamGarageNixSecretKey
+      )
+      {
+        environment.systemPackages = [
+          pkgs.minio-client
+          setupAwsCreds
+          setupMc
+          setupScript
+          uploadProcessor
+        ];
 
-      environment.etc = optionalAttrs (secrets ? nixStoreKey) {
-        "nix/post-build-hook.sh" = {
-          mode = "0755";
+        environment.etc = optionalAttrs (secrets ? nixStoreKey) {
+          "nix/post-build-hook.sh" = {
+            mode = "0755";
+            text = ''
+              #!/bin/sh
+              set -e
+
+              QUEUE_DIR=/var/lib/nix-upload-queue
+
+              for output in $OUT_PATHS; do
+                echo "$output" >> "$QUEUE_DIR/pending"
+              done
+
+              exit 0
+            '';
+          };
+        };
+
+        systemd.tmpfiles.rules = [
+          "d ${config.users.users.jam.home}/.mc 0755 jam users -"
+          "d /root/.mc 0755 root root -"
+        ];
+
+        # TODO: convert to systemd one-shot
+        system.activationScripts.s3-setup = {
+          deps = singleton "agenix";
           text = ''
-            #!/bin/sh
-            set -e
-
-            QUEUE_DIR=/var/lib/nix-upload-queue
-
-            for output in $OUT_PATHS; do
-              echo "$output" >> "$QUEUE_DIR/pending"
-            done
-
-            exit 0
+            echo "Setting up S3 credentials..."
+            ${getExe setupScript}
           '';
         };
-      };
 
-      systemd.tmpfiles.rules = singleton "d ${config.users.users.jam.home}/.mc 0755 jam users -";
-
-      system.activationScripts.s3-setup = {
-        deps = singleton "agenix";
-        text = ''
-          echo "Setting up S3 credentials..."
-          ${getExe setupScript}
-        '';
-      };
-
-      systemd.services.nix-upload-processor = {
-        description = "Nix binary cache upload queue processor";
-        after = [
-          "network.target"
-          "nix-daemon.socket"
-        ];
-        wantedBy = singleton "multi-user.target";
-
-        serviceConfig = {
-          ExecStart = "${getExe uploadProcessor}";
-          LoadCredential = [
-            "s3-access-key:${secrets.s3AccessKey.path}"
-            "s3-secret-key:${secrets.s3SecretKey.path}"
+        systemd.services.nix-upload-processor = {
+          description = "Nix binary cache upload queue processor";
+          after = [
+            "network.target"
+            "nix-daemon.socket"
           ];
-          Restart = "on-failure";
-          RestartSec = "10s";
-          StateDirectory = "nix-upload-queue";
-          StateDirectoryMode = "0755";
-          CPUQuota =
-            let
-              cores = config.systemInfo.cores;
-            in
-            "${toString (cores * 50)}%";
+          wantedBy = singleton "multi-user.target";
+
+          serviceConfig = {
+            ExecStart = "${getExe uploadProcessor}";
+            LoadCredential = [
+              "s3-plumjam-fsn1-access-key:${secrets.s3PlumjamFsn1AccessKey.path}"
+              "s3-plumjam-fsn1-secret-key:${secrets.s3PlumjamFsn1SecretKey.path}"
+              "s3-plumjam-garage-nix-access-key:${secrets.s3PlumjamGarageNixAccessKey.path}"
+              "s3-plumjam-garage-nix-secret-key:${secrets.s3PlumjamGarageNixSecretKey.path}"
+            ];
+            Restart = "on-failure";
+            RestartSec = "10s";
+            StateDirectory = "nix-upload-queue";
+            StateDirectoryMode = "0755";
+            CPUQuota =
+              let
+                cores = config.systemInfo.cores;
+              in
+              "${toString (cores * 50)}%";
+          };
+
+          environment = {
+            AWS_EC2_METADATA_DISABLED = "true";
+          };
         };
 
-        environment = {
-          AWS_ACCESS_KEY_ID_PATH = "${secrets.s3AccessKey.path}";
-          AWS_SECRET_ACCESS_KEY_PATH = "${secrets.s3SecretKey.path}";
-          AWS_EC2_METADATA_DISABLED = "true";
+        nix.settings = {
+          extra-substituters = [
+            fsn1S3Cache
+            garageS3Cache
+          ];
+
+          extra-trusted-public-keys = [
+            "yuzu-store.plumj.am:rRhcZfgv1nSDQxDhgzaudcpyl/JtqoEf4QOsPble7S8="
+            "plum-store.plumj.am:LBmfncp/ftlagUEZOM0NWK2tTH4fIT0Bk2WEBU48CNM="
+            "kiwi-store.plumj.am:PMlO9Tv8jZf5huFRsKWBD7ejVASjUXnZS1o7xpsN5hw="
+            "sloe-store.plumj.am:1qIquG/lWLGgyeyfFBSNuifrNevsGXFf53Bi0stcsxo="
+            "date-store.plumj.am:1sziS/y3AiWPV8TY8pHtK3tYxiN10ujutWDNpo4O1Fg="
+            # TODO ?lime-store?
+            "blackwell-store.plumj.am:YmTvW2JngBUxfgWoKHJzxKu7Xhxt4VzK5u3D0Chudn4="
+          ];
+        }
+        // optionalAttrs (secrets ? nixStoreKey) {
+          post-build-hook = "/etc/nix/post-build-hook.sh";
+          secret-key-files = secrets.nixStoreKey.path;
         };
       };
-
-      nix.settings = {
-        extra-substituters = singleton s3Cache;
-
-        extra-trusted-public-keys = [
-          "yuzu-store.plumj.am:rRhcZfgv1nSDQxDhgzaudcpyl/JtqoEf4QOsPble7S8="
-          "yuzu-store.plumj.am:p6zQw/rR/i1GxTNYE9nNMgReiy2PuDwpq6aXW0DKfoo=" # TODO: Remove after 2026-06-01
-          "plum-store.plumj.am:LBmfncp/ftlagUEZOM0NWK2tTH4fIT0Bk2WEBU48CNM="
-          "kiwi-store.plumj.am:PMlO9Tv8jZf5huFRsKWBD7ejVASjUXnZS1o7xpsN5hw="
-          "sloe-store.plumj.am:1qIquG/lWLGgyeyfFBSNuifrNevsGXFf53Bi0stcsxo="
-          "date-store.plumj.am:1sziS/y3AiWPV8TY8pHtK3tYxiN10ujutWDNpo4O1Fg="
-          # TODO ?lime-store?
-          "blackwell-store.plumj.am:YmTvW2JngBUxfgWoKHJzxKu7Xhxt4VzK5u3D0Chudn4="
-        ];
-      }
-      // optionalAttrs (secrets ? nixStoreKey) {
-        post-build-hook = "/etc/nix/post-build-hook.sh";
-        secret-key-files = secrets.nixStoreKey.path;
-      };
-    };
 }

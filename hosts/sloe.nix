@@ -11,15 +11,18 @@ in
     modules = with inputs.self.modules.nixos; [
       aspectsBase
 
+      acme
       boot-grub
       buildbot-worker
       circus-agent
       circus-evaluator
       disks-server
       forgejo-action-runner
+      garage
       graphics
       harmonia
       # ncro
+      nginx
       nix-settings-extra-server
       openssh-extra-users
       pi
@@ -38,6 +41,14 @@ in
       { disko.devices.disk.disk1.device = "/dev/sdc"; }
       {
         config = mkConfig inputs "sloe" "x86_64-linux" {
+          networking = {
+            domain = "plumj.am";
+            firewall.allowedTCPPorts = [
+              22
+              80
+              443
+            ];
+          };
 
           systemInfo = {
             cores = 12;

@@ -8,21 +8,25 @@
     {
       options.security.acme.users = mkValue [ ];
 
-      config.users.groups.acme.members = config.security.acme.users;
+      config = {
+        age.secrets.acmeEnvironment.rekeyFile = ../secrets/acme-environment.age;
 
-      config.security.acme = {
-        acceptTerms = true;
+        users.groups.acme.members = config.security.acme.users;
 
-        defaults = {
-          environmentFile = config.age.secrets.acmeEnvironment.path;
-          dnsProvider = "cloudflare";
-          dnsResolver = "1.1.1.1";
-          email = "security@${domain}";
-        };
+        security.acme = {
+          acceptTerms = true;
 
-        certs.${domain} = {
-          extraDomainNames = [ "*.${domain}" ];
-          group = "acme";
+          defaults = {
+            environmentFile = config.age.secrets.acmeEnvironment.path;
+            dnsProvider = "cloudflare";
+            dnsResolver = "1.1.1.1";
+            email = "security@${domain}";
+          };
+
+          certs.${domain} = {
+            extraDomainNames = [ "*.${domain}" ];
+            group = "acme";
+          };
         };
       };
     };

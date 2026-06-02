@@ -284,8 +284,10 @@ in
 
         age.secrets = {
           id.rekeyFile = ../secrets/${host}-id.age;
-          s3AccessKey.rekeyFile = ../secrets/s3-access-key.age;
-          s3SecretKey.rekeyFile = ../secrets/s3-secret-key.age;
+          s3PlumjamFsn1AccessKey.rekeyFile = ../secrets/s3-plumjam-fsn1-access-key.age;
+          s3PlumjamFsn1SecretKey.rekeyFile = ../secrets/s3-plumjam-fsn1-secret-key.age;
+          s3PlumjamGarageNixAccessKey.rekeyFile = ../secrets/s3-plumjam-garage-nix-access-key.age;
+          s3PlumjamGarageNixSecretKey.rekeyFile = ../secrets/s3-plumjam-garage-nix-secret-key.age;
           context7Key = {
             rekeyFile = ../secrets/context7-key.age;
             owner = "jam";

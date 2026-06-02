@@ -88,7 +88,7 @@
 
         # GC root registration fails way too often to be useful.
         branches.all = {
-          matchGlob = "*";
+          matchGlob = "**";
           registerGCRoots = false;
         };
       };
