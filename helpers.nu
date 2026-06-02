@@ -104,6 +104,46 @@ def "main reset-circus-db" [] {
    "
 }
 
+def "main fill-caches-remote" [] {
+   let hosts = [date plum sloe]
+   let builds = [date kiwi plum sloe yuzu]
+
+   $hosts | par-each {|host|
+   jj file list
+   | (rsync
+      --archive
+      --compress
+      --delete --recursive --force
+      --delete-excluded
+      --delete-missing-args
+      --human-readable
+      --delay-updates
+      --rsh "ssh -o RemoteCommand=none"
+      --files-from - ./ $"jam@($host):nixos")
+
+      for b in $builds {
+         ssh jam@($host) $"cd ~/nixos ; nix build .#nixosConfigurations.($b).config.system.build.toplevel --builders \"\" --repair --fallback"
+      }
+   }
+}
+
+def "main fill-caches-local" [] {
+   let hosts = [date kiwi plum sloe yuzu]
+   let copyable = $hosts | where {|h| $h != (hostname)}
+
+   for h in $hosts {
+      let target =  $".#nixosConfigurations.($h).config.system.build.toplevel"
+      rom build ($target) -- --builders "" --repair --fallback
+
+      for hh in $hosts {
+         if $hh in $copyable {
+            nix copy --to ssh://root@($h) $target
+         }
+      }
+   }
+
+}
+
 # let reboot into installer again
 # find drives and mnt to /mnt and /mnt/boot
 # nixos-enter
