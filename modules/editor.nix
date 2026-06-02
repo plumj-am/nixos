@@ -280,7 +280,7 @@ in
                     }
                     {
                       name = "nu";
-                      auto-format = false;
+                      auto-format = true;
                       formatter.command = "nufmt";
                       formatter.args = [
                         "--config"
@@ -289,7 +289,7 @@ in
                       ];
                       language-servers = withFsWatcher [
                         "nu-lsp"
-                        # "nu-lint" # Waiting for <https://codeberg.org/wvhulle/nu-lint/pulls/96>
+                        "nu-lint"
                       ];
                       indent = {
                         tab-width = 3;
@@ -415,6 +415,27 @@ in
                 margin: 1
               }
             '';
+
+          "nu-lint.toml" = {
+            generator = pkgs.writers.writeTOML "nu-lint.toml";
+            value = {
+              max_pipeline_length = 60;
+              pipeline_placement = "start";
+              explicit_optional_access = true;
+
+              rules = {
+                check_typed_flag_before_use = "off";
+                print_and_return_data = "off";
+                max_function_body_length = "off";
+                error_make_for_non_fatal = "off";
+                exit_only_in_main = "off";
+                dont_mix_different_effects = "off";
+                redundant_ignore = "off";
+                string_may_be_bare = "off";
+                max_positional_params = "off";
+              };
+            };
+          };
         }
         // mkThemes themes;
       };

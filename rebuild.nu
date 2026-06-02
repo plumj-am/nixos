@@ -9,7 +9,7 @@ def print-notify [message: string, --error(-e)]: any -> string {
    try { notify-send Rebuilder $message }
 }
 
-def --wrapped rsync-files [...rest: string] {
+def --wrapped rsync-files [...rest: string]: any -> string {
    (rsync
       --archive
       --compress
@@ -29,7 +29,7 @@ def --wrapped rsync-files [...rest: string] {
 def --wrapped main [
    --remote: string # The host to build (defaults to current)
    --help (-h)      # Show this help message
-   ...rest          # Extra arguments to pass to nh
+   ...rest: string  # Extra arguments to pass to nh
 ]: nothing -> nothing {
    if $help {
       help main

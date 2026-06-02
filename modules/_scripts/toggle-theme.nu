@@ -3,17 +3,13 @@ const THEME_CONFIG = "/home/jam/nixos/modules/theme.json"
 const THEME_MATUGEN = "/home/jam/nixos/modules/theme-matugen-colors.json"
 const REBUILD_SCRIPT = "/home/jam/nixos/rebuild.nu"
 
-def print-notify [message: string] {
+def print-notify [message: string]: any -> string {
    print $"(ansi purple)[Theme Switcher](ansi rst) ($message)"
 
    try { notify-send "Theme Switcher" $message }
 }
 
-def attempt-rebuild [] {
-   try { nu $REBUILD_SCRIPT } catch { exit 1 }
-}
-
-def get-current-wallpaper [] {
+def get-current-wallpaper []: any -> string {
    let wallpaper = awww query
    | lines
    | first
@@ -30,16 +26,22 @@ def get-current-wallpaper [] {
 def save-theme-config [mode: string, scheme: string] {
    {mode: $mode, scheme: $scheme}
    | to json
-   | save --force $THEME_CONFIG
+   | try { save --force $THEME_CONFIG } catch {|e|
+      print --stderr $"failed to save ($THEME_CONFIG): ($e)"
+
+      exit 1
+   }
 }
 
-def update-gsettings [is_dark: bool] {
+def update-gsettings [is_dark: bool]: any -> nothing {
    let scheme = if $is_dark { "prefer-dark" } else { "default" }
 
-   try { dconf write /org/gnome/desktop/interface/color-scheme $"'($scheme)'" }
+   try {
+      dconf write /org/gnome/desktop/interface/color-scheme $"'($scheme)'"
+   } catch {|e| print --stderr $"failed to save theme via dconf: ($e)" }
 }
 
-def get-current-theme [] {
+def get-current-theme []: any -> nothing {
    try {
       open $THEME_CONFIG
    } catch {
@@ -59,11 +61,7 @@ def is-current [mode_or_scheme: string] {
    }
 }
 
-def generate-matugen-colors [wallpaper: string]: nothing -> nothing {
-   matugen image $wallpaper --json hex --quiet --source-color-index 0 | save --force $THEME_MATUGEN
-}
-
-def toggle-theme [theme: string] {
+def toggle-theme [theme: string]: any -> string {
    print-notify $"Switching to ($theme) theme."
 
    print-notify "Updating theme configuration..."
@@ -79,7 +77,7 @@ def toggle-theme [theme: string] {
    print-notify $"Switch to the ($theme) theme completed!"
 }
 
-def switch-scheme [scheme: string] {
+def switch-scheme [scheme: string]: any -> nothing {
    print-notify $"Switching to ($scheme) color scheme."
 
    let theme_config = get-current-theme
@@ -90,7 +88,14 @@ def switch-scheme [scheme: string] {
       let wallpaper = get-current-wallpaper
 
       if ($wallpaper | is-not-empty) {
-         generate-matugen-colors $wallpaper
+         matugen image $wallpaper --json hex --quiet --source-color-index 0
+         | try {
+            save --force $THEME_MATUGEN
+         } catch {|e|
+            print --stderr $"failed to save generated matugen palette: ($e)"
+
+            exit 1
+         }
       } else {
          print-notify "Warning: Could not detect current wallpaper"
       }
@@ -101,11 +106,11 @@ def switch-scheme [scheme: string] {
    save-theme-config $theme_config.mode $scheme
 }
 
-def det-failure []: any -> int {
+def det-failure []: int -> int {
    if $in not-in [0 1] { 1 } else { 0 }
 }
 
-def reload-applications [] {
+def reload-applications []: any -> string {
    print-notify "Reloading applications..."
 
    mut failure_count = 0
@@ -148,7 +153,9 @@ def main [] {
       reload  - Reload applications"
 }
 
-def "main dark" [--force] {
+def "main dark" [
+   --force # Run the theme toggle even if current theme matches desired theme
+]: nothing -> string {
    if not $force { is-current dark }
 
    toggle-theme dark
@@ -156,7 +163,9 @@ def "main dark" [--force] {
    main reload
 }
 
-def "main light" [--force] {
+def "main light" [
+   --force # Run the theme toggle even if current theme matches desired theme
+]: nothing -> string {
    if not $force { is-current light }
 
    toggle-theme light
@@ -164,7 +173,9 @@ def "main light" [--force] {
    main reload
 }
 
-def "main gruvbox" [--force] {
+def "main gruvbox" [
+   --force # Run the theme toggle even if current theme matches desired theme
+]: nothing -> string {
    if not $force { is-current gruvbox }
 
    switch-scheme gruvbox
@@ -172,7 +183,9 @@ def "main gruvbox" [--force] {
    main reload
 }
 
-def "main matugen" [--force] {
+def "main matugen" [
+   --force # Run the theme toggle even if current theme matches desired theme
+]: nothing -> string {
    if not $force { is-current matugen }
 
    switch-scheme matugen
@@ -180,8 +193,8 @@ def "main matugen" [--force] {
    main reload
 }
 
-def "main reload" [] {
-   attempt-rebuild
+def "main reload" []: nothing -> string {
+   try { nu $REBUILD_SCRIPT } catch { exit 1 }
 
    reload-applications
 
