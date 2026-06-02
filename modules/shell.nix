@@ -156,6 +156,7 @@
                     ...$extra_binds
                     --bind /nix/store /nix/store # I think this prevents spamming ~/.local/share/nix.
                     --bind ${directory}/.pi ${directory}/.pi
+                    --bind ${directory}/.omp ${directory}/.omp
                     --bind ${directory}/.claude ${directory}/.claude
                     --bind ${directory}/nixos ${directory}/nixos
                     --bind ${directory}/.cache ${directory}/.cache
@@ -177,6 +178,7 @@
                     --setenv OPENROUTER_API_KEY (^cat /run/agenix/openrouterKey)
                     --setenv OLLAMA_API_KEY (^cat /run/agenix/ollamaKey)
                     --setenv SAMBANOVA_API_KEY (^cat /run/agenix/sambanovaKey)
+                    --setenv EXA_API_KEY (^cat /run/agenix/exaKey)
                     --setenv IN_BWRAP 1
                     -- $tool ...$rest)
                 }

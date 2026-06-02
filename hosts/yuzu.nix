@@ -39,6 +39,7 @@ in
       # ncro
       nix-distributed-builds
       nix-settings-extra-desktop
+      omp
       opencode
       packages-extra-linux
       packages-extra-gui
