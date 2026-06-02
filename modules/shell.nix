@@ -98,9 +98,7 @@
             ''
               source ${
                 pkgs.runCommand "cade-hook-nu" { }
-                  ''${
-                    getExe (inputs.cade.packages.${pkgs.stdenv.hostPlatform.system}.default)
-                  } hook nushell >> "$out"''
+                  ''${getExe inputs.cade.packages.${pkgs.stdenv.hostPlatform.system}.default} hook nushell >> "$out"''
               }
             '';
 
