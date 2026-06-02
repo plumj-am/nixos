@@ -13,7 +13,7 @@ in
       desktop-tools
       harmonia
       jujutsu-extra
-      ncro
+      # ncro
       nix-distributed-builds
       sudo-extra-desktop
       # s3-upload

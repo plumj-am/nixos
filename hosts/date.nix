@@ -34,7 +34,7 @@ in
       kitty
       litellm
       mprocs
-      ncro
+      # ncro
       nix-settings-extra-desktop
       nix-distributed-builder
       nix-distributed-builds

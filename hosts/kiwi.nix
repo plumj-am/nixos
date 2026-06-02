@@ -18,7 +18,7 @@ in
       disks-extra-zram-swap
       forgejo-action-runner
       harmonia
-      ncro
+      # ncro
       nginx
       nix-distributed-builder
       nix-distributed-builds

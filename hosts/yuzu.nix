@@ -36,7 +36,7 @@ in
       litellm
       llama-cpp
       mprocs
-      ncro
+      # ncro
       nix-distributed-builds
       nix-settings-extra-desktop
       opencode

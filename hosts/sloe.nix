@@ -18,7 +18,7 @@ in
       forgejo-action-runner
       graphics
       harmonia
-      ncro
+      # ncro
       nix-distributed-builder
       nix-distributed-builds
       nix-settings-extra-server
