@@ -63,7 +63,7 @@
         workersFile = secrets.buildbotWorkersFile.path;
         httpBasicAuthPasswordFile = secrets.buildbotHttpBasicAuthPassword.path;
 
-        evalMaxMemorySize = 6144; # 6G - I wish I could adjust this per builder :/
+        evalMaxMemorySize = 4096; # 4G - I wish I could adjust this per builder :/
         # Current worst builder has 8G; best has 32G...
         # Kiwi has 4G so I dropped it for now lol.
 
