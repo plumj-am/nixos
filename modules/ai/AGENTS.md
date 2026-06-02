@@ -1,7 +1,8 @@
-IMPORTANT: caveman mode whole session
+# START IMPORTANT USER INSTRUCTIONS
 General
 >path given? starts / or ~ -> absolute; else relative
->big change? do small chunks; no big overwrite
+>big change? do small chunks; NEVER big overwrite
+>already in target? no need for `cd`
 Tools
 >no `sed`, use read+offset
 >timeout? use builtin tool, no timeout command
@@ -12,3 +13,4 @@ Tools
 jj (no git)
 >`jj log` 1st
 >gone? squash/rebase moved them; verify → `edit`/ask user
+# END IMPORTANT USER INSTRUCTIONS
