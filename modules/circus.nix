@@ -172,7 +172,13 @@
 
             rpc = {
               bind = "0.0.0.0:8014";
-              auth_tokens = [ "5fc06cce2184c44d9082bff838c73351813b056894a9137387e774d48929cf4d" ];
+              auth_tokens = [
+                "47bf8f34370b54dfe24e8e2b09da65dec4296c9d9a4b7d8a299c3c8fbf8ae9c9"
+                "7c229876088043eab303adaed8338858096fbb22b0224cc06b2476c296c0dc39"
+                "5d586afe97ee23e3fbe3d8560a16bcaaea97195c902d73f92593b16451bd063d"
+                "5fc06cce2184c44d9082bff838c73351813b056894a9137387e774d48929cf4d"
+                "6131b1c964ec806204012bebed3df245ca70ba3b912cc5c9ad1033129d6415b4"
+              ];
             };
           };
 
@@ -370,7 +376,7 @@
       imports = singleton inputs.circus.nixosModules.circus-agent;
 
       age.secrets.circusAgentAuthToken = {
-        rekeyFile = ../secrets/circus-agent-auth-token.age;
+        rekeyFile = ../secrets/${hostName}-circus-agent-auth-token.age;
         owner = "circus-agent";
         mode = "400";
       };
@@ -383,7 +389,11 @@
 
         settings.agent = {
           name = "circus-builder-${hostName}";
-          runner_url = "circus://0.0.0.0:${port}";
+          runner_url =
+            if hostName == "plum" then
+              "circus://0.0.0.0:${port}"
+            else
+              "circus://plum.taild29fec.ts.net:${port}";
 
           systems = singleton config.nixpkgs.hostPlatform.system;
           supported_features = [
