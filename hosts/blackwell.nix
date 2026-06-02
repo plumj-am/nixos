@@ -42,7 +42,7 @@ in
 
           age.secrets = {
             forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
-            acmeEnvironment.rekeyFile = ../secrets/acme-environment.age;
+            # acmeEnvironment.rekeyFile = ../secrets/acme-environment.age;
             nixStoreKey.rekeyFile = ../secrets/blackwell-nix-store-key.age;
           };
 
