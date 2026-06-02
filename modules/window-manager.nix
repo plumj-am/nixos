@@ -163,11 +163,11 @@
               }
 
               workspace "browser" {
-                open-on-output "DP-2"
+                open-on-output "DP-1"
               }
 
               workspace "comms" {
-                open-on-output "DP-2"
+                open-on-output "DP-1"
               }
 
               layout {
