@@ -1,10 +1,11 @@
 def zellij-update-tabname []: nothing -> nothing {
-   if ("ZELLIJ" in $env) {
-      let tab_name = if ((pwd) == $env.HOME) {
+   if "ZELLIJ" in $env {
+      let tab_name = if (pwd) == $env.HOME {
          "~"
       } else {
          (pwd | path parse | get stem)
       }
+
       zellij action rename-tab $tab_name
    }
 }
@@ -18,15 +19,17 @@ def "cargo search" [query: string, --limit: int = 10]: nothing -> table {
       } else {
          $line | parse --regex '(?P<name>.+) = "(?P<version>.+)"'
       }
-   } | flatten
+   }
+   | flatten
 }
 
 def "cargo update-all" [--force]: nothing -> nothing {
-       # nu-lint-ignore: non_final_failure_check
-      cargo install --list
-      | parse "{package} v{version}:"
-      | get package
-      | each {|p|
+
+   # nu-lint-ignore: non_final_failure_check
+   cargo install --list
+   | parse "{package} v{version}:"
+   | get package
+   | each {|p|
          if $force {
              cargo install --locked --force $p
          } else {
@@ -40,7 +43,7 @@ def pwd []: any -> string {
 }
 
 # nu-lint-ignore: print_and_return_data
-def "git summary" [--count (-n): int = 10]: nothing -> nothing {
+def "git summary" [--count(-n): int = 10]: nothing -> nothing {
    try {
       git log $"--pretty=%h»¦«%aN»¦«%s»¦«%aD" $"-($count)"
       | lines

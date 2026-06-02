@@ -66,6 +66,29 @@ in
             "--unstable-component"
           ];
         };
+
+        settings.formatter.nufmt =
+          let
+            configFile =
+              pkgs.writers.writeText "config-nufmt.nuon"
+                # nu
+                ''
+                  {
+                    indent: 3
+                    indent_char: "space"
+                    line_length: 100
+                    margin: 1
+                  }
+                '';
+          in
+          {
+            command = "nufmt";
+            options = [
+              "--config"
+              "${configFile}"
+            ];
+            includes = singleton "*.nu";
+          };
       };
     };
 }

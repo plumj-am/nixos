@@ -5,6 +5,7 @@ const REBUILD_SCRIPT = "/home/jam/nixos/rebuild.nu"
 
 def print-notify [message: string] {
    print $"(ansi purple)[Theme Switcher](ansi rst) ($message)"
+
    try { notify-send "Theme Switcher" $message }
 }
 
@@ -27,13 +28,14 @@ def get-current-wallpaper [] {
 }
 
 def save-theme-config [mode: string, scheme: string] {
-   {mode: $mode scheme: $scheme}
+   {mode: $mode, scheme: $scheme}
    | to json
    | save --force $THEME_CONFIG
 }
 
 def update-gsettings [is_dark: bool] {
    let scheme = if $is_dark { "prefer-dark" } else { "default" }
+
    try { dconf write /org/gnome/desktop/interface/color-scheme $"'($scheme)'" }
 }
 
@@ -42,22 +44,22 @@ def get-current-theme [] {
       open $THEME_CONFIG
    } catch {
       print-notify "Failed to load default config, falling back to light/gruvbox"
+
       {mode: dark, scheme: gruvbox}
    }
 }
 
 def is-current [mode_or_scheme: string] {
    let current = get-current-theme
-   if (($current.mode == $mode_or_scheme) or ($current.scheme == $mode_or_scheme)) {
+
+   if ($current.mode == $mode_or_scheme) or ($current.scheme == $mode_or_scheme) {
       print-notify "Current theme and scheme already matches the desired settings."
+
       exit 0
    }
-
 }
 
-def generate-matugen-colors [
-   wallpaper: string
-]: nothing -> nothing {
+def generate-matugen-colors [wallpaper: string]: nothing -> nothing {
    matugen image $wallpaper --json hex --quiet --source-color-index 0 | save --force $THEME_MATUGEN
 }
 
@@ -93,25 +95,37 @@ def switch-scheme [scheme: string] {
          print-notify "Warning: Could not detect current wallpaper"
       }
    }
+
    $env.THEME_SCHEME = $scheme
 
    save-theme-config $theme_config.mode $scheme
 }
 
 def det-failure []: any -> int {
-   if ($in not-in [0 1]) { 1 } else { 0 }
+   if $in not-in [0 1] { 1 } else { 0 }
 }
 
 def reload-applications [] {
    print-notify "Reloading applications..."
+
    mut failure_count = 0
 
    $failure_count += (niri msg action do-screen-transition --delay-ms 0 | complete | get exit_code) | det-failure
-   $failure_count += (qs --no-duplicate -p /home/jam/nixos/modules/quickshell/shell ipc call shell reload | complete | get exit_code) | det-failure
+
+   $failure_count += (
+        qs --no-duplicate -p /home/jam/nixos/modules/quickshell/shell ipc call shell reload
+        | complete
+        | get exit_code
+    ) | det-failure
+
    $failure_count += (pkill -USR1 kitty | complete | get exit_code) | det-failure
+
    $failure_count += (pkill -USR2 ghostty | complete | get exit_code) | det-failure
+
    $failure_count += (pkill -USR1 hx | complete | get exit_code) | det-failure
+
    $failure_count += (pkill -USR2 opencode | complete | get exit_code) | det-failure
+
    # $failure_count += (pkill -SIGTERM brave | complete | get exit_code) | det-failure
    # sleep 1sec
    # $failure_count += (niri msg action do-screen-transition --delay-ms 500 | complete | get exit_code) | det-failure
@@ -136,30 +150,40 @@ def main [] {
 
 def "main dark" [--force] {
    if not $force { is-current dark }
+
    toggle-theme dark
+
    main reload
 }
 
 def "main light" [--force] {
    if not $force { is-current light }
+
    toggle-theme light
+
    main reload
 }
 
 def "main gruvbox" [--force] {
    if not $force { is-current gruvbox }
+
    switch-scheme gruvbox
+
    main reload
 }
 
 def "main matugen" [--force] {
    if not $force { is-current matugen }
+
    switch-scheme matugen
+
    main reload
 }
 
 def "main reload" [] {
    attempt-rebuild
+
    reload-applications
+
    print-notify "Theme switch complete!"
 }

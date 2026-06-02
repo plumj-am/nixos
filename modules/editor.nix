@@ -269,12 +269,12 @@ in
                     {
                       name = "nu";
                       auto-format = false;
-                      # formatter.command = "nufmt"; # Not good enough yet.
-                      # formatter.args = [
-                      #   "--config"
-                      #   "/home/jam/.config/nufmt/config.nuon"
-                      #   "--stdin"
-                      # ];
+                      formatter.command = "nufmt";
+                      formatter.args = [
+                        "--config"
+                        "/home/jam/.config/nufmt/config.nuon"
+                        "--stdin"
+                      ];
                       language-servers = withFsWatcher [
                         "nu-lsp"
                         # "nu-lint" # Waiting for <https://codeberg.org/wvhulle/nu-lint/pulls/96>
@@ -398,6 +398,7 @@ in
             ''
               {
                 indent: 3
+                indent_char: "space"
                 line_length: 100
                 margin: 1
               }
@@ -459,6 +460,7 @@ in
 
           # Nushell
           inputs.nu-lint.packages.${pkgs.stdenv.hostPlatform.system}.default
+          inputs.nufmt.packages.${pkgs.stdenv.hostPlatform.system}.default
 
           # QML
           pkgs.qt6Packages.qtdeclarative

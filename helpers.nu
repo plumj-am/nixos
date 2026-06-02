@@ -1,8 +1,9 @@
 #!/usr/bin/env nu
-def main [] {}
+def main [] { }
 
-def "main nixos-anywhere" [--host: string --remote: string] {
+def "main nixos-anywhere" [--host: string, --remote: string] {
    print "nix run'ning nixos-anywhere"
+
    (nix run github:nix-community/nixos-anywhere --
       --generate-hardware-config nixos-facter $"./hosts/facter/($host).json"
       --flake $".#($host)"
@@ -14,6 +15,7 @@ def "main nixos-anywhere" [--host: string --remote: string] {
 
 def "main generate-facter-config" [] {
    print "nix run'ning nixos-facter"
+
    (sudo nix run
       --option experimental-features "nix-command flakes"
       --option extra-substituters https://numtide.cachix.org
@@ -23,8 +25,9 @@ def "main generate-facter-config" [] {
       --output $"./(hostname).json")
 }
 
-def "main copy-user-ssh" [--host: string --remote: string] {
+def "main copy-user-ssh" [--host: string, --remote: string] {
    print "cp'ing jam ssh keys"
+
    (rsync
       --acls
       --verbose
@@ -33,8 +36,9 @@ def "main copy-user-ssh" [--host: string --remote: string] {
    )
 }
 
-def "main copy-root-ssh" [--host: string --remote: string] {
+def "main copy-root-ssh" [--host: string, --remote: string] {
    print "decrypting the host private key"
+
    (nix run
       nixpkgs#age
       --
@@ -44,14 +48,19 @@ def "main copy-root-ssh" [--host: string --remote: string] {
    ) out> tmp-id-($host).txt
 
    print "nix eval'ing the hostPubkey"
+
    (nix eval
       $".#nixosConfigurations.($host).config.age.rekey.hostPubkey"
    ) | str trim --char '"' out> tmp-id-pub-($host).txt
 
    print "touch'ing the necessary files"
-   (ssh root@($remote) "cd /root && mkdir --parents .ssh && cd .ssh && touch id id.pub")
+
+   (
+        ssh root@($remote) "cd /root && mkdir --parents .ssh && cd .ssh && touch id id.pub"
+    )
 
    print "cp'ing root ssh public key"
+
    (rsync
       --verbose
       /home/jam/nixos/tmp-id-pub-($host).txt
@@ -59,6 +68,7 @@ def "main copy-root-ssh" [--host: string --remote: string] {
    )
 
    print "cp'ing root ssh private key"
+
    (rsync
       --verbose
       /home/jam/nixos/tmp-id-($host).txt
@@ -66,14 +76,17 @@ def "main copy-root-ssh" [--host: string --remote: string] {
    )
 
    print "chmod'ing root ssh keys"
+
    (ssh root@($remote) "cd .ssh && chmod 0600 id*")
 
    print "rm'ing local temporary files"
+
    rm ./tmp-id-($host).txt
+
    rm ./tmp-id-pub-($host).txt
 }
 
-def "main full-nixos-anywhere-setup" [--host: string --remote: string] {
+def "main full-nixos-anywhere-setup" [--host: string, --remote: string] {
    print $"Starting the full deployment process for ($host)"
 
    print $"ssh-keygen -R'ing the necessary local keys"
@@ -89,6 +102,7 @@ def "main full-nixos-anywhere-setup" [--host: string --remote: string] {
    main copy-user-ssh --host $host --remote $remote
 
    print "full-nixos-anywhere-setup'ing complete!"
+
    print "rebuild will not take place automatically, SSH to the machine to verify secrets etc."
 }
 
@@ -106,6 +120,7 @@ def "main reset-circus-db" [] {
 
 def "main fill-caches-remote" [] {
    let hosts = [date plum sloe]
+
    let builds = [date kiwi plum sloe yuzu]
 
    $hosts | par-each {|host|
@@ -129,10 +144,12 @@ def "main fill-caches-remote" [] {
 
 def "main fill-caches-local" [] {
    let hosts = [date kiwi plum sloe yuzu]
+
    let copyable = $hosts | where {|h| $h != (hostname)}
 
    for h in $hosts {
-      let target =  $".#nixosConfigurations.($h).config.system.build.toplevel"
+      let target = $".#nixosConfigurations.($h).config.system.build.toplevel"
+
       rom build ($target) -- --builders "" --repair --fallback
 
       for hh in $hosts {
@@ -141,7 +158,6 @@ def "main fill-caches-local" [] {
          }
       }
    }
-
 }
 
 # let reboot into installer again

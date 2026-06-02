@@ -186,6 +186,14 @@
     "type": "git",
     "url": "https://codeberg.org/wvhulle/nu-lint"
   },
+  "nufmt": {
+    "lastModified": 1779643897,
+    "narHash": "sha256-3AOxUXDd6LDgBqKPnHG+3K2qfcFGzIsPW3pqnt+oNs8=",
+    "owner": "nushell",
+    "repo": "nufmt",
+    "rev": "a24c2b1bc7f573b1a8b2c4a453e989407a4d29c8",
+    "type": "github"
+  },
   "os": {
     "lastModified": 1780981259,
     "narHash": "sha256-GVdFp/OsVrwtvNe5f/o4PAv31sjxykYH3Kp2zIyJTeg=",
