@@ -173,11 +173,11 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1779940584,
-        "narHash": "sha256-ggpqv/tul3rQDhpZtJje/6avlqlugbjlMthZzxqI0ug=",
+        "lastModified": 1780372928,
+        "narHash": "sha256-jjlEBQ9MioO/6Couy+gCFpeTRvp6nTiEh2220hS5/gI=",
         "owner": "manic-systems",
         "repo": "cade",
-        "rev": "34c1b65195f44b0437860cdff5a2d0bbc3518607",
+        "rev": "41a9fdbe9fe5bf54c7d3a6e5a7212f3ca565de1b",
         "type": "github"
       },
       "original": {
