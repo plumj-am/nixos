@@ -117,15 +117,16 @@
         "treefmt-nix": "treefmt-nix_2"
       },
       "locked": {
-        "lastModified": 1778391342,
-        "narHash": "sha256-7FVIfUHdQEB6HM+gUPLJVaL7ABrqlnMxS/pO+vNvjd8=",
-        "owner": "nix-community",
+        "lastModified": 1780482657,
+        "narHash": "sha256-DtRV6inU+6AHPRSrj3vQtD4Tk8jCSiyechB2D/nvel4=",
+        "owner": "plumj-am",
         "repo": "buildbot-nix",
-        "rev": "0bedd1aafd1653858d5f1e0f08eba3d7ec397dff",
+        "rev": "91cb23be1e7f0b91b85b4741365deca362adae3f",
         "type": "github"
       },
       "original": {
-        "owner": "nix-community",
+        "owner": "plumj-am",
+        "ref": "patch/PlumJam-quouslxnzuxk",
         "repo": "buildbot-nix",
         "type": "github"
       }

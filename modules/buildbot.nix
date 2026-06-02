@@ -80,7 +80,7 @@
         };
 
         accessMode.fullyPrivate = {
-          backend = "gitea";
+          backend = "forgejo";
 
           clientId = "26db7117-c7ec-4bc9-b273-7b12bb0f83aa";
           clientSecretFile = secrets.buildbotOauthSecret.path;
@@ -261,10 +261,11 @@
 
       networking.firewall.allowedTCPPorts = singleton 9989;
 
-      # Override default GitHub scopes which are incompatible with Forgejo.
-      systemd.services.oauth2-proxy.environment = {
-        OAUTH2_PROXY_SCOPE = "read:user read:organization";
-      };
+      # Override default Gitea scopes which are incompatible with Forgejo.
+      # NOTE: Testing fork which includes this <github:plumj-am/buildbot-nix?ref=patch/PlumJam-quouslxnzuxk>.
+      # systemd.services.oauth2-proxy.environment = {
+      #   OAUTH2_PROXY_SCOPE = "read:user read:organization";
+      # };
 
       services.nginx.virtualHosts."buildbot.${domain}" = merge config.services.nginx.sslTemplate { };
     };

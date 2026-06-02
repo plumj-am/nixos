@@ -19,7 +19,7 @@
       };
     };
     buildbot-nix = {
-      url = "github:nix-community/buildbot-nix";
+      url = "github:plumj-am/buildbot-nix?ref=patch/PlumJam-quouslxnzuxk";
       inputs.nixpkgs.follows = "os";
     };
     cade = {
