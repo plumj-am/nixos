@@ -62,7 +62,13 @@
         };
       };
 
-      shellAliases.pi = "bwrapper pi";
+      shellAliases = {
+        pi = "bwrapper pi";
+        # This is the only way that works with this provider extension.
+        # I can't set it in the config.
+        # https://github.com/patlux/pi-commandcode-provider
+        pic = "bwrapper pi --model commandcode/deepseek/deepseek-v4-flash";
+      };
 
       hjem.extraModule =
         { osConfig, ... }:
@@ -118,30 +124,22 @@
 
             ".pi/agent/models.json" = {
               generator = pkgs.writers.writeJSON "pi-agent-config.json";
-              value =
-                let
-                  mkLocalProvider =
-                    baseUrl: rest:
-                    {
-                      inherit baseUrl;
-                      api = "openai-completions";
-                      apiKey = "dummy";
-                    }
-                    // rest;
-                in
-                {
-                  providers = {
-                    llama-cpp = mkLocalProvider "http://localhost:11435/v1" {
-                      models = [
-                        {
-                          id = "unsloth/Qwen3.6-35B-A3B:UD-IQ3_XXS";
-                          contextWindow = 131072;
-                          compat.supportsDeveloperRole = false;
-                        }
-                      ];
-                    };
+              value = {
+                providers = {
+                  llama-cpp = {
+                    baseUrl = "http://localhost:11435/v1";
+                    api = "openai-completions";
+                    apiKey = "dummy";
+                    models = [
+                      {
+                        id = "unsloth/Qwen3.6-35B-A3B:UD-IQ3_XXS";
+                        contextWindow = 131072;
+                        compat.supportsDeveloperRole = false;
+                      }
+                    ];
                   };
                 };
+              };
             };
 
             # To test later but idk why it has to be via MCP...
@@ -165,9 +163,10 @@
               generator = pkgs.writers.writeJSON "pi-agent-config.json";
               value = {
                 defaultProvider = "commandcode";
-                defaultModel = "commandcode/deepseek/deepseek-v4-flash";
+                defaultModel = "deepseek/deepseek-v4-flash";
                 enabledModels = [
-                  "*deepseek-v4*"
+                  "commandcode/*deepseek-v4*"
+                  "opencode-go/*deepseek-v4*"
 
                   "unsloth/Qwen3.6-35B-A3B:UD-IQ3_XXS"
                 ];
@@ -186,7 +185,7 @@
 
                 packages = [
                   {
-                    source = "git:github.com/patlux/pi-commandcode-provider";
+                    source = "git:github.com/plumj-am/pi-commandcode-provider";
                     extensions = [ "index.ts" ];
                     themes = [ ];
                     skills = [ ];
