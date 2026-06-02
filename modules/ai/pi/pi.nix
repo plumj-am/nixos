@@ -223,6 +223,7 @@
             ".pi/agent/extensions/caveman.ts".source = ./extensions/caveman.ts;
             ".pi/agent/extensions/teleport.ts".source = ./extensions/teleport.ts;
             ".pi/agent/extensions/tps-status.ts".source = ./extensions/tps-status.ts;
+            ".pi/agent/extensions/notify.ts".source = ./extensions/notify.ts;
 
             ".pi/agent/skills/caveman".source = ./skills/caveman;
             ".pi/agent/skills/gh-grep".source = ./skills/gh-grep; # Taken from <https://github.com/huynguyen03dev/opencode-setup/tree/main/skills/gh-grep>
