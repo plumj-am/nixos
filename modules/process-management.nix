@@ -7,9 +7,7 @@
       ...
     }:
     let
-      inherit (lib) readFile;
-
-      processKiller = pkgs.writeScriptBin "process-killer" <| readFile ./_scripts/process-killer.nu;
+      inherit (lib.lists) singleton;
 
       processMonitorConfig = pkgs.writeText "btop-popup.conf" /* conf */ ''
         tty_mode = True
@@ -64,10 +62,7 @@
     in
     {
       hjem.extraModule = {
-        packages = [
-          processKiller
-          processMonitor
-        ];
+        packages = singleton processMonitor;
       };
     };
 }
