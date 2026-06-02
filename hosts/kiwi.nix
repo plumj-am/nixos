@@ -13,15 +13,12 @@ in
 
       acme
       boot-grub
-      buildbot-worker
-      circus-agent
       disks-server
       disks-extra-zram-swap
       forgejo-action-runner
       harmonia
       # ncro
       nginx
-      nix-distributed-builder
       nix-distributed-builds
       nix-settings-extra-server
       radicle-node
