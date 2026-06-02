@@ -10,7 +10,9 @@
     }:
     let
       inherit (lib.lists) singleton filter;
-      inherit (lib.attrsets) attrsToList;
+      inherit (lib.attrsets) attrsToList genAttrs;
+      inherit (lib.trivial) const flip;
+      inherit (lib.meta) getExe';
       inherit (lib') merge;
       inherit (config.networking) domain hostName;
 
@@ -96,6 +98,23 @@
             force_secure_cookies = true; # enable when behind HTTPS reverse proxy (nginx/caddy)
             # ldap = { }; None
             config_editor_enabled = false;
+
+            page_access = flip genAttrs (const "authenticated") [
+              "home"
+              "projects"
+              "project"
+              "jobset"
+              "jobset_jobs"
+              "evaluations"
+              "evaluation"
+              "builds"
+              "build"
+              "queue"
+              "channels"
+              "news"
+              "starred"
+              "metrics"
+            ];
           };
 
           cache = {
