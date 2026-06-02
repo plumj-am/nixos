@@ -20,6 +20,7 @@ let
     "shell-tools"
     "sudo"
     "ssh"
+    "tack"
     "tailscale"
     "theme"
     "unfree"

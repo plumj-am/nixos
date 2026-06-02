@@ -1268,6 +1268,7 @@
         "rio": "rio",
         "rom": "rom",
         "run0-sudo-shim": "run0-sudo-shim",
+        "tack": "tack",
         "ublock": "ublock",
         "zyouz": "zyouz"
       }
@@ -1533,6 +1534,21 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "tack": {
+      "locked": {
+        "lastModified": 1780213242,
+        "narHash": "sha256-5dYWCjKBwjHOCJBlQK9iBKJxoUosTGQvI62vPBdQUgs=",
+        "owner": "manic-systems",
+        "repo": "tack",
+        "rev": "8c574901340af860979500f24495417ce7e53cdc",
+        "type": "github"
+      },
+      "original": {
+        "owner": "manic-systems",
+        "repo": "tack",
         "type": "github"
       }
     },

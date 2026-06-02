@@ -143,6 +143,10 @@
       url = "github:plumj-am/run0-sudo-shim";
       inputs.nixpkgs.follows = "os";
     };
+    tack = {
+      url = "github:manic-systems/tack";
+      inputs.nixpkgs.follows = "os";
+    };
     ublock = {
       url = "github:imputnet/uBlock";
       flake = false;
