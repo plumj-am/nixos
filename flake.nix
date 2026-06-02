@@ -38,10 +38,6 @@
       url = "git+https://git.plumj.am/plumjam/gerrit-autosubmit";
       inputs.nixpkgs.follows = "os";
     };
-    gitea-mq = {
-      url = "github:Mic92/gitea-mq";
-      inputs.nixpkgs.follows = "os";
-    };
     harmonia = {
       url = "github:nix-community/harmonia";
       inputs.nixpkgs.follows = "os";

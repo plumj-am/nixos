@@ -25,7 +25,6 @@ in
       forgejo-action-runner
       gerrit
       # git-next
-      gitea-mq
       goatcounter
       harmonia
       matrix

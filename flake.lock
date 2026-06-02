@@ -539,27 +539,6 @@
         "type": "github"
       }
     },
-    "gitea-mq": {
-      "inputs": {
-        "nixpkgs": [
-          "os"
-        ],
-        "treefmt-nix": "treefmt-nix_3"
-      },
-      "locked": {
-        "lastModified": 1779939752,
-        "narHash": "sha256-4NS9j//f+TPq0indvhgE0ZUZau4QhEx+y7KoaoBLe1s=",
-        "owner": "Mic92",
-        "repo": "gitea-mq",
-        "rev": "c75e7eaabf7a76defbca661885cf3319e3870b23",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Mic92",
-        "repo": "gitea-mq",
-        "type": "github"
-      }
-    },
     "gitignore": {
       "inputs": {
         "nixpkgs": [
@@ -611,7 +590,7 @@
         "nixpkgs": [
           "os"
         ],
-        "treefmt-nix": "treefmt-nix_4"
+        "treefmt-nix": "treefmt-nix_3"
       },
       "locked": {
         "lastModified": 1780454481,
@@ -770,7 +749,7 @@
           "os"
         ],
         "systems": "systems_3",
-        "treefmt-nix": "treefmt-nix_5"
+        "treefmt-nix": "treefmt-nix_4"
       },
       "locked": {
         "lastModified": 1780527457,
@@ -1101,7 +1080,7 @@
         "quickshell": [
           "quickshell"
         ],
-        "treefmt-nix": "treefmt-nix_6"
+        "treefmt-nix": "treefmt-nix_5"
       },
       "locked": {
         "lastModified": 1780155488,
@@ -1192,7 +1171,6 @@
         "fenix": "fenix",
         "gerrit": "gerrit",
         "gerrit-autosubmit": "gerrit-autosubmit",
-        "gitea-mq": "gitea-mq",
         "harmonia": "harmonia",
         "helium": "helium",
         "hjem": "hjem",
@@ -1227,7 +1205,7 @@
           "os"
         ],
         "rust-overlay": "rust-overlay_4",
-        "treefmt-nix": "treefmt-nix_7"
+        "treefmt-nix": "treefmt-nix_6"
       },
       "locked": {
         "lastModified": 1774371810,
@@ -1511,27 +1489,6 @@
     "treefmt-nix_3": {
       "inputs": {
         "nixpkgs": [
-          "gitea-mq",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1775636079,
-        "narHash": "sha256-pc20NRoMdiar8oPQceQT47UUZMBTiMdUuWrYu2obUP0=",
-        "owner": "numtide",
-        "repo": "treefmt-nix",
-        "rev": "790751ff7fd3801feeaf96d7dc416a8d581265ba",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "treefmt-nix",
-        "type": "github"
-      }
-    },
-    "treefmt-nix_4": {
-      "inputs": {
-        "nixpkgs": [
           "harmonia",
           "nixpkgs"
         ]
@@ -1550,7 +1507,7 @@
         "type": "github"
       }
     },
-    "treefmt-nix_5": {
+    "treefmt-nix_4": {
       "inputs": {
         "nixpkgs": [
           "llm-agents",
@@ -1571,7 +1528,7 @@
         "type": "github"
       }
     },
-    "treefmt-nix_6": {
+    "treefmt-nix_5": {
       "inputs": {
         "nixpkgs": "nixpkgs_2"
       },
@@ -1589,7 +1546,7 @@
         "type": "github"
       }
     },
-    "treefmt-nix_7": {
+    "treefmt-nix_6": {
       "inputs": {
         "nixpkgs": [
           "run0-sudo-shim",
