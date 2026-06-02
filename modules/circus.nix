@@ -12,7 +12,6 @@
       inherit (lib.lists) singleton filter;
       inherit (lib.attrsets) attrsToList genAttrs;
       inherit (lib.trivial) const flip;
-      inherit (lib.meta) getExe';
       inherit (lib') merge;
       inherit (config.networking) domain hostName;
 
