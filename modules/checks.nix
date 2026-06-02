@@ -9,7 +9,6 @@
     let
       inherit (lib.attrsets) mapAttrs' filterAttrs nameValuePair;
       inherit (lib.lists) elem singleton;
-      inherit (lib.fixedPoints) fix;
 
       sys = pkgs.stdenv.hostPlatform.system;
 
@@ -31,25 +30,9 @@
     {
       checks = {
         statix =
-          # For experimental pipe-operators support.
           pkgs.runCommand "statix-check"
             {
-              nativeBuildInputs =
-                singleton
-                <| pkgs.statix.overrideAttrs
-                <| fix (this: {
-                  src = pkgs.fetchFromGitHub {
-                    owner = "oppiliappan";
-                    repo = "statix";
-                    rev = "43681f0da4bf1cc6ecd487ef0a5c6ad72e3397c7";
-                    hash = "sha256-LXvbkO/H+xscQsyHIo/QbNPw2EKqheuNjphdLfIZUv4=";
-                  };
-
-                  cargoDeps = pkgs.rustPlatform.importCargoLock {
-                    lockFile = this.src + "/Cargo.lock";
-                    allowBuiltinFetchGit = true;
-                  };
-                });
+              nativeBuildInputs = singleton pkgs.statix;
             }
             ''
               cat > statix.toml <<'EOF'
