@@ -21,7 +21,6 @@
         in
         orig.overrideAttrs (old: {
           patches = (old.patches or [ ]) ++ [
-            ./patches/buildbot-nix-gcroot-warning.patch
             ./patches/buildbot-nix-no-cancel.patch
           ];
           postPatch = (old.postPatch or "") + ''
@@ -87,9 +86,10 @@
           cookieSecretFile = secrets.buildbotCookieSecret.path;
         };
 
-        branches = {
-          next.matchGlob = "next";
-          mergeQueue.matchGlob = "gitea-mq/*";
+        # GC root registration fails way too often to be useful.
+        branches.all = {
+          matchGlob = "*";
+          registerGCRoots = false;
         };
       };
 
