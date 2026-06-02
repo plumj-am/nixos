@@ -267,6 +267,14 @@
     "rev": "8c574901340af860979500f24495417ce7e53cdc",
     "type": "github"
   },
+  "treefmt": {
+    "lastModified": 1780220602,
+    "narHash": "sha256-eynAfOmbmxJnkp7YewvCEbShNnnYJ9gLLqkzsYtBPeM=",
+    "owner": "numtide",
+    "repo": "treefmt-nix",
+    "rev": "db947814a175b7ca6ded66e21383d938df01c227",
+    "type": "github"
+  },
   "ublock": {
     "lastModified": 1780046171,
     "narHash": "sha256-oYeV2aqUffSWbhuMv5oM+ppSYAwdq8JNpY2T5ZA1KD0=",

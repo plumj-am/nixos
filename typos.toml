@@ -1,5 +1,5 @@
 [default]
 
 [default.extend-words]
-Pn = "Pn" # Random occurrence in a public key.
+Pn     = "Pn"     # Random occurrence in a public key.
 facter = "facter"

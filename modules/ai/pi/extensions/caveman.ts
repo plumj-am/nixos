@@ -47,7 +47,15 @@ function formatLevel(level: CavemanLevel): string {
 }
 
 export default function (pi: ExtensionAPI) {
-	function updateCavemanStatus(ctx: { hasUI: boolean; ui: { setStatus: (id: string, text: string | undefined) => void; theme: { fg: (color: string, text: string) => string } } }): void {
+	function updateCavemanStatus(
+		ctx: {
+			hasUI: boolean
+			ui: {
+				setStatus: (id: string, text: string | undefined) => void
+				theme: { fg: (color: string, text: string) => string }
+			}
+		},
+	): void {
 		if (!ctx.hasUI) return
 		if (currentLevel === "off") {
 			ctx.ui.setStatus("caveman", undefined)
