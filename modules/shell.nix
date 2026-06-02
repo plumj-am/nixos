@@ -115,9 +115,21 @@
                 #!${getExe pkgs.nushell}
 
                 def --wrapped main [tool?: string, ...rest] {
+                  let pwd = ^pwd
                   let tool = if ($tool | is-empty) {
-                    input $"Tool to run in (^pwd)? " | str trim
+                    input $"Tool to run in ($pwd)? " | str trim
                   } else { $tool }
+
+                  # For jj workspaces. Workspace members need to access default workspace
+                  # to use jj commands on the repo.
+                  let extra_binds = if ($pwd | path basename | str contains '-') {
+                    let name = $pwd | path basename
+                    let base = $name | str replace --regex '-[0-9]+$' '''
+                    let original = $pwd | path dirname | path join $base
+                    if ($original | path exists) and ($original | path join '.jj' | path exists) {
+                      [ --bind $original $original ]
+                    } else { [] }
+                  } else { [] }
 
                   (bwrap
                     --dir ${directory}
@@ -139,7 +151,8 @@
                     --ro-bind /etc/hosts /etc/hosts
                     --ro-bind ${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt /etc/ssl/certs/ca-certificates.crt
                     --ro-bind /etc/nix/nix.conf /etc/nix/nix.conf
-                    --bind (^pwd) (^pwd)
+                    --bind $pwd $pwd
+                    ...$extra_binds
                     --bind /nix/store /nix/store # I think this prevents spamming ~/.local/share/nix.
                     --bind ${directory}/.pi ${directory}/.pi
                     --bind ${directory}/.claude ${directory}/.claude
