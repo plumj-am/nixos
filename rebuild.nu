@@ -68,6 +68,7 @@ def --wrapped main [
          print-notify $"Removing old configuration files on ($remote)."
          ssh -o ConnectTimeout=10 -o RemoteCommand=none -tt $"jam@($remote)" "rm --recursive --force nixos"
 
+         cd $config.path
          print-notify $"Copying new configuration files to ($remote)."
          jj file list | rsync-files --files-from - ./ $"jam@($remote):nixos"
 
