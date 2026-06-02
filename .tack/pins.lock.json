@@ -74,10 +74,10 @@
     "url": "https://git.plumj.am/plumjam/gerrit-autosubmit"
   },
   "gerrit-circus-bridge": {
-    "lastModified": 1780948361,
-    "narHash": "sha256-AiNR1tUJimxi2DjqZLZKny6/kjpdbEINkX8FVl9jCI4=",
+    "lastModified": 1781017043,
+    "narHash": "sha256-uOcqfHuYPx7VCfs4yElE9YfwFMr3A4HSSyoAvVM6QnI=",
     "ref": "refs/heads/master",
-    "rev": "6ac6ff827c1a3e4951a9db2efc65b0d11aaa1b33",
+    "rev": "d05ed564dfb11c5dd507eca0e54482f6b91a3c61",
     "type": "git",
     "url": "https://git.plumj.am/plumjam/gerrit-circus-bridge"
   },
