@@ -773,15 +773,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1780427445,
-        "narHash": "sha256-NqXI6uSi3r9JtKK03GjWNcKou/BHbBfP1kWECYu+G14=",
-        "owner": "feel-co",
+        "lastModified": 1780567840,
+        "narHash": "sha256-mEEA8YtAWJZlLaci4z7JXuXSL5W5aIrdjCn/6rtcQqs=",
+        "owner": "manic-systems",
         "repo": "ncro",
-        "rev": "8cb77a1eedab7355801c0a9f976b7551fdf2e998",
+        "rev": "15a1c0b180a815373d8a61298dbb2baa2dbbf578",
         "type": "github"
       },
       "original": {
-        "owner": "feel-co",
+        "owner": "manic-systems",
         "repo": "ncro",
         "type": "github"
       }
@@ -873,13 +873,13 @@
       "locked": {
         "lastModified": 1780223676,
         "narHash": "sha256-7x7KzH5p+VDBvvzpCjkRcVhNm6fIty7WYgI7sPq1SCw=",
-        "owner": "feel-co",
+        "owner": "manic-systems",
         "repo": "nixos-core",
         "rev": "20b5f8916a3fde2f02bccd2e1f2795ab511aab5b",
         "type": "github"
       },
       "original": {
-        "owner": "feel-co",
+        "owner": "manic-systems",
         "repo": "nixos-core",
         "type": "github"
       }

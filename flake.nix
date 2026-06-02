@@ -85,11 +85,11 @@
       inputs.nixpkgs.follows = "os";
     };
     ncro = {
-      url = "github:feel-co/ncro";
+      url = "github:manic-systems/ncro";
       inputs.nixpkgs.follows = "os";
     };
     nixos-core = {
-      url = "github:feel-co/nixos-core";
+      url = "github:manic-systems/nixos-core";
       inputs.nixpkgs.follows = "os";
     };
     nix-index = {
