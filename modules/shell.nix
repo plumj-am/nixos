@@ -138,6 +138,7 @@
                     --dir /etc/ssl/certs
                     --ro-bind ${directory}/.config ${directory}/.config
                     --ro-bind /run/agenix/opencodeGoKey /run/agenix/opencodeGoKey
+                    --ro-bind /run/agenix/commandcodeKey /run/agenix/commandcodeKey
                     --ro-bind /run/agenix/nvidiaNimKey /run/agenix/nvidiaNimKey
                     --ro-bind /run/agenix/codestralKey /run/agenix/codestralKey
                     --ro-bind /run/agenix/llm7Key /run/agenix/llm7Key
@@ -169,6 +170,7 @@
                     --cap-drop all
                     --setenv SSL_CERT_FILE /etc/ssl/certs/ca-certificates.crt
                     --setenv OPENCODE_API_KEY (^cat /run/agenix/opencodeGoKey)
+                    --setenv COMMANDCODE_API_KEY (^cat /run/agenix/commandcodeKey)
                     --setenv NVIDIA_API_KEY (^cat /run/agenix/nvidiaNimKey)
                     --setenv CODESTRAL_API_KEY (^cat /run/agenix/codestralKey)
                     --setenv LLM7_API_KEY (^cat /run/agenix/llm7Key)
