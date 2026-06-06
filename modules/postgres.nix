@@ -3,13 +3,15 @@
     {
       config,
       lib,
+      lib',
       pkgs,
       ...
     }:
     let
-      inherit (config.myLib) mkValue;
       inherit (lib.modules) mkForce mkOverride;
       inherit (lib.trivial) flip;
+      inherit (lib') mkValue;
+      inherit (config.networking) hostName;
     in
     {
       config.environment.systemPackages = [ config.services.postgresql.package ];
@@ -23,9 +25,9 @@
         enableJIT = true;
         enableTCPIP = true;
 
-        settings.listen_addresses = mkForce "::";
+        settings.listen_addresses = mkForce "::,${hostName}.taild29fec.ts.net";
         authentication =
-          mkOverride 10 # ini
+          mkOverride 500 # ini
             ''
               #     DATABASE USER         AUTHENTICATION
               local all      all          peer

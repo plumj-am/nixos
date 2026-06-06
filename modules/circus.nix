@@ -108,11 +108,12 @@ in
 
       services.postgresql = {
         ensureDatabases = singleton "circus";
-        settings.listen_addresses = "localhost,${config.networking.hostName}.taild29fec.ts.net";
+        settings.listen_addresses = "localhost,${hostName}.taild29fec.ts.net";
 
+        # Accept evaluator hosts.
         authentication = ''
           local circus circus trust
-          host circus circus plum.taild29fec.ts.net trust
+          host circus circus date.taild29fec.ts.net trust
           host circus circus sloe.taild29fec.ts.net trust
         '';
       };
@@ -145,7 +146,7 @@ in
             if hostName == "plum" then
               "postgresql:///circus?host=/run/postgresql"
             else
-              "postgresql:///circus?host=plum.taild29fec.ts.net";
+              "postgresql://circus@plum.taild29fec.ts.net/circus";
 
           server = {
             host = "127.0.0.1";
@@ -372,7 +373,7 @@ in
             if hostName == "plum" then
               "postgresql:///circus?host=/run/postgresql"
             else
-              "postgresql:///circus?host=plum.taild29fec.ts.net";
+              "postgresql://circus@plum.taild29fec.ts.net/circus";
 
           evaluator = {
             git_timeout = 600;
@@ -424,7 +425,7 @@ in
             if hostName == "plum" then
               "postgresql:///circus?host=/run/postgresql"
             else
-              "postgresql:///circus?host=plum.taild29fec.ts.net";
+              "postgresql://circus@plum.taild29fec.ts.net/circus";
 
           queue_runner = {
             workers = 4;
