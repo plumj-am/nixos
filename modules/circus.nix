@@ -69,7 +69,7 @@ in
       inherit (lib.lists) singleton filter;
       inherit (lib.attrsets) attrsToList genAttrs recursiveUpdate;
       inherit (lib.trivial) const flip;
-      inherit (lib.modules) mkDefault;
+      inherit (lib.modules) mkDefault mkForce;
       inherit (lib') merge;
       inherit (config.networking) domain hostName;
 
@@ -125,7 +125,7 @@ in
 
       services.circus = {
         enable = true;
-        server.enable = mkDefault true;
+        server.enable = mkForce true;
         evaluator.enable = mkDefault false;
         queueRunner.enable = mkDefault false;
 
@@ -346,6 +346,7 @@ in
     let
       inherit (lib.attrsets) recursiveUpdate;
       inherit (lib.lists) singleton;
+      inherit (lib.modules) mkDefault mkForce;
       inherit (config.networking) hostName;
 
       circusPackages = inputs.circus.packages.${pkgs.stdenv.hostPlatform.system};
@@ -361,9 +362,9 @@ in
       ];
       services.circus = {
         enable = true;
-        server.enable = false;
-        evaluator.enable = true;
-        queueRunner.enable = false;
+        server.enable = mkDefault false;
+        evaluator.enable = mkForce true;
+        queueRunner.enable = mkDefault false;
 
         evaluatorPackage = circusPackages.circus-evaluator;
 
@@ -400,6 +401,7 @@ in
     let
       inherit (lib.attrsets) recursiveUpdate;
       inherit (lib.lists) singleton;
+      inherit (lib.modules) mkDefault mkForce;
       inherit (config.networking) hostName;
 
       circusPackages = inputs.circus.packages.${pkgs.stdenv.hostPlatform.system};
@@ -413,9 +415,9 @@ in
       ];
       services.circus = {
         enable = true;
-        server.enable = false;
-        evaluator.enable = false;
-        queueRunner.enable = true;
+        server.enable = mkDefault false;
+        evaluator.enable = mkDefault false;
+        queueRunner.enable = mkForce true;
 
         queueRunnerPackage = circusPackages.circus-queue-runner;
 
