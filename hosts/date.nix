@@ -14,6 +14,7 @@ in
       boot-systemd
       buildbot-worker
       circus-agent
+      circus-evaluator
       claude-code
       desktop-gui
       desktop-tools

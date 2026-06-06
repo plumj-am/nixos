@@ -16,8 +16,9 @@ in
       buildbot-master
       buildbot-worker
       cinny
-      circus
       circus-agent
+      circus-server
+      circus-queue-runner
       disks-server
       disks-extra-zram-swap
       forgejo

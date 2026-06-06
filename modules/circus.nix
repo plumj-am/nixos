@@ -1,5 +1,62 @@
+let
+  sharedSettings = config: hostName: {
+    cache = {
+      enabled = true;
+      secretKeyFile = config.age.secrets.nixStoreKey.path;
+      compression = "zstd";
+      cache_url = "http://${hostName}.taild29fec.ts.net:5000";
+    };
+
+    # Will see if nix-upload-processor handles this for us.
+    cache_upload = {
+      enabled = false;
+      store_uri = "";
+      s3 = {
+        endpoint_url = "";
+        prefix = "nix";
+        use_path_style = true;
+        access_key_id = "";
+        secret_access_key = "";
+      };
+      upload_concurrency = 4;
+      upload_max_retries = 3;
+      fail_build_on_upload_error = false;
+    };
+
+    database = {
+      connect_timeout = 30;
+      idle_timeout = 600;
+      max_connections = 20;
+      max_lifetime = 1800;
+      min_connections = 5;
+    };
+
+    signing = {
+      enabled = true;
+      key_file = config.age.secrets.nixStoreKey.path;
+    };
+
+    logs = {
+      log_dir = "/var/lib/circus/logs";
+      compress = true;
+    };
+    tracing = {
+      level = "info";
+      format = "compact";
+      show_targets = true;
+      show_timestamps = true;
+    };
+
+    gc = {
+      enabled = true;
+      gc_roots_dir = "/nix/var/nix/gcroots/per-user/circus/circus-roots";
+      max_age_days = 30;
+      cleanup_interval = 3600;
+    };
+  };
+in
 {
-  flake.modules.nixos.circus =
+  flake.modules.nixos.circus-server =
     {
       inputs,
       pkgs,
@@ -10,8 +67,9 @@
     }:
     let
       inherit (lib.lists) singleton filter;
-      inherit (lib.attrsets) attrsToList genAttrs;
+      inherit (lib.attrsets) attrsToList genAttrs recursiveUpdate;
       inherit (lib.trivial) const flip;
+      inherit (lib.modules) mkDefault;
       inherit (lib') merge;
       inherit (config.networking) domain hostName;
 
@@ -48,35 +106,46 @@
         };
       };
 
-      services.postgresql.ensureDatabases = singleton "circus";
+      services.postgresql = {
+        ensureDatabases = singleton "circus";
+        settings.listen_addresses = "localhost,${config.networking.hostName}.taild29fec.ts.net";
 
-      systemd = {
-        tmpfiles.rules = [
-          "d /var/lib/circus/logs 0750 circus circus -"
-          "d /nix/var/nix/gcroots/per-user/circus 0755 circus circus -"
-        ];
+        authentication = ''
+          local circus circus trust
+          host circus circus plum.taild29fec.ts.net trust
+          host circus circus sloe.taild29fec.ts.net trust
+        '';
       };
+
+      systemd.tmpfiles.rules = [
+        "d /var/lib/circus/logs 0750 circus circus -"
+        "d /nix/var/nix/gcroots/per-user/circus 0755 circus circus -"
+      ];
 
       services.circus = {
         enable = true;
-        server.enable = true;
-        evaluator.enable = true;
-        queueRunner.enable = true;
+        server.enable = mkDefault true;
+        evaluator.enable = mkDefault false;
+        queueRunner.enable = mkDefault false;
 
         package = circusPackages.circus-server;
-        evaluatorPackage = circusPackages.circus-evaluator;
-        queueRunnerPackage = circusPackages.circus-queue-runner;
         migratePackage = circusPackages.circus-migrate-cli;
 
         # Mostly set to defaults from:
         # <https://github.com/manic-systems/circus/blob/1e4f89de2a117430023d4af490f32bcee7fe7104/crates/common/src/config.rs>
         # So I have them for reference.
-        settings = {
+        settings = recursiveUpdate (sharedSettings config hostName) {
           oauth.github = {
             client_id = "";
             client_secret = "";
             redirect_uri = "";
           };
+
+          database.url =
+            if hostName == "plum" then
+              "postgresql:///circus?host=/run/postgresql"
+            else
+              "postgresql:///circus?host=plum.taild29fec.ts.net";
 
           server = {
             host = "127.0.0.1";
@@ -114,95 +183,6 @@
               "starred"
               "metrics"
             ];
-          };
-
-          cache = {
-            enabled = true;
-            secretKeyFile = config.age.secrets.nixStoreKey.path;
-            compression = "zstd";
-            cache_url = "http://${hostName}.taild29fec.ts.net:5000";
-          };
-
-          # Will see if nix-upload-processor handles this for us.
-          cache_upload = {
-            enabled = false;
-            store_uri = "";
-            s3 = {
-              endpoint_url = "";
-              prefix = "nix";
-              use_path_style = true;
-              access_key_id = "";
-              secret_access_key = "";
-            };
-            upload_concurrency = 4;
-            upload_max_retries = 3;
-            fail_build_on_upload_error = false;
-          };
-
-          database = {
-            url = "postgresql:///circus?host=/run/postgresql";
-            connect_timeout = 30;
-            idle_timeout = 600;
-            max_connections = 20;
-            max_lifetime = 1800;
-            min_connections = 5;
-          };
-
-          evaluator = {
-            git_timeout = 600;
-            nix_timeout = 3600;
-            poll_interval = 60;
-            restrict_eval = true;
-            max_concurrent_evals = 2;
-            allow_ifd = false;
-            strict_errors = false; # Abort on first error or not.
-          };
-
-          queue_runner = {
-            workers = 4;
-            poll_interval = 5;
-            build_timeout = 3600;
-            strict_errors = false; # Abort on first error or not.
-            failed_paths_cache = false; # TODO: re-enable once working
-            failed_paths_ttl = 86400; # 24h
-            unsupported_timeout = 0; # For unsupported system build timeouts (useless, for Hydra compat).
-            scheduling_strategy = "speed_factor_only"; # TODO: Check other options.
-            # psi_threshold = 50.0; # None or 0.0-100.0
-            psi_check_timeout = 5;
-
-            rpc = {
-              bind = "0.0.0.0:8014";
-              auth_tokens = [
-                "47bf8f34370b54dfe24e8e2b09da65dec4296c9d9a4b7d8a299c3c8fbf8ae9c9"
-                "7c229876088043eab303adaed8338858096fbb22b0224cc06b2476c296c0dc39"
-                "5d586afe97ee23e3fbe3d8560a16bcaaea97195c902d73f92593b16451bd063d"
-                "5fc06cce2184c44d9082bff838c73351813b056894a9137387e774d48929cf4d"
-                "6131b1c964ec806204012bebed3df245ca70ba3b912cc5c9ad1033129d6415b4"
-              ];
-            };
-          };
-
-          signing = {
-            enabled = true;
-            key_file = config.age.secrets.nixStoreKey.path;
-          };
-
-          logs = {
-            log_dir = "/var/lib/circus/logs";
-            compress = true;
-          };
-          tracing = {
-            level = "info";
-            format = "compact";
-            show_targets = true;
-            show_timestamps = true;
-          };
-
-          gc = {
-            enabled = true;
-            gc_roots_dir = "/nix/var/nix/gcroots/per-user/circus/circus-roots";
-            max_age_days = 30;
-            cleanup_interval = 3600;
           };
         };
 
@@ -352,6 +332,126 @@
             '';
         };
       };
+    };
+
+  flake.modules.nixos.circus-evaluator =
+    {
+      inputs,
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
+    let
+      inherit (lib.attrsets) recursiveUpdate;
+      inherit (lib.lists) singleton;
+      inherit (config.networking) hostName;
+
+      circusPackages = inputs.circus.packages.${pkgs.stdenv.hostPlatform.system};
+    in
+    {
+      imports = singleton inputs.circus.nixosModules.default;
+
+      environment.systemPackages = singleton pkgs.nix-eval-jobs;
+
+      systemd.tmpfiles.rules = [
+        "d /var/lib/circus/logs 0750 circus circus -"
+        "d /nix/var/nix/gcroots/per-user/circus 0755 circus circus -"
+      ];
+      services.circus = {
+        enable = true;
+        server.enable = false;
+        evaluator.enable = true;
+        queueRunner.enable = false;
+
+        evaluatorPackage = circusPackages.circus-evaluator;
+
+        database.createLocally = false;
+        settings = recursiveUpdate (sharedSettings config hostName) {
+          database.url =
+            if hostName == "plum" then
+              "postgresql:///circus?host=/run/postgresql"
+            else
+              "postgresql:///circus?host=plum.taild29fec.ts.net";
+
+          evaluator = {
+            git_timeout = 600;
+            nix_timeout = 3600;
+            poll_interval = 60;
+            restrict_eval = true;
+            max_concurrent_evals = 2;
+            allow_ifd = false;
+            strict_errors = false; # Abort on first error or not.
+          };
+        };
+      };
+
+    };
+
+  flake.modules.nixos.circus-queue-runner =
+    {
+      inputs,
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
+    let
+      inherit (lib.attrsets) recursiveUpdate;
+      inherit (lib.lists) singleton;
+      inherit (config.networking) hostName;
+
+      circusPackages = inputs.circus.packages.${pkgs.stdenv.hostPlatform.system};
+    in
+    {
+      imports = singleton inputs.circus.nixosModules.default;
+
+      systemd.tmpfiles.rules = [
+        "d /var/lib/circus/logs 0750 circus circus -"
+        "d /nix/var/nix/gcroots/per-user/circus 0755 circus circus -"
+      ];
+      services.circus = {
+        enable = true;
+        server.enable = false;
+        evaluator.enable = false;
+        queueRunner.enable = true;
+
+        queueRunnerPackage = circusPackages.circus-queue-runner;
+
+        database.createLocally = false;
+        settings = recursiveUpdate (sharedSettings config hostName) {
+          database.url =
+            if hostName == "plum" then
+              "postgresql:///circus?host=/run/postgresql"
+            else
+              "postgresql:///circus?host=plum.taild29fec.ts.net";
+
+          queue_runner = {
+            workers = 4;
+            poll_interval = 5;
+            build_timeout = 3600;
+            strict_errors = false; # Abort on first error or not.
+            failed_paths_cache = false; # TODO: re-enable once working
+            failed_paths_ttl = 86400; # 24h
+            unsupported_timeout = 0; # For unsupported system build timeouts (useless, for Hydra compat).
+            scheduling_strategy = "speed_factor_only"; # TODO: Check other options.
+            # psi_threshold = 50.0; # None or 0.0-100.0
+            psi_check_timeout = 5;
+
+            rpc = {
+              bind = "0.0.0.0:8014";
+              auth_tokens = [
+                "47bf8f34370b54dfe24e8e2b09da65dec4296c9d9a4b7d8a299c3c8fbf8ae9c9"
+                "7c229876088043eab303adaed8338858096fbb22b0224cc06b2476c296c0dc39"
+                "5d586afe97ee23e3fbe3d8560a16bcaaea97195c902d73f92593b16451bd063d"
+                "5fc06cce2184c44d9082bff838c73351813b056894a9137387e774d48929cf4d"
+                "6131b1c964ec806204012bebed3df245ca70ba3b912cc5c9ad1033129d6415b4"
+              ];
+            };
+          };
+        };
+      };
+
     };
 
   flake.modules.nixos.circus-agent =

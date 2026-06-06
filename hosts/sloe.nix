@@ -14,6 +14,7 @@ in
       boot-grub
       buildbot-worker
       circus-agent
+      circus-evaluator
       disks-server
       disks-extra-zram-swap
       forgejo-action-runner
