@@ -14,6 +14,7 @@ in
       acme
       boot-grub
       buildbot-worker
+      circus-agent
       disks-server
       disks-extra-zram-swap
       forgejo-action-runner

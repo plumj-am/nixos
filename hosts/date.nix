@@ -13,6 +13,7 @@ in
       audio
       boot-systemd
       buildbot-worker
+      circus-agent
       claude-code
       desktop-gui
       desktop-tools

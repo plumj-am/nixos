@@ -394,7 +394,6 @@
           ];
           max_jobs = systemSpecs.cores;
           speed_factor = systemSpecs.speedFactor;
-
         };
       };
     };
