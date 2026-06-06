@@ -153,7 +153,7 @@
             nix_timeout = 3600;
             poll_interval = 60;
             restrict_eval = true;
-            max_concurrent_evals = 4;
+            max_concurrent_evals = 2;
             allow_ifd = false;
             strict_errors = false; # Abort on first error or not.
           };
