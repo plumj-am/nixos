@@ -86,10 +86,10 @@ in
       ];
 
       age.secrets = {
-        # circusGiteaWebhookSecret = {
-        #   rekeyFile = ../secrets/circus-gitea-webhook-secret.age;
-        #   owner = "circus";
-        # };
+        circusGiteaPlumJamNixosWebhookSecret = {
+          rekeyFile = ../secrets/circus-gitea-plumjam-nixos-webhook-secret.age;
+          owner = "circus";
+        };
         circusPlumjamPassword = {
           rekeyFile = ../secrets/circus-plumjam-password.age;
           owner = "circus";
@@ -191,7 +191,7 @@ in
           projects = [
             {
               name = "grove";
-              repositoryUrl = "https://git.plumj.am/PlumWorks/grove";
+              repositoryUrl = "ssh://circus@gerrit.plumj.am:29418/grove";
               description = "The PlumWorks Monorepo";
 
               members = [
@@ -220,7 +220,7 @@ in
                 {
                   enabled = false;
                   forgeType = "gitea"; # gitea, github, gitlab.
-                  # secretFile = config.age.secrets.circusGiteaWebhookSecret.path;
+                  # secretFile = config.age.secrets.circusGiteaPlumJamNixosWebhookSecret.path;
                 }
               ];
 
@@ -256,6 +256,21 @@ in
                   schedulingShares = 100; # Higher = higher priority.
                   keepNr = 3; # Number of recent successful evals to retain for GC pinning.
                   inputs = [ ]; # Determined automatically.
+                }
+              ];
+
+              webhooks = [
+                {
+                  enabled = true;
+                  forgeType = "gitea"; # gitea, github, gitlab.
+                  secretFile = config.age.secrets.circusGiteaPlumJamNixosWebhookSecret.path;
+                }
+              ];
+
+              notifications = [
+                {
+                  enabled = true;
+                  notificationType = "gitea_status";
                 }
               ];
 
