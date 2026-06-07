@@ -178,15 +178,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1780795214,
-        "narHash": "sha256-HkgLSWjYb04VzekXI61PvLL6VsrsSPs08NTvJpVJ+Tw=",
-        "owner": "manic-systems",
+        "lastModified": 1780869946,
+        "narHash": "sha256-1KeVeoYiZ3qblokMrJcd1wXLYPpMJ1vFn0yjwhiGe18=",
+        "owner": "plumj-am",
         "repo": "circus",
-        "rev": "4984a92aed03ceb971cc64034f76090227cf2331",
+        "rev": "eb522eb713e79b47b1cc815732edbabd78f5435b",
         "type": "github"
       },
       "original": {
-        "owner": "manic-systems",
+        "owner": "plumj-am",
+        "ref": "patch/PlumJam-rykzunzvwxxu",
         "repo": "circus",
         "type": "github"
       }
@@ -223,6 +224,21 @@
     },
     "crane_3": {
       "locked": {
+        "lastModified": 1779130139,
+        "narHash": "sha256-BLrtr42azquO7MdGFU5a7KiMl3YpFlTeIXqy1fT5GlQ=",
+        "owner": "ipetkov",
+        "repo": "crane",
+        "rev": "edb38893982a3338972bb4a2ec7ce7c29ba10fd9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ipetkov",
+        "repo": "crane",
+        "type": "github"
+      }
+    },
+    "crane_4": {
+      "locked": {
         "lastModified": 1780099841,
         "narHash": "sha256-EVZd2RsbpreRUDSi9rBwPY+ZxoyMaiEBbZxxhljbaS4=",
         "owner": "ipetkov",
@@ -236,7 +252,7 @@
         "type": "github"
       }
     },
-    "crane_4": {
+    "crane_5": {
       "locked": {
         "lastModified": 1768319649,
         "narHash": "sha256-VFkNyxHxkqGp8gf8kfFMW1j6XeBy609kv6TE9uF/0Js=",
@@ -317,6 +333,25 @@
       "inputs": {
         "nixpkgs": "nixpkgs",
         "rust-analyzer-src": "rust-analyzer-src_2"
+      },
+      "locked": {
+        "lastModified": 1779357702,
+        "narHash": "sha256-QGu9ycXwaaqUzDkP7bcanTjGhuqlUNmjh1jLUPjDHgw=",
+        "owner": "nix-community",
+        "repo": "fenix",
+        "rev": "a6ebca03f87958a09065959897223790014cdcac",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "repo": "fenix",
+        "type": "github"
+      }
+    },
+    "fenix_3": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_2",
+        "rust-analyzer-src": "rust-analyzer-src_3"
       },
       "locked": {
         "lastModified": 1779357702,
@@ -517,6 +552,28 @@
         "url": "https://git.plumj.am/plumjam/gerrit-autosubmit"
       }
     },
+    "gerrit-circus-bridge": {
+      "inputs": {
+        "crane": "crane_3",
+        "fenix": "fenix_3",
+        "nixpkgs": [
+          "os"
+        ]
+      },
+      "locked": {
+        "lastModified": 1780868493,
+        "narHash": "sha256-y+iPvtkEh87cjeJ2XCPsEB9cdeBbnFGvy9xu0Bn/XjI=",
+        "ref": "refs/heads/master",
+        "rev": "49d3dba1d11645ded97bed75755983076d39eb80",
+        "revCount": 4,
+        "type": "git",
+        "url": "https://git.plumj.am/plumjam/gerrit-circus-bridge"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://git.plumj.am/plumjam/gerrit-circus-bridge"
+      }
+    },
     "git-hooks": {
       "inputs": {
         "flake-compat": "flake-compat_2",
@@ -586,7 +643,7 @@
     },
     "harmonia": {
       "inputs": {
-        "crane": "crane_3",
+        "crane": "crane_4",
         "nix": "nix",
         "nixpkgs": [
           "os"
@@ -932,6 +989,22 @@
     },
     "nixpkgs_2": {
       "locked": {
+        "lastModified": 1778869304,
+        "narHash": "sha256-30sZNZoA1cqF5JNO9fVX+wgiQYjB7HJqqJ4ztCDeBZE=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "d233902339c02a9c334e7e593de68855ad26c4cb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_3": {
+      "locked": {
         "lastModified": 1761236834,
         "narHash": "sha256-+pthv6hrL5VLW2UqPdISGuLiUZ6SnAXdd2DdUE+fV2Q=",
         "owner": "nixos",
@@ -948,7 +1021,7 @@
     },
     "nu-lint": {
       "inputs": {
-        "crane": "crane_4",
+        "crane": "crane_5",
         "flake-utils": "flake-utils",
         "git-hooks": "git-hooks",
         "nixpkgs": [
@@ -1172,6 +1245,7 @@
         "fenix": "fenix",
         "gerrit": "gerrit",
         "gerrit-autosubmit": "gerrit-autosubmit",
+        "gerrit-circus-bridge": "gerrit-circus-bridge",
         "harmonia": "harmonia",
         "helium": "helium",
         "hjem": "hjem",
@@ -1240,6 +1314,23 @@
       }
     },
     "rust-analyzer-src_2": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1779303932,
+        "narHash": "sha256-alMOllPgosTsuXGjhvQvbGH0ekPOZW0QfGTI0NdJtbQ=",
+        "owner": "rust-lang",
+        "repo": "rust-analyzer",
+        "rev": "7f916ab1b1f669cec017960c2d91a9a87b4b7bae",
+        "type": "github"
+      },
+      "original": {
+        "owner": "rust-lang",
+        "ref": "nightly",
+        "repo": "rust-analyzer",
+        "type": "github"
+      }
+    },
+    "rust-analyzer-src_3": {
       "flake": false,
       "locked": {
         "lastModified": 1779303932,
@@ -1531,7 +1622,7 @@
     },
     "treefmt-nix_5": {
       "inputs": {
-        "nixpkgs": "nixpkgs_2"
+        "nixpkgs": "nixpkgs_3"
       },
       "locked": {
         "lastModified": 1762410071,

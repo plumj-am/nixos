@@ -27,7 +27,7 @@
       inputs.nixpkgs.follows = "os";
     };
     circus = {
-      url = "github:manic-systems/circus";
+      url = "github:plumj-am/circus?ref=patch/PlumJam-rykzunzvwxxu";
       inputs.nixpkgs.follows = "os";
     };
     gerrit = {
@@ -36,6 +36,10 @@
     };
     gerrit-autosubmit = {
       url = "git+https://git.plumj.am/plumjam/gerrit-autosubmit";
+      inputs.nixpkgs.follows = "os";
+    };
+    gerrit-circus-bridge = {
+      url = "git+https://git.plumj.am/plumjam/gerrit-circus-bridge";
       inputs.nixpkgs.follows = "os";
     };
     harmonia = {

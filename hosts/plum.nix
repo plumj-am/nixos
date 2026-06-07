@@ -25,6 +25,7 @@ in
       freshrss-server
       forgejo-action-runner
       gerrit
+      gerrit-circus-bridge
       goatcounter
       harmonia
       matrix

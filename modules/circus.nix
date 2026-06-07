@@ -191,7 +191,7 @@ in
           projects = [
             {
               name = "grove";
-              repositoryUrl = "ssh://circus@gerrit.plumj.am:29418/grove";
+              repositoryUrl = "https://gerrit.plumj.am/grove";
               description = "The PlumWorks Monorepo";
 
               members = [
@@ -292,6 +292,13 @@ in
               # cancel-build, restart-jobs, bump-to-front.
               role = "admin";
             }
+            {
+              name = "circusGerritApiKey";
+              keyFile = config.age.secrets.circusGerritApiKey.path;
+              # admin (default), read-only, create-projects, eval-jobset,
+              # cancel-build, restart-jobs, bump-to-front.
+              role = "eval-jobset";
+            }
           ];
 
           users = {
@@ -327,6 +334,7 @@ in
                   "big-parallel"
                   "kvm"
                   "nixos-test"
+                  "uid-range"
                 ];
                 mandatoryFeatures = [ ];
                 sshKeyFile = config.age.secrets.circusSshKey.path;
@@ -375,6 +383,13 @@ in
         "d /var/lib/circus/logs 0750 circus circus -"
         "d /nix/var/nix/gcroots/per-user/circus 0755 circus circus -"
       ];
+
+      age.secrets.circusGerritPassword = {
+        rekeyFile = ../secrets/circus-gerrit-password.age;
+        owner = "circus";
+        mode = "400";
+      };
+
       services.circus = {
         enable = true;
         server.enable = mkDefault false;
@@ -392,6 +407,7 @@ in
               "postgresql://circus@plum.taild29fec.ts.net/circus";
 
           evaluator = {
+            git_http_username = "circus";
             git_timeout = 600;
             nix_timeout = 3600;
             poll_interval = 60;
@@ -519,10 +535,46 @@ in
             "big-parallel"
             "kvm"
             "nixos-test"
+            "uid-range"
           ];
           max_jobs = systemSpecs.cores;
           speed_factor = systemSpecs.speedFactor;
         };
+      };
+    };
+
+  flake.modules.nixos.gerrit-circus-bridge =
+    {
+      inputs,
+      lib,
+      config,
+      ...
+    }:
+    let
+      inherit (lib.lists) singleton;
+
+      secrets = config.age.secrets;
+    in
+    {
+      imports = singleton inputs.gerrit-circus-bridge.nixosModules.default;
+
+      age.secrets = {
+        circusGerritApiKey = {
+          rekeyFile = ../secrets/circus-gerrit-api-key.age;
+          owner = "circus";
+          mode = "400";
+        };
+        circusGerritPassword = {
+          rekeyFile = ../secrets/circus-gerrit-password.age;
+          owner = "circus";
+          mode = "400";
+        };
+      };
+
+      services.gerrit-circus-bridge = {
+        enable = true;
+        circusApiKeyFile = secrets.circusGerritApiKey.path;
+        gerritPasswordFile = secrets.circusGerritPassword.path;
       };
     };
 }
