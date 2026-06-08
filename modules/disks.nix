@@ -88,19 +88,24 @@
       inherit (lib.lists) singleton;
       inherit (lib.options) mkOption;
       inherit (lib.types) str;
-
-      cfg = config.diskConfig;
     in
     {
       imports = singleton inputs.disko.nixosModules.disko;
 
       config.boot.supportedFilesystems = singleton "bcachefs";
 
-      options.diskConfig = {
-        swapSize = mkOption {
-          type = str;
-          default = "34G";
+      options.disk = {
+        swap.partition = {
+          size = mkOption {
+            type = str;
+            default = "34G";
+          };
+          path = mkOption {
+            type = str;
+            default = "/dev/disk/by-label/swap";
+          };
         };
+
         diskDevice = mkOption {
           type = str;
           default = "/dev/nvme0n1";
@@ -108,12 +113,12 @@
       };
 
       config.swapDevices = singleton {
-        device = "/dev/disk/by-label/swap";
+        device = config.disk.swap.partition.path;
       };
 
       config.disko.devices = {
         disk.main = {
-          device = cfg.diskDevice;
+          device = config.disk.diskDevice;
           type = "disk";
           content = {
             type = "gpt";
@@ -132,7 +137,7 @@
               };
               root = {
                 name = "root";
-                end = "-${cfg.swapSize}";
+                end = "-${config.disk.swap.partition.size}";
                 content = {
                   type = "filesystem";
                   format = "bcachefs";
@@ -142,7 +147,7 @@
               };
               swap = {
                 name = "swap";
-                size = cfg.swapSize;
+                size = config.disk.swap.partition.size;
                 content = {
                   type = "swap";
                   discardPolicy = "both";
@@ -155,8 +160,4 @@
         };
       };
     };
-
-  flake.modules.nixos.disks-extra-zram-swap = {
-    zramSwap.enable = true;
-  };
 }

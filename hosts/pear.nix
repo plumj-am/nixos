@@ -14,7 +14,6 @@ in
       harmonia
       jujutsu-extra
       # ncro
-      nix-distributed-builds
       sudo-extra-desktop
       # s3-upload
       wsl

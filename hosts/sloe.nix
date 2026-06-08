@@ -1,7 +1,6 @@
-{ inputs, lib, ... }:
+{ inputs, ... }:
 let
   inherit (inputs.self) mkConfig;
-  inherit (lib.lists) singleton;
 in
 {
   # Sloe | server | x86_64-linux | NixOS
@@ -16,13 +15,10 @@ in
       circus-agent
       circus-evaluator
       disks-server
-      disks-extra-zram-swap
       forgejo-action-runner
       graphics
       harmonia
       # ncro
-      nix-distributed-builder
-      nix-distributed-builds
       nix-settings-extra-server
       openssh-extra-users
       pi
@@ -31,6 +27,7 @@ in
       rust
       sudo-extra-server
       syncthing
+      swapfile
       s3-upload
       users-extra
       zellij
@@ -41,15 +38,18 @@ in
       {
         config = mkConfig inputs "sloe" "x86_64-linux" {
 
-          systemSpecs = {
+          systemInfo = {
             cores = 12;
-            speedFactor = 5;
-            runner.strong = true;
-          };
+            distributedBuilder = {
+              enable = true;
+              speedFactor = 5;
+            };
+            ciRunner.strong = true;
 
-          swapDevices = singleton {
-            device = "/swapfile";
-            size = 1024 * 32;
+            disks.swap.file = {
+              path = "/swapfile";
+              size = 1024 * 32;
+            };
           };
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK42xzC/vWHZC9SiU/8IBBd2pn7mggBYFQ8themKAic/ root@sloe";

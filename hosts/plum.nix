@@ -1,7 +1,6 @@
-{ inputs, lib, ... }:
+{ inputs, ... }:
 let
   inherit (inputs.self) mkConfig;
-  inherit (lib.lists) singleton;
 in
 {
   # Plum | server | x86_64-linux | NixOS
@@ -20,7 +19,6 @@ in
       circus-server
       circus-queue-runner
       disks-server
-      disks-extra-zram-swap
       forgejo
       freshrss-server
       forgejo-action-runner
@@ -31,8 +29,6 @@ in
       matrix
       # ncro
       nginx
-      nix-distributed-builder
-      nix-distributed-builds
       nix-settings-extra-server
       opengist
       postgres
@@ -42,6 +38,7 @@ in
       rust
       sudo-extra-server
       syncthing
+      swapfile
       s3-upload
       uptime-kuma
       users-extra
@@ -62,15 +59,18 @@ in
             ];
           };
 
-          systemSpecs = {
+          systemInfo = {
             cores = 4;
-            speedFactor = 3;
-            runner.strong = true;
-          };
+            distributedBuilder = {
+              enable = true;
+              speedFactor = 3;
+            };
+            ciRunner.strong = true;
 
-          swapDevices = singleton {
-            device = "/swapfile";
-            size = 1024 * 8;
+            disks.swap.file = {
+              path = "/swapfile";
+              size = 1024 * 8;
+            };
           };
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBH1S3dhOYCCltqrseHc3YZFHc9XU90PsvDo7frzUGrr root@plum";

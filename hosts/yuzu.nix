@@ -18,7 +18,6 @@ in
       desktop-tools
       discord
       disks-normal
-      disks-extra-zram-swap
       docker-rootless
       editor-extra
       forgejo-cli
@@ -37,7 +36,6 @@ in
       llama-cpp
       mprocs
       # ncro
-      nix-distributed-builds
       nix-settings-extra-desktop
       omp
       opencode
@@ -59,6 +57,7 @@ in
       rss-tui
       sudo-extra-desktop
       syncthing
+      swap-partition
       s3-upload
       theme-extra-fonts
       theme-extra-scripts
@@ -68,8 +67,13 @@ in
       { hardware.facter.reportPath = ./facter/yuzu.json; }
       {
         config = mkConfig inputs "yuzu" "x86_64-linux" {
-          systemSpecs = {
+          systemInfo = {
             cores = 20;
+
+            disks.swap.partition = {
+              path = "/dev/disk/by-label/swap";
+              size = "34G";
+            };
           };
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFDLlddona4PlORWd+QpR/7F5H46/Dic9vV23/YSrZl0 root@yuzu";

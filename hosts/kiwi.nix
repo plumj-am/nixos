@@ -1,7 +1,6 @@
-{ inputs, lib, ... }:
+{ inputs, ... }:
 let
   inherit (inputs.self) mkConfig;
-  inherit (lib.lists) singleton;
 in
 {
   # Kiwi | server | x86_64-linux | NixOS
@@ -14,17 +13,16 @@ in
       acme
       boot-grub
       disks-server
-      disks-extra-zram-swap
       forgejo-action-runner
       harmonia
       # ncro
       nginx
-      nix-distributed-builds
       nix-settings-extra-server
       radicle-node
       rust
       sudo-extra-server
       syncthing
+      swapfile
       s3-upload
       website-dr-radka
       zellij
@@ -40,14 +38,17 @@ in
             ];
           };
 
-          systemSpecs = {
+          systemInfo = {
             cores = 2;
-            speedFactor = 2;
-          };
+            distributedBuilder = {
+              enable = false;
+              speedFactor = 2;
+            };
 
-          swapDevices = singleton {
-            device = "/swapfile";
-            size = 1024 * 2;
+            disks.swap.file = {
+              path = "/swapfile";
+              size = 1024 * 2;
+            };
           };
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIElcSHxI64xqUUKEY83tKyzEH+fYT5JCWn3qCqtw16af root@kiwi";

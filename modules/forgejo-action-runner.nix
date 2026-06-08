@@ -37,7 +37,7 @@ let
             tokenFile = config.age.secrets.forgejoRunnerToken.path;
             inherit name url;
 
-            labels = defaultLabels ++ optional config.systemSpecs.runner.strong "strong:host";
+            labels = defaultLabels ++ optional config.systemInfo.ciRunner.strong "strong:host";
 
             settings = {
               runner = {

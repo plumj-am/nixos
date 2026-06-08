@@ -177,7 +177,7 @@
           StateDirectoryMode = "0755";
           CPUQuota =
             let
-              cores = config.systemSpecs.cores;
+              cores = config.systemInfo.cores;
             in
             "${toString (cores * 50)}%";
         };

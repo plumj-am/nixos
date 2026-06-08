@@ -20,7 +20,6 @@ in
       desktop-tools
       discord
       disks-bcachefs
-      disks-extra-zram-swap
       docker-rootless
       editor-extra
       forgejo-action-runner
@@ -38,8 +37,6 @@ in
       mprocs
       # ncro
       nix-settings-extra-desktop
-      nix-distributed-builder
-      nix-distributed-builds
       opencode
       packages-extra-linux
       packages-extra-gui
@@ -52,6 +49,7 @@ in
       rss-tui
       sudo-extra-desktop
       syncthing
+      swap-partition
       s3-upload
       theme-extra-fonts
       theme-extra-scripts
@@ -60,12 +58,18 @@ in
       { hardware.facter.reportPath = ./facter/date.json; }
       {
         config = mkConfig inputs "date" "x86_64-linux" {
-          diskConfig.swapSize = "18G";
-
-          systemSpecs = {
+          systemInfo = {
             cores = 12;
-            speedFactor = 4;
-            runner.strong = true;
+            distributedBuilder = {
+              enable = true;
+              speedFactor = 4;
+            };
+            ciRunner.strong = true;
+
+            disks.swap.partition = {
+              path = "/dev/disk/by-label/swap";
+              size = "18G";
+            };
           };
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEzfoVKZDyiyyMiX1JRFaaTELspG25MlLNq0kI2AANTa root@date";

@@ -33,14 +33,15 @@ in
       getCommon inputs.self.modules.nixos
       ++ (with inputs.self.modules.nixos; [
         disable-nano
-        disks-extra-zram-swap
         dynamic-binaries
         locale
         linux-kernel
         netrc
         networking
+        nix-distributed-builds
+        nix-distributed-builder
         rebuild
-        system-specs
+        system-info
         yubikey
       ]);
   };

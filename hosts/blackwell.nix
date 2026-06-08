@@ -1,7 +1,6 @@
-{ inputs, lib, ... }:
+{ inputs, ... }:
 let
   inherit (inputs.self) mkConfig;
-  inherit (lib.lists) singleton;
 in
 {
   # Blackwell | server | x86_64-linux | NixOS
@@ -14,28 +13,29 @@ in
       boot-grub
       # buildbot-worker
       disks-server
-      disks-extra-zram-swap
       forgejo-action-runner
       harmonia
       # ncro
-      # nix-distributed-builder
-      nix-distributed-builds
       nix-settings-extra-server
       radicle-node
       rust
       sudo-extra-server
+      swapfile
       s3-upload
       zellij
       {
         config = mkConfig inputs "blackwell" "x86_64-linux" {
-          systemSpecs = {
+          systemInfo = {
             cores = 2;
-            speedFactor = 1;
-          };
+            distributedBuilder = {
+              enable = false;
+              speedFactor = 1;
+            };
 
-          swapDevices = singleton {
-            device = "/swapfile";
-            size = 1024 * 2;
+            disks.swap.file = {
+              path = "/swapfile";
+              size = 1024 * 2;
+            };
           };
 
           age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGSi4SKhqze7ZzhJFcUF9KW/4nXX1MfvZjUqrYWNDi9c root@blackwell";

@@ -318,7 +318,8 @@ in
             inputs.self.nixosConfigurations
             |> attrsToList
             |> filter (
-              { name, value }: name != config.networking.hostName && value.config.systemSpecs.builder.enable
+              { name, value }:
+              name != config.networking.hostName && value.config.systemInfo.distributedBuilder.enable
             )
             |> map (
               { name, value }:
@@ -327,8 +328,8 @@ in
                 inherit name;
                 sshUri = "ssh-ng://build@${name}";
                 systems = singleton value.config.nixpkgs.hostPlatform.system;
-                maxJobs = value.config.systemSpecs.cores;
-                speedFactor = value.config.systemSpecs.speedFactor;
+                maxJobs = value.config.systemInfo.cores;
+                speedFactor = value.config.systemInfo.distributedBuilder.speedFactor;
                 supportedFeatures = [
                   "benchmark"
                   "big-parallel"
@@ -500,7 +501,7 @@ in
       inherit (lib.lists) singleton;
       inherit (config.age) secrets;
       inherit (config.networking) hostName;
-      inherit (config) systemSpecs;
+      inherit (config) systemInfo;
 
       port = "8014";
 
@@ -537,8 +538,8 @@ in
             "nixos-test"
             "uid-range"
           ];
-          max_jobs = systemSpecs.cores;
-          speed_factor = systemSpecs.speedFactor;
+          max_jobs = systemInfo.cores;
+          speed_factor = systemInfo.distributedBuilder.speedFactor;
         };
       };
     };
