@@ -1,159 +1,22 @@
 {
   description = "PlumJam's NixOS Configuration Collection";
 
-  outputs = inputs: import ./outputs.nix inputs;
-
-  inputs = {
-    age = {
-      url = "github:ryantm/agenix";
-      inputs = {
-        darwin.follows = "os-darwin";
-        nixpkgs.follows = "os";
+  outputs =
+    { self, ... }@args:
+    let
+      tackInputs = (import ./.tack) {
+        overrides = args.tackOverrides or { };
       };
-    };
-    age-rekey = {
-      url = "github:oddlama/agenix-rekey";
-      inputs = {
-        flake-parts.follows = "parts";
-        nixpkgs.follows = "os";
+      # Strip tack's functor so it's a plain attrset of pins.
+      pins = removeAttrs tackInputs [ "__functor" ];
+      # flake-parts builds inputs' from self.inputs - since the flake
+      # declares no inputs, inject tack pins so inputs'.os still works
+      selfWithInputs = self // {
+        inputs = pins;
       };
-    };
-    buildbot-nix = {
-      url = "github:plumj-am/buildbot-nix?ref=patch/PlumJam-quouslxnzuxk";
-      inputs.nixpkgs.follows = "os";
-    };
-    cade = {
-      url = "github:plumj-am/cade?ref=patch/PlumJam-zvnsyvnoovvu";
-      inputs.nixpkgs.follows = "os";
-    };
-    circus = {
-      url = "github:plumj-am/circus?ref=patch/PlumJam-rykzunzvwxxu";
-      inputs.nixpkgs.follows = "os";
-    };
-    gerrit = {
-      url = "git+https://git.afnix.fr/afnix/nix-gerrit";
-      inputs.nixpkgs.follows = "os";
-    };
-    gerrit-autosubmit = {
-      url = "git+https://git.plumj.am/plumjam/gerrit-autosubmit";
-      inputs.nixpkgs.follows = "os";
-    };
-    gerrit-circus-bridge = {
-      url = "git+https://git.plumj.am/plumjam/gerrit-circus-bridge";
-      inputs.nixpkgs.follows = "os";
-    };
-    harmonia = {
-      url = "github:nix-community/harmonia";
-      inputs.nixpkgs.follows = "os";
-    };
-    disko = {
-      url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "os";
-    };
-    fenix = {
-      url = "github:nix-community/fenix";
-      inputs.nixpkgs.follows = "os";
-    };
-    helium = {
-      url = "github:amaanq/helium-flake";
-      inputs.nixpkgs.follows = "os";
-    };
-    hjem = {
-      url = "github:feel-co/hjem";
-      inputs = {
-        nix-darwin.follows = "os-darwin";
-        nixpkgs.follows = "os";
+      inputs = pins // {
+        self = selfWithInputs;
       };
-    };
-    homebrew = {
-      url = "github:zhaofengli/nix-homebrew";
-    };
-    homebrew-core = {
-      url = "github:homebrew/homebrew-core";
-      flake = false;
-    };
-    homebrew-cask = {
-      url = "github:homebrew/homebrew-cask";
-      flake = false;
-    };
-    inshellah = {
-      url = "github:manic-systems/inshellah";
-      inputs.nixpkgs.follows = "os";
-    };
-    llm-agents = {
-      url = "github:numtide/llm-agents.nix";
-      inputs.nixpkgs.follows = "os";
-    };
-    niri = {
-      url = "github:niri-wm/niri";
-      inputs.nixpkgs.follows = "os";
-    };
-    ncro = {
-      url = "github:manic-systems/ncro";
-      inputs.nixpkgs.follows = "os";
-    };
-    nixos-core = {
-      url = "github:manic-systems/nixos-core";
-      inputs.nixpkgs.follows = "os";
-    };
-    nix-index = {
-      url = "github:nix-community/nix-index-database";
-      inputs.nixpkgs.follows = "os";
-    };
-    nu-lint = {
-      url = "git+https://codeberg.org/wvhulle/nu-lint";
-      inputs.nixpkgs.follows = "os";
-    };
-    os.url = "github:NixOS/nixpkgs/nixos-unstable-small";
-    os-darwin = {
-      url = "github:nix-darwin/nix-darwin/master";
-      inputs.nixpkgs.follows = "os";
-    };
-    os-wsl = {
-      url = "github:nix-community/NixOS-WSL/main";
-      inputs = {
-        flake-compat.follows = "";
-        nixpkgs.follows = "os";
-      };
-    };
-    parts = {
-      url = "github:hercules-ci/flake-parts";
-      inputs.nixpkgs-lib.follows = "os";
-    };
-    qml-niri = {
-      url = "github:imiric/qml-niri/main";
-      inputs = {
-        nixpkgs.follows = "os";
-        quickshell.follows = "quickshell";
-      };
-    };
-    rio = {
-      url = "github:raphamorim/rio";
-      inputs.nixpkgs.follows = "os";
-    };
-    rom = {
-      url = "github:manic-systems/rom";
-      inputs.nixpkgs.follows = "os";
-    };
-    quickshell = {
-      url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
-      inputs.nixpkgs.follows = "os";
-    };
-    run0-sudo-shim = {
-      url = "github:plumj-am/run0-sudo-shim";
-      inputs.nixpkgs.follows = "os";
-    };
-    tack = {
-      url = "github:manic-systems/tack";
-      inputs.nixpkgs.follows = "os";
-    };
-    ublock = {
-      url = "github:imputnet/uBlock";
-      flake = false;
-    };
-    zyouz = {
-      url = "github:plumj-am/zyouz?ref=tmp";
-      inputs.nixpkgs.follows = "os";
-    };
-  };
+    in
+    import ./outputs.nix inputs;
 }

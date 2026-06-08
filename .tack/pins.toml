@@ -1,0 +1,55 @@
+[inputs]
+age.url                  = "gh:ryantm/agenix"
+age-rekey.url            = "gh:oddlama/agenix-rekey"
+buildbot-nix.url         = "gh:plumj-am/buildbot-nix/patch/PlumJam-quouslxnzuxk"
+cade.url                 = "gh:plumj-am/cade/patch/PlumJam-zvnsyvnoovvu"
+circus.url               = "gh:plumj-am/circus/patch/PlumJam-rykzunzvwxxu"
+disko.url                = "gh:nix-community/disko"
+fenix.url                = "gh:nix-community/fenix"
+gerrit.url               = "afnix:afnix/nix-gerrit"
+gerrit-autosubmit.url    = "plumjam:plumjam/gerrit-autosubmit"
+gerrit-circus-bridge.url = "plumjam:plumjam/gerrit-circus-bridge"
+harmonia.url             = "gh:nix-community/harmonia"
+helium.url               = "gh:amaanq/helium-flake"
+hjem.url                 = "gh:feel-co/hjem"
+homebrew.url             = "gh:zhaofengli/nix-homebrew"
+homebrew-cask            = { type = "fetch", url = "gh:homebrew/homebrew-cask" }
+homebrew-core            = { type = "fetch", url = "gh:homebrew/homebrew-core" }
+inshellah.url            = "gh:manic-systems/inshellah"
+llm-agents.url           = "gh:numtide/llm-agents.nix"
+ncro.url                 = "gh:manic-systems/ncro"
+niri.url                 = "gh:niri-wm/niri"
+nix-index.url            = "gh:nix-community/nix-index-database"
+nixos-core.url           = "gh:manic-systems/nixos-core"
+nu-lint.url              = "cb:wvhulle/nu-lint"
+os.url                   = "gh:NixOS/nixpkgs/nixos-unstable-small"
+os-darwin.url            = "gh:nix-darwin/nix-darwin/master"
+os-wsl.url               = "gh:nix-community/NixOS-WSL/main"
+parts.url                = "gh:hercules-ci/flake-parts"
+qml-niri.url             = "gh:imiric/qml-niri/main"
+quickshell.url           = "outfoxxed:outfoxxed/quickshell"
+rio.url                  = "gh:raphamorim/rio"
+rom.url                  = "gh:manic-systems/rom"
+run0-sudo-shim.url       = "gh:plumj-am/run0-sudo-shim"
+tack.url                 = "gh:manic-systems/tack"
+ublock                   = { type = "fetch", url = "gh:imputnet/uBlock" }
+zyouz.url                = "gh:plumj-am/zyouz/tmp"
+
+[shorturls]
+afnix     = "git+https://git.afnix.fr/{path}"
+cb        = "git+https://codeberg.org/{path}"
+gh        = "github:{path}"
+outfoxxed = "git+https://git.outfoxxed.me/{path}"
+plumjam   = "git+https://git.plumj.am/{path}"
+
+[all_follow]
+darwin      = "os-darwin"
+fenix       = "fenix"
+flake-parts = "parts"
+nix-darwin  = "os-darwin"
+nixpkgs     = "os"
+nixpkgs-lib = "os"
+quickshell  = "quickshell"
+
+[tack]
+recomposable = true
