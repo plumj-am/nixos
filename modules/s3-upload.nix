@@ -170,8 +170,8 @@
           --api ${garageApiVersion} \
           --path ${garagePathStyle}
 
-        ${getExe pkgs.minio-client} --quiet ilm add --expire-days 60 ${fsn1Alias}/${fsn1Bucket}/${fsn1Prefix}
-        ${getExe pkgs.minio-client} --quiet ilm add --expire-days 60 ${garageAlias}/${garageBucket}
+        ${getExe pkgs.minio-client} --quiet ilm add --expire-days 60 ${fsn1Alias}/${fsn1Bucket}/${fsn1Prefix} 2>/dev/null || true
+        ${getExe pkgs.minio-client} --quiet ilm add --expire-days 60 ${garageAlias}/${garageBucket} 2>/dev/null || true
       '';
 
       setupScript = pkgs.writeShellScriptBin "s3-setup" ''
@@ -249,15 +249,31 @@
         systemd.tmpfiles.rules = [
           "d ${config.users.users.jam.home}/.mc 0755 jam users -"
           "d /root/.mc 0755 root root -"
+          "d ${config.users.users.jam.home}/.aws 0700 jam users -"
+          "d /root/.aws 0700 root root -"
         ];
 
-        # TODO: convert to systemd one-shot
-        system.activationScripts.s3-setup = {
-          deps = singleton "agenix";
-          text = ''
-            echo "Setting up S3 credentials..."
-            ${getExe setupScript}
-          '';
+        systemd.services.s3-setup = {
+          description = "S3 credential & cache setup";
+          after = [
+            "network.target"
+            "agenix.service"
+          ];
+          before = [ "nix-upload-processor.service" ];
+          wantedBy = [ "multi-user.target" ];
+
+          # mc needs glibc.getent
+          path = [
+            pkgs.glibc.getent
+            pkgs.minio-client
+            pkgs.coreutils
+          ];
+
+          serviceConfig = {
+            Type = "oneshot";
+            RemainAfterExit = true;
+            ExecStart = getExe setupScript;
+          };
         };
 
         systemd.services.nix-upload-processor = {
@@ -265,6 +281,7 @@
           after = [
             "network.target"
             "nix-daemon.socket"
+            "s3-setup.service"
           ];
           wantedBy = singleton "multi-user.target";
 
