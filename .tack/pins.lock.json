@@ -16,11 +16,11 @@
     "type": "github"
   },
   "buildbot-nix": {
-    "lastModified": 1780482657,
-    "narHash": "sha256-DtRV6inU+6AHPRSrj3vQtD4Tk8jCSiyechB2D/nvel4=",
+    "lastModified": 1781103680,
+    "narHash": "sha256-5WUQA0O2ixubsle5J28k01xaTg0dAdNaNyXrYk/1eBY=",
     "owner": "plumj-am",
     "repo": "buildbot-nix",
-    "rev": "91cb23be1e7f0b91b85b4741365deca362adae3f",
+    "rev": "432749452b0a5f09d8a56ebed3575278d61b4e85",
     "type": "github"
   },
   "cade": {

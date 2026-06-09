@@ -87,8 +87,14 @@
         };
 
         # GC root registration fails way too often to be useful.
+        # Patch <https://github.com/plumj-am/buildbot-nix/patch/PlumJam-yzxtwuvzwpww>
+        # allows changing settings for the default git branch). Previously it was
+        # immutable and GC roots were always registered.
+        # Sadly, a lot of my GC root registrations fail - I think because they all
+        # happen in parallel across many builders so drvs aren't available in the
+        # caches immediately.
         branches.all = {
-          matchGlob = "**";
+          matchGlob = "*";
           registerGCRoots = false;
         };
       };
