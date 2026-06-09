@@ -53,6 +53,7 @@ in
       radicle-tui
       raperl
       rio
+      rust
       rust-desktop
       rss-tui
       sudo-extra-desktop
