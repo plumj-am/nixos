@@ -30,18 +30,20 @@
             generator = pkgs.writers.writeTOML "rio-config.toml";
             value = {
               fonts = {
+                size = theme.font.size.tiny + 3; # Weird font sizing compared to other terminals
+                use-drawable-chars = true;
                 family = theme.font.mono.name;
                 # For Maple Mono
-                # features = [
-                #   "+cv64"
-                #   "+ss03"
-                #   "+ss05"
-                #   "+ss07"
-                #   "+ss08"
-                #   "+ss09"
-                #   "+ss10"
-                #   "+ss11"
-                # ];
+                features = [
+                  "+cv64"
+                  "+ss03"
+                  "+ss05"
+                  "+ss07"
+                  "+ss08"
+                  "+ss09"
+                  "+ss10"
+                  "+ss11"
+                ];
               };
               draw-bold-text-with-light-colors = false;
 
