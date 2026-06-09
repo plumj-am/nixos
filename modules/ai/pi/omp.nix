@@ -86,17 +86,17 @@
             value = {
               # [appearance]
               theme = {
-                dark = "titanium";
-                light = "light";
+                dark = "dark-gruvbox";
+                light = "light-gruvbox";
               };
               symbolPreset = "unicode";
               statusLine = {
-                preset = "minimal";
+                preset = "compact";
                 separator = "pipe";
               };
               terminal.showImages = true;
               display = {
-                shimmer = "disabled";
+                shimmer = "classic";
                 showTokenUsage = true;
               };
 
