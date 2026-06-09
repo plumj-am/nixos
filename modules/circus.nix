@@ -189,49 +189,49 @@ in
 
         declarative = {
           projects = [
-            {
-              name = "grove";
-              repositoryUrl = "https://gerrit.plumj.am/grove";
-              description = "The PlumWorks Monorepo";
+            # {
+            #   name = "grove";
+            #   repositoryUrl = "https://gerrit.plumj.am/grove";
+            #   description = "The PlumWorks Monorepo";
 
-              members = [
-                {
-                  username = "PlumJam";
-                  role = "admin"; # member (default), admin, maintainer.
-                }
-              ];
+            #   members = [
+            #     {
+            #       username = "PlumJam";
+            #       role = "admin"; # member (default), admin, maintainer.
+            #     }
+            #   ];
 
-              jobsets = [
-                {
-                  enabled = true;
-                  name = "checks";
-                  flakeMode = true;
-                  nixExpression = "checks"; # flake output ".#checks"
-                  checkInterval = 60;
-                  state = "enabled"; # enabled (default), disabled, one_shot, one_at_a_time.
-                  branch = null; # Git branch to track, default repo default.
-                  schedulingShares = 100; # Higher = higher priority.
-                  keepNr = 3; # Number of recent successful evals to retain for GC pinning.
-                  inputs = [ ]; # Determined automatically.
-                }
-              ];
+            #   jobsets = [
+            #     {
+            #       enabled = true;
+            #       name = "checks";
+            #       flakeMode = true;
+            #       nixExpression = "checks"; # flake output ".#checks"
+            #       checkInterval = 60;
+            #       state = "enabled"; # enabled (default), disabled, one_shot, one_at_a_time.
+            #       branch = null; # Git branch to track, default repo default.
+            #       schedulingShares = 100; # Higher = higher priority.
+            #       keepNr = 3; # Number of recent successful evals to retain for GC pinning.
+            #       inputs = [ ]; # Determined automatically.
+            #     }
+            #   ];
 
-              webhooks = [
-                {
-                  enabled = false;
-                  forgeType = "gitea"; # gitea, github, gitlab.
-                  # secretFile = config.age.secrets.circusGiteaPlumJamNixosWebhookSecret.path;
-                }
-              ];
+            #   webhooks = [
+            #     {
+            #       enabled = false;
+            #       forgeType = "gitea"; # gitea, github, gitlab.
+            #       # secretFile = config.age.secrets.circusGiteaPlumJamNixosWebhookSecret.path;
+            #     }
+            #   ];
 
-              # Release channels for the project.
-              channels = [
-                # {
-                #   name = "";
-                #   jobsetName = "";
-                # }
-              ];
-            }
+            #   # Release channels for the project.
+            #   channels = [
+            #     # {
+            #     #   name = "";
+            #     #   jobsetName = "";
+            #     # }
+            #   ];
+            # }
             {
               name = "nixos";
               repositoryUrl = "https://git.plumj.am/PlumJam/nixos";
@@ -573,7 +573,7 @@ in
       };
 
       services.gerrit-circus-bridge = {
-        enable = true;
+        enable = false;
         circusApiKeyFile = secrets.circusGerritApiKey.path;
         gerritPasswordFile = secrets.circusGerritPassword.path;
       };
