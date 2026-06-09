@@ -22,6 +22,7 @@ in
       graphics
       harmonia
       # ncro
+      nextcloud
       nginx
       nix-settings-extra-server
       openssh-extra-users
@@ -74,6 +75,7 @@ in
           age.secrets = {
             forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
             nixStoreKey.rekeyFile = ../secrets/sloe-nix-store-key.age;
+            resticPassword.rekeyFile = ../secrets/restic-password.age;
           };
 
           system.stateVersion = "26.05";
