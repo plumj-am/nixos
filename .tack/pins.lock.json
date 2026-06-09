@@ -48,11 +48,11 @@
     "type": "github"
   },
   "fenix": {
-    "lastModified": 1780824777,
-    "narHash": "sha256-/D3gjEDezsoa//Kbd+rNQRERl4AS+HYOMChsdD1eus4=",
+    "lastModified": 1781086641,
+    "narHash": "sha256-2oBncBeL671Tf6TnYqk36ebkfPHNYPKwz5at8NcrpvI=",
     "owner": "nix-community",
     "repo": "fenix",
-    "rev": "3a556b6fbd42412b6f3f0ea8d35959b1826f86ff",
+    "rev": "640606300f74b4891bfa1a51f5756450f9fdc7f1",
     "type": "github"
   },
   "gerrit": {
@@ -90,11 +90,11 @@
     "type": "github"
   },
   "helium": {
-    "lastModified": 1780821058,
-    "narHash": "sha256-eHfsA/pKQAK60jmyGzGP7BvcJOXAPZJY0lEQJC2xlGc=",
+    "lastModified": 1781080374,
+    "narHash": "sha256-1RrmVzSKKgsw3VBCLRpklfpz8qUvrbDk26kXEu5R6L0=",
     "owner": "amaanq",
     "repo": "helium-flake",
-    "rev": "d765e1962dbe3fa08e0bf4f6abd3dd53806cf826",
+    "rev": "f6f60ddd33086e3727392d9cade730df37980409",
     "type": "github"
   },
   "hjem": {
@@ -114,19 +114,19 @@
     "type": "github"
   },
   "homebrew-cask": {
-    "lastModified": 1780996071,
-    "narHash": "sha256-MyDf2g1swc9HiPVnL1n+3/PzY9CuKV8rcdO0A4R2mzc=",
+    "lastModified": 1781120205,
+    "narHash": "sha256-qaVuYw4cQ3tF4QLW9d4DA7GsK+kZ+hk4UAvaXHnbrjk=",
     "owner": "homebrew",
     "repo": "homebrew-cask",
-    "rev": "27ba2a998e19b349e7c9c47993fcf325307e8b88",
+    "rev": "6c6349a6b6af4bc4be42f3883e21f7f9434ab13b",
     "type": "github"
   },
   "homebrew-core": {
-    "lastModified": 1780996603,
-    "narHash": "sha256-R2fzQs9ALr266paThSsjbsEUM7hfR9myLIRgelYT+FQ=",
+    "lastModified": 1781120282,
+    "narHash": "sha256-l5ZB/vnVqyhOG2BdcAQ3DYScIJOKue9b+WzjdsbWcu4=",
     "owner": "homebrew",
     "repo": "homebrew-core",
-    "rev": "d5c82d948545a9d457162c6e9773f7a5fd936d9a",
+    "rev": "fdac65a30f925b0c881fc056f83963b1b35d79b6",
     "type": "github"
   },
   "inshellah": {
@@ -138,11 +138,11 @@
     "type": "github"
   },
   "llm-agents": {
-    "lastModified": 1780984090,
-    "narHash": "sha256-b0K1GfAO/0ZHarb8bKU7xCo+qV8Q1NBT/eB9I8RoWoI=",
+    "lastModified": 1781119928,
+    "narHash": "sha256-SVrgdNhZ37qgHH4f8OqZyxxo5DbAuTFFio16TDXiJ+s=",
     "owner": "numtide",
     "repo": "llm-agents.nix",
-    "rev": "ccd30237f9cf64835a536a20a3546b1112934a62",
+    "rev": "96bcba2fb2492eebd2a7b62515d29501660e7fa5",
     "type": "github"
   },
   "ncro": {
@@ -195,11 +195,11 @@
     "type": "github"
   },
   "os": {
-    "lastModified": 1780981259,
-    "narHash": "sha256-GVdFp/OsVrwtvNe5f/o4PAv31sjxykYH3Kp2zIyJTeg=",
+    "lastModified": 1781074563,
+    "narHash": "sha256-md8WlXOlfnIeHeOScMTTHFyf2d6iaTwPl2apR5EQ3P4=",
     "owner": "NixOS",
     "repo": "nixpkgs",
-    "rev": "58f254b2fae09cec435a9480741ba3c749c4e1b6",
+    "rev": "9ae611a455b90cf061d8f332b977e387bda8e1ca",
     "type": "github"
   },
   "os-darwin": {
@@ -211,11 +211,11 @@
     "type": "github"
   },
   "os-wsl": {
-    "lastModified": 1780765279,
-    "narHash": "sha256-md6QHmlIx40bQkun43M2eT8aav5GURGkXEMFwof6uZs=",
+    "lastModified": 1781098109,
+    "narHash": "sha256-XLMCx6WWMxNeM0SSLun6qVzpMQEGsXVPLU8a1ZNOUGU=",
     "owner": "nix-community",
     "repo": "NixOS-WSL",
-    "rev": "3e6d8af994e2a2d31af7a91863d7c0d6e278d951",
+    "rev": "06873343409ec0200a48c85d0ef622c5dafc6aaa",
     "type": "github"
   },
   "parts": {
@@ -235,20 +235,19 @@
     "type": "github"
   },
   "quickshell": {
-    "lastModified": 1780303737,
-    "narHash": "sha256-7HgdJBG4BgAPDyHKKxWtxj7nziqsQo6zQCXtwy+L9fs=",
+    "lastModified": 1781053488,
+    "narHash": "sha256-P4WEBaKgl8flRckHxXGHzT0potPvB3x8ZFIp9gLEAMY=",
     "ref": "refs/heads/master",
-    "rev": "b66495fcc5022681b56b61f928c7acbe910e722c",
-    "revCount": 821,
+    "rev": "d99d87d5e5ec4e696815348692fdaaf0b6be1b2c",
     "type": "git",
     "url": "https://git.outfoxxed.me/outfoxxed/quickshell"
   },
   "rio": {
-    "lastModified": 1780821315,
-    "narHash": "sha256-nY1+HkO44sc+jz2wyN3gW4hGH2JKQWrLx3oKbT5riHA=",
+    "lastModified": 1781048597,
+    "narHash": "sha256-xXTHmBbYckD/BU0ZQH/YezMwmxW7jr9c+5Hej4oQkUk=",
     "owner": "raphamorim",
     "repo": "rio",
-    "rev": "0f73563c6a7940083657aef9bb346fee38c28057",
+    "rev": "fdf5a7b9602bbeb19bfe5d3dae6ebe39894b1e39",
     "type": "github"
   },
   "rom": {

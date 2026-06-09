@@ -1,8 +1,7 @@
 {
   flake.modules.nixos.llama-cpp =
-    { pkgs, ... }:
+    { pkgs, lib, ... }:
     let
-
       cpuMoeOffload = {
         n-gpu-layers = 99;
         cpu-moe = "on";
@@ -33,23 +32,13 @@
         # WARN: Ngram can break tool calls, apparently.
         // ngram
         // cpuMoeOffload;
-    in
-    {
-      services.llama-cpp = {
-        enable = true;
-        package = pkgs.llama-cpp.override { cudaSupport = true; };
 
-        port = 11435;
+      # Write models preset to a file and reference it by path.
+      # (The module's `settings.models-preset` expects a file path, not inline INI.)
+      modelsIni = pkgs.writeText "llama-models.ini" (
+        lib.generators.toINI { } {
+          "*" = { };
 
-        extraFlags = [
-          "--parallel"
-          "1"
-          "--flash-attn"
-          "on"
-          "--mmap"
-        ];
-
-        modelsPreset = {
           # tps | ctx max | ctx max local
           # 8.4 | 262144  |
           "unsloth/Qwen3.6-35B-A3B:UD-IQ3_XXS" = mkUnslothQwen {
@@ -121,6 +110,24 @@
             cache-type-v = "q8_0";
             ctx-size = "131072"; # 262144 max - untested
           };
+        }
+      );
+    in
+    {
+      services.llama-cpp = {
+        enable = true;
+        package = pkgs.llama-cpp.override { cudaSupport = true; };
+
+        settings = {
+          host = "127.0.0.1";
+          port = 11435;
+
+          parallel = 1;
+          flash-attn = "on";
+          mmap = true;
+
+          # Pass path to generated INI file instead of inline content
+          models-preset = "${modelsIni}";
         };
       };
     };
