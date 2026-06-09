@@ -1,6 +1,7 @@
 { inputs, lib, ... }:
 let
   inherit (lib.lists) singleton;
+  inherit (lib.meta) getExe';
 in
 {
   imports = singleton inputs.treefmt.flakeModule;
@@ -82,7 +83,7 @@ in
                 '';
           in
           {
-            command = "nufmt";
+            command = getExe' inputs.nufmt.packages.${pkgs.stdenv.hostPlatform.system}.default "nufmt";
             options = [
               "--config"
               "${configFile}"
