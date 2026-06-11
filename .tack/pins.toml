@@ -45,18 +45,14 @@ outfoxxed = "git+https://git.outfoxxed.me/{path}"
 plumjam   = "git+https://git.plumj.am/{path}"
 
 [all_follow]
-crane             = "crane"
-darwin            = "os-darwin"
-fenix             = "fenix"
-flake-compat      = "flake-compat"
-flake-parts       = "parts"
-nix-darwin        = "os-darwin"
-nixpkgs           = "os"
-nixpkgs-lib       = "os"
-quickshell        = "quickshell"
-rust-analyzer-src = "rust-analyzer"
-rust-overlay      = "rust-overlay"
-treefmt-nix       = "treefmt"
+darwin      = "os-darwin"
+fenix       = "fenix"
+flake-parts = "parts"
+nix-darwin  = "os-darwin"
+nixpkgs     = "os"
+nixpkgs-lib = "os"
+quickshell  = "quickshell"
+treefmt-nix = "treefmt"
 
 [tack]
 recomposable = true
