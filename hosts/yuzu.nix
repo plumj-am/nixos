@@ -37,6 +37,7 @@ in
       mprocs
       # ncro
       nix-settings-extra-desktop
+      omo
       omp
       opencode
       packages-extra-linux
