@@ -197,6 +197,7 @@
               todo = {
                 enabled = true;
                 reminders = true;
+                eager = true;
               };
               find.enabled = true;
               search.enabled = true;
