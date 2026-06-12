@@ -13,7 +13,15 @@
     in
     {
       environment.systemPackages = [
-        pkgs.kdePackages.dolphin
+        pkgs.thunar
+        pkgs.thunar-volman
+        pkgs.thunar-archive-plugin
+        pkgs.thunar-media-tags-plugin
+        pkgs.thunar-vcs-plugin
+
+        # I would like to use but it's a pain for xdg...FileOpener.
+        # Skill issue, perhaps.
+        # pkgs.kdePackages.dolphin
         pkgs.kdePackages.ark
 
         pkgs.hyprpicker
@@ -27,7 +35,7 @@
       # Thanks again twitter:HSVSphere github:RGBCube
       hjem.extraModule = {
         xdg.mime-apps.default-applications =
-          flip genAttrs (const "org.kde.dolphin.desktop") [
+          flip genAttrs (const "thunar.desktop") [
             "inode/directory"
           ]
           // flip genAttrs (const "org.kde.ark.desktop") [
