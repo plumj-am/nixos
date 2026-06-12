@@ -44,8 +44,8 @@
             value = {
               theme = "gruvbox";
               autoupdate = false;
-              model = "opencode-go/deepseek-v4-flash";
-              small_model = "opencode-go/deepseek-v4-flash";
+              model = "commandcode/deepseek-v4-pro";
+              small_model = "commandcode/deepseek-v4-flash";
 
               plugin = [
                 "oh-my-openagent"
@@ -79,18 +79,18 @@
               agent = {
                 build = {
                   mode = "primary";
-                  model = "opencode-go/deepseek-v4-flash";
+                  model = "commandcode/deepseek-v4-pro";
                 };
 
                 researcher = {
                   mode = "primary";
-                  model = "opencode-go/deepseek-v4-flash";
+                  model = "commandcode/deepseek-v4-flash";
                   description = "Read-only research primarily using the web";
                 };
 
                 explore = {
                   mode = "subagent";
-                  model = "opencode-go/deepseek-v4-flash";
+                  model = "commandcode/deepseek-v4-flash";
                 };
               };
 

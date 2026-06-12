@@ -10,7 +10,7 @@
       inherit (lib.lists) singleton;
       inherit (lib.attrsets) mapAttrs;
 
-      provider = "opencode-go";
+      provider = "commandcode";
 
       agentModels = {
         sisyphus = "deepseek-v4-pro"; # Orchestrator - needs strong model - Claude Opus or Kimi K2.6 recommended.
