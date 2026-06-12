@@ -46,12 +46,12 @@
           s3_api = {
             s3_region = "garage";
 
-            api_bind_addr = "[::1]:${toString portS3}";
+            api_bind_addr = "[::]:${toString portS3}";
             root_domain = fqdnS3;
           };
 
           s3_web = {
-            bind_addr = "[::1]:${toString portWebUI}";
+            bind_addr = "[::]:${toString portWebUI}";
             root_domain = fqdnWebUI;
           };
         };

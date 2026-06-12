@@ -23,9 +23,11 @@
       fsn1ApiVersion = "s3v4";
       fsn1S3Cache = "s3://${fsn1Bucket}/${fsn1Prefix}?endpoint=${fsn1Endpoint}&profile=${fsn1Alias}${s3SharedArgs}";
 
+      garageHostName = "sloe";
+      garageHostPort = 8015;
       garageAlias = "plumjam-garage-nix";
       garageBucket = "nix";
-      garageEndpoint = "s3.plumj.am";
+      garageEndpoint = "${garageHostName}.taild29fec.ts.net:${toString garageHostPort}";
       garageRegion = "garage";
       garagePathStyle = "on";
       garageApiVersion = "s3v4";
@@ -164,7 +166,7 @@
           --path ${fsn1PathStyle}
 
         ${getExe pkgs.minio-client} --quiet alias set ${garageAlias} \
-          https://${garageEndpoint} \
+          http://${garageEndpoint} \
           "$(cat ${secrets.s3PlumjamGarageNixAccessKey.path})" \
           "$(cat ${secrets.s3PlumjamGarageNixSecretKey.path})" \
           --api ${garageApiVersion} \
