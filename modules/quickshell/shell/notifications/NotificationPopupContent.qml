@@ -25,7 +25,9 @@ ColumnLayout {
             font.weight: Font.Bold
         }
 
-        Item { Layout.fillWidth: true }
+        Item {
+            Layout.fillWidth: true
+        }
 
         Rectangle {
             visible: !root.popupMode && NotificationServer.notificationCount > 0
@@ -66,11 +68,14 @@ ColumnLayout {
             notification: model.notificationData
             maxWidth: width
             notificationIndex: index
+            compact: root.popupMode
             visible: !root.popupMode || index < NotificationServer.unreadCount
             height: visible ? implicitHeight : 0
 
             onDismissed: NotificationServer.dismiss(notificationIndex)
-            onActionTriggered: function(action) { NotificationServer.invokeAction(notification, action) }
+            onActionTriggered: function (action) {
+                NotificationServer.invokeAction(notification, action);
+            }
         }
     }
 
@@ -90,9 +95,7 @@ ColumnLayout {
     Text {
         id: footerText
         Layout.fillWidth: true
-        text: root.popupMode
-            ? NotificationServer.unreadCount + " new notification" + (NotificationServer.unreadCount !== 1 ? "s" : "")
-            : NotificationServer.notificationCount + " notification" + (NotificationServer.notificationCount !== 1 ? "s" : "")
+        text: root.popupMode ? NotificationServer.unreadCount + " new notification" + (NotificationServer.unreadCount !== 1 ? "s" : "") : NotificationServer.notificationCount + " notification" + (NotificationServer.notificationCount !== 1 ? "s" : "")
         color: Common.Theme.textMuted
         font.family: Common.Theme.font.sans.family
         font.pixelSize: 11

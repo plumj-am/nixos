@@ -9,24 +9,30 @@ Rectangle {
     property var notification: null
     property int notificationIndex: -1
     property int maxWidth: 300
+    property bool compact: false
 
-    signal dismissed()
+    signal dismissed
     signal actionTriggered(var action)
 
     implicitWidth: contentLayout.implicitWidth + Common.Theme.padding.normal * 2
     implicitHeight: contentLayout.implicitHeight + Common.Theme.padding.normal * 2
-    height: implicitHeight
+    height: compact ? Math.min(implicitHeight, 150) : implicitHeight
     color: Common.Theme.background
     radius: Common.Theme.radius.normal
     border.width: 1
     border.color: urgencyColor
+    clip: true
 
     readonly property color urgencyColor: {
-        if (!notification) return Common.Theme.outline
+        if (!notification)
+            return Common.Theme.outline;
         switch (notification.urgency) {
-            case 2: return Common.Theme.error
-            case 1: return Common.Theme.warning
-            default: return Common.Theme.outline
+        case 2:
+            return Common.Theme.error;
+        case 1:
+            return Common.Theme.warning;
+        default:
+            return Common.Theme.outline;
         }
     }
 
@@ -47,10 +53,12 @@ Rectangle {
                 sourceSize.width: 24
                 sourceSize.height: 24
                 source: {
-                    if (!notification) return ""
-                    const icon = notification.appIcon || notification.desktopEntry
-                    if (!icon) return ""
-                    return Quickshell.iconPath(icon, true)
+                    if (!notification)
+                        return "";
+                    const icon = notification.appIcon || notification.desktopEntry;
+                    if (!icon)
+                        return "";
+                    return Quickshell.iconPath(icon, true);
                 }
                 asynchronous: true
                 visible: source !== "" && status === Image.Ready
@@ -67,7 +75,8 @@ Rectangle {
                 visible: imageSource !== "" && status === Image.Ready
                 asynchronous: true
                 onImageSourceChanged: loadFailed = false
-                onStatusChanged: if (status === Image.Error) loadFailed = true
+                onStatusChanged: if (status === Image.Error)
+                    loadFailed = true
             }
 
             Text {
@@ -120,6 +129,8 @@ Rectangle {
             wrapMode: Text.WordWrap
             Layout.fillWidth: true
             visible: text !== ""
+            maximumLineCount: compact ? 1 : 0
+            elide: compact ? Text.ElideRight : Text.ElideNone
         }
 
         Text {
@@ -171,14 +182,18 @@ Rectangle {
     }
 
     function formatTime(timestamp) {
-        if (!timestamp) return ""
-        const date = new Date(timestamp)
-        const now = new Date()
-        const diff = (now - date) / 1000
+        if (!timestamp)
+            return "";
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diff = (now - date) / 1000;
 
-        if (diff < 60) return "now"
-        if (diff < 3600) return Math.floor(diff / 60) + "m"
-        if (diff < 86400) return Math.floor(diff / 3600) + "h"
-        return date.toLocaleDateString(Qt.locale(), "MMM d")
+        if (diff < 60)
+            return "now";
+        if (diff < 3600)
+            return Math.floor(diff / 60) + "m";
+        if (diff < 86400)
+            return Math.floor(diff / 3600) + "h";
+        return date.toLocaleDateString(Qt.locale(), "MMM d");
     }
 }
