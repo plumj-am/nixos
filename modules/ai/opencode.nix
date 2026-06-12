@@ -47,7 +47,10 @@
               model = "opencode-go/deepseek-v4-flash";
               small_model = "opencode-go/deepseek-v4-flash";
 
-              plugin = [ "oh-my-openagent" ];
+              plugin = [
+                "oh-my-openagent"
+                "commandcode-go-opencode-provider"
+              ];
 
               permission = {
                 "*" = "ask";
