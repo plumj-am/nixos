@@ -56,7 +56,7 @@
 
           log_type = "file";
 
-          enabledPreviewProvideres = [
+          enabledPreviewProviders = [
             "OC\\Preview\\BMP"
             "OC\\Preview\\GIF"
             "OC\\Preview\\JPEG"
