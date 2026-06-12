@@ -66,7 +66,7 @@
         schedule = "*:0/10";
         settings = {
           platform = "gerrit";
-          endpoint = "https://gerrit.plumj.am";
+          endpoint = "http://plum.taild29fec.ts.net:8011";
           username = "renovate"; # For Gerrit ONLY otherwise let renovate determine automatically.
           autodiscover = true;
           autodiscoverFilter = [ "grove" ];
