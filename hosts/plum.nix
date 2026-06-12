@@ -15,16 +15,17 @@ in
       buildbot-master
       buildbot-worker
       cinny
-      circus-agent
-      circus-server
-      circus-queue-runner
+      # circus-agent
+      # circus-server
+      # circus-queue-runner
       disks-server
       forgejo
       freshrss-server
       forgejo-action-runner
       gerrit
-      gerrit-circus-bridge
+      # gerrit-circus-bridge
       goatcounter
+      gradient-worker
       harmonia
       matrix
       # ncro

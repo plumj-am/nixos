@@ -14,11 +14,13 @@ in
       acme
       boot-grub
       buildbot-worker
-      circus-agent
-      circus-evaluator
+      # circus-agent
+      # circus-evaluator
       disks-server
       forgejo-action-runner
       garage
+      gradient
+      gradient-worker
       graphics
       harmonia
       # ncro
@@ -39,7 +41,7 @@ in
       { hardware.facter.reportPath = ./facter/sloe.json; }
       # TODO: Fix properly. Issue caused by using sdX I think.
       # It changes the boot device by itself occasionally.
-      { disko.devices.disk.disk1.device = "/dev/sdc"; }
+      { disko.devices.disk.disk1.device = "/dev/sda"; }
       {
         config = mkConfig inputs "sloe" "x86_64-linux" {
           networking = {

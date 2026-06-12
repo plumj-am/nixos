@@ -81,6 +81,14 @@
     "type": "git",
     "url": "https://git.plumj.am/plumjam/gerrit-circus-bridge"
   },
+  "gradient": {
+    "lastModified": 1781278113,
+    "narHash": "sha256-u0l6ydY/jFOGTc/mX0snizwhrzNYmDlicWHLspesriI=",
+    "owner": "wavelens",
+    "repo": "gradient",
+    "rev": "49ab079e0a820e1d484e3cdf4b5c85cb6578a0c7",
+    "type": "github"
+  },
   "harmonia": {
     "lastModified": 1780848659,
     "narHash": "sha256-7mn2yL63vyxPpad00i15e7C/zJLqBhsrhAigcqO0Eok=",

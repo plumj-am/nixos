@@ -13,8 +13,8 @@ in
       audio
       boot-systemd
       buildbot-worker
-      circus-agent
-      circus-evaluator
+      # circus-agent
+      # circus-evaluator
       claude-code
       desktop-gui
       desktop-tools
@@ -26,6 +26,7 @@ in
       forgejo-cli
       games
       gammastep
+      gradient-worker
       graphics
       harmonia
       hardware-desktop

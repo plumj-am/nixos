@@ -21,6 +21,8 @@
         message = "The forgejo module should only be used on the 'plum' host, but you're trying to enable it on '${hostName}'.";
       };
 
+      environment.systemPackages = singleton pkgs.forgejo;
+
       system.activationScripts.forgejo-setup-keys = lib.stringAfter [ "agenix" ] ''
         ln --symbolic --force ${config.age.secrets.forgejoSigningKey.path} /run/agenix/forgejo-signing-key
         ln --symbolic --force ${config.age.secrets.forgejoSigningKeyPub.path} /run/agenix/forgejo-signing-key.pub
@@ -144,7 +146,7 @@
               DESCRIPTION = description;
             };
 
-            webhook.ALLOWED_HOST_LIST = "127.0.0.1,::1,localhost,buildbot.plumj.am";
+            webhook.ALLOWED_HOST_LIST = "127.0.0.1,::1,localhost,buildbot.plumj.am,gradient.plumj.am";
           };
       };
 
