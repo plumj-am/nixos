@@ -90,6 +90,26 @@ in
             ];
             includes = singleton "*.nu";
           };
+
+        # qml
+        programs.qmlformat.enable = true;
+        settings.formatter.qmlformat = {
+          options = [
+            "--normalize"
+            "--objects-spacing"
+            "--functions-spacing"
+            "--group-attributes-together"
+            "--sort-imports"
+            "--single-line-empty-objects"
+            "--semicolon-rule"
+            "essential"
+            "--tabs"
+            "--indent-width"
+            "3"
+            "--column-width"
+            "100"
+          ];
+        };
       };
     };
 }

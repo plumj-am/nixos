@@ -3,291 +3,296 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
-import "../common" as Common
 import "../common/widgets"
+import "../common" as Common
 
 PanelWindow {
-    id: root
+   id: root
 
-    readonly property string fallbackIcon: Quickshell.iconPath("dialog-question", true)
+   readonly property string fallbackIcon: Quickshell.iconPath("dialog-question", true)
+   property bool isOpen: false
+   property string searchText: ""
+   property int selectedIndex: 0
+   property var allApps: []
+   property var screen: null
+   readonly property int barHeight: Common.Config.data.bar.size
+   readonly property int launcherWidth: 500
+   readonly property int launcherHeight: 440
+   readonly property int itemHeight: 48
 
-    property bool isOpen: false
-    property string searchText: ""
-    property int selectedIndex: 0
-    property var allApps: []
-    property var screen: null
+   function loadApps() {
+	  var apps = []
+	  var entries = DesktopEntries.applications.values
+	  for (var i = 0; i < entries.length; i++) {
+		 var app = entries[i]
+		 if (!app.noDisplay && !app.hidden) {
+			var iconName = app.icon || "application-x-executable"
+			apps.push({
+						 name: app.name || "Unknown",
+						 description: app.genericName || app.comment || "",
+						 iconPath: Quickshell.iconPath(iconName, true) || root.fallbackIcon,
+						 command: app.command || [],
+						 app: app
+					  })
+		 }
+	  }
+	  apps.sort(function (a, b) {
+		 return a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+	  })
+	  allApps = apps
+	  filterApps()
+   }
 
-    ListModel {
-        id: appModel
-    }
+   function filterApps() {
+	  var results
+	  if (!searchText || searchText.trim() === "") {
+		 results = allApps.slice(0, 50)
+	  } else {
+		 var query = searchText.toLowerCase()
+		 results = []
+		 for (var i = 0; i < allApps.length; i++) {
+			var app = allApps[i]
+			var name = (app.name || "").toLowerCase()
+			var desc = (app.description || "").toLowerCase()
+			if (name.indexOf(query) !== -1 || desc.indexOf(query) !== -1) {
+			   results.push(app)
+			}
+			if (results.length >= 50)
+			   break
+		 }
+	  }
 
-    visible: isOpen
-    color: "transparent"
-    implicitHeight: 800
+	  appModel.clear()
+	  for (var j = 0; j < results.length; j++) {
+		 appModel.append(results[j])
+	  }
+	  selectedIndex = 0
+   }
 
-    anchors {
-        top: true
-        left: true
-        right: true
-    }
+   function launchSelected() {
+	  if (appModel.count > 0 && selectedIndex >= 0 && selectedIndex < appModel.count) {
+		 var entry = appModel.get(selectedIndex)
+		 var app = entry.app
+		 if (app.execute) {
+			app.execute()
+		 } else if (app.command && app.command.length > 0) {
+			Qt.callLater(function () {
+			   Quickshell.execDetached(app.command)
+			})
+		 }
+		 isOpen = false
+	  }
+   }
 
-    WlrLayershell.namespace: "quickshell-launcher"
-    WlrLayershell.keyboardFocus: isOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
-    WlrLayershell.layer: WlrLayer.Overlay
-    exclusionMode: ExclusionMode.Ignore
+   visible: isOpen
+   color: "transparent"
+   implicitHeight: 800
+   WlrLayershell.namespace: "quickshell-launcher"
+   WlrLayershell.keyboardFocus: isOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+   WlrLayershell.layer: WlrLayer.Overlay
+   exclusionMode: ExclusionMode.Ignore
 
-    readonly property int barHeight: Common.Config.data.bar.size
-    readonly property int launcherWidth: 500
-    readonly property int launcherHeight: 440
-    readonly property int itemHeight: 48
+   Component.onCompleted: loadApps()
+   onIsOpenChanged: {
+	  if (isOpen) {
+		 searchText = ""
+		 selectedIndex = 0
+		 searchField.forceActiveFocus()
+	  } else {
+		 searchText = ""
+		 searchField.text = ""
+	  }
+   }
 
-    Component.onCompleted: loadApps()
+   ListModel {
+	  id: appModel
+   }
 
-    Connections {
-        target: DesktopEntries
-        function onApplicationsChanged() {
-            loadApps();
-        }
-    }
+   anchors {
+	  top: true
+	  left: true
+	  right: true
+   }
 
-    onIsOpenChanged: {
-        if (isOpen) {
-            searchText = "";
-            selectedIndex = 0;
-            searchField.forceActiveFocus();
-        } else {
-            searchText = "";
-            searchField.text = "";
-        }
-    }
+   Connections {
+	  function onApplicationsChanged() {
+		 loadApps()
+	  }
 
-    function loadApps() {
-        var apps = [];
-        var entries = DesktopEntries.applications.values;
-        for (var i = 0; i < entries.length; i++) {
-            var app = entries[i];
-            if (!app.noDisplay && !app.hidden) {
-                var iconName = app.icon || "application-x-executable";
-                apps.push({
-                    name: app.name || "Unknown",
-                    description: app.genericName || app.comment || "",
-                    iconPath: Quickshell.iconPath(iconName, true) || root.fallbackIcon,
-                    command: app.command || [],
-                    app: app
-                });
-            }
-        }
-        apps.sort(function (a, b) {
-            return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
-        });
-        allApps = apps;
-        filterApps();
-    }
+	  target: DesktopEntries
+   }
 
-    function filterApps() {
-        var results;
-        if (!searchText || searchText.trim() === "") {
-            results = allApps.slice(0, 50);
-        } else {
-            var query = searchText.toLowerCase();
-            results = [];
-            for (var i = 0; i < allApps.length; i++) {
-                var app = allApps[i];
-                var name = (app.name || "").toLowerCase();
-                var desc = (app.description || "").toLowerCase();
-                if (name.indexOf(query) !== -1 || desc.indexOf(query) !== -1) {
-                    results.push(app);
-                }
-                if (results.length >= 50)
-                    break;
-            }
-        }
+   MouseArea {
+	  anchors.fill: parent
+	  acceptedButtons: Qt.AllButtons
 
-        appModel.clear();
-        for (var j = 0; j < results.length; j++) {
-            appModel.append(results[j]);
-        }
-        selectedIndex = 0;
-    }
+	  onPressed: root.isOpen = false
+   }
 
-    function launchSelected() {
-        if (appModel.count > 0 && selectedIndex >= 0 && selectedIndex < appModel.count) {
-            var entry = appModel.get(selectedIndex);
-            var app = entry.app;
-            if (app.execute) {
-                app.execute();
-            } else if (app.command && app.command.length > 0) {
-                Qt.callLater(function () {
-                    Quickshell.execDetached(app.command);
-                });
-            }
-            isOpen = false;
-        }
-    }
+   Item {
+	  id: launcherClip
 
-    MouseArea {
-        anchors.fill: parent
-        acceptedButtons: Qt.AllButtons
-        onPressed: root.isOpen = false
-    }
+	  anchors.horizontalCenter: parent.horizontalCenter
+	  y: barHeight
+	  width: launcherWidth
+	  implicitHeight: root.isOpen ? launcherHeight : 0
+	  visible: implicitHeight > 0
+	  clip: true
 
-    Item {
-        id: launcherClip
-        anchors.horizontalCenter: parent.horizontalCenter
-        y: barHeight
-        width: launcherWidth
-        implicitHeight: root.isOpen ? launcherHeight : 0
-        visible: implicitHeight > 0
+	  Behavior on implicitHeight {
+		 Common.NAnim {}
+	  }
 
-        Behavior on implicitHeight {
-            Common.NAnim {}
-        }
+	  Item {
+		 id: launcherBody
 
-        clip: true
+		 width: launcherWidth
+		 height: launcherHeight
 
-        Item {
-            id: launcherBody
-            width: launcherWidth
-            height: launcherHeight
+		 // Body rectangle
+		 Rectangle {
+			anchors.fill: parent
+			color: Common.Theme.background
+			radius: 0
+			bottomLeftRadius: Common.Theme.radius.big
+			bottomRightRadius: Common.Theme.radius.big
+			clip: true
 
-            // Body rectangle
-            Rectangle {
-                anchors.fill: parent
-                color: Common.Theme.background
-                radius: 0
-                bottomLeftRadius: Common.Theme.radius.big
-                bottomRightRadius: Common.Theme.radius.big
-                clip: true
+			ColumnLayout {
+			   id: contentColumn
 
-                ColumnLayout {
-                    id: contentColumn
-                    anchors.fill: parent
-                    anchors.topMargin: 12
-                    anchors.bottomMargin: 12
-                    anchors.leftMargin: 12
-                    anchors.rightMargin: 12
-                    spacing: 8
+			   anchors.fill: parent
+			   anchors.topMargin: 12
+			   anchors.bottomMargin: 12
+			   anchors.leftMargin: 12
+			   anchors.rightMargin: 12
+			   spacing: 8
 
-                    SearchField {
-                        id: searchField
-                        Layout.fillWidth: true
-                        placeholderText: "Search applications..."
-                        onSearchTriggered: function(query) {
-                            root.searchText = query;
-                            root.filterApps();
-                        }
+			   SearchField {
+				  id: searchField
 
-                        Keys.onEscapePressed: root.isOpen = false
-                        Keys.onReturnPressed: root.launchSelected()
-                        Keys.onEnterPressed: root.launchSelected()
-                        Keys.onUpPressed: {
-                            if (root.selectedIndex > 0) {
-                                root.selectedIndex--;
-                            }
-                        }
-                        Keys.onDownPressed: {
-                            if (root.selectedIndex < appModel.count - 1) {
-                                root.selectedIndex++;
-                            }
-                        }
-                    }
+				  Layout.fillWidth: true
+				  placeholderText: "Search applications..."
 
-                    ListView {
-                        id: appList
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        model: appModel
-                        clip: true
-                        currentIndex: root.selectedIndex
-                        onCurrentIndexChanged: {
-                            if (currentIndex >= 0) {
-                                positionViewAtIndex(currentIndex, ListView.Contain);
-                            }
-                        }
+				  onSearchTriggered: function (query) {
+					 root.searchText = query
+					 root.filterApps()
+				  }
+				  Keys.onEscapePressed: root.isOpen = false
+				  Keys.onReturnPressed: root.launchSelected()
+				  Keys.onEnterPressed: root.launchSelected()
+				  Keys.onUpPressed: {
+					 if (root.selectedIndex > 0) {
+						root.selectedIndex--
+					 }
+				  }
+				  Keys.onDownPressed: {
+					 if (root.selectedIndex < appModel.count - 1) {
+						root.selectedIndex++
+					 }
+				  }
+			   }
 
-                        delegate: Rectangle {
-                            width: appList.width
-                            height: root.itemHeight
-                            color: index === root.selectedIndex ? Common.Theme.background2 : "transparent"
-                            radius: Common.Theme.radius.small
+			   ListView {
+				  id: appList
 
-                            property bool isHovered: mouseArea.containsMouse
+				  Layout.fillWidth: true
+				  Layout.fillHeight: true
+				  model: appModel
+				  clip: true
+				  currentIndex: root.selectedIndex
 
-                            onIsHoveredChanged: {
-                                if (isHovered) {
-                                    root.selectedIndex = index;
-                                }
-                            }
+				  delegate: Rectangle {
+					 property bool isHovered: mouseArea.containsMouse
 
-                            RowLayout {
-                                anchors.fill: parent
-                                anchors.leftMargin: 6
-                                anchors.rightMargin: 6
-                                spacing: 8
+					 width: appList.width
+					 height: root.itemHeight
+					 color: index === root.selectedIndex ? Common.Theme.background2 : "transparent"
+					 radius: Common.Theme.radius.small
 
-                                Image {
-                                    source: model.iconPath || root.fallbackIcon
-                                    Layout.preferredWidth: 32
-                                    Layout.preferredHeight: 32
-                                    sourceSize.width: 32
-                                    sourceSize.height: 32
-                                    asynchronous: true
-                                }
+					 onIsHoveredChanged: {
+						if (isHovered) {
+						   root.selectedIndex = index
+						}
+					 }
 
-                                ColumnLayout {
-                                    Layout.fillWidth: true
-                                    spacing: 2
+					 RowLayout {
+						anchors.fill: parent
+						anchors.leftMargin: 6
+						anchors.rightMargin: 6
+						spacing: 8
 
-                                    Text {
-                                        text: model.name
-                                        color: Common.Theme.text
-                                        font.family: Common.Theme.font.sans.family
-                                        font.pixelSize: 13
-                                        font.weight: Font.Medium
-                                        elide: Text.ElideRight
-                                        Layout.fillWidth: true
-                                    }
+						Image {
+						   source: model.iconPath || root.fallbackIcon
+						   Layout.preferredWidth: 32
+						   Layout.preferredHeight: 32
+						   sourceSize.width: 32
+						   sourceSize.height: 32
+						   asynchronous: true
+						}
 
-                                    Text {
-                                        text: model.description || ""
-                                        visible: text !== ""
-                                        color: Common.Theme.text
-                                        font.family: Common.Theme.font.sans.family
-                                        font.pixelSize: 11
-                                        elide: Text.ElideRight
-                                        Layout.fillWidth: true
-                                    }
-                                }
-                            }
+						ColumnLayout {
+						   Layout.fillWidth: true
+						   spacing: 2
 
-                            MouseArea {
-                                id: mouseArea
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    root.selectedIndex = index;
-                                    root.launchSelected();
-                                }
-                            }
-                        }
-                    }
+						   Text {
+							  text: model.name
+							  color: Common.Theme.text
+							  font.family: Common.Theme.font.sans.family
+							  font.pixelSize: 13
+							  font.weight: Font.Medium
+							  elide: Text.ElideRight
+							  Layout.fillWidth: true
+						   }
 
-                    Text {
-                        Layout.fillWidth: true
-                        text: appModel.count + " applications"
-                        color: Common.Theme.textMuted
-                        font.family: Common.Theme.font.sans.family
-                        font.pixelSize: 11
-                        horizontalAlignment: Text.AlignRight
-                        visible: appModel.count > 0
-                    }
-                }
-            }
-        }
+						   Text {
+							  text: model.description || ""
+							  visible: text !== ""
+							  color: Common.Theme.text
+							  font.family: Common.Theme.font.sans.family
+							  font.pixelSize: 11
+							  elide: Text.ElideRight
+							  Layout.fillWidth: true
+						   }
+						}
+					 }
 
-        Common.Border {
-            anchors.fill: parent
-        }
-    }
+					 MouseArea {
+						id: mouseArea
+
+						anchors.fill: parent
+						hoverEnabled: true
+						cursorShape: Qt.PointingHandCursor
+
+						onClicked: {
+						   root.selectedIndex = index
+						   root.launchSelected()
+						}
+					 }
+				  }
+
+				  onCurrentIndexChanged: {
+					 if (currentIndex >= 0) {
+						positionViewAtIndex(currentIndex, ListView.Contain)
+					 }
+				  }
+			   }
+
+			   Text {
+				  Layout.fillWidth: true
+				  text: appModel.count + " applications"
+				  color: Common.Theme.textMuted
+				  font.family: Common.Theme.font.sans.family
+				  font.pixelSize: 11
+				  horizontalAlignment: Text.AlignRight
+				  visible: appModel.count > 0
+			   }
+			}
+		 }
+	  }
+
+	  Common.Border {
+		 anchors.fill: parent
+	  }
+   }
 }

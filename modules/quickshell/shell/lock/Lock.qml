@@ -1,42 +1,44 @@
 import QtQuick
 import Quickshell
-import Quickshell.Wayland
-import Quickshell.Services.Pam
 import Quickshell.Io
+import Quickshell.Services.Pam
+import Quickshell.Wayland
 import "../common" as Common
 
 WlSessionLock {
-    id: lock
+   id: lock
 
-    LockSurface {
-        id: surface
-        pam: pam
-    }
+   LockSurface {
+	  id: surface
 
-    PamContext {
-        id: pam
-        config: "lock"
-        configDirectory: "root:/lock/pam.d"
+	  pam: pam
+   }
 
-        onCompleted: function (result) {
-            if (result === PamResult.Success) {
-                lock.locked = false;
-            } else {
-                surface.clearInput();
-                surface.showError();
-            }
-        }
+   PamContext {
+	  id: pam
 
-    }
+	  config: "lock"
+	  configDirectory: "root:/lock/pam.d"
 
-    IpcHandler {
-        target: "lock"
-        function toggle(): void {
-            if (lock.locked) {
-                lock.locked = false;
-            } else {
-                lock.locked = true;
-            }
-        }
-    }
-}
+	  onCompleted: function (result) {
+		 if (result === PamResult.Success) {
+			lock.locked = false
+		 } else {
+			surface.clearInput()
+			surface.showError()
+		 }
+	  }
+   }
+
+   IpcHandler {
+	  function toggle(): void {
+	  if (lock.locked) {
+		 lock.locked = false
+	  } else {
+			lock.locked = true
+		 }
+		 }
+
+			target: "lock"
+		 }
+	  }

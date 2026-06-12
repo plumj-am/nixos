@@ -2,5 +2,5 @@ import QtQuick
 import "../../common/widgets"
 
 IconButton {
-    icon: "\uf011"
+   icon: "\uf011"
 }

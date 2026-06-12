@@ -6,105 +6,104 @@ import "../common" as Common
 import "."
 
 PanelWindow {
-    id: root
+   id: root
 
-    property int maxVisible: 5
-    property var seenIds: ({})
+   property int maxVisible: 5
+   property var seenIds: ({})
 
-    color: "transparent"
-    visible: toastModel.count > 0
+   function addToast(notification) {
+	  toastModel.insert(0, {
+						   "notificationData": notification
+						})
+	  while (toastModel.count > maxVisible) {
+		 toastModel.remove(toastModel.count - 1)
+	  }
+   }
 
-    anchors {
-        right: true
-        top: true
-        bottom: true
-    }
+   function markSeen(notificationId) {
+	  seenIds[notificationId] = true
+	  var keys = Object.keys(seenIds)
+	  while (keys.length > 50) {
+		 delete seenIds[keys.shift()]
+	  }
+   }
 
-    implicitWidth: 300
-    exclusionMode: ExclusionMode.Ignore
-    WlrLayershell.namespace: "quickshell-notifications"
-    WlrLayershell.layer: WlrLayer.Overlay
+   function removeToast(notification) {
+	  for (var i = 0; i < toastModel.count; i++) {
+		 if (toastModel.get(i).notificationData === notification) {
+			toastModel.remove(i)
+			break
+		 }
+	  }
+   }
 
-    margins {
-        top: Common.Config.data.bar.size
-        right: 0
-    }
+   function dismissAll() {
+	  toastModel.clear()
+   }
 
-    ListModel {
-        id: toastModel
-    }
+   color: "transparent"
+   visible: toastModel.count > 0
+   implicitWidth: 300
+   exclusionMode: ExclusionMode.Ignore
+   WlrLayershell.namespace: "quickshell-notifications"
+   WlrLayershell.layer: WlrLayer.Overlay
 
-    ColumnLayout {
-        id: toastColumn
-        anchors.fill: parent
-        anchors.topMargin: 0
-        anchors.bottomMargin: 12
-        spacing: 0
+   anchors {
+	  right: true
+	  top: true
+	  bottom: true
+   }
 
-        Repeater {
-            model: toastModel
+   margins {
+	  top: Common.Config.data.bar.size
+	  right: 0
+   }
 
-            NotificationToast {
-                Layout.alignment: Qt.AlignRight
-                notification: model.notificationData
-                skipEntryAnimation: root.seenIds[model.notificationData.id] === true
+   ListModel {
+	  id: toastModel
+   }
 
-                onEntryComplete: root.markSeen(notification.id)
+   ColumnLayout {
+	  id: toastColumn
 
-                onDismissed: {
-                    NotificationServer.dismissById(notification.id);
-                    root.removeToast(notification);
-                }
+	  anchors.fill: parent
+	  anchors.topMargin: 0
+	  anchors.bottomMargin: 12
+	  spacing: 0
 
-                onExpired: {
-                    NotificationServer.expire(notification);
-                    root.removeToast(notification);
-                }
+	  Repeater {
+		 model: toastModel
 
-                onActionTriggered: function (action) {
-                    NotificationServer.invokeAction(notification, action);
-                }
-            }
-        }
+		 NotificationToast {
+			Layout.alignment: Qt.AlignRight
+			notification: model.notificationData
+			skipEntryAnimation: root.seenIds[model.notificationData.id] === true
 
-        Item {
-            Layout.fillHeight: true
-        }
-    }
+			onEntryComplete: root.markSeen(notification.id)
+			onDismissed: {
+			   NotificationServer.dismissById(notification.id)
+			   root.removeToast(notification)
+			}
+			onExpired: {
+			   NotificationServer.expire(notification)
+			   root.removeToast(notification)
+			}
+			onActionTriggered: function (action) {
+			   NotificationServer.invokeAction(notification, action)
+			}
+		 }
+	  }
 
-    Connections {
-        target: NotificationServer
+	  Item {
+		 Layout.fillHeight: true
+	  }
+   }
 
-        function onNotificationReceived(notification) {
-            root.addToast(notification);
-        }
-    }
+   Connections {
+	  function onNotificationReceived(notification) {
+		 root.addToast(notification)
+	  }
 
-    function addToast(notification) {
-        toastModel.insert(0, { "notificationData": notification });
-        while (toastModel.count > maxVisible) {
-            toastModel.remove(toastModel.count - 1);
-        }
-    }
-
-    function markSeen(notificationId) {
-        seenIds[notificationId] = true;
-        var keys = Object.keys(seenIds);
-        while (keys.length > 50) {
-            delete seenIds[keys.shift()];
-        }
-    }
-
-    function removeToast(notification) {
-        for (var i = 0; i < toastModel.count; i++) {
-            if (toastModel.get(i).notificationData === notification) {
-                toastModel.remove(i);
-                break;
-            }
-        }
-    }
-
-    function dismissAll() {
-        toastModel.clear();
-    }
+	  target: NotificationServer
+   }
 }

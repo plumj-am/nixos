@@ -4,196 +4,205 @@ import Quickshell
 import "../common" as Common
 
 Rectangle {
-    id: root
+   id: root
 
-    property var notification: null
-    property int notificationIndex: -1
-    property int maxWidth: 300
-    property bool compact: false
+   property var notification: null
+   property int notificationIndex: -1
+   property int maxWidth: 300
+   property bool compact: false
+   readonly property color urgencyColor: {
+	  if (!notification)
+		 return Common.Theme.outline
+	  switch (notification.urgency) {
+	  case 2:
+		 return Common.Theme.error
+	  case 1:
+		 return Common.Theme.warning
+	  default:
+		 return Common.Theme.outline
+	  }
+   }
 
-    signal dismissed
-    signal actionTriggered(var action)
+   signal dismissed
+   signal actionTriggered(var action)
 
-    implicitWidth: contentLayout.implicitWidth + Common.Theme.padding.normal * 2
-    implicitHeight: contentLayout.implicitHeight + Common.Theme.padding.normal * 2
-    height: compact ? Math.min(implicitHeight, 150) : implicitHeight
-    color: Common.Theme.background
-    radius: Common.Theme.radius.normal
-    border.width: 1
-    border.color: urgencyColor
-    clip: true
+   function formatTime(timestamp) {
+	  if (!timestamp)
+		 return ""
+	  const date = new Date(timestamp)
+	  const now = new Date()
+	  const diff = (now - date) / 1000
 
-    readonly property color urgencyColor: {
-        if (!notification)
-            return Common.Theme.outline;
-        switch (notification.urgency) {
-        case 2:
-            return Common.Theme.error;
-        case 1:
-            return Common.Theme.warning;
-        default:
-            return Common.Theme.outline;
-        }
-    }
+	  if (diff < 60)
+		 return "now"
+	  if (diff < 3600)
+		 return Math.floor(diff / 60) + "m"
+	  if (diff < 86400)
+		 return Math.floor(diff / 3600) + "h"
+	  return date.toLocaleDateString(Qt.locale(), "MMM d")
+   }
 
-    ColumnLayout {
-        id: contentLayout
-        anchors.fill: parent
-        anchors.margins: Common.Theme.padding.normal
-        spacing: 2
+   implicitWidth: contentLayout.implicitWidth + Common.Theme.padding.normal * 2
+   implicitHeight: contentLayout.implicitHeight + Common.Theme.padding.normal * 2
+   height: compact ? Math.min(implicitHeight, 150) : implicitHeight
+   color: Common.Theme.background
+   radius: Common.Theme.radius.normal
+   border.width: 1
+   border.color: urgencyColor
+   clip: true
 
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: Common.Theme.margin.small
+   ColumnLayout {
+	  id: contentLayout
 
-            Image {
-                id: appIcon
-                Layout.preferredWidth: 24
-                Layout.preferredHeight: 24
-                sourceSize.width: 24
-                sourceSize.height: 24
-                source: {
-                    if (!notification)
-                        return "";
-                    const icon = notification.appIcon || notification.desktopEntry;
-                    if (!icon)
-                        return "";
-                    return Quickshell.iconPath(icon, true);
-                }
-                asynchronous: true
-                visible: source !== "" && status === Image.Ready
-            }
+	  anchors.fill: parent
+	  anchors.margins: Common.Theme.padding.normal
+	  spacing: 2
 
-            Image {
-                id: notifImage
-                Layout.preferredWidth: 24
-                Layout.preferredHeight: 24
-                property string imageSource: notification?.image || ""
-                property bool loadFailed: false
-                source: loadFailed ? "" : imageSource
-                fillMode: Image.PreserveAspectCrop
-                visible: imageSource !== "" && status === Image.Ready
-                asynchronous: true
-                onImageSourceChanged: loadFailed = false
-                onStatusChanged: if (status === Image.Error)
-                    loadFailed = true
-            }
+	  RowLayout {
+		 Layout.fillWidth: true
+		 spacing: Common.Theme.margin.small
 
-            Text {
-                text: notification?.appName || "Unknown"
-                color: Common.Theme.textMuted
-                font.family: Common.Theme.font.sans.family
-                font.pixelSize: 13
-                elide: Text.ElideRight
-                Layout.fillWidth: true
-            }
+		 Image {
+			id: appIcon
 
-            Text {
-                text: formatTime(notification?.time)
-                color: Common.Theme.textMuted
-                font.family: Common.Theme.font.sans.family
-                font.pixelSize: 10
-                visible: notification?.time !== undefined && notification?.time !== 0
-            }
+			Layout.preferredWidth: 24
+			Layout.preferredHeight: 24
+			sourceSize.width: 24
+			sourceSize.height: 24
+			source: {
+			   if (!notification)
+				  return ""
+			   const icon = notification.appIcon || notification.desktopEntry
+			   if (!icon)
+				  return ""
+			   return Quickshell.iconPath(icon, true)
+			}
+			asynchronous: true
+			visible: source !== "" && status === Image.Ready
+		 }
 
-            Rectangle {
-                Layout.preferredWidth: 20
-                Layout.preferredHeight: 20
-                color: dismissMouseArea.containsMouse ? Common.Theme.surfaceContainer : "transparent"
-                radius: Common.Theme.radius.small
-                visible: true
+		 Image {
+			id: notifImage
 
-                Text {
-                    anchors.centerIn: parent
-                    text: "×"
-                    color: Common.Theme.textMuted
-                    font.family: Common.Theme.font.sans.family
-                    font.pixelSize: 14
-                }
+			property string imageSource: notification?.image || ""
+			property bool loadFailed: false
 
-                MouseArea {
-                    id: dismissMouseArea
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: root.dismissed()
-                }
-            }
-        }
+			Layout.preferredWidth: 24
+			Layout.preferredHeight: 24
+			source: loadFailed ? "" : imageSource
+			fillMode: Image.PreserveAspectCrop
+			visible: imageSource !== "" && status === Image.Ready
+			asynchronous: true
 
-        Text {
-            text: notification?.summary || ""
-            color: Common.Theme.text
-            font.family: Common.Theme.font.sans.family
-            font.pixelSize: 13
-            wrapMode: Text.WordWrap
-            Layout.fillWidth: true
-            visible: text !== ""
-            maximumLineCount: compact ? 1 : 0
-            elide: compact ? Text.ElideRight : Text.ElideNone
-        }
+			onImageSourceChanged: loadFailed = false
+			onStatusChanged: if (status === Image.Error)
+								loadFailed = true
+		 }
 
-        Text {
-            text: notification?.body || ""
-            color: Common.Theme.foreground
-            font.family: Common.Theme.font.sans.family
-            font.pixelSize: 12
-            wrapMode: Text.WordWrap
-            textFormat: Text.RichText
-            Layout.fillWidth: true
-            visible: text !== ""
-            maximumLineCount: 3
-            elide: Text.ElideRight
-        }
+		 Text {
+			text: notification?.appName || "Unknown"
+			color: Common.Theme.textMuted
+			font.family: Common.Theme.font.sans.family
+			font.pixelSize: 13
+			elide: Text.ElideRight
+			Layout.fillWidth: true
+		 }
 
-        RowLayout {
-            Layout.fillWidth: true
-            spacing: Common.Theme.margin.small
-            visible: notification?.actions !== undefined && notification?.actions?.length > 0
+		 Text {
+			text: formatTime(notification?.time)
+			color: Common.Theme.textMuted
+			font.family: Common.Theme.font.sans.family
+			font.pixelSize: 10
+			visible: notification?.time !== undefined && notification?.time !== 0
+		 }
 
-            Repeater {
-                model: notification?.actions || []
+		 Rectangle {
+			Layout.preferredWidth: 20
+			Layout.preferredHeight: 20
+			color: dismissMouseArea.containsMouse ? Common.Theme.surfaceContainer : "transparent"
+			radius: Common.Theme.radius.small
+			visible: true
 
-                Rectangle {
-                    Layout.preferredHeight: 24
-                    implicitWidth: actionText.implicitWidth + Common.Theme.padding.normal * 2
-                    color: actionMouseArea.containsMouse ? Common.Theme.surfaceContainer : Common.Theme.surface
-                    radius: Common.Theme.radius.small
+			Text {
+			   anchors.centerIn: parent
+			   text: "×"
+			   color: Common.Theme.textMuted
+			   font.family: Common.Theme.font.sans.family
+			   font.pixelSize: 14
+			}
 
-                    Text {
-                        id: actionText
-                        anchors.centerIn: parent
-                        text: modelData.text || modelData.identifier || "Action"
-                        color: Common.Theme.accent
-                        font.family: Common.Theme.font.sans.family
-                        font.pixelSize: 11
-                    }
+			MouseArea {
+			   id: dismissMouseArea
 
-                    MouseArea {
-                        id: actionMouseArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: root.actionTriggered(modelData)
-                    }
-                }
-            }
-        }
-    }
+			   anchors.fill: parent
+			   hoverEnabled: true
+			   cursorShape: Qt.PointingHandCursor
 
-    function formatTime(timestamp) {
-        if (!timestamp)
-            return "";
-        const date = new Date(timestamp);
-        const now = new Date();
-        const diff = (now - date) / 1000;
+			   onClicked: root.dismissed()
+			}
+		 }
+	  }
 
-        if (diff < 60)
-            return "now";
-        if (diff < 3600)
-            return Math.floor(diff / 60) + "m";
-        if (diff < 86400)
-            return Math.floor(diff / 3600) + "h";
-        return date.toLocaleDateString(Qt.locale(), "MMM d");
-    }
+	  Text {
+		 text: notification?.summary || ""
+		 color: Common.Theme.text
+		 font.family: Common.Theme.font.sans.family
+		 font.pixelSize: 13
+		 wrapMode: Text.WordWrap
+		 Layout.fillWidth: true
+		 visible: text !== ""
+		 maximumLineCount: compact ? 1 : 0
+		 elide: compact ? Text.ElideRight : Text.ElideNone
+	  }
+
+	  Text {
+		 text: notification?.body || ""
+		 color: Common.Theme.foreground
+		 font.family: Common.Theme.font.sans.family
+		 font.pixelSize: 12
+		 wrapMode: Text.WordWrap
+		 textFormat: Text.RichText
+		 Layout.fillWidth: true
+		 visible: text !== ""
+		 maximumLineCount: 3
+		 elide: Text.ElideRight
+	  }
+
+	  RowLayout {
+		 Layout.fillWidth: true
+		 spacing: Common.Theme.margin.small
+		 visible: notification?.actions !== undefined && notification?.actions?.length > 0
+
+		 Repeater {
+			model: notification?.actions || []
+
+			Rectangle {
+			   Layout.preferredHeight: 24
+			   implicitWidth: actionText.implicitWidth + Common.Theme.padding.normal * 2
+			   color: actionMouseArea.containsMouse ? Common.Theme.surfaceContainer : Common.Theme.surface
+			   radius: Common.Theme.radius.small
+
+			   Text {
+				  id: actionText
+
+				  anchors.centerIn: parent
+				  text: modelData.text || modelData.identifier || "Action"
+				  color: Common.Theme.accent
+				  font.family: Common.Theme.font.sans.family
+				  font.pixelSize: 11
+			   }
+
+			   MouseArea {
+				  id: actionMouseArea
+
+				  anchors.fill: parent
+				  hoverEnabled: true
+				  cursorShape: Qt.PointingHandCursor
+
+				  onClicked: root.actionTriggered(modelData)
+			   }
+			}
+		 }
+	  }
+   }
 }

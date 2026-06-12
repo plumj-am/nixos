@@ -1,23 +1,22 @@
 pragma Singleton
-import QtQuick
 import Niri 0.1
+import QtQuick
 
 QtObject {
-    id: niriWrapper
+   id: niriWrapper
 
-    signal launcherToggleRequested
+   property Niri niri: Niri {
+	  Component.onCompleted: connect()
+	  onConnected: console.log("Connected to niri")
+	  onErrorOccurred: function (error) {
+		 console.error("Niri error:", error)
+	  }
+   }
+   readonly property var focusedWindow: niri.focusedWindow
 
-    property Niri niri: Niri {
-        Component.onCompleted: connect()
-        onConnected: console.log("Connected to niri")
-        onErrorOccurred: function(error) {
-            console.error("Niri error:", error)
-        }
-    }
+   signal launcherToggleRequested
 
-    readonly property var focusedWindow: niri.focusedWindow
-
-    function toggleLauncher() {
-        launcherToggleRequested()
-    }
+   function toggleLauncher() {
+	  launcherToggleRequested()
+   }
 }

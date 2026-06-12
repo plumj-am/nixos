@@ -1,131 +1,138 @@
 import QtQuick
-import QtQuick.Layouts
 import QtQuick.Controls
+import QtQuick.Layouts
 import Quickshell.Io
 import "../common" as Common
 
 Item {
-    id: root
+   id: root
 
-    property real brightness: 0.0
-    property bool available: false
-    property int maxBrightness: 1
-    property bool active: false
+   property real brightness: 0.0
+   property bool available: false
+   property int maxBrightness: 1
+   property bool active: false
 
-    Process {
-        id: getProc
-        command: ["brightnessctl", "-m", "info"]
-        running: false
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const content = text.trim()
-                const lines = content.split("\n")
-                for (const line of lines) {
-                    // brightnessctl -m format: device,class,current,max,percentage
-                    const parts = line.split(",")
-                    if (parts.length >= 5 && parts[1] === "backlight") {
-                        maxBrightness = parseInt(parts[3])
-                        brightness = parseInt(parts[2]) / maxBrightness
-                        available = true
-                        return
-                    }
-                }
-            }
-        }
-    }
+   function setBrightness(value) {
+	  if (!available)
+		 return
+	  setProc.command = ["brightnessctl", "set", Math.round(value * root.maxBrightness)]
+	  setProc.running = true
+   }
 
-    Process {
-        id: setProc
-        running: false
-    }
+   visible: available
+   implicitHeight: available ? layout.implicitHeight : 0
 
-    Timer {
-        id: pollTimer
-        running: root.active
-        interval: 2000
-        repeat: true
-        onTriggered: getProc.running = true
-    }
+   Component.onCompleted: {
+	  getProc.running = true
+   }
 
-    Component.onCompleted: {
-        getProc.running = true
-    }
+   Process {
+	  id: getProc
 
-    function setBrightness(value) {
-        if (!available) return
-        setProc.command = ["brightnessctl", "set", Math.round(value * root.maxBrightness)]
-        setProc.running = true
-    }
+	  command: ["brightnessctl", "-m", "info"]
+	  running: false
 
-    visible: available
-    implicitHeight: available ? layout.implicitHeight : 0
+	  stdout: StdioCollector {
+		 onStreamFinished: {
+			const content = text.trim()
+			const lines = content.split("\n")
+			for (const line of lines) {
+			   // brightnessctl -m format: device,class,current,max,percentage
+			   const parts = line.split(",")
+			   if (parts.length >= 5 && parts[1] === "backlight") {
+				  maxBrightness = parseInt(parts[3])
+				  brightness = parseInt(parts[2]) / maxBrightness
+				  available = true
+				  return
+			   }
+			}
+		 }
+	  }
+   }
 
-    ColumnLayout {
-        id: layout
-        anchors.fill: parent
-        spacing: 8
+   Process {
+	  id: setProc
 
-        RowLayout {
-            spacing: 8
+	  running: false
+   }
 
-            Text {
-                text: "\uf185"
-                font.family: Common.Theme.font.icons.family
-                font.pixelSize: Common.Theme.font.sans.size
-                color: Common.Theme.foreground
-            }
+   Timer {
+	  id: pollTimer
 
-            Text {
-                text: "Brightness"
-                font.family: Common.Theme.font.sans.family
-                font.pixelSize: Common.Theme.font.sans.size
-                font.bold: true
-                color: Common.Theme.foreground
-            }
+	  running: root.active
+	  interval: 2000
+	  repeat: true
 
-            Text {
-                text: Math.round(root.brightness * 100) + "%"
-                font.family: Common.Theme.font.mono.family
-                font.pixelSize: Common.Theme.font.mono.size
-                color: Common.Theme.textMuted
-                Layout.preferredWidth: 42
-            }
-        }
+	  onTriggered: getProc.running = true
+   }
 
-        Slider {
-            id: slider
-            Layout.fillWidth: true
-            from: 0.0
-            to: 1.0
-            stepSize: 0.01
-            value: root.brightness
+   ColumnLayout {
+	  id: layout
 
-            onMoved: root.setBrightness(slider.value)
+	  anchors.fill: parent
+	  spacing: 8
 
-            background: Rectangle {
-                x: slider.leftPadding
-                y: slider.topPadding + slider.availableHeight / 2 - height / 2
-                width: slider.availableWidth
-                height: 4
-                radius: height / 2
-                color: Common.Theme.outline
+	  RowLayout {
+		 spacing: 8
 
-                Rectangle {
-                    width: slider.visualPosition * parent.width
-                    height: parent.height
-                    radius: height / 2
-                    color: Common.Theme.accent
-                }
-            }
+		 Text {
+			text: "\uf185"
+			font.family: Common.Theme.font.icons.family
+			font.pixelSize: Common.Theme.font.sans.size
+			color: Common.Theme.foreground
+		 }
 
-            handle: Rectangle {
-                x: slider.leftPadding + slider.visualPosition * slider.availableWidth - width / 2
-                y: slider.topPadding + slider.availableHeight / 2 - height / 2
-                width: 12
-                height: 12
-                radius: width / 2
-                color: Common.Theme.accent
-            }
-        }
-    }
+		 Text {
+			text: "Brightness"
+			font.family: Common.Theme.font.sans.family
+			font.pixelSize: Common.Theme.font.sans.size
+			font.bold: true
+			color: Common.Theme.foreground
+		 }
+
+		 Text {
+			text: Math.round(root.brightness * 100) + "%"
+			font.family: Common.Theme.font.mono.family
+			font.pixelSize: Common.Theme.font.mono.size
+			color: Common.Theme.textMuted
+			Layout.preferredWidth: 42
+		 }
+	  }
+
+	  Slider {
+		 id: slider
+
+		 Layout.fillWidth: true
+		 from: 0.0
+		 to: 1.0
+		 stepSize: 0.01
+		 value: root.brightness
+
+		 background: Rectangle {
+			x: slider.leftPadding
+			y: slider.topPadding + slider.availableHeight / 2 - height / 2
+			width: slider.availableWidth
+			height: 4
+			radius: height / 2
+			color: Common.Theme.outline
+
+			Rectangle {
+			   width: slider.visualPosition * parent.width
+			   height: parent.height
+			   radius: height / 2
+			   color: Common.Theme.accent
+			}
+		 }
+		 handle: Rectangle {
+			x: slider.leftPadding + slider.visualPosition * slider.availableWidth - width / 2
+			y: slider.topPadding + slider.availableHeight / 2 - height / 2
+			width: 12
+			height: 12
+			radius: width / 2
+			color: Common.Theme.accent
+		 }
+
+		 onMoved: root.setBrightness(slider.value)
+	  }
+   }
 }

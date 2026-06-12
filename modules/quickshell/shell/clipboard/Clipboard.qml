@@ -4,318 +4,346 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
-import "../common" as Common
 import "../common/widgets"
+import "../common" as Common
 
 PanelWindow {
-    id: root
+   id: root
 
-    property bool isOpen: false
-    property string searchText: ""
-    property int selectedIndex: 0
-    property var allEntries: []
-    property var filteredEntries: []
-    property var screen: null
+   property bool isOpen: false
+   property string searchText: ""
+   property int selectedIndex: 0
+   property var allEntries: []
+   property var filteredEntries: []
+   property var screen: null
+   readonly property int clipboardWidth: 500
+   readonly property int clipboardHeight: 440
+   readonly property int itemHeight: 40
 
-    visible: isOpen || clipboardClip.implicitHeight > 0
-    color: "transparent"
+   function loadEntries() {
+	  listProc.running = false
+	  listProc.running = true
+   }
 
-    anchors {
-        top: true
-        bottom: true
-        left: true
-        right: true
-    }
+   function parseEntries(raw) {
+	  var lines = raw.split("\n")
+	  var entries = []
+	  for (var i = 0; i < lines.length && entries.length < 50; i++) {
+		 var line = lines[i].trim()
+		 if (line === "")
+			continue
+		 var parts = line.split("\t")
+		 if (parts.length < 2)
+			continue
+		 var id = parts[0]
+		 var text = parts.slice(1).join("\t")
+		 if (text.indexOf("binary data") === 0)
+			continue
+		 entries.push({
+						 id: id,
+						 text: text
+					  })
+	  }
+	  allEntries = entries
+	  filterEntries()
+   }
 
-    WlrLayershell.namespace: "quickshell-clipboard"
-    WlrLayershell.keyboardFocus: isOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
-    WlrLayershell.layer: WlrLayer.Overlay
-    exclusionMode: ExclusionMode.Ignore
+   function filterEntries() {
+	  if (!searchText || searchText.trim() === "") {
+		 filteredEntries = allEntries.slice()
+	  } else {
+		 var query = searchText.toLowerCase()
+		 var results = []
+		 for (var i = 0; i < allEntries.length; i++) {
+			if (allEntries[i].text.toLowerCase().indexOf(query) !== -1) {
+			   results.push(allEntries[i])
+			}
+		 }
+		 filteredEntries = results
+	  }
+	  selectedIndex = 0
+   }
 
-    readonly property int clipboardWidth: 500
-    readonly property int clipboardHeight: 440
-    readonly property int itemHeight: 40
+   function selectEntry() {
+	  if (filteredEntries.length > 0 && filteredEntries[selectedIndex]) {
+		 var id = filteredEntries[selectedIndex].id
+		 // Pass id as separate argv to avoid shell injection from clipboard content
+		 copyProc.command = ["sh", "-c", "cliphist decode \"$1\" | wl-copy", "_", id]
+		 copyProc.running = true
+		 isOpen = false
+	  }
+   }
 
-    onIsOpenChanged: {
-        if (isOpen) {
-            searchText = "";
-            selectedIndex = 0;
-            loadEntries();
-            searchField.forceActiveFocus();
-        }
-    }
+   function deleteEntry(index) {
+	  if (filteredEntries[index]) {
+		 var id = filteredEntries[index].id
+		 deleteProc.command = ["cliphist", "delete", id]
+		 deleteProc.running = true
+		 var newAll = []
+		 for (var i = 0; i < allEntries.length; i++) {
+			if (allEntries[i].id !== id)
+			   newAll.push(allEntries[i])
+		 }
+		 allEntries = newAll
+		 filterEntries()
+	  }
+   }
 
-    function loadEntries() {
-        listProc.running = false;
-        listProc.running = true;
-    }
+   function clearAll() {
+	  wipeProc.running = true
+	  allEntries = []
+	  filteredEntries = []
+	  isOpen = false
+   }
 
-    function parseEntries(raw) {
-        var lines = raw.split("\n");
-        var entries = [];
-        for (var i = 0; i < lines.length && entries.length < 50; i++) {
-            var line = lines[i].trim();
-            if (line === "") continue;
-            var parts = line.split("\t");
-            if (parts.length < 2) continue;
-            var id = parts[0];
-            var text = parts.slice(1).join("\t");
-            if (text.indexOf("binary data") === 0) continue;
-            entries.push({ id: id, text: text });
-        }
-        allEntries = entries;
-        filterEntries();
-    }
+   visible: isOpen || clipboardClip.implicitHeight > 0
+   color: "transparent"
+   WlrLayershell.namespace: "quickshell-clipboard"
+   WlrLayershell.keyboardFocus: isOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+   WlrLayershell.layer: WlrLayer.Overlay
+   exclusionMode: ExclusionMode.Ignore
 
-    function filterEntries() {
-        if (!searchText || searchText.trim() === "") {
-            filteredEntries = allEntries.slice();
-        } else {
-            var query = searchText.toLowerCase();
-            var results = [];
-            for (var i = 0; i < allEntries.length; i++) {
-                if (allEntries[i].text.toLowerCase().indexOf(query) !== -1) {
-                    results.push(allEntries[i]);
-                }
-            }
-            filteredEntries = results;
-        }
-        selectedIndex = 0;
-    }
+   onIsOpenChanged: {
+	  if (isOpen) {
+		 searchText = ""
+		 selectedIndex = 0
+		 loadEntries()
+		 searchField.forceActiveFocus()
+	  }
+   }
 
-    function selectEntry() {
-        if (filteredEntries.length > 0 && filteredEntries[selectedIndex]) {
-            var id = filteredEntries[selectedIndex].id;
-            // Pass id as separate argv to avoid shell injection from clipboard content
-            copyProc.command = ["sh", "-c", "cliphist decode \"$1\" | wl-copy", "_", id];
-            copyProc.running = true;
-            isOpen = false;
-        }
-    }
+   anchors {
+	  top: true
+	  bottom: true
+	  left: true
+	  right: true
+   }
 
-    function deleteEntry(index) {
-        if (filteredEntries[index]) {
-            var id = filteredEntries[index].id;
-            deleteProc.command = ["cliphist", "delete", id];
-            deleteProc.running = true;
-            var newAll = [];
-            for (var i = 0; i < allEntries.length; i++) {
-                if (allEntries[i].id !== id) newAll.push(allEntries[i]);
-            }
-            allEntries = newAll;
-            filterEntries();
-        }
-    }
+   Process {
+	  id: listProc
 
-    function clearAll() {
-        wipeProc.running = true;
-        allEntries = [];
-        filteredEntries = [];
-        isOpen = false;
-    }
+	  command: ["cliphist", "list"]
+	  running: false
 
-    Process {
-        id: listProc
-        command: ["cliphist", "list"]
-        running: false
-        stdout: StdioCollector {
-            onStreamFinished: root.parseEntries(this.text)
-        }
-    }
+	  stdout: StdioCollector {
+		 onStreamFinished: root.parseEntries(this.text)
+	  }
+   }
 
-    Process {
-        id: copyProc
-        running: false
-    }
+   Process {
+	  id: copyProc
 
-    Process {
-        id: deleteProc
-        running: false
-    }
+	  running: false
+   }
 
-    Process {
-        id: wipeProc
-        command: ["cliphist", "wipe"]
-        running: false
-    }
+   Process {
+	  id: deleteProc
 
-    MouseArea {
-        anchors.fill: parent
-        acceptedButtons: Qt.AllButtons
-        onPressed: root.isOpen = false
-    }
+	  running: false
+   }
 
-    Item {
-        id: clipboardClip
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        width: clipboardWidth
-        implicitHeight: root.isOpen ? clipboardHeight : 0
-        visible: implicitHeight > 0
+   Process {
+	  id: wipeProc
 
-        Behavior on implicitHeight {
-            Common.NAnim {}
-        }
+	  command: ["cliphist", "wipe"]
+	  running: false
+   }
 
-        clip: true
+   MouseArea {
+	  anchors.fill: parent
+	  acceptedButtons: Qt.AllButtons
 
-        Item {
-            id: clipboardBody
-            anchors.bottom: parent.bottom
-            width: clipboardWidth
-            height: clipboardHeight
+	  onPressed: root.isOpen = false
+   }
 
-            Rectangle {
-                anchors.fill: parent
-                color: Common.Theme.background
-                radius: 0
-                topLeftRadius: Common.Theme.radius.big
-                topRightRadius: Common.Theme.radius.big
-                clip: true
+   Item {
+	  id: clipboardClip
 
-                ColumnLayout {
-                    id: contentColumn
-                    anchors.fill: parent
-                    anchors.topMargin: 12
-                    anchors.bottomMargin: 12
-                    anchors.leftMargin: 12
-                    anchors.rightMargin: 12
-                    spacing: 8
+	  anchors.horizontalCenter: parent.horizontalCenter
+	  anchors.bottom: parent.bottom
+	  width: clipboardWidth
+	  implicitHeight: root.isOpen ? clipboardHeight : 0
+	  visible: implicitHeight > 0
+	  clip: true
 
-                    SearchField {
-                        id: searchField
-                        Layout.fillWidth: true
-                        placeholderText: "Search clipboard..."
-                        onSearchTriggered: function(query) {
-                            root.searchText = query;
-                            root.filterEntries();
-                        }
+	  Behavior on implicitHeight {
+		 Common.NAnim {}
+	  }
 
-                        Keys.onEscapePressed: root.isOpen = false
-                        Keys.onReturnPressed: root.selectEntry()
-                        Keys.onEnterPressed: root.selectEntry()
-                        Keys.onUpPressed: {
-                            if (root.selectedIndex > 0) root.selectedIndex--;
-                        }
-                        Keys.onDownPressed: {
-                            if (root.selectedIndex < root.filteredEntries.length - 1) root.selectedIndex++;
-                        }
-                    }
+	  Item {
+		 id: clipboardBody
 
-                    ListView {
-                        id: entryList
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        model: root.filteredEntries
-                        clip: true
-                        currentIndex: root.selectedIndex
-                        onCurrentIndexChanged: {
-                            if (currentIndex >= 0) positionViewAtIndex(currentIndex, ListView.Contain);
-                        }
+		 anchors.bottom: parent.bottom
+		 width: clipboardWidth
+		 height: clipboardHeight
 
-                        delegate: Rectangle {
-                            width: entryList.width
-                            height: root.itemHeight
-                            color: index === root.selectedIndex ? Common.Theme.background2 : "transparent"
-                            radius: Common.Theme.radius.small
+		 Rectangle {
+			anchors.fill: parent
+			color: Common.Theme.background
+			radius: 0
+			topLeftRadius: Common.Theme.radius.big
+			topRightRadius: Common.Theme.radius.big
+			clip: true
 
-                            property bool isHovered: delegateMouseArea.containsMouse
+			ColumnLayout {
+			   id: contentColumn
 
-                            onIsHoveredChanged: {
-                                if (isHovered) root.selectedIndex = index;
-                            }
+			   anchors.fill: parent
+			   anchors.topMargin: 12
+			   anchors.bottomMargin: 12
+			   anchors.leftMargin: 12
+			   anchors.rightMargin: 12
+			   spacing: 8
 
-                            RowLayout {
-                                anchors.fill: parent
-                                anchors.leftMargin: 6
-                                anchors.rightMargin: 6
-                                spacing: 8
+			   SearchField {
+				  id: searchField
 
-                                Text {
-                                    text: "\uf0c7"
-                                    font.family: Common.Theme.font.mono.family
-                                    font.pixelSize: 13
-                                    color: Common.Theme.textMuted
-                                    Layout.alignment: Qt.AlignVCenter
-                                }
+				  Layout.fillWidth: true
+				  placeholderText: "Search clipboard..."
 
-                                Text {
-                                    text: modelData.text
-                                    color: Common.Theme.text
-                                    font.family: Common.Theme.font.mono.family
-                                    font.pixelSize: 12
-                                    elide: Text.ElideRight
-                                    Layout.fillWidth: true
-                                    Layout.alignment: Qt.AlignVCenter
-                                }
+				  onSearchTriggered: function (query) {
+					 root.searchText = query
+					 root.filterEntries()
+				  }
+				  Keys.onEscapePressed: root.isOpen = false
+				  Keys.onReturnPressed: root.selectEntry()
+				  Keys.onEnterPressed: root.selectEntry()
+				  Keys.onUpPressed: {
+					 if (root.selectedIndex > 0)
+						root.selectedIndex--
+				  }
+				  Keys.onDownPressed: {
+					 if (root.selectedIndex < root.filteredEntries.length - 1)
+						root.selectedIndex++
+				  }
+			   }
 
-                                Text {
-                                    text: "\uf00d"
-                                    font.family: Common.Theme.font.mono.family
-                                    font.pixelSize: 12
-                                    color: deleteBtnMA.containsMouse ? Common.Theme.error : Common.Theme.textMuted
-                                    Layout.alignment: Qt.AlignVCenter
-                                    visible: delegateMouseArea.containsMouse
+			   ListView {
+				  id: entryList
 
-                                    MouseArea {
-                                        id: deleteBtnMA
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: Qt.PointingHandCursor
-                                        onClicked: function (mouse) {
-                                            mouse.accepted = true;
-                                            root.deleteEntry(index);
-                                        }
-                                    }
-                                }
-                            }
+				  Layout.fillWidth: true
+				  Layout.fillHeight: true
+				  model: root.filteredEntries
+				  clip: true
+				  currentIndex: root.selectedIndex
 
-                            MouseArea {
-                                id: delegateMouseArea
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    root.selectedIndex = index;
-                                    root.selectEntry();
-                                }
-                            }
-                        }
-                    }
+				  delegate: Rectangle {
+					 property bool isHovered: delegateMouseArea.containsMouse
 
-                    RowLayout {
-                        Layout.fillWidth: true
+					 width: entryList.width
+					 height: root.itemHeight
+					 color: index === root.selectedIndex ? Common.Theme.background2 : "transparent"
+					 radius: Common.Theme.radius.small
 
-                        Text {
-                            text: root.filteredEntries.length + " entries"
-                            color: Common.Theme.textMuted
-                            font.family: Common.Theme.font.sans.family
-                            font.pixelSize: 11
-                        }
+					 onIsHoveredChanged: {
+						if (isHovered)
+						   root.selectedIndex = index
+					 }
 
-                        Item { Layout.fillWidth: true }
+					 RowLayout {
+						anchors.fill: parent
+						anchors.leftMargin: 6
+						anchors.rightMargin: 6
+						spacing: 8
 
-                        Text {
-                            text: "Clear all"
-                            color: clearAllMA.containsMouse ? Common.Theme.error : Common.Theme.textMuted
-                            font.family: Common.Theme.font.sans.family
-                            font.pixelSize: 11
+						Text {
+						   text: "\uf0c7"
+						   font.family: Common.Theme.font.mono.family
+						   font.pixelSize: 13
+						   color: Common.Theme.textMuted
+						   Layout.alignment: Qt.AlignVCenter
+						}
 
-                            MouseArea {
-                                id: clearAllMA
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: root.clearAll()
-                            }
-                        }
-                    }
-                }
-            }
-        }
+						Text {
+						   text: modelData.text
+						   color: Common.Theme.text
+						   font.family: Common.Theme.font.mono.family
+						   font.pixelSize: 12
+						   elide: Text.ElideRight
+						   Layout.fillWidth: true
+						   Layout.alignment: Qt.AlignVCenter
+						}
 
-        Common.Border {
-            anchors.fill: parent
-        }
-    }
+						Text {
+						   text: "\uf00d"
+						   font.family: Common.Theme.font.mono.family
+						   font.pixelSize: 12
+						   color: deleteBtnMA.containsMouse ? Common.Theme.error : Common.Theme.textMuted
+						   Layout.alignment: Qt.AlignVCenter
+						   visible: delegateMouseArea.containsMouse
+
+						   MouseArea {
+							  id: deleteBtnMA
+
+							  anchors.fill: parent
+							  hoverEnabled: true
+							  cursorShape: Qt.PointingHandCursor
+
+							  onClicked: function (mouse) {
+								 mouse.accepted = true
+								 root.deleteEntry(index)
+							  }
+						   }
+						}
+					 }
+
+					 MouseArea {
+						id: delegateMouseArea
+
+						anchors.fill: parent
+						hoverEnabled: true
+						cursorShape: Qt.PointingHandCursor
+
+						onClicked: {
+						   root.selectedIndex = index
+						   root.selectEntry()
+						}
+					 }
+				  }
+
+				  onCurrentIndexChanged: {
+					 if (currentIndex >= 0)
+						positionViewAtIndex(currentIndex, ListView.Contain)
+				  }
+			   }
+
+			   RowLayout {
+				  Layout.fillWidth: true
+
+				  Text {
+					 text: root.filteredEntries.length + " entries"
+					 color: Common.Theme.textMuted
+					 font.family: Common.Theme.font.sans.family
+					 font.pixelSize: 11
+				  }
+
+				  Item {
+					 Layout.fillWidth: true
+				  }
+
+				  Text {
+					 text: "Clear all"
+					 color: clearAllMA.containsMouse ? Common.Theme.error : Common.Theme.textMuted
+					 font.family: Common.Theme.font.sans.family
+					 font.pixelSize: 11
+
+					 MouseArea {
+						id: clearAllMA
+
+						anchors.fill: parent
+						hoverEnabled: true
+						cursorShape: Qt.PointingHandCursor
+
+						onClicked: root.clearAll()
+					 }
+				  }
+			   }
+			}
+		 }
+	  }
+
+	  Common.Border {
+		 anchors.fill: parent
+	  }
+   }
 }

@@ -1,117 +1,125 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Services.Pipewire
-import "." as Local
 import "../common" as Common
+import "." as Local
 
 Item {
-    id: root
+   id: root
 
-    property bool open: false
+   property bool open: false
 
-    implicitWidth: 360
-    implicitHeight: open ? contentColumn.implicitHeight + 24 : 0
-    visible: implicitHeight > 0
+   implicitWidth: 360
+   implicitHeight: open ? contentColumn.implicitHeight + 24 : 0
+   visible: implicitHeight > 0
 
-    Behavior on implicitHeight {
-        Common.NAnim {}
-    }
+   Behavior on implicitHeight {
+	  Common.NAnim {}
+   }
 
-    Rectangle {
-        anchors.fill: parent
-        color: Common.Theme.background
-        radius: 0
-        bottomLeftRadius: Common.Theme.radius.big
-        clip: true
+   Rectangle {
+	  anchors.fill: parent
+	  color: Common.Theme.background
+	  radius: 0
+	  bottomLeftRadius: Common.Theme.radius.big
+	  clip: true
 
-        MouseArea {
-            z: -1
-            anchors.fill: parent
-            onPressed: function(mouse) { mouse.accepted = true }
-        }
+	  MouseArea {
+		 z: -1
+		 anchors.fill: parent
 
-        ColumnLayout {
-            z: 0
-            id: contentColumn
-            anchors.fill: parent
-            anchors.margins: 12
-            spacing: 12
+		 onPressed: function (mouse) {
+			mouse.accepted = true
+		 }
+	  }
 
-            // Audio
-            Text {
-                text: "Audio"
-                font.family: Common.Theme.font.sans.family
-                font.pixelSize: Common.Theme.font.sans.size
-                font.bold: true
-                color: Common.Theme.foreground
-            }
+	  ColumnLayout {
+		 id: contentColumn
 
-            Local.AudioSlider {
-                Layout.fillWidth: true
-                node: Pipewire.defaultAudioSink
-                icon: {
-                    if (!node || !node.audio) return "\uf026";
-                    if (node.audio.muted || node.audio.volume === 0) return "\uf026";
-                    if (node.audio.volume < 0.4) return "\uf027";
-                    return "\uf028";
-                }
-                label: "Output"
-            }
+		 z: 0
+		 anchors.fill: parent
+		 anchors.margins: 12
+		 spacing: 12
 
-            Local.AudioSlider {
-                Layout.fillWidth: true
-                node: Pipewire.defaultAudioSource
-                icon: "\uf130"
-                label: "Input"
-            }
+		 // Audio
+		 Text {
+			text: "Audio"
+			font.family: Common.Theme.font.sans.family
+			font.pixelSize: Common.Theme.font.sans.size
+			font.bold: true
+			color: Common.Theme.foreground
+		 }
 
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 1
-                color: Common.Theme.outline
-            }
+		 Local.AudioSlider {
+			Layout.fillWidth: true
+			node: Pipewire.defaultAudioSink
+			icon: {
+			   if (!node || !node.audio)
+				  return "\uf026"
+			   if (node.audio.muted || node.audio.volume === 0)
+				  return "\uf026"
+			   if (node.audio.volume < 0.4)
+				  return "\uf027"
+			   return "\uf028"
+			}
+			label: "Output"
+		 }
 
-            // Brightness
-            Local.BrightnessSlider {
-                id: brightnessSlider
-                Layout.fillWidth: true
-                active: root.open
-            }
+		 Local.AudioSlider {
+			Layout.fillWidth: true
+			node: Pipewire.defaultAudioSource
+			icon: "\uf130"
+			label: "Input"
+		 }
 
-            Rectangle {
-                visible: brightnessSlider.available
-                Layout.fillWidth: true
-                Layout.preferredHeight: 1
-                color: Common.Theme.outline
-            }
+		 Rectangle {
+			Layout.fillWidth: true
+			Layout.preferredHeight: 1
+			color: Common.Theme.outline
+		 }
 
-            // Bluetooth
-            Local.BluetoothToggle {
-                Layout.fillWidth: true
-            }
+		 // Brightness
+		 Local.BrightnessSlider {
+			id: brightnessSlider
 
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 1
-                color: Common.Theme.outline
-            }
+			Layout.fillWidth: true
+			active: root.open
+		 }
 
-            // Network
-            Text {
-                text: "Network"
-                font.family: Common.Theme.font.sans.family
-                font.pixelSize: Common.Theme.font.sans.size
-                font.bold: true
-                color: Common.Theme.foreground
-            }
+		 Rectangle {
+			visible: brightnessSlider.available
+			Layout.fillWidth: true
+			Layout.preferredHeight: 1
+			color: Common.Theme.outline
+		 }
 
-            Local.NetworkInfo {
-                Layout.fillWidth: true
-            }
-        }
-    }
+		 // Bluetooth
+		 Local.BluetoothToggle {
+			Layout.fillWidth: true
+		 }
 
-    Common.Border {
-        anchors.fill: parent
-    }
+		 Rectangle {
+			Layout.fillWidth: true
+			Layout.preferredHeight: 1
+			color: Common.Theme.outline
+		 }
+
+		 // Network
+		 Text {
+			text: "Network"
+			font.family: Common.Theme.font.sans.family
+			font.pixelSize: Common.Theme.font.sans.size
+			font.bold: true
+			color: Common.Theme.foreground
+		 }
+
+		 Local.NetworkInfo {
+			Layout.fillWidth: true
+		 }
+	  }
+   }
+
+   Common.Border {
+	  anchors.fill: parent
+   }
 }

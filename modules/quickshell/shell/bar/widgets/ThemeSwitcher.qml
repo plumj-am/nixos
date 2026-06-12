@@ -1,7 +1,7 @@
 import QtQuick
-import "../../common"
 import "../../common/widgets"
+import "../../common"
 
 IconButton {
-    icon: Theme.mode === "light" ? "\uf185" : "\uf186"
+   icon: Theme.mode === "light" ? "\uf185" : "\uf186"
 }

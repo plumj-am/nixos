@@ -4,60 +4,64 @@ import "../../common"
 import "../../notifications" as Notifications
 
 Item {
-    id: root
+   id: root
 
-    property real size: 24
-    property bool drawerOpen: false
+   property real size: 24
+   property bool drawerOpen: false
 
-    implicitWidth: row.width + 8
-    implicitHeight: size
+   signal clicked
 
-    signal clicked()
+   implicitWidth: row.width + 8
+   implicitHeight: size
 
-    onDrawerOpenChanged: {
-        if (drawerOpen) {
-            Notifications.NotificationServer.markAllSeen()
-        }
-    }
+   onDrawerOpenChanged: {
+	  if (drawerOpen) {
+		 Notifications.NotificationServer.markAllSeen()
+	  }
+   }
 
-    RowLayout {
-        id: row
-        spacing: 4
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: parent.left
+   RowLayout {
+	  id: row
 
-        Text {
-            text: "󰂚"
-            font.family: Theme.font.icons.family
-            font.pixelSize: Theme.font.sans.size
-            color: mouseArea.containsMouse || root.drawerOpen ? Theme.accent : Theme.foreground
-            Layout.alignment: Qt.AlignVCenter
-        }
+	  spacing: 4
+	  anchors.verticalCenter: parent.verticalCenter
+	  anchors.left: parent.left
 
-        Rectangle {
-            visible: Notifications.NotificationServer.unreadCount > 0
-            implicitWidth: countText.implicitWidth + 8
-            implicitHeight: 16
-            radius: 8
-            color: Theme.accent
+	  Text {
+		 text: "󰂚"
+		 font.family: Theme.font.icons.family
+		 font.pixelSize: Theme.font.sans.size
+		 color: mouseArea.containsMouse || root.drawerOpen ? Theme.accent : Theme.foreground
+		 Layout.alignment: Qt.AlignVCenter
+	  }
 
-            Text {
-                id: countText
-                anchors.centerIn: parent
-                text: Notifications.NotificationServer.unreadCount
-                font.family: Theme.font.sans.family
-                font.pixelSize: 10
-                font.bold: true
-                color: Theme.background
-            }
-        }
-    }
+	  Rectangle {
+		 visible: Notifications.NotificationServer.unreadCount > 0
+		 implicitWidth: countText.implicitWidth + 8
+		 implicitHeight: 16
+		 radius: 8
+		 color: Theme.accent
 
-    MouseArea {
-        id: mouseArea
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        onClicked: root.clicked()
-    }
+		 Text {
+			id: countText
+
+			anchors.centerIn: parent
+			text: Notifications.NotificationServer.unreadCount
+			font.family: Theme.font.sans.family
+			font.pixelSize: 10
+			font.bold: true
+			color: Theme.background
+		 }
+	  }
+   }
+
+   MouseArea {
+	  id: mouseArea
+
+	  anchors.fill: parent
+	  hoverEnabled: true
+	  cursorShape: Qt.PointingHandCursor
+
+	  onClicked: root.clicked()
+   }
 }

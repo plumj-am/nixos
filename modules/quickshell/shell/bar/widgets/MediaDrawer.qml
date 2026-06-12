@@ -4,199 +4,206 @@ import "../../common" as Common
 import "../../services"
 
 Item {
-    id: root
+   id: root
 
-    property bool open: false
+   property bool open: false
 
-    Binding {
-        target: Mpris
-        property: "positionTrackingEnabled"
-        value: root.open
-    }
+   implicitWidth: 340
+   implicitHeight: open ? contentColumn.implicitHeight + 24 : 0
+   visible: implicitHeight > 0
 
-    implicitWidth: 340
-    implicitHeight: open ? contentColumn.implicitHeight + 24 : 0
-    visible: implicitHeight > 0
+   Behavior on implicitHeight {
+	  Common.NAnim {}
+   }
 
-    Behavior on implicitHeight {
-        Common.NAnim {}
-    }
+   Binding {
+	  target: Mpris
+	  property: "positionTrackingEnabled"
+	  value: root.open
+   }
 
-    Rectangle {
-        anchors.fill: parent
-        color: Common.Theme.background
-        radius: 0
-        bottomRightRadius: Common.Theme.radius.big
-        clip: true
+   Rectangle {
+	  anchors.fill: parent
+	  color: Common.Theme.background
+	  radius: 0
+	  bottomRightRadius: Common.Theme.radius.big
+	  clip: true
 
-        ColumnLayout {
-            id: contentColumn
-            anchors.fill: parent
-            anchors.margins: 12
-            spacing: 12
+	  ColumnLayout {
+		 id: contentColumn
 
-            RowLayout {
-                spacing: 12
+		 anchors.fill: parent
+		 anchors.margins: 12
+		 spacing: 12
 
-                Rectangle {
-                    Layout.preferredWidth: 80
-                    Layout.preferredHeight: 80
-                    color: Common.Theme.surface
-                    radius: Common.Theme.radius.normal
+		 RowLayout {
+			spacing: 12
 
-                    Image {
-                        id: albumArtImage
-                        anchors.fill: parent
-                        anchors.margins: 2
-                        source: Mpris.trackArtUrl
-                        fillMode: Image.PreserveAspectCrop
-                        asynchronous: true
-                        visible: status === Image.Ready
-                    }
+			Rectangle {
+			   Layout.preferredWidth: 80
+			   Layout.preferredHeight: 80
+			   color: Common.Theme.surface
+			   radius: Common.Theme.radius.normal
 
-                    Text {
-                        anchors.centerIn: parent
-                        text: "\uf001"
-                        font.family: Common.Theme.font.mono.family
-                        font.pixelSize: 28
-                        color: Common.Theme.textMuted
-                        visible: !albumArtImage.visible
-                    }
-                }
+			   Image {
+				  id: albumArtImage
 
-                ColumnLayout {
-                    Layout.maximumWidth: 180
-                    spacing: 4
+				  anchors.fill: parent
+				  anchors.margins: 2
+				  source: Mpris.trackArtUrl
+				  fillMode: Image.PreserveAspectCrop
+				  asynchronous: true
+				  visible: status === Image.Ready
+			   }
 
-                    Text {
-                        Layout.fillWidth: true
-                        text: Mpris.trackTitle || "No track"
-                        font.family: Common.Theme.font.sans.family
-                        font.pixelSize: Common.Theme.font.sans.size
-                        font.bold: true
-                        color: Common.Theme.foreground
-                        elide: Text.ElideRight
-                        wrapMode: Text.WordWrap
-                        maximumLineCount: 2
-                    }
+			   Text {
+				  anchors.centerIn: parent
+				  text: "\uf001"
+				  font.family: Common.Theme.font.mono.family
+				  font.pixelSize: 28
+				  color: Common.Theme.textMuted
+				  visible: !albumArtImage.visible
+			   }
+			}
 
-                    Text {
-                        Layout.fillWidth: true
-                        text: Mpris.trackArtist || "Unknown artist"
-                        font.family: Common.Theme.font.sans.family
-                        font.pixelSize: Common.Theme.font.sans.size - 2
-                        color: Common.Theme.textMuted
-                        elide: Text.ElideRight
-                    }
+			ColumnLayout {
+			   Layout.maximumWidth: 180
+			   spacing: 4
 
-                    Text {
-                        text: Mpris.identity
-                        font.family: Common.Theme.font.mono.family
-                        font.pixelSize: Common.Theme.font.mono.size - 2
-                        color: Common.Theme.textMuted
-                        visible: Mpris.identity !== ""
-                    }
-                }
-            }
+			   Text {
+				  Layout.fillWidth: true
+				  text: Mpris.trackTitle || "No track"
+				  font.family: Common.Theme.font.sans.family
+				  font.pixelSize: Common.Theme.font.sans.size
+				  font.bold: true
+				  color: Common.Theme.foreground
+				  elide: Text.ElideRight
+				  wrapMode: Text.WordWrap
+				  maximumLineCount: 2
+			   }
 
-            ColumnLayout {
-                spacing: 4
+			   Text {
+				  Layout.fillWidth: true
+				  text: Mpris.trackArtist || "Unknown artist"
+				  font.family: Common.Theme.font.sans.family
+				  font.pixelSize: Common.Theme.font.sans.size - 2
+				  color: Common.Theme.textMuted
+				  elide: Text.ElideRight
+			   }
 
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 4
-                    color: Common.Theme.surface
-                    radius: 2
+			   Text {
+				  text: Mpris.identity
+				  font.family: Common.Theme.font.mono.family
+				  font.pixelSize: Common.Theme.font.mono.size - 2
+				  color: Common.Theme.textMuted
+				  visible: Mpris.identity !== ""
+			   }
+			}
+		 }
 
-                    Rectangle {
-                        width: parent.width * Math.min(1, Mpris.position / Math.max(1, Mpris.length))
-                        height: parent.height
-                        color: Common.Theme.primary
-                        radius: 2
-                    }
-                }
+		 ColumnLayout {
+			spacing: 4
 
-                RowLayout {
-                    Layout.fillWidth: true
+			Rectangle {
+			   Layout.fillWidth: true
+			   Layout.preferredHeight: 4
+			   color: Common.Theme.surface
+			   radius: 2
 
-                    Text {
-                        text: Mpris.formatTime(Mpris.position)
-                        font.family: Common.Theme.font.mono.family
-                        font.pixelSize: Common.Theme.font.mono.size - 2
-                        color: Common.Theme.textMuted
-                    }
+			   Rectangle {
+				  width: parent.width * Math.min(1, Mpris.position / Math.max(1, Mpris.length))
+				  height: parent.height
+				  color: Common.Theme.primary
+				  radius: 2
+			   }
+			}
 
-                    Item {
-                        Layout.fillWidth: true
-                    }
+			RowLayout {
+			   Layout.fillWidth: true
 
-                    Text {
-                        text: Mpris.formatTime(Mpris.length)
-                        font.family: Common.Theme.font.mono.family
-                        font.pixelSize: Common.Theme.font.mono.size - 2
-                        color: Common.Theme.textMuted
-                    }
-                }
-            }
+			   Text {
+				  text: Mpris.formatTime(Mpris.position)
+				  font.family: Common.Theme.font.mono.family
+				  font.pixelSize: Common.Theme.font.mono.size - 2
+				  color: Common.Theme.textMuted
+			   }
 
-            RowLayout {
-                Layout.alignment: Qt.AlignHCenter
-                spacing: 16
+			   Item {
+				  Layout.fillWidth: true
+			   }
 
-                Text {
-                    text: "\uf048"
-                    font.family: Common.Theme.font.mono.family
-                    font.pixelSize: 16
-                    color: Mpris.canGoPrevious ? Common.Theme.foreground : Common.Theme.textMuted
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Mpris.canGoPrevious ? Qt.PointingHandCursor : Qt.ArrowCursor
-                        onClicked: if (Mpris.canGoPrevious)
-                            Mpris.previous()
-                    }
-                }
+			   Text {
+				  text: Mpris.formatTime(Mpris.length)
+				  font.family: Common.Theme.font.mono.family
+				  font.pixelSize: Common.Theme.font.mono.size - 2
+				  color: Common.Theme.textMuted
+			   }
+			}
+		 }
 
-                Rectangle {
-                    width: 32
-                    height: 32
-                    radius: 16
-                    color: playPauseHover.hovered ? Common.Theme.primary : Common.Theme.accent
+		 RowLayout {
+			Layout.alignment: Qt.AlignHCenter
+			spacing: 16
 
-                    Text {
-                        anchors.centerIn: parent
-                        text: Mpris.isPlaying ? "\uf04c" : "\uf04b"
-                        font.family: Common.Theme.font.mono.family
-                        font.pixelSize: 14
-                        color: Common.Theme.background
-                    }
+			Text {
+			   text: "\uf048"
+			   font.family: Common.Theme.font.mono.family
+			   font.pixelSize: 16
+			   color: Mpris.canGoPrevious ? Common.Theme.foreground : Common.Theme.textMuted
 
-                    HoverHandler {
-                        id: playPauseHover
-                        cursorShape: Qt.PointingHandCursor
-                    }
+			   MouseArea {
+				  anchors.fill: parent
+				  cursorShape: Mpris.canGoPrevious ? Qt.PointingHandCursor : Qt.ArrowCursor
 
-                    TapHandler {
-                        onTapped: Mpris.playPause()
-                    }
-                }
+				  onClicked: if (Mpris.canGoPrevious)
+								Mpris.previous()
+			   }
+			}
 
-                Text {
-                    text: "\uf051"
-                    font.family: Common.Theme.font.mono.family
-                    font.pixelSize: 16
-                    color: Mpris.canGoNext ? Common.Theme.foreground : Common.Theme.textMuted
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Mpris.canGoNext ? Qt.PointingHandCursor : Qt.ArrowCursor
-                        onClicked: if (Mpris.canGoNext)
-                            Mpris.next()
-                    }
-                }
-            }
-        }
-    }
+			Rectangle {
+			   width: 32
+			   height: 32
+			   radius: 16
+			   color: playPauseHover.hovered ? Common.Theme.primary : Common.Theme.accent
 
-    Common.Border {
-        anchors.fill: parent
-    }
+			   Text {
+				  anchors.centerIn: parent
+				  text: Mpris.isPlaying ? "\uf04c" : "\uf04b"
+				  font.family: Common.Theme.font.mono.family
+				  font.pixelSize: 14
+				  color: Common.Theme.background
+			   }
+
+			   HoverHandler {
+				  id: playPauseHover
+
+				  cursorShape: Qt.PointingHandCursor
+			   }
+
+			   TapHandler {
+				  onTapped: Mpris.playPause()
+			   }
+			}
+
+			Text {
+			   text: "\uf051"
+			   font.family: Common.Theme.font.mono.family
+			   font.pixelSize: 16
+			   color: Mpris.canGoNext ? Common.Theme.foreground : Common.Theme.textMuted
+
+			   MouseArea {
+				  anchors.fill: parent
+				  cursorShape: Mpris.canGoNext ? Qt.PointingHandCursor : Qt.ArrowCursor
+
+				  onClicked: if (Mpris.canGoNext)
+								Mpris.next()
+			   }
+			}
+		 }
+	  }
+   }
+
+   Common.Border {
+	  anchors.fill: parent
+   }
 }

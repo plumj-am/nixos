@@ -1,131 +1,153 @@
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import "widgets"
 import "../common"
 import "../services" as Services
+import "widgets"
 
 Item {
-    id: root
+   id: root
 
-    property int barSize: Config.data.bar.size
-    property bool mediaDrawerOpen: false
-    property bool notifDrawerOpen: false
-    readonly property color barColor: Theme.background
+   property int barSize: Config.data.bar.size
+   property bool mediaDrawerOpen: false
+   property bool notifDrawerOpen: false
+   readonly property color barColor: Theme.background
 
-    signal notificationClicked
-    signal mediaClicked
-    signal sessionClicked
-    signal controlCenterClicked
-    signal themeSwitchClicked
-    signal rebuildClicked
+   signal notificationClicked
+   signal mediaClicked
+   signal sessionClicked
+   signal controlCenterClicked
+   signal themeSwitchClicked
+   signal rebuildClicked
 
-    implicitHeight: barSize
+   implicitHeight: barSize
 
-    anchors {
-        left: parent.left
-        right: parent.right
-        top: parent.top
-    }
+   anchors {
+	  left: parent.left
+	  right: parent.right
+	  top: parent.top
+   }
 
-    Rectangle {
-        id: barContent
-        anchors.fill: parent
-        color: barColor
+   Rectangle {
+	  id: barContent
 
-        RowLayout {
-            anchors.fill: parent
-            anchors.leftMargin: 12
-            anchors.rightMargin: 12
-            spacing: 8
+	  anchors.fill: parent
+	  color: barColor
 
-            Item {
-                Layout.fillWidth: true
-                Layout.preferredWidth: 0
+	  RowLayout {
+		 anchors.fill: parent
+		 anchors.leftMargin: 12
+		 anchors.rightMargin: 12
+		 spacing: 8
 
-                RowLayout {
-                    anchors.left: parent.left
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: 8
+		 Item {
+			Layout.fillWidth: true
+			Layout.preferredWidth: 0
 
-                    Media {
-                        Layout.alignment: Qt.AlignVCenter
-                        drawerOpen: root.mediaDrawerOpen
-                        onClicked: root.mediaClicked()
-                    }
-                }
-            }
+			RowLayout {
+			   anchors.left: parent.left
+			   anchors.verticalCenter: parent.verticalCenter
+			   spacing: 8
 
-            FocusedWindow {
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-                Layout.minimumWidth: implicitWidth
-            }
+			   Media {
+				  Layout.alignment: Qt.AlignVCenter
+				  drawerOpen: root.mediaDrawerOpen
 
-            Item {
-                Layout.fillWidth: true
-                Layout.preferredWidth: 0
+				  onClicked: root.mediaClicked()
+			   }
+			}
+		 }
 
-                RowLayout {
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: 8
+		 FocusedWindow {
+			Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+			Layout.minimumWidth: implicitWidth
+		 }
 
-                    Tray {
-                        Layout.alignment: Qt.AlignVCenter
-                    }
-                    Privacy {
-                        Layout.alignment: Qt.AlignVCenter
-                    }
-                    Separator {
-                        Layout.alignment: Qt.AlignVCenter
-                    }
-                    CpuWidget {
-                        Layout.alignment: Qt.AlignVCenter
-                    }
-                    RamWidget {
-                        Layout.alignment: Qt.AlignVCenter
-                    }
-                    DiskWidget {
-                        Layout.alignment: Qt.AlignVCenter
-                    }
-                    NetworkWidget {
-                        Layout.alignment: Qt.AlignVCenter
-                    }
-                    GpuWidget {
-                        Layout.alignment: Qt.AlignVCenter
-                    }
-                    Battery {
-                        Layout.alignment: Qt.AlignVCenter
-                    }
-                    Separator {
-                        Layout.alignment: Qt.AlignVCenter
-                    }
-                    Rebuild {
-                        Layout.alignment: Qt.AlignVCenter
-                        onClicked: root.rebuildClicked()
-                    }
-                    ThemeSwitcher {
-                        Layout.alignment: Qt.AlignVCenter
-                        onClicked: root.themeSwitchClicked()
-                    }
-                    ControlCenterButton {
-                        Layout.alignment: Qt.AlignVCenter
-                        onClicked: root.controlCenterClicked()
-                    }
-                    NotificationWidget {
-                        Layout.alignment: Qt.AlignVCenter
-                        drawerOpen: root.notifDrawerOpen
-                        onClicked: root.notificationClicked()
-                    }
-                    Clock {
-                        Layout.alignment: Qt.AlignVCenter
-                    }
-                    SessionButton {
-                        Layout.alignment: Qt.AlignVCenter
-                        onClicked: root.sessionClicked()
-                    }
-                }
-            }
-        }
-    }
+		 Item {
+			Layout.fillWidth: true
+			Layout.preferredWidth: 0
+
+			RowLayout {
+			   anchors.right: parent.right
+			   anchors.verticalCenter: parent.verticalCenter
+			   spacing: 8
+
+			   Tray {
+				  Layout.alignment: Qt.AlignVCenter
+			   }
+
+			   Privacy {
+				  Layout.alignment: Qt.AlignVCenter
+			   }
+
+			   Separator {
+				  Layout.alignment: Qt.AlignVCenter
+			   }
+
+			   CpuWidget {
+				  Layout.alignment: Qt.AlignVCenter
+			   }
+
+			   RamWidget {
+				  Layout.alignment: Qt.AlignVCenter
+			   }
+
+			   DiskWidget {
+				  Layout.alignment: Qt.AlignVCenter
+			   }
+
+			   NetworkWidget {
+				  Layout.alignment: Qt.AlignVCenter
+			   }
+
+			   GpuWidget {
+				  Layout.alignment: Qt.AlignVCenter
+			   }
+
+			   Battery {
+				  Layout.alignment: Qt.AlignVCenter
+			   }
+
+			   Separator {
+				  Layout.alignment: Qt.AlignVCenter
+			   }
+
+			   Rebuild {
+				  Layout.alignment: Qt.AlignVCenter
+
+				  onClicked: root.rebuildClicked()
+			   }
+
+			   ThemeSwitcher {
+				  Layout.alignment: Qt.AlignVCenter
+
+				  onClicked: root.themeSwitchClicked()
+			   }
+
+			   ControlCenterButton {
+				  Layout.alignment: Qt.AlignVCenter
+
+				  onClicked: root.controlCenterClicked()
+			   }
+
+			   NotificationWidget {
+				  Layout.alignment: Qt.AlignVCenter
+				  drawerOpen: root.notifDrawerOpen
+
+				  onClicked: root.notificationClicked()
+			   }
+
+			   Clock {
+				  Layout.alignment: Qt.AlignVCenter
+			   }
+
+			   SessionButton {
+				  Layout.alignment: Qt.AlignVCenter
+
+				  onClicked: root.sessionClicked()
+			   }
+			}
+		 }
+	  }
+   }
 }
