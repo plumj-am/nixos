@@ -185,8 +185,8 @@
                   gerritserver='gerrit.plumj.am',
                   gerritport=29418,
                   username='buildbot',
-                  identity_file='/run/secrets/buildbot/gerrit-ssh-key',
                   handled_events=["patchset-created", "change-restored"],
+                  identity_file='/run/secrets/buildbot-master/gerrit-ssh-key',
               )
           ]
 
@@ -221,7 +221,7 @@
                   'gerrit.plumj.am',
                   'buildbot',
                   port=29418,
-                  identity_file='/run/secrets/buildbot/gerrit-ssh-key',
+                  identity_file='/run/secrets/buildbot-master/gerrit-ssh-key',
                   generators=[
                       GerritBuildStartStatusGenerator(
                           callback=gerritStartCB,
