@@ -68,6 +68,7 @@
                 todoread = "allow";
                 todowrite = "allow";
                 websearch = "allow";
+                lsp_diagnostics = "allow";
 
                 "context7_*" = "allow";
                 "gh_grep_*" = "allow";

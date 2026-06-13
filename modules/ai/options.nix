@@ -99,6 +99,7 @@
         "jj help*"
         "jj interdiff*"
         "jj log*"
+        "jj new"
         "jj new -m*"
         "jj new --message*"
         "jj op diff*"
