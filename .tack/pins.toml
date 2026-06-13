@@ -2,7 +2,7 @@
 age.url                  = "gh:ryantm/agenix"
 age-rekey.url            = "gh:oddlama/agenix-rekey"
 buildbot-nix.url         = "gh:plumj-am/buildbot-nix/tmp"
-cade.url                 = "gh:plumj-am/cade/patch/PlumJam-zvnsyvnoovvu"
+cade.url                 = "gh:manic-systems/cade"
 circus.url               = "gh:plumj-am/circus/patch/PlumJam-rykzunzvwxxu"
 disko.url                = "gh:nix-community/disko"
 fenix.url                = "gh:nix-community/fenix"

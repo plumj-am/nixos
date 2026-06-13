@@ -24,11 +24,11 @@
     "type": "github"
   },
   "cade": {
-    "lastModified": 1780588554,
-    "narHash": "sha256-s07XiTHa88oPQCcGr1cVIojVln+6PeN5Yoe4h8tMfkQ=",
-    "owner": "plumj-am",
+    "lastModified": 1781176544,
+    "narHash": "sha256-MFx0t5f8nQBhWl6WjopW+e19JUKhaDWZ39T7tBmJRHc=",
+    "owner": "manic-systems",
     "repo": "cade",
-    "rev": "ee64627ac378fbcd19203f905ae112dcef35b4f6",
+    "rev": "316562cb400117dd7ec998acf67182566e475318",
     "type": "github"
   },
   "circus": {
