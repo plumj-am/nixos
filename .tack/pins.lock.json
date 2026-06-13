@@ -267,11 +267,11 @@
     "type": "github"
   },
   "run0-sudo-shim": {
-    "lastModified": 1774371810,
-    "narHash": "sha256-E4o8TbHMHPqXCEluU1dgQQxsr5o/ifhbZw3CRIofqsg=",
-    "owner": "plumj-am",
+    "lastModified": 1781110520,
+    "narHash": "sha256-QkDoEBgcWh/eKX8jxctMNEy08Sf8kpxXFhWbsygTWz8=",
+    "owner": "LordGrimmauld",
     "repo": "run0-sudo-shim",
-    "rev": "6071e7a9a368779b8eed711d0da0e6333a557ae7",
+    "rev": "9eb571a3fa3a3ad441822838580b78d40d87f37d",
     "type": "github"
   },
   "tack": {

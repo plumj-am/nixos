@@ -32,7 +32,7 @@ qml-niri.url             = "gh:imiric/qml-niri/main"
 quickshell.url           = "outfoxxed:outfoxxed/quickshell"
 rio.url                  = "gh:raphamorim/rio"
 rom.url                  = "gh:manic-systems/rom"
-run0-sudo-shim.url       = "gh:plumj-am/run0-sudo-shim"
+run0-sudo-shim.url       = "gh:LordGrimmauld/run0-sudo-shim"
 tack.url                 = "gh:manic-systems/tack"
 treefmt.url              = "gh:numtide/treefmt-nix"
 ublock                   = { type = "fetch", url = "gh:imputnet/uBlock" }
