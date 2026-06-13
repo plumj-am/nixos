@@ -8,10 +8,10 @@
     }:
     let
       inherit (lib.modules) mkForce;
-      inherit (config.age) secrets;
+      inherit (config.sops) secrets;
 
       # Check with:
-      # curl -s https://opencode.ai/zen/go/v1/models -H (cat /run/agenix/opencodeGoKey) | jq '.data[].id'
+      # curl -s https://opencode.ai/zen/go/v1/models -H (cat /run/secrets/opencode-go-key) | jq '.data[].id'
       models = [
         # MINIMAX works
         {
@@ -120,12 +120,7 @@
         };
     in
     {
-      age.secrets.opencodeGoEnvironment = {
-        rekeyFile = ../../secrets/opencode-go-environment.age;
-        owner = "litellm";
-        group = "litellm";
-        mode = "600";
-      };
+      ai.secrets = true;
 
       unfree.allowedNames = [
         "cuda_cudart"
@@ -146,7 +141,7 @@
         enable = true;
         port = 4000;
 
-        environmentFile = secrets.opencodeGoEnvironment.path;
+        environmentFile = secrets."litellm-environment".path;
 
         environment = {
           SCARF_NO_ANALYTICS = "True";

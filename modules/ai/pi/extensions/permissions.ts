@@ -158,7 +158,8 @@ export const forbiddenCommandsWithAlternatives: Array<{
 
 // Forbidden path patterns (strict mode)
 export const forbiddenPathPatterns: string[] = [
-	"**/run/agenix",
+	"**/run/secrets",
+	"**/run/secrets-for-users",
 	"**/.env",
 	"**/.env.*",
 	"**/.envrc",

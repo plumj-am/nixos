@@ -11,7 +11,7 @@
       inherit (lib.lists) singleton;
       inherit (lib') merge;
       inherit (config.networking) domain hostName;
-      inherit (config.age) secrets;
+      inherit (config.sops) secrets;
 
       buildbot-nix-patched =
         let
@@ -42,13 +42,18 @@
         message = "The buildbot-master module should only be used on the 'plum' host.";
       };
 
-      age.secrets = {
-        buildbotAccessToken.rekeyFile = ../secrets/buildbot-access-token.age;
-        buildbotWebhookSecret.rekeyFile = ../secrets/buildbot-webhook-secret.age;
-        buildbotOauthSecret.rekeyFile = ../secrets/buildbot-oauth-secret.age;
-        buildbotWorkersFile.rekeyFile = ../secrets/buildbot-workers-file.age;
-        buildbotHttpBasicAuthPassword.rekeyFile = ../secrets/buildbot-http-basic-auth-password.age;
-        buildbotCookieSecret.rekeyFile = ../secrets/buildbot-cookie-secret.age;
+      sops.secrets = {
+        "buildbot-master/access-token".sopsFile = ../secrets/services/buildbot.yaml;
+        "buildbot-master/webhook-secret".sopsFile = ../secrets/services/buildbot.yaml;
+        "buildbot-master/oauth-secret".sopsFile = ../secrets/services/buildbot.yaml;
+        "buildbot-master/workers-file".sopsFile = ../secrets/services/buildbot.yaml;
+        "buildbot-master/http-basic-auth-password".sopsFile = ../secrets/services/buildbot.yaml;
+        "buildbot-master/cookie-secret".sopsFile = ../secrets/services/buildbot.yaml;
+        "buildbot-master/gerrit-ssh-key" = {
+          sopsFile = ../secrets/services/buildbot.yaml;
+          owner = "buildbot";
+          mode = "600";
+        };
       };
 
       services.buildbot-nix.packages.buildbot-nix = buildbot-nix-patched;
@@ -59,8 +64,8 @@
         domain = "buildbot.${domain}";
         admins = singleton "PlumJam";
 
-        workersFile = secrets.buildbotWorkersFile.path;
-        httpBasicAuthPasswordFile = secrets.buildbotHttpBasicAuthPassword.path;
+        workersFile = secrets."buildbot-master/workers-file".path;
+        httpBasicAuthPasswordFile = secrets."buildbot-master/http-basic-auth-password".path;
 
         evalMaxMemorySize = 4096; # 4G - I wish I could adjust this per builder :/
         # Current worst builder has 8G; best has 32G...
@@ -73,17 +78,17 @@
           topic = null;
 
           oauthId = "26db7117-c7ec-4bc9-b273-7b12bb0f83aa";
-          oauthSecretFile = secrets.buildbotOauthSecret.path;
-          tokenFile = secrets.buildbotAccessToken.path;
-          webhookSecretFile = secrets.buildbotWebhookSecret.path;
+          oauthSecretFile = secrets."buildbot-master/oauth-secret".path;
+          tokenFile = secrets."buildbot-master/access-token".path;
+          webhookSecretFile = secrets."buildbot-master/webhook-secret".path;
         };
 
         accessMode.fullyPrivate = {
           backend = "forgejo";
 
           clientId = "26db7117-c7ec-4bc9-b273-7b12bb0f83aa";
-          clientSecretFile = secrets.buildbotOauthSecret.path;
-          cookieSecretFile = secrets.buildbotCookieSecret.path;
+          clientSecretFile = secrets."buildbot-master/oauth-secret".path;
+          cookieSecretFile = secrets."buildbot-master/cookie-secret".path;
         };
 
         # GC root registration fails way too often to be useful.
@@ -180,7 +185,7 @@
                   gerritserver='gerrit.plumj.am',
                   gerritport=29418,
                   username='buildbot',
-                  identity_file='/run/agenix/gerritBuildbotSshKey',
+                  identity_file='/run/secrets/buildbot/gerrit-ssh-key',
                   handled_events=["patchset-created", "change-restored"],
               )
           ]
@@ -216,7 +221,7 @@
                   'gerrit.plumj.am',
                   'buildbot',
                   port=29418,
-                  identity_file='/run/agenix/gerritBuildbotSshKey',
+                  identity_file='/run/secrets/buildbot/gerrit-ssh-key',
                   generators=[
                       GerritBuildStartStatusGenerator(
                           callback=gerritStartCB,
@@ -285,14 +290,12 @@
     let
       inherit (lib.lists) singleton;
       inherit (config.networking) hostName;
-      inherit (config.age) secrets;
+      inherit (config.sops) secrets;
     in
     {
       imports = singleton inputs.buildbot-nix.nixosModules.buildbot-worker;
 
-      age.secrets = {
-        buildbotMasterPassword.rekeyFile = ../secrets/buildbot-master-password.age;
-      };
+      sops.secrets."buildbot-worker/master-password".sopsFile = ../secrets/services/buildbot.yaml;
 
       nix.settings.trusted-users = singleton "buildbot-worker";
 
@@ -302,11 +305,9 @@
         masterUrl =
           if hostName == "plum" then "tcp:host=localhost:port=9989" else "tcp:host=plum:port=9989";
 
-        # Must match the cores field in ../secrets/buildbot-workers-file.age
-        # Doesn't matter if they are offline, they're simply not used.
         workers = 0; # Determined automatically based on CPU core count.
 
-        workerPasswordFile = secrets.buildbotMasterPassword.path;
+        workerPasswordFile = secrets."buildbot-worker/master-password".path;
       };
     };
 }

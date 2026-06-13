@@ -19,6 +19,7 @@ in
       nix-settings-extra-server
       radicle-node
       rust
+      sops
       sudo-extra-server
       swapfile
       s3-upload
@@ -36,14 +37,6 @@ in
               path = "/swapfile";
               size = 1024 * 2;
             };
-          };
-
-          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGSi4SKhqze7ZzhJFcUF9KW/4nXX1MfvZjUqrYWNDi9c root@blackwell";
-
-          age.secrets = {
-            forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
-            # acmeEnvironment.rekeyFile = ../secrets/acme-environment.age;
-            nixStoreKey.rekeyFile = ../secrets/blackwell-nix-store-key.age;
           };
 
           system.stateVersion = "26.05";

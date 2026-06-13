@@ -11,11 +11,24 @@
       inherit (lib) mkForce;
       inherit (config.myLib) merge mkResticBackup;
       inherit (config.networking) domain hostName;
+      inherit (config.sops) secrets;
 
       fqdn = "git.${domain}";
       port = 8001;
     in
     {
+      sops.secrets = {
+        "forgejo/signing-key" = {
+          sopsFile = ../secrets/services/forgejo.yaml;
+          owner = "forgejo";
+        };
+        "forgejo/signing-key-pub" = {
+          sopsFile = ../secrets/services/forgejo.yaml;
+          owner = "forgejo";
+        };
+        "forgejo/admin-password".sopsFile = ../secrets/services/forgejo.yaml;
+      };
+
       assertions = singleton {
         assertion = hostName == "plum";
         message = "The forgejo module should only be used on the 'plum' host, but you're trying to enable it on '${hostName}'.";
@@ -23,9 +36,9 @@
 
       environment.systemPackages = singleton pkgs.forgejo;
 
-      system.activationScripts.forgejo-setup-keys = lib.stringAfter [ "agenix" ] ''
-        ln --symbolic --force ${config.age.secrets.forgejoSigningKey.path} /run/agenix/forgejo-signing-key
-        ln --symbolic --force ${config.age.secrets.forgejoSigningKeyPub.path} /run/agenix/forgejo-signing-key.pub
+      system.activationScripts.forgejo-setup-keys = ''
+        ln --symbolic --force ${secrets."forgejo/signing-key".path} /run/secrets/forgejo/signing-key
+        ln --symbolic --force ${secrets."forgejo/signing-key-pub".path} /run/secrets/forgejo/signing-key.pub
       '';
 
       services.openssh.settings = {
@@ -109,7 +122,7 @@
 
             "repository.signing" = {
               FORMAT = "ssh";
-              SIGNING_KEY = "/run/agenix/forgejo-signing-key.pub";
+              SIGNING_KEY = "/run/secrets/forgejo/signing-key.pub";
               MERGES = "always";
             };
 

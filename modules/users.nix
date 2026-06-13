@@ -16,7 +16,7 @@
       users.users = {
         root = {
           shell = pkgs.nushell;
-          hashedPasswordFile = config.age.secrets.password.path;
+          hashedPasswordFile = config.sops.secrets.password.path;
           openssh.authorizedKeys.keys = keys.admins;
         };
 
@@ -24,7 +24,7 @@
           description = "Jam";
           isNormalUser = true;
           shell = pkgs.nushell;
-          hashedPasswordFile = config.age.secrets.password.path;
+          hashedPasswordFile = config.sops.secrets.password.path;
           openssh.authorizedKeys.keys = keys.admins;
         };
       };

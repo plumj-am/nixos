@@ -12,12 +12,11 @@
       inherit (lib.lists) singleton filter map;
       inherit (lib') merge;
       inherit (config.networking) domain hostName;
+      inherit (config.sops) secrets;
 
       fqdn = "gradient.${domain}";
       listenAddr = "0.0.0.0";
       port = 8018;
-
-      secrets = config.age.secrets;
 
       upstreams =
         let
@@ -76,16 +75,16 @@
     {
       imports = singleton inputs.gradient.nixosModules.default;
 
-      age.secrets = {
-        gradientJwt.rekeyFile = ../secrets/gradient-jwt.age;
-        gradientCrypt.rekeyFile = ../secrets/gradient-crypt.age;
-        gradientWorkerToken.rekeyFile = ../secrets/gradient-worker-token.age;
-        gradientUserPlumjamPassword.rekeyFile = ../secrets/gradient-user-plumjam-password.age;
-        gradientOrgPlumworksSshPrivateKey.rekeyFile = ../secrets/gradient-org-plumworks-ssh-private-key.age;
-        # Same as nixStoreKey but trim `name:`.
-        gradientCacheSigningKey.rekeyFile = ../secrets/gradient-cache-signing-key.age;
-        gradientForgejoWebhookAccessToken.rekeyFile = ../secrets/gradient-forgejo-webhook-access-token.age;
-        gradientForgejoWebhookHmacSecret.rekeyFile = ../secrets/gradient-forgejo-webhook-hmac-secret.age;
+      sops.secrets = {
+        "gradient-server/jwt".sopsFile = ../secrets/services/gradient.yaml;
+        "gradient-server/crypt".sopsFile = ../secrets/services/gradient.yaml;
+        "gradient-server/worker-token".sopsFile = ../secrets/services/gradient.yaml;
+        "gradient-server/user-plumjam-password".sopsFile = ../secrets/services/gradient.yaml;
+        "gradient-server/org-plumworks-ssh-private-key".sopsFile = ../secrets/services/gradient.yaml;
+        # Same as nix-store-key but trim `name:`.
+        "gradient-server/cache-signing-key".sopsFile = ../secrets/services/gradient.yaml;
+        "gradient-server/forgejo-webhook-access-token".sopsFile = ../secrets/services/gradient.yaml;
+        "gradient-server/forgejo-webhook-hmac-secret".sopsFile = ../secrets/services/gradient.yaml;
       };
 
       environment.systemPackages =
@@ -112,8 +111,8 @@
           url = "https://${fqdn}";
         };
 
-        jwtSecretFile = secrets.gradientJwt.path;
-        cryptSecretFile = secrets.gradientCrypt.path;
+        jwtSecretFile = secrets."gradient-server/jwt".path;
+        cryptSecretFile = secrets."gradient-server/crypt".path;
 
         databaseUrl = "postgresql:///gradient?host=/run/postgresql";
 
@@ -128,7 +127,7 @@
                 "plumworks"
                 "plumjam"
               ];
-              token_file = secrets.gradientWorkerToken.path;
+              token_file = secrets."gradient-server/worker-token".path;
               created_by = "plumjam";
             };
             date = {
@@ -137,7 +136,7 @@
                 "plumworks"
                 "plumjam"
               ];
-              token_file = secrets.gradientWorkerToken.path;
+              token_file = secrets."gradient-server/worker-token".path;
               created_by = "plumjam";
             };
             plum = {
@@ -146,7 +145,7 @@
                 "plumworks"
                 "plumjam"
               ];
-              token_file = secrets.gradientWorkerToken.path;
+              token_file = secrets."gradient-server/worker-token".path;
               created_by = "plumjam";
             };
           };
@@ -157,7 +156,7 @@
               name = "plumworks-cache";
               display_name = "PlumWorks Cache";
               max_storage_gb = 50;
-              signing_key_file = secrets.gradientCacheSigningKey.path;
+              signing_key_file = secrets."gradient-server/cache-signing-key".path;
               organizations = singleton "plumworks";
               created_by = "plumjam";
               inherit upstreams;
@@ -168,7 +167,7 @@
               name = "plumjam-cache";
               display_name = "PlumJam Cache";
               max_storage_gb = 50;
-              signing_key_file = secrets.gradientCacheSigningKey.path;
+              signing_key_file = secrets."gradient-server/cache-signing-key".path;
               organizations = singleton "plumjam";
               created_by = "plumjam";
               inherit upstreams;
@@ -178,7 +177,7 @@
           users.plumjam = {
             name = "PlumJam";
             email = "ci@plumj.am";
-            password_file = secrets.gradientUserPlumjamPassword.path;
+            password_file = secrets."gradient-server/user-plumjam-password".path;
             superuser = true;
             email_verified = true;
           };
@@ -188,7 +187,7 @@
               display_name = "PlumWorks";
               description = "PlumWorks";
               created_by = "plumjam";
-              private_key_file = secrets.gradientOrgPlumworksSshPrivateKey.path;
+              private_key_file = secrets."gradient-server/org-plumworks-ssh-private-key".path;
               public = false;
             };
 
@@ -197,7 +196,7 @@
               description = "PlumJam";
               created_by = "plumjam";
               # TODO: make separate one.
-              private_key_file = secrets.gradientOrgPlumworksSshPrivateKey.path;
+              private_key_file = secrets."gradient-server/org-plumworks-ssh-private-key".path;
               public = false;
             };
           };
@@ -245,7 +244,7 @@
               display_name = "git.plumj.am-inbound";
               kind = "inbound";
               forge_type = "forgejo";
-              secret_file = secrets.gradientForgejoWebhookHmacSecret.path;
+              secret_file = secrets."gradient-server/forgejo-webhook-hmac-secret".path;
               organization = "plumjam";
               created_by = "plumjam";
             };
@@ -255,7 +254,7 @@
               kind = "outbound";
               forge_type = "forgejo";
               endpoint_url = "https://git.plumj.am";
-              access_token_file = secrets.gradientForgejoWebhookAccessToken.path;
+              access_token_file = secrets."gradient-server/forgejo-webhook-access-token".path;
               organization = "plumjam";
               created_by = "plumjam";
             };
@@ -305,8 +304,7 @@
     let
       inherit (lib.lists) singleton;
       inherit (config.networking) hostName;
-
-      secrets = config.age.secrets;
+      inherit (config.sops) secrets;
 
       gradientHostName = "sloe";
       gradientHost = "${gradientHostName}.taild29fec.ts.net";
@@ -315,9 +313,9 @@
     {
       imports = singleton inputs.gradient.nixosModules.default;
 
-      age.secrets = {
-        gradientWorkerToken.rekeyFile = ../secrets/gradient-worker-token.age;
-        gradientWorkerPeers.rekeyFile = ../secrets/gradient-worker-peers.age;
+      sops.secrets = {
+        "gradient-worker/token".sopsFile = ../secrets/services/gradient.yaml;
+        "gradient-worker/peers".sopsFile = ../secrets/services/gradient.yaml;
       };
 
       services.gradient.worker = {
@@ -326,7 +324,7 @@
         # Tailscale should optimise if host is the same, I think.
         serverUrl = "ws://${gradientHost}:${toString gradientPort}/proto";
 
-        peersFile = secrets.gradientWorkerPeers.path;
+        peersFile = secrets."gradient-worker/peers".path;
         workerId =
           if hostName == "sloe" then
             "019ebc40-e764-72a0-816e-09e490f44995"

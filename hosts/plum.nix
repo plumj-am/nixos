@@ -37,6 +37,7 @@ in
       radicle-node
       renovate
       rust
+      sops
       sudo-extra-server
       syncthing
       swapfile
@@ -72,42 +73,6 @@ in
               path = "/swapfile";
               size = 1024 * 8;
             };
-          };
-
-          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBH1S3dhOYCCltqrseHc3YZFHc9XU90PsvDo7frzUGrr root@plum";
-
-          age.secrets = {
-            forgejoSigningKey = {
-              rekeyFile = ../secrets/plum-forgejo-signing-key.age;
-              owner = "forgejo";
-            };
-            forgejoSigningKeyPub = {
-              rekeyFile = ../secrets/plum-forgejo-signing-key-pub.age;
-              owner = "forgejo";
-            };
-            opengistEnvironment = {
-              rekeyFile = ../secrets/plum-opengist-environment.age;
-              owner = "forgejo";
-            };
-            rssAdminPassword = {
-              rekeyFile = ../secrets/plum-rss-password.age;
-              owner = "freshrss";
-              mode = "400";
-            };
-            matrixSigningKey = {
-              rekeyFile = ../secrets/plum-matrix-signing-key.age;
-              owner = "matrix-synapse";
-              group = "matrix-synapse";
-            };
-            matrixRegistrationSecret = {
-              rekeyFile = ../secrets/plum-matrix-registration-secret.age;
-              owner = "matrix-synapse";
-              group = "matrix-synapse";
-            };
-            forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
-            forgejoAdminPassword.rekeyFile = ../secrets/plum-forgejo-password.age;
-            nixStoreKey.rekeyFile = ../secrets/plum-nix-store-key.age;
-            resticPassword.rekeyFile = ../secrets/restic-password.age;
           };
 
           system.stateVersion = "26.05";

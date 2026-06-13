@@ -8,23 +8,21 @@
     }:
     let
       inherit (lib.lists) singleton;
-      inherit (config.age) secrets;
+      inherit (config.sops) secrets;
     in
     {
-      config = {
-        age.secrets.forgejoCliConfig = {
-          rekeyFile = ../secrets/forgejo-cli-config.age;
-          owner = "jam";
-          mode = "600";
-        };
+      sops.secrets."forgejo-cli/config" = {
+        sopsFile = ../secrets/services/forgejo.yaml;
+        owner = "jam";
+        mode = "600";
+      };
 
-        shellAliases.fj = "fj --host https://git.plumj.am";
+      shellAliases.fj = "fj --host https://git.plumj.am";
 
-        hjem.extraModule = {
-          packages = singleton pkgs.forgejo-cli;
+      hjem.extraModule = {
+        packages = singleton pkgs.forgejo-cli;
 
-          xdg.data.files."forgejo-cli/keys.json".source = secrets.forgejoCliConfig.path;
-        };
+        xdg.data.files."forgejo-cli/keys.json".source = secrets."forgejo-cli/config".path;
       };
     };
 }

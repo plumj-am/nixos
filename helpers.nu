@@ -12,7 +12,7 @@ def "main nixos-anywhere" [
       --flake $".#($host)"
       --target-host root@($remote)
       --option builders ""
-      --phases kexec,disko,install # Skip reboot to verify setup for Agenix.
+      --phases kexec,disko,install # Skip reboot to verify setup for sops.
       --build-on local)
 }
 

@@ -1,20 +1,4 @@
 {
-  "age": {
-    "lastModified": 1770165109,
-    "narHash": "sha256-9VnK6Oqai65puVJ4WYtCTvlJeXxMzAp/69HhQuTdl/I=",
-    "owner": "ryantm",
-    "repo": "agenix",
-    "rev": "b027ee29d959fda4b60b57566d64c98a202e0feb",
-    "type": "github"
-  },
-  "age-rekey": {
-    "lastModified": 1774522439,
-    "narHash": "sha256-GvINrdGznE7mGlDNjW0/PMgOJlC+Nl9MkfxALB4QvWs=",
-    "owner": "oddlama",
-    "repo": "agenix-rekey",
-    "rev": "8b9c179bc1300ab130c90f2d25426bf0e7a2b58d",
-    "type": "github"
-  },
   "buildbot-nix": {
     "lastModified": 1781103680,
     "narHash": "sha256-5WUQA0O2ixubsle5J28k01xaTg0dAdNaNyXrYk/1eBY=",
@@ -272,6 +256,14 @@
     "owner": "LordGrimmauld",
     "repo": "run0-sudo-shim",
     "rev": "9eb571a3fa3a3ad441822838580b78d40d87f37d",
+    "type": "github"
+  },
+  "sops": {
+    "lastModified": 1780547341,
+    "narHash": "sha256-Gq8KNx5A7hBB3uGJaj6eQfLDIz5YdLu92gqBcvHvoUo=",
+    "owner": "Mic92",
+    "repo": "sops-nix",
+    "rev": "9ed65852b6257fbeae4355bc24ecfea307ca759a",
     "type": "github"
   },
   "tack": {

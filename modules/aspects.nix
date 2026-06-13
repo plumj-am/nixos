@@ -15,7 +15,7 @@ let
     "openssh"
     "packages"
     "rebuild"
-    "secret-manager"
+    "sops"
     "shell"
     "shell-tools"
     "sudo"
@@ -43,6 +43,7 @@ in
         nix-distributed-builds
         nix-distributed-builder
         rebuild
+        restic
         system-info
         yubikey
       ]);

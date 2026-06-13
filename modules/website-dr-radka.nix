@@ -9,6 +9,7 @@
     let
       inherit (lib.meta) getExe;
       inherit (config.networking) domain;
+      inherit (config.sops) secrets;
       inherit (config.myLib) merge;
 
       app_port = 3000;
@@ -18,6 +19,12 @@
       build_dir = "${app_dir}/build";
     in
     {
+      sops.secrets."radka/environment" = {
+        sopsFile = ../secrets/services/radka.yaml;
+        owner = "dr-radka";
+        group = "dr-radka";
+      };
+
       users.users.${app_user} = {
         isSystemUser = true;
         group = app_group;
@@ -40,7 +47,7 @@
           ExecStart = "${getExe pkgs.nodejs-slim_24} ./index.js";
           Restart = "always";
           RestartSec = 5;
-          EnvironmentFile = config.age.secrets.drRadkaEnvironment.path;
+          EnvironmentFile = secrets."radka/environment".path;
 
           # hardening
           NoNewPrivileges = true;

@@ -10,6 +10,7 @@
     let
       inherit (lib.lists) optional singleton;
       inherit (config.networking) hostName;
+      inherit (config.sops) secrets;
 
       name = hostName;
       url = "http://plum.taild29fec.ts.net:8001";
@@ -21,6 +22,7 @@
       ];
     in
     {
+      sops.secrets."forgejo-runner/token".sopsFile = ../secrets/services/forgejo.yaml;
       users.users.gitea-runner = {
         description = "gitea-runner";
         isSystemUser = true;
@@ -33,7 +35,7 @@
         package = pkgs.forgejo-runner;
         instances.${name} = {
           enable = true;
-          tokenFile = config.age.secrets.forgejoRunnerToken.path;
+          tokenFile = secrets."forgejo-runner/token".path;
           inherit name url;
 
           labels = defaultLabels ++ optional config.systemInfo.ciRunner.strong "strong:host";

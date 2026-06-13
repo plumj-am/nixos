@@ -4,12 +4,13 @@
     let
       inherit (config.networking) domain;
       inherit (config.myLib) mkValue;
+      inherit (config.sops) secrets;
     in
     {
       options.security.acme.users = mkValue [ ];
 
       config = {
-        age.secrets.acmeEnvironment.rekeyFile = ../secrets/acme-environment.age;
+        sops.secrets."acme/environment".sopsFile = ../secrets/services/acme.yaml;
 
         users.groups.acme.members = config.security.acme.users;
 
@@ -17,7 +18,7 @@
           acceptTerms = true;
 
           defaults = {
-            environmentFile = config.age.secrets.acmeEnvironment.path;
+            environmentFile = secrets."acme/environment".path;
             dnsProvider = "cloudflare";
             dnsResolver = "1.1.1.1";
             email = "security@${domain}";

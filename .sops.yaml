@@ -1,0 +1,125 @@
+keys:
+    - &jam age18u04g60dgwthljv8k92zcgng7vntruhcn5c2mu508k040f8f5cdspwhf9v
+    - &blackwell age1wt8te3mspe0kxql4lcnnjy62xdglce6fsfwmhgqqtazly7n99d3sqpvvm3
+    - &date age1cg5js8dmt7typwm6aeampx40xjx47uwssj2r24fwunpqy5e2pf8sp5gd4a
+    - &kiwi age15rls9mat4d3f9ve8qmhnu25gwjemh64h7e6a9uqdz3snny7v34usq5jmcx
+    - &lime age193t3r7tej56uendyle9nunau7wwhgx7fptjt0wn4mzfmkcecsc3qt89g6q
+    - &pear age1yzt8ztws0jet8e9u99j7vla9cx4gla9wk667lhlz5kmu0xu5rfgquqgtsw
+    - &plum age1rpsq6przms4j5k8c7v5c7yywad3quaczynmz48v3frmlkq9p4c8qkka8kj
+    - &sloe age12rjvhy7ywaj8eq2amey4csenfekakwpe5y0wa8nldc0jdw0w6vfq5czmew
+    - &yuzu age1y4shzt0cuukhr33c783e7kel5gv90jnd0wfg8x4002fd44esvehsmxztda
+
+creation_rules:
+    - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam]
+
+    - path_regex: secrets/all/[^/]+\.(yaml|json|env|ini)$
+      key_groups:
+          - age:
+                - *jam
+
+                - *date
+                - *kiwi
+                - *plum
+                - *sloe
+                - *lime
+                - *blackwell
+                - *pear
+                - *yuzu
+
+    - path_regex: secrets/services/circus\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *date, *plum, *sloe]
+
+    - path_regex: secrets/services/matrix\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *plum]
+
+    - path_regex: secrets/services/buildbot\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *date, *plum, *sloe]
+
+    - path_regex: secrets/services/garage\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *sloe]
+
+    - path_regex: secrets/services/gradient\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *date, *plum, *sloe]
+
+    - path_regex: secrets/services/gerrit\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *plum]
+
+    - path_regex: secrets/services/renovate\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *plum]
+
+    - path_regex: secrets/services/forgejo\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *plum]
+
+    - path_regex: secrets/services/nextcloud\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *sloe]
+
+    - path_regex: secrets/services/rss\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam]
+
+    - path_regex: secrets/services/acme\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *date, *kiwi, *plum, *sloe]
+
+    - path_regex: secrets/services/restic\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *date, *kiwi, *plum, *sloe]
+
+    - path_regex: secrets/services/tailscale\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam]
+
+    - path_regex: secrets/services/radicle\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam]
+
+    - path_regex: secrets/services/opengist\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *plum]
+
+    - path_regex: secrets/services/radka\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *kiwi]
+
+    - path_regex: secrets/blackwell/[^/]+\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *blackwell]
+
+    - path_regex: secrets/date/[^/]+\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *date]
+
+    - path_regex: secrets/kiwi/[^/]+\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *kiwi]
+
+    - path_regex: secrets/plum/[^/]+\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *plum]
+
+    - path_regex: secrets/lime/[^/]+\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *lime]
+
+    - path_regex: secrets/pear/[^/]+\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *pear]
+
+    - path_regex: secrets/yuzu/[^/]+\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *yuzu]
+
+    - path_regex: secrets/sloe/[^/]+\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *sloe]

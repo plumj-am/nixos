@@ -19,6 +19,7 @@ in
       opencode
       peripherals
       radicle
+      sops
       # radicle-node
       rust-desktop
       sudo
@@ -26,8 +27,6 @@ in
       zellij
       {
         config = mkConfig inputs "lime" "aarch64-darwin" {
-          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPeG5tRLj+z0LlAhH60rQuvRarHWuYE+fYMEgPvGbMrW jam@lime";
-
           system.stateVersion = 6;
         };
       }

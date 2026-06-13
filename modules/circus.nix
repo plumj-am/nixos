@@ -2,7 +2,7 @@ let
   sharedSettings = config: hostName: {
     cache = {
       enabled = true;
-      secretKeyFile = config.age.secrets.nixStoreKey.path;
+      secretKeyFile = config.sops.secrets.nix-store-key.path;
       compression = "zstd";
       cache_url = "http://${hostName}.taild29fec.ts.net:5000";
     };
@@ -33,7 +33,7 @@ let
 
     signing = {
       enabled = true;
-      key_file = config.age.secrets.nixStoreKey.path;
+      key_file = config.sops.secrets.nix-store-key.path;
     };
 
     logs = {
@@ -85,26 +85,25 @@ in
         pkgs.nix-eval-jobs
       ];
 
-      age.secrets = {
-        circusGiteaPlumJamNixosWebhookSecret = {
-          rekeyFile = ../secrets/circus-gitea-plumjam-nixos-webhook-secret.age;
-          owner = "circus";
+      sops.secrets =
+        flip genAttrs
+          (const {
+            sopsFile = ../secrets/services/circus.yaml;
+            owner = "circus";
+          })
+          [
+            "circus/forgejo-plumjam-nixos-webhook-secret"
+            "circus/plumjam-password"
+            "circus/forgejo-token"
+          ]
+        // {
+          "circus/ssh-key" = {
+            sopsFile = ../secrets/services/circus.yaml;
+            owner = "circus";
+            group = "circus";
+            mode = "600";
+          };
         };
-        circusPlumjamPassword = {
-          rekeyFile = ../secrets/circus-plumjam-password.age;
-          owner = "circus";
-        };
-        circusForgejoToken = {
-          rekeyFile = ../secrets/circus-forgejo-token.age;
-          owner = "circus";
-        };
-        circusSshKey = {
-          rekeyFile = ../secrets/plum-circus-ssh-key.age;
-          owner = "circus";
-          group = "circus";
-          mode = "600";
-        };
-      };
 
       services.postgresql = {
         ensureDatabases = singleton "circus";
@@ -220,7 +219,7 @@ in
             #     {
             #       enabled = false;
             #       forgeType = "gitea"; # gitea, github, gitlab.
-            #       # secretFile = config.age.secrets.circusGiteaPlumJamNixosWebhookSecret.path;
+            #       # secretFile = secrets."circus/forgejo-plumjam-nixos-webhook-secret".path;
             #     }
             #   ];
 
@@ -263,7 +262,7 @@ in
                 {
                   enabled = true;
                   forgeType = "gitea"; # gitea, github, gitlab.
-                  secretFile = config.age.secrets.circusGiteaPlumJamNixosWebhookSecret.path;
+                  secretFile = config.sops.secrets."circus/forgejo-plumjam-nixos-webhook-secret".path;
                 }
               ];
 
@@ -287,14 +286,14 @@ in
           apiKeys = [
             {
               name = "git.plumj.am/PlumJam token";
-              keyFile = config.age.secrets.circusForgejoToken.path;
+              keyFile = config.sops.secrets."circus/forgejo-token".path;
               # admin (default), read-only, create-projects, eval-jobset,
               # cancel-build, restart-jobs, bump-to-front.
               role = "admin";
             }
             {
               name = "circusGerritApiKey";
-              keyFile = config.age.secrets.circusGerritApiKey.path;
+              keyFile = config.sops.secrets."gerrit-circus-bridge/gerrit-api-key".path;
               # admin (default), read-only, create-projects, eval-jobset,
               # cancel-build, restart-jobs, bump-to-front.
               role = "eval-jobset";
@@ -306,7 +305,7 @@ in
               enabled = true;
               email = "me@plumj.am";
               fullName = "PlumJam";
-              passwordFile = config.age.secrets.circusPlumjamPassword.path;
+              passwordFile = config.sops.secrets."circus/plumjam-password".path;
               # admin, read-only, create-projects, eval-jobset,
               # cancel-build, restart-jobs, bump-to-front
               role = "admin";
@@ -338,8 +337,8 @@ in
                   "uid-range"
                 ];
                 mandatoryFeatures = [ ];
-                sshKeyFile = config.age.secrets.circusSshKey.path;
-                publicHostKey = config.age.rekey.hostPubkey;
+                sshKeyFile = config.sops.secrets."circus/ssh-key".path;
+                publicHostKey = config.flake.keys.${name};
               }
             );
         };
@@ -385,8 +384,8 @@ in
         "d /nix/var/nix/gcroots/per-user/circus 0755 circus circus -"
       ];
 
-      age.secrets.circusEvaluatorGerritPassword = {
-        rekeyFile = ../secrets/circus-evaluator-gerrit-password.age;
+      sops.secrets."circus/evaluator-gerrit-password" = {
+        sopsFile = ../secrets/services/circus.yaml;
         owner = "circus";
         mode = "400";
       };
@@ -499,7 +498,7 @@ in
     }:
     let
       inherit (lib.lists) singleton;
-      inherit (config.age) secrets;
+      inherit (config.sops) secrets;
       inherit (config.networking) hostName;
       inherit (config) systemInfo;
 
@@ -510,8 +509,8 @@ in
     {
       imports = singleton inputs.circus.nixosModules.circus-agent;
 
-      age.secrets.circusAgentAuthToken = {
-        rekeyFile = ../secrets/${hostName}-circus-agent-auth-token.age;
+      sops.secrets."circus/${hostName}-agent-auth-token" = {
+        sopsFile = ../secrets/services/circus.yaml;
         owner = "circus-agent";
         mode = "400";
       };
@@ -520,7 +519,7 @@ in
         enable = true;
         package = circusPkgs.circus-agent;
 
-        authTokenFile = secrets.circusAgentAuthToken.path;
+        authTokenFile = secrets."circus/${hostName}-agent-auth-token".path;
 
         settings.agent = {
           name = "circus-builder-${hostName}";
@@ -554,19 +553,19 @@ in
     let
       inherit (lib.lists) singleton;
 
-      secrets = config.age.secrets;
+      secrets = config.sops.secrets;
     in
     {
       imports = singleton inputs.gerrit-circus-bridge.nixosModules.default;
 
-      age.secrets = {
-        circusGerritApiKey = {
-          rekeyFile = ../secrets/circus-gerrit-api-key.age;
+      sops.secrets = {
+        "gerrit-circus-bridge/gerrit-api-key" = {
+          sopsFile = ../secrets/services/circus.yaml;
           owner = "circus";
           mode = "400";
         };
-        circusGerritPassword = {
-          rekeyFile = ../secrets/circus-gerrit-password.age;
+        "gerrit-circus-bridge/gerrit-password" = {
+          sopsFile = ../secrets/services/circus.yaml;
           owner = "circus";
           mode = "400";
         };
@@ -574,8 +573,8 @@ in
 
       services.gerrit-circus-bridge = {
         enable = false;
-        circusApiKeyFile = secrets.circusGerritApiKey.path;
-        gerritPasswordFile = secrets.circusGerritPassword.path;
+        circusApiKeyFile = secrets."gerrit-circus-bridge/gerrit-api-key".path;
+        gerritPasswordFile = secrets."gerrit-circus-bridge/gerrit-password".path;
       };
     };
 }

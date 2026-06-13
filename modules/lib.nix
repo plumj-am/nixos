@@ -24,8 +24,6 @@ let
       inherit (lib.options) mkOption;
       inherit (lib.types) attrs;
       inherit (lib.modules) mkIf;
-      inherit (config.age) secrets;
-      inherit (config.networking) hostName;
     in
     {
       options.myLib = lib.mkOption {
@@ -117,23 +115,6 @@ let
               desktopName = replaceStrings [ "-" ] [ " " ] name;
             }
           ));
-
-        # Backup creation helper with restic to keep constants consistent.
-        # Can be used like so:
-        # `services.restic.backups.<service> = mkResticBackup "<service>" { <rest> }`
-        mkResticBackup =
-          name: rest:
-          {
-            repository = "s3:https://fsn1.your-objectstorage.com/plumjam/backups/${hostName}/${name}";
-            passwordFile = secrets.resticPassword.path;
-            initialize = true;
-            pruneOpts = [
-              "--keep-daily 8"
-              "--keep-weekly 5"
-              "--keep-monthly 3"
-            ];
-          }
-          // rest;
 
         systemdHardened = {
           RuntimeDirectoryMode = "0755";
@@ -282,20 +263,18 @@ in
 
         networking.hostName = host;
 
-        age.secrets = {
-          id.rekeyFile = ../secrets/${host}-id.age;
-          s3PlumjamFsn1AccessKey.rekeyFile = ../secrets/s3-plumjam-fsn1-access-key.age;
-          s3PlumjamFsn1SecretKey.rekeyFile = ../secrets/s3-plumjam-fsn1-secret-key.age;
-          s3PlumjamGarageNixAccessKey.rekeyFile = ../secrets/s3-plumjam-garage-nix-access-key.age;
-          s3PlumjamGarageNixSecretKey.rekeyFile = ../secrets/s3-plumjam-garage-nix-secret-key.age;
-          context7Key = {
-            rekeyFile = ../secrets/context7-key.age;
-            owner = "jam";
-            mode = "400";
-          };
-        }
-        // optionalAttrs isLinux {
-          password.rekeyFile = ../secrets/${host}-password.age;
+        sops.secrets.password = {
+          sopsFile = ../secrets/${host}/password.yaml;
+          neededForUsers = true;
+        };
+
+        sops.secrets.id = {
+          sopsFile = ../secrets/${host}/id.yaml;
+        };
+
+        sops.secrets.nixStoreKey = {
+          sopsFile = ../secrets/all/nix-store-keys.yaml;
+          key = host;
         };
       }
       (optionalAttrs isLinux {

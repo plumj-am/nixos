@@ -2,17 +2,19 @@
   flake.modules.nixos.tailscale =
     { config, ... }:
     let
+      inherit (config.sops) secrets;
+
       interface = "ts0";
       domains = [ "taild29fec.ts.net" ];
     in
     {
-      age.secrets.tailscaleAuthKey.rekeyFile = ../secrets/tailscale-auth-key.age;
+      sops.secrets."tailscale/auth-key".sopsFile = ../secrets/services/tailscale.yaml;
 
       services.resolved.settings.Resolve.Domains = domains;
       services.tailscale = {
         enable = true;
 
-        authKeyFile = config.age.secrets.tailscaleAuthKey.path;
+        authKeyFile = secrets."tailscale/auth-key".path;
 
         useRoutingFeatures = "both";
         interfaceName = interface;

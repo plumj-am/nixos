@@ -20,6 +20,7 @@ in
       nix-settings-extra-server
       radicle-node
       rust
+      sops
       sudo-extra-server
       syncthing
       swapfile
@@ -49,19 +50,6 @@ in
               path = "/swapfile";
               size = 1024 * 2;
             };
-          };
-
-          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIElcSHxI64xqUUKEY83tKyzEH+fYT5JCWn3qCqtw16af root@kiwi";
-
-          age.secrets = {
-            forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
-            acmeEnvironment.rekeyFile = ../secrets/acme-environment.age;
-            drRadkaEnvironment = {
-              rekeyFile = ../secrets/kiwi-dr-radka-environment.age;
-              owner = "dr-radka";
-              group = "dr-radka";
-            };
-            nixStoreKey.rekeyFile = ../secrets/kiwi-nix-store-key.age;
           };
 
           system.stateVersion = "26.05";

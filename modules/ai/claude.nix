@@ -12,9 +12,11 @@
       inherit (lib.meta) getExe getExe';
       inherit (lib.strings) toJSON;
       inherit (lib.trivial) const;
-      inherit (config.age) secrets;
+      inherit (config.sops) secrets;
     in
     {
+      ai.secrets = true;
+
       # THANK YOU FOR THIS ENTIRE THING!!
       # Xitter: @HSVSphere
       # Source: <https://github.com/RGBCube/ncc/blob/dentride/modules/slop.mod.nix>
@@ -30,7 +32,7 @@
               text = # nu
                 ''
                   #!/usr/bin/env nu
-                  try { claude mcp add -s user -t http context7 https://mcp.context7.com/mcp --header $"CONTEXT7_API_KEY: (cat ${secrets.context7Key.path})" }
+                  try { claude mcp add -s user -t http context7 https://mcp.context7.com/mcp --header $"CONTEXT7_API_KEY: (cat ${secrets."context7-key".path})" }
                   try { npx skills add JuliusBrussee/caveman --agent pi }
                 '';
               executable = true;
@@ -72,8 +74,10 @@
                   filesystem = {
                     allowWrite = [ "/tmp" ];
                     denyRead = [
-                      "/run/agenix"
-                      "/run/agenix.d"
+                      "/run/secrets"
+                      "/run/secrets-for-users"
+                      "/run/secrets.d"
+                      "/run/secrets-for-users.d"
                     ];
                   };
                 };

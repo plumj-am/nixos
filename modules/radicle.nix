@@ -35,11 +35,17 @@ let
       inherit (lib.lists) singleton;
     in
     {
+      sops.secrets."radicle/jam-key" = {
+        sopsFile = ../secrets/services/radicle.yaml;
+        owner = "jam";
+        mode = "600";
+      };
+
       hjem.extraModule =
         { pkgs, osConfig, ... }:
         let
           inherit (osConfig.flake) keys;
-          inherit (osConfig.age) secrets;
+          inherit (osConfig.sops) secrets;
           inherit (osConfig.networking) hostName;
         in
         {
@@ -50,7 +56,7 @@ let
 
           files = {
             ".radicle/keys/radicle.pub".text = keys."${hostName}-jam-radicle";
-            ".radicle/keys/radicle".source = secrets.radicleUserKey.path;
+            ".radicle/keys/radicle".source = secrets."radicle/jam-key".path;
             # TODO: Need to figure out if ^this^ will be a problem when it is not set.
             # TODO: I don't want it to overwrite the generated key.
             # TODO: Overall bootstrapping is weak for new/reset hosts...
@@ -119,12 +125,13 @@ in
       inputs,
       pkgs,
       lib,
+      config,
       ...
     }:
     let
       inherit (lib.lists) singleton;
     in
-    radicleUserBase { inherit inputs lib; }
+    radicleUserBase { inherit inputs lib config; }
     // {
       networking.firewall.allowedTCPPorts = singleton userNodePort;
 
@@ -166,8 +173,8 @@ in
       services.radicle = {
         enable = true;
 
-        publicKey = config.age.rekey.hostPubkey;
-        privateKey = config.age.secrets.id.path;
+        publicKey = config.flake.keys.${hostName};
+        privateKey = config.sops.secrets.id.path;
         checkConfig = false; # Allows debugging at systemd unit level.
 
         httpd = {

@@ -28,10 +28,10 @@ in
       nginx
       nix-settings-extra-server
       openssh-extra-users
-      pi
       radicle-node
       raperl
       rust
+      sops
       sudo-extra-server
       syncthing
       swapfile
@@ -71,13 +71,6 @@ in
           nix.gc = {
             options = mkForce "--delete-older-than 14d";
             dates = mkForce "*-*-01/14 00:00:00"; # Every 2 weeks.
-          };
-
-          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK42xzC/vWHZC9SiU/8IBBd2pn7mggBYFQ8themKAic/ root@sloe";
-          age.secrets = {
-            forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
-            nixStoreKey.rekeyFile = ../secrets/sloe-nix-store-key.age;
-            resticPassword.rekeyFile = ../secrets/restic-password.age;
           };
 
           system.stateVersion = "26.05";

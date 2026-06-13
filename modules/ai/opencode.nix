@@ -11,7 +11,7 @@
       inherit (lib.attrsets) genAttrs;
       inherit (lib.meta) getExe;
       inherit (lib.trivial) const;
-      inherit (config.age) secrets;
+      inherit (config.sops) secrets;
 
       opencodePackage = pkgs.symlinkJoin {
         name = "opencode-wrapped";
@@ -26,6 +26,8 @@
       };
     in
     {
+      ai.secrets = true;
+
       hjem.extraModule = {
         packages = [
           pkgs.python3
@@ -138,7 +140,7 @@
                   type = "remote";
                   url = "https://mcp.context7.com/mcp";
                   headers = {
-                    CONTEXT7_API_KEY = "{file:${secrets.context7Key.path}}";
+                    CONTEXT7_API_KEY = "{file:${secrets."context7-key".path}}";
                   };
                 };
 

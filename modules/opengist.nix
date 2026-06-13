@@ -11,6 +11,7 @@
       inherit (lib.meta) getExe;
       inherit (config.networking) domain hostName;
       inherit (config.myLib) merge systemdHardened;
+      inherit (config.sops) secrets;
 
       fqdn = "gist.${domain}";
       port = 8002;
@@ -23,6 +24,11 @@
       assertions = singleton {
         assertion = config.services.forgejo.enable;
         message = "The opengist module should be used on the host running Forgejo, but you're trying to enable it on '${hostName}'.";
+      };
+
+      sops.secrets."opengist/environment" = {
+        sopsFile = ../secrets/services/opengist.yaml;
+        owner = "forgejo";
       };
 
       systemd.services.opengist = {
@@ -42,7 +48,7 @@
           ExecStart = "${getExe pkgs.opengist} --config /etc/opengist/config.yml";
           Restart = "always";
           WorkingDirectory = workDir;
-          EnvironmentFile = singleton config.age.secrets.opengistEnvironment.path;
+          EnvironmentFile = singleton secrets."opengist/environment".path;
 
           RuntimeDirectory = "opengist";
           ReadWritePaths = singleton workDir;

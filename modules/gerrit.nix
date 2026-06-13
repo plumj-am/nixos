@@ -14,29 +14,25 @@
       inherit (lib') merge;
       inherit (config.myLib) mkResticBackup;
       inherit (config.networking) domain;
+      inherit (config.sops) secrets;
 
       port = 8011;
     in
     {
-      imports = [ inputs.gerrit-autosubmit.nixosModules.default ];
+      imports = singleton inputs.gerrit-autosubmit.nixosModules.default;
 
-      age.secrets = {
-        gerritSecureConfig = {
-          rekeyFile = ../secrets/gerrit-secure-config.age;
+      sops.secrets = {
+        "gerrit/secure-config" = {
+          sopsFile = ../secrets/services/gerrit.yaml;
           owner = "git";
           group = "git";
         };
-        gerritBuildbotSshKey = {
-          rekeyFile = ../secrets/gerrit-buildbot-ssh-key.age;
-          owner = "buildbot";
-          mode = "600";
-        };
-        gerritReplicationKey = {
-          rekeyFile = ../secrets/gerrit-replication-key.age;
+        "gerrit/replication-key" = {
+          sopsFile = ../secrets/services/gerrit.yaml;
           owner = "git";
           group = "git";
         };
-        gerritAutosubmitEnvironment.rekeyFile = ../secrets/gerrit-autosubmit-environment.age;
+        "gerrit-autosubmit/environment".sopsFile = ../secrets/services/gerrit.yaml;
       };
 
       services.restic.backups.gerrit = mkResticBackup "gerrit" {
@@ -60,7 +56,7 @@
         };
         script = ''
           mkdir -p /var/lib/gerrit/.ssh
-          cp ${config.age.secrets.gerritReplicationKey.path} /var/lib/gerrit/.ssh/id_replication
+          cp ${secrets."gerrit/replication-key".path} /var/lib/gerrit/.ssh/id_replication
           cat > /var/lib/gerrit/.ssh/config <<EOF
           Host *
             IdentityFile /var/lib/gerrit/.ssh/id_replication
@@ -72,7 +68,7 @@
           chmod 600 /var/lib/gerrit/.ssh/known_hosts
           chown -R git:git /var/lib/gerrit/.ssh
 
-          ln --symbolic --force ${config.age.secrets.gerritSecureConfig.path} etc/secure.config
+          ln --symbolic --force ${secrets."gerrit/secure-config".path} etc/secure.config
         '';
       };
 
@@ -223,7 +219,7 @@
         enable = true;
         gerritUrl = "https://gerrit.plumj.am";
         gerritUsername = "autosubmit-bot";
-        secretsFile = config.age.secrets.gerritAutosubmitEnvironment.path;
+        secretsFile = secrets."gerrit-autosubmit/environment".path;
       };
 
       networking.firewall.allowedTCPPorts = singleton 29418;

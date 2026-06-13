@@ -11,8 +11,7 @@
       inherit (lib.lists) singleton;
       inherit (lib') merge;
       inherit (config.networking) domain;
-
-      secrets = config.age.secrets;
+      inherit (config.sops) secrets;
 
       fqdnS3 = "s3.${domain}";
       fqdnWebUI = "cdn.${domain}";
@@ -21,13 +20,13 @@
       portRPC = 8017;
     in
     {
-      age.secrets.garageEnvironment.rekeyFile = ../secrets/garage-environment.age;
+      sops.secrets."garage/environment".sopsFile = ../secrets/services/garage.yaml;
 
       services.garage = {
         enable = true;
         package = pkgs.garage_2;
 
-        environmentFile = secrets.garageEnvironment.path;
+        environmentFile = secrets."garage/environment".path;
 
         settings = {
           data_dir = singleton {

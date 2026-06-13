@@ -60,7 +60,7 @@ in
         enable = true;
         hostKeys = singleton {
           type = "ed25519";
-          inherit (config.age.secrets.id) path;
+          inherit (config.sops.secrets.id) path;
         };
         settings = {
           AllowUsers = [
@@ -127,7 +127,7 @@ in
         enable = true;
         extraConfig = # sshd_config
           ''
-            HostKey ${config.age.secrets.id.path}
+            HostKey ${config.sops.secrets.id.path}
             PasswordAuthentication no
             KbdInteractiveAuthentication no
             AcceptEnv SHELLS COLORTERM

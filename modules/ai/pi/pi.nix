@@ -11,56 +11,7 @@
       inherit (lib.meta) getExe;
     in
     {
-      age.secrets = {
-        opencodeGoKey = {
-          rekeyFile = ../../../secrets/opencode-go-key.age;
-          owner = "jam";
-          group = "users";
-          mode = "600";
-        };
-        commandcodeKey = {
-          rekeyFile = ../../../secrets/commandcode-key.age;
-          owner = "jam";
-          group = "users";
-          mode = "600";
-        };
-        nvidiaNimKey = {
-          rekeyFile = ../../../secrets/nvidia-nim-key.age;
-          owner = "jam";
-          group = "users";
-          mode = "600";
-        };
-        codestralKey = {
-          rekeyFile = ../../../secrets/codestral-key.age;
-          owner = "jam";
-          group = "users";
-          mode = "600";
-        };
-        llm7Key = {
-          rekeyFile = ../../../secrets/llm7-key.age;
-          owner = "jam";
-          group = "users";
-          mode = "600";
-        };
-        openrouterKey = {
-          rekeyFile = ../../../secrets/openrouter-key.age;
-          owner = "jam";
-          group = "users";
-          mode = "600";
-        };
-        ollamaKey = {
-          rekeyFile = ../../../secrets/ollama-key.age;
-          owner = "jam";
-          group = "users";
-          mode = "600";
-        };
-        sambanovaKey = {
-          rekeyFile = ../../../secrets/sambanova-key.age;
-          owner = "jam";
-          group = "users";
-          mode = "600";
-        };
-      };
+      ai.secrets = true;
 
       shellAliases = {
         pi = "bwrapper pi";
@@ -89,35 +40,35 @@
               value = {
                 opencode-go = {
                   type = "api_key";
-                  key = "!cat ${osConfig.age.secrets.opencodeGoKey.path}";
+                  key = "!cat ${osConfig.sops.secrets."opencode-go-key".path}";
                 };
                 commandcode = {
                   type = "api_key";
-                  key = "!cat ${osConfig.age.secrets.commandcodeKey.path}";
+                  key = "!cat ${osConfig.sops.secrets."command-code-key".path}";
                 };
                 nvidia-nim = {
                   type = "api_key";
-                  key = "!cat ${osConfig.age.secrets.nvidiaNimKey.path}";
+                  key = "!cat ${osConfig.sops.secrets."nvidia-nim-key".path}";
                 };
                 codestral = {
                   type = "api_key";
-                  key = "!cat ${osConfig.age.secrets.codestralKey.path}";
+                  key = "!cat ${osConfig.sops.secrets."codestral-key".path}";
                 };
                 llm7 = {
                   type = "api_key";
-                  key = "!cat ${osConfig.age.secrets.llm7Key.path}";
+                  key = "!cat ${osConfig.sops.secrets."llm7-key".path}";
                 };
                 openrouter = {
                   type = "api_key";
-                  key = "!cat ${osConfig.age.secrets.openrouterKey.path}";
+                  key = "!cat ${osConfig.sops.secrets."openrouter-key".path}";
                 };
                 ollama = {
                   type = "api_key";
-                  key = "!cat ${osConfig.age.secrets.ollamaKey.path}";
+                  key = "!cat ${osConfig.sops.secrets."ollama-key".path}";
                 };
                 sambanova = {
                   type = "api_key";
-                  key = "!cat ${osConfig.age.secrets.sambanovaKey.path}";
+                  key = "!cat ${osConfig.sops.secrets."sambanova-key".path}";
                 };
               };
             };

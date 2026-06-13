@@ -38,6 +38,8 @@
     in
 
     {
+      ai.secrets = true;
+
       hjem.extraModule = {
         packages = singleton inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.oh-my-opencode;
 

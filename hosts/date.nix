@@ -48,6 +48,7 @@ in
       quickshell
       rust-desktop
       rss-tui
+      sops
       sudo-extra-desktop
       syncthing
       swap-partition
@@ -71,17 +72,6 @@ in
               path = "/dev/disk/by-label/swap";
               size = "18G";
             };
-          };
-
-          age.rekey.hostPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEzfoVKZDyiyyMiX1JRFaaTELspG25MlLNq0kI2AANTa root@date";
-          age.secrets = {
-            forgejoRunnerToken.rekeyFile = ../secrets/plum-forgejo-runner-token.age;
-            nixStoreKey.rekeyFile = ../secrets/date-nix-store-key.age;
-            rssApiPassword = {
-              rekeyFile = ../secrets/plum-rss-api-password.age;
-              owner = "jam";
-            };
-            resticPassword.rekeyFile = ../secrets/restic-password.age;
           };
 
           # Used as a server when not used as a laptop.

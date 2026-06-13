@@ -10,8 +10,7 @@
       inherit (lib.lists) singleton;
       inherit (config.myLib) mkResticBackup merge;
       inherit (config.networking) domain hostName;
-
-      secrets = config.age.secrets;
+      inherit (config.sops) secrets;
 
       fqdn = "cloud.${domain}";
     in
@@ -21,8 +20,8 @@
         message = "nextcloud must run on sloe to ensure adequate disk space is available";
       };
 
-      age.secrets.nextcloudPassword = {
-        rekeyFile = ../secrets/nextcloud-password.age;
+      sops.secrets."nextcloud/plumjam-password" = {
+        sopsFile = ../secrets/services/nextcloud.yaml;
         owner = "nextcloud";
       };
 
@@ -46,7 +45,7 @@
 
         config = {
           adminuser = "plumjam";
-          adminpassFile = secrets.nextcloudPassword.path;
+          adminpassFile = secrets."nextcloud/plumjam-password".path;
 
           dbtype = "pgsql";
         };

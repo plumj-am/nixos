@@ -4,11 +4,27 @@
     let
       inherit (config.myLib) merge mkResticBackup;
       inherit (config.networking) domain;
+      inherit (config.sops) secrets;
 
       fqdn = "matrix.${domain}";
       port = 8008;
     in
     {
+      sops.secrets = {
+        "matrix/signing-key" = {
+          sopsFile = ../secrets/services/matrix.yaml;
+          owner = "matrix-synapse";
+          group = "matrix-synapse";
+          mode = "600";
+        };
+        "matrix/registration-secret" = {
+          sopsFile = ../secrets/services/matrix.yaml;
+          owner = "matrix-synapse";
+          group = "matrix-synapse";
+          mode = "600";
+        };
+      };
+
       services.restic.backups.matrix = mkResticBackup "matrix" {
         paths = [ "/var/lib/matrix-synapse" ];
         timerConfig = {
@@ -92,8 +108,8 @@
           url_preview_enabled = true;
           dynamic_thumbnails = true;
 
-          signing_key_path = config.age.secrets.matrixSigningKey.path;
-          registration_shared_secret = config.age.secrets.matrixRegistrationSecret.path;
+          signing_key_path = secrets."matrix/signing-key".path;
+          registration_shared_secret = secrets."matrix/registration-secret".path;
 
           trusted_key_servers = [ ];
 

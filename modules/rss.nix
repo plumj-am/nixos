@@ -4,11 +4,17 @@
     let
       inherit (config.networking) domain;
       inherit (config.myLib) merge;
-      inherit (config.age) secrets;
+      inherit (config.sops) secrets;
 
       fqdn = "rss.${domain}";
     in
     {
+      sops.secrets."rss-server/admin-password" = {
+        sopsFile = ../secrets/services/rss.yaml;
+        owner = "freshrss";
+        mode = "400";
+      };
+
       services.freshrss = {
         enable = true;
 
@@ -20,7 +26,7 @@
         baseUrl = "https://${fqdn}";
 
         defaultUser = "admin";
-        passwordFile = secrets.rssAdminPassword.path;
+        passwordFile = secrets."rss-server/admin-password".path;
       };
 
       services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
@@ -39,9 +45,14 @@
     }:
     let
       inherit (lib.lists) singleton;
-      inherit (config.age) secrets;
+      inherit (config.sops) secrets;
     in
     {
+      sops.secrets."rss-client/api-password" = {
+        sopsFile = ../secrets/services/rss.yaml;
+        owner = "jam";
+      };
+
       hjem.extraModule = {
         packages = singleton pkgs.newsboat;
 
@@ -49,7 +60,7 @@
           urls-source "freshrss"
           freshrss-url "https://rss.plumj.am/api/greader.php"
           freshrss-login "plumjam"
-          freshrss-passwordfile "${secrets.rssApiPassword.path}"
+          freshrss-passwordfile "${secrets."rss-client/api-password".path}"
         '';
       };
     };

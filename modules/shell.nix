@@ -137,14 +137,14 @@
                     --dir /etc/ssl
                     --dir /etc/ssl/certs
                     --ro-bind ${directory}/.config ${directory}/.config
-                    --ro-bind /run/agenix/opencodeGoKey /run/agenix/opencodeGoKey
-                    --ro-bind /run/agenix/commandcodeKey /run/agenix/commandcodeKey
-                    --ro-bind /run/agenix/nvidiaNimKey /run/agenix/nvidiaNimKey
-                    --ro-bind /run/agenix/codestralKey /run/agenix/codestralKey
-                    --ro-bind /run/agenix/llm7Key /run/agenix/llm7Key
-                    --ro-bind /run/agenix/openrouterKey /run/agenix/openrouterKey
-                    --ro-bind /run/agenix/ollamaKey /run/agenix/ollamaKey
-                    --ro-bind /run/agenix/sambanovaKey /run/agenix/sambanovaKey
+                    --ro-bind /run/secrets/opencode-go-key /run/secrets/opencode-go-key
+                    --ro-bind /run/secrets/command-code-key /run/secrets/command-code-key
+                    --ro-bind /run/secrets/nvidia-nim-key /run/secrets/nvidia-nim-key
+                    --ro-bind /run/secrets/codestral-key /run/secrets/codestral-key
+                    --ro-bind /run/secrets/llm7-key /run/secrets/llm7-key
+                    --ro-bind /run/secrets/openrouter-key /run/secrets/openrouter-key
+                    --ro-bind /run/secrets/ollama-key /run/secrets/ollama-key
+                    --ro-bind /run/secrets/sambanova-key /run/secrets/sambanova-key
                     --ro-bind /run/current-system /run/current-system
                     --ro-bind /etc/profiles/per-user/${user}/bin /etc/profiles/per-user/${user}/bin
                     --ro-bind /etc/resolv.conf /etc/resolv.conf
@@ -170,15 +170,15 @@
                     --die-with-parent
                     --cap-drop all
                     --setenv SSL_CERT_FILE /etc/ssl/certs/ca-certificates.crt
-                    --setenv OPENCODE_API_KEY (^cat /run/agenix/opencodeGoKey)
-                    --setenv COMMANDCODE_API_KEY (^cat /run/agenix/commandcodeKey)
-                    --setenv NVIDIA_API_KEY (^cat /run/agenix/nvidiaNimKey)
-                    --setenv CODESTRAL_API_KEY (^cat /run/agenix/codestralKey)
-                    --setenv LLM7_API_KEY (^cat /run/agenix/llm7Key)
-                    --setenv OPENROUTER_API_KEY (^cat /run/agenix/openrouterKey)
-                    --setenv OLLAMA_API_KEY (^cat /run/agenix/ollamaKey)
-                    --setenv SAMBANOVA_API_KEY (^cat /run/agenix/sambanovaKey)
-                    --setenv EXA_API_KEY (^cat /run/agenix/exaKey)
+                    --setenv OPENCODE_API_KEY (^cat /run/secrets/opencode-go-key)
+                    --setenv COMMANDCODE_API_KEY (^cat /run/secrets/command-code-key)
+                    --setenv NVIDIA_API_KEY (^cat /run/secrets/nvidia-nim-key)
+                    --setenv CODESTRAL_API_KEY (^cat /run/secrets/codestral-key)
+                    --setenv LLM7_API_KEY (^cat /run/secrets/llm7-key)
+                    --setenv OPENROUTER_API_KEY (^cat /run/secrets/openrouter-key)
+                    --setenv OLLAMA_API_KEY (^cat /run/secrets/ollama-key)
+                    --setenv SAMBANOVA_API_KEY (^cat /run/secrets/sambanova-key)
+                    --setenv EXA_API_KEY (^cat /run/secrets/exa-key)
                     --setenv IN_BWRAP 1
                     -- $tool ...$rest)
                 }

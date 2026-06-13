@@ -11,62 +11,7 @@
       inherit (lib.meta) getExe;
     in
     {
-      age.secrets = {
-        opencodeGoKey = {
-          rekeyFile = ../../../secrets/opencode-go-key.age;
-          owner = "jam";
-          group = "users";
-          mode = "600";
-        };
-        commandcodeKey = {
-          rekeyFile = ../../../secrets/commandcode-key.age;
-          owner = "jam";
-          group = "users";
-          mode = "600";
-        };
-        nvidiaNimKey = {
-          rekeyFile = ../../../secrets/nvidia-nim-key.age;
-          owner = "jam";
-          group = "users";
-          mode = "600";
-        };
-        codestralKey = {
-          rekeyFile = ../../../secrets/codestral-key.age;
-          owner = "jam";
-          group = "users";
-          mode = "600";
-        };
-        llm7Key = {
-          rekeyFile = ../../../secrets/llm7-key.age;
-          owner = "jam";
-          group = "users";
-          mode = "600";
-        };
-        openrouterKey = {
-          rekeyFile = ../../../secrets/openrouter-key.age;
-          owner = "jam";
-          group = "users";
-          mode = "600";
-        };
-        ollamaKey = {
-          rekeyFile = ../../../secrets/ollama-key.age;
-          owner = "jam";
-          group = "users";
-          mode = "600";
-        };
-        sambanovaKey = {
-          rekeyFile = ../../../secrets/sambanova-key.age;
-          owner = "jam";
-          group = "users";
-          mode = "600";
-        };
-        exaKey = {
-          rekeyFile = ../../../secrets/exa-key.age;
-          owner = "jam";
-          group = "users";
-          mode = "600";
-        };
-      };
+      ai.secrets = true;
 
       shellAliases.omp = "bwrapper omp";
 

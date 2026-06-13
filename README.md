@@ -142,13 +142,9 @@ module such as unique `secrets` configuration.
 
 ### Secrets
 
-All secrets are handled by (r)agenix and agenix-rekey.
+All secrets are handled by sops-nix.
 
-agenix: <https://github.com/ryantm/agenix>
-
-ragenix: <https://github.com/yaxitech/ragenix>
-
-agenix-rekey: <https://github.com/oddlama/agenix-rekey>
+sops-nix: <https://github.com/mic92/sops-nix>
 
 ### Imports
 
@@ -279,10 +275,8 @@ The structure of the repository and a few key files are highlighted below:
 │   │   └── ...
 │   └── quickshell/    # Quickshell configs
 │       └── ...
-├── secrets/           # Secrets managed by agenix
-│   ├── ...
-│   └── rekeyed/       # Rekeyed secrets from agenix-rekey
-│       └── ...
+├── secrets/           # Secrets managed by sops
+│   └── ...
 ├── outputs.nix        # Flake outputs
 ├── flake.lock
 ├── flake.nix

@@ -1,12 +1,17 @@
 {
   flake.modules.common.ai-options =
-    { lib, ... }:
+    { lib, config, ... }:
     let
-      inherit (lib.options) mkOption;
+      inherit (lib.modules) mkIf;
+      inherit (lib.attrsets) genAttrs;
+      inherit (lib.trivial) flip const;
+      inherit (lib.options) mkOption mkEnableOption;
       inherit (lib.types) listOf str;
     in
     {
       options.ai = {
+        secrets = mkEnableOption "include AI secrets with this system/module";
+
         commands.bash.allow = mkOption {
           type = listOf str;
           default = [ ];
@@ -15,6 +20,37 @@
           '';
         };
       };
+
+      config.sops.secrets =
+        mkIf config.ai.secrets
+        <|
+          flip genAttrs
+            (const {
+              sopsFile = ../../secrets/all/ai.yaml;
+              owner = "jam";
+              group = "users";
+              mode = "600";
+            })
+            [
+              "opencode-go-key"
+              "command-code-key"
+              "nvidia-nim-key"
+              "codestral-key"
+              "llm7-key"
+              "openrouter-key"
+              "ollama-key"
+              "sambanova-key"
+              "exa-key"
+              "context7-key"
+            ]
+          // {
+            litellm-environment = {
+              sopsFile = ../../secrets/all/ai.yaml;
+              owner = "litellm";
+              group = "litellm";
+              mode = "600";
+            };
+          };
 
       config.ai.commands.bash.allow = [
         "ag*"
