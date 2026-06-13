@@ -64,6 +64,7 @@ in
           "cgroups"
         ];
 
+        auto-optimise-store = true;
         use-cgroups = true;
         builders-use-substitutes = true;
         flake-registry = "";
