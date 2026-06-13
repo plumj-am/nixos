@@ -142,20 +142,19 @@ module such as unique `secrets` configuration.
 
 ### Secrets
 
-All secrets are handled by sops-nix.
-
-sops-nix: <https://github.com/mic92/sops-nix>
+All secrets are handled by [sops-nix](https://github.com/mic92/sops-nix).
 
 ### Imports
 
 Imports are handled by an `importTree` function in `outputs.nix`. It
 automatically imports all nix files in the specified directories (`./modules`,
-`./hosts`, and `./packages` in my case).
+`./hosts`, and `./packages` in my case). Directories and files prefixed with `_`
+are excluded e.g. `_scripts/`.
 
 ### myLib
 
 There may be unfamiliar functions/helpers in some files - these come from
-`modules/lib.nix`.
+`modules/lib.nix`. I want to make the lib proper eventually.
 
 ### Theming
 
