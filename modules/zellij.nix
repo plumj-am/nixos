@@ -93,15 +93,15 @@
                       }
 
                       normal {
-                        bind "q" { GoToTab 1; }
-                        bind "w" { GoToTab 2; }
-                        bind "e" { GoToTab 3; }
-                        bind "r" { GoToTab 4; }
-                        bind "t" { GoToTab 5; }
-                        bind "y" { GoToTab 6; }
-                        bind "u" { GoToTab 7; }
-                        bind "i" { GoToTab 8; }
-                        bind "o" { GoToTab 9; }
+                        bind "q" { GoToTab 1; SwitchToMode "locked"; }
+                        bind "w" { GoToTab 2; SwitchToMode "locked"; }
+                        bind "e" { GoToTab 3; SwitchToMode "locked"; }
+                        bind "r" { GoToTab 4; SwitchToMode "locked"; }
+                        bind "t" { GoToTab 5; SwitchToMode "locked"; }
+                        bind "y" { GoToTab 6; SwitchToMode "locked"; }
+                        bind "u" { GoToTab 7; SwitchToMode "locked"; }
+                        bind "i" { GoToTab 8; SwitchToMode "locked"; }
+                        bind "o" { GoToTab 9; SwitchToMode "locked"; }
                         bind "Ctrl g" {
                           Run "${getExe pkgs.jjui}" {
                             in_place true
