@@ -7,7 +7,6 @@
       ...
     }:
     let
-      inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
     in
     {
@@ -16,7 +15,11 @@
       shellAliases.omp = "bwrapper omp";
 
       hjem.extraModule = {
-        packages = singleton inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp;
+        packages = [
+          inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp
+          pkgs.bun # Gay but needed for some plugins.
+          pkgs.node-gyp # ^
+        ];
 
         # Another that doesn't follow XDG spec, amazing...
         files = {
@@ -29,6 +32,9 @@
             type = "copy"; # Sometimes needs to write to config.
             generator = pkgs.writers.writeYAML "omp-agent-config.yml";
             value = {
+              defaultProvider = "commandcode";
+              defaultModel = "deepseek-v4-flash";
+
               # [appearance]
               theme = {
                 dark = "dark-gruvbox";
@@ -45,6 +51,13 @@
                 showTokenUsage = true;
               };
 
+              # [context]
+              contextPromotion = false; # do not upgrade model - compact instead.
+              compaction = {
+                enabled = true;
+                strategy = "context-full";
+              };
+
               # [editing]
               lsp = {
                 enabled = true;
@@ -59,6 +72,7 @@
               };
 
               # [interaction]
+              autoResume = false;
               steeringMode = "all"; # Send all queued messages at once.
               followUpMode = "all";
               interruptMode = "wait";
@@ -77,38 +91,48 @@
                 timeout = 0;
                 notify = "on";
               };
+              features.unexpectedStopDetection = true;
 
               # [internal]
               memories.enabled = false;
               modelProviderOrder = [
                 "commandcode"
+                # "opencode-go"
+                "opencode-zen"
               ];
-              enabledModels = [
-                "*kimi-k2*"
-                "*qwen3.*"
-                "*minimax-m2.7*"
-                "*mimo-v2.5*"
-                "*deepseek-v4*"
-                "*grok*"
-                "*codestral*"
-                "*nemotron-3-super*"
-                "*glm-5*"
-                "*glm5*"
-                "*gpt-oss-120b*"
-                "*gpt-oss:120b*"
-
-                "unsloth/Qwen3.6-35B-A3B:UD-IQ3_XXS"
-              ];
+              modelRoles =
+                let
+                  # TODO: switch to commandcode once provider is supported
+                  small = "opencode-zen/deepseek-v4-flash-free";
+                  normal = "opencode-zen/big-pickle"; # maybe kimi-k2.6 better here
+                  vision = "commandcode/kimi-k2.5"; # idk if it supports vision lol
+                in
+                {
+                  default = "${normal}:auto";
+                  smol = "${small}:off";
+                  slow = "${normal}:high";
+                  plan = "${normal}:high";
+                  vision = "${vision}:low";
+                  designer = "${normal}:low";
+                  commit = "${small}:off";
+                  task = "${small}:minimal";
+                };
+              enabledModels = [ ]; # all
               shellPath = getExe pkgs.bash;
 
               # [memory]
               memory.backend = "off";
 
               # [model]
+              advisor = {
+                enabled = true;
+                syncBacklog = 5;
+              };
               defaultThinkingLevel = "medium";
               hideThinkingBlock = true;
+              personality = "pragmatic";
               retry = {
-                maxRetries = 10;
+                maxRetries = 100000;
                 maxDelayMs = 600000;
               };
 
@@ -117,12 +141,14 @@
               providers = {
                 webSearch = "auto";
                 image = "auto";
-                tinyModel = "deepseek-v4-flash";
+                tinyModel = "LFM2-350m";
+                tinyModelDevice = "cpu";
+                unexpectedStopModel = "qwen3-1.7b";
               };
               exa = {
                 enabled = true;
                 enableSearch = true;
-                enableResearcher = false;
+                enableResearcher = true;
               };
 
               # [tasks]
@@ -147,7 +173,7 @@
               search.enabled = true;
               astGrep.enabled = true;
               irc.enabled = true;
-              renderMermaid.enable = true;
+              renderMermaid.enabled = true;
               debug.enabled = true;
               checkpoint.enabled = true;
               fetch.enabled = true;
@@ -157,35 +183,28 @@
               async.enabled = true;
               mcp.discoveryMode = true;
 
-              # defaultProvider = "commandcode";
-              # defaultModel = "deepseek-v4-flash";
+              # [shell]
+              bash = {
+                enabled = true;
+                autoBackground.enabled = true;
+              };
+              bashInterceptor.enabled = true;
             };
           };
 
-          # ".omp/plugins/package.json" = {
-          #   type = "copy";
-          #   generator = pkgs.writers.writeJSON "omp-plugins-package.json";
-          #   value = {
-          #     name = "omp-plugins";
-          #     private = true;
-          #     dependencies = {
-          #       pi-commandcode-provider = "0.4.0";
-          #     };
-          #   };
-          # };
-
-          # Yes, I could just `".pi/agent/extensions".source = ./extensions`
-          # but this way I can add and remove easily.
-          # ".pi/agent/extensions/system-theme.ts".source = ./extensions/system-theme.ts;
-          # ".pi/agent/extensions/permissions.ts".source = ./extensions/permissions.ts;
-          # ".pi/agent/extensions/plan-mode.ts".source = ./extensions/plan-mode.ts;
-          # ".pi/agent/extensions/read-only-mode.ts".source = ./extensions/read-only-mode.ts;
-          # ".pi/agent/extensions/zellij-attention.ts".source = ./extensions/zellij-attention.ts;
-          # ".pi/agent/extensions/caveman.ts".source = ./extensions/caveman.ts;
-          # ".pi/agent/extensions/tps-status.ts".source = ./extensions/tps-status.ts;
-
-          # ".pi/agent/skills/caveman".source = ./skills/caveman;
-          # ".pi/agent/skills/gh-grep".source = ./skills/gh-grep; # Taken from <https://github.com/huynguyen03dev/opencode-setup/tree/main/skills/gh-grep>
+          ".omp/plugins/package.json" = {
+            type = "copy";
+            generator = pkgs.writers.writeJSON "omp-plugins-package.json";
+            value = {
+              name = "omp-plugins";
+              private = true;
+              dependencies = {
+                context-mode = "^1";
+                ponytail = "https://github.com/DietrichGebert/ponytail";
+                omp-cmd = "https://github.com/bl4zee1g/omp-cmd";
+              };
+            };
+          };
         };
       };
     };
