@@ -102,6 +102,11 @@
                 };
               };
 
+              provider.commandcode = {
+                timeout = 3000000;
+                chunkTimeout = 1500000;
+              };
+
               keybinds = {
                 app_exit = "ctrl+c";
                 messages_half_page_up = "ctrl+u";
