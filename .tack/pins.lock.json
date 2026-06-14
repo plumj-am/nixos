@@ -1,26 +1,10 @@
 {
-  "buildbot-nix": {
-    "lastModified": 1781103680,
-    "narHash": "sha256-5WUQA0O2ixubsle5J28k01xaTg0dAdNaNyXrYk/1eBY=",
-    "owner": "plumj-am",
-    "repo": "buildbot-nix",
-    "rev": "432749452b0a5f09d8a56ebed3575278d61b4e85",
-    "type": "github"
-  },
   "cade": {
     "lastModified": 1782611946,
     "narHash": "sha256-IjmEV8v2hf6j9jgK44zF1Bwn4G96DHSeFSZg6UjSA2w=",
     "owner": "manic-systems",
     "repo": "cade",
     "rev": "341d4cf80788ec305c28d9159d487d7884111311",
-    "type": "github"
-  },
-  "circus": {
-    "lastModified": 1780869946,
-    "narHash": "sha256-1KeVeoYiZ3qblokMrJcd1wXLYPpMJ1vFn0yjwhiGe18=",
-    "owner": "plumj-am",
-    "repo": "circus",
-    "rev": "eb522eb713e79b47b1cc815732edbabd78f5435b",
     "type": "github"
   },
   "disko": {
@@ -57,13 +41,13 @@
     "type": "git",
     "url": "https://git.plumj.am/plumjam/gerrit-autosubmit"
   },
-  "gerrit-circus-bridge": {
-    "lastModified": 1781017043,
-    "narHash": "sha256-uOcqfHuYPx7VCfs4yElE9YfwFMr3A4HSSyoAvVM6QnI=",
+  "grove": {
+    "lastModified": 1783440918,
+    "narHash": "sha256-BoiiT5i+skb/gnMGMNFYHKJ/KyKUma7vSG5zm5NFo8k=",
     "ref": "refs/heads/master",
-    "rev": "d05ed564dfb11c5dd507eca0e54482f6b91a3c61",
+    "rev": "466d92eaac3777d06ee696811223b48c1663d153",
     "type": "git",
-    "url": "https://git.plumj.am/plumjam/gerrit-circus-bridge"
+    "url": "ssh://forgejo@git.plumj.am/grove-systems/grove"
   },
   "harmonia": {
     "lastModified": 1781453616,

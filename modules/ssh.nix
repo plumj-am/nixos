@@ -106,6 +106,11 @@ in
             publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBH1S3dhOYCCltqrseHc3YZFHc9XU90PsvDo7frzUGrr gerrit-replication";
           };
         };
+
+      programs.ssh.extraConfig = ''
+        Host git.plumj.am
+          IdentityFile /root/.ssh/id
+      '';
     };
 
   flake.modules.nixos.openssh-extra-users =

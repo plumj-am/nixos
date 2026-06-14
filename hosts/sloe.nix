@@ -13,12 +13,11 @@ in
 
       acme
       boot-grub
-      buildbot-worker
-      # circus-agent
-      # circus-evaluator
       disks-server
       forgejo-action-runner
       garage
+      graft-node
+      graft-sentinel
       graphics
       harmonia
       # ncro

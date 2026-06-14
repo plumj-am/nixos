@@ -12,18 +12,13 @@ in
 
       acme
       boot-grub
-      buildbot-master
-      buildbot-worker
       cinny
-      # circus-agent
-      # circus-server
-      # circus-queue-runner
       disks-server
       forgejo
       freshrss-server
       forgejo-action-runner
       gerrit
-      # gerrit-circus-bridge
+      graft-node
       goatcounter
       harmonia
       matrix

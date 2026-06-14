@@ -45,7 +45,7 @@
           add_header Strict-Transport-Security $hsts_header always;
 
           proxy_hide_header Content-Security-Policy;
-          add_header Content-Security-Policy "script-src 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain} kit.fontawesome.com https://cdn.tailwindcss.com https://unpkg.com/lucide@0.473.0; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com *.${domain} *.${domain}; img-src 'self' blob: data: https:; base-uri 'self'; frame-ancestors 'self';" always;
+          add_header Content-Security-Policy "script-src 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain} kit.fontawesome.com https://cdn.tailwindcss.com https://unpkg.com/lucide@0.473.0; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com *.${domain}; object-src 'self' ${domain} *.${domain}; img-src 'self' blob: data: https:; base-uri 'self'; frame-ancestors 'self';" always;
 
           proxy_hide_header Referrer-Policy;
           add_header Referrer-Policy no-referrer always;

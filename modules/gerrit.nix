@@ -88,8 +88,8 @@
       services.gerrit = {
         enable = true;
         package = inputs.gerrit.packages.${pkgs.stdenv.hostPlatform.system}.gerrit.overrideAttrs (old: {
-          # Remove the patch that appends version string with "-dirty-nix" so buildbot can
-          # correctly send status updates to Gerrit.
+          # Remove the patch that appends version string with "-dirty-nix" so
+          # status updates can sent to Gerrit.
           postPatch =
             lib.replaceStrings [ "sed -Ei 's,^(STABLE_BUILD_GERRIT_LABEL.*)$,\\1-dirty-nix,' .version" ] [ "" ]
               old.postPatch;
@@ -209,13 +209,10 @@
             push = [
               "+refs/heads/*:refs/heads/*"
               "+refs/tags/*:refs/tags/*"
-              # "+refs/changes/*:refs/changes/*" # Necessary for buildbot to pick it up.
+              # "+refs/changes/*:refs/changes/*"
               "+refs/meta/config:refs/meta/config"
             ];
 
-            # Keep an eye on this and ./buildbot.nix ->  grove-gerrit scheduler -> treeStableTimer
-            # If the gap is too small, buildbot won't have a ref to fetch for the build and the
-            # git step will fail.
             replicationDelay = 1;
             timeout = 120;
             threads = 3;

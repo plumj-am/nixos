@@ -1,12 +1,10 @@
 [inputs]
-buildbot-nix.url         = "gh:plumj-am/buildbot-nix/tmp"
 cade.url              = "gh:manic-systems/cade?ref=next"
-circus.url               = "gh:plumj-am/circus/patch/PlumJam-rykzunzvwxxu"
 disko.url             = "gh:nix-community/disko"
 fenix.url             = "gh:nix-community/fenix"
 gerrit.url            = "afnix:afnix/nix-gerrit"
 gerrit-autosubmit.url = "plumjam:plumjam/gerrit-autosubmit"
-gerrit-circus-bridge.url = "plumjam:plumjam/gerrit-circus-bridge"
+grove.url             = "plumjam:grove-systems/grove"
 harmonia.url          = "gh:nix-community/harmonia"
 helium.url            = "gh:amaanq/helium-flake"
 hjem.url              = "gh:feel-co/hjem"
@@ -36,12 +34,15 @@ treefmt.url           = "gh:numtide/treefmt-nix"
 ublock                = { type = "fetch", url = "gh:imputnet/uBlock" }
 zyouz.url             = "gh:plumj-am/zyouz/tmp"
 
+# For local testing.
+# grove.url = "git+file:///home/jam/projects/grove?ref=graft"
+
 [shorturls]
 afnix     = "git+https://git.afnix.fr/{path}"
 cb        = "git+https://codeberg.org/{path}"
 gh        = "github:{path}"
 outfoxxed = "git+https://git.outfoxxed.me/{path}"
-plumjam   = "git+https://git.plumj.am/{path}"
+plumjam   = "git+ssh://forgejo@git.plumj.am/{path}"
 
 [all_follow]
 darwin      = "os-darwin"
