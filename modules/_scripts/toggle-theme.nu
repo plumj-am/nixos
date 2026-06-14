@@ -3,12 +3,6 @@ const THEME_CONFIG = "/home/jam/nixos/modules/theme.json"
 const THEME_MATUGEN = "/home/jam/nixos/modules/theme-matugen-colors.json"
 const REBUILD_SCRIPT = "/home/jam/nixos/rebuild.nu"
 
-def print-notify [message: string]: any -> string {
-   print $"(ansi purple)[Theme Switcher](ansi rst) ($message)"
-
-   try { notify-send "Theme Switcher" $message }
-}
-
 def get-current-wallpaper []: any -> string {
    let wallpaper = awww query
    | lines
@@ -45,7 +39,7 @@ def get-current-theme []: any -> nothing {
    try {
       open $THEME_CONFIG
    } catch {
-      print-notify "Failed to load default config, falling back to light/gruvbox"
+      print "Failed to load default config, falling back to light/gruvbox"
 
       {mode: dark, scheme: gruvbox}
    }
@@ -55,16 +49,16 @@ def is-current [mode_or_scheme: string] {
    let current = get-current-theme
 
    if ($current.mode == $mode_or_scheme) or ($current.scheme == $mode_or_scheme) {
-      print-notify "Current theme and scheme already matches the desired settings."
+      print "Current theme and scheme already matches the desired settings."
 
       exit 0
    }
 }
 
-def toggle-theme [theme: string]: any -> string {
-   print-notify $"Switching to ($theme) theme."
+def toggle-theme [theme: string]: any -> nothing {
+   print $"Switching to ($theme) theme."
 
-   print-notify "Updating theme configuration..."
+   print "Updating theme configuration..."
 
    let theme_config = get-current-theme
 
@@ -74,16 +68,16 @@ def toggle-theme [theme: string]: any -> string {
 
    update-gsettings ($theme == dark)
 
-   print-notify $"Switch to the ($theme) theme completed!"
+   print $"Switch to the ($theme) theme completed!"
 }
 
 def switch-scheme [scheme: string]: any -> nothing {
-   print-notify $"Switching to ($scheme) color scheme."
+   print $"Switching to ($scheme) color scheme."
 
    let theme_config = get-current-theme
 
    if $scheme == matugen {
-      print-notify "Generating matugen colors from current wallpaper..."
+      print "Generating matugen colors from current wallpaper..."
 
       let wallpaper = get-current-wallpaper
 
@@ -97,7 +91,7 @@ def switch-scheme [scheme: string]: any -> nothing {
             exit 1
          }
       } else {
-         print-notify "Warning: Could not detect current wallpaper"
+         print "Warning: Could not detect current wallpaper"
       }
    }
 
@@ -111,7 +105,7 @@ def det-failure []: int -> int {
 }
 
 def reload-applications []: any -> string {
-   print-notify "Reloading applications..."
+   print "Reloading applications..."
 
    mut failure_count = 0
 
@@ -137,9 +131,9 @@ def reload-applications []: any -> string {
    # $failure_count += (niri msg action spawn -- brave | complete | get exit_code) | det-failure
 
    if $failure_count > 0 {
-      print-notify $"($failure_count) reloads failed in 'reload-applications'. Exiting."
+      print $"($failure_count) reloads failed in 'reload-applications'. Exiting."
    } else {
-      print-notify "Applications reloaded successfully."
+      print "Applications reloaded successfully."
    }
 }
 
@@ -155,7 +149,7 @@ def main [] {
 
 def "main dark" [
    --force # Run the theme toggle even if current theme matches desired theme
-]: nothing -> string {
+]: nothing -> nothing {
    if not $force { is-current dark }
 
    toggle-theme dark
@@ -165,7 +159,7 @@ def "main dark" [
 
 def "main light" [
    --force # Run the theme toggle even if current theme matches desired theme
-]: nothing -> string {
+]: nothing -> nothing {
    if not $force { is-current light }
 
    toggle-theme light
@@ -175,7 +169,7 @@ def "main light" [
 
 def "main gruvbox" [
    --force # Run the theme toggle even if current theme matches desired theme
-]: nothing -> string {
+]: nothing -> nothing {
    if not $force { is-current gruvbox }
 
    switch-scheme gruvbox
@@ -185,7 +179,7 @@ def "main gruvbox" [
 
 def "main matugen" [
    --force # Run the theme toggle even if current theme matches desired theme
-]: nothing -> string {
+]: nothing -> nothing {
    if not $force { is-current matugen }
 
    switch-scheme matugen
@@ -193,10 +187,10 @@ def "main matugen" [
    main reload
 }
 
-def "main reload" []: nothing -> string {
+def "main reload" []: nothing -> nothing {
    try { nu $REBUILD_SCRIPT } catch { exit 1 }
 
    reload-applications
 
-   print-notify "Theme switch complete!"
+   print "Theme switch complete!"
 }

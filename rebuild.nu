@@ -1,14 +1,4 @@
 #!/usr/bin/env nu
-def print-notify [message: string, --error(-e)]: any -> string {
-   if $error {
-      print $"(ansi red)[Rebuilder](ansi rst) ($message)"
-   } else {
-      print $"(ansi purple)[Rebuilder](ansi rst) ($message)"
-   }
-
-   try { notify-send Rebuilder $message }
-}
-
 def --wrapped rsync-files [...rest: string]: any -> string {
    (rsync
       --archive
@@ -22,7 +12,6 @@ def --wrapped rsync-files [...rest: string]: any -> string {
       ...$rest)
 }
 
-# Rebuild the current or a remote NixOS/nix-darwin host
 @example "Rebuild the current host" rebuild
 @example "Rebuild a remote host" { rebuild --remote plum }
 @example "Rebuild all hosts sequentially" { rebuild all }
@@ -69,38 +58,38 @@ def --wrapped main [
    ]
 
    let result = if $is_remote {
-      print-notify $"Attempting to start remote build process on ($remote)."
+      print $"Attempting to start remote build process on ($remote)."
 
       try {
-         print-notify $"Removing old configuration files on ($remote)."
+         print $"Removing old configuration files on ($remote)."
 
          ssh -o ConnectTimeout=10 -o RemoteCommand=none -tt $"jam@($remote)" "rm --recursive --force nixos"
 
          cd $config.path
 
-         print-notify $"Copying new configuration files to ($remote)."
+         print $"Copying new configuration files to ($remote)."
 
          jj file list | rsync-files --files-from - ./ $"jam@($remote):nixos"
 
-         print-notify $"Starting rebuild on ($remote)."
+         print $"Starting rebuild on ($remote)."
 
          ssh -o ConnectTimeout=10 -o RemoteCommand=none -qtt $"jam@($remote)" ./nixos/rebuild.nu
 
          true
       } catch {|e|
-         print-notify --error $"Something went wrong: ($e.msg)"
+         print --stderr $"Something went wrong: ($e.msg)"
 
-         print-notify --error "See above for more information."
+         print --stderr "See above for more information."
 
          false
       }
    } else {
-      print-notify $"Rebuilding ($hostname)."
+      print $"Rebuilding ($hostname)."
 
       let nh = if (which nh | is-not-empty) {
          [nh]
       } else {
-         print-notify "Command 'nh' not found, falling back to 'nix run nixpkgs#nh'."
+         print "Command 'nh' not found, falling back to 'nix run nixpkgs#nh'."
 
          [
             nix
@@ -121,9 +110,9 @@ def --wrapped main [
 
    if not $is_remote {
       if $result {
-         print-notify $"Rebuild for ($remote | default --empty $hostname) succeeded."
+         print $"Rebuild for ($remote | default --empty $hostname) succeeded."
       } else {
-         print-notify $"Rebuild for ($remote | default --empty $hostname) failed."
+         print $"Rebuild for ($remote | default --empty $hostname) failed."
       }
    }
 }
