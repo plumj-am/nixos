@@ -20,7 +20,7 @@ in
       radicle-node
       rust
       sops
-      sudo-extra-server
+      sudo-server
       swapfile
       s3-upload
       zellij

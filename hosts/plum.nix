@@ -38,7 +38,7 @@ in
       renovate
       rust
       sops
-      sudo-extra-server
+      sudo-server
       syncthing
       swapfile
       s3-upload

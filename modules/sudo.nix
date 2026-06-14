@@ -7,7 +7,7 @@ let
     '';
 in
 {
-  flake.modules.nixos.sudo =
+  flake.modules.nixos.sudo-desktop =
     {
       inputs,
       pkgs,
@@ -40,9 +40,20 @@ in
           pamMount = false;
         };
       };
+
+      # Persistent auth with run0.
+      services.dbus.implementation = "broker";
+      security.polkit.extraConfig = # js
+        ''
+          polkit.addRule(function(_action, subject) {
+            if (subject.isInGroup("wheel")) {
+              return polkit.Result.YES;
+            }
+          });
+        '';
     };
 
-  flake.modules.darwin.sudo = {
+  flake.modules.darwin.sudo-desktop = {
     security.sudo.extraConfig = sudoExtraConfig;
 
     security.pam.services.sudo_local = {
@@ -51,21 +62,12 @@ in
     };
   };
 
-  flake.modules.nixos.sudo-extra-desktop = {
-    # Persistent auth with run0.
-    services.dbus.implementation = "broker";
-    security.polkit.extraConfig = # js
-      ''
-        polkit.addRule(function(_action, subject) {
-          if (subject.isInGroup("wheel")) {
-            return polkit.Result.YES;
-          }
-        });
-      '';
-  };
+  flake.modules.nixos.sudo-server = {
+    users.users.jam.extraGroups = [ "wheel" ];
 
-  flake.modules.nixos.sudo-extra-server = {
     security.sudo-rs = {
+      enable = true;
+      execWheelOnly = true;
       wheelNeedsPassword = true;
       extraConfig = # sudoers
         ''

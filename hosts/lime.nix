@@ -22,7 +22,7 @@ in
       sops
       # radicle-node
       rust-desktop
-      sudo
+      sudo-desktop
       theme-extra-fonts
       zellij
       {

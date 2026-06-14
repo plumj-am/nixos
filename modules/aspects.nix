@@ -18,7 +18,6 @@ let
     "sops"
     "shell"
     "shell-tools"
-    "sudo"
     "ssh"
     "tack"
     "tailscale"

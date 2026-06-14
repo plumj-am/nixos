@@ -57,7 +57,7 @@ in
       rust-desktop
       rss-tui
       sops
-      sudo-extra-desktop
+      sudo-desktop
       syncthing
       swap-partition
       s3-upload

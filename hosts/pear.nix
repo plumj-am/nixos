@@ -15,7 +15,7 @@ in
       jujutsu-extra
       # ncro
       sops
-      sudo-extra-desktop
+      sudo-desktop
       # s3-upload
       wsl
       zellij
