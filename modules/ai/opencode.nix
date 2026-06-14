@@ -77,6 +77,11 @@
                 "nixos_*" = "allow";
 
                 bash = genAttrs config.ai.commands.bash.allow (const "allow");
+
+                external_directory = {
+                  "/tmp/**" = "allow";
+                  "~/.cargo/registry/src/**" = "allow";
+                };
               };
 
               agent = {
