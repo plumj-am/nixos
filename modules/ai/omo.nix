@@ -12,28 +12,34 @@
 
       provider = "commandcode";
 
+      claude = "kimi-k2.6"; # communicators/planners
+      gpt = "deepseek-v4-pro"; # deep specialists
+      gemini = "qwen-3.6-plus"; # vision-capable
+      fast = "deepseek-v4-flash";
+
       agentModels = {
-        sisyphus = "deepseek-v4-pro"; # Orchestrator - needs strong model - Claude Opus or Kimi K2.6 recommended.
-        prometheus = "deepseek-v4-pro"; # Investigates bugs, runtime errors, production incidents.
-        oracle = "deepseek-v4-pro"; # Architecture - needs strong model
-        librarian = "deepseek-v4-flash"; # Research - use cheap, fast models.
-        explore = "deepseek-v4-flash";
-        multimodal-looker = "kimi-k2.6"; # Vision-capable.
-        metis = "deepseek-v4-pro"; # Pre-planning consultant.
-        momus = "deepseek-v4-pro"; # Plan reviewer.
-        atlas = "deepseek-v4-flash"; # Task executor - carries out delegated implementation work.
-        sisyphus-junior = "deepseek-v4-flash"; # Lightweight orchestrator - simpler tasks that don't need full Sisyphus.
+        sisyphus = claude; # main orchestrator
+        prometheus = claude; # strategic planner
+        oracle = gpt; # architecture consultant
+        librarian = fast; # docs/code search
+        explore = fast; # fast codebase grep
+        hephaestus = gpt; # autonomous, deep worker
+        multimodal-looker = gemini; # vision/screenshots
+        metis = claude; # plan gap analyzer
+        momus = gpt; # reviewer
+        atlas = claude; # todo orchestrator
+        sisyphus-junior = claude; # lightweight orchestrator
       };
 
       categoryModels = {
-        visual-engineering = "kimi-k2.6"; # Visual tasks.
-        ultrabrain = "deepseek-v4-pro"; # Deep logical reasoning.
-        deep = "deepseek-v4-pro"; # Goal-oriented autonomous problem-solving.
-        artistry = "deepseek-v4-flash"; # Creative/artistic.
-        quick = "deepseek-v4-flash"; # Trivial tasks.
-        unspecified-low = "deepseek-v4-flash"; # Unclassified tasks, low effort.
-        unspecified-high = "deepseek-v4-pro"; # Unclassified tasks, high effort.
-        writing = "deepseek-v4-pro"; # Documentation, prose, technical writing.
+        visual-engineering = claude; # frontend, UI, and design
+        artistry = claude; # creative/artistic
+        ultrabrain = claude; # maximum reasoning
+        deep = claude; # deep coding, complex logic
+        quick = fast; # simple, fast tasks
+        unspecified-low = claude; # general complex work
+        unspecified-high = fast; # general standard work
+        writing = claude; # docs, text, and prose
       };
     in
 
@@ -51,6 +57,8 @@
                 "https://raw.githubusercontent.com/code-yeongyu/oh-my-openagent/dev/assets/oh-my-opencode.schema.json";
 
               auto_update = false;
+
+              team_mode.enabled = true;
 
               agents = mapAttrs (_: model: { model = "${provider}/${model}"; }) agentModels;
               categories = mapAttrs (_: model: { model = "${provider}/${model}"; }) categoryModels;

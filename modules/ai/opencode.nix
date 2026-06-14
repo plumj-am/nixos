@@ -41,16 +41,16 @@
             source = ./AGENTS.md;
           };
 
-          "opencode/opencode.jsonc" = {
+          "opencode/opencode.json" = {
             generator = pkgs.writers.writeJSON "opencode-opencode.jsonc";
             value = {
-              theme = "gruvbox";
               autoupdate = false;
-              model = "commandcode/deepseek-v4-pro";
+              model = "commandcode/kimi-k2.6";
               small_model = "commandcode/deepseek-v4-flash";
 
               plugin = [
                 "oh-my-openagent"
+                "oh-my-openagent/tui"
                 "commandcode-go-opencode-provider"
               ];
 
@@ -87,7 +87,7 @@
               agent = {
                 build = {
                   mode = "primary";
-                  model = "commandcode/deepseek-v4-pro";
+                  model = "commandcode/kimi-k2.6";
                 };
 
                 researcher = {
@@ -105,13 +105,6 @@
               provider.commandcode = {
                 timeout = 3000000;
                 chunkTimeout = 1500000;
-              };
-
-              keybinds = {
-                app_exit = "ctrl+c";
-                messages_half_page_up = "ctrl+u";
-                messages_half_page_down = "ctrl+d";
-                input_newline = "shift+enter";
               };
 
               lsp = {
@@ -169,6 +162,20 @@
                     "--"
                   ];
                 };
+              };
+            };
+          };
+
+          "opencode/tui.json" = {
+            generator = pkgs.writers.writeJSON "opencode-tui.jsonc";
+            value = {
+              theme = "gruvbox";
+
+              keybinds = {
+                app_exit = "ctrl+c";
+                messages_half_page_up = "ctrl+u";
+                messages_half_page_down = "ctrl+d";
+                input_newline = "shift+enter";
               };
             };
           };
