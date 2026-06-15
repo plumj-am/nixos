@@ -25,7 +25,6 @@ in
       gerrit
       # gerrit-circus-bridge
       goatcounter
-      gradient-worker
       harmonia
       matrix
       # ncro

@@ -19,8 +19,6 @@ in
       disks-server
       forgejo-action-runner
       garage
-      gradient
-      gradient-worker
       graphics
       harmonia
       # ncro

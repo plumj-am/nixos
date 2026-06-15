@@ -26,7 +26,6 @@ in
       forgejo-cli
       games
       gammastep
-      gradient-worker
       graphics
       harmonia
       hardware-desktop

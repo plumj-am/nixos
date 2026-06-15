@@ -44,10 +44,6 @@ creation_rules:
       key_groups:
           - age: [*jam, *sloe]
 
-    - path_regex: secrets/services/gradient\.(yaml|json|env|ini)$
-      key_groups:
-          - age: [*jam, *date, *plum, *sloe]
-
     - path_regex: secrets/services/gerrit\.(yaml|json|env|ini)$
       key_groups:
           - age: [*jam, *plum]
