@@ -32,7 +32,7 @@ rio.url                  = "gh:raphamorim/rio"
 rom.url                  = "gh:manic-systems/rom"
 run0-sudo-shim.url       = "gh:LordGrimmauld/run0-sudo-shim"
 sops.url                 = "gh:Mic92/sops-nix"
-tack.url                 = "gh:manic-systems/tack"
+tack.url                 = "gh:plumj-am/tack?ref=patch/PlumJam-pvmklwurvqlp"
 treefmt.url              = "gh:numtide/treefmt-nix"
 ublock                   = { type = "fetch", url = "gh:imputnet/uBlock" }
 zyouz.url                = "gh:plumj-am/zyouz/tmp"

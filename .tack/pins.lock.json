@@ -267,11 +267,11 @@
     "type": "github"
   },
   "tack": {
-    "lastModified": 1780213242,
-    "narHash": "sha256-5dYWCjKBwjHOCJBlQK9iBKJxoUosTGQvI62vPBdQUgs=",
-    "owner": "manic-systems",
+    "lastModified": 1781526820,
+    "narHash": "sha256-qQS2A43VpxIc0dSKofkRNV1+LSWikMWJjhf9M7VktBE=",
+    "owner": "plumj-am",
     "repo": "tack",
-    "rev": "8c574901340af860979500f24495417ce7e53cdc",
+    "rev": "11437bf0352c453cd364a3dc230b192a7aa79ea6",
     "type": "github"
   },
   "treefmt": {
