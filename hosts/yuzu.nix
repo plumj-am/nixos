@@ -63,6 +63,7 @@ in
       s3-upload
       theme-extra-fonts
       theme-extra-scripts
+      tmux
       window-manager
       zellij
       zyouz

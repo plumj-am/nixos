@@ -54,3 +54,24 @@ def "git summary" [--count(-n): int = 10]: nothing -> nothing {
       | table --index 1 # start index from 1
    } catch { print "Error: Make sure you're in a git repository" }
 }
+
+def tmux-ide [session: string = "main"] {
+   if (tmux has-session -t $session | complete | get exit_code) == 0 {
+      tmux kill-session -t $session
+   }
+
+   tmux new-session -d -s $session
+
+   # Vertical split
+   tmux split-window -v -p 28 -t $"($session).0"
+
+   # Horizontal split top
+   tmux split-window -h -p 18 -t $"($session).0"
+
+   # Horizontal split bottom
+   tmux split-window -h -p 50 -t $"($session).2"
+
+   tmux select-pane -t $"($session).0"
+
+   tmux attach -t $session
+}
