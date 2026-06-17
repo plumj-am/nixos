@@ -12,9 +12,11 @@
 
       provider = "commandcode";
 
-      claude = "kimi-k2.6"; # communicators/planners
+      # Cheapest compatible model for now.
+      # deepseek-v4-pro doesn't work well in this role.
+      claude = "kimi-k2.5"; # communicators/planners
       gpt = "deepseek-v4-pro"; # deep specialists
-      gemini = "qwen-3.6-plus"; # vision-capable
+      gemini = "qwen3.6-plus"; # vision-capable
       fast = "deepseek-v4-flash";
 
       agentModels = {

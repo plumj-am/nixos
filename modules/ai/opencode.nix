@@ -45,7 +45,7 @@
             generator = pkgs.writers.writeJSON "opencode-opencode.jsonc";
             value = {
               autoupdate = false;
-              model = "commandcode/kimi-k2.6";
+              model = "commandcode/deepseek-v4-pro";
               small_model = "commandcode/deepseek-v4-flash";
 
               plugin = [
@@ -87,7 +87,7 @@
               agent = {
                 build = {
                   mode = "primary";
-                  model = "commandcode/kimi-k2.6";
+                  model = "commandcode/deepseek-v4-pro";
                 };
 
                 researcher = {
