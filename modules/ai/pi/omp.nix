@@ -82,7 +82,6 @@
               memories.enabled = false;
               modelProviderOrder = [
                 "commandcode"
-                "opencode-go"
               ];
               enabledModels = [
                 "*kimi-k2*"

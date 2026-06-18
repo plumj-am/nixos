@@ -38,10 +38,6 @@
               type = "copy"; # I think pi auth requires this and 600 mode.
               permissions = "600";
               value = {
-                opencode-go = {
-                  type = "api_key";
-                  key = "!cat ${osConfig.sops.secrets."opencode-go-key".path}";
-                };
                 commandcode = {
                   type = "api_key";
                   key = "!cat ${osConfig.sops.secrets."command-code-key".path}";
@@ -117,7 +113,6 @@
                 defaultModel = "deepseek/deepseek-v4-flash";
                 enabledModels = [
                   "commandcode/*deepseek-v4*"
-                  "opencode-go/*deepseek-v4*"
 
                   "unsloth/Qwen3.6-35B-A3B:UD-IQ3_XXS"
                 ];

@@ -137,7 +137,6 @@
                     --dir /etc/ssl
                     --dir /etc/ssl/certs
                     --ro-bind ${directory}/.config ${directory}/.config
-                    --ro-bind /run/secrets/opencode-go-key /run/secrets/opencode-go-key
                     --ro-bind /run/secrets/command-code-key /run/secrets/command-code-key
                     --ro-bind /run/secrets/nvidia-nim-key /run/secrets/nvidia-nim-key
                     --ro-bind /run/secrets/codestral-key /run/secrets/codestral-key
@@ -170,7 +169,6 @@
                     --die-with-parent
                     --cap-drop all
                     --setenv SSL_CERT_FILE /etc/ssl/certs/ca-certificates.crt
-                    --setenv OPENCODE_API_KEY (^cat /run/secrets/opencode-go-key)
                     --setenv COMMANDCODE_API_KEY (^cat /run/secrets/command-code-key)
                     --setenv NVIDIA_API_KEY (^cat /run/secrets/nvidia-nim-key)
                     --setenv CODESTRAL_API_KEY (^cat /run/secrets/codestral-key)

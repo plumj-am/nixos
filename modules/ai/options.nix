@@ -32,7 +32,6 @@
               mode = "600";
             })
             [
-              "opencode-go-key"
               "command-code-key"
               "nvidia-nim-key"
               "codestral-key"
