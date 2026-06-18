@@ -52,6 +52,7 @@
                 "oh-my-openagent"
                 "oh-my-openagent/tui"
                 "commandcode-go-opencode-provider"
+                "context-mode"
               ];
 
               permission = {
@@ -68,13 +69,16 @@
                 todoread = "allow";
                 todowrite = "allow";
                 websearch = "allow";
-                lsp_diagnostics = "allow";
 
                 "context7_*" = "allow";
                 "gh_grep_*" = "allow";
+                "grep_app_*" = "allow";
+                "websearch_*" = "allow";
                 "web-reader_*" = "allow";
                 "web-search-prime_*" = "allow";
                 "nixos_*" = "allow";
+                "lsp_*" = "allow";
+                "zread_*" = "allow";
 
                 bash = genAttrs config.ai.commands.bash.allow (const "allow");
 
