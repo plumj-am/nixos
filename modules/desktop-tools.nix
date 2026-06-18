@@ -19,6 +19,8 @@
         pkgs.thunar-media-tags-plugin
         pkgs.thunar-vcs-plugin
 
+        pkgs.tumbler # thumbnails
+
         # I would like to use but it's a pain for xdg...FileOpener.
         # Skill issue, perhaps.
         # pkgs.kdePackages.dolphin
