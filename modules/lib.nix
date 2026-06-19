@@ -272,7 +272,7 @@ in
           sopsFile = ../secrets/${host}/id.yaml;
         };
 
-        sops.secrets.nixStoreKey = {
+        sops.secrets.nix-store-key = {
           sopsFile = ../secrets/all/nix-store-keys.yaml;
           key = host;
         };

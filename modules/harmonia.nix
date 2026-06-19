@@ -8,7 +8,6 @@
     }:
     let
       inherit (lib.lists) filter singleton;
-      inherit (lib.modules) mkIf;
       inherit (config.sops) secrets;
       inherit (config.networking) hostName;
 
@@ -29,7 +28,7 @@
 
       services.harmonia-dev.cache = {
         enable = true;
-        signKeyPaths = mkIf (secrets ? nix-store-key) <| singleton secrets.nix-store-key.path;
+        signKeyPaths = singleton secrets.nix-store-key.path;
         settings = {
           bind = "[::]:${toString port}";
           workers = 4;

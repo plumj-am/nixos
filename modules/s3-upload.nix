@@ -8,7 +8,6 @@
     }:
     let
       inherit (lib.meta) getExe;
-      inherit (lib.attrsets) optionalAttrs;
       inherit (lib.lists) singleton;
       inherit (config.sops) secrets;
 
@@ -210,7 +209,6 @@
                 echo "  Garage Bucket: ${garageAlias}"
                 echo "  Garage Endpoint: ${garageEndpoint}"
                 echo "  Garage Substituter: ${garageS3Cache}"
-                echo "  Signing key: ${if secrets ? nix-store-key then "enabled" else "disabled"}"
       '';
     in
     {
@@ -229,7 +227,7 @@
         uploadProcessor
       ];
 
-      environment.etc = optionalAttrs (secrets ? nix-store-key) {
+      environment.etc = {
         "nix/post-build-hook.sh" = {
           mode = "0755";
           text = ''
@@ -325,8 +323,7 @@
           # TODO ?lime-store?
           "blackwell-store.plumj.am:YmTvW2JngBUxfgWoKHJzxKu7Xhxt4VzK5u3D0Chudn4="
         ];
-      }
-      // optionalAttrs (secrets ? nix-store-key) {
+
         post-build-hook = "/etc/nix/post-build-hook.sh";
         secret-key-files = secrets.nix-store-key.path;
       };
