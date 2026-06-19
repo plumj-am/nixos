@@ -18,7 +18,6 @@ Item {
    signal sessionClicked
    signal controlCenterClicked
    signal themeSwitchClicked
-   signal rebuildClicked
 
    implicitHeight: barSize
 
@@ -110,12 +109,6 @@ Item {
 
 			   Separator {
 				  Layout.alignment: Qt.AlignVCenter
-			   }
-
-			   Rebuild {
-				  Layout.alignment: Qt.AlignVCenter
-
-				  onClicked: root.rebuildClicked()
 			   }
 
 			   ThemeSwitcher {

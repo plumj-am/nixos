@@ -172,9 +172,6 @@ ShellRoot {
 										  command: ["tt", cmd, "--force"]
 									   })
 			}
-			onRebuildClicked: Quickshell.execDetached({
-														 command: ["bash", "-c", "$HOME/nixos/rebuild.nu"]
-													  })
 		 }
 
 		 // Notification drawer (top-right)
