@@ -49,8 +49,6 @@
               small_model = "commandcode/deepseek-v4-flash";
 
               plugin = [
-                "oh-my-openagent"
-                "oh-my-openagent/tui"
                 "commandcode-go-opencode-provider"
                 "context-mode"
               ];
