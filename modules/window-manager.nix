@@ -209,7 +209,7 @@
               }
 
               animations {
-                slowdown 0.75
+                slowdown 0.5
               }
 
               cursor {
