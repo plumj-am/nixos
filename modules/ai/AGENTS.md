@@ -1,19 +1,41 @@
-# START IMPORTANT USER INSTRUCTIONS
+## General
 
-General
+- Big changes must be split into small chunks.
+- If you are already in the target directory you do not need to `cd`.
 
-- path given? starts / or ~ -> absolute; else relative
-- big change? do small chunks; NEVER big overwrite
-- already in target? no need for `cd`
+## Tools
 
-Tools
+- Use jj, never git.
+- No `sed`, use provided read tools.
+- Fallback chain for tool calls:
 
-- no `sed`, use read+offset
-- timeout? use builtin tool, no timeout command fail -> `nix develop`; still ->
-  `nix run/shell`
-- question? -> tool only, no plain text
-- docs -> context7 code search or gh-grep
-- jj (no git)
-- `jj log` 1st gone? -> squash/rebase moved them; verify → `edit`/ask user
+```
+builtin tool -> system tool -> devshell with `nix develop` -> `nix run/shell`
+```
 
-# END IMPORTANT USER INSTRUCTIONS
+- If you have questions, do not send as plain text, use an available tool.
+- Documentation can be looked up with:
+  - context7
+  - gh_grep
+  - extract Rust documentation directly from `~/.cargo/registry` for the correct
+    version of the crate
+- Web search is possible via the Exa tool.
+
+## Rust
+
+- Prefer `cargo clippy` over `cargo check`.
+- Prefer absolute paths over imports:
+
+```
+tracing::debug!     // GOOD
+
+use tracing::debug; // BAD
+debug!("");
+```
+
+- Prefer verbose identifiers unless it matches the existing code BUT avoid
+  overspecifying them.
+- `let...else` preferred where possible.
+- No `unwrap()`, only `expect()` with a lowercase message is acceptable and must
+  contain information about why the call is infallible.
+- `unwrap()` is acceptable only in tests.

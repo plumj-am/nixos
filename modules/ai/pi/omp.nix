@@ -97,25 +97,21 @@
               memories.enabled = false;
               modelProviderOrder = [
                 "commandcode"
-                # "opencode-go"
                 "opencode-zen"
               ];
               modelRoles =
                 let
-                  # TODO: switch to commandcode once provider is supported
-                  small = "opencode-zen/deepseek-v4-flash-free";
-                  normal = "opencode-zen/big-pickle"; # maybe kimi-k2.6 better here
-                  vision = "commandcode/kimi-k2.5"; # idk if it supports vision lol
+                  model = "commandcode/deepseek-v4-flash";
                 in
                 {
-                  default = "${normal}:auto";
-                  smol = "${small}:off";
-                  slow = "${normal}:high";
-                  plan = "${normal}:high";
-                  vision = "${vision}:low";
-                  designer = "${normal}:low";
-                  commit = "${small}:off";
-                  task = "${small}:minimal";
+                  default = "${model}:auto";
+                  smol = "${model}:off";
+                  slow = "${model}:high";
+                  plan = "${model}:high";
+                  vision = "${model}:low";
+                  designer = "${model}:low";
+                  commit = "${model}:off";
+                  task = "${model}:minimal";
                 };
               enabledModels = [ ]; # all
               shellPath = getExe pkgs.bash;

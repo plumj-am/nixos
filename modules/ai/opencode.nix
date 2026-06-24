@@ -9,7 +9,6 @@
     let
       inherit (lib.lists) singleton;
       inherit (lib.attrsets) genAttrs;
-      inherit (lib.meta) getExe;
       inherit (lib.trivial) const;
       inherit (config.sops) secrets;
 
@@ -45,12 +44,12 @@
             generator = pkgs.writers.writeJSON "opencode-opencode.jsonc";
             value = {
               autoupdate = false;
-              model = "commandcode/deepseek-v4-pro";
+              model = "commandcode/deepseek-v4-flash";
               small_model = "commandcode/deepseek-v4-flash";
 
               plugin = [
                 "commandcode-go-opencode-provider"
-                "context-mode"
+                "@tarquinen/opencode-dcp"
               ];
 
               permission = {
@@ -89,24 +88,79 @@
               agent = {
                 build = {
                   mode = "primary";
-                  model = "commandcode/deepseek-v4-pro";
+                  model = "commandcode/deepseek/deepseek-v4-flash";
+                  reasoningEffort = "high";
+                  textVerbosity = "low";
+                  thinking.type = "enabled";
+                };
+
+                plan = {
+                  mode = "primary";
+                  model = "commandcode/deepseek/deepseek-v4-flash";
+                  reasoningEffort = "max";
+                  textVerbosity = "low";
+                  thinking.type = "enabled";
                 };
 
                 researcher = {
                   mode = "primary";
-                  model = "commandcode/deepseek-v4-flash";
+                  model = "commandcode/deepseek/deepseek-v4-flash";
                   description = "Read-only research primarily using the web";
+                  reasoningEffort = "low";
+                  textVerbosity = "low";
+                  thinking.type = "enabled";
+                };
+
+                general = {
+                  mode = "subagent";
+                  model = "commandcode/deepseek/deepseek-v4-flash";
+                  reasoningEffort = "high";
+                  textVerbosity = "low";
+                  thinking.type = "enabled";
                 };
 
                 explore = {
                   mode = "subagent";
-                  model = "commandcode/deepseek-v4-flash";
+                  model = "commandcode/deepseek/deepseek-v4-flash";
+                  reasoningEffort = "low";
+                  textVerbosity = "low";
+                  thinking.type = "disabled";
+                };
+
+                scout = {
+                  mode = "subagent";
+                  model = "commandcode/deepseek/deepseek-v4-flash";
+                  reasoningEffort = "high";
+                  textVerbosity = "low";
+                  thinking.type = "enabled";
                 };
               };
 
               provider.commandcode = {
                 timeout = 3000000;
                 chunkTimeout = 1500000;
+
+                models =
+                  genAttrs [
+                    "deepseek/deepseek-v4-pro"
+                    "deepseek/deepseek-v4-flash"
+                  ]
+                  <| const {
+                    variants = {
+                      # "In thinking mode, for compatibility, low and medium are mapped to high, and xhigh is mapped to max"
+                      # <https://api-docs.deepseek.com/guides/thinking_mode>
+                      Max = {
+                        reasoningEffort = "max";
+                        textVerbosity = "low";
+                        thinking.type = "enabled";
+                      };
+                      Default = {
+                        reasoningEffort = "high";
+                        textVerbosity = "low";
+                        thinking.type = "enabled";
+                      };
+                    };
+                  };
               };
 
               lsp = {
@@ -154,16 +208,6 @@
                   type = "remote";
                   url = "https://mcp.grep.app";
                 };
-
-                nixos = {
-                  type = "local";
-                  command = [
-                    "${getExe pkgs.nix}"
-                    "run"
-                    "github:utensils/mcp-nixos"
-                    "--"
-                  ];
-                };
               };
             };
           };
@@ -179,6 +223,15 @@
                 messages_half_page_down = "ctrl+d";
                 input_newline = "shift+enter";
               };
+            };
+          };
+
+          "opencode/dcp.json" = {
+            generator = pkgs.writers.writeJSON "opencode-tui.jsonc";
+            value = {
+              enabled = true;
+              autoUpdate = false;
+              experimental.allowSubAgents = true;
             };
           };
         };

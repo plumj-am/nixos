@@ -112,11 +112,11 @@
                 defaultProvider = "commandcode";
                 defaultModel = "deepseek/deepseek-v4-flash";
                 enabledModels = [
-                  "commandcode/*deepseek-v4*"
-
+                  "deepseek-v4-flash"
+                  "deepseek-v4-pro"
                   "unsloth/Qwen3.6-35B-A3B:UD-IQ3_XXS"
                 ];
-                defaultThinkingLevel = "xhigh";
+                defaultThinkingLevel = "low";
 
                 quietStartup = true;
                 hideThinkingBlock = true;
@@ -132,7 +132,7 @@
 
                 packages = [
                   {
-                    source = "git:github.com/plumj-am/pi-commandcode-provider";
+                    source = "git:github.com/patlux/pi-commandcode-provider";
                     extensions = [ "index.ts" ];
                     themes = [ ];
                     skills = [ ];
@@ -149,8 +149,7 @@
                       "answer.ts"
                       "btw.ts"
                       "context.ts"
-                      "loop.ts"
-                      "multi-edit.ts"
+                      "goal.ts"
                       "todos.ts"
                     ];
                     themes = [ ];
