@@ -148,7 +148,7 @@
             };
             forgejo = {
               match = "#(\\d+)";
-              link = "https://git.plumj.am/PlumWorks/grove/issues/$1";
+              link = "https://git.plumj.am/grove-systems/grove/issues/$1";
             };
           };
 
@@ -193,11 +193,11 @@
         replicationSettings = {
           gerrit.replicateOnStartup = true;
           remote.forgejo = {
-            url = "forgejo@git.plumj.am:PlumWorks/grove.git";
+            url = "forgejo@git.plumj.am:grove-systems/grove.git";
             push = [
               "+refs/heads/*:refs/heads/*"
               "+refs/tags/*:refs/tags/*"
-              "+refs/changes/*:refs/changes/*" # Necessary for buildbot to pick it up.
+              # "+refs/changes/*:refs/changes/*" # Necessary for buildbot to pick it up.
               "+refs/meta/config:refs/meta/config"
             ];
 
@@ -205,7 +205,7 @@
             # If the gap is too small, buildbot won't have a ref to fetch for the build and the
             # git step will fail.
             replicationDelay = 1;
-            timeout = 30;
+            timeout = 120;
             threads = 3;
             remoteNameStyle = "dash";
             mirror = false;

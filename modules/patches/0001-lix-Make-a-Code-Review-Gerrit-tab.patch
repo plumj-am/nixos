@@ -15,7 +15,7 @@ index 21017415c1..c5a36b2203 100644
  					</a>
  				{{end}}
 
-+				{{if and (eq .Repository.Name "grove") (eq .Repository.OwnerName "PlumWorks")}}
++				{{if and (eq .Repository.Name "grove") (eq .Repository.OwnerName "grove-systems")}}
 +					<a class="item" href="https://gerrit.plumj.am/q/project:grove">
 +						{{svg "octicon-code-review"}} Code Review (Gerrit)
 +					</a>

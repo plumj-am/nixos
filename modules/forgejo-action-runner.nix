@@ -17,7 +17,7 @@
       defaultLabels = [
         "self-hosted:host"
         "${name}:host"
-        "plumworks-infra:host"
+        "grove-systems:host"
         "ubuntu-latest:docker://docker.gitea.com/runner-images:ubuntu-latest"
       ];
     in
