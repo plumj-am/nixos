@@ -96,7 +96,7 @@
         });
 
         serverId = "e731e7e0-0873-4a69-a2b4-77a527800a3a";
-        jvmHeapLimit = "1024m";
+        jvmHeapLimit = "1536m";
         listenAddress = "[::]:${toString port}";
 
         builtinPlugins = [
@@ -176,7 +176,7 @@
               # A Code-Review +2 vote is required from a code owner.
               requiredApproval = "Code-Review+2";
               # The OWNERS check can be overriden using an Owners-Override vote.
-              overrideApproval = "Owners-Override+1";
+              # overrideApproval = "Owners-Override+1";
               # People implicitly approve their own changes automatically.
               enableImplicitApprovals = "TRUE";
               disabledBranch = "refs/meta/config";
@@ -188,10 +188,12 @@
             email = "gerrit@plumj.am";
           };
 
+          sendemail.enable = false;
         };
 
         replicationSettings = {
           gerrit.replicateOnStartup = true;
+          replication.updateRefErrorMaxRetries = 3;
           remote.forgejo = {
             url = "forgejo@git.plumj.am:grove-systems/grove.git";
             push = [
