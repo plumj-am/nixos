@@ -1,7 +1,8 @@
 #!/usr/bin/env nu
-const THEME_CONFIG = "/home/jam/nixos/modules/theme.json"
-const THEME_MATUGEN = "/home/jam/nixos/modules/theme-matugen-colors.json"
-const REBUILD_SCRIPT = "/home/jam/nixos/rebuild.nu"
+let NIXOS_CONFIG = $"($env.HOME)/nixos"
+let THEME_CONFIG = $"($NIXOS_CONFIG)/modules/theme.json"
+let THEME_MATUGEN = $"($NIXOS_CONFIG)/modules/theme-matugen-colors.json"
+let REBUILD_SCRIPT = $"($NIXOS_CONFIG)/rebuild.nu"
 
 def get-current-wallpaper []: any -> string {
    let wallpaper = awww query
@@ -100,41 +101,57 @@ def switch-scheme [scheme: string]: any -> nothing {
    save-theme-config $theme_config.mode $scheme
 }
 
-def det-failure []: int -> int {
-   if $in not-in [0 1] { 1 } else { 0 }
+def restart-apps [apps: list<record<name: string, new: list<string>>>]: nothing -> nothing {
+   $apps | par-each {|app|
+      pkill -TERM $app.name | ignore
+
+      for _ in 1..30 {
+         if (ps | where name =~ $app.name | is-empty) { break }
+
+         sleep 100ms
+      }
+
+      if (niri msg action spawn -- ...$app.new | complete | get exit_code) != 0 {
+         print --stderr $"Failed to restart ($app.name)"
+      }
+   }
 }
 
-def reload-applications []: any -> string {
+def refresh-apps [apps: list<record<name: string, signal: string>>] {
+   $apps | par-each {|app|
+      if (pkill $"-($app.signal)" $app.name | complete | get exit_code) > 1 {
+         print --stderr $"Failed to reload ($app.name)"
+      }
+   }
+}
+
+def reload-applications [mode?: string]: nothing -> nothing {
    print "Reloading applications..."
 
-   mut failure_count = 0
+   let refreshable_apps = [
+      {name: "kitty", signal: "USR1"}
+      {name: "ghostty", signal: "USR2"}
+      {name: "hx", signal: "USR1"}
+      {name: "opencode", signal: "USR2"}
+   ]
 
-   $failure_count += (niri msg action do-screen-transition --delay-ms 0 | complete | get exit_code) | det-failure
+   let helium_mode = if $mode == "dark" { ["helium" "--force-dark-mode"] } else { ["helium" "--force-light-mode"] }
 
-   $failure_count += (
-        qs --no-duplicate -p /home/jam/nixos/modules/quickshell/shell ipc call shell reload
-        | complete
-        | get exit_code
-    ) | det-failure
+   let restartable_apps = [
+      {name: "helium", new: $helium_mode}
+   ]
 
-   $failure_count += (pkill -USR1 kitty | complete | get exit_code) | det-failure
+   [
+      {
+         if (qs --no-duplicate -p /home/jam/nixos/modules/quickshell/shell ipc call shell reload | complete | get exit_code) != 0 {
+            print --stderr "Failed to reload quickshell"
+         }
+      }
+      { refresh-apps $refreshable_apps }
+      { restart-apps $restartable_apps }
+   ] | par-each {|f| do $f}
 
-   $failure_count += (pkill -USR2 ghostty | complete | get exit_code) | det-failure
-
-   $failure_count += (pkill -USR1 hx | complete | get exit_code) | det-failure
-
-   $failure_count += (pkill -USR2 opencode | complete | get exit_code) | det-failure
-
-   # $failure_count += (pkill -SIGTERM brave | complete | get exit_code) | det-failure
-   # sleep 1sec
-   # $failure_count += (niri msg action do-screen-transition --delay-ms 500 | complete | get exit_code) | det-failure
-   # $failure_count += (niri msg action spawn -- brave | complete | get exit_code) | det-failure
-
-   if $failure_count > 0 {
-      print $"($failure_count) reloads failed in 'reload-applications'. Exiting."
-   } else {
-      print "Applications reloaded successfully."
-   }
+   print "Application reloading complete."
 }
 
 def main [] {
@@ -154,7 +171,13 @@ def "main dark" [
 
    toggle-theme dark
 
-   main reload
+   try { nu $REBUILD_SCRIPT } catch {|e|
+      print --stderr "rebuild failed"
+
+      exit 1
+   }
+
+   reload-applications "dark"
 }
 
 def "main light" [
@@ -164,7 +187,13 @@ def "main light" [
 
    toggle-theme light
 
-   main reload
+   try { nu $REBUILD_SCRIPT } catch {|e|
+      print --stderr "rebuild failed"
+
+      exit 1
+   }
+
+   reload-applications "light"
 }
 
 def "main gruvbox" [
@@ -174,7 +203,13 @@ def "main gruvbox" [
 
    switch-scheme gruvbox
 
-   main reload
+   try { nu $REBUILD_SCRIPT } catch {|e|
+      print --stderr "rebuild failed"
+
+      exit 1
+   }
+
+   reload-applications
 }
 
 def "main matugen" [
@@ -184,13 +219,11 @@ def "main matugen" [
 
    switch-scheme matugen
 
-   main reload
-}
+   try { nu $REBUILD_SCRIPT } catch {|e|
+      print --stderr "rebuild failed"
 
-def "main reload" []: nothing -> nothing {
-   try { nu $REBUILD_SCRIPT } catch { exit 1 }
+      exit 1
+   }
 
    reload-applications
-
-   print "Theme switch complete!"
 }
