@@ -510,8 +510,27 @@ in
       inherit (lib.lists) singleton;
     in
     {
-      hjem.extraModule = {
-        packages = singleton inputs.helium.packages.${pkgs.stdenv.hostPlatform.system}.default;
-      };
+      environment.systemPackages = [
+        inputs.helium.packages.${pkgs.stdenv.hostPlatform.system}.default
+
+        (pkgs.makeDesktopItem {
+          exec = "helium --force-light-mode";
+          mimeTypes = singleton "image/jpeg";
+          name = "helium";
+          type = "Application";
+          icon = "helium";
+          desktopName = "Helium";
+          genericName = "Web Browser";
+        })
+        (pkgs.makeDesktopItem {
+          exec = "helium --force-dark-mode";
+          mimeTypes = singleton "image/jpeg";
+          name = "helium-dark";
+          type = "Application";
+          icon = "helium";
+          desktopName = "Helium Dark";
+          genericName = "Web Browser";
+        })
+      ];
     };
 }
