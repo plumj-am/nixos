@@ -139,6 +139,7 @@
             enableAttentionSet = true;
             enableAssignee = false;
             diff3ConflictView = true;
+            maxUpdates = 10000;
           };
 
           commentlink = {
