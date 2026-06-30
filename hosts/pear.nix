@@ -10,7 +10,6 @@ in
     modules = with inputs.self.modules.nixos; [
       aspectsBase
 
-      desktop-tools
       harmonia
       jujutsu-extra
       # ncro

@@ -15,13 +15,14 @@ in
       buildbot-worker
       # circus-agent
       # circus-evaluator
+      colour-picker
       claude-code
       desktop-gui
-      desktop-tools
       discord
       disks-bcachefs
       docker-rootless
       editor-extra
+      file-manager
       forgejo-action-runner
       forgejo-cli
       games

@@ -13,12 +13,13 @@ in
       audio
       boot-systemd
       claude-code
+      colour-picker
       desktop-gui
-      desktop-tools
       discord
       disks-normal
       docker-rootless
       editor-extra
+      file-manager
       forgejo-cli
       games
       gammastep

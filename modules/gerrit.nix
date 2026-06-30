@@ -130,7 +130,10 @@
             advertisedAddress = "gerrit.plumj.am:29418";
           };
 
-          cache.web_sessions.maxAge = "3 months";
+          cache = {
+            threads = 2;
+            web_sessions.maxAge = "3 months";
+          };
 
           change = {
             addChangeReviewFootersToCommitMessage = true;
@@ -188,6 +191,8 @@
             name = "Gerrit";
             email = "gerrit@plumj.am";
           };
+
+          receive.timeout = "15min";
 
           sendemail.enable = false;
         };
