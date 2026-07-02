@@ -37,6 +37,7 @@ in
       litellm
       mprocs
       # ncro
+      nextcloud-client
       nix-settings-extra-desktop
       opencode
       packages-extra-linux

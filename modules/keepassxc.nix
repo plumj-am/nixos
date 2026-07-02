@@ -55,26 +55,6 @@ in
         };
       };
 
-      services.syncthing.settings.folders.keepassxc = {
-        label = "keepassxc";
-        id = "/home/jam/keepassxc";
-        path = "/home/jam/keepassxc";
-        devices = [
-          "yuzu"
-          "date"
-          "jam-phone"
-          # "lime" # See below
-        ];
-        ignorePerms = true;
-        versioning = {
-          type = "staggered";
-          params = {
-            cleanInterval = "7200"; # 2h
-            maxAge = "2592000"; # 30d
-          };
-        };
-      };
-
       hjem.extraModule = {
         xdg.mime-apps.default-applications = flip genAttrs (const "org.keepassxc.KeePassXC.desktop") [
           "application/x-keepass2"
@@ -105,16 +85,6 @@ in
       inherit (lib.generators) toINI;
     in
     {
-      # TODO: setup syncthing on darwin and figure out how to handle $HOME differences
-      # services.syncthing.settings.folders.keepassxc = {
-      #   path = "/Users/jam/keepassxc";
-      #   devices = [
-      #     "yuzu"
-      #     "date"
-      #     "lime"
-      #   ];
-      # };
-
       homebrew.casks = singleton "keepassxc";
 
       hjem.extraModule = {

@@ -36,6 +36,7 @@ in
       llama-cpp
       mprocs
       # ncro
+      nextcloud-client
       nix-settings-extra-desktop
       omp
       opencode

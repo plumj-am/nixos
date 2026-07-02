@@ -96,5 +96,91 @@
           ${config.services.nginx.headers}
         '';
       };
+
+    };
+
+  flake.modules.nixos.nextcloud-client =
+    { pkgs, lib, ... }:
+    let
+      inherit (lib.lists) singleton;
+    in
+    {
+      hjem.extraModule = { osConfig, ... }: {
+        packages = singleton pkgs.nextcloud-client;
+        # This is probably a bad idea.
+        xdg.config.files."Nextcloud/nextcloud.cfg" = {
+          type = "copy";
+          permissions = "600"; # Need to set or it won't start.
+          text =
+            # ini
+            ''
+              [General]
+              clientPreviousVersion=
+              clientVersion=33.0.5
+              confirmExternalStorage=true
+              desktopEnterpriseChannel=stable
+              isVfsEnabled=false
+              lastSelectedAccount=0
+              launchOnSystemStartup=true
+              monoIcons=true
+              moveToTrash=false
+              newBigFolderSizeLimit=500
+              notifyExistingFoldersOverLimit=false
+              optionalServerNotifications=true
+              promptDeleteAllFiles=false
+              showCallNotifications=true
+              showChatNotifications=true
+              showInExplorerNavigationPane=false
+              showQuotaWarningNotifications=true
+              stopSyncingExistingFoldersOverLimit=false
+              updateChannel=stable
+              useNewBigFolderSizeLimit=true
+
+              [Accounts]
+              0\Folders\1\ignoreHiddenFiles=false
+              0\Folders\1\journalPath=.sync_2287fed0df6f.db
+              0\Folders\1\localPath=/home/jam/Pictures/
+              0\Folders\1\paused=false
+              0\Folders\1\targetPath=/${osConfig.networking.hostName}/pictures
+              0\Folders\1\version=2
+              0\Folders\1\virtualFilesMode=off
+              0\Folders\2\ignoreHiddenFiles=false
+              0\Folders\2\journalPath=.sync_9618a8250da1.db
+              0\Folders\2\localPath=/home/jam/keepassxc/
+              0\Folders\2\paused=false
+              0\Folders\2\targetPath=/keepassxc
+              0\Folders\2\version=2
+              0\Folders\2\virtualFilesMode=off
+              0\authType=webflow
+              0\dav_user=plumjam
+              0\desktopEnterpriseChannel=invalid
+              0\displayName=plumjam
+              0\encryptionCertificateSha256Fingerprint=@ByteArray()
+              0\networkDownloadLimit=0
+              0\networkDownloadLimitSetting=0
+              0\networkProxyHostName=
+              0\networkProxyNeedsAuth=false
+              0\networkProxyPort=0
+              0\networkProxyType=2
+              0\networkProxyUser=
+              0\networkUploadLimit=0
+              0\networkUploadLimitSetting=0
+              0\serverColor=@Variant(\0\0\0\x43\x1\xff\xff\0\0\x82\x82\xc9\xc9\0\0)
+              0\serverHasValidSubscription=false
+              0\serverTextColor=@Variant(\0\0\0\x43\x1\xff\xff\xff\xff\xff\xff\xff\xff\0\0)
+              0\serverVersion=33.0.5.1
+              0\url=https://cloud.plumj.am
+              0\version=13
+              0\webflow_user=plumjam
+              version=13
+
+              [Nextcloud]
+              autoUpdateCheck=false
+
+              [Settings]
+              geometry=@ByteArray(\x1\xd9\xd0\xcb\0\x3\0\0\xff\xff\xff\xfd\xff\xff\xff\xe2\0\0\x3\xb8\0\0\x3\xf5\0\0\0\0\0\0\0\0\0\0\x3\xb5\0\0\x3\xf2\0\0\0\0\0\0\0\0\a\x80\0\0\0\0\0\0\0\0\0\0\x3\xb5\0\0\x3\xf2)
+            '';
+        };
+      };
     };
 }
