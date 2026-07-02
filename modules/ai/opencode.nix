@@ -47,9 +47,14 @@
               model = "commandcode/deepseek-v4-flash";
               small_model = "commandcode/deepseek-v4-flash";
 
+              experimental = {
+                disable_paste_summary = true;
+              };
+
               plugin = [
                 "commandcode-go-opencode-provider"
                 "@tarquinen/opencode-dcp"
+                "@plannotator/opencode"
               ];
 
               permission = {

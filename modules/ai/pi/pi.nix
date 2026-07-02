@@ -130,10 +130,16 @@
 
                 shellPath = getExe pkgs.bash;
 
+                # NOTE: Do not `extensions = [ "index.ts" ];` it does not work.
+                # Just redact the line to have an index extension loaded.
                 packages = [
                   {
+                    source = "npm:@plannotator/pi-extension";
+                    themes = [ ];
+                    skills = [ ];
+                  }
+                  {
                     source = "git:github.com/patlux/pi-commandcode-provider";
-                    extensions = [ "index.ts" ];
                     themes = [ ];
                     skills = [ ];
                   }
@@ -162,7 +168,8 @@
             # but this way I can add and remove easily.
             ".pi/agent/extensions/system-theme.ts".source = ./extensions/system-theme.ts;
             ".pi/agent/extensions/permissions.ts".source = ./extensions/permissions.ts;
-            ".pi/agent/extensions/plan-mode.ts".source = ./extensions/plan-mode.ts;
+            # Testing plannotator.
+            # ".pi/agent/extensions/plan-mode.ts".source = ./extensions/plan-mode.ts;
             ".pi/agent/extensions/read-only-mode.ts".source = ./extensions/read-only-mode.ts;
             ".pi/agent/extensions/zellij-attention.ts".source = ./extensions/zellij-attention.ts;
             ".pi/agent/extensions/caveman.ts".source = ./extensions/caveman.ts;
