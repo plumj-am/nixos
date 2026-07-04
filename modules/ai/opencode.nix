@@ -87,6 +87,7 @@
                 external_directory = {
                   "/tmp/**" = "allow";
                   "~/.cargo/registry/src/**" = "allow";
+                  "~/.local/share/opencode/**" = "allow";
                 };
               };
 
