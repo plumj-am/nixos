@@ -107,10 +107,11 @@ in
           };
         };
 
-      programs.ssh.extraConfig = ''
-        Host git.plumj.am
-          IdentityFile /root/.ssh/id
-      '';
+      programs.ssh.extraConfig = # ssh
+        ''
+          Host git.plumj.am
+            IdentityFile ${config.sops.secrets.id.path}
+        '';
     };
 
   flake.modules.nixos.openssh-extra-users =
