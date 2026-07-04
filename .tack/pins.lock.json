@@ -8,11 +8,11 @@
     "type": "github"
   },
   "cade": {
-    "lastModified": 1781176544,
-    "narHash": "sha256-MFx0t5f8nQBhWl6WjopW+e19JUKhaDWZ39T7tBmJRHc=",
+    "lastModified": 1782611946,
+    "narHash": "sha256-IjmEV8v2hf6j9jgK44zF1Bwn4G96DHSeFSZg6UjSA2w=",
     "owner": "manic-systems",
     "repo": "cade",
-    "rev": "316562cb400117dd7ec998acf67182566e475318",
+    "rev": "341d4cf80788ec305c28d9159d487d7884111311",
     "type": "github"
   },
   "circus": {
