@@ -108,15 +108,6 @@
                   thinking.type = "enabled";
                 };
 
-                researcher = {
-                  mode = "primary";
-                  model = "commandcode/deepseek/deepseek-v4-flash";
-                  description = "Read-only research primarily using the web";
-                  reasoningEffort = "low";
-                  textVerbosity = "low";
-                  thinking.type = "enabled";
-                };
-
                 general = {
                   mode = "subagent";
                   model = "commandcode/deepseek/deepseek-v4-flash";
