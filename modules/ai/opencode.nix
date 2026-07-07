@@ -55,6 +55,7 @@
                 "commandcode-go-opencode-provider"
                 "@tarquinen/opencode-dcp"
                 "@plannotator/opencode"
+                "opencode-tps-meter"
               ];
 
               permission = {
