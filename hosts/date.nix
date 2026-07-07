@@ -54,6 +54,7 @@ in
       s3-upload
       theme-extra-fonts
       theme-extra-scripts
+      video-player
       window-manager
       zellij
       { hardware.facter.reportPath = ./facter/date.json; }
