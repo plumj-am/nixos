@@ -48,13 +48,14 @@ in
             ];
           };
 
-        # css html js jsx less markdown md sass scss ts tsx yaml yml
+        # css html js jsx less markdown md sass scss ts tsx
         programs.deno = {
           enable = true;
           package = pkgs.deno;
           excludes = [
             "*.json"
             "*.jsonc"
+            "*.yaml" # sops files
           ];
         };
         settings.formatter.deno = {
