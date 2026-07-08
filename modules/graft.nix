@@ -8,7 +8,6 @@ let
 
   nixExtraArgs = [
     "--accept-flake-config"
-    "--allow-import-from-derivation"
     "--builders"
     ""
     "--cores"
