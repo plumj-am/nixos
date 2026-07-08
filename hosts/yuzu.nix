@@ -33,7 +33,7 @@ in
       keepassxc
       kitty
       litellm
-      llama-cpp
+      # llama-cpp
       mprocs
       # ncro
       nextcloud-client
