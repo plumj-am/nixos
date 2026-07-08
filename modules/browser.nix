@@ -533,4 +533,13 @@ in
         })
       ];
     };
+
+  flake.modules.common.brave =
+    { pkgs, lib, ... }:
+    let
+      inherit (lib.lists) singleton;
+    in
+    {
+      environment.systemPackages = singleton pkgs.brave;
+    };
 }

@@ -12,6 +12,7 @@ in
 
       audio
       boot-systemd
+      brave
       colour-picker
       claude-code
       desktop-gui
