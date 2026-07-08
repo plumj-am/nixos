@@ -43,7 +43,7 @@
   },
   "grove": {
     "type": "git",
-    "url": "https://git.plumj.am/grove-systems/grove",
+    "url": "ssh://forgejo@git.plumj.am/grove-systems/grove",
     "ref": "HEAD",
     "rev": "466d92eaac3777d06ee696811223b48c1663d153",
     "narHash": "sha256-BoiiT5i+skb/gnMGMNFYHKJ/KyKUma7vSG5zm5NFo8k=",

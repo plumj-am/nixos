@@ -8,6 +8,7 @@ let
 
   nixExtraArgs = [
     "--accept-flake-config"
+    "--allow-import-from-derivation"
     "--builders"
     ""
     "--cores"
@@ -30,13 +31,19 @@ in
     let
       inherit (lib.lists) singleton;
       inherit (lib') merge;
-      inherit (config.networking) domain;
+      inherit (config.networking) domain hostName;
       inherit (config.sops) secrets;
     in
     {
       imports = singleton inputs.grove.nixosModules.graft-sentinel;
 
       sops.secrets.graft-environment.sopsFile = ../secrets/services/graft.yaml;
+
+      sops.secrets."graft-ssh" = {
+        sopsFile = ../secrets/${hostName}/graft-ssh.yaml;
+        group = "graft";
+        mode = "0440";
+      };
 
       services.graft-sentinel = {
         enable = true;
@@ -131,6 +138,13 @@ in
       services.nginx.virtualHosts."graft.${domain}" = merge config.services.nginx.sslTemplate {
         locations."/".proxyPass = "http://127.0.0.1:${toString sentinelHttpPort}";
       };
+
+      systemd.services.graft-sentinel = {
+        environment.GIT_SSH_COMMAND = "${pkgs.openssh}/bin/ssh -i ${
+          config.sops.secrets."graft-ssh".path
+        } -o StrictHostKeyChecking=accept-new";
+        serviceConfig.BindReadOnlyPaths = [ config.sops.secrets."graft-ssh".path ];
+      };
     };
 
   flake.modules.nixos.graft-node =
@@ -148,6 +162,12 @@ in
     in
     {
       imports = singleton inputs.grove.nixosModules.graft-node;
+
+      sops.secrets."graft-ssh" = {
+        sopsFile = ../secrets/${hostName}/graft-ssh.yaml;
+        group = "graft";
+        mode = "0440";
+      };
 
       services.graft-node = {
         enable = true;
@@ -190,6 +210,12 @@ in
             quiet_hours_end = "10:00";
           };
         };
+      };
+
+      systemd.services.graft-node = {
+        environment.GIT_SSH_COMMAND = "${pkgs.openssh}/bin/ssh -i ${
+          config.sops.secrets."graft-ssh".path
+        } -o StrictHostKeyChecking=accept-new";
       };
     };
 }
