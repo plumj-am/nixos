@@ -130,6 +130,8 @@
         "git show*"
         "git status*"
 
+        "cabal build*"
+
         "cargo build*"
         "cargo check*"
         "cargo clippy*"
