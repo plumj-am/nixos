@@ -21,7 +21,7 @@
 
       # Evaluate packages as checks.
       # Need to fix IFD in rsh.
-      blacklistPackages = singleton "rad-seed-helper";
+      blacklistPackages = [ ];
       packages =
         mapAttrs' (n: nameValuePair "package-${n}")
         <| filterAttrs (n: _: !(elem n blacklistPackages))

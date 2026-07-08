@@ -50,7 +50,7 @@ let
         in
         {
           packages = [
-            inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.rad-seed-helper
+            # inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.rsh-rsh
             pkgs.radicle-node
           ];
 

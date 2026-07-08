@@ -147,9 +147,9 @@ All secrets are handled by [sops-nix](https://github.com/mic92/sops-nix).
 ### Imports
 
 Imports are handled by an `importTree` function in `outputs.nix`. It
-automatically imports all nix files in the specified directories (`./modules`,
-`./hosts`, and `./packages` in my case). Directories and files prefixed with `_`
-are excluded e.g. `_scripts/`.
+automatically imports all nix files in the specified directories (`./modules`
+and `./hosts` in my case). Directories and files prefixed with `_` are excluded
+e.g. `_scripts/`.
 
 ### myLib
 
@@ -266,7 +266,6 @@ The structure of the repository and a few key files are highlighted below:
 ```sh
 .
 ├── hosts/             # All hosts live in here
-├── packages/          # Some packages I expose in the flake
 ├── modules/           # All modules live in here
 │   ├── theme.nix      # System-wide theming
 │   ├── ...
