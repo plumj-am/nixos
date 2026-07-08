@@ -162,7 +162,8 @@
 
           commitmessage = {
             maxSubjectLength = 65;
-            maxLineLength = 80;
+            # I want 80 but longer than 72 looks awful in Gerrit commit message preview :/
+            maxLineLength = 72;
             longLinesThreshold = 33;
             rejectTooLong = true;
           };
