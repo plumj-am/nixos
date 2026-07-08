@@ -38,7 +38,7 @@ in
       { hardware.facter.reportPath = ./facter/sloe.json; }
       # TODO: Fix properly. Issue caused by using sdX I think.
       # It changes the boot device by itself occasionally.
-      { disko.devices.disk.disk1.device = "/dev/sda"; }
+      { disko.devices.disk.disk1.device = "/dev/sdb"; }
       {
         config = mkConfig inputs "sloe" "x86_64-linux" {
           networking = {
