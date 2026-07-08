@@ -99,8 +99,20 @@ in
                 ];
                 trim-trailing-whitespace = true;
                 true-color = true;
+                statusline = {
+                  diagnostics = [
+                    "hint"
+                    "info"
+                    "warning"
+                    "error"
+                  ];
+                };
                 lsp.display-inlay-hints = true;
-                inline-diagnostics.cursor-line = "hint";
+                inline-diagnostics = {
+                  cursor-line = "hint";
+                  other-lines = "disable";
+                };
+                end-of-line-diagnostics = "hint";
                 jump-label-alphabet = "jfkdls;aurieowpqnvmcxz";
                 cursor-shape = {
                   normal = "block";
@@ -117,49 +129,39 @@ in
                 };
               };
 
-              keys = {
-                select = {
-                  "C-j" = "@X*dp";
-                  "C-k" = "@X*dkP";
+              keys =
+                let
+                  shared = {
+                    # Move lines up and down. Use `z` register to avoid clobbering system or primary clipboard.
+                    "C-j" = "@X\"zd\"zp";
+                    "C-k" = "@X\"zdk\"zP";
 
-                  "q" = "record_macro";
-                  "@" = "replay_macro";
+                    "q" = "record_macro";
+                    "@" = "replay_macro";
 
-                  "C-X" = "select_line_above";
+                    "C-x" = "select_line_above";
 
-                  "D" = "extend_to_line_end";
+                    "D" = "extend_to_line_end";
 
-                  "space"."B" =
-                    '':sh echo $"# git blame:(char nl)  (git blame -L %{cursor_line},+1 %{buffer_name} | cut -c1-60)"'';
-                };
+                    "space"."B" =
+                      '':sh echo $"# git blame:(char nl)  (git blame -L %{cursor_line},+1 %{buffer_name} | cut -c1-60)"'';
+                  };
+                in
+                {
+                  select = shared;
+                  normal = shared // {
+                    "'" = {
+                      # Hack to have a custom popup helper with a title.
+                      _ = "@ File Management\n";
 
-                normal = {
-                  # Move lines up and down. Use `z` register to avoid clobbering system or primary clipboard.
-                  "C-j" = "@X\"zd\"zp";
-                  "C-k" = "@X\"zdk\"zP";
-
-                  "q" = "record_macro";
-                  "@" = "replay_macro";
-
-                  "C-X" = "select_line_above";
-
-                  "D" = "extend_to_line_end";
-
-                  "space"."B" =
-                    '':sh echo $"# git blame:(char nl)  (git blame -L %{cursor_line},+1 %{buffer_name} | cut -c1-60)"'';
-
-                  "'" = {
-                    # Hack to have a custom popup helper with a title.
-                    _ = "@ File Management\n";
-
-                    t = "@:sh touch <C-r>%";
-                    r = "@:sh rm <C-r>%";
-                    k = "@:sh mkdir <C-r>%";
-                    m = "@:sh mv <C-r>% <C-r>%";
-                    c = "@:sh cp <C-r>% <C-r>%";
+                      t = "@:sh touch <C-r>%";
+                      r = "@:sh rm <C-r>%";
+                      k = "@:sh mkdir <C-r>%";
+                      m = "@:sh mv <C-r>% <C-r>%";
+                      c = "@:sh cp <C-r>% <C-r>%";
+                    };
                   };
                 };
-              };
             };
           };
           "helix/languages.toml" = {
