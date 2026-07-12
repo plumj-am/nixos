@@ -49,6 +49,9 @@ let
         ];
 
       filters = [
+        # GRAVATAR
+        "@@||www.gravatar.com^"
+
         # YOUTUBE SHORTS -> WATCH
         # regex
         ''||youtube.com/shorts/$document,uritransform=/^https:\/\/(?:www\.|m\.)?youtube\.com\/shorts\/([^\/?#]+)/https:\/\/www.youtube.com\/watch?v=\$1/''
