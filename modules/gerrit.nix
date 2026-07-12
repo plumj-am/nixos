@@ -11,15 +11,86 @@
     let
       inherit (lib.modules) mkForce;
       inherit (lib.lists) singleton;
+      inherit (lib.attrsets) mapAttrsToList;
       inherit (lib') merge;
       inherit (config.myLib) mkResticBackup;
       inherit (config.networking) domain;
       inherit (config.sops) secrets;
 
-      port = 8011;
+      sshPort = "29418";
+      httpPort = "8011";
+      fqdn = "gerrit.${domain}";
+
+      stable = "3.14";
+      exact = "${stable}.1";
+
+      stateDir = "/var/lib/gerrit";
+
+      builtinPlugins = [
+        "commit-message-length-validator"
+        "download-commands"
+        "gitiles"
+        "hooks"
+        "replication"
+        "reviewnotes"
+        "webhooks"
+      ];
+
+      externalPlugins = {
+        oauth = {
+          src = "bazel";
+          sha256 = "sha256-iUK6WSRLtuZMhZyKRuViKNlEvYFvy2TPUDF6yGgpluk=";
+        };
+        code-owners = {
+          src = "bazel";
+          sha256 = "sha256-PX8nXvzuIn7ujVtq48tWTWLkufSjmBZmyGjOgb2xqfc=";
+        };
+        avatars-gravatar = {
+          src = "bazel-master";
+          sha256 = "sha256-A3g7kpwoZosBUWPTgOk9xsDBzO/mFu+klQIW3D83zaQ=";
+        };
+        git-repo-metrics = {
+          src = "gh-bazel";
+          sha256 = "sha256-z0HioEl32WOi6pLN8ECP6jLs+ddthlgITyUxM7fzjVY=";
+        };
+        ai-review-agent-provider = {
+          src = "gh-bazel";
+          sha256 = "sha256-JJrEDeuWfFw3Zkmc6nGWSX/QPKEixo9IDqxsacHBcdc=";
+        };
+        account = {
+          src = "gh-bazel";
+          sha256 = "sha256-Qi527xYVbenWTLM4ddzk44g0Z8El67LgR9Jq86MNsCc=";
+        };
+        # TODO: try a newer build in a week or so (19/07)
+        # replication-status = {
+        #   src = "gh-bazel";
+        #   sha256 = "sha256-NyebDV+OHgIXNJ0t6uy1nzVMeJiCJewB33tozXnMcFc=";
+        # };
+      };
+
+      plugins = mapAttrsToList (
+        name: p:
+        pkgs.fetchurl {
+          url = "https://gerrit-ci.gerritforge.com/job/plugin-${name}-${p.src}-stable-${stable}/lastSuccessfulBuild/artifact/bazel-bin/plugins/${name}/${name}.jar";
+          inherit (p) sha256;
+        }
+      ) externalPlugins;
     in
     {
       imports = singleton inputs.gerrit-autosubmit.nixosModules.default;
+
+      # TODO: Remove after https://github.com/NixOS/nixpkgs/pull/521466 merges.
+      nixpkgs.overlays = singleton (
+        final: prev: {
+          gerrit = prev.gerrit.overrideAttrs {
+            version = exact;
+            src = final.fetchurl {
+              url = "https://gerrit-releases.storage.googleapis.com/gerrit-${exact}.war";
+              hash = "sha256-AjMQcGGfEKJ2eR1xXzaqp6bs8OT4S6u/G7Y3JDbAVu0=";
+            };
+          };
+        }
+      );
 
       sops.secrets = {
         "gerrit/secure-config" = {
@@ -36,8 +107,8 @@
       };
 
       services.restic.backups.gerrit = mkResticBackup "gerrit" {
-        paths = [ "/var/lib/gerrit" ];
-        exclude = [ "/var/lib/gerrit/tmp" ];
+        paths = singleton stateDir;
+        exclude = singleton "${stateDir}/tmp";
         timerConfig = {
           OnCalendar = "hourly";
           Persistent = true;
@@ -46,27 +117,27 @@
 
       systemd.services.gerrit-keys = {
         enable = true;
-        before = [ "gerrit.service" ];
-        wantedBy = [ "gerrit.service" ];
-        after = [ "network.target" ];
+        before = singleton "gerrit.service";
+        wantedBy = singleton "gerrit.service";
+        after = singleton "network.target";
         serviceConfig = {
           Type = "oneshot";
           RemainAfterExit = true;
-          WorkingDirectory = "/var/lib/gerrit";
+          WorkingDirectory = stateDir;
         };
         script = ''
-          mkdir -p /var/lib/gerrit/.ssh
-          cp ${secrets."gerrit/replication-key".path} /var/lib/gerrit/.ssh/id_replication
-          cat > /var/lib/gerrit/.ssh/config <<EOF
+          mkdir -p ${stateDir}/.ssh
+          cp ${secrets."gerrit/replication-key".path} ${stateDir}/.ssh/id_replication
+          cat > ${stateDir}/.ssh/config <<EOF
           Host *
-            IdentityFile /var/lib/gerrit/.ssh/id_replication
+            IdentityFile ${stateDir}/.ssh/id_replication
           EOF
-          chmod 600 /var/lib/gerrit/.ssh/id_replication
-          chmod 600 /var/lib/gerrit/.ssh/config
-          chmod 700 /var/lib/gerrit/.ssh
-          cp -L /etc/ssh/ssh_known_hosts /var/lib/gerrit/.ssh/known_hosts
-          chmod 600 /var/lib/gerrit/.ssh/known_hosts
-          chown -R git:git /var/lib/gerrit/.ssh
+          chmod 600 ${stateDir}/.ssh/id_replication
+          chmod 600 ${stateDir}/.ssh/config
+          chmod 700 ${stateDir}/.ssh
+          cp -L /etc/ssh/ssh_known_hosts ${stateDir}/.ssh/known_hosts
+          chmod 600 ${stateDir}/.ssh/known_hosts
+          chown -R git:git ${stateDir}/.ssh
 
           ln --symbolic --force ${secrets."gerrit/secure-config".path} etc/secure.config
         '';
@@ -75,7 +146,7 @@
       users.users.git = {
         isSystemUser = true;
         group = "git";
-        home = "/var/lib/gerrit";
+        home = stateDir;
         createHome = false;
       };
       users.groups.git = { };
@@ -87,31 +158,12 @@
       };
       services.gerrit = {
         enable = true;
-        package = inputs.gerrit.packages.${pkgs.stdenv.hostPlatform.system}.gerrit.overrideAttrs (old: {
-          # Remove the patch that appends version string with "-dirty-nix" so
-          # status updates can sent to Gerrit.
-          postPatch =
-            lib.replaceStrings [ "sed -Ei 's,^(STABLE_BUILD_GERRIT_LABEL.*)$,\\1-dirty-nix,' .version" ] [ "" ]
-              old.postPatch;
-        });
 
         serverId = "e731e7e0-0873-4a69-a2b4-77a527800a3a";
         jvmHeapLimit = "1536m";
-        listenAddress = "[::]:${toString port}";
+        listenAddress = "[::]:${httpPort}";
 
-        builtinPlugins = [
-          "commit-message-length-validator"
-          "download-commands"
-          "gitiles"
-          "hooks"
-          "replication"
-          "reviewnotes"
-          "webhooks"
-        ];
-        plugins = [
-          inputs.gerrit.packages.${pkgs.stdenv.hostPlatform.system}.oauth
-          inputs.gerrit.packages.${pkgs.stdenv.hostPlatform.system}.code-owners
-        ];
+        inherit builtinPlugins plugins;
 
         settings = {
           auth = {
@@ -123,11 +175,11 @@
           };
           oauth.allowRegisterNewEmail = true;
 
-          httpd.listenUrl = "proxy-https://[::]:${toString port}";
+          httpd.listenUrl = "proxy-https://[::]:${httpPort}";
 
           sshd = {
-            listenAddress = "[::]:29418";
-            advertisedAddress = "gerrit.plumj.am:29418";
+            listenAddress = "[::]:${sshPort}";
+            advertisedAddress = "${fqdn}:${sshPort}";
           };
 
           cache = {
@@ -176,7 +228,7 @@
           ];
 
           gerrit = {
-            canonicalWebUrl = "https://gerrit.plumj.am";
+            canonicalWebUrl = "https://${fqdn}";
             docUrl = "/Documentation";
           };
 
@@ -220,14 +272,14 @@
             remoteNameStyle = "dash";
             mirror = false;
             replicatePermissions = true;
-            projects = [ "grove" ];
+            projects = singleton "grove";
           };
         };
       };
 
       services.gerrit-autosubmit = {
         enable = true;
-        gerritUrl = "https://gerrit.plumj.am";
+        gerritUrl = "https://${fqdn}";
         gerritUsername = "autosubmit-bot";
         secretsFile = secrets."gerrit-autosubmit/environment".path;
       };
@@ -235,9 +287,9 @@
       networking.firewall.allowedTCPPorts = singleton 29418;
 
       services.nginx.recommendedProxySettings = mkForce false;
-      services.nginx.virtualHosts."gerrit.${domain}" = merge config.services.nginx.sslTemplate {
+      services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
         locations."/" = {
-          proxyPass = "http://localhost:${toString port}";
+          proxyPass = "http://localhost:${httpPort}";
           extraConfig = # nginx
             ''
               proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
