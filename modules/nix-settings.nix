@@ -18,6 +18,7 @@ in
       inputs,
       pkgs,
       lib,
+      config,
       ...
     }:
     let
@@ -33,10 +34,15 @@ in
           '';
     in
     {
+
+      sops.secrets."github-token".sopsFile = ../secrets/all/nix.yaml;
+
+      sops.templates."nix-access-tokens".content = ''
+        access-tokens = github.com=${config.sops.placeholder."github-token"}
+      '';
+
       nix.package = mkDefault pkgs.nixVersions.latest;
-      nix.channel = {
-        enable = false;
-      };
+      nix.channel.enable = false;
 
       nix.gc = {
         automatic = true;
@@ -95,6 +101,10 @@ in
           "uid-range" # For nspawn vm tests.
         ];
       };
+
+      nix.extraOptions = ''
+        !include ${config.sops.templates."nix-access-tokens".path}
+      '';
 
       nix.optimise.automatic = true;
     };
