@@ -54,17 +54,9 @@
                   type = "api_key";
                   key = "!cat ${osConfig.sops.secrets."llm7-key".path}";
                 };
-                openrouter = {
-                  type = "api_key";
-                  key = "!cat ${osConfig.sops.secrets."openrouter-key".path}";
-                };
                 ollama = {
                   type = "api_key";
                   key = "!cat ${osConfig.sops.secrets."ollama-key".path}";
-                };
-                sambanova = {
-                  type = "api_key";
-                  key = "!cat ${osConfig.sops.secrets."sambanova-key".path}";
                 };
               };
             };

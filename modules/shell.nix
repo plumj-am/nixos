@@ -141,9 +141,7 @@
                     --ro-bind /run/secrets/nvidia-nim-key /run/secrets/nvidia-nim-key
                     --ro-bind /run/secrets/codestral-key /run/secrets/codestral-key
                     --ro-bind /run/secrets/llm7-key /run/secrets/llm7-key
-                    --ro-bind /run/secrets/openrouter-key /run/secrets/openrouter-key
                     --ro-bind /run/secrets/ollama-key /run/secrets/ollama-key
-                    --ro-bind /run/secrets/sambanova-key /run/secrets/sambanova-key
                     --ro-bind /run/current-system /run/current-system
                     --ro-bind /etc/profiles/per-user/${user}/bin /etc/profiles/per-user/${user}/bin
                     --ro-bind /etc/resolv.conf /etc/resolv.conf
@@ -173,9 +171,7 @@
                     --setenv NVIDIA_API_KEY (^cat /run/secrets/nvidia-nim-key)
                     --setenv CODESTRAL_API_KEY (^cat /run/secrets/codestral-key)
                     --setenv LLM7_API_KEY (^cat /run/secrets/llm7-key)
-                    --setenv OPENROUTER_API_KEY (^cat /run/secrets/openrouter-key)
                     --setenv OLLAMA_API_KEY (^cat /run/secrets/ollama-key)
-                    --setenv SAMBANOVA_API_KEY (^cat /run/secrets/sambanova-key)
                     --setenv EXA_API_KEY (^cat /run/secrets/exa-key)
                     --setenv IN_BWRAP 1
                     -- $tool ...$rest)
