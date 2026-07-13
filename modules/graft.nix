@@ -57,6 +57,7 @@ in
             host = localGrpcHost;
             port = sentinelHttpPort;
             dashboard_url = "https://graft.plumj.am";
+            checks_api_enabled = true;
           };
 
           grpc = {

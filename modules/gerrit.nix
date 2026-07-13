@@ -9,7 +9,7 @@
       ...
     }:
     let
-      inherit (lib.modules) mkForce;
+      inherit (lib.modules) mkAfter mkForce;
       inherit (lib.lists) singleton;
       inherit (lib.attrsets) mapAttrsToList;
       inherit (lib') merge;
@@ -36,45 +36,79 @@
         "webhooks"
       ];
 
+      checksPlugin =
+        pkgs.writers.writeText "graft-checks.js" # js
+          ''
+            Gerrit.install(plugin => {
+              plugin.checks().register({
+                fetch: async (change) => {
+                  const resp = await fetch(
+                    `/checks/api?project=''${encodeURIComponent (change.repo)}&change=''${change.changeNumber}&patchset=''${change.patchsetNumber}`,
+                    { credentials: 'include' }
+                  );
+                  if (!resp.ok) {
+                    return { responseCode: 'OK', runs: [] };
+                  }
+                  const data = await resp.json();
+                  return { responseCode: 'OK', runs: data.runs };
+                },
+              }, {
+                fetchPollingIntervalSeconds: 60,
+              });
+            });
+          '';
+
       externalPlugins = {
         oauth = {
-          src = "bazel";
+          src = "bazel-stable-${stable}";
           sha256 = "sha256-iUK6WSRLtuZMhZyKRuViKNlEvYFvy2TPUDF6yGgpluk=";
         };
         code-owners = {
-          src = "bazel";
+          src = "bazel-stable-${stable}";
           sha256 = "sha256-PX8nXvzuIn7ujVtq48tWTWLkufSjmBZmyGjOgb2xqfc=";
         };
         avatars-gravatar = {
-          src = "bazel-master";
+          src = "bazel-master-stable-${stable}";
           sha256 = "sha256-A3g7kpwoZosBUWPTgOk9xsDBzO/mFu+klQIW3D83zaQ=";
         };
         git-repo-metrics = {
-          src = "gh-bazel";
+          src = "gh-bazel-stable-${stable}";
           sha256 = "sha256-z0HioEl32WOi6pLN8ECP6jLs+ddthlgITyUxM7fzjVY=";
         };
         ai-review-agent-provider = {
-          src = "gh-bazel";
+          src = "gh-bazel-stable-${stable}";
           sha256 = "sha256-JJrEDeuWfFw3Zkmc6nGWSX/QPKEixo9IDqxsacHBcdc=";
         };
         account = {
-          src = "gh-bazel";
+          src = "gh-bazel-master-master-stable-${stable}";
           sha256 = "sha256-Qi527xYVbenWTLM4ddzk44g0Z8El67LgR9Jq86MNsCc=";
         };
-        # TODO: try a newer build in a week or so (19/07)
+        #
         # replication-status = {
-        #   src = "gh-bazel";
+        #   src = "gh-bazel-stable-${stable}";
         #   sha256 = "sha256-NyebDV+OHgIXNJ0t6uy1nzVMeJiCJewB33tozXnMcFc=";
         # };
+        # For scripts.
+        groovy-provider = {
+          src = "gh-bazel-master-stable-${stable}";
+          sha256 = "sha256-Pdvb6kGrzdnLtvCRNyRUZt2LjpmggTXThyBWA4I+lIg=";
+        };
       };
 
-      plugins = mapAttrsToList (
-        name: p:
-        pkgs.fetchurl {
-          url = "https://gerrit-ci.gerritforge.com/job/plugin-${name}-${p.src}-stable-${stable}/lastSuccessfulBuild/artifact/bazel-bin/plugins/${name}/${name}.jar";
-          inherit (p) sha256;
-        }
-      ) externalPlugins;
+      plugins =
+        mapAttrsToList (
+          name: p:
+          pkgs.fetchurl {
+            url = "https://gerrit-ci.gerritforge.com/job/plugin-${name}-${p.src}/lastStableBuild/artifact/bazel-bin/plugins/${name}/${name}.jar";
+            inherit (p) sha256;
+          }
+        ) externalPlugins
+        ++ [ checksPlugin ];
+
+      groovyScript = pkgs.fetchurl {
+        url = "https://gerrit.googlesource.com/plugins/scripts/+/refs/heads/master/ai/ai-review-agent-openai-compatible-1.0.groovy";
+        sha256 = "sha256-RkXD7DcEke0Y70w+/Zj/dtdJvNR6mXfINDX5Is/X+PQ=";
+      };
     in
     {
       imports = singleton inputs.gerrit-autosubmit.nixosModules.default;
@@ -156,6 +190,10 @@
         User = "git";
         Group = "git";
       };
+      systemd.services.gerrit.serviceConfig.ExecStartPre = [
+        "+${pkgs.coreutils}/bin/mkdir -p ${stateDir}/groovy"
+        "+${pkgs.coreutils}/bin/cp ${groovyScript} ${stateDir}/groovy/ai-review-agent-openai-compatible-1.0.groovy"
+      ];
       services.gerrit = {
         enable = true;
 
@@ -242,6 +280,12 @@
               enableImplicitApprovals = "TRUE";
               disabledBranch = "refs/meta/config";
             };
+
+            ai-review-agent-openai-compatible = {
+              baseUrl = "https://opencode.ai/zen/v1";
+            };
+
+            "groovy-provider".scriptsDir = stateDir;
           };
 
           user = {
@@ -298,6 +342,31 @@
               proxy_read_timeout 3600;
               proxy_cookie_path / /; # Reset from commonHttpConfig in ./nginx.nix
               # Gerrit should be left to handle it's own cookies or it breaks oauth.
+            '';
+        };
+        locations."/internal/gerrit-auth-check" = {
+          proxyPass = "http://localhost:${httpPort}/a/accounts/self";
+          extraConfig = # nginx
+            ''
+              internal;
+              proxy_pass_request_body off;
+              proxy_set_header Content-Length "";
+              # Forward the browser's Gerrit session cookie
+              proxy_set_header Cookie $http_cookie;
+            '';
+        };
+
+        locations."/checks/" = {
+          proxyPass = "http://sloe.taild29fec.ts.net:8019";
+          extraConfig = # nginx
+            ''
+              auth_request /internal/gerrit-auth-check;
+              # The Gerrit checks plugin fetches /checks/api; graft serves /api/checks.
+              rewrite ^/checks/api$ /api/checks break;
+              proxy_set_header Host $host;
+              proxy_set_header X-Real-IP $remote_addr;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto $scheme;
             '';
         };
       };
