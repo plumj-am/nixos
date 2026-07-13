@@ -1,6 +1,7 @@
 {
   flake.modules.common.shell-tools =
     {
+      inputs,
       pkgs,
       lib,
       config,
@@ -29,6 +30,8 @@
           pkgs.nnn
           pkgs.ripgrep
           pkgs.vivid
+
+          inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.rustle
         ];
 
         environment.sessionVariables = {
