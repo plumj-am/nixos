@@ -106,12 +106,12 @@
                 {
                   default = "${model}:auto";
                   smol = "${model}:off";
-                  slow = "${model}:high";
-                  plan = "${model}:high";
+                  slow = "${model}:max";
+                  plan = "${model}:max";
                   vision = "${model}:low";
                   designer = "${model}:low";
                   commit = "${model}:off";
-                  task = "${model}:minimal";
+                  task = "${model}:low";
                 };
               enabledModels = [ ]; # all
               shellPath = getExe pkgs.bash;
@@ -121,7 +121,7 @@
 
               # [model]
               advisor = {
-                enabled = true;
+                enabled = false; # Can't choose model yet?
                 syncBacklog = 5;
               };
               defaultThinkingLevel = "medium";
@@ -178,6 +178,16 @@
               browser.enabled = true;
               async.enabled = true;
               mcp.discoveryMode = true;
+              skills = {
+                enabled = true;
+                enableCodexUser = false;
+                enableClaudeUser = false;
+                enablePiUser = false;
+                enableAgentsUser = false;
+                enableClaudeProject = false;
+                enablePiProject = false;
+                enableAgentsProject = false;
+              };
 
               # [shell]
               bash = {
