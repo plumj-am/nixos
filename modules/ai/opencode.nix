@@ -56,6 +56,7 @@
                 "@tarquinen/opencode-dcp"
                 "@plannotator/opencode"
                 "opencode-tps-meter"
+                "@dietrichgebert/ponytail"
               ];
 
               permission = {
