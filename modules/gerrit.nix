@@ -9,7 +9,7 @@
       ...
     }:
     let
-      inherit (lib.modules) mkAfter mkForce;
+      inherit (lib.modules) mkForce;
       inherit (lib.lists) singleton;
       inherit (lib.attrsets) mapAttrsToList;
       inherit (lib') merge;

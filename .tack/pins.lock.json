@@ -23,15 +23,6 @@
     "narHash": "sha256-xXONk0mfpVtFSaZZp21bjw1eRud0dFJ2jpVQ/TQX7ZY=",
     "lastModified": 1784276287
   },
-  "gerrit": {
-    "type": "git",
-    "url": "https://git.afnix.fr/afnix/nix-gerrit",
-    "ref": "refs/heads/main",
-    "rev": "d223099f23d8ace53eb309e40046c5086c4473fb",
-    "narHash": "sha256-q9aIvIKBBvc2HqwNDf2qUDv88wkCurczSuty1xiHzMc=",
-    "lastModified": 1769786825,
-    "revCount": 39
-  },
   "gerrit-autosubmit": {
     "type": "git",
     "url": "https://git.plumj.am/plumjam/gerrit-autosubmit",

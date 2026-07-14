@@ -2,7 +2,6 @@
 cade.url              = "gh:manic-systems/cade?ref=next"
 disko.url             = "gh:nix-community/disko"
 fenix.url             = "gh:nix-community/fenix"
-gerrit.url            = "afnix:afnix/nix-gerrit"
 gerrit-autosubmit.url = "plumjam:plumjam/gerrit-autosubmit"
 grove.url             = "git+ssh://forgejo@git.plumj.am/grove-systems/grove"
 harmonia.url          = "gh:nix-community/harmonia"
