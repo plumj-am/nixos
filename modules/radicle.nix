@@ -27,7 +27,6 @@ let
 
   radicleUserBase =
     {
-      inputs,
       lib,
       ...
     }:

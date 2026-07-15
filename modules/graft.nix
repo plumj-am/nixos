@@ -30,7 +30,7 @@ in
     let
       inherit (lib.lists) singleton;
       inherit (lib') merge;
-      inherit (config.networking) domain hostName;
+      inherit (config.networking) domain;
       inherit (config.sops) secrets;
     in
     {
@@ -39,7 +39,7 @@ in
       sops.secrets.graft-environment.sopsFile = ../secrets/services/graft.yaml;
 
       sops.secrets."graft-ssh" = {
-        sopsFile = ../secrets/${hostName}/graft-ssh.yaml;
+        sopsFile = ../secrets/services/graft-ssh.yaml;
         group = "graft";
         mode = "0440";
       };
@@ -219,7 +219,7 @@ in
       imports = singleton inputs.grove.nixosModules.graft-node;
 
       sops.secrets."graft-ssh" = {
-        sopsFile = ../secrets/${hostName}/graft-ssh.yaml;
+        sopsFile = ../secrets/services/graft-ssh.yaml;
         group = "graft";
         mode = "0440";
       };
