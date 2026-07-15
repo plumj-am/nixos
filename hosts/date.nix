@@ -46,6 +46,7 @@ in
       quickshell
       rust-desktop
       rss-tui
+      shed
       sops
       sudo-desktop
       syncthing
