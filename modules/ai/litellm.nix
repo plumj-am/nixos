@@ -10,8 +10,6 @@
       inherit (lib.modules) mkForce;
       inherit (config.sops) secrets;
 
-      # Check with:
-      # curl -s https://opencode.ai/zen/go/v1/models -H (cat /run/secrets/opencode-go-key) | jq '.data[].id'
       models = [
         # MINIMAX works
         {

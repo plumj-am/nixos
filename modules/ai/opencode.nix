@@ -23,17 +23,31 @@
           '';
       };
 
-      big = "commandcode/deepseek-v4-pro";
+      # let cf = http get api.commandcode.ai/provider/v1/models | get data.id | where ("free" in $it) | sort
+      # let of = http get opencode.ai/zen/v1/models | get data.id | where ("free" in $it) | sort
+      # let cp = http get api.commandcode.ai/provider/v1/models | get data.id | where ("free" not-in $it) | sort
+      # [
+      #   {type: "free", opencode: $of, commandcode: $cf}
+      #   {type: "paid", opencode: [],  commandcode: $cp}
+      # ] | table --expand --index false --theme single
+      big = "commandcode/deepseek-v4-flash";
       small = "commandcode/deepseek-v4-flash";
       cheap = "opencode/deepseek-v4-flash-free";
 
       bigFallback = [
+        "commandcode/qwen3.7-flash"
         "commandcode/minimax-m3"
       ];
       smallFallback = [
+        "commandcode/qwen3.7-flash"
         "opencode/deepseek-v4-flash-free"
       ];
       cheapFallback = [
+        "opencode/deepseek-v4-flash-free"
+        "opencode/laguna-s-2.1-free"
+        "opencode/ling-3.0-flash-free"
+        "commandcode/laguna-s-2.1-free"
+        "commandcode/ling-3.0-flash-free"
         "commandcode/step-3.5-flash"
         "commandcode/deepseek-v4-flash"
       ];
@@ -169,6 +183,16 @@
                   minimax-m3 = {
                     id = "MiniMaxAI/MiniMax-M3";
                     name = "MiniMax M3";
+                    reasoning = true;
+                    tool_call = true;
+                    limit = {
+                      context = 1000000;
+                      output = 131072;
+                    };
+                  };
+                  "qwen3.7-flash" = {
+                    id = "Qwen/Qwen3.7-Flash";
+                    name = "Qwen 3.7 Flash";
                     reasoning = true;
                     tool_call = true;
                     limit = {
