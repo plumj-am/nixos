@@ -39,6 +39,7 @@
               "ollama-key"
               "exa-key"
               "context7-key"
+              "command-code-auth-json"
             ]
           // {
             litellm-environment = {
