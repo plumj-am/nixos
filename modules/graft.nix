@@ -82,6 +82,20 @@ in
               forgejo_repo_name = "nixos";
             };
 
+            fff-hx = {
+              display_name = "fff.hx";
+              forge = "forgejo";
+              clone_uri = "https://git.plumj.am/plumjam/fff.hx";
+              flake_ref = ".#checks";
+              systems = [ "x86_64-linux" ];
+              build_timeout_secs = 3600;
+              poll_interval_secs = 30;
+              users = [ "plumjam" ];
+              forgejo_url = "https://git.plumj.am";
+              forgejo_repo_owner = "plumjam";
+              forgejo_repo_name = "fff.hx";
+            };
+
             grove = {
               display_name = "Grove";
               forge = "gerrit";
