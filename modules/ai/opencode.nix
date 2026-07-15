@@ -144,7 +144,7 @@
 
                 options = {
                   baseURL = "https://api.commandcode.ai/provider/v1";
-                  apiKey = "{env:COMMANDCODE_API_KEY}";
+                  apiKey = "{file:/run/secrets/command-code-key}";
                 };
 
                 timeout = 3000000;
@@ -294,7 +294,7 @@
                   type = "remote";
                   url = "https://mcp.context7.com/mcp";
                   headers = {
-                    CONTEXT7_API_KEY = "{env:CONTEXT7_API_KEY}";
+                    CONTEXT7_API_KEY = "{file:/run/secrets/context7-key}";
                   };
                 };
 
