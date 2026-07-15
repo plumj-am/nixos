@@ -31,6 +31,7 @@ in
       radicle-node
       renovate
       rust
+      shed
       sops
       sudo-server
       syncthing

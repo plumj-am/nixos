@@ -34,11 +34,11 @@
   },
   "grove": {
     "type": "git",
-    "url": "ssh://forgejo@git.plumj.am/grove-systems/grove",
-    "ref": "HEAD",
-    "rev": "6b714feb4727859db8ecf7f2d753cc1c7a26b069",
-    "narHash": "sha256-SmuCl9QLCwR/8xZ10XcG0vIfyXhd7pSvYKokwTBeqDs=",
-    "lastModified": 1784340407
+    "url": "file:///home/jam/projects/grove",
+    "ref": "refs/heads/graft",
+    "rev": "f2b05d1133380072b71a41e8ac1b20f1b1433978",
+    "narHash": "sha256-QOhXldXpqBaq95JmX5M9EiNQyN0Sg3ZUsnOwhvliGsM=",
+    "lastModified": 1784654641
   },
   "harmonia": {
     "type": "github",
@@ -223,6 +223,14 @@
     "rev": "9fa985ddb9dc7f4d66aa7bfc3bc3188e4aa1d727",
     "narHash": "sha256-J/I7VPXpOwNtEk9H+lbZVT+xJYBsSKgnMlwzlVIJSWk=",
     "lastModified": 1782890834
+  },
+  "shed": {
+    "type": "git",
+    "url": "file:///home/jam/projects/grove",
+    "ref": "refs/heads/shed",
+    "rev": "48dfe07bfdc8631b444a9d54a7f97d7169259275",
+    "narHash": "sha256-xYaZfW0P/z2oIBNz2UssH7pecOnRqZuto3Ufjbyy0G0=",
+    "lastModified": 1784585648
   },
   "sops": {
     "type": "github",

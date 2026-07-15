@@ -134,16 +134,6 @@ in
           nix = {
             bin = pkgs.nix;
             extra_args = nixExtraArgs;
-            cache_entry_max_age_days = 14;
-            verify_caches = [
-              "s3://plumjam/nix?endpoint=fsn1.your-objectstorage.com&profile=plumjam-fsn1"
-              "s3://nix?endpoint=sloe.taild29fec.ts.net:8015&profile=plumjam-garage&region=garage"
-              "http://date.taild29fec.ts.net:5000"
-              "http://kiwi.taild29fec.ts.net:5000"
-              "http://plum.taild29fec.ts.net:5000"
-              "http://yuzu.taild29fec.ts.net:5000"
-              "http://sloe.taild29fec.ts.net:5000"
-            ];
           };
 
           nodes = {
@@ -242,7 +232,7 @@ in
               if hostName == mainHost then
                 systemInfo.cores - 1
               else if hostName == "yuzu" then
-                12
+                16
               else
                 systemInfo.cores;
             build_timeout_secs = 3600;
@@ -256,12 +246,12 @@ in
 
           scheduler = {
             quiet_hours_start =
-              if hostName == "date" then
-                "23:15"
-              else if hostName == "sloe" then
-                "02:30"
-              else
-                "";
+              # if hostName == "date" then
+              #   "23:15"
+              # else if hostName == "sloe" then
+              #   "02:30"
+              # else
+              "";
             quiet_hours_end = "10:00";
           };
         };

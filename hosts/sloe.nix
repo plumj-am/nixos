@@ -28,6 +28,7 @@ in
       radicle-node
       raperl
       rust
+      shed
       sops
       sudo-server
       syncthing

@@ -58,6 +58,7 @@ in
       rust
       rust-desktop
       rss-tui
+      shed
       sops
       sudo-desktop
       syncthing
