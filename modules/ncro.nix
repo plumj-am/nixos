@@ -65,10 +65,6 @@
               url = "https://nix-community.cachix.org";
               priority = 20;
             }
-            {
-              url = "https://cache.garnix.io";
-              priority = 25;
-            }
           ]
           ++ s3Upstreams
           ++ harmoniaUpstreams;
@@ -103,7 +99,6 @@
         trusted-public-keys = mkForce [
           "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
           "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-          "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
 
           "yuzu-store.plumj.am:rRhcZfgv1nSDQxDhgzaudcpyl/JtqoEf4QOsPble7S8="
           "yuzu-store.plumj.am:p6zQw/rR/i1GxTNYE9nNMgReiy2PuDwpq6aXW0DKfoo=" # TODO: Remove after 2026-06-01
