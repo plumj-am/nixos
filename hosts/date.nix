@@ -48,7 +48,6 @@ in
       shed
       sops
       sudo-desktop
-      syncthing
       swap-partition
       s3
       s3-upload

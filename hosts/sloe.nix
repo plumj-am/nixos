@@ -31,7 +31,6 @@ in
       shed
       sops
       sudo-server
-      syncthing
       swapfile
       s3
       s3-upload
