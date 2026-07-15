@@ -12,7 +12,6 @@ in
 
       audio
       boot-systemd
-      claude-code
       colour-picker
       command-code
       desktop-gui

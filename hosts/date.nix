@@ -14,7 +14,6 @@ in
       boot-systemd
       brave
       colour-picker
-      claude-code
       desktop-gui
       discord
       disks-normal

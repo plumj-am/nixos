@@ -11,7 +11,6 @@ in
       aspectsBase
 
       app-launcher
-      claude-code
       editor-extra
       jujutsu-extra
       kitty
