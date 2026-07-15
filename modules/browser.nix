@@ -1,5 +1,9 @@
 # Credit: <https://github.com/RGBCube/ncc/blob/287d7aecf7469bb206ba2708d073d36b87be999e/modules/web-browser.mod.nix>
-{ inputs, lib, ... }:
+{
+  inputs,
+  lib,
+  ...
+}:
 let
   inherit (lib.attrsets)
     attrNames
@@ -366,19 +370,41 @@ let
     ];
   };
 
-  preferences = {
-    helium.completed_onboarding = true;
-    helium.services.user_consented = true;
+  preferences = theme: {
+    helium = {
+      completed_onboarding = true;
+      services.user_consented = true;
 
-    helium.browser.layout = 2; # Vertical.
-    helium.browser.rounded_frame = false;
+      browser = {
+        layout = 1; # compact
+        rounded_frame = false;
 
-    helium.browser.new_tab_next_to_active = true;
+        new_tab_next_to_active = true;
 
-    bookmark_bar.show_on_all_tabs = true;
-    bookmark_bar.show_tab_groups = false;
+        custom_accelerators = {
+          # search tabs
+          "52500" = {
+            added = singleton "Control+Shift+KeyF";
+            removed = singleton "Control+Shift+KeyA";
+          };
+        };
+      };
+    };
+
+    bookmark_bar = {
+      show_on_all_tabs = true;
+      show_tab_groups = false;
+    };
 
     download.prompt_for_download = true; # Ask where to save each time.
+
+    webkit.webprefs.fonts = {
+      fixed.Zyyy = theme.font.mono.name;
+      math.Zyyy = theme.font.mono.name;
+      sansserif.Zyyy = theme.font.sans.name;
+      serif.Zyyy = theme.font.sans.name;
+      standard.Zyyy = theme.font.sans.name;
+    };
 
     # `extensions.settings` is HMAC-tracked. Writing it externally trips Chromium's reset popup warning.
     # No policy equivalent for per-extension incognito. Toggle manually in helium://extensions for now.
@@ -390,9 +416,9 @@ in
 {
   flake.modules.darwin.helium =
     {
-      config,
-      lib,
       pkgs,
+      lib,
+      config,
       ...
     }:
     let
@@ -401,6 +427,7 @@ in
       inherit (lib.meta) getExe;
       inherit (lib.modules) mkAfter;
       inherit (lib.strings) toJSON;
+      inherit (config) theme;
 
       policyFiles = [
         {
@@ -455,17 +482,23 @@ in
 
         files."Library/Application Support/net.imput.helium/Default/Preferences" = {
           type = "copy";
-          text = toJSON preferences;
+          text = toJSON (preferences theme);
         };
       };
     };
 
   flake.modules.nixos.helium =
-    { lib, pkgs, ... }:
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
     let
       inherit (lib.strings) toJSON;
       inherit (lib.attrsets) genAttrs;
       inherit (lib.trivial) const flip;
+      inherit (config) theme;
     in
     {
       environment.etc."chromium/native-messaging-hosts/org.keepassxc.keepassxc_browser.json".text =
@@ -485,7 +518,7 @@ in
       hjem.extraModule = {
         xdg.config.files."helium/Default/Preferences" = {
           type = "copy";
-          text = toJSON preferences;
+          text = toJSON (preferences theme);
         };
 
         xdg.mime-apps.default-applications = flip genAttrs (const "helium.desktop") [
