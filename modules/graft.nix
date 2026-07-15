@@ -134,6 +134,16 @@ in
           nix = {
             bin = pkgs.nix;
             extra_args = nixExtraArgs;
+            cache_entry_max_age_days = 14;
+            verify_caches = [
+              "s3://plumjam/nix?endpoint=fsn1.your-objectstorage.com&profile=plumjam-fsn1"
+              "s3://nix?endpoint=sloe.taild29fec.ts.net:8015&profile=plumjam-garage&region=garage"
+              "http://date.taild29fec.ts.net:5000"
+              "http://kiwi.taild29fec.ts.net:5000"
+              "http://plum.taild29fec.ts.net:5000"
+              "http://yuzu.taild29fec.ts.net:5000"
+              "http://sloe.taild29fec.ts.net:5000"
+            ];
           };
 
           nodes = {
@@ -157,7 +167,38 @@ in
         environment.GIT_SSH_COMMAND = "${pkgs.openssh}/bin/ssh -i ${
           config.sops.secrets."graft-ssh".path
         } -o StrictHostKeyChecking=accept-new";
-        serviceConfig.BindReadOnlyPaths = [ config.sops.secrets."graft-ssh".path ];
+        # The cache probe (nix path-info --store) runs as graft-sentinel and
+        # needs AWS creds to read the S3 binary caches. Point nix at a
+        # credentials file we materialize from the sops secrets at start.
+        environment.AWS_SHARED_CREDENTIALS_FILE = "${config.services.graft-sentinel.state_dir}/.aws/credentials";
+        serviceConfig = {
+          BindReadOnlyPaths = [ config.sops.secrets."graft-ssh".path ];
+          LoadCredential = [
+            "s3-plumjam-fsn1-access-key:${config.sops.secrets."s3/fsn1/access-key".path}"
+            "s3-plumjam-fsn1-secret-key:${config.sops.secrets."s3/fsn1/secret-key".path}"
+            "s3-plumjam-garage-access-key:${config.sops.secrets."s3/garage/access-key".path}"
+            "s3-plumjam-garage-secret-key:${config.sops.secrets."s3/garage/secret-key".path}"
+          ];
+          ExecStartPre =
+            let
+              creds = pkgs.writeShellScript "graft-sentinel-aws-creds" ''
+                set -eu
+                mkdir -p ${config.services.graft-sentinel.state_dir}/.aws
+                umask 077
+                cat > ${config.services.graft-sentinel.state_dir}/.aws/credentials <<EOF
+                [plumjam-fsn1]
+                aws_access_key_id=$(cat "$CREDENTIALS_DIRECTORY/s3-plumjam-fsn1-access-key")
+                aws_secret_access_key=$(cat "$CREDENTIALS_DIRECTORY/s3-plumjam-fsn1-secret-key")
+                [plumjam-garage]
+                aws_access_key_id=$(cat "$CREDENTIALS_DIRECTORY/s3-plumjam-garage-access-key")
+                aws_secret_access_key=$(cat "$CREDENTIALS_DIRECTORY/s3-plumjam-garage-secret-key")
+                region=garage
+                EOF
+                chown graft-sentinel:graft ${config.services.graft-sentinel.state_dir}/.aws/credentials
+              '';
+            in
+            "+${creds}";
+        };
       };
     };
 
