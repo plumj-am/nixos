@@ -4,6 +4,7 @@
       config,
       pkgs,
       lib,
+      inputs,
       ...
     }:
     let
@@ -12,11 +13,12 @@
       inherit (config.sops) secrets;
       inherit (config.myLib) merge;
 
+      radka = inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.radka;
+
       app_port = 3000;
       app_user = "dr-radka";
       app_group = "dr-radka";
       app_dir = "/var/lib/dr-radka";
-      build_dir = "${app_dir}/build";
     in
     {
       sops.secrets."radka/environment" = {
@@ -43,8 +45,8 @@
           Type = "simple";
           User = app_user;
           Group = app_group;
-          WorkingDirectory = build_dir;
-          ExecStart = "${getExe pkgs.nodejs-slim_24} ./index.js";
+          WorkingDirectory = "${radka}";
+          ExecStart = "${getExe pkgs.nodejs-slim_24} ${radka}/index.js";
           Restart = "always";
           RestartSec = 5;
           EnvironmentFile = secrets."radka/environment".path;
