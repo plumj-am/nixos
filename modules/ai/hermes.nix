@@ -263,7 +263,7 @@
           agent = {
             max_turns = 500;
             verbose = false;
-            reasoning_effort = "xhigh"; # xhigh | high | medium | low | minimal | none
+            reasoning_effort = "max"; # max | xhigh | high | medium | low | minimal | none
             reasoning_overrides = { }; # per-model: { "claude-opus-4.6" = "high"; }
             # gateway_timeout = 1800; # seconds, 0 for unlimited
             # gateway_timeout_warning = 900;
