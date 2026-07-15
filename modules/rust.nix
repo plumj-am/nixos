@@ -40,6 +40,11 @@ let
         pkgs.evcxr
         pkgs.kondo
       ];
+
+      hjem.extraModule.files.".cargo/config.toml" = {
+        generator = pkgs.writers.writeTOML "cargo-config.toml";
+        value.build.target-dir = ".cargo/target";
+      };
     };
 in
 {

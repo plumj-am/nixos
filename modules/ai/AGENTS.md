@@ -27,6 +27,7 @@
 
 ## Rust
 
+- All Rust projects share the same target directory: `~/.cargo/target`.
 - Prefer `cargo clippy` over `cargo check`.
 - Prefer `cargo nextest` over `cargo test`.
 - Prefer absolute paths over imports:
