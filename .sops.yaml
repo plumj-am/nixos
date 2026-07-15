@@ -44,10 +44,6 @@ creation_rules:
       key_groups:
           - age: [*jam, *plum]
 
-    - path_regex: secrets/services/renovate\.(yaml|json|env|ini)$
-      key_groups:
-          - age: [*jam, *plum]
-
     - path_regex: secrets/services/forgejo\.(yaml|json|env|ini)$
       key_groups:
           - age: [*jam, *plum]
@@ -83,6 +79,10 @@ creation_rules:
     - path_regex: secrets/services/radka\.(yaml|json|env|ini)$
       key_groups:
           - age: [*jam, *kiwi]
+
+    - path_regex: secrets/services/tend\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *plum]
 
     - path_regex: secrets/services/graft\.(yaml|json|env|ini)$
       key_groups:

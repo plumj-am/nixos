@@ -34,6 +34,7 @@ in
       swapfile
       s3
       s3-upload
+      tend
       users-extra
       zellij
       { hardware.facter.reportPath = ./facter/sloe.json; }

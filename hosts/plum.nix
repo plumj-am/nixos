@@ -28,7 +28,6 @@ in
       postgres
       radicle-explorer
       radicle-node
-      renovate
       rust
       shed
       sops
