@@ -249,6 +249,7 @@
                 defaultThinkingLevel = "medium";
                 hideThinkingBlock = true;
                 personality = "pragmatic";
+                textVerbosity = "low";
                 retry = {
                   modelFallback = true;
                   fallbackRevertPolicy = "cooldown-expiry";
