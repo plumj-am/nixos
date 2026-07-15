@@ -149,6 +149,8 @@
         "node --check*"
         "npx tsc*"
 
+        "python3 -c*"
+
         "zig build*"
 
         "curl http://localhost*"
