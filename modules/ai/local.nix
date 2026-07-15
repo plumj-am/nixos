@@ -2,6 +2,8 @@
   flake.modules.nixos.llama-cpp =
     { pkgs, lib, ... }:
     let
+      inherit (lib.attrsets) optionalAttrs;
+
       cpuMoeOffload = {
         n-gpu-layers = 99;
         cpu-moe = "on";
@@ -18,7 +20,12 @@
       };
 
       mkUnslothQwen =
-        { name, ctx, ... }:
+        {
+          name,
+          ctx,
+          moeOffload ? true,
+          ...
+        }:
         {
           hf-repo = "unsloth/${name}";
           jinja = "on";
@@ -31,7 +38,7 @@
         }
         # WARN: Ngram can break tool calls, apparently.
         // ngram
-        // cpuMoeOffload;
+        // optionalAttrs moeOffload cpuMoeOffload;
 
       # Write models preset to a file and reference it by path.
       # (The module's `settings.models-preset` expects a file path, not inline INI.)
@@ -102,18 +109,24 @@
             ctx = "262144"; # 262144 max - untested
           };
 
-          # tps | ctx max | ctx max local
-          # 0   | 262144  | 0
-          "unsloth/gemma-4-31B-it-GGUF-UD-IQ3_XXS" = cpuMoeOffload // {
-            hf-repo = "unsloth/gemma-4-31B-it-GGUF:IQ3_XXS";
-            cache-type-k = "q8_0";
-            cache-type-v = "q8_0";
-            ctx-size = "131072"; # 262144 max - untested
+          # tps  | ctx max | ctx max local
+          # 0    | 262144  | 0
+          "unsloth/Qwen3.8-27B:UD-IQ3_XXS" = mkUnslothQwen {
+            name = "Qwen3.8-27B-GGUF:UD-IQ3-XXS";
+            ctx = "262144"; # 262144 max - untested
+            moeOffload = false;
           };
         }
       );
     in
     {
+      unfree.allowedNames = [
+        "cuda_cccl"
+        "cuda_cudart"
+        "cuda_nvcc"
+        "libcublas"
+      ];
+
       services.llama-cpp = {
         enable = true;
         package = pkgs.llama-cpp.override { cudaSupport = true; };
