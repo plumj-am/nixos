@@ -142,16 +142,18 @@
                     --ro-bind /run/secrets/codestral-key /run/secrets/codestral-key
                     --ro-bind /run/secrets/llm7-key /run/secrets/llm7-key
                     --ro-bind /run/secrets/ollama-key /run/secrets/ollama-key
+                    --ro-bind /run/secrets/exa-key /run/secrets/exa-key
+                    --ro-bind /run/secrets/context7-key /run/secrets/context7-key
                     --ro-bind /run/current-system /run/current-system
                     --ro-bind /etc/profiles/per-user/${user}/bin /etc/profiles/per-user/${user}/bin
                     --ro-bind /etc/resolv.conf /etc/resolv.conf
                     --ro-bind /etc/nsswitch.conf /etc/nsswitch.conf
                     --ro-bind /etc/hosts /etc/hosts
                     --ro-bind ${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt /etc/ssl/certs/ca-certificates.crt
-                    --ro-bind /etc/nix/nix.conf /etc/nix/nix.conf
+                    --ro-bind /etc/nix /etc/nix
+                    --ro-bind /nix /nix # Prevents spamming user store
                     --bind $pwd $pwd
                     ...$extra_binds
-                    --bind /nix/store /nix/store # I think this prevents spamming ~/.local/share/nix.
                     --bind ${directory}/.pi ${directory}/.pi
                     --bind ${directory}/.omp ${directory}/.omp
                     --bind ${directory}/.claude ${directory}/.claude
@@ -173,6 +175,7 @@
                     --setenv LLM7_API_KEY (^cat /run/secrets/llm7-key)
                     --setenv OLLAMA_API_KEY (^cat /run/secrets/ollama-key)
                     --setenv EXA_API_KEY (^cat /run/secrets/exa-key)
+                    --setenv CONTEXT7_API_KEY (^cat /run/secrets/context7-key)
                     --setenv IN_BWRAP 1
                     -- $tool ...$rest)
                 }

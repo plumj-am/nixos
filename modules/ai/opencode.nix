@@ -10,7 +10,6 @@
       inherit (lib.lists) singleton;
       inherit (lib.attrsets) genAttrs;
       inherit (lib.trivial) const;
-      inherit (config.sops) secrets;
 
       opencodePackage = pkgs.symlinkJoin {
         name = "opencode-wrapped";
@@ -23,9 +22,15 @@
               --set OPENCODE_ENABLE_EXA 1
           '';
       };
+
+      big = "hy3"; # TODO: change to minimax-m3 after 21/07 (free promo ends)
+      small = "hy3"; # TODO: change to deepseek-v4-flash
+      cheap = "hy3"; # TODO: change to step-3.5-flash
     in
     {
       ai.secrets = true;
+
+      shellAliases.opencode = "bwrapper opencode";
 
       hjem.extraModule = {
         packages = [
@@ -44,8 +49,8 @@
             generator = pkgs.writers.writeJSON "opencode-opencode.jsonc";
             value = {
               autoupdate = false;
-              model = "commandcode/deepseek-v4-flash";
-              small_model = "commandcode/deepseek-v4-flash";
+              model = "commandcode/${small}";
+              small_model = "commandcode/${cheap}";
 
               experimental = {
                 disable_paste_summary = true;
@@ -92,48 +97,6 @@
                 };
               };
 
-              agent = {
-                build = {
-                  mode = "primary";
-                  model = "commandcode/deepseek-v4-flash";
-                  reasoningEffort = "high";
-                  textVerbosity = "low";
-                  thinking.type = "enabled";
-                };
-
-                plan = {
-                  mode = "primary";
-                  model = "commandcode/minimax-m3";
-                  reasoningEffort = "max";
-                  textVerbosity = "low";
-                  thinking.type = "enabled";
-                };
-
-                general = {
-                  mode = "subagent";
-                  model = "commandcode/deepseek-v4-flash";
-                  reasoningEffort = "high";
-                  textVerbosity = "low";
-                  thinking.type = "enabled";
-                };
-
-                explore = {
-                  mode = "subagent";
-                  model = "commandcode/deepseek-v4-flash";
-                  reasoningEffort = "low";
-                  textVerbosity = "low";
-                  thinking.type = "disabled";
-                };
-
-                scout = {
-                  mode = "subagent";
-                  model = "commandcode/deepseek-v4-flash";
-                  reasoningEffort = "high";
-                  textVerbosity = "low";
-                  thinking.type = "enabled";
-                };
-              };
-
               provider.commandcode = {
                 npm = "@ai-sdk/openai-compatible";
                 name = "Command Code";
@@ -167,19 +130,19 @@
                       output = 384000;
                     };
                   };
-                  minimax-m3 = {
-                    id = "MiniMaxAI/MiniMax-M3";
-                    name = "MiniMax M3";
+                  "step-3.5-flash" = {
+                    id = "stepfun/Step-3.5-Flash";
+                    name = "Step 3.5 Flash";
                     reasoning = true;
                     tool_call = true;
                     limit = {
                       context = 1000000;
-                      output = 131072;
+                      output = 384000;
                     };
                   };
-                  "mimo-v2.5-pro" = {
-                    id = "xiaomi/mimo-v2.5-pro";
-                    name = "MiMo V2.5 Pro";
+                  minimax-m3 = {
+                    id = "MiniMaxAI/MiniMax-M3";
+                    name = "MiniMax M3";
                     reasoning = true;
                     tool_call = true;
                     limit = {
@@ -197,6 +160,48 @@
                       output = 131072;
                     };
                   };
+                };
+              };
+
+              agent = {
+                build = {
+                  mode = "primary";
+                  model = "commandcode/${cheap}";
+                  reasoningEffort = "medium";
+                  textVerbosity = "low";
+                  thinking.type = "enabled";
+                };
+
+                plan = {
+                  mode = "primary";
+                  model = "commandcode/${big}";
+                  reasoningEffort = "max";
+                  textVerbosity = "low";
+                  thinking.type = "enabled";
+                };
+
+                general = {
+                  mode = "subagent";
+                  model = "commandcode/${small}";
+                  reasoningEffort = "high";
+                  textVerbosity = "low";
+                  thinking.type = "enabled";
+                };
+
+                explore = {
+                  mode = "subagent";
+                  model = "commandcode/${cheap}";
+                  reasoningEffort = "low";
+                  textVerbosity = "low";
+                  thinking.type = "disabled";
+                };
+
+                scout = {
+                  mode = "subagent";
+                  model = "commandcode/${cheap}";
+                  reasoningEffort = "low";
+                  textVerbosity = "low";
+                  thinking.type = "enabled";
                 };
               };
 
@@ -243,7 +248,7 @@
                   type = "remote";
                   url = "https://mcp.context7.com/mcp";
                   headers = {
-                    CONTEXT7_API_KEY = "{file:${secrets."context7-key".path}}";
+                    CONTEXT7_API_KEY = "{env:CONTEXT7_API_KEY}";
                   };
                 };
 
