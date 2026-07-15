@@ -125,6 +125,24 @@
               forgejo_repo_name = "fff.hx";
             };
 
+            grove_forgejo = {
+              display_name = "grove";
+              forge = "forgejo";
+              clone_uri = "https://git.plumj.am/grove-systems/grove";
+              flake_ref = ".#checks";
+              systems = [ "x86_64-linux" ];
+              build_timeout_secs = 3600;
+              poll_interval_secs = 30;
+              users = [
+                "plumjam"
+                "antteheatta"
+              ];
+              forgejo_url = "https://git.plumj.am";
+              forgejo_repo_owner = "grove-systems";
+              forgejo_repo_name = "grove";
+            };
+
+            # TODO: remove after fully moved to Forgejo
             grove = {
               display_name = "Grove";
               forge = "gerrit";
