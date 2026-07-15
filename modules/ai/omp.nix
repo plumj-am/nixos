@@ -99,6 +99,14 @@
                       contextWindow = 1000000;
                       maxTokens = 131072;
                     }
+                    # TODO: limited input, wait until full release with full context
+                    {
+                      id = "poolside/laguna-s-2.1-free";
+                      name = "Poolside Laguna S 2.1";
+                      reasoning = true;
+                      contextWindow = 256000;
+                      maxTokens = 131072;
+                    }
                   ];
               };
             };
@@ -109,32 +117,28 @@
             generator = pkgs.writers.writeYAML "omp-agent-config.yml";
             value =
               let
-                big = "commandcode/deepseek/deepseek-v4-flash";
-                small = "commandcode/deepseek/deepseek-v4-flash";
-                cheap = "opencode-zen/deepseek-v4-flash-free";
+                big = "opencode-zen/laguna-s-2.1-free";
+                small = "opencode-zen/laguna-s-2.1-free";
+                cheap = "opencode-zen/laguna-s-2.1-free";
                 vision = "commandcode/Qwen/Qwen3.7-Flash";
 
                 bigFallback = [
-                  "commandcode/qwen3.7-flash"
-                  "commandcode/minimax-m3"
+                  "commandcode/deepseek/deepseek-v4-flash"
+                  "commandcode/minimaxai/minimax-m3"
                 ];
                 smallFallback = [
-                  "commandcode/qwen3.7-flash"
-                  "opencode/deepseek-v4-flash-free"
+                  "opencode-zen/deepseek-v4-flash-free"
+                  "commandcode/deepseek/deepseek-v4-flash"
                 ];
                 cheapFallback = [
-                  "opencode/deepseek-v4-flash-free"
-                  "opencode/laguna-s-2.1-free"
-                  "opencode/ling-3.0-flash-free"
-                  "commandcode/laguna-s-2.1-free"
-                  "commandcode/ling-3.0-flash-free"
-                  "commandcode/step-3.5-flash"
-                  "commandcode/deepseek-v4-flash"
+                  "opencode-zen/deepseek-v4-flash-free"
+                  "commandcode/stepfun/step-3.5-flash"
+                  "commandcode/deepseek/deepseek-v4-flash"
                 ];
               in
               {
-                defaultProvider = "commandcode";
-                defaultModel = "deepseek/deepseek-v4-flash";
+                defaultProvider = "opencode-zen";
+                defaultModel = "laguna-s-2.1-free";
 
                 # [appearance]
                 theme = {
@@ -204,11 +208,13 @@
                   default = "${small}:high";
                   smol = "${cheap}:off";
                   slow = "${big}:max";
+                  advisor = "${big}:max";
                   plan = "${big}:max";
                   vision = "${vision}:low";
                   designer = "${vision}:low";
                   commit = "${cheap}:off";
                   task = "${cheap}:low";
+                  tiny = "${cheap}:low";
                 };
                 enabledModels = [ ]; # all
                 shellPath = getExe pkgs.bash;
@@ -229,15 +235,17 @@
                   fallbackRevertPolicy = "cooldown-expiry";
                   maxRetries = 100000;
                   maxDelayMs = 600000;
-                  fallbackChain = {
+                  fallbackChains = {
                     default = smallFallback;
                     smol = cheapFallback;
                     slow = bigFallback;
+                    advisor = bigFallback;
                     plan = bigFallback;
                     vision = [ ]; # TODO: add another vision model
                     designer = [ ];
                     commit = cheapFallback;
                     task = cheapFallback;
+                    tiny = cheapFallback;
                   };
                 };
 

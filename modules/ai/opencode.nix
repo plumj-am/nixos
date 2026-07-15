@@ -30,24 +30,20 @@
       #   {type: "free", opencode: $of, commandcode: $cf}
       #   {type: "paid", opencode: [],  commandcode: $cp}
       # ] | table --expand --index false --theme single
-      big = "commandcode/deepseek-v4-flash";
-      small = "commandcode/deepseek-v4-flash";
-      cheap = "opencode/deepseek-v4-flash-free";
+      big = "opencode/laguna-s-2.1-free";
+      small = "opencode/laguna-s-2.1-free";
+      cheap = "opencode/laguna-s-2.1-free";
 
       bigFallback = [
-        "commandcode/qwen3.7-flash"
+        "commandcode/deepseek-v4-flash"
         "commandcode/minimax-m3"
       ];
       smallFallback = [
-        "commandcode/qwen3.7-flash"
         "opencode/deepseek-v4-flash-free"
+        "commandcode/deepseek-v4-flash"
       ];
       cheapFallback = [
         "opencode/deepseek-v4-flash-free"
-        "opencode/laguna-s-2.1-free"
-        "opencode/ling-3.0-flash-free"
-        "commandcode/laguna-s-2.1-free"
-        "commandcode/ling-3.0-flash-free"
         "commandcode/step-3.5-flash"
         "commandcode/deepseek-v4-flash"
       ];
@@ -201,6 +197,17 @@
                       output = 131072;
                     };
                   };
+                  # TODO: limited input, wait until full release with full context
+                  "laguna-s2.1-free" = {
+                    id = "poolside/laguna-s-2.1-free";
+                    name = "Poolside Laguna S 2.1";
+                    reasoning = true;
+                    tool_call = true;
+                    limit = {
+                      context = 256000;
+                      output = 131072;
+                    };
+                  };
                 };
               };
 
@@ -342,6 +349,19 @@
               enabled = true;
               autoUpdate = false;
               experimental.allowSubAgents = true;
+            };
+          };
+
+          "opencode/opencode-fallback.json" = {
+            generator = pkgs.writers.writeJSON "opencode-fallback.json";
+            value = {
+              retry_on_errors = [
+                429
+                500
+                502
+                504
+              ];
+              retryable_error_patterns = [ "upstream stream ended before terminal chunk" ];
             };
           };
         };
