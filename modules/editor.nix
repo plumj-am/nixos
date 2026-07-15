@@ -39,21 +39,6 @@ in
       inherit (lib) elem;
       inherit (config) theme;
 
-      fsWatcherLsp = pkgs.rustPlatform.buildRustPackage (final: {
-        pname = "fs_watcher_lsp";
-        version = "0.1.0";
-
-        src = pkgs.fetchCrate {
-          inherit (final) pname version;
-          hash = "sha256-zahbi8RK8aDHcVOzIk5fCIh57+SjMGAVtUvtKhpMvF0=";
-        };
-
-        cargoHash = "sha256-w1i19IV/tjyl+W0NIjjbB0R9UpGrAUuK/yWbOZUKPUA=";
-        cargoDepsName = final.pname;
-      });
-
-      withFsWatcher = rest: [ "fs-watcher-lsp" ] ++ rest;
-
       mkThemes =
         themes:
         mapAttrs' (
@@ -75,7 +60,8 @@ in
       hjem.extraModule = {
         packages = [
           pkgs.helix
-          fsWatcherLsp
+          # pkgs.steelix # TODO: enable steelix and disable helix once merged: <https://github.com/NixOS/nixpkgs/pull/540253>
+          # pkgs.steel
         ];
 
         xdg.config.files = {
@@ -182,7 +168,7 @@ in
                       ];
                     }
                     // optionalAttrs (elem ext (attrValues denoJsTsLanguages)) {
-                      language-servers = withFsWatcher <| singleton "deno";
+                      language-servers = singleton "deno";
                     };
 
                   denoFmtLanguages =
@@ -209,12 +195,10 @@ in
                     {
                       name = "rust";
                       auto-format = true;
-                      language-servers =
-                        withFsWatcher
-                        <| singleton {
-                          name = "rust-analyzer";
-                          except-features = singleton "inlay-hints";
-                        };
+                      language-servers = singleton {
+                        name = "rust-analyzer";
+                        except-features = singleton "inlay-hints";
+                      };
                       indent = {
                         tab-width = 3;
                         unit = "   ";
@@ -235,7 +219,7 @@ in
                     {
                       name = "nix";
                       auto-format = true;
-                      language-servers = withFsWatcher [
+                      language-servers = [
                         "nixd"
                         "nil"
                       ];
@@ -274,7 +258,7 @@ in
                     {
                       name = "markdown";
                       auto-format = true;
-                      language-servers = withFsWatcher <| singleton "marksman";
+                      language-servers = singleton "marksman";
                     }
                     {
                       name = "just";
@@ -289,7 +273,7 @@ in
                         "/home/jam/.config/nufmt/config.nuon"
                         "--stdin"
                       ];
-                      language-servers = withFsWatcher [
+                      language-servers = [
                         "nu-lsp"
                         "nu-lint"
                       ];
@@ -407,6 +391,43 @@ in
               };
             };
           };
+
+          "helix/helix.scm".text = # scheme
+            ''
+
+            '';
+
+          # TODO: script/automate install via forge e.g.
+          #   STEEL_HOME=/home/jam/.steel forge pkg install --git <repo>
+          "helix/init.scm".text = # scheme
+            ''
+              (require "helix/keymaps.scm")
+
+              (require "oil/oil.scm")                         ;; <https://github.com/mattwparas/helix-file-watcher>
+              (require "helix-file-watcher/file-watcher.scm") ;; <https://github.com/Ra77a3l3-jar/oil.hx>
+              (require "scooter/scooter.scm")                 ;; <https://github.com/thomasschafer/scooter.hx>
+
+              (keymap (global)
+                (normal
+                  (space
+                    (o
+                      (o ":oil")
+                      (e ":oil-enter")
+                      (b ":oil-back")
+                      (g ":oil-root")
+                      (s ":oil-save")
+                      (r ":oil-refresh")
+                      (q ":oil-close")
+                      (h ":oil-toggle-hidden")
+                      (i ":oil-toggle-git-ignored")
+                      (m
+                        (y ":oil-yank")
+                        (x ":oil-cut")
+                        (p ":oil-paste")
+                        (c ":oil-clipboard-clear"))))))
+
+              (spawn-watcher)
+            '';
 
           "nufmt/config.nuon".text = # nuon
             ''
