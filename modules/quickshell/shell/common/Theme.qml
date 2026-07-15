@@ -56,7 +56,7 @@ QtObject {
 									  size: 15
 								   },
 								   mono: {
-									  family: "Hasklug Nerd Font Mono",
+									  family: "Maple Mono",
 									  size: 13
 								   },
 								   icons: {
