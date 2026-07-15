@@ -36,7 +36,7 @@ def update-gsettings [is_dark: bool]: any -> nothing {
    } catch {|e| print --stderr $"failed to save theme via dconf: ($e)" }
 }
 
-def get-current-theme []: any -> nothing {
+def get-current-theme []: any -> record<mode: string, scheme: string> {
    try {
       open $THEME_CONFIG
    } catch {
