@@ -11,6 +11,16 @@
       ];
     in
     {
+      environment.sessionVariables = {
+        PROTON_ENABLE_WAYLAND = "1";
+
+        # maybe these only works in steam launch options?
+        PROTON_LOCAL_SHADER_CACHE = "1";
+        __GL_SHADER_DISK_CACHE_SKIP_CLEANUP = "1";
+        __GL_SHADER_DISK_CACHE_SIZE = "21474836480";
+        DXVK_CONFIG = "dxvk.trackPipelineLifetime = True";
+      };
+
       environment.systemPackages = packages ++ [
         (mkDesktopEntry {
           name = "Overwatch";
