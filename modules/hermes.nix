@@ -10,6 +10,7 @@
     let
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
+      inherit (config.myLib) mkResticBackup;
       inherit (config.sops) secrets;
 
       cfg = config.services.hermes-agent;
@@ -106,6 +107,21 @@
         inputs.hermes-agent.nixosModules.default
         inputs.hermes-webui.nixosModules.default
       ];
+
+      services.restic.backups.hermes = mkResticBackup "hermes" {
+        paths = singleton cfg.stateDir;
+        exclude = [
+          "${cfg.stateDir}/workspace/*/target"
+          "${cfg.stateDir}/workspace/*/node_modules"
+          "${cfg.stateDir}/workspace/*/result"
+          "${cfg.stateDir}/.cargo"
+        ];
+
+        timerConfig = {
+          OnCalendar = "hourly";
+          Persistent = true;
+        };
+      };
 
       services.hermes-agent = {
         enable = true;
