@@ -172,9 +172,9 @@
     "type": "github",
     "owner": "NixOS",
     "repo": "nixpkgs",
-    "rev": "09233832ac9676c8a4105a82a0204283362b0e84",
-    "narHash": "sha256-oT4sZ9BMbbi6PwgValMQCCkgZmFtUdBV0LkGicrqpGg=",
-    "lastModified": 1784293129
+    "rev": "5cca3a89405eb65d2adb43754c2af8dac7b6f2e1",
+    "narHash": "sha256-kvsnFCG4T5dmUj7BMcmpuPZjZNSjOZfhXUdjiBQG2xk=",
+    "lastModified": 1787234702
   },
   "os-darwin": {
     "type": "github",
