@@ -239,7 +239,7 @@
 
               $env.config.rm.always_trash = false
 
-              $env.config.table.mode = "compact"
+              $env.config.table.mode = "single"
               $env.config.table.index_mode = "always"
               $env.config.table.show_empty = true
 
