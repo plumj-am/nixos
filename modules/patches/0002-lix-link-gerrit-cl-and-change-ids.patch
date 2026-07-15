@@ -25,11 +25,11 @@ index 2e65827bf7..2d474077a5 100644
 +		pattern:      regexp.MustCompile(`(?:\s|^|\(|\[)(I[0-9a-f]{8,40})(?:\s|$|\)|\]|[.,](\s|$))`),
 +	}
 +
-+	// Gerrit cl/ pattern
++	// Gerrit cl/ cl: (case insensitive) pattern
 +	clSlashPattern = GerritPattern{
 +		urlMatch:     2,
 +		displayMatch: 1,
-+		pattern:      regexp.MustCompile(`(?:^|[\s\]\[(){},.;:!?])(cl/([0-9]{0,6}))(?:$|[\s\]\[(){},.;:!?])`),
++		pattern:      regexp.MustCompile(`(?:^|[\s\]\[(){},.;:!?])((?i:cl)[ :/]?([0-9]{1,6}))(?:$|[\s\]\[(){},.;:!?])`),
 +	}
 +
  	// shortLinkPattern matches short but difficult to parse [[name|link|arg=test]] syntax
