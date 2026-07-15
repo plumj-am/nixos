@@ -11,7 +11,7 @@
       inherit (lib.modules) mkForce;
       inherit (lib.trivial) flip;
       inherit (lib.lists) singleton;
-      inherit (config.s3) fsn1 garage;
+      inherit (config.s3.caches) fsn1 garage;
 
       port = "8013";
       ncroUrl = "http://localhost:${port}";

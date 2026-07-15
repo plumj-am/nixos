@@ -10,7 +10,7 @@
     let
       inherit (lib.lists) singleton length;
       inherit (lib.fixedPoints) fix;
-      inherit (config.s3) fsn1;
+      inherit (config.s3.caches) fsn1;
 
       # Same shared args as `./s3-upload.nix`.
       s3SharedArgs = "&priority=43&multipart-upload=true&multipart-threshold=50M&multipart-chunk-size=10M";

@@ -78,18 +78,18 @@ Item {
 			   acceptedButtons: Qt.LeftButton | Qt.RightButton
 
 			   onClicked: mouse => {
-							 if (!trayItem)
-							 return
-							 if (mouse.button === Qt.LeftButton) {
-								if (!trayItem.onlyMenu) {
-								   trayItem.activate()
-								} else if (trayItem.hasMenu) {
-								   trayMenu.open()
-								}
-							 } else if (mouse.button === Qt.RightButton && trayItem.hasMenu) {
-								trayMenu.open()
-							 }
-						  }
+				  if (!trayItem)
+					 return
+				  if (mouse.button === Qt.LeftButton) {
+					 if (!trayItem.onlyMenu) {
+						trayItem.activate()
+					 } else if (trayItem.hasMenu) {
+						trayMenu.open()
+					 }
+				  } else if (mouse.button === Qt.RightButton && trayItem.hasMenu) {
+					 trayMenu.open()
+				  }
+			   }
 			}
 
 			QsMenuAnchor {

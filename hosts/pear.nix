@@ -15,7 +15,8 @@ in
       ncro
       sops
       sudo-desktop
-      # s3-upload
+      s3
+      s3-upload
       wsl
       zellij
       {

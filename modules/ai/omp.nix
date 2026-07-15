@@ -249,7 +249,7 @@
                   slow = big;
                   advisor = big;
                   plan = big;
-                  vision = vision;
+                  inherit vision;
                   designer = vision;
                   commit = cheap;
                   task = cheap;

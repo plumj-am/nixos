@@ -9,33 +9,41 @@
     let
       inherit (config.sops) secrets;
 
-      fsn1 = {
-        alias = "plumjam-fsn1";
-        bucket = "plumjam";
-        prefix = "nix";
-        endpoint = "fsn1.your-objectstorage.com";
-        pathStyle = "off";
-        apiVersion = "s3v4";
-      };
-      garage = {
-        alias = "plumjam-garage";
-        bucket = "nix";
-        endpoint = "sloe.taild29fec.ts.net:8015";
-        region = "garage";
-        pathStyle = "on";
-        apiVersion = "s3v4";
+      caches = {
+        fsn1 = {
+          alias = "plumjam-fsn1";
+          bucket = "plumjam";
+          prefix = "nix";
+          endpoint = "fsn1.your-objectstorage.com";
+          pathStyle = "off";
+          apiVersion = "s3v4";
+        };
+        garage = {
+          alias = "plumjam-garage";
+          bucket = "nix";
+          endpoint = "sloe.taild29fec.ts.net:8015";
+          region = "garage";
+          pathStyle = "on";
+          apiVersion = "s3v4";
+        };
       };
     in
     {
-      options.s3 = lib.mkOption {
+      options.s3.caches = lib.mkOption {
         type = lib.types.attrs;
         default = { };
-        description = "Shared S3 cache configuration";
+        description = "Shared S3 caches configuration";
+      };
+      options.s3.credentialsFile = lib.mkOption {
+        type = lib.types.str;
+        default = { };
+        description = "Shared S3 credentials file";
       };
 
       config = {
         s3 = {
-          inherit fsn1 garage;
+          inherit caches;
+
           # Materialised by the `s3-credentials` systemd service from the four
           # sops secrets below; group-readable so every S3 consumer can share
           # one credentials file.
@@ -75,13 +83,13 @@
                   mkdir -p /var/lib/s3/.aws
                   umask 077
                   cat > /var/lib/s3/.aws/credentials <<EOF
-                  [${fsn1.alias}]
+                  [${caches.fsn1.alias}]
                   aws_access_key_id=$(cat "$CREDENTIALS_DIRECTORY/s3-fsn1-access-key")
                   aws_secret_access_key=$(cat "$CREDENTIALS_DIRECTORY/s3-fsn1-secret-key")
-                  [${garage.alias}]
+                  [${caches.garage.alias}]
                   aws_access_key_id=$(cat "$CREDENTIALS_DIRECTORY/s3-garage-access-key")
                   aws_secret_access_key=$(cat "$CREDENTIALS_DIRECTORY/s3-garage-secret-key")
-                  region=${garage.region}
+                  region=${caches.garage.region}
                   EOF
                   chown root:s3 /var/lib/s3/.aws/credentials
                   chmod 0640 /var/lib/s3/.aws/credentials
@@ -104,7 +112,7 @@
       inherit (lib.meta) getExe;
       inherit (lib.lists) singleton;
       inherit (config.sops) secrets;
-      inherit (config.s3) fsn1 garage;
+      inherit (config.s3.caches) fsn1 garage;
 
       s3SharedArgs = "&priority=43&multipart-upload=true&multipart-threshold=50M&multipart-chunk-size=10M";
 

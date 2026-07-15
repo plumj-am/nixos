@@ -163,7 +163,10 @@ in
         environment.AWS_SHARED_CREDENTIALS_FILE = config.s3.credentialsFile;
         serviceConfig = {
           BindReadOnlyPaths = [ config.sops.secrets."graft-ssh".path ];
-          SupplementaryGroups = [ "graft" "s3" ];
+          SupplementaryGroups = [
+            "graft"
+            "s3"
+          ];
         };
       };
     };

@@ -94,9 +94,9 @@ Rectangle {
 
 	  onDismissed: root.dismiss()
 	  onActionTriggered: action => {
-							root.actionTriggered(action)
-							root.dismiss()
-						 }
+		 root.actionTriggered(action)
+		 root.dismiss()
+	  }
    }
 
    MouseArea {
