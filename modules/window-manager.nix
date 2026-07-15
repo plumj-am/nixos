@@ -237,6 +237,11 @@
                 Mod+slash { show-hotkey-overlay; }
                 Mod+Shift+slash { show-hotkey-overlay; }
 
+                Mod+Shift+Ctrl+H repeat=false { spawn "helium"; }
+                Mod+Shift+Ctrl+K repeat=false { spawn "kitty"; }
+                Mod+Shift+Ctrl+Z repeat=false { spawn-sh "kitty -e zellij"; }
+                Mod+Shift+Ctrl+Q repeat=false { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath}"; }
+
                 Mod+Q repeat=false { close-window; }
                 Mod+Tab repeat=false { toggle-overview; }
 
