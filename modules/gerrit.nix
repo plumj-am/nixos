@@ -245,7 +245,7 @@
               link = "https://git.plumj.am/grove-systems/grove/issues/$1";
             };
             changenum = {
-              match = "[Cc][Ll]:?(\\d{1,6})\\b";
+              match = "[Cc][Ll][ :]?(\\d{1,6})\\b";
               link = "/q/$1";
             };
           };
