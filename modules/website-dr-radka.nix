@@ -55,7 +55,6 @@
           NoNewPrivileges = true;
           ProtectSystem = "strict";
           ProtectHome = true;
-          ReadWritePaths = [ app_dir ];
           PrivateTmp = true;
           ProtectKernelTunables = true;
           ProtectKernelModules = true;
@@ -66,7 +65,6 @@
           NODE_ENV = "production";
           ORIGIN = "https://${domain}";
         };
-        path = [ pkgs.nodejs-slim_24 ];
       };
 
       services.nginx = {
