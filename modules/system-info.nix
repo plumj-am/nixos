@@ -12,6 +12,11 @@
           default = 1;
           description = "Total logical CPU cores on this system";
         };
+        threads = mkOption {
+          type = ints.between 1 128;
+          default = 1;
+          description = "Total threads supported by the CPU on this system";
+        };
 
         ciRunner.strong = mkOption {
           type = bool;

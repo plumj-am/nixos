@@ -74,7 +74,8 @@ in
       {
         config = mkConfig inputs "yuzu" "x86_64-linux" {
           systemInfo = {
-            cores = 20;
+            cores = 14;
+            threads = 20;
 
             disks.swap.partition = {
               path = "/dev/disk/by-label/swap";
