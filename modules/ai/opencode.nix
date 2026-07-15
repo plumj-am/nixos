@@ -61,6 +61,20 @@
                 "@plannotator/opencode"
                 "opencode-tps-meter"
                 "@dietrichgebert/ponytail"
+                [
+                  "@prevalentware/opencode-goal-plugin"
+                  {
+                    auto_continue = true;
+                    defer_while_tasks_active = true;
+                    max_auto_turns = 25;
+                    min_continue_interval_seconds = 3;
+                    max_prompt_failures = 10;
+                    no_progress_token_threshold = 50;
+                    max_no_progress_turns = 2;
+                    restricted_agents = [ "plan" ];
+                    allow_goal_execution_from_plan = false;
+                  }
+                ]
               ];
 
               permission = {
