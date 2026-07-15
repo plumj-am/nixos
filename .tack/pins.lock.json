@@ -3,9 +3,9 @@
     "type": "github",
     "owner": "manic-systems",
     "repo": "cade",
-    "rev": "341d4cf80788ec305c28d9159d487d7884111311",
-    "narHash": "sha256-IjmEV8v2hf6j9jgK44zF1Bwn4G96DHSeFSZg6UjSA2w=",
-    "lastModified": 1782611946
+    "rev": "8cf18ad67bd678aa0fc2b71d7839f3f31edf8963",
+    "narHash": "sha256-zkOMfC/oO1MnTp2Kn5eZ5n/9Lsu2cpvBo+Gjoxe2ZS8=",
+    "lastModified": 1785270046
   },
   "disko": {
     "type": "github",

@@ -1,5 +1,5 @@
 [inputs]
-cade.url              = "gh:manic-systems/cade?ref=next"
+cade.url              = "gh:manic-systems/cade"
 disko.url             = "gh:nix-community/disko"
 fenix.url             = "gh:nix-community/fenix"
 gerrit-autosubmit.url = "plumjam:plumjam/gerrit-autosubmit"
