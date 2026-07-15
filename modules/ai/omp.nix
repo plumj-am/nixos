@@ -70,15 +70,18 @@
                       };
                   in
                   mkDeepSeekModel {
+                    # high | xhigh
                     id = "deepseek/deepseek-v4-flash";
                     name = "DeepSeek V4 Flash";
                   }
                   ++ mkDeepSeekModel {
+                    # high | xhigh
                     id = "deepseek/deepseek-v4-pro";
                     name = "DeepSeek V4 Pro";
                   }
                   ++ [
                     {
+                      # minimal | low | medium | high
                       id = "stepfun/Step-3.5-Flash";
                       name = "Step 3.5 Flash";
                       reasoning = true;
@@ -86,26 +89,40 @@
                       maxTokens = 384000;
                     }
                     {
-                      id = "MiniMaxAI/MiniMax-M3";
-                      name = "MiniMax M3";
-                      reasoning = true;
-                      contextWindow = 1000000;
-                      maxTokens = 131072;
-                    }
-                    {
-                      id = "Qwen/Qwen3.7-Flash";
-                      name = "Qwen 3.7 Flash";
-                      reasoning = true;
-                      contextWindow = 1000000;
-                      maxTokens = 131072;
-                    }
-                    # TODO: limited input, wait until full release with full context
-                    {
+                      # TODO: limited input, wait until full release with full context
+                      # minimal | low | medium | high | xhigh
                       id = "poolside/laguna-s-2.1-free";
                       name = "Poolside Laguna S 2.1";
                       reasoning = true;
                       contextWindow = 256000;
                       maxTokens = 131072;
+                    }
+                    {
+                      # minimal | low | medium | high | xhigh
+                      id = "meta/muse-spark-1.2-contributor";
+                      name = "Meta Muse Spark 1.2";
+                      reasoning = true;
+                      thinking = {
+                        minLevel = "minimal";
+                        maxLevel = "xhigh";
+                        mode = "effort";
+                      };
+                      input = [
+                        "text"
+                        "image"
+                      ];
+                      cost = {
+                        input = 0.1;
+                        output = 0.2;
+                        cacheRead = 0.002;
+                        cacheWrite = 0;
+                      };
+                      contextWindow = 1048576;
+                      maxTokens = 131072;
+                      compat = {
+                        supportsReasoningEffort = true;
+                        supportsToolChoice = false;
+                      };
                     }
                   ];
               };
@@ -119,13 +136,17 @@
                 api = "openai-completions";
                 models = [
                   {
+                    # minimal | low | medium | high | xhigh
                     id = "laguna-s-2.1-free";
                     name = "Poolside Laguna S 2.1";
                     reasoning = true;
                     contextWindow = 256000;
                     maxTokens = 131072;
                   }
-                  { id = "deepseek-v4-flash-free"; }
+                  {
+                    # high | xhigh
+                    id = "deepseek-v4-flash-free";
+                  }
                 ];
               };
             };
@@ -136,29 +157,28 @@
             generator = pkgs.writers.writeYAML "omp-agent-config.yml";
             value =
               let
-                big = "opencode-zen/laguna-s-2.1-free";
-                small = "opencode-zen/laguna-s-2.1-free";
-                cheap = "opencode-zen/laguna-s-2.1-free";
-                vision = "commandcode/Qwen/Qwen3.7-Flash";
+                big = "opencode-zen/laguna-s-2.1-free:xhigh";
+                small = "opencode-zen/laguna-s-2.1-free:high";
+                cheap = "opencode-zen/laguna-s-2.1-free:low";
+                vision = "commandcode/meta/muse-spark-1.2-contributor:low";
 
                 bigFallback = [
-                  "commandcode/deepseek/deepseek-v4-flash"
-                  "commandcode/minimaxai/minimax-m3"
+                  "commandcode/meta/muse-spark-1.2-contributor:xhigh"
+                  "commandcode/deepseek/deepseek-v4-flash:xhigh"
                 ];
                 smallFallback = [
-                  "opencode-zen/deepseek-v4-flash-free"
-                  "commandcode/deepseek/deepseek-v4-flash"
+                  "opencode-zen/deepseek-v4-flash-free:auto"
+                  "commandcode/meta/muse-spark-1.2-contributor:medium"
+                  "commandcode/deepseek/deepseek-v4-flash:high"
                 ];
                 cheapFallback = [
-                  "opencode-zen/deepseek-v4-flash-free"
-                  "commandcode/stepfun/step-3.5-flash"
-                  "commandcode/deepseek/deepseek-v4-flash"
+                  "opencode-zen/deepseek-v4-flash-free:high"
+                  "commandcode/stepfun/step-3.5-flash:low"
+                  "commandcode/deepseek/deepseek-v4-flash:high"
+                  "commandcode/meta/muse-spark-1.2-contributor:low"
                 ];
               in
               {
-                defaultProvider = "opencode-zen";
-                defaultModel = "laguna-s-2.1-free";
-
                 # [appearance]
                 theme = {
                   dark = "dark-gruvbox";
@@ -176,7 +196,7 @@
                 };
 
                 # [context]
-                contextPromotion = false; # do not upgrade model - compact instead.
+                contextPromotion.enabled = false; # do not upgrade model - compact instead.
                 compaction = {
                   enabled = true;
                   strategy = "context-full";
@@ -224,16 +244,16 @@
                   "opencode-zen"
                 ];
                 modelRoles = {
-                  default = "${small}:high";
-                  smol = "${cheap}:off";
-                  slow = "${big}:max";
-                  advisor = "${big}:max";
-                  plan = "${big}:max";
-                  vision = "${vision}:low";
-                  designer = "${vision}:low";
-                  commit = "${cheap}:off";
-                  task = "${cheap}:low";
-                  tiny = "${cheap}:low";
+                  default = small;
+                  smol = cheap;
+                  slow = big;
+                  advisor = big;
+                  plan = big;
+                  vision = vision;
+                  designer = vision;
+                  commit = cheap;
+                  task = cheap;
+                  tiny = cheap;
                 };
                 enabledModels = [ ]; # all
                 shellPath = getExe pkgs.bash;
@@ -343,7 +363,7 @@
               private = true;
               dependencies = {
                 context-mode = "^1";
-                omp-dynamic-context-pruning = "https://github.com/TT432/omp-dynamic-context-pruning";
+                omp-dynamic-context-pruning = "https://github.com/plumj-am/omp-dynamic-context-pruning";
                 ponytail = "https://github.com/DietrichGebert/ponytail";
                 "@plannotator/pi-extension" = "^0.25";
                 caveman = "https://github.com/JuliusBrussee/caveman";
