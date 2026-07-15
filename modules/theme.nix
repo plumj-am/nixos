@@ -201,7 +201,7 @@ let
 
         gtk.dark = {
           name = "Gruvbox-Dark";
-          package = pkgs.gruvbox-gtk-theme;
+          package = pkgs.gruvbox-dark-gtk;
         };
         gtk.light = {
           name = "Adwaita";
