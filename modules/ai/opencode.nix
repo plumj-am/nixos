@@ -52,7 +52,6 @@
               };
 
               plugin = [
-                "commandcode-go-opencode-provider"
                 "@tarquinen/opencode-dcp"
                 "@plannotator/opencode"
                 "opencode-tps-meter"
@@ -96,7 +95,7 @@
               agent = {
                 build = {
                   mode = "primary";
-                  model = "commandcode/deepseek/deepseek-v4-flash";
+                  model = "commandcode/deepseek-v4-flash";
                   reasoningEffort = "high";
                   textVerbosity = "low";
                   thinking.type = "enabled";
@@ -104,7 +103,7 @@
 
                 plan = {
                   mode = "primary";
-                  model = "commandcode/deepseek/deepseek-v4-flash";
+                  model = "commandcode/minimax-m3";
                   reasoningEffort = "max";
                   textVerbosity = "low";
                   thinking.type = "enabled";
@@ -112,7 +111,7 @@
 
                 general = {
                   mode = "subagent";
-                  model = "commandcode/deepseek/deepseek-v4-flash";
+                  model = "commandcode/deepseek-v4-flash";
                   reasoningEffort = "high";
                   textVerbosity = "low";
                   thinking.type = "enabled";
@@ -120,7 +119,7 @@
 
                 explore = {
                   mode = "subagent";
-                  model = "commandcode/deepseek/deepseek-v4-flash";
+                  model = "commandcode/deepseek-v4-flash";
                   reasoningEffort = "low";
                   textVerbosity = "low";
                   thinking.type = "disabled";
@@ -128,7 +127,7 @@
 
                 scout = {
                   mode = "subagent";
-                  model = "commandcode/deepseek/deepseek-v4-flash";
+                  model = "commandcode/deepseek-v4-flash";
                   reasoningEffort = "high";
                   textVerbosity = "low";
                   thinking.type = "enabled";
@@ -136,30 +135,69 @@
               };
 
               provider.commandcode = {
+                npm = "@ai-sdk/openai-compatible";
+                name = "Command Code";
+
+                options = {
+                  baseURL = "https://api.commandcode.ai/provider/v1";
+                  apiKey = "{env:COMMANDCODE_API_KEY}";
+                };
+
                 timeout = 3000000;
                 chunkTimeout = 1500000;
 
-                models =
-                  genAttrs [
-                    "deepseek/deepseek-v4-pro"
-                    "deepseek/deepseek-v4-flash"
-                  ]
-                  <| const {
-                    variants = {
-                      # "In thinking mode, for compatibility, low and medium are mapped to high, and xhigh is mapped to max"
-                      # <https://api-docs.deepseek.com/guides/thinking_mode>
-                      Max = {
-                        reasoningEffort = "max";
-                        textVerbosity = "low";
-                        thinking.type = "enabled";
-                      };
-                      Default = {
-                        reasoningEffort = "high";
-                        textVerbosity = "low";
-                        thinking.type = "enabled";
-                      };
+                models = {
+                  deepseek-v4-flash = {
+                    id = "deepseek/deepseek-v4-flash";
+                    name = "DeepSeek V4 Flash";
+                    reasoning = true;
+                    tool_call = true;
+                    limit = {
+                      context = 1000000;
+                      output = 384000;
                     };
                   };
+                  deepseek-v4-pro = {
+                    id = "deepseek/deepseek-v4-pro";
+                    name = "DeepSeek V4 Pro";
+                    reasoning = true;
+                    tool_call = true;
+                    limit = {
+                      context = 1000000;
+                      output = 384000;
+                    };
+                  };
+                  minimax-m3 = {
+                    id = "MiniMaxAI/MiniMax-M3";
+                    name = "MiniMax M3";
+                    reasoning = true;
+                    tool_call = true;
+                    limit = {
+                      context = 1000000;
+                      output = 131072;
+                    };
+                  };
+                  "mimo-v2.5-pro" = {
+                    id = "xiaomi/mimo-v2.5-pro";
+                    name = "MiMo V2.5 Pro";
+                    reasoning = true;
+                    tool_call = true;
+                    limit = {
+                      context = 1000000;
+                      output = 131072;
+                    };
+                  };
+                  hy3 = {
+                    id = "tencent/Hy3";
+                    name = "Tencent Hy3 [free]";
+                    reasoning = true;
+                    tool_call = true;
+                    limit = {
+                      context = 262144;
+                      output = 131072;
+                    };
+                  };
+                };
               };
 
               lsp = {
@@ -177,12 +215,18 @@
               formatter = {
                 rustfmt = {
                   command = [
-                    "cargo"
-                    "fmt"
+                    "rustfmt"
                     "--"
                     "$FILE"
                   ];
                   extensions = [ ".rs" ];
+                };
+                nixfmt = {
+                  command = [
+                    "nixfmt"
+                    "$FILE"
+                  ];
+                  extensions = [ ".nix" ];
                 };
                 qmlformat = {
                   command = [
