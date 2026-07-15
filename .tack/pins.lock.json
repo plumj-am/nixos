@@ -36,9 +36,9 @@
     "type": "git",
     "url": "ssh://forgejo@git.plumj.am/grove-systems/grove",
     "ref": "HEAD",
-    "rev": "e2f483a9236b85ba8448414edffc9fbfe487aa27",
-    "narHash": "sha256-4rhjWZSu8bzIIYaaPSqrMez95gT4Yls9x1eH/h+KqaA=",
-    "lastModified": 1786223944
+    "rev": "68574910cfffed64820cafb042eeeb2b7cad4ce4",
+    "narHash": "sha256-8dWfolwL+zxYM0hZbURupsaeFLDP4WoElLeYeDBC+vU=",
+    "lastModified": 1786386897
   },
   "harmonia": {
     "type": "github",
