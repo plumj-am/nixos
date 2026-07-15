@@ -26,7 +26,7 @@ def --wrapped main [
       exit 0
    }
 
-   let os = uname | get kernel-name | str downcase
+   let os: string = uname | get kernel-name | str lowercase
 
    let config = if $os == darwin {
       {path: /Users/jam/nixos, cmd: $os}
