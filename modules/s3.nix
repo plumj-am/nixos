@@ -124,7 +124,6 @@
       garageApiVersion = garage.apiVersion;
       garageS3Cache = "s3://${garageBucket}?endpoint=${garageEndpoint}&profile=${garageAlias}&region=${garageRegion}${s3SharedArgs}";
 
-
       uploadProcessor = pkgs.writeShellScriptBin "nix-upload-processor" ''
         #!/usr/bin/env bash
         set -eu
@@ -264,8 +263,12 @@
           --api ${garageApiVersion} \
           --path ${garagePathStyle}
 
-        ${getExe pkgs.minio-client} --quiet ilm add --expire-days 60 ${fsn1Alias}/${fsn1Bucket}/${fsn1Prefix} 2>/dev/null || true
-        ${getExe pkgs.minio-client} --quiet ilm add --expire-days 60 ${garageAlias}/${garageBucket} 2>/dev/null || true
+        if ! ${getExe pkgs.minio-client} --quiet ilm ls --json ${fsn1Alias}/${fsn1Bucket} | ${getExe pkgs.jq} -e '.config.Rules[]? | select(.Expiration.Days == 14)'; then
+          ${getExe pkgs.minio-client} --quiet ilm add --expire-days 14 ${fsn1Alias}/${fsn1Bucket} 2>/dev/null || true
+        fi
+        if ! ${getExe pkgs.minio-client} --quiet ilm ls --json ${garageAlias}/${garageBucket} | ${getExe pkgs.jq} -e '.config.Rules[]? | select(.Expiration.Days == 14)'; then
+          ${getExe pkgs.minio-client} --quiet ilm add --expire-days 14 ${garageAlias}/${garageBucket} 2>/dev/null || true
+        fi
       '';
 
       setupScript = pkgs.writeShellScriptBin "s3-setup" ''
