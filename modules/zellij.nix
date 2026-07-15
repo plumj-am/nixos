@@ -272,8 +272,8 @@
               ''
                 layout {
                   pane size="75%" split_direction="vertical" {
-                      pane focus=true size="72%"
-                      pane size="28%"
+                      pane focus=true size="76%"
+                      pane size="24%"
                   }
                   pane size="25%" split_direction="vertical" {
                       pane size="50%"
