@@ -476,6 +476,7 @@ in
           # Rust
           # rust-analyzer is in modules/common/rust.nix
           pkgs.lldb
+          pkgs.leptosfmt
 
           # Assembler
           pkgs.asm-lsp
