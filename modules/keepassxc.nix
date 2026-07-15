@@ -24,7 +24,7 @@ let
       ClearSearch = true;
       ClearSearchTimeout = 5; # 5 minutes.
       LockDatabaseIdle = true;
-      LockDatabaseIdleSeconds = 3 * 60 * 60; # 3 hours.
+      LockDatabaseIdleSeconds = 6 * 60 * 60; # 6 hours.
     };
 
     Browser.Enabled = true;
