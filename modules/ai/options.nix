@@ -36,9 +36,6 @@
             [
               "command-code-key"
               "nvidia-nim-key"
-              "codestral-key"
-              "llm7-key"
-              "ollama-key"
               "exa-key"
               "context7-key"
               "command-code-auth-json"

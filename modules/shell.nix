@@ -139,9 +139,6 @@
                     --ro-bind ${directory}/.config ${directory}/.config
                     --ro-bind /run/secrets/command-code-key /run/secrets/command-code-key
                     --ro-bind /run/secrets/nvidia-nim-key /run/secrets/nvidia-nim-key
-                    --ro-bind /run/secrets/codestral-key /run/secrets/codestral-key
-                    --ro-bind /run/secrets/llm7-key /run/secrets/llm7-key
-                    --ro-bind /run/secrets/ollama-key /run/secrets/ollama-key
                     --ro-bind /run/secrets/exa-key /run/secrets/exa-key
                     --ro-bind /run/secrets/context7-key /run/secrets/context7-key
                     --ro-bind /run/current-system /run/current-system
@@ -171,9 +168,6 @@
                     --setenv SSL_CERT_FILE /etc/ssl/certs/ca-certificates.crt
                     --setenv COMMANDCODE_API_KEY (^cat /run/secrets/command-code-key)
                     --setenv NVIDIA_API_KEY (^cat /run/secrets/nvidia-nim-key)
-                    --setenv CODESTRAL_API_KEY (^cat /run/secrets/codestral-key)
-                    --setenv LLM7_API_KEY (^cat /run/secrets/llm7-key)
-                    --setenv OLLAMA_API_KEY (^cat /run/secrets/ollama-key)
                     --setenv EXA_API_KEY (^cat /run/secrets/exa-key)
                     --setenv CONTEXT7_API_KEY (^cat /run/secrets/context7-key)
                     --setenv IN_BWRAP 1
