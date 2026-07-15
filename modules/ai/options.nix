@@ -40,15 +40,7 @@
               "exa-key"
               "context7-key"
               "command-code-auth-json"
-            ]
-          // {
-            litellm-environment = {
-              sopsFile = ../../secrets/all/ai.yaml;
-              owner = "litellm";
-              group = "litellm";
-              mode = "600";
-            };
-          };
+            ];
 
       # "*" and " *" might not be necessary but tools sometimes differ in how
       # they handle them apparently. Once I'm sure, I'll just do this on the

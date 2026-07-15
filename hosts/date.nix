@@ -33,7 +33,6 @@ in
       jujutsu-extra
       keepassxc
       kitty
-      litellm
       mprocs
       # ncro
       nextcloud-client
