@@ -4,11 +4,13 @@
       inputs,
       pkgs,
       lib,
+      config,
       ...
     }:
     let
       inherit (lib.meta) getExe;
       inherit (lib.lists) singleton;
+      inherit (config.sops) secrets;
     in
     {
       ai.secrets = true;
@@ -34,45 +36,70 @@
             value = {
               providers.commandcode = {
                 baseUrl = "https://api.commandcode.ai/provider/v1";
-                apiKey = "COMMANDCODE_API_KEY";
+                apiKey = "!cat ${secrets.command-code-key.path}";
                 api = "openai-completions";
-                models = [
-                  {
+                models =
+                  let
+                    mkDeepSeekModel =
+                      { id, name }:
+                      singleton {
+                        inherit id name;
+                        reasoning = true;
+                        thinking = {
+                          minLevel = "high";
+                          maxLevel = "xhigh";
+                          mode = "effort";
+                        };
+                        input = singleton "text";
+                        contextWindow = 1000000;
+                        maxTokens = 384000;
+                        compat = {
+                          supportsDeveloperRole = false;
+                          supportsReasoningEffort = true;
+                          maxTokensField = "max_tokens";
+                          reasoningEffortMap = {
+                            low = "high"; # lowest available for V4 models
+                            high = "high";
+                            xhigh = "max";
+                          };
+                          supportsToolChoice = false;
+                          requiresReasoningContentForToolCalls = true;
+                          requiresAssistantContentForToolCalls = true;
+                          extraBody.thinking.type = "enabled";
+                        };
+                      };
+                  in
+                  mkDeepSeekModel {
                     id = "deepseek/deepseek-v4-flash";
                     name = "DeepSeek V4 Flash";
-                    reasoning = true;
-                    contextWindow = 1000000;
-                    maxTokens = 384000;
                   }
-                  {
+                  ++ mkDeepSeekModel {
                     id = "deepseek/deepseek-v4-pro";
                     name = "DeepSeek V4 Pro";
-                    reasoning = true;
-                    contextWindow = 1000000;
-                    maxTokens = 384000;
                   }
-                  {
-                    id = "stepfun/Step-3.5-Flash";
-                    name = "Step 3.5 Flash";
-                    reasoning = true;
-                    contextWindow = 1000000;
-                    maxTokens = 384000;
-                  }
-                  {
-                    id = "MiniMaxAI/MiniMax-M3";
-                    name = "MiniMax M3";
-                    reasoning = true;
-                    contextWindow = 1000000;
-                    maxTokens = 131072;
-                  }
-                  {
-                    id = "Qwen/Qwen3.7-Flash";
-                    name = "Qwen 3.7 Flash";
-                    reasoning = true;
-                    contextWindow = 1000000;
-                    maxTokens = 131072;
-                  }
-                ];
+                  ++ [
+                    {
+                      id = "stepfun/Step-3.5-Flash";
+                      name = "Step 3.5 Flash";
+                      reasoning = true;
+                      contextWindow = 1000000;
+                      maxTokens = 384000;
+                    }
+                    {
+                      id = "MiniMaxAI/MiniMax-M3";
+                      name = "MiniMax M3";
+                      reasoning = true;
+                      contextWindow = 1000000;
+                      maxTokens = 131072;
+                    }
+                    {
+                      id = "Qwen/Qwen3.7-Flash";
+                      name = "Qwen 3.7 Flash";
+                      reasoning = true;
+                      contextWindow = 1000000;
+                      maxTokens = 131072;
+                    }
+                  ];
               };
             };
           };
@@ -80,83 +107,101 @@
           ".omp/agent/config.yml" = {
             type = "copy"; # Sometimes needs to write to config.
             generator = pkgs.writers.writeYAML "omp-agent-config.yml";
-            value = {
-              defaultProvider = "commandcode";
-              defaultModel = "deepseek/deepseek-v4-flash";
+            value =
+              let
+                big = "commandcode/deepseek/deepseek-v4-flash";
+                small = "commandcode/deepseek/deepseek-v4-flash";
+                cheap = "opencode-zen/deepseek-v4-flash-free";
+                vision = "commandcode/Qwen/Qwen3.7-Flash";
 
-              # [appearance]
-              theme = {
-                dark = "dark-gruvbox";
-                light = "light-gruvbox";
-              };
-              symbolPreset = "unicode";
-              statusLine = {
-                preset = "compact";
-                separator = "pipe";
-              };
-              terminal.showImages = true;
-              display = {
-                shimmer = "classic";
-                showTokenUsage = true;
-              };
+                bigFallback = [
+                  "commandcode/qwen3.7-flash"
+                  "commandcode/minimax-m3"
+                ];
+                smallFallback = [
+                  "commandcode/qwen3.7-flash"
+                  "opencode/deepseek-v4-flash-free"
+                ];
+                cheapFallback = [
+                  "opencode/deepseek-v4-flash-free"
+                  "opencode/laguna-s-2.1-free"
+                  "opencode/ling-3.0-flash-free"
+                  "commandcode/laguna-s-2.1-free"
+                  "commandcode/ling-3.0-flash-free"
+                  "commandcode/step-3.5-flash"
+                  "commandcode/deepseek-v4-flash"
+                ];
+              in
+              {
+                defaultProvider = "commandcode";
+                defaultModel = "deepseek/deepseek-v4-flash";
 
-              # [context]
-              contextPromotion = false; # do not upgrade model - compact instead.
-              compaction = {
-                enabled = true;
-                strategy = "context-full";
-              };
+                # [appearance]
+                theme = {
+                  dark = "dark-gruvbox";
+                  light = "light-gruvbox";
+                };
+                symbolPreset = "unicode";
+                statusLine = {
+                  preset = "compact";
+                  separator = "pipe";
+                };
+                terminal.showImages = true;
+                display = {
+                  shimmer = "classic";
+                  showTokenUsage = true;
+                };
 
-              # [editing]
-              lsp = {
-                enabled = true;
-                formatOnWrite = false;
-                diagnosticsOnWrite = true;
-                diagnosticsOnEdit = false;
-                diagnosticsDeduplicate = true;
-              };
-              eval = {
-                js = true;
-                py = true;
-              };
+                # [context]
+                contextPromotion = false; # do not upgrade model - compact instead.
+                compaction = {
+                  enabled = true;
+                  strategy = "context-full";
+                };
 
-              # [interaction]
-              autoResume = false;
-              steeringMode = "all"; # Send all queued messages at once.
-              followUpMode = "all";
-              interruptMode = "wait";
-              power = {
-                preventIdleSleep = false;
-                preventSystemSleep = false;
-                declareUserActive = false;
-                preventDisplaySleep = false;
-              };
-              startup = {
-                quiet = true;
-                setupWizard = false;
-                checkUpdate = false;
-              };
-              ask = {
-                timeout = 0;
-                notify = "on";
-              };
-              features.unexpectedStopDetection = true;
+                # [editing]
+                lsp = {
+                  enabled = true;
+                  formatOnWrite = false;
+                  diagnosticsOnWrite = true;
+                  diagnosticsOnEdit = false;
+                  diagnosticsDeduplicate = true;
+                };
+                eval = {
+                  js = true;
+                  py = true;
+                };
 
-              # [internal]
-              memories.enabled = false;
-              modelProviderOrder = [
-                "commandcode"
-                "opencode-zen"
-              ];
-              modelRoles =
-                let
-                  big = "commandcode/deepseek/deepseek-v4-flash";
-                  small = "commandcode/deepseek/deepseek-v4-flash";
-                  cheap = "opencode-zen/deepseek-v4-flash-free";
-                  vision = "commandcode/Qwen/Qwen3.7-Flash";
-                in
-                {
-                  default = "${small}:auto";
+                # [interaction]
+                autoResume = false;
+                steeringMode = "all"; # Send all queued messages at once.
+                followUpMode = "all";
+                interruptMode = "wait";
+                power = {
+                  preventIdleSleep = false;
+                  preventSystemSleep = false;
+                  declareUserActive = false;
+                  preventDisplaySleep = false;
+                };
+                startup = {
+                  quiet = true;
+                  setupWizard = false;
+                  checkUpdate = false;
+                };
+                ask = {
+                  timeout = 0;
+                  notify = "on";
+                };
+                features.unexpectedStopDetection = true;
+
+                # [internal]
+                memories.enabled = false;
+                modelProviderOrder = [
+                  "commandcode"
+                  "opencode-zen"
+                ];
+                modelRoles = {
+                  default = "${small}:high";
                   smol = "${cheap}:off";
                   slow = "${big}:max";
                   plan = "${big}:max";
@@ -165,89 +210,101 @@
                   commit = "${cheap}:off";
                   task = "${cheap}:low";
                 };
-              enabledModels = [ ]; # all
-              shellPath = getExe pkgs.bash;
+                enabledModels = [ ]; # all
+                shellPath = getExe pkgs.bash;
 
-              # [memory]
-              memory.backend = "off";
+                # [memory]
+                memory.backend = "off";
 
-              # [model]
-              advisor = {
-                enabled = false; # Can't choose model yet?
-                syncBacklog = 5;
-              };
-              defaultThinkingLevel = "medium";
-              hideThinkingBlock = true;
-              personality = "pragmatic";
-              retry = {
-                maxRetries = 100000;
-                maxDelayMs = 600000;
-              };
+                # [model]
+                advisor = {
+                  enabled = false; # Can't choose model yet?
+                  syncBacklog = 5;
+                };
+                defaultThinkingLevel = "medium";
+                hideThinkingBlock = true;
+                personality = "pragmatic";
+                retry = {
+                  modelFallback = true;
+                  fallbackRevertPolicy = "cooldown-expiry";
+                  maxRetries = 100000;
+                  maxDelayMs = 600000;
+                  fallbackChain = {
+                    default = smallFallback;
+                    smol = cheapFallback;
+                    slow = bigFallback;
+                    plan = bigFallback;
+                    vision = [ ]; # TODO: add another vision model
+                    designer = [ ];
+                    commit = cheapFallback;
+                    task = cheapFallback;
+                  };
+                };
 
-              # [providers]
-              secrets.enabled = true;
-              providers = {
-                webSearch = "auto";
-                image = "auto";
-                tinyModel = "LFM2-350m";
-                tinyModelDevice = "cpu";
-                unexpectedStopModel = "qwen3-1.7b";
-              };
-              exa = {
-                enabled = true;
-                enableSearch = true;
-                enableResearcher = true;
-              };
+                # [providers]
+                secrets.enabled = true;
+                providers = {
+                  webSearch = "auto";
+                  image = "auto";
+                  tinyModel = "LFM2-350m";
+                  tinyModelDevice = "cpu";
+                  unexpectedStopModel = "qwen3-1.7b";
+                };
+                exa = {
+                  enabled = true;
+                  enableSearch = true;
+                  enableResearcher = true;
+                };
 
-              # [tasks]
-              plan.enabled = true;
-              goal = {
-                enabled = true;
-                statusInFooter = true;
-              };
+                # [tasks]
+                plan.enabled = true;
+                goal = {
+                  enabled = true;
+                  statusInFooter = true;
+                };
 
-              # [tools]
-              marketplace.autoUpdate = "notify";
-              tools = {
-                discoveryMode = "auto";
-                approval = { }; # TODO?
-              };
-              todo = {
-                enabled = true;
-                reminders = true;
-                eager = true;
-              };
-              find.enabled = true;
-              search.enabled = true;
-              astGrep.enabled = true;
-              irc.enabled = true;
-              renderMermaid.enabled = true;
-              debug.enabled = true;
-              checkpoint.enabled = true;
-              fetch.enabled = true;
-              github.enabled = true;
-              web_search.enabled = true;
-              browser.enabled = true;
-              async.enabled = true;
-              mcp.discoveryMode = true;
-              skills = {
-                enabled = true;
-                enableCodexUser = false;
-                enableClaudeUser = false;
-                enablePiUser = false;
-                enableAgentsUser = false;
-                enableClaudeProject = false;
-                enablePiProject = false;
-                enableAgentsProject = false;
-              };
+                # [tools]
+                marketplace.autoUpdate = "notify";
+                tools = {
+                  discoveryMode = "auto";
+                  approval = { }; # TODO?
+                };
+                todo = {
+                  enabled = true;
+                  reminders = true;
+                  eager = true;
+                };
+                find.enabled = true;
+                search.enabled = true;
+                astGrep.enabled = true;
+                irc.enabled = true;
+                renderMermaid.enabled = true;
+                debug.enabled = true;
+                checkpoint.enabled = true;
+                fetch.enabled = true;
+                github.enabled = true;
+                web_search.enabled = true;
+                browser.enabled = true;
+                async.enabled = true;
+                mcp.discoveryMode = true;
+                skills = {
+                  enabled = true;
+                  enableCodexUser = false;
+                  enableClaudeUser = false;
+                  enablePiUser = false;
+                  enableAgentsUser = false;
+                  enableClaudeProject = false;
+                  enablePiProject = false;
+                  enableAgentsProject = false;
+                };
 
-              # [shell]
-              bash = {
-                enabled = true;
-                autoBackground.enabled = true;
+                # [shell]
+                bash = {
+                  enabled = true;
+                  autoBackground.enabled = true;
+                };
+                bashInterceptor.enabled = true;
               };
-              bashInterceptor.enabled = true;
-            };
           };
 
           ".omp/plugins/package.json" = {
@@ -261,9 +318,15 @@
                 omp-dynamic-context-pruning = "https://github.com/TT432/omp-dynamic-context-pruning";
                 ponytail = "https://github.com/DietrichGebert/ponytail";
                 "@plannotator/pi-extension" = "^0.25";
+                caveman = "https://github.com/JuliusBrussee/caveman";
               };
             };
           };
+        };
+
+        xdg.config.files."ponytail/config.json" = {
+          generator = pkgs.writers.writeJSON "ponytail-config.json";
+          value.defaultMode = "ultra";
         };
 
         systemd.services.omp-bun-install = {
