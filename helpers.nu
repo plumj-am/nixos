@@ -50,17 +50,18 @@ def "main copy-root-ssh" [
    print "decrypting the host private key"
 
    (nix run
-      nixpkgs#age
+      nixpkgs#sops
       --
       --decrypt
-      --identity ./yubikey.pub
-      $"./secrets/($host)-id.age"
-   ) out> tmp-id-($host).txt
+      $"./secrets/($host)/id.yaml"
+   )
+   | from yaml
+   | get id out> tmp-id-($host).txt
 
    print "nix eval'ing the hostPubkey"
 
    (nix eval
-      $".#nixosConfigurations.($host).config.age.rekey.hostPubkey"
+      $".#nixosConfigurations.($host).config.flake.keys.($host)"
    ) | str trim --char '"' out> tmp-id-pub-($host).txt
 
    print "touch'ing the necessary files"
@@ -108,7 +109,13 @@ def "main full-nixos-anywhere-setup" [
 
    (try { ssh-keygen -R ($remote) })
 
-   input $"Make sure you have run 'sudo passwd' on the new host \(($host) | ($remote)\) before continuing. Press any button to continue."
+   input $"Make sure you have:
+   - run 'sudo passwd' on the new host \(($host) | ($remote)\)
+   - enabled openssh service with `services.openssh.settings.PermitRootLogin = "yes";`
+   - allowed port 22 (TCP)
+   - disabled automatic sleep
+before continuing, if necessary.
+Press any button to continue."
 
    main copy-root-ssh --host $host --remote $remote
 
