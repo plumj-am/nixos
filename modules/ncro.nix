@@ -10,33 +10,54 @@
     let
       inherit (lib.modules) mkForce;
       inherit (lib.trivial) flip;
-      inherit (lib.lists) singleton;
+      inherit (lib.lists) singleton filter;
       inherit (config.s3.caches) fsn1 garage;
 
       port = "8013";
       ncroUrl = "http://localhost:${port}";
 
-      harmoniaUrl = "taild29fec.ts.net:5000";
+      tailnet = "taild29fec.ts.net";
+      meshPort = "7946";
+
+      harmoniaUrl = "${tailnet}:5000";
       harmoniaHosts = [
-        "plum"
-        "kiwi"
-        "sloe"
-        "date"
-        "yuzu"
+        {
+          name = "plum";
+          key = "9f193f58b1bf4d35de86471ba3d85f8397dc838c39a93ad08c5dadd4724af7ca";
+        }
+        {
+          name = "kiwi";
+          key = "3b8d4ef4b11a643892c16e38efaafe7a5db0dc0c835fa80a211fbe836b7663a7";
+        }
+        {
+          name = "sloe";
+          key = "30978780e116e3287e14ba75f459a0be79e13c233a8196283c35a6abdcc569b7";
+        }
+        {
+          name = "date";
+          key = "91d83f3e8f3f502c46831e27935bafe9ba25f5551367f8ef443587776ad772f9";
+        }
+        {
+          name = "yuzu";
+          key = "9b2e111a6e1e8301638f1e95c022e09c488084146fbbcece24a4bc95ba8fc9b6";
+        }
       ];
       harmoniaUpstreams = flip map harmoniaHosts (h: {
-        url = "http://${h}.${harmoniaUrl}";
+        url = "http://${h.name}.${harmoniaUrl}";
         priority = 30;
+        nar_url_mode = "keep";
       });
 
       s3Upstreams = [
         {
           url = "s3://plumjam/nix?endpoint=fsn1.your-objectstorage.com&scheme=https&profile=${fsn1.alias}";
           priority = 43;
+          nar_url_mode = "keep";
         }
         {
           url = "s3://nix?endpoint=s3.plumj.am&scheme=https&profile=${garage.alias}&region=${garage.region}";
           priority = 43;
+          nar_url_mode = "keep";
         }
       ];
     in
@@ -73,10 +94,12 @@
             {
               url = "https://cache.nixos.org";
               priority = 10;
+              nar_url_mode = "keep";
             }
             {
               url = "https://nix-community.cachix.org";
               priority = 20;
+              nar_url_mode = "keep";
             }
           ]
           ++ s3Upstreams
@@ -102,7 +125,17 @@
 
           discovery = { };
 
-          mesh = { };
+          mesh = {
+            enabled = true;
+            bind_addr = "0.0.0.0:${meshPort}";
+            # auto-generated
+            private_key = "/var/lib/ncro/mesh.key";
+            gossip_interval = "30s";
+            peers = map (h: {
+              addr = "${h.name}.${tailnet}:${meshPort}";
+              public_key = h.key or "";
+            }) (filter (h: h != config.networking.hostName) harmoniaHosts);
+          };
         };
       };
 
