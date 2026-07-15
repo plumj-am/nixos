@@ -142,9 +142,8 @@
                         bind "d" { NewPane "Down"; SwitchToMode "locked"; }
                         bind "r" { NewPane "Right"; SwitchToMode "locked"; }
                         bind "n" { NewPane "stacked"; SwitchToMode "locked"; }
-                        bind "x" { CloseFocus; }
-                        bind "f" { ToggleFocusFullscreen; }
-                        bind "w" { ToggleFloatingPanes; }
+                        bind "x" { CloseFocus; SwitchToMode "locked"; }
+                        bind "f" { NewPane "stacked"; MoveFocus "Up"; CloseFocus; SwitchToMode "locked"; }
                       }
 
                       tab {
