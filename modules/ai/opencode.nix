@@ -23,9 +23,20 @@
           '';
       };
 
-      big = "hy3"; # TODO: change to minimax-m3 after 21/07 (free promo ends)
-      small = "hy3"; # TODO: change to deepseek-v4-flash
-      cheap = "hy3"; # TODO: change to step-3.5-flash
+      big = "commandcode/deepseek-v4-pro";
+      small = "commandcode/deepseek-v4-flash";
+      cheap = "opencode/deepseek-v4-flash-free";
+
+      bigFallback = [
+        "commandcode/minimax-m3"
+      ];
+      smallFallback = [
+        "opencode/deepseek-v4-flash-free"
+      ];
+      cheapFallback = [
+        "commandcode/step-3.5-flash"
+        "commandcode/deepseek-v4-flash"
+      ];
     in
     {
       ai.secrets = true;
@@ -49,8 +60,8 @@
             generator = pkgs.writers.writeJSON "opencode-opencode.jsonc";
             value = {
               autoupdate = false;
-              model = "commandcode/${small}";
-              small_model = "commandcode/${cheap}";
+              model = small;
+              small_model = cheap;
 
               experimental = {
                 disable_paste_summary = true;
@@ -61,6 +72,7 @@
                 "@plannotator/opencode"
                 "opencode-tps-meter"
                 "@dietrichgebert/ponytail"
+                "opencode-runtime-fallback"
                 [
                   "@prevalentware/opencode-goal-plugin"
                   {
@@ -164,23 +176,14 @@
                       output = 131072;
                     };
                   };
-                  hy3 = {
-                    id = "tencent/Hy3";
-                    name = "Tencent Hy3 [free]";
-                    reasoning = true;
-                    tool_call = true;
-                    limit = {
-                      context = 262144;
-                      output = 131072;
-                    };
-                  };
                 };
               };
 
               agent = {
                 build = {
                   mode = "primary";
-                  model = "commandcode/${cheap}";
+                  model = small;
+                  fallback_models = smallFallback;
                   reasoningEffort = "medium";
                   textVerbosity = "low";
                   thinking.type = "enabled";
@@ -188,7 +191,8 @@
 
                 plan = {
                   mode = "primary";
-                  model = "commandcode/${big}";
+                  model = big;
+                  fallback_models = bigFallback;
                   reasoningEffort = "max";
                   textVerbosity = "low";
                   thinking.type = "enabled";
@@ -196,7 +200,8 @@
 
                 general = {
                   mode = "subagent";
-                  model = "commandcode/${small}";
+                  model = small;
+                  fallback_models = smallFallback;
                   reasoningEffort = "high";
                   textVerbosity = "low";
                   thinking.type = "enabled";
@@ -204,7 +209,8 @@
 
                 explore = {
                   mode = "subagent";
-                  model = "commandcode/${cheap}";
+                  model = cheap;
+                  fallback_models = cheapFallback;
                   reasoningEffort = "low";
                   textVerbosity = "low";
                   thinking.type = "disabled";
@@ -212,7 +218,8 @@
 
                 scout = {
                   mode = "subagent";
-                  model = "commandcode/${cheap}";
+                  model = cheap;
+                  fallback_models = cheapFallback;
                   reasoningEffort = "low";
                   textVerbosity = "low";
                   thinking.type = "enabled";
@@ -278,6 +285,10 @@
             generator = pkgs.writers.writeJSON "opencode-tui.jsonc";
             value = {
               theme = "gruvbox";
+
+              plugin = [
+                "opencode-tps-meter"
+              ];
 
               keybinds = {
                 app_exit = "ctrl+c";
