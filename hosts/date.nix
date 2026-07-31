@@ -17,7 +17,7 @@ in
       claude-code
       desktop-gui
       discord
-      disks-bcachefs
+      disks-normal
       docker-rootless
       editor-extra
       file-manager
