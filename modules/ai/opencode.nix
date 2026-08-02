@@ -87,6 +87,7 @@
                 "opencode-tps-meter"
                 "@dietrichgebert/ponytail"
                 "opencode-runtime-fallback"
+                "mattpocock/skills"
                 [
                   "@prevalentware/opencode-goal-plugin"
                   {
@@ -113,6 +114,7 @@
                 lsp = "allow";
                 question = "allow";
                 read = "allow";
+                skill = "allow";
                 task = "allow";
                 todoread = "allow";
                 todowrite = "allow";

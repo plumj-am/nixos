@@ -58,6 +58,8 @@
         "command *"
         "date*"
         "date *"
+        "diff*"
+        "diff *"
         "echo*"
         "echo *"
         "false"

@@ -6,7 +6,8 @@
 ## Tools
 
 - Use jj, never git.
-- No `sed`, use provided read tools.
+- Avoid `sed`; use provided read/edit tools whenever possible.
+- Prefer python for scripting; avoid bash.
 - Fallback chain for tool calls:
 
 ```
@@ -36,6 +37,7 @@ debug!("");
 - Prefer verbose identifiers unless it matches the existing code BUT avoid
   overspecifying them.
 - `let...else` preferred where possible.
-- No `unwrap()`, only `expect()` with a lowercase message is acceptable and must
-  contain information about why the call is infallible.
+- No `unwrap()`, prefer proper error handling. Only `expect()` with a lowercase
+  message is acceptable in certain cases and must contain information about why
+  the call is infallible.
 - `unwrap()` is acceptable only in tests.
