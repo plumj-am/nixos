@@ -87,7 +87,6 @@
                 "opencode-tps-meter"
                 "@dietrichgebert/ponytail"
                 "opencode-runtime-fallback"
-                "mattpocock/skills"
                 [
                   "@prevalentware/opencode-goal-plugin"
                   {
@@ -322,6 +321,18 @@
                 messages_half_page_down = "ctrl+d";
                 input_newline = "shift+enter";
               };
+            };
+          };
+
+          "opencode/tcp-meter.json" = {
+            generator = pkgs.writers.writeJSON "opencode-tui.jsonc";
+            value = {
+              showAverage = false;
+              showElapsed = true;
+
+              enableColorCoding = true;
+              showTpsThreshold = 40;
+              fastTpsThreshold = 80;
             };
           };
 
