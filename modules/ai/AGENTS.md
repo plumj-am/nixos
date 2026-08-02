@@ -6,18 +6,21 @@
 ## Tools
 
 - Use jj, never git.
-- Avoid `sed`; use provided read/edit tools whenever possible.
-- Prefer python for scripting; avoid bash.
+- Prefer provided read/edit tools whenever possible; avoid `sed` and similar.
+- Preferred scripting language chain:
+  1. nushell
+  2. python
+  3. bash - last resort
 - Fallback chain for tool calls:
-
-```
-builtin tool -> system tool -> devshell with `nix develop` -> `nix run/shell`
-```
-
-- If you have questions, do not send as plain text, use an available tool.
+  1. builtin tool
+  2. system tool
+  3. devshell with `nix develop`
+  4. `nix run/shell`
+- Do not send questions as plain text, use an available tool (e.g. question,
+  interview).
 - Documentation can be looked up with:
-  - context7
-  - gh_grep
+  - `context7`
+  - `gh_grep`
   - extract Rust documentation directly from `~/.cargo/registry` for the correct
     version of the crate
 - Web search is possible via the Exa tool.
@@ -25,6 +28,7 @@ builtin tool -> system tool -> devshell with `nix develop` -> `nix run/shell`
 ## Rust
 
 - Prefer `cargo clippy` over `cargo check`.
+- Prefer `cargo nextest` over `cargo test`.
 - Prefer absolute paths over imports:
 
 ```
@@ -40,4 +44,5 @@ debug!("");
 - No `unwrap()`, prefer proper error handling. Only `expect()` with a lowercase
   message is acceptable in certain cases and must contain information about why
   the call is infallible.
-- `unwrap()` is acceptable only in tests.
+- `unwrap()` is only acceptable in tests.
+- If the anyhow crate is used, make use of the `.context()` method.

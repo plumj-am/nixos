@@ -42,7 +42,6 @@ in
       packages-extra-gui
       packages-extra-cli
       peripherals
-      pi
       process-management
       quickshell
       rust-desktop

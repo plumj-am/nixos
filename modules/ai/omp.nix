@@ -25,7 +25,7 @@
         files = {
           ".omp/agent/AGENTS.md" = {
             type = "copy";
-            source = ../AGENTS.md;
+            source = ./AGENTS.md;
           };
 
           ".omp/agent/config.yml" = {
