@@ -8,6 +8,7 @@
     }:
     let
       inherit (lib.meta) getExe;
+      inherit (lib.lists) singleton;
     in
     {
       ai.secrets = true;
@@ -28,12 +29,60 @@
             source = ./AGENTS.md;
           };
 
+          ".omp/agent/models.yml" = {
+            generator = pkgs.writers.writeYAML "omp-agent-models.yml";
+            value = {
+              providers.commandcode = {
+                baseUrl = "https://api.commandcode.ai/provider/v1";
+                apiKey = "COMMANDCODE_API_KEY";
+                api = "openai-completions";
+                models = [
+                  {
+                    id = "deepseek/deepseek-v4-flash";
+                    name = "DeepSeek V4 Flash";
+                    reasoning = true;
+                    contextWindow = 1000000;
+                    maxTokens = 384000;
+                  }
+                  {
+                    id = "deepseek/deepseek-v4-pro";
+                    name = "DeepSeek V4 Pro";
+                    reasoning = true;
+                    contextWindow = 1000000;
+                    maxTokens = 384000;
+                  }
+                  {
+                    id = "stepfun/Step-3.5-Flash";
+                    name = "Step 3.5 Flash";
+                    reasoning = true;
+                    contextWindow = 1000000;
+                    maxTokens = 384000;
+                  }
+                  {
+                    id = "MiniMaxAI/MiniMax-M3";
+                    name = "MiniMax M3";
+                    reasoning = true;
+                    contextWindow = 1000000;
+                    maxTokens = 131072;
+                  }
+                  {
+                    id = "Qwen/Qwen3.7-Flash";
+                    name = "Qwen 3.7 Flash";
+                    reasoning = true;
+                    contextWindow = 1000000;
+                    maxTokens = 131072;
+                  }
+                ];
+              };
+            };
+          };
+
           ".omp/agent/config.yml" = {
             type = "copy"; # Sometimes needs to write to config.
             generator = pkgs.writers.writeYAML "omp-agent-config.yml";
             value = {
               defaultProvider = "commandcode";
-              defaultModel = "deepseek-v4-flash";
+              defaultModel = "deepseek/deepseek-v4-flash";
 
               # [appearance]
               theme = {
@@ -101,17 +150,20 @@
               ];
               modelRoles =
                 let
-                  model = "commandcode/deepseek-v4-flash";
+                  big = "commandcode/deepseek/deepseek-v4-flash";
+                  small = "commandcode/deepseek/deepseek-v4-flash";
+                  cheap = "opencode-zen/deepseek-v4-flash-free";
+                  vision = "commandcode/Qwen/Qwen3.7-Flash";
                 in
                 {
-                  default = "${model}:auto";
-                  smol = "${model}:off";
-                  slow = "${model}:max";
-                  plan = "${model}:max";
-                  vision = "${model}:low";
-                  designer = "${model}:low";
-                  commit = "${model}:off";
-                  task = "${model}:low";
+                  default = "${small}:auto";
+                  smol = "${cheap}:off";
+                  slow = "${big}:max";
+                  plan = "${big}:max";
+                  vision = "${vision}:low";
+                  designer = "${vision}:low";
+                  commit = "${cheap}:off";
+                  task = "${cheap}:low";
                 };
               enabledModels = [ ]; # all
               shellPath = getExe pkgs.bash;
@@ -206,11 +258,27 @@
               private = true;
               dependencies = {
                 context-mode = "^1";
+                omp-dynamic-context-pruning = "https://github.com/TT432/omp-dynamic-context-pruning";
                 ponytail = "https://github.com/DietrichGebert/ponytail";
-                omp-cmd = "https://github.com/bl4zee1g/omp-cmd";
+                "@plannotator/pi-extension" = "^0.25";
               };
             };
           };
+        };
+
+        systemd.services.omp-bun-install = {
+          description = "bun install for oh-my-pi plugins";
+          path = singleton pkgs.bun;
+          script = ''
+            cd ~/.omp/plugins
+            bun install
+          '';
+          serviceConfig = {
+            Type = "oneshot";
+            TimeoutStartSec = "5s";
+          };
+          after = singleton "hjem.target";
+          wantedBy = singleton "default.target";
         };
       };
     };
