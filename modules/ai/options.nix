@@ -38,6 +38,7 @@
               "nvidia-nim-key"
               "exa-key"
               "context7-key"
+              "opencode-go-key"
               "command-code-auth-json"
             ];
 

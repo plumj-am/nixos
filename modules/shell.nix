@@ -138,6 +138,7 @@
                     --dir /etc/ssl/certs
                     --ro-bind ${directory}/.config ${directory}/.config
                     --ro-bind /run/secrets/command-code-key /run/secrets/command-code-key
+                    --ro-bind /run/secrets/opencode-go-key /run/secrets/opencode-go-key
                     --ro-bind /run/secrets/nvidia-nim-key /run/secrets/nvidia-nim-key
                     --ro-bind /run/secrets/exa-key /run/secrets/exa-key
                     --ro-bind /run/secrets/context7-key /run/secrets/context7-key
@@ -167,6 +168,7 @@
                     --cap-drop all
                     --setenv SSL_CERT_FILE /etc/ssl/certs/ca-certificates.crt
                     --setenv COMMANDCODE_API_KEY (^cat /run/secrets/command-code-key)
+                    --setenv OPENCODE_API_KEY (^cat /run/secrets/opencode-go-key)
                     --setenv NVIDIA_API_KEY (^cat /run/secrets/nvidia-nim-key)
                     --setenv EXA_API_KEY (^cat /run/secrets/exa-key)
                     --setenv CONTEXT7_API_KEY (^cat /run/secrets/context7-key)

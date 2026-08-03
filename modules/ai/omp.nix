@@ -109,6 +109,25 @@
                     }
                   ];
               };
+
+              # Static defs so these resolve at launch before the remote
+              # opencode-zen catalog fetch completes. laguna-s-2.1-free is
+              # NOT in omp's catalog so need to add stuff manually.
+              providers.opencode-zen = {
+                baseUrl = "https://opencode.ai/zen/v1";
+                apiKey = "!cat ${secrets.opencode-go-key.path}";
+                api = "openai-completions";
+                models = [
+                  {
+                    id = "laguna-s-2.1-free";
+                    name = "Poolside Laguna S 2.1";
+                    reasoning = true;
+                    contextWindow = 256000;
+                    maxTokens = 131072;
+                  }
+                  { id = "deepseek-v4-flash-free"; }
+                ];
+              };
             };
           };
 
