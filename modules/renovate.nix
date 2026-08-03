@@ -48,7 +48,7 @@
           pkgs.cargo # I don't think it not being nightly matters here.
           pkgs.openssh # For ssh-keygen.
         ];
-        schedule = "*:0/10";
+        schedule = "daily";
         settings = {
           platform = "gerrit";
           endpoint = "http://plum.taild29fec.ts.net:8011";
