@@ -10,9 +10,7 @@
     let
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
-      inherit (lib.strings) optionalString;
       inherit (config) theme;
-      inherit (config.networking) hostName;
       inherit (config.myLib) mkDesktopEntry;
 
       quickshell = getExe inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.quickshell;
@@ -189,6 +187,19 @@
                   proportion 1.00
                 }
 
+                tab-indicator {
+                  on
+                  hide-when-single-tab
+                  place-within-column
+                  gap 0
+                  width 4
+                  length total-proportion=1.0
+                  position "left"
+                  active-color "${colors.base05}"
+                  inactive-color "#${colors.base02}"
+                  urgent-color "#${colors.base08}"
+                }
+
                 border {
                   on
                   width ${toString border.small}
@@ -234,13 +245,13 @@
               }
 
               binds {
+                Mod+Ctrl+Shift+Escape { quit; }
                 Mod+slash { show-hotkey-overlay; }
                 Mod+Shift+slash { show-hotkey-overlay; }
 
-                Mod+Shift+Ctrl+H repeat=false { spawn "helium"; }
-                Mod+Shift+Ctrl+K repeat=false { spawn "kitty"; }
-                Mod+Shift+Ctrl+Z repeat=false { spawn-sh "kitty -e zellij"; }
-                Mod+Shift+Ctrl+Q repeat=false { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath}"; }
+                Mod+B repeat=false hotkey-overlay-title="Spawn Helium" { spawn "helium"; }
+                Mod+Z repeat=false hotkey-overlay-title="Spawn kitty" { spawn "kitty"; }
+                Mod+X repeat=false hotkey-overlay-title="Spawn Quickshell" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath}"; }
 
                 Mod+Q repeat=false { close-window; }
                 Mod+Tab repeat=false { toggle-overview; }
@@ -254,8 +265,8 @@
                 Mod+7 { focus-workspace 7; }
                 Mod+8 { focus-workspace 8; }
 
-                Mod+Ctrl+H { focus-monitor-left; }
-                Mod+Ctrl+L { focus-monitor-right; }
+                Mod+Ctrl+Alt+H { focus-monitor-left; }
+                Mod+Ctrl+Alt+L { focus-monitor-right; }
 
                 Mod+F { expand-column-to-available-width; }
                 Mod+Shift+F { maximize-column; }
@@ -272,34 +283,37 @@
                 Mod+Shift+Minus { set-window-height "-10%"; }
                 Mod+Shift+Equal { set-window-height "+10%"; }
 
+                Mod+Shift+H { focus-column-or-monitor-left; }
+                Mod+Shift+L { focus-column-or-monitor-right; }
+                Mod+Shift+J { focus-window-down; }
+                Mod+Shift+K { focus-window-up; }
+
                 Mod+H { focus-column-or-monitor-left; }
                 Mod+L { focus-column-or-monitor-right; }
                 Mod+J { focus-workspace-down; }
                 Mod+K { focus-workspace-up; }
 
-                Mod+Shift+H { move-column-left-or-to-monitor-left; }
-                Mod+Shift+L { move-column-right-or-to-monitor-right; }
-                Mod+Shift+J { move-window-down-or-to-workspace-down; }
-                Mod+Shift+K { move-window-up-or-to-workspace-up; }
+                Mod+Ctrl+H { move-column-left-or-to-monitor-left; }
+                Mod+Ctrl+L { move-column-right-or-to-monitor-right; }
+                Mod+Ctrl+J { move-window-down-or-to-workspace-down; }
+                Mod+Ctrl+K { move-window-up-or-to-workspace-up; }
 
                 Mod+Comma { consume-window-into-column; }
                 Mod+Period { expel-window-from-column; }
                 Mod+Shift+Comma { consume-or-expel-window-left; }
                 Mod+Shift+Period { consume-or-expel-window-right; }
 
-                Mod+Ctrl+R { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call shell reload"; }
-                Mod+Ctrl+Shift+R { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call shell reloadHard"; }
-                Ctrl+Backspace { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call launcher toggle"; }
+                Mod+Ctrl+R hotkey-overlay-title="Soft reload Quickshell" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call shell reload"; }
+                Mod+Ctrl+Shift+R hotkey-overlay-title="Hard reload Quickshell" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call shell reloadHard"; }
+                Ctrl+Backspace hotkey-overlay-title="Open launcher" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call launcher toggle"; }
                 Mod+T { spawn "process-monitor"; }
                 Mod+P { spawn "process-killer"; }
                 Mod+D { spawn "todo-scratchpad"; }
                 Mod+S { spawn "random-scratchpad"; }
-                Mod+C { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call clipboard toggle"; }
+                Mod+C hotkey-overlay-title="Open clipboard history" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call clipboard toggle"; }
 
-                ${optionalString (hostName == "date") ''
-                  XF86MonBrightnessDown { spawn "brightnessctl" "set" "5%-"; }
-                  XF86MonBrightnessUp { spawn "brightnessctl" "set" "+5%"; }
-                ''}
+                XF86MonBrightnessDown { spawn "brightnessctl" "set" "5%-"; }
+                XF86MonBrightnessUp { spawn "brightnessctl" "set" "+5%"; }
               }
 
               spawn-sh-at-startup "${quickshell} --path ${quickshellPath}"
