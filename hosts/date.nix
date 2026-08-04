@@ -37,6 +37,7 @@ in
       # ncro
       nextcloud-client
       nix-settings-extra-desktop
+      omp
       opencode
       packages-extra-linux
       packages-extra-gui
