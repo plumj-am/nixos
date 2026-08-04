@@ -14,7 +14,7 @@ in
       disks-server
       forgejo-action-runner
       harmonia
-      # ncro
+      ncro
       nix-settings-extra-server
       radicle-node
       rust

@@ -20,7 +20,7 @@ in
       graft-sentinel
       graphics
       harmonia
-      # ncro
+      ncro
       nextcloud
       nginx
       nix-settings-extra-server

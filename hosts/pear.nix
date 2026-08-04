@@ -12,7 +12,7 @@ in
 
       harmonia
       jujutsu-extra
-      # ncro
+      ncro
       sops
       sudo-desktop
       # s3-upload

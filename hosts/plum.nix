@@ -22,7 +22,7 @@ in
       goatcounter
       harmonia
       matrix
-      # ncro
+      ncro
       nginx
       nix-settings-extra-server
       opengist

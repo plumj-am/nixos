@@ -35,7 +35,7 @@ in
       kitty
       # llama-cpp
       mprocs
-      # ncro
+      ncro
       nextcloud-client
       nix-settings-extra-desktop
       omp
