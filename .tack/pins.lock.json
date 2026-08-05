@@ -108,9 +108,9 @@
     "type": "github",
     "owner": "manic-systems",
     "repo": "ncro",
-    "rev": "8681ec50b9570de825786f9ec599b1301214a1ff",
-    "narHash": "sha256-E4sJw/ySR3bEGd3eyqXErmDtjj0TF+8JGYXH9uDPctc=",
-    "lastModified": 1784212632
+    "rev": "c1c68b069e5497bd58570bc94d98baa87cc5f6ca",
+    "narHash": "sha256-MFIB6KJ0nPGgt8jO05ddar1ZkjOhZrVEYYlmb/hh6SA=",
+    "lastModified": 1785959561
   },
   "niri": {
     "type": "github",
@@ -223,14 +223,6 @@
     "rev": "9fa985ddb9dc7f4d66aa7bfc3bc3188e4aa1d727",
     "narHash": "sha256-J/I7VPXpOwNtEk9H+lbZVT+xJYBsSKgnMlwzlVIJSWk=",
     "lastModified": 1782890834
-  },
-  "shed": {
-    "type": "git",
-    "url": "ssh://forgejo@git.plumj.am/grove-systems/grove",
-    "ref": "HEAD",
-    "rev": "540940804de4d78390f81c4d0446353da116858b",
-    "narHash": "sha256-o5XfVEU4oJ1S9VF9sEXmaH/16pFd7MyQaTBl/iys78c=",
-    "lastModified": 1785603312
   },
   "sops": {
     "type": "github",
