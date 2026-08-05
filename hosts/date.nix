@@ -52,6 +52,7 @@ in
       sudo-desktop
       syncthing
       swap-partition
+      s3
       s3-upload
       theme-extra-fonts
       theme-extra-scripts

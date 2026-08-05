@@ -1,4 +1,98 @@
 {
+  flake.modules.nixos.s3 =
+    {
+      pkgs,
+      config,
+      lib,
+      ...
+    }:
+    let
+      inherit (config.sops) secrets;
+
+      fsn1 = {
+        alias = "plumjam-fsn1";
+        bucket = "plumjam";
+        prefix = "nix";
+        endpoint = "fsn1.your-objectstorage.com";
+        pathStyle = "off";
+        apiVersion = "s3v4";
+      };
+      garage = {
+        alias = "plumjam-garage";
+        bucket = "nix";
+        endpoint = "sloe.taild29fec.ts.net:8015";
+        region = "garage";
+        pathStyle = "on";
+        apiVersion = "s3v4";
+      };
+    in
+    {
+      options.s3 = lib.mkOption {
+        type = lib.types.attrs;
+        default = { };
+        description = "Shared S3 cache configuration";
+      };
+
+      config = {
+        s3 = {
+          inherit fsn1 garage;
+          # Materialised by the `s3-credentials` systemd service from the four
+          # sops secrets below; group-readable so every S3 consumer can share
+          # one credentials file.
+          credentialsFile = "/var/lib/s3/.aws/credentials";
+        };
+
+        users.groups.s3 = { };
+
+        sops.secrets = {
+          "s3/fsn1/access-key".sopsFile = ../secrets/all/s3.yaml;
+          "s3/fsn1/secret-key".sopsFile = ../secrets/all/s3.yaml;
+          "s3/garage/access-key".sopsFile = ../secrets/all/s3.yaml;
+          "s3/garage/secret-key".sopsFile = ../secrets/all/s3.yaml;
+        };
+
+        # One-time systemd service: reads the four sops-rendered secret files
+        # via $CREDENTIALS_DIRECTORY and writes a combined AWS credentials
+        # file readable by the `s3` group.
+        systemd.services.s3-credentials = {
+          description = "Materialise shared AWS credentials for S3 consumers";
+          wantedBy = [ "multi-user.target" ];
+          serviceConfig = {
+            Type = "oneshot";
+            RemainAfterExit = true;
+            StateDirectory = "s3";
+            StateDirectoryMode = "0755";
+            LoadCredential = [
+              "s3-fsn1-access-key:${secrets."s3/fsn1/access-key".path}"
+              "s3-fsn1-secret-key:${secrets."s3/fsn1/secret-key".path}"
+              "s3-garage-access-key:${secrets."s3/garage/access-key".path}"
+              "s3-garage-secret-key:${secrets."s3/garage/secret-key".path}"
+            ];
+            ExecStart =
+              let
+                creds = pkgs.writeShellScript "s3-aws-creds" ''
+                  set -eu
+                  mkdir -p /var/lib/s3/.aws
+                  umask 077
+                  cat > /var/lib/s3/.aws/credentials <<EOF
+                  [${fsn1.alias}]
+                  aws_access_key_id=$(cat "$CREDENTIALS_DIRECTORY/s3-fsn1-access-key")
+                  aws_secret_access_key=$(cat "$CREDENTIALS_DIRECTORY/s3-fsn1-secret-key")
+                  [${garage.alias}]
+                  aws_access_key_id=$(cat "$CREDENTIALS_DIRECTORY/s3-garage-access-key")
+                  aws_secret_access_key=$(cat "$CREDENTIALS_DIRECTORY/s3-garage-secret-key")
+                  region=${garage.region}
+                  EOF
+                  chown root:s3 /var/lib/s3/.aws/credentials
+                  chmod 0640 /var/lib/s3/.aws/credentials
+                '';
+              in
+              "+${creds}";
+          };
+        };
+      };
+    };
+
   flake.modules.nixos.s3-upload =
     {
       pkgs,
@@ -10,26 +104,26 @@
       inherit (lib.meta) getExe;
       inherit (lib.lists) singleton;
       inherit (config.sops) secrets;
+      inherit (config.s3) fsn1 garage;
 
       s3SharedArgs = "&priority=43&multipart-upload=true&multipart-threshold=50M&multipart-chunk-size=10M";
 
-      fsn1Alias = "plumjam-fsn1";
-      fsn1Bucket = "plumjam";
-      fsn1Prefix = "nix";
-      fsn1Endpoint = "fsn1.your-objectstorage.com";
-      fsn1PathStyle = "off";
-      fsn1ApiVersion = "s3v4";
+      fsn1Alias = fsn1.alias;
+      fsn1Bucket = fsn1.bucket;
+      fsn1Prefix = fsn1.prefix;
+      fsn1Endpoint = fsn1.endpoint;
+      fsn1PathStyle = fsn1.pathStyle;
+      fsn1ApiVersion = fsn1.apiVersion;
       fsn1S3Cache = "s3://${fsn1Bucket}/${fsn1Prefix}?endpoint=${fsn1Endpoint}&profile=${fsn1Alias}${s3SharedArgs}";
 
-      garageHostName = "sloe";
-      garageHostPort = 8015;
-      garageAlias = "plumjam-garage";
-      garageBucket = "nix";
-      garageEndpoint = "${garageHostName}.taild29fec.ts.net:${toString garageHostPort}";
-      garageRegion = "garage";
-      garagePathStyle = "on";
-      garageApiVersion = "s3v4";
+      garageAlias = garage.alias;
+      garageBucket = garage.bucket;
+      garageEndpoint = garage.endpoint;
+      garageRegion = garage.region;
+      garagePathStyle = garage.pathStyle;
+      garageApiVersion = garage.apiVersion;
       garageS3Cache = "s3://${garageBucket}?endpoint=${garageEndpoint}&profile=${garageAlias}&region=${garageRegion}${s3SharedArgs}";
+
 
       uploadProcessor = pkgs.writeShellScriptBin "nix-upload-processor" ''
         #!/usr/bin/env bash
@@ -212,13 +306,6 @@
       '';
     in
     {
-      sops.secrets = {
-        "s3/fsn1/access-key".sopsFile = ../secrets/all/s3.yaml;
-        "s3/fsn1/secret-key".sopsFile = ../secrets/all/s3.yaml;
-        "s3/garage/access-key".sopsFile = ../secrets/all/s3.yaml;
-        "s3/garage/secret-key".sopsFile = ../secrets/all/s3.yaml;
-      };
-
       environment.systemPackages = [
         pkgs.minio-client
         setupAwsCreds

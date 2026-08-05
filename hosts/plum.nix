@@ -36,6 +36,7 @@ in
       sudo-server
       syncthing
       swapfile
+      s3
       s3-upload
       uptime-kuma
       users-extra

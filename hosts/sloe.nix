@@ -33,6 +33,7 @@ in
       sudo-server
       syncthing
       swapfile
+      s3
       s3-upload
       users-extra
       zellij

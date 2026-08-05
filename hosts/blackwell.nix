@@ -21,6 +21,7 @@ in
       sops
       sudo-server
       swapfile
+      s3
       s3-upload
       zellij
       {

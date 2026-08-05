@@ -4,12 +4,14 @@
       inputs,
       pkgs,
       lib,
+      config,
       ...
     }:
     let
       inherit (lib.modules) mkForce;
       inherit (lib.trivial) flip;
       inherit (lib.lists) singleton;
+      inherit (config.s3) fsn1 garage;
 
       port = "8013";
       ncroUrl = "http://localhost:${port}";
@@ -27,21 +29,32 @@
         priority = 30;
       });
 
-      s3Urls = [
-        "s3://plumjam/nix?endpoint=fsn1.your-objectstorage.com&scheme=https"
-        "s3://nix?endpoint=s3.plumj.am&scheme=https"
+      s3Upstreams = [
+        {
+          url = "s3://plumjam/nix?endpoint=fsn1.your-objectstorage.com&scheme=https&profile=${fsn1.alias}";
+          priority = 43;
+        }
+        {
+          url = "s3://nix?endpoint=s3.plumj.am&scheme=https&profile=${garage.alias}&region=${garage.region}";
+          priority = 43;
+        }
       ];
-      s3Upstreams = flip map s3Urls (url: {
-        inherit url;
-        priority = 43;
-      });
     in
     {
       imports = singleton inputs.ncro.nixosModules.default;
 
-      systemd.services.ncro.serviceConfig.Environment = ''
-        AWS_EC2_METADATA_DISABLED=true
-      '';
+      # S3 credentials come from the shared file materialised by the `s3`
+      # aspect (s3-credentials.service at /var/lib/s3/.aws/credentials).
+      systemd.services.ncro = {
+        serviceConfig = {
+          Environment = ''
+            AWS_EC2_METADATA_DISABLED=true
+          '';
+          SupplementaryGroups = [ "s3" ];
+        };
+        environment.AWS_SHARED_CREDENTIALS_FILE = config.s3.credentialsFile;
+      };
+
       services.ncro = {
         enable = true;
         package = inputs.ncro.packages.${pkgs.stdenv.hostPlatform.system}.ncro;

@@ -158,36 +158,12 @@ in
           config.sops.secrets."graft-ssh".path
         } -o StrictHostKeyChecking=accept-new";
         # The cache probe (nix path-info --store) runs as graft-sentinel and
-        # needs AWS creds to read the S3 binary caches. Point nix at a
-        # credentials file we materialize from the sops secrets at start.
-        environment.AWS_SHARED_CREDENTIALS_FILE = "${config.services.graft-sentinel.state_dir}/.aws/credentials";
+        # needs AWS creds to read the S3 binary caches. The shared file is
+        # materialised by the `s3` aspect (s3-credentials.service).
+        environment.AWS_SHARED_CREDENTIALS_FILE = config.s3.credentialsFile;
         serviceConfig = {
           BindReadOnlyPaths = [ config.sops.secrets."graft-ssh".path ];
-          LoadCredential = [
-            "s3-plumjam-fsn1-access-key:${config.sops.secrets."s3/fsn1/access-key".path}"
-            "s3-plumjam-fsn1-secret-key:${config.sops.secrets."s3/fsn1/secret-key".path}"
-            "s3-plumjam-garage-access-key:${config.sops.secrets."s3/garage/access-key".path}"
-            "s3-plumjam-garage-secret-key:${config.sops.secrets."s3/garage/secret-key".path}"
-          ];
-          ExecStartPre =
-            let
-              creds = pkgs.writeShellScript "graft-sentinel-aws-creds" ''
-                set -eu
-                mkdir -p ${config.services.graft-sentinel.state_dir}/.aws
-                umask 077
-                cat > ${config.services.graft-sentinel.state_dir}/.aws/credentials <<EOF
-                [plumjam-fsn1]
-                aws_access_key_id=$(cat "$CREDENTIALS_DIRECTORY/s3-plumjam-fsn1-access-key")
-                aws_secret_access_key=$(cat "$CREDENTIALS_DIRECTORY/s3-plumjam-fsn1-secret-key")
-                [plumjam-garage]
-                aws_access_key_id=$(cat "$CREDENTIALS_DIRECTORY/s3-plumjam-garage-access-key")
-                aws_secret_access_key=$(cat "$CREDENTIALS_DIRECTORY/s3-plumjam-garage-secret-key")
-                region=garage
-                EOF
-                chown graft-sentinel:graft ${config.services.graft-sentinel.state_dir}/.aws/credentials
-              '';
-            in
-            "+${creds}";
+          SupplementaryGroups = [ "graft" "s3" ];
         };
       };
     };
