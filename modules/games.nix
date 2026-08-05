@@ -3,25 +3,20 @@
     { pkgs, config, ... }:
     let
       inherit (config.myLib) mkDesktopEntry;
-      packages = [
-        pkgs.steam
-        pkgs.gamemode
-        pkgs.protontricks
-        pkgs.winetricks
-      ];
     in
     {
       environment.sessionVariables = {
         PROTON_ENABLE_WAYLAND = "1";
-
-        # maybe these only works in steam launch options?
-        PROTON_LOCAL_SHADER_CACHE = "1";
         __GL_SHADER_DISK_CACHE_SKIP_CLEANUP = "1";
-        __GL_SHADER_DISK_CACHE_SIZE = "21474836480";
-        DXVK_CONFIG = "dxvk.trackPipelineLifetime = True";
+        __GL_SHADER_DISK_CACHE_SIZE = "10737418240";
       };
 
-      environment.systemPackages = packages ++ [
+      environment.systemPackages = [
+        pkgs.steam
+        pkgs.gamemode
+        pkgs.protontricks
+        pkgs.winetricks
+
         (mkDesktopEntry {
           name = "Overwatch";
           exec = "steam steam://rungameid/2357570";
