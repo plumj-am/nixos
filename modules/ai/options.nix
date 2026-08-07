@@ -40,6 +40,7 @@
               "context7-key"
               "opencode-go-key"
               "command-code-auth-json"
+              "hermes-env"
             ];
 
       config.ai.commands.bash.allow =

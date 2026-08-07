@@ -20,6 +20,7 @@ in
       graft-sentinel
       graphics
       harmonia
+      hermes
       ncro
       nextcloud
       nginx
