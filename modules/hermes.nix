@@ -12,6 +12,9 @@
       inherit (lib.meta) getExe;
       inherit (config.sops) secrets;
 
+      cfg = config.services.hermes-agent;
+      package = inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.default;
+
       gerritMcpSrc = pkgs.fetchFromGitHub {
         owner = "GerritCodeReview";
         repo = "gerrit-mcp-server";
@@ -31,6 +34,39 @@
         }
       );
 
+      # No MemoryDenyWriteExecute (breaks CPython JIT-ish paths), read-only /
+      # and home, private /tmp, pid-subset /proc.
+      hermesHardening = {
+        UMask = "0007";
+        NoNewPrivileges = true;
+        ProtectSystem = "strict";
+        ProtectHome = true;
+        PrivateTmp = true;
+        PrivateDevices = true;
+        ProtectKernelTunables = true;
+        ProtectKernelModules = true;
+        ProtectControlGroups = true;
+        ProtectHostname = true;
+        ProtectClock = true;
+        LockPersonality = true;
+        RestrictSUIDSGID = true;
+        RestrictRealtime = true;
+        RestrictNamespaces = true;
+        ProcSubset = "pid";
+        ProtectProc = "invisible";
+        CapabilityBoundingSet = [ ];
+        SystemCallArchitectures = "native";
+        RestrictAddressFamilies = [
+          "AF_INET"
+          "AF_INET6"
+          "AF_UNIX"
+        ];
+        ReadWritePaths = [
+          cfg.stateDir
+          cfg.workingDirectory
+        ];
+      };
+
       gerritMcpServer = pythonPkgs.buildPythonPackage {
         pname = "gerrit-mcp-server";
         version = "1.0.0";
@@ -47,9 +83,8 @@
         ];
         # The upstream server writes server.log next to the package
         # (SERVER_ROOT_PATH / "server.log"), which is read-only in the Nix
-        # store — every tool call crashes with "Permission denied". Point the
-        # log at $HERMES_HOME (writable, hermes-owned; both host and
-        # container contexts have it set) with /tmp as fallback.
+        # store - every tool call crashes with "Permission denied". Point the
+        # log at $HERMES_HOME (writable, hermes-owned) with /tmp as fallback.
         postPatch = ''
           substituteInPlace gerrit_mcp_server/main.py \
             --replace-fail \
@@ -73,27 +108,29 @@
       ];
 
       services.hermes-agent = {
-
         enable = true;
-        package = inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.default;
+        inherit package;
+
+        container.enable = false; # Run natively.
+
         user = "hermes";
         group = "hermes";
         createUser = true;
         stateDir = "/var/lib/hermes";
         workingDirectory = "/var/lib/hermes/workspace";
 
-        # Declarative config
+        # Declarative config.
         configFile = null;
         settings = {
           database.journal_mode = "wal";
 
           model = {
             default = "deepseek/deepseek-v4-flash";
-            provider = "commandcode"; # named providers.commandcode entry below
+            provider = "commandcode";
             base_url = "https://api.commandcode.ai/provider/v1";
           };
 
-          # Command Code provider — key resolved from .env via key_env
+          # Command Code provider - key resolved from .env.
           providers.commandcode = {
             name = "Command Code";
             api = "https://api.commandcode.ai/provider/v1";
@@ -126,10 +163,9 @@
 
           terminal = {
             backend = "local";
-            # cwd = controlled by `workingDirectory` above - do not set here
+            # cwd = ""; controlled by `workingDirectory` above - do not set here
             timeout = 180;
             home_mode = "auto";
-            docker_mount_cwd_to_workspace = false; # SECURITY: off by default
             lifetime_seconds = 300;
           };
 
@@ -207,25 +243,17 @@
               model = "base"; # tiny | base | small | medium | large-v3 | turbo
             };
             openai = {
-              model = "whisper-1"; # whisper-1 | gpt-4o-mini-transcribe | …
+              model = "whisper-1";
               language = "";
             };
-            # provider = "groq";
-            # groq = { model = "whisper-large-v3-turbo"; };
-            # mistral = { model = "voxtral-mini-latest"; };
           };
 
           code_execution = {
-            timeout = 300; # max seconds per script
-            max_tool_calls = 50; # max RPC tool calls per execution
+            timeout = 300;
+            max_tool_calls = 50;
           };
 
-          delegation = {
-            max_iterations = 50;
-            # max_concurrent_children = 3;
-            # max_spawn_depth = 1;
-            # model = "google/gemini-3-flash-preview";  # empty = inherit parent
-          };
+          delegation.max_iterations = 50;
 
           display = {
             personality = "concise";
@@ -255,10 +283,7 @@
           telemetry.shared_metrics.enabled = false;
         };
 
-        # Paths to env files (API keys, tokens) merged into
-        # $HERMES_HOME/.env at activation. sops `hermes-env` secret
-        # (secrets/all/ai.yaml) holds COMMANDCODE_API_KEY=<key>.
-        environmentFiles = [ secrets."hermes-env".path ];
+        environmentFiles = singleton secrets."hermes-env".path;
 
         # Non-secret env vars.
         environment = { };
@@ -284,17 +309,11 @@
           };
           gerrit = {
             command = "${gerritMcpServer}/bin/gerrit-mcp-server";
-            args = [ ];
             env = {
-              # ${HERMES_HOME} resolves per-context: the webui/desktop/CLI
-              # run on the host (HERMES_HOME=/var/lib/hermes/.hermes) while
-              # the gateway runs in the container (HERMES_HOME=/data/.hermes).
-              # Both see the same config file, copied by hermes-mcp-config.
               GERRIT_CONFIG_PATH = "\${HERMES_HOME}/gerrit-mcp-config.json";
-              # The server shells out to curl (run_curl → subprocess) and the
+              # The server shells out to curl (run_curl -> subprocess) and the
               # MCP env filter strips inherited PATH, so give it curl's bin
-              # dir explicitly. Works in both host and container (both mount
-              # /nix/store).
+              # dir explicitly.
               PATH = "${pkgs.curl}/bin";
             };
             timeout = 120;
@@ -315,25 +334,13 @@
         ];
         extraPlugins = [ ];
 
-        container = {
-          enable = true;
-          backend = "docker";
-          image = "ubuntu:24.04";
-          extraVolumes = [ ];
-          extraOptions = [ ];
-          hostUsers = [ "jam" ];
-        };
       };
 
-      # Copy the gerrit MCP config into $HERMES_HOME (visible as /data/.hermes
-      # inside the container) so the stdio MCP server spawned by the gateway
-      # can read it. Runs as a oneshot BEFORE the gateway: the sops secret is
-      # materialized by sops-install-secrets.service (sysinit.target), and
-      # hermes-agent.service starts at multi-user.target, so ordering after
-      # sops-install-secrets and before hermes-agent guarantees the file is
-      # present when the gateway (and its MCP servers) come up.
-      #
-      # The gerrit-mcp-config sops secret is a JSON file:
+      systemd.services.hermes-agent.serviceConfig = hermesHardening // {
+        ProtectHome = lib.mkForce true; # Upstream doesn't set this...
+      };
+
+      # Example Gerrit MCP config:
       #   {
       #     "default_gerrit_base_url": "https://gerrit.plumj.am",
       #     "gerrit_hosts": [{
@@ -357,15 +364,14 @@
         script = ''
           install -o hermes -g hermes -m 0600 \
             ${secrets."gerrit-mcp-config".path} \
-            ${config.services.hermes-agent.stateDir}/.hermes/gerrit-mcp-config.json
+            ${cfg.stateDir}/.hermes/gerrit-mcp-config.json
         '';
       };
 
-      # Restart the gateway when the gerrit config changes (MCP servers are
-      # discovered at startup).
+      # Restart the gateway when the gerrit config changes.
 
       # Ensure the gerrit config copy + git config complete before ANY gateway
-      # start (including restartTriggers-driven restarts), not just boot.
+      # starts.
       systemd.services.hermes-agent.after = [
         "hermes-mcp-config.service"
         "hermes-git-config.service"
@@ -375,14 +381,11 @@
         "hermes-git-config.service"
       ];
       systemd.services.hermes-agent.restartTriggers = [
-        "${config.services.hermes-agent.stateDir}/.hermes/.env"
-        "${config.services.hermes-agent.stateDir}/.hermes/gerrit-mcp-config.json"
+        "${cfg.stateDir}/.hermes/.env"
+        "${cfg.stateDir}/.hermes/gerrit-mcp-config.json"
       ];
 
-      # Git config for the hermes user. The container mounts
-      # ${stateDir}/home → /home/hermes (container HOME), and the host
-      # hermes user's HOME is ${stateDir}; write ~/.gitconfig to both so the
-      # gateway (container) and the webui/CLI (host) share the same identity.
+      # Git config for the hermes user.
       systemd.services.hermes-git-config = {
         description = "Write git config for hermes user";
         wantedBy = [ "hermes-agent.service" ];
@@ -392,124 +395,55 @@
           RemainAfterExit = true;
         };
         script = ''
-          ${pkgs.gitMinimal}/bin/git config --file ${config.services.hermes-agent.stateDir}/.gitconfig user.name "PlumJam"
-          ${pkgs.gitMinimal}/bin/git config --file ${config.services.hermes-agent.stateDir}/.gitconfig user.email "git@plumj.am"
-          ${pkgs.gitMinimal}/bin/git config --file ${config.services.hermes-agent.stateDir}/.gitconfig init.defaultBranch master
-          ${pkgs.gitMinimal}/bin/git config --file ${config.services.hermes-agent.stateDir}/.gitconfig pull.rebase true
-          ${pkgs.gitMinimal}/bin/git config --file ${config.services.hermes-agent.stateDir}/.gitconfig push.autoSetupRemote true
-
-          # Same config in the container HOME (stateDir/home -> /home/hermes)
-          install -d -o hermes -g hermes -m 0700 ${config.services.hermes-agent.stateDir}/home
-          install -o hermes -g hermes -m 0600 \
-            ${config.services.hermes-agent.stateDir}/.gitconfig \
-            ${config.services.hermes-agent.stateDir}/home/.gitconfig
-          chown hermes:hermes ${config.services.hermes-agent.stateDir}/.gitconfig
+          ${getExe pkgs.gitMinimal} config --file ${cfg.stateDir}/.gitconfig user.name "Keeper"
+          ${getExe pkgs.gitMinimal} config --file ${cfg.stateDir}/.gitconfig user.email "keeper-bot@plumj.am"
+          ${getExe pkgs.gitMinimal} config --file ${cfg.stateDir}/.gitconfig init.defaultBranch master
+          ${getExe pkgs.gitMinimal} config --file ${cfg.stateDir}/.gitconfig pull.rebase true
+          ${getExe pkgs.gitMinimal} config --file ${cfg.stateDir}/.gitconfig push.autoSetupRemote true
+          chown hermes:hermes ${cfg.stateDir}/.gitconfig
         '';
       };
 
-      # Desktop / dashboard backend (hermes serve) - reachable over Tailscale.
+      # Desktop/dashboard backend (hermes serve).
       systemd.services.hermes-agent-serve = {
         description = "Hermes Agent backend (serve)";
-        wantedBy = [ "multi-user.target" ];
-        after = [
-          "docker.service"
-          "hermes-agent.service"
-        ];
-        requires = [ "docker.service" ];
-        restartTriggers = [
-          "${config.services.hermes-agent.stateDir}/.hermes/.env"
-        ];
-        preStart =
-          let
-            serveEntrypoint = pkgs.writeShellScript "hermes-serve-entrypoint" ''
-              set -eu
-              exec setpriv --reuid="''${HERMES_UID:?}" --regid="''${HERMES_GID:?}" --clear-groups "$@"
-            '';
-          in
-          # bash
-          ''
-            # The gateway service (hermes-agent.service) creates the
-            # current-package/current-entrypoint symlinks in preStart - wait
-            # for them before creating this container.
-            _attempt=0
-            while [ $_attempt -lt 60 ]; do
-              if [ -e ${config.services.hermes-agent.stateDir}/current-package ]; then
-                break
-              fi
-              _attempt=$((_attempt + 1))
-              sleep 1
-            done
-            # Install the minimal serve entrypoint into the shared volume
-            install -m 0755 ${serveEntrypoint} ${config.services.hermes-agent.stateDir}/current-entrypoint-serve
-            # Recreate on identity change (mirrors hermes-agent.service)
-            _identity="container-serve-v3"
-            _identity_file="${config.services.hermes-agent.stateDir}/.container-identity-serve"
-            _need_create=false
-            if ! ${getExe pkgs.docker} inspect hermes-agent-serve &>/dev/null; then
-              _need_create=true
-            elif [ ! -f "$_identity_file" ] || [ "$(cat "$_identity_file")" != "$_identity" ]; then
-              echo "serve container config changed, recreating..."
-              ${getExe pkgs.docker} rm -f hermes-agent-serve || true
-              _need_create=true
-            fi
-            if [ "$_need_create" = "true" ]; then
-              _uid=$(${pkgs.coreutils}/bin/id -u hermes)
-              _gid=$(${pkgs.coreutils}/bin/id -g hermes)
-              echo "Creating serve container..."
-              ${getExe pkgs.docker} create \
-                --name hermes-agent-serve \
-                --network=host \
-                --entrypoint /data/current-entrypoint-serve \
-                --volume /nix/store:/nix/store:ro \
-                --volume ${config.services.hermes-agent.stateDir}:/data \
-                --volume ${config.services.hermes-agent.stateDir}/home:/home/hermes \
-                --env HERMES_UID=$_uid \
-                --env HERMES_GID=$_gid \
-                --env HERMES_HOME=/data/.hermes \
-                --env HERMES_MANAGED=true \
-                --env HOME=/home/hermes \
-                ${config.services.hermes-agent.container.image} \
-                /data/current-package/bin/hermes serve --host 0.0.0.0 --port 9119
-              echo "$_identity" > "$_identity_file"
-            fi
-          '';
-        script = # bash
-          ''
-            exec ${getExe pkgs.docker} start -a hermes-agent-serve
-          '';
+        wantedBy = singleton "multi-user.target";
+        after = singleton "hermes-agent.service";
+        restartTriggers = singleton "${cfg.stateDir}/.hermes/.env";
+
+        environment = {
+          HOME = "${cfg.stateDir}";
+          HERMES_HOME = "${cfg.stateDir}/.hermes";
+          HERMES_MANAGED = "true";
+        };
 
         serviceConfig = {
           Type = "simple";
+          User = "hermes";
+          Group = "hermes";
+          WorkingDirectory = cfg.workingDirectory;
+
+          ExecStart = "${package}/bin/hermes serve --host 0.0.0.0 --port 9119";
+
           Restart = "always";
           RestartSec = 5;
           TimeoutStopSec = 30;
-        };
+        }
+        // hermesHardening;
       };
-
       services.hermes-webui = {
         enable = true;
         user = "hermes";
         group = "hermes";
         host = "0.0.0.0";
         hermesHome = "/var/lib/hermes/.hermes";
-        agent.package = inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.default;
+        agent = {
+          inherit package;
+        };
         environmentFiles = [ ];
       };
 
-      # Auto-restart the webui when the shared .env changes (same pattern
-      # as the gateway and serve services above).
-      systemd.services.hermes-webui.restartTriggers = [
-        "${config.services.hermes-agent.stateDir}/.hermes/.env"
-      ];
-
-      boot.kernelModules = [ "overlay" ];
-
-      security.sudo.extraRules = singleton {
-        users = singleton "jam";
-        commands = singleton {
-          command = "/run/current-system/sw/bin/docker";
-          options = [ "NOPASSWD" ];
-        };
-      };
+      # Auto-restart the webui when the shared .env changes.
+      systemd.services.hermes-webui.restartTriggers = singleton "${cfg.stateDir}/.hermes/.env";
     };
 }
