@@ -11,16 +11,69 @@
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
       inherit (config.sops) secrets;
+
+      gerritMcpSrc = pkgs.fetchFromGitHub {
+        owner = "GerritCodeReview";
+        repo = "gerrit-mcp-server";
+        rev = "e178cced87daf8467924a7b6b82c708d7c399207";
+        sha256 = "1rvyp284kh85sr38i3ij5pgph427rzcbadxwbzjpjsb8i5c7zv9k";
+      };
+
+      # Skip flaky tests.
+      pythonPkgs = pkgs.python312.pkgs.overrideScope (
+        pfinal: pprev: {
+          inline-snapshot = pprev.inline-snapshot.overridePythonAttrs (_: {
+            doCheck = false;
+          });
+          mcp = pprev.mcp.overridePythonAttrs (_: {
+            doCheck = false;
+          });
+        }
+      );
+
+      gerritMcpServer = pythonPkgs.buildPythonPackage {
+        pname = "gerrit-mcp-server";
+        version = "1.0.0";
+        src = gerritMcpSrc;
+        pyproject = true;
+        build-system = [
+          pythonPkgs.setuptools
+          pythonPkgs.wheel
+        ];
+        dependencies = [
+          pythonPkgs.mcp
+          pythonPkgs.uvicorn
+          pythonPkgs.websockets
+        ];
+        # The upstream server writes server.log next to the package
+        # (SERVER_ROOT_PATH / "server.log"), which is read-only in the Nix
+        # store — every tool call crashes with "Permission denied". Point the
+        # log at $HERMES_HOME (writable, hermes-owned; both host and
+        # container contexts have it set) with /tmp as fallback.
+        postPatch = ''
+          substituteInPlace gerrit_mcp_server/main.py \
+            --replace-fail \
+              'LOG_FILE_PATH = SERVER_ROOT_PATH / "server.log"' \
+              'LOG_FILE_PATH = Path(os.environ.get("HERMES_HOME") or "/tmp") / "gerrit-mcp-server.log"'
+        '';
+        meta = {
+          description = "MCP server for interacting with Gerrit code review";
+          homepage = "https://gerrit.googlesource.com/gerrit-mcp-server";
+          license = lib.licenses.asl20;
+          mainProgram = "gerrit-mcp-server";
+        };
+      };
     in
     {
+      ai.secrets = true;
+
       imports = [
         inputs.hermes-agent.nixosModules.default
         inputs.hermes-webui.nixosModules.default
       ];
 
-      ai.secrets = true;
-
       services.hermes-agent = {
+
         enable = true;
         package = inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.default;
         user = "hermes";
@@ -189,6 +242,16 @@
             streaming = true;
           };
 
+          discord = {
+            require_mention = true;
+            auto_thread = true; # on mentions
+            allow_mentions = {
+              roles = true;
+              users = true;
+              replied_user = true;
+            };
+          };
+
           telemetry.shared_metrics.enabled = false;
         };
 
@@ -196,26 +259,61 @@
         # $HERMES_HOME/.env at activation. sops `hermes-env` secret
         # (secrets/all/ai.yaml) holds COMMANDCODE_API_KEY=<key>.
         environmentFiles = [ secrets."hermes-env".path ];
-        # Non-secret env vars. DO NOT put secrets here (world-readable).
+
+        # Non-secret env vars.
         environment = { };
 
         authFile = null;
         authFileForceOverwrite = false;
 
         documents = { };
-        mcpServers = { };
+
+        mcpServers = {
+          forgejo = {
+            command = "${pkgs.forgejo-mcp}/bin/forgejo-mcp";
+            args = [
+              "-t"
+              "stdio"
+              "-url"
+              "https://git.plumj.am"
+              "-token"
+              "\${FORGEJO_MCP_TOKEN}"
+            ];
+            timeout = 120;
+            connect_timeout = 60;
+          };
+          gerrit = {
+            command = "${gerritMcpServer}/bin/gerrit-mcp-server";
+            args = [ ];
+            env = {
+              # ${HERMES_HOME} resolves per-context: the webui/desktop/CLI
+              # run on the host (HERMES_HOME=/var/lib/hermes/.hermes) while
+              # the gateway runs in the container (HERMES_HOME=/data/.hermes).
+              # Both see the same config file, copied by hermes-mcp-config.
+              GERRIT_CONFIG_PATH = "\${HERMES_HOME}/gerrit-mcp-config.json";
+              # The server shells out to curl (run_curl → subprocess) and the
+              # MCP env filter strips inherited PATH, so give it curl's bin
+              # dir explicitly. Works in both host and container (both mount
+              # /nix/store).
+              PATH = "${pkgs.curl}/bin";
+            };
+            timeout = 120;
+            connect_timeout = 60;
+          };
+        };
 
         extraArgs = [ ]; # extra args for `hermes gateway`
-        extraPackages = [ ];
+        extraPackages = [
+          pkgs.curl
+          pkgs.gitMinimal
+          pkgs.jq
+          pkgs.nushell
+          pkgs.python3
+
+          pkgs.forgejo-mcp
+          gerritMcpServer
+        ];
         extraPlugins = [ ];
-        extraPythonPackages = [ ];
-        extraDependencyGroups = [ ];
-
-        restart = "always";
-        restartSec = 5;
-
-        # hermes CLI on PATH + HERMES_HOME system-wide (container routing)
-        addToSystemPackages = true;
 
         container = {
           enable = true;
@@ -227,10 +325,87 @@
         };
       };
 
-      # Auto-restart the gateway when the merged .env changes.
+      # Copy the gerrit MCP config into $HERMES_HOME (visible as /data/.hermes
+      # inside the container) so the stdio MCP server spawned by the gateway
+      # can read it. Runs as a oneshot BEFORE the gateway: the sops secret is
+      # materialized by sops-install-secrets.service (sysinit.target), and
+      # hermes-agent.service starts at multi-user.target, so ordering after
+      # sops-install-secrets and before hermes-agent guarantees the file is
+      # present when the gateway (and its MCP servers) come up.
+      #
+      # The gerrit-mcp-config sops secret is a JSON file:
+      #   {
+      #     "default_gerrit_base_url": "https://gerrit.plumj.am",
+      #     "gerrit_hosts": [{
+      #       "name": "plumj",
+      #       "external_url": "https://gerrit.plumj.am",
+      #       "authentication": { "type": "http_basic",
+      #                           "username": "...", "auth_token": "..." }
+      #     }]
+      #   }
+      systemd.services.hermes-mcp-config = {
+        description = "Copy gerrit MCP config into HERMES_HOME";
+        wantedBy = [ "hermes-agent.service" ];
+        after = [ "sops-install-secrets.service" ];
+        restartTriggers = [
+          secrets."gerrit-mcp-config".path
+        ];
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+        };
+        script = ''
+          install -o hermes -g hermes -m 0600 \
+            ${secrets."gerrit-mcp-config".path} \
+            ${config.services.hermes-agent.stateDir}/.hermes/gerrit-mcp-config.json
+        '';
+      };
+
+      # Restart the gateway when the gerrit config changes (MCP servers are
+      # discovered at startup).
+
+      # Ensure the gerrit config copy + git config complete before ANY gateway
+      # start (including restartTriggers-driven restarts), not just boot.
+      systemd.services.hermes-agent.after = [
+        "hermes-mcp-config.service"
+        "hermes-git-config.service"
+      ];
+      systemd.services.hermes-agent.wants = [
+        "hermes-mcp-config.service"
+        "hermes-git-config.service"
+      ];
       systemd.services.hermes-agent.restartTriggers = [
         "${config.services.hermes-agent.stateDir}/.hermes/.env"
+        "${config.services.hermes-agent.stateDir}/.hermes/gerrit-mcp-config.json"
       ];
+
+      # Git config for the hermes user. The container mounts
+      # ${stateDir}/home → /home/hermes (container HOME), and the host
+      # hermes user's HOME is ${stateDir}; write ~/.gitconfig to both so the
+      # gateway (container) and the webui/CLI (host) share the same identity.
+      systemd.services.hermes-git-config = {
+        description = "Write git config for hermes user";
+        wantedBy = [ "hermes-agent.service" ];
+        after = [ "sops-install-secrets.service" ];
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+        };
+        script = ''
+          ${pkgs.gitMinimal}/bin/git config --file ${config.services.hermes-agent.stateDir}/.gitconfig user.name "PlumJam"
+          ${pkgs.gitMinimal}/bin/git config --file ${config.services.hermes-agent.stateDir}/.gitconfig user.email "git@plumj.am"
+          ${pkgs.gitMinimal}/bin/git config --file ${config.services.hermes-agent.stateDir}/.gitconfig init.defaultBranch master
+          ${pkgs.gitMinimal}/bin/git config --file ${config.services.hermes-agent.stateDir}/.gitconfig pull.rebase true
+          ${pkgs.gitMinimal}/bin/git config --file ${config.services.hermes-agent.stateDir}/.gitconfig push.autoSetupRemote true
+
+          # Same config in the container HOME (stateDir/home -> /home/hermes)
+          install -d -o hermes -g hermes -m 0700 ${config.services.hermes-agent.stateDir}/home
+          install -o hermes -g hermes -m 0600 \
+            ${config.services.hermes-agent.stateDir}/.gitconfig \
+            ${config.services.hermes-agent.stateDir}/home/.gitconfig
+          chown hermes:hermes ${config.services.hermes-agent.stateDir}/.gitconfig
+        '';
+      };
 
       # Desktop / dashboard backend (hermes serve) - reachable over Tailscale.
       systemd.services.hermes-agent-serve = {

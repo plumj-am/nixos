@@ -41,6 +41,7 @@
               "opencode-go-key"
               "command-code-auth-json"
               "hermes-env"
+              "gerrit-mcp-config"
             ];
 
       config.ai.commands.bash.allow =
