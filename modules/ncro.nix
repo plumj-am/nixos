@@ -82,6 +82,11 @@
           ++ s3Upstreams
           ++ harmoniaUpstreams;
 
+          fallback_cache = {
+            enabled = true;
+            url = "https://cache.nixos.org";
+          };
+
           cache = {
             db_path = "/var/lib/ncro/routes.db";
             max_entries = 100000;
