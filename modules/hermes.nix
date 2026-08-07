@@ -13,7 +13,10 @@
       inherit (config.sops) secrets;
     in
     {
-      imports = singleton inputs.hermes-agent.nixosModules.default;
+      imports = [
+        inputs.hermes-agent.nixosModules.default
+        inputs.hermes-webui.nixosModules.default
+      ];
 
       ai.secrets = true;
 
@@ -307,6 +310,22 @@
           TimeoutStopSec = 30;
         };
       };
+
+      services.hermes-webui = {
+        enable = true;
+        user = "hermes";
+        group = "hermes";
+        host = "0.0.0.0";
+        hermesHome = "/var/lib/hermes/.hermes";
+        agent.package = inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.default;
+        environmentFiles = [ ];
+      };
+
+      # Auto-restart the webui when the shared .env changes (same pattern
+      # as the gateway and serve services above).
+      systemd.services.hermes-webui.restartTriggers = [
+        "${config.services.hermes-agent.stateDir}/.hermes/.env"
+      ];
 
       boot.kernelModules = [ "overlay" ];
 

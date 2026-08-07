@@ -64,6 +64,14 @@
     "narHash": "sha256-VuYHuoxtqP5+6x2EgAlOXSZrwMbOwO6VSKq2ECfk0es=",
     "lastModified": 1786112466
   },
+  "hermes-webui": {
+    "type": "github",
+    "owner": "nesquena",
+    "repo": "hermes-webui",
+    "rev": "5f3117f81e2031361f01e557318baf1010ad21c3",
+    "narHash": "sha256-/brRIzvCa6HmAdXtcJOOKj7co/jbLEMLsqbtqyUww3w=",
+    "lastModified": 1785984354
+  },
   "hjem": {
     "type": "github",
     "owner": "feel-co",

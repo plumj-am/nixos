@@ -7,6 +7,7 @@ grove.url             = "git+ssh://forgejo@git.plumj.am/grove-systems/grove"
 harmonia.url          = "gh:nix-community/harmonia"
 helium.url            = "gh:amaanq/helium-flake"
 hermes-agent.url      = "gh:NousResearch/hermes-agent"
+hermes-webui.url      = "gh:nesquena/hermes-webui"
 hjem.url              = "gh:feel-co/hjem"
 homebrew.url          = "gh:zhaofengli/nix-homebrew"
 homebrew-cask         = { type = "fetch", url = "gh:homebrew/homebrew-cask" }
