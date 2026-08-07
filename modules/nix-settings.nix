@@ -44,6 +44,8 @@ in
       nix.package = mkDefault pkgs.nixVersions.latest;
       nix.channel.enable = false;
 
+      # nixpkgs.config.contentAddressedByDefault = true;
+
       nix.gc = {
         automatic = true;
         options = "--delete-older-than 7d";
@@ -66,6 +68,7 @@ in
           "nix-command"
           "pipe-operators"
           "cgroups"
+          "ca-derivations"
         ];
 
         auto-optimise-store = true;
