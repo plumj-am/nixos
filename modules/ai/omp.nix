@@ -163,13 +163,13 @@
                 vision = "commandcode/meta/muse-spark-1.2-contributor:low";
 
                 bigFallback = [
-                  "commandcode/meta/muse-spark-1.2-contributor:xhigh"
                   "commandcode/deepseek/deepseek-v4-flash:xhigh"
+                  "commandcode/meta/muse-spark-1.2-contributor:xhigh"
                 ];
                 smallFallback = [
                   "opencode-zen/deepseek-v4-flash-free:auto"
-                  "commandcode/meta/muse-spark-1.2-contributor:medium"
                   "commandcode/deepseek/deepseek-v4-flash:high"
+                  "commandcode/meta/muse-spark-1.2-contributor:medium"
                 ];
                 cheapFallback = [
                   "opencode-zen/deepseek-v4-flash-free:high"

@@ -35,13 +35,13 @@
       cheap = "opencode/laguna-s-2.1-free";
 
       bigFallback = [
-        "commandcode/muse-spark-1.2"
         "commandcode/deepseek-v4-flash"
+        "commandcode/muse-spark-1.2"
       ];
       smallFallback = [
         "opencode/deepseek-v4-flash-free"
-        "commandcode/muse-spark-1.2"
         "commandcode/deepseek-v4-flash"
+        "commandcode/muse-spark-1.2"
       ];
       cheapFallback = [
         "opencode/deepseek-v4-flash-free"
