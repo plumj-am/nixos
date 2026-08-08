@@ -215,6 +215,14 @@
 
           httpd.listenUrl = "proxy-https://[::]:${httpPort}";
 
+          # Show username instead of first/last name.
+          accounts.defaultDisplayName = "USERNAME";
+
+          gc = {
+            aggressive = true;
+            interval = "1 day";
+          };
+
           sshd = {
             listenAddress = "[::]:${sshPort}";
             advertisedAddress = "${fqdn}:${sshPort}";
@@ -233,6 +241,7 @@
             enableAssignee = false;
             diff3ConflictView = true;
             maxUpdates = 10000;
+            mergabilityComputationBehavior = "API_REF_UPDATED_AND_CHANGE_REINDEX";
           };
 
           commentlink = {
