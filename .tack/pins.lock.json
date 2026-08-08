@@ -34,11 +34,11 @@
   },
   "grove": {
     "type": "git",
-    "url": "file:///home/jam/projects/grove",
-    "ref": "refs/heads/graft",
-    "rev": "e76c93fb6cd3d86750d55ba39070ac5b3c3ea848",
-    "narHash": "sha256-dIXhFswALOSRA202xJ+SYy23HAqHARN13KVzitEXd3g=",
-    "lastModified": 1785756485
+    "url": "ssh://forgejo@git.plumj.am/grove-systems/grove",
+    "ref": "HEAD",
+    "rev": "e2f483a9236b85ba8448414edffc9fbfe487aa27",
+    "narHash": "sha256-4rhjWZSu8bzIIYaaPSqrMez95gT4Yls9x1eH/h+KqaA=",
+    "lastModified": 1786223944
   },
   "harmonia": {
     "type": "github",

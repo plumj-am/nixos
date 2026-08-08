@@ -1,5 +1,4 @@
 let
-  localGrpcHost = "0.0.0.0";
   mainHost = "sloe";
   sentinelHost = "${mainHost}.taild29fec.ts.net";
 
@@ -54,14 +53,14 @@ in
 
         config = {
           http = {
-            host = localGrpcHost;
+            host = "127.0.0.1";
             port = sentinelHttpPort;
             dashboard_url = "https://graft.plumj.am";
             checks_api_enabled = true;
           };
 
           grpc = {
-            host = localGrpcHost;
+            host = sentinelHost;
             port = sentinelGrpcPort;
           };
 
