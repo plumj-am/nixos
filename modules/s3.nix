@@ -29,15 +29,30 @@
       };
     in
     {
-      options.s3.caches = lib.mkOption {
-        type = lib.types.attrs;
-        default = { };
-        description = "Shared S3 caches configuration";
-      };
-      options.s3.credentialsFile = lib.mkOption {
-        type = lib.types.str;
-        default = { };
-        description = "Shared S3 credentials file";
+      options.s3 = {
+        caches = lib.mkOption {
+          type = lib.types.attrs;
+          default = { };
+          defaultText = "Shared S3 caches configuration";
+          description = "S3 caches keyed by name (fsn1, garage).";
+        };
+        credentialsFile = lib.mkOption {
+          type = lib.types.str;
+          default = "/var/lib/s3/.aws/credentials";
+          description = "Shared S3 credentials file";
+        };
+        # Only upload store paths at least this many bytes. The binary
+        # cache protocol has fixed per-path overhead, so skipping small
+        # paths avoids pointless round-trips to S3/Garage. Default 1 MiB.
+        nixUploadMinSize = lib.mkOption {
+          type = lib.types.ints.unsigned;
+          default = 1048576;
+          defaultText = "1048576";
+          description = ''
+            Minimum path size (bytes) the nix-upload-processor will upload.
+            Paths smaller than this are skipped and recorded as done.
+          '';
+        };
       };
 
       config = {
@@ -115,7 +130,6 @@
       inherit (config.s3.caches) fsn1 garage;
 
       s3SharedArgs = "&priority=43&multipart-upload=true&multipart-threshold=50M&multipart-chunk-size=10M";
-
       fsn1Alias = fsn1.alias;
       fsn1Bucket = fsn1.bucket;
       fsn1Prefix = fsn1.prefix;
@@ -188,6 +202,11 @@
             fi
 
             size=$(du -sb "$path" 2>/dev/null | ${getExe pkgs.gawk} '{print $1}' || echo "0")
+            # Skip paths below the upload threshold.
+            if [ "$size" -lt ${toString config.s3.nixUploadMinSize} ]; then
+              echo "Skipping $path ($((size / 1024)) KiB) — below ${toString config.s3.nixUploadMinSize} byte threshold"
+              continue
+            fi
             echo "Uploading $path ($((size / 1024)) KiB)"
             all_ok=true
             for cache in "${fsn1S3Cache}" "${garageS3Cache}"; do
