@@ -35,6 +35,7 @@
             })
             [
               "command-code-key"
+              "hetzner-inference-key"
               "nvidia-nim-key"
               "exa-key"
               "context7-key"

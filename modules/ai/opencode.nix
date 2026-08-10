@@ -10,6 +10,7 @@
       inherit (lib.lists) singleton;
       inherit (lib.attrsets) genAttrs;
       inherit (lib.trivial) const;
+      inherit (config.sops) secrets;
 
       opencodePackage = pkgs.symlinkJoin {
         name = "opencode-wrapped";
@@ -142,7 +143,7 @@
 
                 options = {
                   baseURL = "https://api.commandcode.ai/provider/v1";
-                  apiKey = "{file:/run/secrets/command-code-key}";
+                  apiKey = "{file:${secrets.command-code-key.path}";
                 };
 
                 timeout = 3000000;
@@ -198,6 +199,32 @@
                     limit = {
                       context = 1048576;
                       output = 384000;
+                    };
+                  };
+                };
+              };
+
+              provider.hetzner-inference = {
+                npm = "@ai-sdk/openai-compatible";
+                name = "Hetzner Inference";
+                options = {
+
+                  baseURL = "https://inference.hetzner.com/api/v1";
+                  apiKey = "{file:${secrets.hetzner-inference-key.path}";
+                };
+
+                timeout = 3000000;
+                chunkTimeout = 1500000;
+
+                models = {
+                  deepseek-v4-flash = {
+                    id = "DeepSeek-V4-Flash-0731";
+                    name = "DeepSeek V4 Flash";
+                    reasoning = true;
+                    tool_call = true;
+                    limit = {
+                      context = 512000;
+                      output = 131072;
                     };
                   };
                 };
@@ -293,7 +320,7 @@
                   type = "remote";
                   url = "https://mcp.context7.com/mcp";
                   headers = {
-                    CONTEXT7_API_KEY = "{file:/run/secrets/context7-key}";
+                    CONTEXT7_API_KEY = "{file:${secrets.context7-key.path}";
                   };
                 };
 

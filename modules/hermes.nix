@@ -174,7 +174,18 @@
                 context_length = 1048576;
               }
             ];
+          };
 
+          providers.hetzner-inference = {
+            name = "Hetzner Inference";
+            api = "https://inference.hetzner.com/api/v1";
+            key_env = "HETZNER_INFERENCE_API_KEY";
+            models = [
+              {
+                id = "deepseek/deepseek-v4-flash";
+                context_length = 512000;
+              }
+            ];
           };
 
           terminal = {

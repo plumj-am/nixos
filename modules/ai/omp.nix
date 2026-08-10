@@ -127,6 +127,42 @@
                   ];
               };
 
+              providers.hetzner-inference = {
+                baseUrl = "https://inference.hetzner.com/api/v1";
+                apiKey = "!cat ${secrets.hetzner-inference-key.path}";
+                api = "openai-completions";
+                models = [
+                  {
+                    id = "DeepSeek-V4-Flash-0731";
+                    name = "DeepSeek V4 Flash";
+                    reasoning = true;
+                    thinking = {
+                      minLevel = "high";
+                      maxLevel = "xhigh";
+                      mode = "effort";
+                    };
+                    input = singleton "text";
+                    contextWindow = 512000;
+                    maxTokens = 131072;
+                    compat = {
+                      supportsDeveloperRole = false;
+                      supportsReasoningEffort = true;
+                      maxTokensField = "max_tokens";
+                      reasoningEffortMap = {
+                        low = "high"; # lowest available for V4 models
+                        high = "high";
+                        xhigh = "max";
+                      };
+                      supportsToolChoice = false;
+                      requiresReasoningContentForToolCalls = true;
+                      requiresAssistantContentForToolCalls = true;
+                      extraBody.thinking.type = "enabled";
+                    };
+
+                  }
+                ];
+              };
+
               # Static defs so these resolve at launch before the remote
               # opencode-zen catalog fetch completes. laguna-s-2.1-free is
               # NOT in omp's catalog so need to add stuff manually.
