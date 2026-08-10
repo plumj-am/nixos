@@ -25,7 +25,7 @@
 
       # Skip flaky tests.
       pythonPkgs = pkgs.python312.pkgs.overrideScope (
-        pfinal: pprev: {
+        _: pprev: {
           inline-snapshot = pprev.inline-snapshot.overridePythonAttrs (_: {
             doCheck = false;
           });
@@ -146,6 +146,15 @@
             base_url = "https://api.commandcode.ai/provider/v1";
           };
 
+          fallback_providers = [
+            {
+              provider = "hetzner-inference";
+              model = "DeepSeek-V4-Flash-0731";
+              base_url = "https://inference.hetzner.com/api/v1";
+              key_env = "HETZNER_INFERENCE_API_KEY";
+            }
+          ];
+
           # Command Code provider - key resolved from .env.
           providers.commandcode = {
             name = "Command Code";
@@ -254,7 +263,7 @@
           agent = {
             max_turns = 500;
             verbose = false;
-            reasoning_effort = "medium"; # xhigh | high | medium | low | minimal | none
+            reasoning_effort = "xhigh"; # xhigh | high | medium | low | minimal | none
             reasoning_overrides = { }; # per-model: { "claude-opus-4.6" = "high"; }
             # gateway_timeout = 1800; # seconds, 0 for unlimited
             # gateway_timeout_warning = 900;
@@ -352,6 +361,7 @@
         extraPackages = [
           pkgs.curl
           pkgs.gitMinimal
+          pkgs.jujutsu
           pkgs.jq
           pkgs.nushell
           pkgs.python3
