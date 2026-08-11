@@ -2,6 +2,7 @@
 
 - Big changes must be split into small chunks.
 - If you are already in the target directory you do not need to `cd`.
+- Use sub-agents to delegate and split work whenever possible.
 
 ## Tools
 
