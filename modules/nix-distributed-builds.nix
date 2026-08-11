@@ -30,8 +30,11 @@
               sshKey = "/root/.ssh/id";
               speedFactor = value.config.systemInfo.distributedBuilder.speedFactor;
               supportedFeatures = [
+                "auto-allocate-uids"
                 "benchmark"
                 "big-parallel"
+                "ca-derivations"
+                "cgroups"
                 "kvm"
                 "nixos-test"
                 "uid-range" # For nspawn vm tests.

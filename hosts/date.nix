@@ -24,7 +24,6 @@ in
       forgejo-cli
       games
       gammastep
-      graft-node
       graphics
       harmonia
       hardware-desktop

@@ -18,7 +18,6 @@ in
       freshrss-server
       forgejo-action-runner
       gerrit
-      graft-node
       goatcounter
       harmonia
       matrix

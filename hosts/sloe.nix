@@ -16,8 +16,7 @@ in
       disks-server
       forgejo-action-runner
       garage
-      graft-node
-      graft-sentinel
+      graft
       graphics
       harmonia
       hermes

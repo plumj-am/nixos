@@ -1,23 +1,5 @@
-let
-  mainHost = "sloe";
-  sentinelHost = "${mainHost}.taild29fec.ts.net";
-
-  sentinelHttpPort = 8019;
-  sentinelGrpcPort = 8020;
-
-  nixExtraArgs = [
-    "--accept-flake-config"
-    "--builders"
-    ""
-    "--cores"
-    "1"
-    "--max-jobs"
-    "1"
-    "--fallback"
-  ];
-in
 {
-  flake.modules.nixos.graft-sentinel =
+  flake.modules.nixos.graft =
     {
       inputs,
       pkgs,
@@ -27,13 +9,66 @@ in
       ...
     }:
     let
-      inherit (lib.lists) singleton;
+      inherit (lib.lists) singleton foldl';
       inherit (lib') merge;
       inherit (config.networking) domain;
       inherit (config.sops) secrets;
+
+      cfg = config.services.graft;
+
+      remote_builders =
+        let
+          mkRemoteBuilder =
+            {
+              hostName,
+              maxJobs,
+              speedFactor,
+              system,
+              ...
+            }:
+            singleton {
+              inherit
+                hostName
+                maxJobs
+                speedFactor
+                system
+                ;
+              protocol = "ssh-ng";
+              sshUser = "build";
+              sshKey = "/root/.ssh/id";
+              supportedFeatures = [
+                "auto-allocate-uids"
+                "benchmark"
+                "big-parallel"
+                "ca-derivations"
+                "cgroups"
+                "kvm"
+                "nixos-test"
+                "uid-range"
+              ];
+            };
+        in
+        mkRemoteBuilder {
+          hostName = "sloe";
+          maxJobs = 12;
+          speedFactor = 5;
+          system = "x86_64-linux";
+        }
+        ++ mkRemoteBuilder {
+          hostName = "date";
+          maxJobs = 12;
+          speedFactor = 4;
+          system = "x86_64-linux";
+        }
+        ++ mkRemoteBuilder {
+          hostName = "plum";
+          maxJobs = 4;
+          speedFactor = 3;
+          system = "x86_64-linux";
+        };
     in
     {
-      imports = singleton inputs.grove.nixosModules.graft-sentinel;
+      imports = singleton inputs.grove.nixosModules.graft;
 
       sops.secrets.graft-environment.sopsFile = ../secrets/services/graft.yaml;
 
@@ -43,25 +78,20 @@ in
         mode = "0440";
       };
 
-      services.graft-sentinel = {
+      services.graft = {
         enable = true;
-        package = inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.graft-graft-sentinel;
+        package = inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.graft;
 
-        state_dir = "/var/lib/graft-sentinel";
+        state_dir = "/var/lib/graft";
 
         environment_file = secrets.graft-environment.path;
 
         config = {
           http = {
             host = "127.0.0.1";
-            port = sentinelHttpPort;
+            port = 8019;
             dashboard_url = "https://graft.plumj.am";
             checks_api_enabled = true;
-          };
-
-          grpc = {
-            host = sentinelHost;
-            port = sentinelGrpcPort;
           };
 
           database.path = "ci.db";
@@ -132,16 +162,19 @@ in
 
           nix = {
             bin = pkgs.nix;
-            extra_args = nixExtraArgs;
+            extra_args = [
+              "--accept-flake-config"
+              "--fallback"
+            ];
           };
 
-          nodes = {
-            heartbeat_timeout_secs = 60;
-            max_retries = 3;
-          };
+          nodes.max_retries = 3;
+
+          builder.max_concurrent = foldl' (acc: b: acc + b.maxJobs) 0 <| remote_builders;
         };
-      };
 
+        inherit remote_builders;
+      };
       # Old subdomain to avoid breaking links.
       services.nginx.virtualHosts."gerrix.${domain}" = merge config.services.nginx.sslTemplate {
         locations."/".return = "https://graft.plumj.am$request_uri";
@@ -149,14 +182,14 @@ in
       };
 
       services.nginx.virtualHosts."graft.${domain}" = merge config.services.nginx.sslTemplate {
-        locations."/".proxyPass = "http://127.0.0.1:${toString sentinelHttpPort}";
+        locations."/".proxyPass = "http://127.0.0.1:${toString cfg.config.http.port}";
       };
 
-      systemd.services.graft-sentinel = {
+      systemd.services.graft = {
         environment.GIT_SSH_COMMAND = "${pkgs.openssh}/bin/ssh -i ${
           config.sops.secrets."graft-ssh".path
         } -o StrictHostKeyChecking=accept-new";
-        # The cache probe (nix path-info --store) runs as graft-sentinel and
+        # The cache probe (nix path-info --store) runs as graft and
         # needs AWS creds to read the S3 binary caches. The shared file is
         # materialised by the `s3` aspect (s3-credentials.service).
         environment.AWS_SHARED_CREDENTIALS_FILE = config.s3.credentialsFile;
@@ -170,76 +203,4 @@ in
       };
     };
 
-  flake.modules.nixos.graft-node =
-    {
-      inputs,
-      pkgs,
-      lib,
-      config,
-      ...
-    }:
-    let
-      inherit (lib.lists) singleton;
-      inherit (config.networking) hostName;
-      inherit (config) systemInfo;
-    in
-    {
-      imports = singleton inputs.grove.nixosModules.graft-node;
-
-      sops.secrets."graft-ssh" = {
-        sopsFile = ../secrets/services/graft-ssh.yaml;
-        group = "graft";
-        mode = "0440";
-      };
-
-      services.graft-node = {
-        enable = true;
-        package = inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.graft-graft-node;
-
-        state_dir = "/var/lib/graft-node";
-
-        config = {
-          sentinel = {
-            addr = "http://${sentinelHost}:${toString sentinelGrpcPort}";
-            node_name = hostName;
-          };
-
-          builder = {
-            # Leave 1 core for free evaluation on sentinel host.
-            max_concurrent =
-              if hostName == mainHost then
-                systemInfo.cores - 1
-              else if hostName == "yuzu" then
-                16
-              else
-                systemInfo.cores;
-            build_timeout_secs = 3600;
-            work_dir = "/tmp/graft-node/builds";
-          };
-
-          nix = {
-            bin = pkgs.nix;
-            extra_args = nixExtraArgs;
-          };
-
-          scheduler = {
-            quiet_hours_start =
-              # if hostName == "date" then
-              #   "23:30"
-              # else if hostName == "sloe" then
-              "02:30"
-            # else
-            # ""
-            ;
-            quiet_hours_end = "10:00";
-          };
-        };
-      };
-
-      systemd.services.graft-node = {
-        environment.GIT_SSH_COMMAND = "${pkgs.openssh}/bin/ssh -i ${
-          config.sops.secrets."graft-ssh".path
-        } -o StrictHostKeyChecking=accept-new";
-      };
-    };
 }
