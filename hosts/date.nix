@@ -11,6 +11,7 @@ in
       aspectsBase
 
       audio
+      boot-optimise
       boot-systemd
       brave
       colour-picker

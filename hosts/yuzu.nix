@@ -11,6 +11,7 @@ in
       aspectsBase
 
       audio
+      boot-optimise
       boot-systemd
       colour-picker
       command-code
