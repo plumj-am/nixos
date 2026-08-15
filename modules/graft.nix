@@ -126,7 +126,7 @@
             };
 
             grove_forgejo = {
-              display_name = "grove";
+              display_name = "Grove";
               forge = "forgejo";
               clone_uri = "https://git.plumj.am/grove-systems/grove";
               flake_ref = ".#checks";
@@ -142,15 +142,14 @@
               forgejo_repo_name = "grove";
             };
 
-            # TODO: remove after fully moved to Forgejo
             grove = {
-              display_name = "Grove";
+              display_name = "Grove [Gerrit Archive]";
               forge = "gerrit";
               clone_uri = "https://gerrit.plumj.am/grove";
               flake_ref = ".#checks";
               systems = [ "x86_64-linux" ];
               build_timeout_secs = 3600;
-              poll_interval_secs = 30;
+              poll_interval_secs = 604800;
               users = [
                 "plumjam"
                 "antteheatta"

@@ -9,8 +9,8 @@
       ...
     }:
     let
-      inherit (lib.modules) mkForce;
-      inherit (lib.lists) singleton;
+      inherit (lib.modules) mkForce mkIf;
+      inherit (lib.lists) singleton elem;
       inherit (lib.attrsets) mapAttrsToList;
       inherit (lib') merge;
       inherit (config.myLib) mkResticBackup;
@@ -31,7 +31,7 @@
         "download-commands"
         "gitiles"
         "hooks"
-        "replication"
+        # "replication"
         "reviewnotes"
         "webhooks"
       ];
@@ -307,7 +307,7 @@
           sendemail.enable = false;
         };
 
-        replicationSettings = {
+        replicationSettings = (mkIf <| elem builtinPlugins <| singleton "replication") {
           gerrit.replicateOnStartup = true;
           replication.updateRefErrorMaxRetries = 3;
           remote.forgejo = {
