@@ -10,7 +10,7 @@ let
 
     GUI = {
       LaunchAtStartup = true;
-      MinimizeOnStartup = true;
+      MinimizeOnStartup = false;
       MinimizeToTray = true;
       MinimizeOnClose = true;
       ShowTrayIcon = true;

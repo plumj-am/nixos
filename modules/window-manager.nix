@@ -319,6 +319,7 @@
               spawn-sh-at-startup "${quickshell} --path ${quickshellPath}"
               spawn-at-startup "${pkgs.wl-clipboard}/bin/wl-paste --watch ${pkgs.cliphist}/bin/cliphist store"
               spawn-at-startup "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
+              spawn-at-startup "${pkgs.keepassxc}/bin/keepassxc"
               spawn-sh-at-startup "sleep 5; awww-daemon"
               spawn-sh-at-startup "sleep 5; gammastep-indicator"
             '';
