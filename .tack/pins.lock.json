@@ -132,9 +132,9 @@
     "type": "github",
     "owner": "niri-wm",
     "repo": "niri",
-    "rev": "0777769e719b7c9b7c980d4ea66288bfbb4da5b3",
-    "narHash": "sha256-dI0HkX1djETia7cD/Y64h8BNIsSOfTRMzfNum2J6UhE=",
-    "lastModified": 1783522755
+    "rev": "b0eb8ad8c80094de34abd88c109aea421461622b",
+    "narHash": "sha256-dzLsp/FvMerhsjfsWtFK/BTlJ5FZwLWlhsFJRRxpmbU=",
+    "lastModified": 1787128307
   },
   "nix-index": {
     "type": "github",

@@ -406,6 +406,21 @@
               };
             };
           };
+
+          ".omp/agent/dcp.json" = {
+            type = "copy";
+            generator = pkgs.writers.writeJSON "omp-agent-dcp.json";
+            value = {
+              enabled = true;
+
+              minContextLimit = 50000;
+              maxContextLimit = 200000;
+
+              showCompression = true;
+
+              experimental.allowSubAgents = true;
+            };
+          };
         };
 
         xdg.config.files."ponytail/config.json" = {
