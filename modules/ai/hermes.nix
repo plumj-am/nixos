@@ -12,6 +12,10 @@
       inherit (lib.meta) getExe;
       inherit (config.myLib) mkResticBackup;
       inherit (config.sops) secrets;
+      inherit (config.ai.subs.commandcode) active;
+
+      activeSubEnv = "COMMANDCODE_${toString active}";
+      activeSub = "commandcode-${toString active}";
 
       cfg = config.services.hermes-agent;
       package = inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.default;
@@ -142,35 +146,18 @@
 
           model = {
             default = "deepseek/deepseek-v4-flash";
-            provider = "commandcode";
+            provider = activeSub;
             base_url = "https://api.commandcode.ai/provider/v1";
           };
-
-          fallback_providers = [
-            {
-              provider = "hetzner-inference";
-              model = "DeepSeek-V4-Flash-0731";
-              base_url = "https://inference.hetzner.com/api/v1";
-              key_env = "HETZNER_INFERENCE_API_KEY";
-            }
-          ];
 
           # Command Code provider - key resolved from .env.
           providers.commandcode = {
             name = "Command Code";
             api = "https://api.commandcode.ai/provider/v1";
-            key_env = "COMMANDCODE_API_KEY";
+            key_env = "${activeSubEnv}_API_KEY";
             models = [
               {
                 id = "deepseek/deepseek-v4-flash";
-                context_length = 1000000;
-              }
-              {
-                id = "deepseek/deepseek-v4-pro";
-                context_length = 1000000;
-              }
-              {
-                id = "stepfun/Step-3.5-Flash";
                 context_length = 1000000;
               }
               # TODO: limited input, wait until full release with full context
@@ -181,18 +168,6 @@
               {
                 id = "meta/muse-spark-1.2-contributor";
                 context_length = 1048576;
-              }
-            ];
-          };
-
-          providers.hetzner-inference = {
-            name = "Hetzner Inference";
-            api = "https://inference.hetzner.com/api/v1";
-            key_env = "HETZNER_INFERENCE_API_KEY";
-            models = [
-              {
-                id = "deepseek/deepseek-v4-flash";
-                context_length = 512000;
               }
             ];
           };

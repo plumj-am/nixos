@@ -11,6 +11,83 @@
       inherit (lib.meta) getExe;
       inherit (lib.lists) singleton;
       inherit (config.sops) secrets;
+      inherit (config.ai.subs.commandcode) active;
+
+      activeSub = "commandcode-${toString active}";
+
+      mkCommandCodeProvider = name: {
+        ${name} = {
+          baseUrl = "https://api.commandcode.ai/provider/v1";
+          apiKey = "!cat ${secrets."${name}-key".path}";
+          api = "openai-completions";
+          models = [
+            {
+              # high | xhigh
+              id = "deepseek/deepseek-v4-flash";
+              name = "DeepSeek V4 Flash";
+              reasoning = true;
+              thinking = {
+                minLevel = "high";
+                maxLevel = "xhigh";
+                mode = "effort";
+              };
+              input = singleton "text";
+              contextWindow = 1000000;
+              maxTokens = 384000;
+              compat = {
+                supportsDeveloperRole = false;
+                supportsReasoningEffort = true;
+                maxTokensField = "max_tokens";
+                reasoningEffortMap = {
+                  low = "high"; # lowest available for V4 models
+                  high = "high";
+                  xhigh = "max";
+                };
+                supportsToolChoice = false;
+                requiresReasoningContentForToolCalls = true;
+                requiresAssistantContentForToolCalls = true;
+                extraBody.thinking.type = "enabled";
+              };
+            }
+            {
+              # TODO: limited input, wait until full release with full context
+              # minimal | low | medium | high | xhigh
+              id = "poolside/laguna-s-2.1-free";
+              name = "Poolside Laguna S 2.1";
+              reasoning = true;
+              contextWindow = 256000;
+              maxTokens = 131072;
+            }
+            {
+              # minimal | low | medium | high | xhigh
+              id = "meta/muse-spark-1.2-contributor";
+              name = "Meta Muse Spark 1.2";
+              reasoning = true;
+              thinking = {
+                minLevel = "minimal";
+                maxLevel = "xhigh";
+                mode = "effort";
+              };
+              input = [
+                "text"
+                "image"
+              ];
+              cost = {
+                input = 0.1;
+                output = 0.2;
+                cacheRead = 0.002;
+                cacheWrite = 0;
+              };
+              contextWindow = 1048576;
+              maxTokens = 131072;
+              compat = {
+                supportsReasoningEffort = true;
+                supportsToolChoice = false;
+              };
+            }
+          ];
+        };
+      };
     in
     {
       ai.secrets = true;
@@ -34,156 +111,31 @@
           ".omp/agent/models.yml" = {
             generator = pkgs.writers.writeYAML "omp-agent-models.yml";
             value = {
-              providers.commandcode = {
-                baseUrl = "https://api.commandcode.ai/provider/v1";
-                apiKey = "!cat ${secrets.command-code-key.path}";
-                api = "openai-completions";
-                models =
-                  let
-                    mkDeepSeekModel =
-                      { id, name }:
-                      singleton {
-                        inherit id name;
-                        reasoning = true;
-                        thinking = {
-                          minLevel = "high";
-                          maxLevel = "xhigh";
-                          mode = "effort";
-                        };
-                        input = singleton "text";
-                        contextWindow = 1000000;
-                        maxTokens = 384000;
-                        compat = {
-                          supportsDeveloperRole = false;
-                          supportsReasoningEffort = true;
-                          maxTokensField = "max_tokens";
-                          reasoningEffortMap = {
-                            low = "high"; # lowest available for V4 models
-                            high = "high";
-                            xhigh = "max";
-                          };
-                          supportsToolChoice = false;
-                          requiresReasoningContentForToolCalls = true;
-                          requiresAssistantContentForToolCalls = true;
-                          extraBody.thinking.type = "enabled";
-                        };
-                      };
-                  in
-                  mkDeepSeekModel {
-                    # high | xhigh
-                    id = "deepseek/deepseek-v4-flash";
-                    name = "DeepSeek V4 Flash";
-                  }
-                  ++ mkDeepSeekModel {
-                    # high | xhigh
-                    id = "deepseek/deepseek-v4-pro";
-                    name = "DeepSeek V4 Pro";
-                  }
-                  ++ [
+              providers = mkCommandCodeProvider activeSub // {
+                nvidia.apiKey = "!cat ${secrets.nvidia-nim-key.path}";
+
+                # Static defs so these resolve at launch before the remote
+                # opencode-zen catalog fetch completes. laguna-s-2.1-free is
+                # NOT in omp's catalog so need to add stuff manually.
+                opencode-zen = {
+                  baseUrl = "https://opencode.ai/zen/v1";
+                  apiKey = "!cat ${secrets.opencode-go-key.path}";
+                  api = "openai-completions";
+                  models = [
                     {
-                      # minimal | low | medium | high
-                      id = "stepfun/Step-3.5-Flash";
-                      name = "Step 3.5 Flash";
-                      reasoning = true;
-                      contextWindow = 1000000;
-                      maxTokens = 384000;
-                    }
-                    {
-                      # TODO: limited input, wait until full release with full context
                       # minimal | low | medium | high | xhigh
-                      id = "poolside/laguna-s-2.1-free";
+                      id = "laguna-s-2.1-free";
                       name = "Poolside Laguna S 2.1";
                       reasoning = true;
                       contextWindow = 256000;
                       maxTokens = 131072;
                     }
                     {
-                      # minimal | low | medium | high | xhigh
-                      id = "meta/muse-spark-1.2-contributor";
-                      name = "Meta Muse Spark 1.2";
-                      reasoning = true;
-                      thinking = {
-                        minLevel = "minimal";
-                        maxLevel = "xhigh";
-                        mode = "effort";
-                      };
-                      input = [
-                        "text"
-                        "image"
-                      ];
-                      cost = {
-                        input = 0.1;
-                        output = 0.2;
-                        cacheRead = 0.002;
-                        cacheWrite = 0;
-                      };
-                      contextWindow = 1048576;
-                      maxTokens = 131072;
-                      compat = {
-                        supportsReasoningEffort = true;
-                        supportsToolChoice = false;
-                      };
+                      # high | xhigh
+                      id = "deepseek-v4-flash-free";
                     }
                   ];
-              };
-
-              providers.hetzner-inference = {
-                baseUrl = "https://inference.hetzner.com/api/v1";
-                apiKey = "!cat ${secrets.hetzner-inference-key.path}";
-                api = "openai-completions";
-                models = [
-                  {
-                    id = "DeepSeek-V4-Flash-0731";
-                    name = "DeepSeek V4 Flash";
-                    reasoning = true;
-                    thinking = {
-                      minLevel = "high";
-                      maxLevel = "xhigh";
-                      mode = "effort";
-                    };
-                    input = singleton "text";
-                    contextWindow = 512000;
-                    maxTokens = 131072;
-                    compat = {
-                      supportsDeveloperRole = false;
-                      supportsReasoningEffort = true;
-                      maxTokensField = "max_tokens";
-                      reasoningEffortMap = {
-                        low = "high"; # lowest available for V4 models
-                        high = "high";
-                        xhigh = "max";
-                      };
-                      supportsToolChoice = false;
-                      requiresReasoningContentForToolCalls = true;
-                      requiresAssistantContentForToolCalls = true;
-                      extraBody.thinking.type = "enabled";
-                    };
-
-                  }
-                ];
-              };
-
-              # Static defs so these resolve at launch before the remote
-              # opencode-zen catalog fetch completes. laguna-s-2.1-free is
-              # NOT in omp's catalog so need to add stuff manually.
-              providers.opencode-zen = {
-                baseUrl = "https://opencode.ai/zen/v1";
-                apiKey = "!cat ${secrets.opencode-go-key.path}";
-                api = "openai-completions";
-                models = [
-                  {
-                    # minimal | low | medium | high | xhigh
-                    id = "laguna-s-2.1-free";
-                    name = "Poolside Laguna S 2.1";
-                    reasoning = true;
-                    contextWindow = 256000;
-                    maxTokens = 131072;
-                  }
-                  {
-                    # high | xhigh
-                    id = "deepseek-v4-flash-free";
-                  }
-                ];
+                };
               };
             };
           };
@@ -196,22 +148,24 @@
                 big = "opencode-zen/laguna-s-2.1-free:xhigh";
                 small = "opencode-zen/laguna-s-2.1-free:high";
                 cheap = "opencode-zen/laguna-s-2.1-free:low";
-                vision = "commandcode/meta/muse-spark-1.2-contributor:low";
+                vision = "${activeSub}/meta/muse-spark-1.2-contributor:low";
 
                 bigFallback = [
-                  "commandcode/deepseek/deepseek-v4-flash:xhigh"
-                  "commandcode/meta/muse-spark-1.2-contributor:xhigh"
+                  "${activeSub}/deepseek/deepseek-v4-flash:xhigh"
+                  "${activeSub}/meta/muse-spark-1.2-contributor:xhigh"
+                  "nvidia/deepseek-ai/deepseek-v4-flash-0731:auto"
                 ];
                 smallFallback = [
                   "opencode-zen/deepseek-v4-flash-free:auto"
-                  "commandcode/deepseek/deepseek-v4-flash:high"
-                  "commandcode/meta/muse-spark-1.2-contributor:medium"
+                  "${activeSub}/deepseek/deepseek-v4-flash:high"
+                  "${activeSub}/meta/muse-spark-1.2-contributor:medium"
+                  "nvidia/deepseek-ai/deepseek-v4-flash-0731:auto"
                 ];
                 cheapFallback = [
                   "opencode-zen/deepseek-v4-flash-free:high"
-                  "commandcode/stepfun/step-3.5-flash:low"
-                  "commandcode/deepseek/deepseek-v4-flash:high"
-                  "commandcode/meta/muse-spark-1.2-contributor:low"
+                  "${activeSub}/deepseek/deepseek-v4-flash:high"
+                  "${activeSub}/meta/muse-spark-1.2-contributor:low"
+                  "nvidia/deepseek-ai/deepseek-v4-flash-0731:auto"
                 ];
               in
               {
@@ -276,7 +230,7 @@
                 # [internal]
                 memories.enabled = false;
                 modelProviderOrder = [
-                  "commandcode"
+                  activeSub
                   "opencode-zen"
                 ];
                 modelRoles = {

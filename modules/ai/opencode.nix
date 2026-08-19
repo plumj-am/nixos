@@ -11,6 +11,9 @@
       inherit (lib.attrsets) genAttrs;
       inherit (lib.trivial) const;
       inherit (config.sops) secrets;
+      inherit (config.ai.subs.commandcode) active;
+
+      activeSub = "commandcode-${toString active}";
 
       opencodePackage = pkgs.symlinkJoin {
         name = "opencode-wrapped";
@@ -22,6 +25,55 @@
               --set OPENCODE_EXPERIMENTAL true \
               --set OPENCODE_ENABLE_EXA 1
           '';
+      };
+
+      mkCommandCodeProvider = name: {
+        ${name} = {
+          npm = "@ai-sdk/openai-compatible";
+          inherit name;
+
+          options = {
+            baseURL = "https://api.commandcode.ai/provider/v1";
+            apiKey = "{file:${secrets."${name}-key".path}";
+          };
+
+          timeout = 3000000;
+          chunkTimeout = 1500000;
+
+          models = {
+            deepseek-v4-flash = {
+              id = "deepseek/deepseek-v4-flash";
+              name = "DeepSeek V4 Flash";
+              reasoning = true;
+              tool_call = true;
+              limit = {
+                context = 1000000;
+                output = 384000;
+              };
+            };
+            # TODO: limited input, wait until full release with full context
+            "laguna-s2.1-free" = {
+              id = "poolside/laguna-s-2.1-free";
+              name = "Poolside Laguna S 2.1";
+              reasoning = true;
+              tool_call = true;
+              limit = {
+                context = 256000;
+                output = 131072;
+              };
+            };
+            "muse-spark-1.2" = {
+              id = "meta/muse-spark-1.2-contributor";
+              name = "Meta Muse Spark 1.2";
+              reasoning = true;
+              tool_call = true;
+              limit = {
+                context = 1048576;
+                output = 384000;
+              };
+            };
+          };
+        };
       };
 
       # let cf = http get api.commandcode.ai/provider/v1/models | get data.id | where ("free" in $it) | sort
@@ -36,19 +88,18 @@
       cheap = "opencode/laguna-s-2.1-free";
 
       bigFallback = [
-        "commandcode/deepseek-v4-flash"
-        "commandcode/muse-spark-1.2"
+        "${activeSub}/deepseek-v4-flash"
+        "${activeSub}/muse-spark-1.2"
       ];
       smallFallback = [
         "opencode/deepseek-v4-flash-free"
-        "commandcode/deepseek-v4-flash"
-        "commandcode/muse-spark-1.2"
+        "${activeSub}/deepseek-v4-flash"
+        "${activeSub}/muse-spark-1.2"
       ];
       cheapFallback = [
         "opencode/deepseek-v4-flash-free"
-        "commandcode/step-3.5-flash"
-        "commandcode/deepseek-v4-flash"
-        "commandcode/muse-spark-1.2"
+        "${activeSub}/deepseek-v4-flash"
+        "${activeSub}/muse-spark-1.2"
       ];
     in
     {
@@ -137,98 +188,7 @@
                 };
               };
 
-              provider.commandcode = {
-                npm = "@ai-sdk/openai-compatible";
-                name = "Command Code";
-
-                options = {
-                  baseURL = "https://api.commandcode.ai/provider/v1";
-                  apiKey = "{file:${secrets.command-code-key.path}";
-                };
-
-                timeout = 3000000;
-                chunkTimeout = 1500000;
-
-                models = {
-                  deepseek-v4-flash = {
-                    id = "deepseek/deepseek-v4-flash";
-                    name = "DeepSeek V4 Flash";
-                    reasoning = true;
-                    tool_call = true;
-                    limit = {
-                      context = 1000000;
-                      output = 384000;
-                    };
-                  };
-                  deepseek-v4-pro = {
-                    id = "deepseek/deepseek-v4-pro";
-                    name = "DeepSeek V4 Pro";
-                    reasoning = true;
-                    tool_call = true;
-                    limit = {
-                      context = 1000000;
-                      output = 384000;
-                    };
-                  };
-                  "step-3.5-flash" = {
-                    id = "stepfun/Step-3.5-Flash";
-                    name = "Step 3.5 Flash";
-                    reasoning = true;
-                    tool_call = true;
-                    limit = {
-                      context = 1000000;
-                      output = 384000;
-                    };
-                  };
-                  # TODO: limited input, wait until full release with full context
-                  "laguna-s2.1-free" = {
-                    id = "poolside/laguna-s-2.1-free";
-                    name = "Poolside Laguna S 2.1";
-                    reasoning = true;
-                    tool_call = true;
-                    limit = {
-                      context = 256000;
-                      output = 131072;
-                    };
-                  };
-                  "muse-spark-1.2" = {
-                    id = "meta/muse-spark-1.2-contributor";
-                    name = "Meta Muse Spark 1.2";
-                    reasoning = true;
-                    tool_call = true;
-                    limit = {
-                      context = 1048576;
-                      output = 384000;
-                    };
-                  };
-                };
-              };
-
-              provider.hetzner-inference = {
-                npm = "@ai-sdk/openai-compatible";
-                name = "Hetzner Inference";
-                options = {
-
-                  baseURL = "https://inference.hetzner.com/api/v1";
-                  apiKey = "{file:${secrets.hetzner-inference-key.path}";
-                };
-
-                timeout = 3000000;
-                chunkTimeout = 1500000;
-
-                models = {
-                  deepseek-v4-flash = {
-                    id = "DeepSeek-V4-Flash-0731";
-                    name = "DeepSeek V4 Flash";
-                    reasoning = true;
-                    tool_call = true;
-                    limit = {
-                      context = 512000;
-                      output = 131072;
-                    };
-                  };
-                };
-              };
+              provider = mkCommandCodeProvider activeSub;
 
               agent = {
                 build = {

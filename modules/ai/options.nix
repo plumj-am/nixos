@@ -6,13 +6,20 @@
       inherit (lib.attrsets) genAttrs;
       inherit (lib.trivial) flip const;
       inherit (lib.options) mkOption mkEnableOption;
-      inherit (lib.types) listOf str;
+      inherit (lib.types) listOf str ints;
       inherit (lib.strings) removeSuffix hasSuffix;
       inherit (lib.lists) filter;
     in
     {
       options.ai = {
         secrets = mkEnableOption "include AI secrets with this system/module";
+
+        subs.commandcode.active = mkOption {
+          type = ints.between 1 2;
+          description = ''
+            which commandcode subscription to use in AI tools
+          '';
+        };
 
         commands.bash.allow = mkOption {
           type = listOf str;
@@ -22,6 +29,8 @@
           '';
         };
       };
+
+      config.ai.subs.commandcode.active = 2;
 
       config.sops.secrets =
         mkIf config.ai.secrets
@@ -34,13 +43,14 @@
               mode = "600";
             })
             [
-              "command-code-key"
+              "commandcode-1-key"
+              "commandcode-2-key"
               "hetzner-inference-key"
               "nvidia-nim-key"
               "exa-key"
               "context7-key"
               "opencode-go-key"
-              "command-code-auth-json"
+              "commandcode-auth-json"
               "hermes-env"
               "gerrit-mcp-config"
             ];

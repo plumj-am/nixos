@@ -1,5 +1,5 @@
 {
-  flake.modules.common.command-code =
+  flake.modules.common.commandcode =
     { pkgs, config, ... }:
     let
       inherit (config) theme;
@@ -22,15 +22,14 @@
               model = "tencent/Hy3";
               firstMessageSent = true;
               featureModels = {
-                # TODO: change to MiniMaxAI/MiniMax-M3 and deepseek/deepseek-v4-flash after 21/07
-                titleGeneration = "tencent/Hy3";
-                compaction = "tencent/Hy3";
-                toolDescription = "tencent/Hy3";
-                tasteOnboarding = "tencent/Hy3";
+                titleGeneration = "deepseek/deepseek-v4-flash";
+                compaction = "deepseek/deepseek-v4-flash";
+                toolDescription = "deepseek/deepseek-v4-flash";
+                tasteOnboarding = "deepseek/deepseek-v4-flash";
               };
             };
           };
-          ".commandcode/auth.json".source = secrets."command-code-auth-json".path;
+          ".commandcode/auth.json".source = secrets."commandcode-auth-json".path;
           ".commandcode/updates.json" = {
             generator = pkgs.writers.writeJSON "commandcode-updates.json";
             value = {

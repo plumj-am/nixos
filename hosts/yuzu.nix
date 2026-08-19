@@ -14,7 +14,7 @@ in
       boot-optimise
       boot-systemd
       colour-picker
-      command-code
+      commandcode
       desktop-gui
       discord
       disks-normal
