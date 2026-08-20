@@ -332,7 +332,8 @@
 
                 # By default, show the repo trunk, the remote bookmarks, and all remote tags. We
                 # don't want to change these in most cases, but in some repos it's useful.
-                "immutable_heads()" = "present(trunk()) | remote_bookmarks() | tags()";
+                "immutable_heads()" =
+                  ''(present(trunk()) | remote_bookmarks() | tags()) ~ bookmarks(glob:"change/*")'';
 
                 # trunk() by default resolves to the latest 'main'/'master' remote bookmark. May
                 # require customization for repos like nixpkgs.
