@@ -34,10 +34,12 @@ in
       keepassxc
       kitty
       # llama-cpp
+      # lmstudio
       mprocs
       ncro
       nextcloud-client
       nix-settings-extra-desktop
+      # ollama
       omp
       opencode
       packages-extra-linux
@@ -52,7 +54,7 @@ in
       radicle-node
       radicle-tui
       raperl
-      rio
+      # rio
       rust
       rust-desktop
       shed

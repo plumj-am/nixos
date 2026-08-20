@@ -209,4 +209,135 @@
         };
       };
     };
+
+  flake.modules.nixos.lmstudio =
+    { pkgs, lib, ... }:
+    let
+      inherit (lib.lists) singleton;
+    in
+    {
+      unfree.allowedNames = singleton "lmstudio";
+
+      hjemModule = { config, ... }: {
+        packages = singleton pkgs.lmstudio;
+
+        files.".lmstudio/settings.json" = {
+          generator = pkgs.writers.writeJSON "lmstudio-settings.json";
+          type = "copy";
+          value = {
+            language = "en";
+            downloadsFolder = "${config.directory}/.lmstudio/models";
+            sidebar = {
+              showButtonNames = false;
+              monochromeSidebarIcons = true;
+            };
+            configs.expandConfigsOnClick = true;
+            chat = {
+              showSuggestionsOnNewChat = true;
+              allowOnlyOneNewChat = true;
+              alwaysShowPromptTemplate = false;
+              useShiftEnterToSendMessage = false;
+              useKeychordToRegenerate = true;
+              unloadPreviousModelOnSelect = true;
+              highlightChatMessageOnHover = true;
+              doubleClickMessageToEdit = false;
+              doubleClickChatCellRenames = false;
+              aiNamingMode = "auto";
+              autoExpandReasoningBlocks = false;
+              reasoningBlocksVignette = true;
+              messageGenInfoMode = "lastMessage";
+              visualizeSpeculativeDecoding = false;
+              chatFullWidth = false;
+              neverAskForToolConfirmation = false;
+              skipToolConfirmationPatterns = [ ];
+              showChatUtilityMenuLabels = true;
+              pinnedPlugins = [ ];
+              showRoleAndInsertButtons = false;
+              scrollLastMessageToTop = "scrollToTopNoLatch";
+              showTokenCountInChatListings = false;
+              moveDeletedItemsToTrash = false;
+              sidebarSort = {
+                field = "createdAt";
+                direction = "desc";
+              };
+              showSpringboardWhenClosingAllTabsInSplit = false;
+              imageInputs = {
+                userMaxImageDimensionPixelsEnabled = true;
+                userMaxImageDimensionPixels = 2048;
+                ignoreModelPreferredMaxImageDimension = false;
+              };
+            };
+            developer = {
+              showExperimentalFeatures = true;
+              experimentalLoadPresets = true;
+              backendDownloadChannel = "stable";
+              appUpdateChannel = "stable";
+              showDebugInfoBlocksInChat = false;
+              showModelDownloadOptionData = false;
+              showResourceConsumptionWidget = true;
+              allowDevelopmentPlugins = true;
+              unloadPreviousJITModelOnLoad = true;
+              jitModelTTL = {
+                enabled = true;
+                ttlSeconds = 60 * 60; # 1 hour
+              };
+              autoUpdateExtensionPacks = true;
+              autoDeleteExtensionPacks = true;
+              separateReasoningContentInAPI = true;
+              experimentFlags = [ ];
+              apiPredictionHistoryEviction = {
+                type = "time";
+                ttlDays = 30;
+              };
+              attemptedInstallLmsCliOnStartup = false;
+            };
+            ui = {
+              missionControlFullscreen = false;
+              showModelFileNameInMyModels = false;
+              configureLoadParamsBeforeLoad = false;
+              alwaysOpenModelLoaderFromPicker = true;
+              contextDisplayMode = "percentage";
+              appNavigationBarPosition = "left";
+              showTabStripScrollBar = false;
+              tabStripFullStripStyle = false;
+              openDownloadsPaneOnStartNewModelDownload = false;
+            };
+            cloudInference.billingContext.type = "personal";
+            configPresetInclusiveness.speculativeDecoding = false;
+            toggledConfigDropdowns = [ ];
+            userInterfaceComplexityLevel = 0;
+            developerMode = true;
+            appFirstLoad = false;
+            autoLoadBundledLLM = true;
+            modelLoadingGuardrails = {
+              mode = "low";
+              customThresholdBytes = 4 * 1024 * 1024 * 1024; # 4 GB
+              alwaysAllowLoadAnyway = false;
+            };
+            dismissedModals = [
+              "LM"
+              "Link"
+              "Sidebar"
+              "Button"
+              "Popover"
+            ];
+            dismissedConversationSnackbars = [ ];
+            pre030ChatsMigrated = 3;
+            appPostUpdateNotificationPending = false;
+            promptWhenCommittingUnsavedChangesWithNewFields = false;
+            enableLocalService = true;
+            useLlamaCppEngineProtocolRuntime3 = true;
+            cliInstalled = false;
+            useHFProxy = true;
+            hfSearchToken = "";
+            hfDownloadToken = "";
+            defaultContextLength = {
+              type = "custom";
+              value = 262144;
+            };
+            appIntroAcceptedForBuild = null;
+          };
+        };
+      };
+    };
 }
