@@ -183,13 +183,14 @@
                 display = {
                   shimmer = "classic";
                   showTokenUsage = true;
+                  cacheMissMarker = true;
                 };
 
                 # [context]
                 contextPromotion.enabled = false; # do not upgrade model - compact instead.
                 compaction = {
                   enabled = true;
-                  strategy = "context-full";
+                  strategy = "handoff"; # create handoff + start new session from it
                 };
 
                 # [editing]
@@ -210,6 +211,7 @@
                 steeringMode = "all"; # Send all queued messages at once.
                 followUpMode = "all";
                 interruptMode = "wait";
+                autocompleteMaxVisible = 20;
                 power = {
                   preventIdleSleep = false;
                   preventSystemSleep = false;
@@ -226,6 +228,7 @@
                   notify = "on";
                 };
                 features.unexpectedStopDetection = true;
+                git.enabled = false; # only affects status bar (using jj anyway)
 
                 # [internal]
                 memories.enabled = false;
@@ -237,7 +240,7 @@
                   default = small;
                   smol = cheap;
                   slow = big;
-                  advisor = big;
+                  advisor = cheap;
                   plan = big;
                   inherit vision;
                   designer = vision;
@@ -253,7 +256,7 @@
 
                 # [model]
                 advisor = {
-                  enabled = false; # Can't choose model yet?
+                  enabled = true;
                   syncBacklog = 5;
                 };
                 defaultThinkingLevel = "medium";
@@ -269,7 +272,7 @@
                     default = smallFallback;
                     smol = cheapFallback;
                     slow = bigFallback;
-                    advisor = bigFallback;
+                    advisor = cheapFallback;
                     plan = bigFallback;
                     vision = [ ]; # TODO: add another vision model
                     designer = [ ];
@@ -300,6 +303,7 @@
                   enabled = true;
                   statusInFooter = true;
                 };
+                eager = "preferred"; # sub-agent delegation
 
                 # [tools]
                 marketplace.autoUpdate = "notify";
@@ -324,6 +328,7 @@
                 web_search.enabled = true;
                 browser.enabled = true;
                 async.enabled = true;
+                security.enabled = true;
                 mcp.discoveryMode = true;
                 skills = {
                   enabled = true;
@@ -355,7 +360,7 @@
                 context-mode = "^1";
                 omp-dynamic-context-pruning = "https://github.com/plumj-am/omp-dynamic-context-pruning";
                 ponytail = "https://github.com/DietrichGebert/ponytail";
-                "@plannotator/pi-extension" = "^0.25";
+                "@plannotator/pi-extension" = "^0.26";
                 caveman = "https://github.com/JuliusBrussee/caveman";
               };
             };
@@ -387,7 +392,9 @@
           path = singleton pkgs.bun;
           script = ''
             cd ~/.omp/plugins
-            bun install
+            rm bun.lock
+            rm --recursive node_modules
+            bun install --force --refresh
           '';
           serviceConfig = {
             Type = "oneshot";
