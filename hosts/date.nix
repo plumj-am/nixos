@@ -45,7 +45,6 @@ in
       process-management
       quickshell
       rust-desktop
-      rss-tui
       shed
       sops
       sudo-desktop
