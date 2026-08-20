@@ -1,6 +1,10 @@
 {
   flake.modules.nixos.llama-cpp =
-    { pkgs, lib, ... }:
+    {
+      pkgs,
+      lib,
+      ...
+    }:
     let
       inherit (lib.attrsets) optionalAttrs;
 
@@ -116,6 +120,27 @@
             ctx = "262144"; # 262144 max - untested
             moeOffload = false;
           };
+
+          "ornith-ai/Ornith-1.5-35B-A3B:Q4_K_M" = {
+            name = "Ornith-1.5-35B-A3B:Q4_K_M";
+            hf-repo = "ornith-ai/Ornith-1.5-35B-A3B-GGUF:Q4_K_M";
+
+            context = "156000";
+            jinja = "on";
+            flash-attention = "on";
+            cache-type-k = "q8_0";
+            cache-type-v = "q8_0";
+            reasoning = "on";
+            batch-size = 2048;
+            ubatch-size = 1024;
+            temp = 0.6;
+            top-p = 0.95;
+            top-k = 20;
+            min-p = 0.0;
+            presence-penalty = 0.0;
+            repeat-penalty = 1.0;
+          }
+          // cpuMoeOffload;
         }
       );
     in
@@ -125,6 +150,7 @@
         "cuda_cudart"
         "cuda_nvcc"
         "libcublas"
+        "cuda_nvrtc"
       ];
 
       services.llama-cpp = {
