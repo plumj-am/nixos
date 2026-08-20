@@ -170,4 +170,43 @@
         };
       };
     };
+
+  flake.modules.nixos.ollama =
+    {
+      pkgs,
+      ...
+    }:
+    {
+      unfree.allowedNames = [
+        "cuda_cccl"
+        "cuda_cudart"
+        "cuda_nvcc"
+        "libcublas"
+        "cuda_nvrtc"
+      ];
+
+      services.ollama = {
+        enable = true;
+        package = pkgs.ollama-cuda;
+
+        port = 11434;
+
+        syncModels = true;
+        loadModels = [
+          "hf.co/unsloth/Qwen3.8-27B-GGUF:UD-IQ3_XXS"
+          "hf.co/ornith-ai/Ornith-1.5-35B-A3B-GGUF:Q4_K_M"
+        ];
+
+        environmentVariables = {
+          OLLAMA_NUM_PARALLEL = "4";
+          OLLAMA_MAX_LOADED_MODELS = "2";
+          OLLAMA_FLASH_ATTENTION = "1";
+          OLLAMA_NO_CLOUD = "1";
+          OLLAMA_KV_CACHE_TYPE = "q8_0";
+          OLLAMA_MULTIUSER_CACHE = "1";
+          OLLAMA_NEW_ENGINE = "1";
+          OLLAMA_CONTEXT_LENGTH = "262144";
+        };
+      };
+    };
 }
