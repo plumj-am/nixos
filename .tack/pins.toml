@@ -30,6 +30,7 @@ rio.url               = "gh:raphamorim/rio"
 rom.url               = "gh:manic-systems/rom"
 run0-sudo-shim.url    = "gh:LordGrimmauld/run0-sudo-shim"
 sops.url              = "gh:Mic92/sops-nix"
+steam-config.url   = "gh:different-name/steam-config-nix"
 tack.url              = "gh:manic-systems/tack"
 treefmt.url           = "gh:numtide/treefmt-nix"
 ublock                = { type = "fetch", url = "gh:imputnet/uBlock" }
