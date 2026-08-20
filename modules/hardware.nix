@@ -1,5 +1,5 @@
-let
-  hardwareDesktop =
+{
+  flake.modules.nixos.hardware-desktop =
     { pkgs, ... }:
     {
       hardware = {
@@ -15,9 +15,13 @@ let
         pkgs.lshw # Hardware info.
         pkgs.usbutils # USB device info.
         pkgs.pciutils # PCI device info.
+
+        # iphone trash
+        pkgs.libimobiledevice
+        pkgs.ifuse
+        pkgs.usbmuxd
       ];
+
+      services.usbmuxd.enable = true;
     };
-in
-{
-  flake.modules.nixos.hardware-desktop = hardwareDesktop;
 }
