@@ -40,9 +40,7 @@ in
       website-personal
       zellij
       { hardware.facter.reportPath = ./facter/plum.json; }
-      # TODO: Fix properly. Issue caused by using sdX I think.
-      # It changes the boot device by itself occasionally.
-      { disko.devices.disk.disk1.device = "/dev/sda"; }
+      { disko.devices.disk.disk1.device = "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_102788287"; }
       {
         config = mkConfig inputs "plum" "x86_64-linux" {
           networking = {
