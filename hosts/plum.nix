@@ -16,7 +16,7 @@ in
       disks-server
       forgejo
       freshrss-server
-      forgejo-action-runner
+      forgejo-runner
       gerrit
       goatcounter
       harmonia
@@ -60,7 +60,6 @@ in
               enable = true;
               speedFactor = 3;
             };
-            ciRunner.strong = true;
 
             disks.swap.file = {
               path = "/swapfile";

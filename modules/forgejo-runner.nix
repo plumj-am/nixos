@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.forgejo-action-runner =
+  flake.modules.nixos.forgejo-runner =
     {
       config,
       lib,
@@ -8,13 +8,13 @@
       ...
     }:
     let
-      inherit (lib.lists) optional singleton;
+      inherit (lib.lists) singleton;
       inherit (config.networking) hostName;
       inherit (config.sops) secrets;
 
       name = hostName;
-      url = "http://plum.taild29fec.ts.net:8001";
-      defaultLabels = [
+      url = "https://git.plumj.am";
+      labels = [
         "self-hosted:host"
         "${name}:host"
         "grove-systems:host"
@@ -36,9 +36,7 @@
         instances.${name} = {
           enable = true;
           tokenFile = secrets."forgejo-runner/token".path;
-          inherit name url;
-
-          labels = defaultLabels ++ optional config.systemInfo.ciRunner.strong "strong:host";
+          inherit name url labels;
 
           settings = {
             runner = {

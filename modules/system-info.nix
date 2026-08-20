@@ -3,7 +3,7 @@
     { lib, ... }:
     let
       inherit (lib.options) mkOption;
-      inherit (lib.types) ints bool;
+      inherit (lib.types) ints;
     in
     {
       options.systemInfo = {
@@ -16,12 +16,6 @@
           type = ints.between 1 128;
           default = 1;
           description = "Total threads supported by the CPU on this system";
-        };
-
-        ciRunner.strong = mkOption {
-          type = bool;
-          default = false;
-          description = "System is powerful enough for heavy CI workloads";
         };
       };
     };

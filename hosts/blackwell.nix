@@ -12,7 +12,7 @@ in
 
       boot-grub
       disks-server
-      forgejo-action-runner
+      forgejo-runner
       harmonia
       ncro
       nix-settings-extra-server

@@ -13,7 +13,7 @@ in
       acme
       boot-grub
       disks-server
-      forgejo-action-runner
+      forgejo-runner
       harmonia
       ncro
       nginx

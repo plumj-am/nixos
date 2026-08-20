@@ -14,7 +14,7 @@ in
       acme
       boot-grub
       disks-server
-      forgejo-action-runner
+      forgejo-runner
       garage
       graft
       graphics
@@ -58,7 +58,6 @@ in
               enable = true;
               speedFactor = 5;
             };
-            ciRunner.strong = true;
 
             disks.swap.file = {
               path = "/swapfile";

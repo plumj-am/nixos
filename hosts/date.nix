@@ -21,7 +21,7 @@ in
       docker-rootless
       editor-extra
       file-manager
-      forgejo-action-runner
+      forgejo-runner
       forgejo-cli
       games
       gammastep
@@ -66,7 +66,6 @@ in
               enable = true;
               speedFactor = 4;
             };
-            ciRunner.strong = true;
 
             disks.swap.partition = {
               path = "/dev/disk/by-label/swap";
