@@ -5,8 +5,6 @@
       inherit (lib.lists) singleton;
     in
     {
-      services.geoclue2.enable = true;
-
       hjem.extraModule = {
         packages = singleton pkgs.gammastep;
 
@@ -14,9 +12,14 @@
           generator = lib.generators.toINI { };
           value = {
             general = {
-              location-provider = "geoclue2";
               temp-day = 4500;
               temp-night = 3500;
+              location-provider = "manual";
+            };
+
+            manual = {
+              lat = 52.23;
+              lon = 21.01;
             };
           };
         };
