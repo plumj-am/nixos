@@ -25,7 +25,7 @@ in
       swapfile
       s3
       s3-upload
-      website-dr-radka
+      website-radka
       zellij
       { hardware.facter.reportPath = ./facter/kiwi.json; }
       {

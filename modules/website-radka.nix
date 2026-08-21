@@ -1,70 +1,35 @@
 {
-  flake.modules.nixos.website-dr-radka =
+  flake.modules.nixos.website-radka =
     {
-      config,
+      inputs,
       pkgs,
       lib,
-      inputs,
+      config,
       ...
     }:
     let
-      inherit (lib.meta) getExe;
+      inherit (lib.lists) singleton;
       inherit (config.networking) domain;
       inherit (config.sops) secrets;
       inherit (config.myLib) merge;
 
-      radka = inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.radka;
-
-      app_port = 3000;
-      app_user = "dr-radka";
-      app_group = "dr-radka";
-      app_dir = "/var/lib/dr-radka";
+      port = 8081;
     in
     {
+      imports = singleton inputs.grove.nixosModules.radka;
+
       sops.secrets."radka/environment" = {
         sopsFile = ../secrets/services/radka.yaml;
-        owner = "dr-radka";
-        group = "dr-radka";
+        owner = "radka";
+        group = "radka";
       };
 
-      users.users.${app_user} = {
-        isSystemUser = true;
-        group = app_group;
-        home = app_dir;
-        createHome = true;
-      };
+      services.radka = {
+        enable = true;
+        package = inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.radka;
 
-      users.groups.${app_group} = { };
-
-      systemd.services.dr-radka = {
-        description = "Dr. Radka SvelteKit Application";
-        after = [ "network.target" ];
-        wantedBy = [ "multi-user.target" ];
-
-        serviceConfig = {
-          Type = "simple";
-          User = app_user;
-          Group = app_group;
-          WorkingDirectory = "${radka}";
-          ExecStart = "${getExe pkgs.nodejs-slim_24} ${radka}/index.js";
-          Restart = "always";
-          RestartSec = 5;
-          EnvironmentFile = secrets."radka/environment".path;
-
-          # hardening
-          NoNewPrivileges = true;
-          ProtectSystem = "strict";
-          ProtectHome = true;
-          PrivateTmp = true;
-          ProtectKernelTunables = true;
-          ProtectKernelModules = true;
-          ProtectControlGroups = true;
-        };
-
-        environment = {
-          NODE_ENV = "production";
-          ORIGIN = "https://${domain}";
-        };
+        stateDir = "/var/lib/radka";
+        environmentFile = secrets."radka/environment".path;
       };
 
       services.nginx = {
@@ -81,7 +46,7 @@
           # '';
 
           locations."/" = {
-            proxyPass = "http://0.0.0.0:${toString app_port}";
+            proxyPass = "http://[::1]:${toString port}";
             extraConfig = # nginx
               ''
                 # override csp for built app requirements and maintain security headers
@@ -91,12 +56,10 @@
                 add_header X-Content-Type-Options nosniff always;
                 add_header X-XSS-Protection "1; mode=block" always;
                 add_header Permissions-Policy "camera=(), geolocation=(), payment=(), usb=()" always;
-                add_header Referrer-Policy no-referrer always;
+                add_header Referrer-Policy strict-origin-when-cross-origin always;
               '';
           };
         };
       };
-
-      environment.systemPackages = [ pkgs.nodejs-slim_24 ];
     };
 }
