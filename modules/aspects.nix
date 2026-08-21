@@ -41,6 +41,7 @@ in
         nix-distributed-builds
         nix-distributed-builder
         nix-extra
+        packages
         rebuild
         restic
         system-info

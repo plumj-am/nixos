@@ -38,9 +38,9 @@ in
       # ollama
       omp
       opencode
-      packages-extra-linux
-      packages-extra-gui
-      packages-extra-cli
+      packages
+      packages-gui
+      packages-cli
       peripherals
       pijul
       process-management

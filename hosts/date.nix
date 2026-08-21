@@ -34,9 +34,8 @@ in
       nextcloud-client
       omp
       opencode
-      packages-extra-linux
-      packages-extra-gui
-      packages-extra-cli
+      packages-gui
+      packages-cli
       peripherals
       process-management
       quickshell
