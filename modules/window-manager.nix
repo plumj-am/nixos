@@ -1,7 +1,6 @@
 {
   flake.modules.nixos.window-manager =
     {
-      inputs,
       pkgs,
       lib,
       config,
@@ -66,7 +65,7 @@
       hjem.extraModule =
         { config, ... }:
         {
-          packages = singleton inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri;
+          packages = singleton pkgs.niri;
 
           xdg.config.files."niri/config.kdl".text =
             with theme; # kdl

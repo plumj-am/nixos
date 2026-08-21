@@ -12,7 +12,6 @@ homebrew.url          = "gh:zhaofengli/nix-homebrew"
 homebrew-cask         = { type = "fetch", url = "gh:homebrew/homebrew-cask" }
 homebrew-core         = { type = "fetch", url = "gh:homebrew/homebrew-core" }
 llm-agents.url        = "gh:numtide/llm-agents.nix"
-niri.url              = "gh:niri-wm/niri"
 nixos-core.url        = "gh:manic-systems/nixos-core"
 os.url                = "gh:NixOS/nixpkgs/nixos-unstable-small"
 os-darwin.url         = "gh:nix-darwin/nix-darwin/master"

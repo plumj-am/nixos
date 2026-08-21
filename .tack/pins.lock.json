@@ -104,14 +104,6 @@
     "narHash": "sha256-HRmx7PnoqUNtA06P/FEyygZeUJIzbNUtx4zo9Jiiz9s=",
     "lastModified": 1787286673
   },
-  "niri": {
-    "type": "github",
-    "owner": "niri-wm",
-    "repo": "niri",
-    "rev": "b0eb8ad8c80094de34abd88c109aea421461622b",
-    "narHash": "sha256-dzLsp/FvMerhsjfsWtFK/BTlJ5FZwLWlhsFJRRxpmbU=",
-    "lastModified": 1787128307
-  },
   "nixos-core": {
     "type": "github",
     "owner": "manic-systems",
