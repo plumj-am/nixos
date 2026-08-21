@@ -52,17 +52,6 @@
               deadnix --fail ${../.}
               touch $out
             '';
-
-        # TODO: Setup treefmt for yml, qml, etc. formatting.
-        nixfmt =
-          pkgs.runCommand "nixfmt"
-            {
-              nativeBuildInputs = singleton pkgs.nixfmt;
-            }
-            ''
-              nixfmt --check ${../.}
-              touch $out
-            '';
       }
       // nixosMachines
       // packages;
