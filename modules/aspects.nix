@@ -7,6 +7,7 @@ let
     "env"
     "helix"
     "hjem"
+    "inputs-gcroot"
     "jujutsu"
     "keys"
     "lib"
