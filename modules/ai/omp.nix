@@ -85,6 +85,27 @@
                 supportsToolChoice = false;
               };
             }
+            {
+              # minimal | low | medium | high
+              id = "stealth/ox-alpha";
+              name = "Ox Alpha";
+              reasoning = true;
+              input = [
+                "text"
+              ];
+              cost = {
+                input = 0;
+                output = 0;
+                cacheRead = 0;
+                cacheWrite = 0;
+              };
+              contextWindow = 1048576;
+              maxTokens = 131072;
+              compat = {
+                supportsReasoningEffort = false;
+                supportsToolChoice = false;
+              };
+            }
           ];
         };
       };
@@ -145,23 +166,26 @@
             generator = pkgs.writers.writeYAML "omp-agent-config.yml";
             value =
               let
-                big = "opencode-zen/laguna-s-2.1-free:xhigh";
-                small = "opencode-zen/laguna-s-2.1-free:high";
-                cheap = "opencode-zen/laguna-s-2.1-free:low";
+                big = "${activeSub}/stealth/ox-alpha:high";
+                small = "${activeSub}/stealth/ox-alpha:high";
+                cheap = "${activeSub}/stealth/ox-alpha:high";
                 vision = "${activeSub}/meta/muse-spark-1.2-contributor:low";
 
                 bigFallback = [
+                  "opencode-zen/laguna-s-2.1-free:xhigh"
                   "${activeSub}/deepseek/deepseek-v4-flash:xhigh"
                   "${activeSub}/meta/muse-spark-1.2-contributor:xhigh"
                   "nvidia/deepseek-ai/deepseek-v4-flash-0731:auto"
                 ];
                 smallFallback = [
+                  "opencode-zen/laguna-s-2.1-free:high"
                   "opencode-zen/deepseek-v4-flash-free:auto"
                   "${activeSub}/deepseek/deepseek-v4-flash:high"
                   "${activeSub}/meta/muse-spark-1.2-contributor:medium"
                   "nvidia/deepseek-ai/deepseek-v4-flash-0731:auto"
                 ];
                 cheapFallback = [
+                  "opencode-zen/laguna-s-2.1-free:low"
                   "opencode-zen/deepseek-v4-flash-free:high"
                   "${activeSub}/deepseek/deepseek-v4-flash:high"
                   "${activeSub}/meta/muse-spark-1.2-contributor:low"
@@ -334,8 +358,8 @@
                   enabled = true;
                   enableCodexUser = false;
                   enableClaudeUser = false;
-                  enablePiUser = false;
-                  enableAgentsUser = false;
+                  enablePiUser = true;
+                  enableAgentsUser = true;
                   enableClaudeProject = false;
                   enablePiProject = false;
                   enableAgentsProject = false;
@@ -387,6 +411,17 @@
             value = {
               name = "omp-plugins";
               private = true;
+              # Bun blocks install scripts of unlisted deps; node-pty and the
+              # others need theirs to build for Linux.
+              trustedDependencies = [
+                "@google/genai"
+                "better-sqlite3"
+                "context-mode"
+                "node-pty"
+                "onnxruntime-node"
+                "protobufjs"
+                "sharp"
+              ];
               dependencies = {
                 context-mode = "^1";
                 omp-dynamic-context-pruning = "https://github.com/plumj-am/omp-dynamic-context-pruning";
@@ -418,21 +453,39 @@
           value.defaultMode = "ultra";
         };
 
-        systemd.services.omp-bun-install = {
-          description = "bun install for oh-my-pi plugins";
-          path = singleton pkgs.bun;
-          script = ''
-            cd ~/.omp/plugins
-            rm bun.lock
-            rm --recursive node_modules
-            bun install --force --refresh
-          '';
-          serviceConfig = {
-            Type = "oneshot";
-            TimeoutStartSec = "5s";
-          };
+        systemd.services.omp-install-plugins-skills = {
+          description = "automatic plugin and skill install for oh-my-pi";
           after = singleton "hjem.target";
           wantedBy = singleton "default.target";
+          serviceConfig = {
+            Type = "oneshot";
+            TimeoutStartSec = "120s";
+          };
+
+          path = [
+            pkgs.bash
+            pkgs.gcc
+            pkgs.git
+            pkgs.gnumake
+            pkgs.nodejs
+            pkgs.node-gyp
+          ];
+          environment.PYTHON = getExe pkgs.python3;
+          script = # sh
+            ''
+              cd ~/.omp/plugins
+              rm --force bun.lock node_modules/ || true
+              ${getExe pkgs.bun} install --force --refresh
+
+              echo "skills add mattpocock/skills"
+              ${getExe pkgs.skills} add mattpocock/skills \
+                --skill grilling \
+                --skill grill-me \
+                --skill grill-with-docs \
+                --yes \
+                --agent universal \
+                --global
+            '';
         };
       };
     };
