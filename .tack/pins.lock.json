@@ -208,14 +208,6 @@
     "narHash": "sha256-FdHaAULw+eE3WE29UjR+FK/rFcjaxICveMKS01sUZR4=",
     "lastModified": 1783598489
   },
-  "rom": {
-    "type": "github",
-    "owner": "manic-systems",
-    "repo": "rom",
-    "rev": "bdf5edf384cfbe7651b71f83324eadb9301abf62",
-    "narHash": "sha256-7gCPo5Zl/KrGlj3+5/Ed6wUmmgKD93HgPHv1vWqf3WQ=",
-    "lastModified": 1783197026
-  },
   "run0-sudo-shim": {
     "type": "github",
     "owner": "LordGrimmauld",

@@ -1,7 +1,6 @@
 {
   flake.modules.nixos.rebuild =
     {
-      inputs,
       pkgs,
       lib,
       lib',
@@ -14,7 +13,6 @@
     {
       environment.systemPackages = [
         pkgs.nh
-        inputs.rom.packages.${pkgs.stdenv.hostPlatform.system}.default
 
         (mkDirtyHaskellScript "rebuild-hs" {
           path = ../Rebuild.hs;
