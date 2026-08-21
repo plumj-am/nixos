@@ -20,6 +20,7 @@ in
       disks-normal
       docker-rootless
       editor-extra
+      emacs
       file-manager
       forgejo-cli
       games

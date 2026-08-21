@@ -104,6 +104,18 @@ def --wrapped main [
       try {
          sudo ...$nh $config.cmd ...$nh_args
 
+         if (which emacsclient | is-not-empty) {
+            print "Reloading Emacs"
+
+            try {
+               emacsclient --eval '(load-file "/home/jam/.config/emacs/init.el")' | ignore
+            } catch {|e|
+               print --stderr $"Reloading Emacs failed: ($e)"
+
+               false
+            }
+         }
+
          true
       } catch { false }
    }

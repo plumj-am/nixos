@@ -4,6 +4,7 @@
   outputs = inputs: import ./outputs.nix inputs;
 
   inputs = {
+    emacs-overlay.url = "github:nix-community/emacs-overlay";
     cade = {
       url = "github:manic-systems/cade";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -49,6 +50,10 @@
     };
     homebrew-core = {
       url = "github:homebrew/homebrew-core";
+      flake = false;
+    };
+    jj-mode-el = {
+      url = "github:bolivier/jj-mode.el";
       flake = false;
     };
     llm-agents = {
