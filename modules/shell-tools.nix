@@ -1,3 +1,4 @@
+{ self, ... }:
 {
   flake.modules.common.shell-tools =
     {
@@ -9,6 +10,8 @@
     }:
     let
       inherit (lib.meta) getExe;
+      inherit (lib.attrsets) attrNames;
+      inherit (lib.strings) toJSON;
       inherit (config) theme;
 
       bat = getExe pkgs.bat;
@@ -44,6 +47,29 @@
           --line-number
           --smart-case
         '';
+
+        xdg.config.files."nushell/config.nu".text = "source ${
+          pkgs.writeText "nix-run.nu" # nu
+            ''
+              def >? []: string -> string {
+                if ($in | str contains "#") or ($in | str contains ":") {
+                  $in
+                } else if $in in ${toJSON <| attrNames self.packages.${config.nixpkgs.hostPlatform.system}} {
+                  "path:${self}#" + $in
+                } else {
+                  "path:${inputs.nixpkgs}#" + $in
+                }
+              }
+
+              def --wrapped , [program: string = "", ...rest] {
+                nix run ($program | >?) -- ...$rest
+              }
+
+              def --wrapped > [...rest: string] {
+                nix shell ...($rest | each { $in | >? })
+              }
+            ''
+        }";
       };
     };
 }
