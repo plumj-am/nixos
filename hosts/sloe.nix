@@ -18,7 +18,6 @@ in
       garage
       graft
       graphics
-      harmonia
       hermes
       nextcloud
       nginx

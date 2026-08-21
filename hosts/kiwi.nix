@@ -14,7 +14,6 @@ in
       boot-grub
       disks-server
       forgejo-runner
-      harmonia
       nginx
       radicle-node
       rust

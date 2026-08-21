@@ -26,7 +26,6 @@ in
       gammastep
       ghostty
       graphics
-      harmonia
       hardware-desktop
       haskell
       helium

@@ -33,6 +33,7 @@ in
       ++ (with inputs.self.modules.nixos; [
         disable-nano
         dynamic-binaries
+        harmonia
         locale
         linux-kernel
         netrc

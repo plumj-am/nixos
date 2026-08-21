@@ -19,7 +19,6 @@ in
       forgejo-runner
       gerrit
       goatcounter
-      harmonia
       matrix
       nginx
       opengist

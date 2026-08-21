@@ -10,7 +10,6 @@ in
     modules = with inputs.self.modules.nixos; [
       aspectsBase
 
-      harmonia
       sops
       sudo-desktop
       s3

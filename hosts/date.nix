@@ -26,7 +26,6 @@ in
       games
       gammastep
       graphics
-      harmonia
       hardware-desktop
       helium
       keepassxc
