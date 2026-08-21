@@ -8,14 +8,14 @@
       ...
     }:
     let
-      inherit (lib.lists) singleton foldl';
+      inherit (lib.lists) singleton foldl' filter;
       inherit (lib.modules) merge;
-      inherit (config.networking) domain;
+      inherit (config.networking) domain hostName;
       inherit (config.sops) secrets;
 
       cfg = config.services.graft;
 
-      remote_builders =
+      remote_builders_all =
         let
           mkRemoteBuilder =
             {
@@ -65,12 +65,13 @@
           speedFactor = 3;
           system = "x86_64-linux";
         };
+      remote_builders = remote_builders_all |> filter (b: b.hostName != hostName);
     in
     {
-      imports = singleton inputs.grove.nixosModules.graft;
+      imports = singleton inputs.graft.nixosModules.graft;
 
       sops.secrets.graft-environment.sopsFile = ../secrets/services/graft.yaml;
-
+      sops.secrets."graft/cache/secret_key".sopsFile = ../secrets/services/graft.yaml;
       sops.secrets."graft-ssh" = {
         sopsFile = ../secrets/services/graft-ssh.yaml;
         group = "graft";
@@ -79,7 +80,7 @@
 
       services.graft = {
         enable = true;
-        package = inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.graft;
+        package = inputs.graft.packages.${pkgs.stdenv.hostPlatform.system}.graft;
 
         state_dir = "/var/lib/graft";
 
@@ -91,6 +92,9 @@
             port = 8019;
             dashboard_url = "https://graft.plumj.am";
             checks_api_enabled = true;
+
+            incrementalize = true;
+            cache_url = "http://127.0.0.1:5000";
           };
 
           database.path = "ci.db";
@@ -177,16 +181,20 @@
           };
 
           nix = {
-            bin = pkgs.nix;
+            bin = pkgs.nixVersions.latest;
             extra_args = [
               "--accept-flake-config"
               "--fallback"
             ];
+
+            cache_dir = "file:///nix/cache/graft";
+            cache_public_key = "graft-cache-1:cJVyGZWQ+v4vG6ajYspWHD5NFvOhJAk7cFbxh/hmSiI=";
+            cache_secret_key_file = secrets."graft/cache/secret_key".path;
           };
 
           nodes.max_retries = 3;
 
-          builder.max_concurrent = foldl' (acc: b: acc + b.maxJobs) 0 <| remote_builders;
+          builder.max_concurrent = foldl' (acc: b: acc + b.maxJobs) 0 <| remote_builders_all;
         };
 
         inherit remote_builders;
