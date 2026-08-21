@@ -135,12 +135,6 @@ def reload-applications [mode?: string]: nothing -> nothing {
       {name: "opencode", signal: "USR2"}
    ]
 
-   let helium_mode = if $mode == "dark" { ["helium" "--force-dark-mode"] } else { ["helium" "--force-light-mode"] }
-
-   let restartable_apps = [
-      {name: "helium", new: $helium_mode}
-   ]
-
    [
       {
          if (qs --no-duplicate -p /home/jam/nixos/modules/quickshell/shell ipc call shell reload | complete | get exit_code) != 0 {
@@ -148,7 +142,6 @@ def reload-applications [mode?: string]: nothing -> nothing {
          }
       }
       { refresh-apps $refreshable_apps }
-      { restart-apps $restartable_apps }
    ] | par-each {|f| do $f}
 
    print "Application reloading complete."
