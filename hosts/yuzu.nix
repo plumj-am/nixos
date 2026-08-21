@@ -4,7 +4,7 @@ let
 in
 {
   # Yuzu | desktop | x86_64-linux | NixOS
-  flake.nixosConfigurations.yuzu = inputs.os.lib.nixosSystem {
+  flake.nixosConfigurations.yuzu = inputs.nixpkgs.lib.nixosSystem {
     specialArgs = { inherit inputs; };
 
     modules = with inputs.self.modules.nixos; [
@@ -51,7 +51,7 @@ in
       radicle-node
       radicle-tui
       raperl
-      # rio
+      rio
       rust
       rust-desktop
       shed

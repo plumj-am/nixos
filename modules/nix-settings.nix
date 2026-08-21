@@ -9,7 +9,7 @@ let
   registryMap = inputs |> filterAttrs (const <| isType "flake");
 
   nixosNixPath = (registryMap |> mapAttrsToList (name: value: "${name}=${value}")) ++ [
-    "nixpkgs=${inputs.os}"
+    "nixpkgs=${inputs.nixpkgs}"
   ];
 in
 {
@@ -51,7 +51,8 @@ in
         options = "--delete-older-than 7d";
       };
 
-      nix.registry = registryMap // { default = inputs.os; } |> mapAttrs (_: flake: { inherit flake; });
+      nix.registry =
+        registryMap // { default = inputs.nixpkgs; } |> mapAttrs (_: flake: { inherit flake; });
 
       nix.settings = {
         extra-substituters = [

@@ -4,7 +4,7 @@ let
 in
 {
   # Blackwell | server | x86_64-linux | NixOS
-  flake.nixosConfigurations.blackwell = inputs.os.lib.nixosSystem {
+  flake.nixosConfigurations.blackwell = inputs.nixpkgs.lib.nixosSystem {
     specialArgs = { inherit inputs; };
 
     modules = with inputs.self.modules.nixos; [

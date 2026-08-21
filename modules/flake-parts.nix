@@ -36,7 +36,7 @@ in
       perSystem =
         { inputs', ... }:
         {
-          _module.args.pkgs = inputs'.os.legacyPackages;
+          _module.args.pkgs = inputs'.nixpkgs.legacyPackages;
         };
     }
   ];

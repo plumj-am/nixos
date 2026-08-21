@@ -4,7 +4,7 @@ let
 in
 {
   # Plum | server | x86_64-linux | NixOS
-  flake.nixosConfigurations.plum = inputs.os.lib.nixosSystem {
+  flake.nixosConfigurations.plum = inputs.nixpkgs.lib.nixosSystem {
     specialArgs = { inherit inputs; };
 
     modules = with inputs.self.modules.nixos; [

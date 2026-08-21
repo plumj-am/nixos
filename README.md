@@ -26,7 +26,6 @@ Dendritic NixOS configurations for 8 personal machines:
   [flake-parts](https://github.com/hercules-ci/flake-parts)
 - [Hjem](https://github.com/feel-co/hjem) for $HOME management
 - No `specialArgs` or janky passing around of configs between layers[^4]
-- [tack](https://github.com/manic-systems/tack) for flake input management
 
 [^4]: Apart from inherit `specialArgs = { inherit inputs; };` for each host. It
     is necessary for any host configuration.
@@ -100,7 +99,7 @@ Examples of what this looks like:
 ```nix
 {
   # For NixOS systems:
-  flake.nixosConfigurations.hostName = inputs.os.lib.nixosSystem {
+  flake.nixosConfigurations.hostName = inputs.nixpkgs.lib.nixosSystem {
     specialArgs = { inherit inputs; };
     modules = with inputs.self.modules.nixos; [
       # ... other aspects
@@ -116,7 +115,7 @@ Examples of what this looks like:
   };
 
   # Or for Darwin systems:
-  flake.darwinConfigurations.hostName = inputs.os-darwin.lib.darwinSystem {
+  flake.darwinConfigurations.hostName = inputs.nix-darwin.lib.darwinSystem {
     specialArgs = { inherit inputs; };
     modules = with inputs.self.modules.darwin; [
       # ... other packages
@@ -201,12 +200,6 @@ It has the following features (non-exhaustive):
 
 The configuration can be found in `modules/quickshell`.
 
-## Tack
-
-[tack](https://github.com/manic-systems/tack) manages my flake inputs in
-[`./.tack`]. I recommend checking out this project - there are a lot of features
-that make it a nice way to control flake inputs.
-
 ## Other comments
 
 The previous version of my configurations can be seen on the
@@ -224,12 +217,6 @@ Hjem Rum was removed in pull request
 on 2026-02-01. I'd like to mention that it is an excellent tool! I just didn't
 really need it and I already use generators or write config files directly for
 the most part anyway.
-
-Inputs use different names to what you might expect:
-
-- nixpkgs -> os
-- nix-darwin -> os-darwin
-- nixos-wsl -> os-wsl
 
 `osConfig` comes from Hjem and can be used to access the system-level `config`
 alongside the hjem level `config`.

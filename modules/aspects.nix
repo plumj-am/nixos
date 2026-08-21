@@ -18,7 +18,6 @@ let
     "shell"
     "shell-tools"
     "ssh"
-    "tack"
     "tailscale"
     "theme"
     "unfree"

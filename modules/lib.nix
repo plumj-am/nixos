@@ -250,7 +250,7 @@ in
   flake.mkConfig =
     inputs: host: platform: rest:
     let
-      lib = inputs.os.lib;
+      lib = inputs.nixpkgs.lib;
       inherit (lib) mkMerge;
       inherit (lib.strings) hasSuffix;
       inherit (lib.attrsets) optionalAttrs;

@@ -4,7 +4,7 @@ let
 in
 {
   # Lime | Macbook | x86_64-linux | nix-darwin
-  flake.darwinConfigurations.lime = inputs.os-darwin.lib.darwinSystem {
+  flake.darwinConfigurations.lime = inputs.nix-darwin.lib.darwinSystem {
     specialArgs = { inherit inputs; };
 
     modules = with inputs.self.modules.darwin; [

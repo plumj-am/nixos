@@ -5,7 +5,7 @@ let
 in
 {
   # Sloe | server | x86_64-linux | NixOS
-  flake.nixosConfigurations.sloe = inputs.os.lib.nixosSystem {
+  flake.nixosConfigurations.sloe = inputs.nixpkgs.lib.nixosSystem {
     specialArgs = { inherit inputs; };
 
     modules = with inputs.self.modules.nixos; [

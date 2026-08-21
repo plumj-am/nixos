@@ -4,7 +4,7 @@ let
 in
 {
   # Kiwi | server | x86_64-linux | NixOS
-  flake.nixosConfigurations.kiwi = inputs.os.lib.nixosSystem {
+  flake.nixosConfigurations.kiwi = inputs.nixpkgs.lib.nixosSystem {
     specialArgs = { inherit inputs; };
 
     modules = with inputs.self.modules.nixos; [

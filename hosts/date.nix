@@ -4,7 +4,7 @@ let
 in
 {
   # Date | laptop/server | x86_64-linux | NixOS
-  flake.nixosConfigurations.date = inputs.os.lib.nixosSystem {
+  flake.nixosConfigurations.date = inputs.nixpkgs.lib.nixosSystem {
     specialArgs = { inherit inputs; };
 
     modules = with inputs.self.modules.nixos; [

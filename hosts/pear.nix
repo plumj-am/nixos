@@ -4,7 +4,7 @@ let
 in
 {
   # Pear | WSL | x86_64-linux | NixOS-WSL
-  flake.nixosConfigurations.pear = inputs.os.lib.nixosSystem {
+  flake.nixosConfigurations.pear = inputs.nixpkgs.lib.nixosSystem {
     specialArgs = { inherit inputs; };
 
     modules = with inputs.self.modules.nixos; [
