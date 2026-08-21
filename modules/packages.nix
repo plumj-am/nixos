@@ -37,7 +37,7 @@
     {
       environment.systemPackages = [
         pkgs.obs-studio
-        pkgs.thunderbird
+        # pkgs.thunderbird
       ];
     };
 
