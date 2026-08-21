@@ -2,7 +2,7 @@
 let
   commonModuleNames = [
     "ai-options"
-    "disable-nix-documentation"
+    "documentation"
     "git"
     "env"
     "helix"
@@ -32,14 +32,14 @@ in
       getCommon inputs.self.modules.nixos
       ++ (with inputs.self.modules.nixos; [
         disable-nano
+        distributed-builds
+        distributed-builder
         dynamic-binaries
         harmonia
         locale
         linux-kernel
         netrc
         networking
-        nix-distributed-builds
-        nix-distributed-builder
         nix-extra
         packages
         rebuild

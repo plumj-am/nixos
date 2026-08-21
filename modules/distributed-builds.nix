@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.nix-distributed-builds =
+  flake.modules.nixos.distributed-builds =
     {
       inputs,
       config,
@@ -45,7 +45,7 @@
       };
     };
 
-  flake.modules.nixos.nix-distributed-builder =
+  flake.modules.nixos.distributed-builder =
     { config, lib, ... }:
     let
       inherit (lib.lists) singleton;

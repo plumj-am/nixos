@@ -1,5 +1,5 @@
 {
-  flake.modules.common.disable-nix-documentation = {
+  flake.modules.common.documentation = {
     documentation = {
       doc.enable = false;
       info.enable = false;
