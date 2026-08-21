@@ -36,7 +36,6 @@ in
       # llama-cpp
       # lmstudio
       mprocs
-      ncro
       nextcloud-client
       nix-settings-extra-desktop
       # ollama

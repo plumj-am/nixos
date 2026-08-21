@@ -20,7 +20,6 @@ in
       graphics
       harmonia
       hermes
-      ncro
       nextcloud
       nginx
       nix-settings-extra-server

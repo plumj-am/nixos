@@ -15,7 +15,6 @@ in
       disks-server
       forgejo-runner
       harmonia
-      ncro
       nginx
       nix-settings-extra-server
       radicle-node

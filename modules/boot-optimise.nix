@@ -31,7 +31,6 @@
 
           # Move each service from multi-user.target -> lazy-start.target.
           systemd.services = {
-            ncro.wantedBy = mkForce <| singleton "lazy-start.target";
             shed.wantedBy = mkForce <| singleton "lazy-start.target";
             nix-upload-processor.wantedBy = mkForce <| singleton "lazy-start.target";
             s3-setup.wantedBy = mkForce <| singleton "lazy-start.target";

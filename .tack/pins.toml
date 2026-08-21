@@ -14,7 +14,6 @@ homebrew-cask         = { type = "fetch", url = "gh:homebrew/homebrew-cask" }
 homebrew-core         = { type = "fetch", url = "gh:homebrew/homebrew-core" }
 inshellah.url         = "gh:manic-systems/inshellah"
 llm-agents.url        = "gh:numtide/llm-agents.nix"
-ncro.url              = "gh:manic-systems/ncro"
 niri.url              = "gh:niri-wm/niri"
 nix-index.url         = "gh:nix-community/nix-index-database"
 nixos-core.url        = "gh:manic-systems/nixos-core"

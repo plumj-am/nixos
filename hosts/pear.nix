@@ -12,7 +12,6 @@ in
 
       harmonia
       jujutsu-extra
-      ncro
       sops
       sudo-desktop
       s3

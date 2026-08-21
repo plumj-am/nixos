@@ -33,7 +33,6 @@ in
       keepassxc
       kitty
       mprocs
-      ncro
       nextcloud-client
       nix-settings-extra-desktop
       omp

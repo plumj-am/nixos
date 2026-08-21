@@ -120,14 +120,6 @@
     "narHash": "sha256-HRmx7PnoqUNtA06P/FEyygZeUJIzbNUtx4zo9Jiiz9s=",
     "lastModified": 1787286673
   },
-  "ncro": {
-    "type": "github",
-    "owner": "manic-systems",
-    "repo": "ncro",
-    "rev": "c1c68b069e5497bd58570bc94d98baa87cc5f6ca",
-    "narHash": "sha256-MFIB6KJ0nPGgt8jO05ddar1ZkjOhZrVEYYlmb/hh6SA=",
-    "lastModified": 1785959561
-  },
   "niri": {
     "type": "github",
     "owner": "niri-wm",
