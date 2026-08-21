@@ -102,6 +102,7 @@
                         bind "u" { GoToTab 7; SwitchToMode "locked"; }
                         bind "i" { GoToTab 8; SwitchToMode "locked"; }
                         bind "o" { GoToTab 9; SwitchToMode "locked"; }
+                        bind "p" { GoToTab 10; SwitchToMode "locked"; }
                         bind "Ctrl g" {
                           Run "${getExe pkgs.jjui}" {
                             in_place true
@@ -272,8 +273,8 @@
               ''
                 layout {
                   pane size="75%" split_direction="vertical" {
-                      pane focus=true size="76%"
-                      pane size="24%"
+                      pane focus=true size="68%"
+                      pane size="32%"
                   }
                   pane size="25%" split_direction="vertical" {
                       pane size="50%"
