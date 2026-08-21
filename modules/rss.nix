@@ -1,9 +1,9 @@
 {
   flake.modules.nixos.freshrss-server =
-    { config, ... }:
+    { lib', config, ... }:
     let
+      inherit (lib') merge;
       inherit (config.networking) domain;
-      inherit (config.myLib) merge;
       inherit (config.sops) secrets;
 
       fqdn = "rss.${domain}";

@@ -2,13 +2,14 @@
   flake.modules.nixos.nginx =
     {
       lib,
+      lib',
       config,
       ...
     }:
     let
       inherit (lib) mkForce;
+      inherit (lib') mkConst;
       inherit (config.networking) domain;
-      inherit (config.myLib) mkConst;
     in
     {
       options.services.nginx.sslTemplate = mkConst {

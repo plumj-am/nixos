@@ -2,14 +2,16 @@
   flake.modules.nixos.forgejo =
     {
       pkgs,
-      config,
       lib,
+      lib',
+      config,
       ...
     }:
     let
       inherit (lib.lists) singleton;
-      inherit (lib) mkForce;
-      inherit (config.myLib) merge mkResticBackup;
+      inherit (lib.modules) mkForce;
+      inherit (lib') merge;
+      inherit (config.myLib) mkResticBackup;
       inherit (config.networking) domain hostName;
 
       fqdn = "git.${domain}";

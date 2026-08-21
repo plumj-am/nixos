@@ -2,15 +2,16 @@
   flake.modules.nixos.opengist =
     {
       pkgs,
-      config,
       lib,
+      lib',
+      config,
       ...
     }:
     let
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
+      inherit (lib') merge systemdHardened;
       inherit (config.networking) domain hostName;
-      inherit (config.myLib) merge systemdHardened;
       inherit (config.sops) secrets;
 
       fqdn = "gist.${domain}";

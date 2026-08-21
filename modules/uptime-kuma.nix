@@ -1,9 +1,9 @@
 {
   flake.modules.nixos.uptime-kuma =
-    { config, ... }:
+    { lib', config, ... }:
     let
+      inherit (lib') merge;
       inherit (config.networking) domain;
-      inherit (config.myLib) merge;
 
       fqdn = "uptime.${domain}";
       port = "3001"; # String for uptime-kuma.

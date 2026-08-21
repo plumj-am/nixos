@@ -1,9 +1,9 @@
 {
   flake.modules.nixos.acme =
-    { config, ... }:
+    { lib', config, ... }:
     let
+      inherit (lib') mkValue;
       inherit (config.networking) domain;
-      inherit (config.myLib) mkValue;
       inherit (config.sops) secrets;
     in
     {

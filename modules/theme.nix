@@ -333,10 +333,10 @@ in
     };
 
   flake.modules.nixos.theme-extra-scripts =
-    { config, pkgs, ... }:
+    { pkgs, lib', ... }:
     let
       inherit (lib) map;
-      inherit (config.myLib) mkDesktopEntry;
+      inherit (lib') mkDesktopEntry;
 
       pickWallpaper = pkgs.writeScriptBin "pick-wallpaper" <| readFile ./_scripts/pick-wallpaper.nu;
 

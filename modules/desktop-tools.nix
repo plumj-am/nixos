@@ -2,11 +2,11 @@
   flake.modules.nixos.colour-picker =
     {
       pkgs,
-      config,
+      lib',
       ...
     }:
     let
-      inherit (config.myLib) mkDesktopEntry;
+      inherit (lib') mkDesktopEntry;
     in
     {
       environment.systemPackages = [

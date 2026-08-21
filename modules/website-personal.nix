@@ -1,9 +1,13 @@
 {
   flake.modules.nixos.website-personal =
-    { config, ... }:
+    {
+      lib',
+      config,
+      ...
+    }:
     let
+      inherit (lib') merge;
       inherit (config.networking) domain;
-      inherit (config.myLib) merge;
 
       fqdn = domain;
       root = "/var/www/site";

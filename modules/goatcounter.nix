@@ -1,9 +1,9 @@
 {
   flake.modules.nixos.goatcounter =
-    { config, ... }:
+    { lib', config, ... }:
     let
+      inherit (lib') merge;
       inherit (config.networking) domain;
-      inherit (config.myLib) merge;
 
       fqdn = "analytics.${domain}";
       port = 8007;

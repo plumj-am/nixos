@@ -1,8 +1,9 @@
 {
   flake.modules.nixos.matrix =
-    { config, ... }:
+    { lib', config, ... }:
     let
-      inherit (config.myLib) merge mkResticBackup;
+      inherit (lib') merge;
+      inherit (config.myLib) mkResticBackup;
       inherit (config.networking) domain;
       inherit (config.sops) secrets;
 
@@ -144,14 +145,15 @@
     {
       pkgs,
       lib,
+      lib',
       config,
       ...
     }:
     let
       inherit (lib.strings) toJSON;
       inherit (lib.lists) singleton;
+      inherit (lib') merge;
       inherit (config.networking) domain hostName;
-      inherit (config.myLib) merge;
 
       fqdn = "chat.${domain}";
       root = pkgs.cinny;

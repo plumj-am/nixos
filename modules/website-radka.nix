@@ -4,14 +4,15 @@
       inputs,
       pkgs,
       lib,
+      lib',
       config,
       ...
     }:
     let
       inherit (lib.lists) singleton;
+      inherit (lib') merge;
       inherit (config.networking) domain;
       inherit (config.sops) secrets;
-      inherit (config.myLib) merge;
 
       port = 8081;
     in

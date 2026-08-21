@@ -3,14 +3,15 @@
     {
       pkgs,
       lib,
+      lib',
       config,
       ...
     }:
     let
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
+      inherit (lib') mkDesktopEntry;
       inherit (config) theme;
-      inherit (config.myLib) mkDesktopEntry;
 
       quickshell = getExe pkgs.quickshell;
       quickshellPath = "/home/jam/nixos/modules/quickshell/shell";
