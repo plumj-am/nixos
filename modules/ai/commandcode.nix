@@ -8,7 +8,7 @@
     {
       ai.secrets = true;
 
-      shellAliases.cmd = "nix run nixpkgs#deno -- x --allow-all --no-prompt npm:command-code";
+      shellAliases.cmd = "nix run nixpkgs#deno -- x --allow-all --no-prompt --yes npm:command-code@latest";
 
       hjem.extraModule = {
         files = {
@@ -19,13 +19,14 @@
               provider = "command-code";
               installed = true;
               theme = if theme.isDark then "dark" else "light";
-              model = "tencent/Hy3";
+              model = "deepseek/deepseek-v4-flash";
               firstMessageSent = true;
               featureModels = {
                 titleGeneration = "deepseek/deepseek-v4-flash";
                 compaction = "deepseek/deepseek-v4-flash";
                 toolDescription = "deepseek/deepseek-v4-flash";
                 tasteOnboarding = "deepseek/deepseek-v4-flash";
+                tasteLearning = "deepseek/deepseek-v4-flash";
               };
             };
           };
