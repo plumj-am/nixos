@@ -7,7 +7,6 @@
         pkgs.ast-grep
         pkgs.curl
         pkgs.hyperfine
-        pkgs.moreutils
         pkgs.nodejs
         pkgs.openssl
         pkgs.pv
