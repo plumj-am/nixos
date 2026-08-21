@@ -1,8 +1,9 @@
 ## General
 
-- Big changes must be split into small chunks.
-- If you are already in the target directory you do not need to `cd`.
 - Use sub-agents to delegate and split work whenever possible.
+- Always talk and write in ASD-STE100 Simplified Technical English (STE) and
+  follow Zinsser's 4 principles of quality writing: simplicity, brevity,
+  clarity, and humanity.
 
 ## Tools
 
