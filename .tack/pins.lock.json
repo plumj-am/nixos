@@ -136,14 +136,6 @@
     "narHash": "sha256-ZL0ZrwESUMua5NiNWO6rBKVsfFxrzIsXAYIeQV+K5tA=",
     "lastModified": 1782974239
   },
-  "nu-lint": {
-    "type": "git",
-    "url": "https://codeberg.org/wvhulle/nu-lint",
-    "ref": "HEAD",
-    "rev": "f15c04bcd02c943a9187947a0f90a32b7af6fa95",
-    "narHash": "sha256-LWgxsR10R0YEmBgQRVRRQ0v12oUeLLIsya0wZBcEego=",
-    "lastModified": 1783188378
-  },
   "nufmt": {
     "type": "github",
     "owner": "nushell",

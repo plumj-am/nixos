@@ -516,8 +516,8 @@ in
           pkgs.haskell-language-server
 
           # Nushell
-          inputs.nu-lint.packages.${pkgs.stdenv.hostPlatform.system}.default
           inputs.nufmt.packages.${pkgs.stdenv.hostPlatform.system}.default
+          pkgs.nu-lint
 
           # QML
           pkgs.qt6Packages.qtdeclarative
