@@ -2,22 +2,15 @@
   flake.modules.nixos.rebuild =
     {
       pkgs,
-      lib,
       lib',
       ...
     }:
     let
-      inherit (lib.lists) singleton;
-      inherit (lib') mkDesktopEntry mkDirtyHaskellScript;
+      inherit (lib') mkDesktopEntry;
     in
     {
       environment.systemPackages = [
         pkgs.nh
-
-        (mkDirtyHaskellScript "rebuild-hs" {
-          path = ../Rebuild.hs;
-          deps = singleton "typed-process";
-        })
       ];
 
       hjem.extraModule =
