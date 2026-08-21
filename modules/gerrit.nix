@@ -198,7 +198,7 @@
         enable = true;
 
         serverId = "e731e7e0-0873-4a69-a2b4-77a527800a3a";
-        jvmHeapLimit = "1536m";
+        jvmHeapLimit = "512m";
         listenAddress = "[::]:${httpPort}";
 
         inherit builtinPlugins plugins;

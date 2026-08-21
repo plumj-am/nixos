@@ -58,7 +58,7 @@
         enable = true;
         package = pkgs.forgejo.overrideAttrs (old: {
           patches = old.patches ++ [
-            ./patches/0001-lix-Make-a-Code-Review-Gerrit-tab.patch
+            # ./patches/0001-lix-Make-a-Code-Review-Gerrit-tab.patch
             ./patches/0002-lix-link-gerrit-cl-and-change-ids.patch
           ];
         });
