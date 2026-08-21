@@ -466,7 +466,6 @@ in
 
   flake.modules.common.editor-extra =
     {
-      inputs,
       pkgs,
       ...
     }:
@@ -516,8 +515,8 @@ in
           pkgs.haskell-language-server
 
           # Nushell
-          inputs.nufmt.packages.${pkgs.stdenv.hostPlatform.system}.default
           pkgs.nu-lint
+          pkgs.nufmt
 
           # QML
           pkgs.qt6Packages.qtdeclarative
