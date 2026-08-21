@@ -350,6 +350,37 @@
               };
           };
 
+          ".omp/agent/extensions/zellij-attention-hook.ts".text = # ts
+            ''
+              // oh-my-pi extension: flag the zellij tab via zellij-attention.
+              // ⏳ waiting = ask tool (blocked on user), ✅ completed = terminal settle.
+              // https://github.com/KiryuuLight/zellij-attention
+
+              import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent";
+
+              export default function (pi: ExtensionAPI): void {
+                const paneId = process.env.ZELLIJ_PANE_ID;
+                const pipe = (state: string) =>
+                  void pi
+                    .exec("zellij", [
+                      "pipe",
+                      "--name",
+                      `zellij-attention::''${state}::''${paneId}`,
+                    ])
+                    .catch(() => {});
+
+                pi.on("tool_call", (event) => {
+                  if (!paneId) return;
+                  if (event.toolName === "ask") pipe("waiting");
+                });
+
+                pi.on("agent_end", (event, ctx) => {
+                  if (!paneId) return;
+                  if (event.willContinue || ctx.hasPendingMessages()) return;
+                  pipe("completed");
+                });
+              }
+            '';
           ".omp/plugins/package.json" = {
             type = "copy";
             generator = pkgs.writers.writeJSON "omp-plugins-package.json";
