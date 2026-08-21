@@ -238,8 +238,8 @@
               };
 
               lsp = {
-                nixd = {
-                  command = [ "nixd" ];
+                nil = {
+                  command = [ "nil" ];
                   extensions = [ ".nix" ];
                 };
 

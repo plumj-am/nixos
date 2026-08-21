@@ -31,8 +31,6 @@ in
     # We define flake.modules ourselves with support for a classless "common"
     # namespace, plus auto-merge into nixos and darwin.
     {
-      debug = true; # For nixd.
-
       perSystem =
         { inputs', ... }:
         {

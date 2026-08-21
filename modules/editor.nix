@@ -220,7 +220,6 @@ in
                       name = "nix";
                       auto-format = true;
                       language-servers = [
-                        "nixd"
                         "nil"
                       ];
                     }
@@ -297,12 +296,8 @@ in
                       autoArchive = true;
                       autoEvalInputs = true;
                     };
-                    nixpkgsInputName = "os";
+                    nixpkgsInputName = "nixpkgs";
                   };
-                };
-                nixd = {
-                  command = "nixd";
-                  args = singleton "--inlay-hints";
                 };
 
                 deno = {
@@ -484,7 +479,6 @@ in
           pkgs.deno
 
           # Nix
-          pkgs.nixd
           pkgs.nil
           pkgs.nixfmt
 
