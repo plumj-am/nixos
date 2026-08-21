@@ -51,6 +51,7 @@ let
           packages = [
             # inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.rsh-rsh
             pkgs.radicle-node
+            pkgs.radicle-tui
           ];
 
           files = {
@@ -119,35 +120,7 @@ let
     };
 in
 {
-  flake.modules.nixos.radicle =
-    {
-      inputs,
-      pkgs,
-      lib,
-      config,
-      ...
-    }:
-    let
-      inherit (lib.lists) singleton;
-    in
-    radicleUserBase { inherit inputs lib config; }
-    // {
-      networking.firewall.allowedTCPPorts = singleton userNodePort;
-
-      systemd.user.services.radicle-user-node = {
-        description = "Radicle User Node";
-        wantedBy = [ "default.target" ];
-        after = [ "network-online.target" ];
-        wants = [ "network-online.target" ];
-        unitConfig.ConditionUser = "jam";
-        serviceConfig = {
-          Type = "simple";
-          ExecStart = "${pkgs.radicle-node}/bin/rad node start";
-          Restart = "on-failure";
-          RestartSec = "5";
-        };
-      };
-    };
+  flake.modules.nixos.radicle = radicleUserBase;
 
   flake.modules.darwin.radicle = radicleUserBase;
 
@@ -286,21 +259,6 @@ in
             ''
               try_files $uri $uri/ /index.html;
             '';
-        };
-      };
-    };
-
-  flake.modules.common.radicle-tui =
-    { pkgs, lib, ... }:
-    let
-      inherit (lib.lists) singleton;
-    in
-    {
-      config = {
-        shellAliases.rad = "rad-tui";
-
-        hjem.extraModule = {
-          packages = singleton pkgs.radicle-tui;
         };
       };
     };

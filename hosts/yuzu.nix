@@ -49,7 +49,6 @@ in
       quickshell
       radicle
       radicle-node
-      radicle-tui
       raperl
       rio
       rust
