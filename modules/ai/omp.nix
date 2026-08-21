@@ -209,13 +209,11 @@
                   showTokenUsage = true;
                   cacheMissMarker = true;
                 };
+                tui.renderMermaid = true;
 
                 # [context]
                 contextPromotion.enabled = false; # do not upgrade model - compact instead.
-                compaction = {
-                  enabled = true;
-                  strategy = "handoff"; # create handoff + start new session from it
-                };
+                compaction.enabled = true;
 
                 # [editing]
                 lsp = {
@@ -236,12 +234,7 @@
                 followUpMode = "all";
                 interruptMode = "wait";
                 autocompleteMaxVisible = 20;
-                power = {
-                  preventIdleSleep = false;
-                  preventSystemSleep = false;
-                  declareUserActive = false;
-                  preventDisplaySleep = false;
-                };
+                power.sleepPrevention = "off";
                 startup = {
                   quiet = true;
                   setupWizard = false;
@@ -309,17 +302,11 @@
                 # [providers]
                 secrets.enabled = true;
                 providers = {
-                  webSearch = "auto";
-                  image = "auto";
                   tinyModel = "LFM2-350m";
                   tinyModelDevice = "cpu";
                   unexpectedStopModel = "qwen3-1.7b";
                 };
-                exa = {
-                  enabled = true;
-                  enableSearch = true;
-                  enableResearcher = true;
-                };
+                exa.enabled = true;
 
                 # [tasks]
                 plan.enabled = true;
@@ -327,24 +314,17 @@
                   enabled = true;
                   statusInFooter = true;
                 };
-                eager = "preferred"; # sub-agent delegation
+                task.eager = "always"; # sub-agent delegation
 
                 # [tools]
                 marketplace.autoUpdate = "notify";
-                tools = {
-                  discoveryMode = "auto";
-                  approval = { }; # TODO?
-                };
+                tools.approval = { }; # TODO?
                 todo = {
                   enabled = true;
                   reminders = true;
-                  eager = true;
+                  eager = "always";
                 };
-                find.enabled = true;
-                search.enabled = true;
                 astGrep.enabled = true;
-                irc.enabled = true;
-                renderMermaid.enabled = true;
                 debug.enabled = true;
                 checkpoint.enabled = true;
                 fetch.enabled = true;
@@ -353,7 +333,6 @@
                 browser.enabled = true;
                 async.enabled = true;
                 security.enabled = true;
-                mcp.discoveryMode = true;
                 skills = {
                   enabled = true;
                   enableCodexUser = false;
@@ -465,7 +444,7 @@
           path = [
             pkgs.bash
             pkgs.gcc
-            pkgs.git
+            pkgs.gitMinimal
             pkgs.gnumake
             pkgs.nodejs
             pkgs.node-gyp
