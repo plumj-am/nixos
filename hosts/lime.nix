@@ -13,7 +13,6 @@ in
       app-launcher
       editor-extra
       kitty
-      nix-settings-extra-darwin
       opencode
       peripherals
       radicle

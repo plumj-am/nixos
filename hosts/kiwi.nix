@@ -16,7 +16,6 @@ in
       forgejo-runner
       harmonia
       nginx
-      nix-settings-extra-server
       radicle-node
       rust
       sops

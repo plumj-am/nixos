@@ -36,7 +36,6 @@ in
       # lmstudio
       mprocs
       nextcloud-client
-      nix-settings-extra-desktop
       # ollama
       omp
       opencode

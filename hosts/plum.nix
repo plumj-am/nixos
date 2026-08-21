@@ -22,7 +22,6 @@ in
       harmonia
       matrix
       nginx
-      nix-settings-extra-server
       opengist
       postgres
       radicle-explorer

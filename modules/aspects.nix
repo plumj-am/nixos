@@ -10,7 +10,7 @@ let
     "jujutsu"
     "keys"
     "lib"
-    "nix-settings"
+    "nix"
     "openssh"
     "packages"
     "rebuild"
@@ -39,6 +39,7 @@ in
         networking
         nix-distributed-builds
         nix-distributed-builder
+        nix-extra
         rebuild
         restic
         system-info
@@ -52,6 +53,7 @@ in
       ++ (with inputs.self.modules.darwin; [
         fixes
         homebrew
+        nix-extra
       ]);
   };
 }

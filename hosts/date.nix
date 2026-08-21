@@ -33,7 +33,6 @@ in
       kitty
       mprocs
       nextcloud-client
-      nix-settings-extra-desktop
       omp
       opencode
       packages-extra-linux

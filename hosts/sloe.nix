@@ -22,7 +22,6 @@ in
       hermes
       nextcloud
       nginx
-      nix-settings-extra-server
       openssh-extra-users
       radicle-node
       raperl

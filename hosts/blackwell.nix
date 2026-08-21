@@ -14,7 +14,6 @@ in
       disks-server
       forgejo-runner
       harmonia
-      nix-settings-extra-server
       radicle-node
       rust
       sops
