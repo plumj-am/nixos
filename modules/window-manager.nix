@@ -13,7 +13,7 @@
       inherit (config) theme;
       inherit (config.myLib) mkDesktopEntry;
 
-      quickshell = getExe inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.quickshell;
+      quickshell = getExe pkgs.quickshell;
       quickshellPath = "/home/jam/nixos/modules/quickshell/shell";
     in
     {

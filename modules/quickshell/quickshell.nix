@@ -5,7 +5,7 @@
       services.upower.enable = true;
 
       environment.systemPackages = [
-        inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.quickshell
+        pkgs.quickshell
         inputs.qml-niri.packages.${pkgs.stdenv.hostPlatform.system}.qml-niri
 
         # Extra packages.
