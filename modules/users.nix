@@ -12,6 +12,7 @@
     in
     {
       users.mutableUsers = false;
+      environment.etc."shells".enable = false;
 
       users.users = {
         root = {
