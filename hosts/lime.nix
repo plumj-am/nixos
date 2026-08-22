@@ -12,7 +12,6 @@ in
 
       app-launcher
       editor-extra
-      jujutsu-extra
       kitty
       nix-settings-extra-darwin
       opencode

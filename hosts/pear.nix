@@ -11,7 +11,6 @@ in
       aspectsBase
 
       harmonia
-      jujutsu-extra
       sops
       sudo-desktop
       s3

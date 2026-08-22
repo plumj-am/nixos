@@ -16,6 +16,14 @@
       hjem.extraModule =
         { osConfig, config, ... }:
         {
+          packages = [
+            pkgs.jujutsu
+            pkgs.difftastic
+            pkgs.mergiraf
+
+            pkgs.jjui
+          ];
+
           xdg.config.files."jj/config.toml" = {
             generator = pkgs.writers.writeTOML "jj-config.toml";
             value = {
@@ -492,22 +500,5 @@
             };
           };
         };
-    };
-
-  flake.modules.common.jujutsu-extra =
-    { pkgs, ... }:
-    {
-      hjem.extraModule = {
-        packages = [
-          pkgs.jujutsu
-          pkgs.difftastic
-          pkgs.mergiraf
-
-          pkgs.jjui
-
-          # GUI
-          # pkgs.gg-jj
-        ];
-      };
     };
 }

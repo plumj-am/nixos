@@ -29,7 +29,6 @@ in
       harmonia
       hardware-desktop
       helium
-      jujutsu-extra
       keepassxc
       kitty
       mprocs
