@@ -176,14 +176,6 @@
     "narHash": "sha256-cFG5vnmjJcZRVCSUaqQLOdwkX6iqF6bY8IvvmBSGSRs=",
     "lastModified": 1783673918
   },
-  "rio": {
-    "type": "github",
-    "owner": "raphamorim",
-    "repo": "rio",
-    "rev": "46e5e483e8cee8e86f274f87f16a9f0b5061e8f7",
-    "narHash": "sha256-FdHaAULw+eE3WE29UjR+FK/rFcjaxICveMKS01sUZR4=",
-    "lastModified": 1783598489
-  },
   "run0-sudo-shim": {
     "type": "github",
     "owner": "LordGrimmauld",

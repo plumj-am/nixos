@@ -1,7 +1,6 @@
 {
   flake.modules.common.rio =
     {
-      inputs,
       pkgs,
       lib,
       lib',
@@ -16,14 +15,12 @@
     in
     {
       hjem.extraModule = {
-        packages = [
-          inputs.rio.packages.${pkgs.stdenv.hostPlatform.system}.rio
-
-          (mkDesktopEntry {
+        packages =
+          singleton
+          <| mkDesktopEntry {
             name = "Zellij-Rio";
             exec = "rio --command zellij";
-          })
-        ];
+          };
 
         xdg.config.files = {
           "rio/config.toml" = {
