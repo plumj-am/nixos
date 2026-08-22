@@ -110,13 +110,6 @@
                           };
                           SwitchToMode "locked";
                         }
-                        bind "Ctrl e" {
-                          Run "${getExe pkgs.nnn}" {
-                            in_place true
-                            close_on_exit true
-                          };
-                          SwitchToMode "locked";
-                        }
                         bind "Ctrl p" {
                           LaunchOrFocusPlugin "sessionizer" {
                             floating true
