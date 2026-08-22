@@ -112,14 +112,6 @@
     "narHash": "sha256-dzLsp/FvMerhsjfsWtFK/BTlJ5FZwLWlhsFJRRxpmbU=",
     "lastModified": 1787128307
   },
-  "nix-index": {
-    "type": "github",
-    "owner": "nix-community",
-    "repo": "nix-index-database",
-    "rev": "1111b9bc836afb7e31a7014e8d1272de9b1c917d",
-    "narHash": "sha256-BQxN5UMg9FOevAsgBRwPxfxlh51Puj+dNn/8Dsi3sPM=",
-    "lastModified": 1783864904
-  },
   "nixos-core": {
     "type": "github",
     "owner": "manic-systems",

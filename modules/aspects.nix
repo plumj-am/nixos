@@ -10,7 +10,6 @@ let
     "jujutsu"
     "keys"
     "lib"
-    "nix-index"
     "nix-settings"
     "openssh"
     "packages"
