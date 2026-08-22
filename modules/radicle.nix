@@ -304,20 +304,4 @@ in
         };
       };
     };
-
-  flake.modules.common.radicle-gui =
-    {
-      pkgs,
-      lib,
-      ...
-    }:
-    let
-      inherit (lib.lists) singleton;
-    in
-    {
-      hjem.extraModule = {
-        packages = singleton pkgs.radicle-desktop;
-      };
-    };
-
 }

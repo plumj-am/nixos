@@ -49,7 +49,6 @@ in
       process-management
       quickshell
       radicle
-      radicle-gui
       radicle-node
       radicle-tui
       raperl
