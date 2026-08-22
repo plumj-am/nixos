@@ -89,46 +89,34 @@
               confirm-close-surface = false;
               quit-after-last-window-closed = true;
 
-              keybind =
-                mapAttrsToList (name: value: "ctrl+shift+${name}=${value}") {
-                  c = "copy_to_clipboard";
-                  v = "paste_from_clipboard";
+              keybind = mapAttrsToList (name: value: "ctrl+shift+${name}=${value}") {
+                c = "copy_to_clipboard";
+                v = "paste_from_clipboard";
 
-                  i = "inspector:toggle";
+                i = "inspector:toggle";
 
-                  plus = "increase_font_size:1";
-                  minus = "decrease_font_size:1";
-                  equal = "reset_font_size";
+                plus = "increase_font_size:1";
+                minus = "decrease_font_size:1";
+                equal = "reset_font_size";
 
-                  e = "write_scrollback_file:open";
+                e = "write_scrollback_file:open";
 
-                  j = "scroll_page_lines:1";
-                  k = "scroll_page_lines:-1";
+                j = "scroll_page_lines:1";
+                k = "scroll_page_lines:-1";
 
-                  u = "scroll_page_fractional:-0.5";
-                  d = "scroll_page_fractional:0.5";
+                u = "scroll_page_fractional:-0.5";
+                d = "scroll_page_fractional:0.5";
 
-                  z = "jump_to_prompt:-2";
-                  x = "jump_to_prompt:2";
+                z = "jump_to_prompt:-2";
+                x = "jump_to_prompt:2";
 
-                  # ugly tabs :(
-                  t = "new_window";
-                  n = "new_window";
+                # ugly tabs :(
+                t = "new_window";
+                n = "new_window";
 
-                  w = "unbind";
-                  q = "unbind";
-                }
-                ++ mapAttrsToList (name: value: "alt+${name}=${value}") {
-                  h = "goto_split:left";
-                  j = "goto_split:down";
-                  k = "goto_split:up";
-                  l = "goto_split:right";
-                  f = "toggle_split_zoom";
-                }
-                ++ mapAttrsToList (name: value: "alt+shift+${name}=${value}") {
-                  j = "new_split:down";
-                  l = "new_split:right";
-                };
+                w = "unbind";
+                q = "unbind";
+              };
             };
           };
         }
