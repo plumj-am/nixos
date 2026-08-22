@@ -12,6 +12,8 @@
       inherit (lib.trivial) floor;
 
       inherit (config.users.users.jam) home;
+
+      threads = toString <| floor <| config.systemInfo.threads * 0.5;
     in
     {
       imports = singleton inputs.steam-config.nixosModules.default;
@@ -28,12 +30,12 @@
 
       programs.steam = {
         enable = true;
-        protontricks.enable = false;
+        protontricks.enable = true;
 
         extraCompatPackages = singleton pkgs.proton-ge-bin;
         extraPackages = [
-          pkgs.winetricks
           pkgs.mangohud
+          pkgs.winetricks
         ];
 
         config = {
@@ -49,13 +51,14 @@
             desktopEntry.enable = true;
 
             wrappers = [
-              "gamemoderun"
               "mangohud"
+              "gamemoderun"
             ];
 
             env = {
               TZ = "Europe/Warsaw";
-              DXVK_CONFIG = "dxvk.trackPipelineLifetime = True";
+
+              DXVK_CONFIG = "dxvk.trackPipelineLifetime=True;dxvk.enableGraphicsPipelineLibrary=True;dxvk.numCompilerThreads=${threads}";
               DXVK_HUD = "compiler";
 
               PROTON_ENABLE_WAYLAND = "1";
@@ -80,9 +83,6 @@
       security.rtkit.enable = true; # For low-latency audio
 
       hjemModule.xdg.data.files."Steam/steam_dev.cfg".text =
-        let
-          threads = toString <| floor <| config.systemInfo.threads * 0.5;
-        in
         #cfg
         ''
           unShaderBackgroundProcessingThreads ${threads}
