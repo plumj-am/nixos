@@ -1,7 +1,6 @@
 {
   flake.modules.nixos.harmonia =
     {
-      inputs,
       config,
       lib,
       ...
@@ -24,9 +23,7 @@
       ];
     in
     {
-      imports = [ inputs.harmonia.nixosModules.harmonia ];
-
-      services.harmonia-dev.cache = {
+      services.harmonia.cache = {
         enable = true;
         signKeyPaths = singleton secrets.nix-store-key.path;
         settings = {

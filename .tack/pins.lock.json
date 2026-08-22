@@ -40,14 +40,6 @@
     "narHash": "sha256-jNHiWzF0fnfrKZMK11oU2Lyn4FpZxXPsVB5H/jQDK1A=",
     "lastModified": 1787326337
   },
-  "harmonia": {
-    "type": "github",
-    "owner": "nix-community",
-    "repo": "harmonia",
-    "rev": "d5201ff458c273438901d9a61ca2d659946e67f8",
-    "narHash": "sha256-qZxlEeC/zEWW0IEKu64OJLJxIxW03M75b3XQgZOSW94=",
-    "lastModified": 1783873325
-  },
   "helium": {
     "type": "github",
     "owner": "amaanq",
