@@ -105,8 +105,6 @@
     {
       ai.secrets = true;
 
-      shellAliases.opencode = "bwrapper opencode";
-
       hjem.extraModule = {
         packages = [
           pkgs.python3

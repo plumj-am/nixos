@@ -113,8 +113,6 @@
     {
       ai.secrets = true;
 
-      shellAliases.omp = "bwrapper omp";
-
       hjem.extraModule = {
         packages = [
           inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp

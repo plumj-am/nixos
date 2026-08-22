@@ -91,81 +91,9 @@
             '';
 
           aliases = defaultAliases // osConfig.shellAliases;
-
-          inherit (config) directory user;
-          bwrapper =
-            pkgs.writeScriptBin "bwrapper"
-              # nu
-              ''
-                #!${getExe pkgs.nushell}
-
-                def --wrapped main [tool?: string, ...rest] {
-                  let pwd = ^pwd
-                  let tool = if ($tool | is-empty) {
-                    input $"Tool to run in ($pwd)? " | str trim
-                  } else { $tool }
-
-                  # For jj workspaces. Workspace members need to access default workspace
-                  # to use jj commands on the repo.
-                  let extra_binds = if ($pwd | path basename | str contains '-') {
-                    let name = $pwd | path basename
-                    let base = $name | str replace --regex '-[0-9]+$' '''
-                    let original = $pwd | path dirname | path join $base
-                    if ($original | path exists) and ($original | path join '.jj' | path exists) {
-                      [ --bind $original $original ]
-                    } else { [] }
-                  } else { [] }
-
-                  (bwrap
-                    --dir ${directory}
-                    --dir /etc
-                    --dir /etc/ssl
-                    --dir /etc/ssl/certs
-                    --ro-bind ${directory}/.config ${directory}/.config
-                    --ro-bind /run/secrets/command-code-key /run/secrets/command-code-key
-                    --ro-bind /run/secrets/opencode-go-key /run/secrets/opencode-go-key
-                    --ro-bind /run/secrets/nvidia-nim-key /run/secrets/nvidia-nim-key
-                    --ro-bind /run/secrets/exa-key /run/secrets/exa-key
-                    --ro-bind /run/secrets/context7-key /run/secrets/context7-key
-                    --ro-bind /run/current-system /run/current-system
-                    --ro-bind /etc/profiles/per-user/${user}/bin /etc/profiles/per-user/${user}/bin
-                    --ro-bind /etc/resolv.conf /etc/resolv.conf
-                    --ro-bind /etc/nsswitch.conf /etc/nsswitch.conf
-                    --ro-bind /etc/hosts /etc/hosts
-                    --ro-bind ${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt /etc/ssl/certs/ca-certificates.crt
-                    --ro-bind /etc/nix /etc/nix
-                    --ro-bind /nix /nix # Prevents spamming user store
-                    --bind $pwd $pwd
-                    ...$extra_binds
-                    --bind ${directory}/.pi ${directory}/.pi
-                    --bind ${directory}/.omp ${directory}/.omp
-                    --bind ${directory}/.claude ${directory}/.claude
-                    --bind ${directory}/nixos ${directory}/nixos
-                    --bind ${directory}/.cache ${directory}/.cache
-                    --bind ${directory}/.local ${directory}/.local
-                    --bind ${directory}/.config/nushell ${directory}/.config/nushell
-                    --tmpfs /tmp
-                    --proc /proc
-                    --dev /dev
-                    --unshare-pid
-                    --share-net
-                    --die-with-parent
-                    --cap-drop all
-                    --setenv SSL_CERT_FILE /etc/ssl/certs/ca-certificates.crt
-                    --setenv COMMANDCODE_API_KEY (^cat /run/secrets/command-code-key)
-                    --setenv OPENCODE_API_KEY (^cat /run/secrets/opencode-go-key)
-                    --setenv NVIDIA_API_KEY (^cat /run/secrets/nvidia-nim-key)
-                    --setenv EXA_API_KEY (^cat /run/secrets/exa-key)
-                    --setenv CONTEXT7_API_KEY (^cat /run/secrets/context7-key)
-                    --setenv IN_BWRAP 1
-                    -- $tool ...$rest)
-                }
-              '';
         in
         {
           packages = [
-            bwrapper
-
             pkgs.bash
             # pkgs.direnv
             pkgs.nushell
