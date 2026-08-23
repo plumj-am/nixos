@@ -382,7 +382,7 @@
         path = [
           pkgs.glibc.getent
           pkgs.minio-client
-          pkgs.coreutils
+          pkgs.uutils-coreutils-noprefix
         ];
 
         serviceConfig = {

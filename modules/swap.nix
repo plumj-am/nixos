@@ -59,7 +59,7 @@
                 ''
                   if ! test -f "${path}"; then
                     ${pkgs.util-linux}/bin/fallocate -l ${toString size}M "${path}"
-                    ${pkgs.coreutils}/bin/chmod 0600 "${path}"
+                    ${pkgs.uutils-coreutils-noprefix}/bin/chmod 0600 "${path}"
                     ${pkgs.util-linux}/bin/mkswap "${path}"
                   else
                     echo "${path}: swapfile already exists, skipping creation"

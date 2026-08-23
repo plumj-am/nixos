@@ -19,14 +19,20 @@
       pager = "${bat} --plain --theme ${theme.bat}";
     in
     {
+      shellAliases = {
+        jq = "jaq";
+        btop = "btm";
+        fzf = "skim";
+      };
+
       hjem.extraModule = {
         packages = [
           pkgs.bat
-          pkgs.btop
+          pkgs.bottom
           pkgs.eza
           pkgs.fd
-          pkgs.fzf
-          pkgs.jq
+          pkgs.skim
+          pkgs.jaq
           pkgs.less
           pkgs.ripgrep
           pkgs.vivid

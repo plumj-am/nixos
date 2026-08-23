@@ -60,7 +60,7 @@ creation_rules:
       key_groups:
           - age: [*jam, *date, *kiwi, *plum, *sloe]
 
-    - path_regex: secrets/services/restic\.(yaml|json|env|ini)$
+    - path_regex: secrets/services/rustic\.(yaml|json|env|ini)$
       key_groups:
           - age: [*jam, *date, *kiwi, *plum, *sloe]
 

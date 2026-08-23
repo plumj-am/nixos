@@ -60,8 +60,7 @@
         enable-spring-load-actions-on-all-items = true;
 
         persistent-apps = [
-          { app = "/Applications/Nix\ User\ Apps/Zed.app"; }
-          { app = "/Applications/Nix\ User\ Apps/kitty.app"; }
+          { app = "/Applications/Nix\ User\ Apps/rio.app"; }
         ];
       };
     };

@@ -44,7 +44,7 @@ in
         nix-extra
         packages
         rebuild
-        restic
+        rustic
         system-info
         yubikey
       ]);

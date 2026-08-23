@@ -10,7 +10,7 @@
     let
       inherit (lib.lists) singleton;
       inherit (lib') merge;
-      inherit (config.myLib) mkResticBackup;
+      inherit (config.myLib) mkRusticBackup;
       inherit (config.networking) domain hostName;
       inherit (config.sops) secrets;
 
@@ -27,7 +27,7 @@
         owner = "nextcloud";
       };
 
-      services.restic.backups.nextcloud = mkResticBackup "nextcloud" {
+      services.rustic.backups.nextcloud = mkRusticBackup "nextcloud" {
         paths = singleton "/var/lib/nextcloud";
         timerConfig = {
           OnCalendar = "hourly";

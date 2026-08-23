@@ -12,12 +12,12 @@ in
 
       app-launcher
       editor-extra
-      kitty
       opencode
       peripherals
       radicle
       sops
       # radicle-node
+      rio
       rust-desktop
       sudo-desktop
       theme-extra-fonts

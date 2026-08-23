@@ -10,7 +10,7 @@
     let
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
-      inherit (config.myLib) mkResticBackup;
+      inherit (config.myLib) mkRusticBackup;
       inherit (config.sops) secrets;
       inherit (config.ai.subs.commandcode) active;
 
@@ -112,7 +112,7 @@
         inputs.hermes-webui.nixosModules.default
       ];
 
-      services.restic.backups.hermes = mkResticBackup "hermes" {
+      services.rustic.backups.hermes = mkRusticBackup "hermes" {
         paths = singleton cfg.stateDir;
         exclude = [
           "${cfg.stateDir}/workspace/*/target"
@@ -319,6 +319,7 @@
             connect_timeout = 60;
           };
           gerrit = {
+            enabled = false;
             command = "${gerritMcpServer}/bin/gerrit-mcp-server";
             env = {
               GERRIT_CONFIG_PATH = "\${HERMES_HOME}/gerrit-mcp-config.json";

@@ -1,6 +1,9 @@
 let
   mkScratchpad =
-    { pkgs, ... }:
+    { pkgs, lib, ... }:
+    let
+      inherit (lib.meta) getExe;
+    in
     {
       name,
       file,
@@ -16,7 +19,7 @@ let
       let notes_dir = ($notes_path | path dirname)
 
       if (not ($notes_dir | path exists)) { mkdir $notes_dir }
-      if (not ($notes_path | path exists)) { ^${pkgs.coreutils}/bin/touch $notes_path }
+      if (not ($notes_path | path exists)) { ^${pkgs.uutils-coreutils-noprefix}/bin/touch $notes_path }
 
       let compositor = if $niri_bin != null {
           "niri"
@@ -37,7 +40,7 @@ let
       }
 
       if ($existing | is-empty) {
-        ^${pkgs.kitty}/bin/kitty --detach --class $scratchpad_class --title "${title}" --override remember_window_size=no --override initial_window_width=80c --override initial_window_height=24c --directory $notes_dir "hx" $notes_path
+        ^${getExe pkgs.rio} --app-id $scratchpad_class --title-placeholder "${title}" --working-dir $notes_dir "hx" $notes_path
       } else if $compositor == "niri" and $niri_bin != null {
         let id = ($existing | first | get id?)
         if $id != null { ^$niri_bin msg action close-window --id $id }
@@ -48,10 +51,11 @@ in
   flake.modules.nixos.desktop-tools =
     {
       pkgs,
+      lib,
       ...
     }:
     let
-      mkScratchpad' = mkScratchpad { inherit pkgs; };
+      mkScratchpad' = mkScratchpad { inherit pkgs lib; };
 
       todoScratchpad = mkScratchpad' {
         name = "todo";

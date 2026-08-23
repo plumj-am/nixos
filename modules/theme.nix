@@ -169,20 +169,11 @@ let
       };
 
       themes = {
-        alacritty.dark = "gruvbox_material_hard_dark";
-        alacritty.light = "gruvbox_material_hard_light";
-
-        ghostty.dark = "Gruvbox Dark Hard";
-        ghostty.light = "Gruvbox Light Hard";
-
         rio.dark = "gruvbox-dark-hard";
         rio.light = "gruvbox-light-hard";
 
         zellij.dark = "gruvbox-dark";
         zellij.light = "gruvbox-light";
-
-        starship.dark = "dark_theme";
-        starship.light = "light_theme";
 
         vivid.dark = "gruvbox-dark";
         vivid.light = "gruvbox-light";
@@ -195,9 +186,6 @@ let
 
         bat.dark = "gruvbox-dark";
         bat.light = "gruvbox-light";
-
-        zed.dark = "Gruvbox Dark Hard";
-        zed.light = "Gruvbox Light Hard";
 
         gtk.dark = {
           name = "Gruvbox-Dark";
@@ -250,16 +238,12 @@ in
       theme = mkThemeConfig { inherit pkgs; };
       themedApps = [
         "icons"
-        "alacritty"
-        "ghostty"
         "rio"
         "zellij"
-        "starship"
         "vivid"
         "nushell"
         "helix"
         "bat"
-        "zed"
         "gtk"
         "qt"
       ];

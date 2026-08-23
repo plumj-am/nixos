@@ -14,8 +14,6 @@
         # Notifications.
         pkgs.libnotify
 
-        # Clipboard.
-        pkgs.wl-clipboard
         # Screen brightness.
         pkgs.brightnessctl
         pkgs.bluez

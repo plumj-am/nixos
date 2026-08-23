@@ -129,8 +129,6 @@ def reload-applications [mode?: string]: nothing -> nothing {
    print "Reloading applications..."
 
    let refreshable_apps = [
-      {name: "kitty", signal: "USR1"}
-      {name: "ghostty", signal: "USR2"}
       {name: "hx", signal: "USR1"}
       {name: "opencode", signal: "USR2"}
    ]

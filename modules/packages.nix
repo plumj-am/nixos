@@ -2,6 +2,8 @@
   flake.modules.common.packages =
     { pkgs, ... }:
     {
+      shellAliases.wrk = "oha";
+
       environment.defaultPackages = [ ];
       environment.systemPackages = [
         pkgs.ast-grep
@@ -9,15 +11,13 @@
         pkgs.hyperfine
         pkgs.nodejs
         pkgs.openssl
-        pkgs.pv
         pkgs.rsync
         pkgs.tokei
-        pkgs.tree
         pkgs.typos
         pkgs.uutils-coreutils-noprefix
         pkgs.sqld
         pkgs.sqlite
-        pkgs.wrk
+        pkgs.oha
         pkgs.xh
       ];
     };

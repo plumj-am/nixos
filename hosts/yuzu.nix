@@ -25,13 +25,11 @@ in
       forgejo-cli
       games
       gammastep
-      ghostty
       graphics
       hardware-desktop
       haskell
       helium
       keepassxc
-      kitty
       # llama-cpp
       # lmstudio
       mprocs

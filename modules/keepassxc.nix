@@ -44,10 +44,10 @@ in
       inherit (lib.attrsets) genAttrs;
       inherit (lib.lists) singleton;
       inherit (lib.generators) toINI;
-      inherit (config.myLib) mkResticBackup;
+      inherit (config.myLib) mkRusticBackup;
     in
     {
-      services.restic.backups.keepassxc = mkResticBackup "keepassxc" {
+      services.rustic.backups.keepassxc = mkRusticBackup "keepassxc" {
         paths = [ "/home/jam/keepassxc" ];
         timerConfig = {
           OnCalendar = "hourly";

@@ -29,7 +29,6 @@ in
       hardware-desktop
       helium
       keepassxc
-      kitty
       mprocs
       nextcloud-client
       omp

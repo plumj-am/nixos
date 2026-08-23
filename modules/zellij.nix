@@ -175,7 +175,7 @@
                       }
 
                       shared_except "locked" {
-                        bind "Esc" "Enter" { SwitchToMode "locked"; }
+                        bind "Esc" "Enter" { SwitchToMode "locked"; ScrollToBottom; }
                       }
 
                       shared_except "pane" "locked" {

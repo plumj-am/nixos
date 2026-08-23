@@ -26,7 +26,7 @@
 
         # Necessary for usbip.
         extraBin = [
-          { src = "${lib.getExe' pkgs.coreutils-full "ls"}"; }
+          { src = "${lib.getExe' pkgs.uutils-coreutils-noprefix "ls"}"; }
           { src = "${lib.getExe pkgs.bash}"; }
           { src = "${lib.getExe' pkgs.linuxPackages.usbip "usbip"}"; }
         ];

@@ -13,7 +13,7 @@
       inherit (lib.lists) singleton elem;
       inherit (lib.attrsets) mapAttrsToList;
       inherit (lib') merge;
-      inherit (config.myLib) mkResticBackup;
+      inherit (config.myLib) mkRusticBackup;
       inherit (config.networking) domain;
       inherit (config.sops) secrets;
 
@@ -140,7 +140,7 @@
         "gerrit-autosubmit/environment".sopsFile = ../secrets/services/gerrit.yaml;
       };
 
-      services.restic.backups.gerrit = mkResticBackup "gerrit" {
+      services.rustic.backups.gerrit = mkRusticBackup "gerrit" {
         paths = singleton stateDir;
         exclude = singleton "${stateDir}/tmp";
         timerConfig = {
@@ -191,8 +191,8 @@
         Group = "git";
       };
       systemd.services.gerrit.serviceConfig.ExecStartPre = [
-        "+${pkgs.coreutils}/bin/mkdir -p ${stateDir}/groovy"
-        "+${pkgs.coreutils}/bin/cp ${groovyScript} ${stateDir}/groovy/ai-review-agent-openai-compatible-1.0.groovy"
+        "+${pkgs.uutils-coreutils-noprefix}/bin/mkdir -p ${stateDir}/groovy"
+        "+${pkgs.uutils-coreutils-noprefix}/bin/cp ${groovyScript} ${stateDir}/groovy/ai-review-agent-openai-compatible-1.0.groovy"
       ];
       services.gerrit = {
         enable = true;

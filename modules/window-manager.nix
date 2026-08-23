@@ -47,9 +47,10 @@
       };
 
       environment.systemPackages = [
-        pkgs.cliphist
-        pkgs.polkit_gnome
         pkgs.brightnessctl
+        pkgs.clipcat
+        pkgs.polkit_gnome
+        pkgs.wl-clipboard-rs
         pkgs.xwayland-satellite
         pkgs.xdg-utils
 
@@ -92,7 +93,7 @@
               }
 
               window-rule {
-                match app-id=r#"kitty"#
+                match app-id=r#"rio"#
                 open-maximized false
               }
 
@@ -250,7 +251,7 @@
                 Mod+Shift+slash { show-hotkey-overlay; }
 
                 Mod+B repeat=false hotkey-overlay-title="Spawn Helium" { spawn "helium"; }
-                Mod+Z repeat=false hotkey-overlay-title="Spawn kitty" { spawn "kitty"; }
+                Mod+Z repeat=false hotkey-overlay-title="Spawn Rio" { spawn "rio"; }
                 Mod+X repeat=false hotkey-overlay-title="Spawn Quickshell" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath}"; }
 
                 Mod+Q repeat=false { close-window; }
@@ -317,12 +318,45 @@
               }
 
               spawn-sh-at-startup "${quickshell} --path ${quickshellPath}"
-              spawn-at-startup "${pkgs.wl-clipboard}/bin/wl-paste --watch ${pkgs.cliphist}/bin/cliphist store"
               spawn-at-startup "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
               spawn-at-startup "${pkgs.keepassxc}/bin/keepassxc"
               spawn-sh-at-startup "sleep 5; awww-daemon"
               spawn-sh-at-startup "sleep 5; gammastep-indicator"
             '';
+
+          xdg.config.files."clipcat/clipcatd.toml".text = # toml
+            ''
+              # clipcatd requires this file to exist; all unset fields use defaults.
+              daemonize = false
+              # Copy-on-select: capture the primary (mouse) selection into history.
+              # sync with clipboard is off so selections don't poke the clipboard selection.
+              synchronize_selection_with_clipboard = false
+
+              [watcher]
+              enable_primary = true
+              # Default min_length = 1 drops single-char copies; keep everything.
+              filter_text_min_length = 0
+
+              [desktop_notification]
+              enable = false
+
+              [metrics]
+              enable = false
+            '';
+
+          systemd.services.clipcatd = {
+            description = "Clipcat daemon (clipboard manager)";
+            partOf = [ "graphical-session.target" ];
+            wantedBy = [ "graphical-session.target" ];
+            after = [ "graphical-session.target" ];
+            serviceConfig = {
+              Type = "simple";
+              Restart = "on-failure";
+              # systemd supervises the daemon, so no --replace; clear stale socket + pid files.
+              ExecStartPre = "${pkgs.coreutils}/bin/rm -f %t/clipcat/grpc.sock %t/clipcatd.pid";
+              ExecStart = "${getExe pkgs.clipcat} --no-daemon";
+            };
+          };
         };
     };
 

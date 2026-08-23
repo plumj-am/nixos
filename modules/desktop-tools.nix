@@ -2,19 +2,21 @@
   flake.modules.nixos.colour-picker =
     {
       pkgs,
+      lib,
       lib',
       ...
     }:
     let
+      inherit (lib.meta) getExe;
       inherit (lib') mkDesktopEntry;
     in
     {
       environment.systemPackages = [
-        pkgs.hyprpicker
+        pkgs.eyedropper
 
         (mkDesktopEntry {
           name = "Colour-Picker";
-          exec = "hyprpicker --format=hex --autocopy";
+          exec = getExe pkgs.eyedropper;
         })
       ];
     };

@@ -12,35 +12,51 @@
       inherit (lib.lists) singleton;
       inherit (lib') mkDesktopEntry;
       inherit (config) theme;
+
+      rioThemes = pkgs.fetchFromGitHub {
+        owner = "mbadolato";
+        repo = "iTerm2-Color-Schemes";
+        rev = "75c93eebaca34a6194ba8bdb83d99b62e20f9aba";
+        hash = "sha256-L4H8ZkmI/CHhXOTPo1anTPg73IDS9lUfY6s0yGHaHKM=";
+      };
     in
     {
-      hjem.extraModule = {
-        packages =
-          singleton
-          <| mkDesktopEntry {
+      hjemModule = {
+        packages = [
+          pkgs.rio
+
+          (mkDesktopEntry {
             name = "Zellij-Rio";
             exec = "rio --command zellij";
-          };
+          })
+        ];
 
         xdg.config.files = {
           "rio/config.toml" = {
             generator = pkgs.writers.writeTOML "rio-config.toml";
             value = {
               fonts = {
-                size = theme.font.size.tiny + 3; # Weird font sizing compared to other terminals
+                size = theme.font.size.normal;
                 use-drawable-chars = true;
                 family = theme.font.mono.name;
-                # For Maple Mono
-                features = [
-                  "+cv64"
-                  "+ss03"
-                  "+ss05"
-                  "+ss07"
-                  "+ss08"
-                  "+ss09"
-                  "+ss10"
-                  "+ss11"
-                ];
+                regular.weight = 400;
+                bold.weight = 600;
+                italic.weight = 400;
+                bold-italic.weight = 600;
+                features =
+                  if theme.font.mono.name == "Maple Mono NF" then
+                    [
+                      "+cv64"
+                      "+ss03"
+                      "+ss05"
+                      "+ss07"
+                      "+ss08"
+                      "+ss09"
+                      "+ss10"
+                      "+ss11"
+                    ]
+                  else
+                    [ ];
               };
               draw-bold-text-with-light-colors = false;
 
@@ -49,22 +65,13 @@
               scrollback-history-limit = 100000;
               confirm-before-quit = false;
 
-              theme = "gruvbox";
+              adaptive-theme = {
+                dark = "iterm2-gruvbox-dark-hard";
+                light = "iterm2-gruvbox-light-hard";
+              };
               hide-mouse-cursor-when-typing = true;
               window.decorations = "Disabled";
               padding = singleton theme.padding.tiny;
-
-              # Waiting for fix <https://github.com/raphamorim/rio/issues/1407>
-              # hints = {
-              #   alphabet = "jfkdls;ahgurieowpq";
-              #   rules = singleton {
-              #     regex = ''(https://|http://)[^\u{0000}-\u{001F}\u{007F}-\u{009F}<>"\s{-}\^⟨⟩`\\]+'';
-              #     hyperlinks = true;
-              #     post-processing = true;
-              #     persist = false;
-              #     action.command = "xdg-open";
-              #   };
-              # };
 
               renderer = {
                 backend = "Vulkan";
@@ -73,34 +80,8 @@
             };
           };
 
-          "rio/themes/gruvbox.toml" = {
-            generator = pkgs.writers.writeTOML "rio-themes-gruvbox.toml";
-            value = with theme.withHash; {
-              colors = {
-                background = base00;
-                foreground = base05;
-                selection-background = base02;
-                selection-foreground = base00;
-                cursor = base05;
-                black = base00;
-                light-black = base00;
-                red = base08;
-                light-red = base08;
-                green = base0B;
-                light-green = base0B;
-                yellow = base0A;
-                light-yellow = base0A;
-                blue = base0D;
-                light-blue = base0D;
-                magenta = base0E;
-                light-magenta = base0E;
-                cyan = base0C;
-                light-cyan = base0C;
-                white = base05;
-                light-white = base05;
-              };
-            };
-          };
+          "rio/themes/iterm2-gruvbox-dark-hard.toml".source = "${rioThemes}/rio/Gruvbox Dark Hard.toml";
+          "rio/themes/iterm2-gruvbox-light-hard.toml".source = "${rioThemes}/rio/Gruvbox Light Hard.toml";
         };
       };
     };

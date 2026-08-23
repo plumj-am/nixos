@@ -32,12 +32,13 @@ PanelWindow {
 		 var line = lines[i].trim()
 		 if (line === "")
 			continue
-		 var parts = line.split("\t")
-		 if (parts.length < 2)
+		 // clipcatctl list format: "<16-hex id>: <preview>"
+		 var sep = line.indexOf(": ")
+		 if (sep < 0)
 			continue
-		 var id = parts[0]
-		 var text = parts.slice(1).join("\t")
-		 if (text.indexOf("binary data") === 0)
+		 var id = line.slice(0, sep)
+		 var text = line.slice(sep + 2)
+		 if (text.indexOf("[image/") === 0)
 			continue
 		 entries.push({
 						 id: id,
@@ -67,9 +68,11 @@ PanelWindow {
    function selectEntry() {
 	  if (filteredEntries.length > 0 && filteredEntries[selectedIndex]) {
 		 var id = filteredEntries[selectedIndex].id
-		 // Pass id as separate argv to avoid shell injection from clipboard content
-		 copyProc.command = ["sh", "-c", "cliphist decode \"$1\" | wl-copy", "_", id]
+		 copyProc.command = ["clipcatctl", "promote", id]
 		 copyProc.running = true
+		 // Close on copy; flash feedback briefly in case the panel is still visible.
+		 copiedFlash.visible = true
+		 copiedFlashTimer.restart()
 		 isOpen = false
 	  }
    }
@@ -77,7 +80,7 @@ PanelWindow {
    function deleteEntry(index) {
 	  if (filteredEntries[index]) {
 		 var id = filteredEntries[index].id
-		 deleteProc.command = ["cliphist", "delete", id]
+		 deleteProc.command = ["clipcatctl", "remove", id]
 		 deleteProc.running = true
 		 var newAll = []
 		 for (var i = 0; i < allEntries.length; i++) {
@@ -122,7 +125,7 @@ PanelWindow {
    Process {
 	  id: listProc
 
-	  command: ["cliphist", "list"]
+	  command: ["clipcatctl", "list"]
 	  running: false
 
 	  stdout: StdioCollector {
@@ -145,7 +148,7 @@ PanelWindow {
    Process {
 	  id: wipeProc
 
-	  command: ["cliphist", "wipe"]
+	  command: ["clipcatctl", "clear"]
 	  running: false
    }
 
@@ -340,10 +343,44 @@ PanelWindow {
 			   }
 			}
 		 }
+
+		 // Copy feedback: flashes when an entry is promoted.
+		 Rectangle {
+			id: copiedFlash
+
+			visible: false
+			anchors.horizontalCenter: parent.horizontalCenter
+			anchors.bottom: parent.bottom
+			anchors.bottomMargin: 12
+			z: 10
+			implicitWidth: copiedFlashLabel.implicitWidth + 16
+			implicitHeight: copiedFlashLabel.implicitHeight + 8
+			color: Common.Theme.background2
+			radius: Common.Theme.radius.small
+
+			Text {
+			   id: copiedFlashLabel
+
+			   anchors.centerIn: parent
+			   text: "Copied"
+			   color: Common.Theme.text
+			   font.family: Common.Theme.font.sans.family
+			   font.pixelSize: 12
+			}
+		 }
 	  }
 
 	  Common.Border {
 		 anchors.fill: parent
 	  }
+   }
+
+   Timer {
+	  id: copiedFlashTimer
+
+	  interval: 900
+	  repeat: false
+
+	  onTriggered: copiedFlash.visible = false
    }
 }
