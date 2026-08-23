@@ -60,7 +60,6 @@ in
       s3-upload
       theme-extra-fonts
       theme-extra-scripts
-      tmux
       video-player
       window-manager
       zellij
