@@ -41,6 +41,46 @@
           packageRequires = [ (epkgs pkgs).magit ];
         };
 
+      epkgs = pkgs: (withEmacsOverlay pkgs).emacsPackagesFor (withEmacsOverlay pkgs).emacs30-pgtk;
+
+      package =
+        let
+          epkgs = (withEmacsOverlay pkgs).emacsPackagesFor (withEmacsOverlay pkgs).emacs30-pgtk;
+        in
+        epkgs.emacsWithPackages (epkgs: [
+          epkgs.doom-themes
+          epkgs.avy
+          epkgs.multiple-cursors
+          epkgs.helix
+          epkgs.which-key
+
+          epkgs.vertico
+          epkgs.orderless
+          epkgs.marginalia
+          epkgs.consult
+          epkgs.corfu
+          epkgs.cape
+
+          epkgs.org-modern
+
+          epkgs.rust-mode
+          epkgs.nix-mode
+
+          epkgs.nushell-ts-mode
+          epkgs.markdown-ts-mode
+          epkgs.haskell-ts-mode
+
+          epkgs.vterm
+          epkgs.windresize
+
+          epkgs.eldoc-box
+          epkgs.magit
+
+          epkgs.treesit-grammars.with-all-grammars
+
+          jjMode
+        ]);
+
       initElText = # scheme
         ''
           ;;; init.el --- Declarative configuration. -*- lexical-binding: t; -*-
@@ -251,19 +291,6 @@
 
       initElFile = pkgs.writers.writeText "init.el" initElText;
 
-      epkgs = pkgs: (withEmacsOverlay pkgs).emacsPackagesFor (withEmacsOverlay pkgs).emacs30-pgtk;
-
-      package = (withEmacsOverlay pkgs).emacsWithPackagesFromUsePackage {
-        config = initElFile;
-        package = (withEmacsOverlay pkgs).emacs30-pgtk;
-        alwaysEnsure = true;
-        extraEmacsPackages = epkgs: [
-          epkgs.treesit-grammars.with-all-grammars
-          epkgs.eldoc-box
-          epkgs.magit
-          jjMode
-        ];
-      };
     in
     {
       services.emacs = {
