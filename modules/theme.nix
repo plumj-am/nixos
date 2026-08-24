@@ -1,113 +1,90 @@
 { lib, ... }:
 let
   inherit (lib.options) mkOption;
-  inherit (lib.attrsets) mapAttrs listToAttrs elemAt;
+  inherit (lib.attrsets)
+    mapAttrs
+    genAttrs
+    collect
+    isDerivation
+    ;
+  inherit (lib.lists) elem;
   inherit (lib.trivial) fromHexString;
-  inherit (lib.types) attrs;
-  inherit (lib.lists) genList;
-  inherit (lib)
+  inherit (lib.types) attrsOf anything;
+  inherit (lib.strings)
     fromJSON
     readFile
     substring
     pathExists
     ;
 
+  gruvboxColors = {
+    dark = {
+      base00 = "1d2021";
+      base01 = "3c3836";
+      base02 = "504945";
+      base03 = "665c54";
+      base04 = "bdae93";
+      base05 = "d5c4a1";
+      base06 = "ebdbb2";
+      base07 = "fbf1c7";
+      base08 = "fb4934";
+      base09 = "fe8019";
+      base0A = "fabd2f";
+      base0B = "b8bb26";
+      base0C = "8ec07c";
+      base0D = "83a598";
+      base0E = "d3869b";
+      base0F = "d65d0e";
+    };
+    light = {
+      base00 = "f9f5d7";
+      base01 = "ebdbb2";
+      base02 = "d5c4a1";
+      base03 = "bdae93";
+      base04 = "665c54";
+      base05 = "504945";
+      base06 = "3c3836";
+      base07 = "282828";
+      base08 = "9d0006";
+      base09 = "af3a03";
+      base0A = "b57614";
+      base0B = "79740e";
+      base0C = "427b58";
+      base0D = "076678";
+      base0E = "8f3f71";
+      base0F = "d65d0e";
+    };
+  };
+
   mkThemeConfig =
     { pkgs }:
     let
-      themeConfig = fromJSON (readFile ./theme.json);
-      isDark = themeConfig.mode == "dark";
+      themeConfig = fromJSON <| readFile ./theme.json;
+      variant = themeConfig.mode;
+      isDark = variant == "dark";
       colorScheme = themeConfig.scheme;
+
+      # assert lib.elem variant ["light" "dark"];
 
       matugenCache = ./theme-matugen-colors.json;
 
       parseMatugenColors =
-        json:
-        let
-          data = fromJSON json;
-          stripHash = s: substring 1 6 s;
-          slot = if isDark then "dark" else "light";
-          colorNames = [
-            "base00"
-            "base01"
-            "base02"
-            "base03"
-            "base04"
-            "base05"
-            "base06"
-            "base07"
-            "base08"
-            "base09"
-            "base0A"
-            "base0B"
-            "base0C"
-            "base0D"
-            "base0E"
-            "base0F"
-          ];
-        in
-        listToAttrs
-        <| genList (n: {
-          name = elemAt colorNames n;
-          value = stripHash data.base16.${elemAt colorNames n}.${slot}.color;
-        }) 16;
+        json: mapAttrs (_: value: substring 1 6 value.${variant}.color) <| (fromJSON json).base16;
 
       matugenColors =
-        if pathExists matugenCache then parseMatugenColors (readFile matugenCache) else gruvboxColors.dark;
-
-      gruvboxColors = {
-        dark = {
-          base00 = "1d2021";
-          base01 = "3c3836";
-          base02 = "504945";
-          base03 = "665c54";
-          base04 = "bdae93";
-          base05 = "d5c4a1";
-          base06 = "ebdbb2";
-          base07 = "fbf1c7";
-          base08 = "fb4934";
-          base09 = "fe8019";
-          base0A = "fabd2f";
-          base0B = "b8bb26";
-          base0C = "8ec07c";
-          base0D = "83a598";
-          base0E = "d3869b";
-          base0F = "d65d0e";
-        };
-        light = {
-          base00 = "f9f5d7";
-          base01 = "ebdbb2";
-          base02 = "d5c4a1";
-          base03 = "bdae93";
-          base04 = "665c54";
-          base05 = "504945";
-          base06 = "3c3836";
-          base07 = "282828";
-          base08 = "9d0006";
-          base09 = "af3a03";
-          base0A = "b57614";
-          base0B = "79740e";
-          base0C = "427b58";
-          base0D = "076678";
-          base0E = "8f3f71";
-          base0F = "d65d0e";
-        };
-      };
-
-      colors =
-        if colorScheme == "matugen" then
-          matugenColors
+        if pathExists matugenCache then
+          parseMatugenColors <| readFile matugenCache
         else
-          (if isDark then gruvboxColors.dark else gruvboxColors.light);
+          gruvboxColors.${variant};
 
-      variant = if isDark then "dark" else "light";
+      colors = if colorScheme == "matugen" then matugenColors else gruvboxColors.${variant};
 
       hexToRgb =
         hex:
         let
-          r = fromHexString (substring 0 2 hex);
-          g = fromHexString (substring 2 2 hex);
-          b = fromHexString (substring 4 2 hex);
+          r = fromHexString <| substring 0 2 hex;
+          g = fromHexString <| substring 2 2 hex;
+          b = fromHexString <| substring 4 2 hex;
         in
         [
           r
@@ -115,33 +92,50 @@ let
           b
         ];
 
+      fonts = {
+        mono = {
+          iosevka = {
+            name = "Iosevka Nerd Font Mono";
+            family = "Iosevka";
+            package = pkgs.nerd-fonts.iosevka;
+          };
+          maple-mono = {
+            name = "Maple Mono NF";
+            family = "Maple Mono";
+            package = pkgs.maple-mono.NF;
+          };
+          hasklug = {
+            name = "Hasklug Nerd Font Mono";
+            family = "Hasklug";
+            package = pkgs.nerd-fonts.hasklug;
+          };
+          fira-code = {
+            name = "Fira Code Nerd Font Mono";
+            family = "Fira Code";
+            package = pkgs.nerd-fonts.fira-code;
+          };
+        };
+        sans = {
+          lexend = {
+            name = "Lexend";
+            family = "Lexend";
+            package = pkgs.lexend;
+          };
+        };
+      };
+
       designSystem = {
         font = {
-          size.tiny = 9;
-          size.small = 10;
-          size.normal = 12;
-          size.medium = 14;
-          size.big = 16;
+          size = {
+            tiny = 9;
+            small = 10;
+            normal = 12;
+            medium = 14;
+            big = 16;
+          };
 
-          # mono.name = "Iosevka Nerd Font Mono";
-          # mono.family = "Iosevka";
-          # mono.package = pkgs.nerd-fonts.iosevka;
-
-          mono.name = "Maple Mono NF";
-          mono.family = "Maple Mono";
-          mono.package = pkgs.maple-mono.NF;
-
-          # mono.name = "Hasklug Nerd Font Mono";
-          # mono.family = "Hasklug";
-          # mono.package = pkgs.nerd-fonts.hasklug;
-
-          # mono.name = "Fira Code Nerd Font Mono";
-          # mono.family = "Fira Code";
-          # mono.package = pkgs.nerd-fonts.fira-code;
-
-          sans.name = "Lexend";
-          sans.family = "Lexend";
-          sans.package = pkgs.lexend;
+          mono = fonts.mono.maple-mono;
+          sans = fonts.sans.lexend;
         };
 
         radius = {
@@ -168,55 +162,82 @@ let
         };
       };
 
-      themes = {
-        rio.dark = "gruvbox-dark-hard";
-        rio.light = "gruvbox-light-hard";
+      apps = {
 
-        zellij.dark = "gruvbox-dark";
-        zellij.light = "gruvbox-light";
-
-        vivid.dark = "gruvbox-dark";
-        vivid.light = "gruvbox-light";
-
-        nushell.dark = "dark-theme";
-        nushell.light = "light-theme";
-
-        helix.dark = "gruvbox_dark_hard";
-        helix.light = "gruvbox_light_hard";
-
-        bat.dark = "gruvbox-dark";
-        bat.light = "gruvbox-light";
-
-        gtk.dark = {
-          name = "Gruvbox-Dark";
-          package = pkgs.gruvbox-dark-gtk;
-        };
-        gtk.light = {
-          name = "Adwaita";
-          package = pkgs.gnome-themes-extra;
+        rio = {
+          dark = "gruvbox-dark-hard";
+          light = "gruvbox-light-hard";
         };
 
-        qt.dark = {
-          name = "adwaita-dark";
-          platformTheme = "adwaita";
-        };
-        qt.light = {
-          name = "adwaita";
-          platformTheme = "adwaita";
+        zellij = {
+          dark = "gruvbox-dark";
+          light = "gruvbox-light";
         };
 
-        icons.dark = {
-          name = "Gruvbox-Plus-Dark";
-          package = pkgs.gruvbox-plus-icons;
+        vivid = {
+          dark = "gruvbox-dark";
+          light = "gruvbox-light";
         };
-        icons.light = {
-          name = "Papirus-Light";
-          package = pkgs.papirus-icon-theme;
+
+        nushell = {
+          dark = "dark-theme";
+          light = "light-theme";
+        };
+
+        helix = {
+          dark = "gruvbox_dark_hard";
+          light = "gruvbox_light_hard";
+        };
+
+        bat = {
+          dark = "gruvbox-dark";
+          light = "gruvbox-light";
+        };
+
+        gtk = {
+          dark = {
+            name = "Gruvbox-Dark";
+            package = pkgs.gruvbox-dark-gtk;
+          };
+          light = {
+            name = "Adwaita";
+            package = pkgs.gnome-themes-extra;
+          };
+        };
+
+        qt = {
+          dark = {
+            name = "adwaita-dark";
+            platformTheme = "gnome";
+          };
+          light = {
+            name = "adwaita";
+            platformTheme = "gnome";
+          };
+        };
+
+        icons = {
+          dark = {
+            name = "Gruvbox-Plus-Dark";
+            package = pkgs.gruvbox-plus-icons;
+          };
+          light = {
+            name = "Papirus-Light";
+            package = pkgs.papirus-icon-theme;
+          };
         };
       };
 
-      getTheme = program: if isDark then themes.${program}.dark else themes.${program}.light;
+      getAppTheme = program: apps.${program}.${variant};
     in
+    assert elem variant [
+      "dark"
+      "light"
+    ];
+    assert elem colorScheme [
+      "gruvbox"
+      "matugen"
+    ];
     {
       inherit
         isDark
@@ -224,12 +245,11 @@ let
         variant
         colors
         designSystem
-        themes
-        getTheme
+        apps
+        getAppTheme
         hexToRgb
         ;
     };
-
 in
 {
   flake.modules.common.theme =
@@ -250,17 +270,20 @@ in
     in
     {
       options.theme = mkOption {
-        type = attrs;
+        type = attrsOf anything;
         default = { };
         description = "Global theme configuration";
       };
 
       config = {
+        # makes switching variants faster if they are all present
+        environment.systemPackages = collect isDerivation theme.apps;
+
         theme =
           theme.designSystem
           // {
             inherit (theme)
-              themes
+              apps
               isDark
               colorScheme
               variant
@@ -271,13 +294,7 @@ in
             with0x = mapAttrs (_: v: "0x${v}") theme.colors;
             withRgb = mapAttrs (_: v: theme.hexToRgb v) theme.colors;
           }
-          // (
-            listToAttrs
-            <| map (app: {
-              name = app;
-              value = theme.getTheme app;
-            }) themedApps
-          );
+          // genAttrs themedApps theme.getAppTheme;
       };
     };
 

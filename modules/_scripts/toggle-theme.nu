@@ -42,7 +42,7 @@ def get-current-theme []: any -> record<mode: string, scheme: string> {
    } catch {
       print "Failed to load default config, falling back to light/gruvbox"
 
-      {mode: dark, scheme: gruvbox}
+      {mode: light, scheme: gruvbox}
    }
 }
 
@@ -62,8 +62,6 @@ def toggle-theme [theme: string]: any -> nothing {
    print "Updating theme configuration..."
 
    let theme_config = get-current-theme
-
-   $env.THEME_MODE = $theme
 
    save-theme-config $theme $theme_config.scheme
 
@@ -95,8 +93,6 @@ def switch-scheme [scheme: string]: any -> nothing {
          print "Warning: Could not detect current wallpaper"
       }
    }
-
-   $env.THEME_SCHEME = $scheme
 
    save-theme-config $theme_config.mode $scheme
 }

@@ -251,16 +251,6 @@
 
                 			$env.LS_COLORS = (${pkgs.vivid}/bin/vivid generate ${theme.vivid})
 
-                			let theme_json = $"${config.directory}/nixos/modules/theme.json"
-                			if ($theme_json | path exists) {
-                				let theme = (open $theme_json)
-                				$env.THEME_MODE = $theme.mode
-                				$env.THEME_SCHEME = $theme.scheme
-                			} else {
-                				$env.THEME_MODE = "${theme.variant}"
-                				$env.THEME_SCHEME = "${theme.colorScheme}"
-                			}
-
                 			def prompt [--transient --right]: nothing -> string {
                 				let bar = $"(ansi '${base0D}')(ansi attr_bold)━(ansi rst)"
 

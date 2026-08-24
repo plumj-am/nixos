@@ -47,6 +47,7 @@
         enable = true;
 
         style = config.theme.qt.name;
+        platformTheme = config.theme.qt.platformTheme;
       };
 
       programs.dconf = {
@@ -70,8 +71,6 @@
       };
 
       hjem.extraModule = {
-        packages = singleton theme.gtk.package;
-
         files.".gtkrc-2.0".text = gtk2;
         xdg.config.files."gtk-3.0/settings.ini".text = gtk3;
         xdg.config.files."gtk-4.0/settings.ini".text = gtk4;
