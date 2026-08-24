@@ -10,8 +10,7 @@
       inherit (lib.lists) singleton;
       inherit (config) theme;
 
-      # Color scheme for gsettings (prefer-dark, default, prefer-light)
-      colorScheme = if theme.isDark then "prefer-dark" else "default";
+      colorScheme = if theme.isDark then "'prefer-dark'" else "'prefer-light'";
 
       gtkCommon = # ini
         ''
@@ -54,7 +53,10 @@
         enable = true;
 
         profiles.user.databases = singleton {
-          settings."org/gnome/desktop/interface".color-scheme = colorScheme;
+          settings."org/gnome/desktop/interface" = {
+            font-name = theme.font.sans.name;
+            color-scheme = colorScheme;
+          };
         };
       };
 

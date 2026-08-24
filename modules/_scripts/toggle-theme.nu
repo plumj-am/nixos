@@ -29,7 +29,7 @@ def save-theme-config [mode: string, scheme: string] {
 }
 
 def update-gsettings [is_dark: bool]: any -> nothing {
-   let scheme = if $is_dark { "prefer-dark" } else { "default" }
+   let scheme = if $is_dark { "prefer-dark" } else { "prefer-light" }
 
    try {
       dconf write /org/gnome/desktop/interface/color-scheme $"'($scheme)'"
