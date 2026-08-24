@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.default = self.modules.nixos.locale;
   flake.modules.nixos.locale =
     let
       tz = "Europe/Warsaw";

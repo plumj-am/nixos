@@ -1,3 +1,4 @@
+{ self, ... }:
 let
   sshConfigBase = {
     shellAliases = {
@@ -39,21 +40,36 @@ let
   };
 in
 {
-  flake.modules.nixos.ssh = {
+  flake.modules.darwin.default = self.modules.darwin.ssh;
+  flake.modules.darwin.ssh = { config, ... }: {
     imports = [ sshConfigBase ];
 
-    programs.ssh.startAgent = true;
+    services.openssh = {
+      enable = true;
+      extraConfig = # sshd_config
+        ''
+          HostKey ${config.sops.secrets.id.path}
+          PasswordAuthentication no
+          KbdInteractiveAuthentication no
+          AcceptEnv SHELLS COLORTERM
+        '';
+    };
   };
 
-  flake.modules.darwin.ssh = sshConfigBase;
-
-  flake.modules.nixos.openssh =
+  flake.modules.nixos.default = self.modules.nixos.ssh;
+  flake.modules.nixos.ssh =
     { config, lib, ... }:
     let
       inherit (lib.lists) singleton map;
       inherit (lib.attrsets) listToAttrs;
     in
     {
+      imports = singleton sshConfigBase;
+
+      networking.firewall.allowedTCPPorts = singleton 22;
+
+      programs.ssh.startAgent = true;
+
       services.sshguard.enable = true;
 
       services.openssh = {
@@ -123,21 +139,6 @@ in
       services.openssh.settings = {
         AllowUsers = singleton "anamana";
         AllowGroups = singleton "ssh";
-      };
-    };
-
-  flake.modules.darwin.openssh =
-    { config, ... }:
-    {
-      services.openssh = {
-        enable = true;
-        extraConfig = # sshd_config
-          ''
-            HostKey ${config.sops.secrets.id.path}
-            PasswordAuthentication no
-            KbdInteractiveAuthentication no
-            AcceptEnv SHELLS COLORTERM
-          '';
       };
     };
 }

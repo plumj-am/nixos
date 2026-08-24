@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.default = self.modules.nixos.users;
   flake.modules.nixos.users =
     {
       pkgs,
@@ -45,6 +47,7 @@
       };
     };
 
+  flake.modules.darwin.default = self.modules.darwin.users;
   flake.modules.darwin.users =
     { pkgs, config, ... }:
     let

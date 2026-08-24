@@ -8,27 +8,14 @@ in
     specialArgs = { inherit inputs; };
 
     modules = with inputs.self.modules.nixos; [
-      aspectsBase
+      default
+      server
 
-      boot-grub
-      disks-server
-      forgejo-runner
-      harmonia
-      radicle-node
-      rust
-      sops
-      sudo-server
-      swapfile
-      s3
-      s3-upload
-      zellij
+      distributed-builder
       {
         config = mkConfig inputs "blackwell" "x86_64-linux" {
           systemInfo = {
-            distributedBuilder = {
-              enable = false;
-              speedFactor = 1;
-            };
+            distributedBuilder.speedFactor = 1;
 
             disks.swap.file = {
               path = "/swapfile";

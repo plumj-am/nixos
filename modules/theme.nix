@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ self, lib, ... }:
 let
   inherit (lib.options) mkOption;
   inherit (lib.attrsets)
@@ -252,6 +252,7 @@ let
     };
 in
 {
+  flake.modules.common.default = self.modules.common.theme;
   flake.modules.common.theme =
     { pkgs, ... }:
     let
@@ -320,6 +321,7 @@ in
       ];
     };
 
+  flake.modules.darwin.default = self.modules.darwin.theme-extra-fonts;
   flake.modules.darwin.theme-extra-fonts =
     { config, pkgs, ... }:
     {

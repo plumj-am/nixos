@@ -17,6 +17,7 @@ def --wrapped rsync-files [...rest: string]: any -> string {
 @example "Rebuild all hosts sequentially" { rebuild all }
 def --wrapped main [
    --remote: string # The host to build (defaults to current)
+   --emacs (-e)     # Also reload emacs
    --help (-h)      # Show this help message
    ...rest: string  # Extra arguments to pass to nh
 ]: nothing -> nothing {
@@ -104,7 +105,7 @@ def --wrapped main [
       try {
          sudo ...$nh $config.cmd ...$nh_args
 
-         if (which emacsclient | is-not-empty) {
+         if ($emacs) and (which emacsclient | is-not-empty) {
             print "Reloading Emacs"
 
             try {

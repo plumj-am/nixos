@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.common.default = self.modules.common.zellij;
   flake.modules.common.zellij =
     {
       pkgs,

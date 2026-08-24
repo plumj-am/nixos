@@ -1,4 +1,9 @@
-{ inputs, lib, ... }:
+{
+  self,
+  inputs,
+  lib,
+  ...
+}:
 let
   inherit (lib.lists) optional singleton;
   inherit (lib.options) mkOption;
@@ -58,6 +63,9 @@ let
     };
 in
 {
+  flake.modules.nixos.default = self.modules.nixos.hjem;
   flake.modules.nixos.hjem = mkHjemModule inputs.hjem.nixosModules.default;
+
+  flake.modules.darwin.default = self.modules.nixos.hjem;
   flake.modules.darwin.hjem = mkHjemModule inputs.hjem.darwinModules.default;
 }

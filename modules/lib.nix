@@ -1,6 +1,36 @@
-# Custom library functions and such.
-let
-  commonModule =
+{ self, ... }:
+{
+  flake.mkConfig =
+    inputs: host: platform: rest:
+    let
+      inherit (inputs.nixpkgs) lib;
+      inherit (lib) mkMerge;
+    in
+    mkMerge [
+      {
+        nixpkgs.hostPlatform = platform;
+
+        networking.hostName = host;
+
+        sops.secrets.password = {
+          sopsFile = ../secrets/${host}/password.yaml;
+          neededForUsers = true;
+        };
+
+        sops.secrets.id = {
+          sopsFile = ../secrets/${host}/id.yaml;
+        };
+
+        sops.secrets.nix-store-key = {
+          sopsFile = ../secrets/all/nix-store-keys.yaml;
+          key = host;
+        };
+      }
+      rest
+    ];
+
+  flake.modules.common.default = self.modules.common.lib;
+  flake.modules.common.lib =
     {
       pkgs,
       lib,
@@ -202,38 +232,4 @@ let
         };
       };
     };
-
-in
-{
-  flake.mkConfig =
-    inputs: host: platform: rest:
-    let
-      inherit (inputs.nixpkgs) lib;
-      inherit (lib) mkMerge;
-    in
-    mkMerge [
-      {
-        nixpkgs.hostPlatform = platform;
-
-        networking.hostName = host;
-
-        sops.secrets.password = {
-          sopsFile = ../secrets/${host}/password.yaml;
-          neededForUsers = true;
-        };
-
-        sops.secrets.id = {
-          sopsFile = ../secrets/${host}/id.yaml;
-        };
-
-        sops.secrets.nix-store-key = {
-          sopsFile = ../secrets/all/nix-store-keys.yaml;
-          key = host;
-        };
-      }
-      rest
-    ];
-
-  flake.modules.nixos.lib = commonModule;
-  flake.modules.darwin.lib = commonModule;
 }

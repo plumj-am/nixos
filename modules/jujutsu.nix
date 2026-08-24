@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.common.default = self.modules.common.jujutsu;
   flake.modules.common.jujutsu =
     {
       pkgs,

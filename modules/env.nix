@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.common.default = self.modules.common.env;
   flake.modules.common.env =
     { pkgs, lib, ... }:
     let

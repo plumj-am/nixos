@@ -1,5 +1,7 @@
+{ self, ... }:
 {
-  flake.modules.nixos.rebuild =
+  flake.modules.common.default = self.modules.common.rebuild;
+  flake.modules.common.rebuild =
     {
       pkgs,
       lib',
@@ -27,17 +29,5 @@
             })
           ];
         };
-    };
-
-  flake.modules.darwin.rebuild =
-    {
-      pkgs,
-      ...
-    }:
-    {
-      environment.systemPackages = [
-        pkgs.nh
-        pkgs.nix-output-monitor
-      ];
     };
 }

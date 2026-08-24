@@ -1,8 +1,10 @@
+{ self, ... }:
 # Remove All PErl, webkitgtk, and other shit!
 # Credit to: <https://github.com/amaanq/dotfiles>
 # nixos-core project: <https://github.com/feel-co/nixos-core>
 #
 {
+  flake.modules.nixos.default = self.modules.nixos.nuke;
   flake.modules.nixos.nuke =
     {
       inputs,

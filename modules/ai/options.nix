@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.common.default = self.modules.common.ai-options;
   flake.modules.common.ai-options =
     { lib, config, ... }:
     let

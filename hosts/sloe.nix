@@ -9,49 +9,28 @@ in
     specialArgs = { inherit inputs; };
 
     modules = with inputs.self.modules.nixos; [
-      aspectsBase
+      default
+      server
 
       acme
-      boot-grub
-      disks-server
-      forgejo-runner
+      distributed-builder
       garage
       graft
       graphics
       hermes
       nextcloud
       nginx
-      nuke
       openssh-extra-users
-      radicle-node
-      rust
-      shed
-      sops
-      sudo-server
-      swapfile
-      s3
-      s3-upload
       tend
       users-extra
-      zellij
       { hardware.facter.reportPath = ./facter/sloe.json; }
       { disko.devices.disk.disk1.device = "/dev/disk/by-id/wwn-0x5001b448b89708e0"; }
       {
         config = mkConfig inputs "sloe" "x86_64-linux" {
-          networking = {
-            domain = "plumj.am";
-            firewall.allowedTCPPorts = [
-              22
-              80
-              443
-            ];
-          };
+          networking.domain = "plumj.am";
 
           systemInfo = {
-            distributedBuilder = {
-              enable = true;
-              speedFactor = 5;
-            };
+            distributedBuilder.speedFactor = 5;
 
             disks.swap.file = {
               path = "/swapfile";

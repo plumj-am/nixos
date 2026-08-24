@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.default = self.modules.nixos.tailscale;
   flake.modules.nixos.tailscale =
     { config, ... }:
     let
@@ -21,6 +23,7 @@
       };
     };
 
+  flake.modules.darwin.default = self.modules.darwin.tailscale;
   flake.modules.darwin.tailscale = {
     services.tailscale.enable = true;
   };

@@ -8,39 +8,20 @@ in
     specialArgs = { inherit inputs; };
 
     modules = with inputs.self.modules.nixos; [
-      aspectsBase
+      default
+      server
 
       acme
-      boot-grub
-      disks-server
-      forgejo-runner
+      distributed-builder
       nginx
-      radicle-node
-      rust
-      sops
-      sudo-server
-      swapfile
-      s3
-      s3-upload
       website-radka
-      zellij
       { hardware.facter.reportPath = ./facter/kiwi.json; }
       {
         config = mkConfig inputs "kiwi" "x86_64-linux" {
-          networking = {
-            domain = "dr-radka.pl";
-            firewall.allowedTCPPorts = [
-              22
-              80
-              443
-            ];
-          };
+          networking.domain = "dr-radka.pl";
 
           systemInfo = {
-            distributedBuilder = {
-              enable = false;
-              speedFactor = 2;
-            };
+            distributedBuilder.speedFactor = 2;
 
             disks.swap.file = {
               path = "/swapfile";

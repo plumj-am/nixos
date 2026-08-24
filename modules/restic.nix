@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.default = self.modules.nixos.rustic;
   flake.modules.nixos.rustic =
     {
       config,

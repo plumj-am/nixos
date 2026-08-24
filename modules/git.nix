@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.common.default = self.modules.common.git;
   flake.modules.common.git =
     {
       pkgs,

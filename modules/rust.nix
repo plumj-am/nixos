@@ -1,3 +1,4 @@
+{ self, ... }:
 let
   fenixToolchain =
     inputs: pkgs:
@@ -48,7 +49,8 @@ let
     };
 in
 {
-  flake.modules.nixos.rust =
+  flake.modules.common.default = self.modules.nixos.rust;
+  flake.modules.common.rust =
     {
       inputs,
       pkgs,

@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.default = self.modules.nixos.networking;
   flake.modules.nixos.networking =
     { lib, ... }:
     let

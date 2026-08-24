@@ -1,3 +1,4 @@
+{ self, ... }:
 let
   domain = "plumj.am";
   fqdn = "rad.${domain}";
@@ -124,6 +125,7 @@ in
 
   flake.modules.darwin.radicle = radicleUserBase;
 
+  flake.modules.common.default = self.modules.common.radicle-node;
   flake.modules.common.radicle-node =
     {
       pkgs,

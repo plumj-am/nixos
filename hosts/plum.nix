@@ -8,15 +8,14 @@ in
     specialArgs = { inherit inputs; };
 
     modules = with inputs.self.modules.nixos; [
-      aspectsBase
+      default
+      server
 
       acme
-      boot-grub
       cinny
-      disks-server
+      distributed-builder
       forgejo
       freshrss-server
-      forgejo-runner
       gerrit
       goatcounter
       matrix
@@ -24,36 +23,17 @@ in
       opengist
       postgres
       radicle-explorer
-      radicle-node
-      rust
-      shed
-      sops
-      sudo-server
-      swapfile
-      s3
-      s3-upload
       uptime-kuma
       users-extra
       website-personal
-      zellij
       { hardware.facter.reportPath = ./facter/plum.json; }
       { disko.devices.disk.disk1.device = "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_102788287"; }
       {
         config = mkConfig inputs "plum" "x86_64-linux" {
-          networking = {
-            domain = "plumj.am";
-            firewall.allowedTCPPorts = [
-              22
-              80
-              443
-            ];
-          };
+          networking.domain = "plumj.am";
 
           systemInfo = {
-            distributedBuilder = {
-              enable = true;
-              speedFactor = 3;
-            };
+            distributedBuilder.speedFactor = 3;
 
             disks.swap.file = {
               path = "/swapfile";

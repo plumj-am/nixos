@@ -1,3 +1,4 @@
+{ self, ... }:
 let
   yubikeyCommon =
     { pkgs, ... }:
@@ -26,6 +27,7 @@ let
     };
 in
 {
+  flake.modules.nixos.default = self.modules.nixos.yubikey;
   flake.modules.nixos.yubikey =
     { pkgs, lib, ... }:
     let
@@ -36,5 +38,6 @@ in
       environment.systemPackages = singleton pkgs.yubioath-flutter;
     };
 
+  flake.modules.darwin.default = self.modules.darwin.yubikey;
   flake.modules.darwin.yubikey = yubikeyCommon;
 }

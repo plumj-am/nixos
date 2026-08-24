@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.darwin.default = self.modules.darwin.homebrew;
   flake.modules.darwin.homebrew =
     {
       inputs,

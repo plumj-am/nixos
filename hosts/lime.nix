@@ -8,20 +8,10 @@ in
     specialArgs = { inherit inputs; };
 
     modules = with inputs.self.modules.darwin; [
-      aspectsBase
+      default
 
-      app-launcher
-      editor-extra
-      opencode
-      peripherals
-      radicle
-      sops
-      # radicle-node
-      rio
-      rust-desktop
-      sudo-desktop
-      theme-extra-fonts
-      zellij
+      ai-agents
+      desktop
       {
         config = mkConfig inputs "lime" "aarch64-darwin" {
           system.stateVersion = 6;

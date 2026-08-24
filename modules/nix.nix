@@ -1,4 +1,9 @@
-{ inputs, lib, ... }:
+{
+  self,
+  inputs,
+  lib,
+  ...
+}:
 let
   inherit (lib.attrsets) filterAttrs mapAttrsToList;
   inherit (lib.trivial) const;
@@ -9,6 +14,8 @@ let
   registryMap = inputs |> filterAttrs (const <| isType "flake");
 in
 {
+
+  flake.modules.common.default = self.modules.common.nix;
   flake.modules.common.nix =
     {
       inputs,
@@ -111,6 +118,7 @@ in
       nix.optimise.automatic = true;
     };
 
+  flake.modules.nixos.default = self.modules.nixos.nix-extra;
   flake.modules.nixos.nix-extra = {
     nix.nixPath = (registryMap |> mapAttrsToList (name: value: "${name}=${value}")) ++ [
       "nixpkgs=${inputs.nixpkgs}"
@@ -142,6 +150,7 @@ in
     };
   };
 
+  flake.modules.darwin.default = self.modules.darwin.nix-extra;
   flake.modules.darwin.nix-extra =
     { lib, ... }:
     let

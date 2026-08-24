@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.default = self.modules.nixos.system-info;
   flake.modules.nixos.system-info =
     { lib, config, ... }:
     let
@@ -12,9 +14,9 @@
       inherit (lib.lists) elemAt;
       inherit (config.hardware.facter) report;
 
-      cpu = elemAt report.hardware.cpu 0;
-      inherit (cpu) cores;
-      threads = cpu.siblings;
+      cpu = if (report != { }) then elemAt report.hardware.cpu 0 else { };
+      cores = cpu.cores or 4;
+      threads = cpu.siblings or 4;
 
       gpu = elemAt report.hardware.graphics_card 0;
       gpuExists = gpu != [ ];

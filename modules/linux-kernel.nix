@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.default = self.modules.nixos.linux-kernel;
   flake.modules.nixos.linux-kernel = {
     security.lockKernelModules = true;
 

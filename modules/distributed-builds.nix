@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.default = self.modules.nixos.distributed-builds;
   flake.modules.nixos.distributed-builds =
     {
       inputs,
@@ -9,16 +11,26 @@
     let
       inherit (lib.attrsets) attrsToList;
       inherit (lib.lists) filter;
+      inherit (lib.options) mkOption;
+      inherit (lib.types) ints;
     in
     {
+      options.systemInfo.distributedBuilder = {
+        speedFactor = mkOption {
+          type = ints.between 1 10;
+          default = 1;
+          description = "Relative speed factor for distributed builds";
+        };
+      };
+
       config = {
         nix.distributedBuilds = true;
         nix.buildMachines =
           inputs.self.nixosConfigurations
           |> attrsToList
           |> filter (
-            { name, value }:
-            name != config.networking.hostName && value.config.systemInfo.distributedBuilder.enable
+            { name }:
+            name != config.networking.hostName
           )
           |> map (
             { name, value }:
@@ -49,24 +61,9 @@
     { config, lib, ... }:
     let
       inherit (lib.lists) singleton;
-      inherit (lib.options) mkOption;
-      inherit (lib.types) bool ints;
       inherit (config.flake) keys;
     in
     {
-      options.systemInfo.distributedBuilder = {
-        enable = mkOption {
-          type = bool;
-          default = false;
-          description = "Whether this host participates as a distributed Nix builder";
-        };
-        speedFactor = mkOption {
-          type = ints.between 1 10;
-          default = 1;
-          description = "Relative speed factor for distributed builds";
-        };
-
-      };
       config = {
         services.openssh.settings = {
           AllowUsers = singleton "build";

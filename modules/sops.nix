@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.default = self.modules.nixos.sops;
   flake.modules.nixos.sops =
     {
       inputs,
@@ -25,6 +27,7 @@
       };
     };
 
+  flake.modules.darwin.default = self.modules.darwin.sops;
   flake.modules.darwin.sops =
     {
       inputs,

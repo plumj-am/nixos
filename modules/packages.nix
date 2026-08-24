@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.common.default = self.modules.common.packages;
   flake.modules.common.packages =
     { pkgs, ... }:
     {
@@ -22,6 +24,7 @@
       ];
     };
 
+  flake.modules.nixos.default = self.modules.nixos.packages;
   flake.modules.nixos.packages =
     { pkgs, ... }:
     {

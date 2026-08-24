@@ -8,12 +8,10 @@ in
     specialArgs = { inherit inputs; };
 
     modules = with inputs.self.modules.nixos; [
-      aspectsBase
+      default
 
       sops
       sudo-desktop
-      s3
-      s3-upload
       wsl
       zellij
       {

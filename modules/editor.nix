@@ -1,3 +1,4 @@
+{ self, ... }:
 let
   denoJsTsLanguages = {
     JavaScript = "js";
@@ -16,6 +17,11 @@ let
   ];
 in
 {
+  flake.modules.common.default.imports = [
+    self.modules.common.disable-nano
+    self.modules.common.helix
+  ];
+
   flake.modules.common.disable-nano = {
     programs.nano.enable = false;
   };

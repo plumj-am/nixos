@@ -1,5 +1,7 @@
-let
-  commonModule =
+{ self, ... }:
+{
+  flake.modules.common.default = self.modules.common.keys;
+  flake.modules.common.keys =
     { lib, ... }:
     let
       inherit (lib.options) mkOption;
@@ -48,8 +50,4 @@ let
         all = attrValues keys;
       };
     };
-in
-{
-  flake.modules.nixos.keys = commonModule;
-  flake.modules.darwin.keys = commonModule;
 }

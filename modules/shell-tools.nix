@@ -1,5 +1,6 @@
 { self, ... }:
 {
+  flake.modules.common.default = self.modules.common.shell-tools;
   flake.modules.common.shell-tools =
     {
       inputs,

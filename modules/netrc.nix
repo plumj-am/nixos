@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.default = self.modules.nixos.netrc;
   flake.modules.nixos.netrc = {
     nix.settings.netrc-file = "/etc/.netrc";
 

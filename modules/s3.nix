@@ -1,4 +1,10 @@
+{ self, ... }:
 {
+  flake.modules.nixos.default.imports = [
+    self.modules.nixos.s3
+    self.modules.nixos.s3-upload
+  ];
+
   flake.modules.nixos.s3 =
     {
       pkgs,

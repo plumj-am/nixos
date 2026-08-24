@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.common.default = self.modules.common.shell;
   flake.modules.common.shell =
     {
       inputs,

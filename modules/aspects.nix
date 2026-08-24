@@ -1,62 +1,64 @@
 { inputs, ... }:
-let
-  commonModuleNames = [
-    "ai-options"
-    "documentation"
-    "git"
-    "env"
-    "helix"
-    "hjem"
-    "inputs-gcroot"
-    "jujutsu"
-    "keys"
-    "lib"
-    "nix"
-    "openssh"
-    "packages"
-    "rebuild"
-    "sops"
-    "shell"
-    "shell-tools"
-    "ssh"
-    "tailscale"
-    "theme"
-    "unfree"
-    "users"
+{
+  flake.modules.darwin.desktop.imports = with inputs.self.modules.darwin; [
+    editor-extra
+    peripherals
+    radicle
+    rio
+    rust-desktop
+    sudo-desktop
+    theme-extra-fonts
   ];
 
-  getCommon = modules: map (name: modules.${name}) commonModuleNames;
-in
-{
-  flake.modules.nixos.aspectsBase = {
-    imports =
-      getCommon inputs.self.modules.nixos
-      ++ (with inputs.self.modules.nixos; [
-        disable-nano
-        distributed-builds
-        distributed-builder
-        dynamic-binaries
-        harmonia
-        locale
-        linux-kernel
-        netrc
-        networking
-        nix-extra
-        packages
-        rebuild
-        rustic
-        system-info
-        yubikey
-      ]);
-  };
+  flake.modules.nixos.desktop.imports = with inputs.self.modules.nixos; [
+    audio
+    boot-optimise
+    boot-systemd
+    colour-picker
+    desktop-gui
+    discord
+    disks-normal
+    docker-rootless
+    editor-extra
+    emacs
+    file-manager
+    forgejo-cli
+    gammastep
+    graphics
+    hardware-desktop
+    haskell
+    helium
+    keepassxc
+    nextcloud-client
+    packages-gui
+    packages-cli
+    peripherals
+    pijul
+    process-management
+    quickshell
+    rio
+    rust-desktop
+    radicle
+    sudo-desktop
+    swap-partition
+    theme-extra-fonts
+    theme-extra-scripts
+    video-player
+    window-manager
+    zyouz
+  ];
 
-  flake.modules.darwin.aspectsBase = {
-    imports =
-      getCommon inputs.self.modules.darwin
-      ++ (with inputs.self.modules.darwin; [
-        fixes
-        homebrew
-        nix-extra
-      ]);
-  };
+  flake.modules.nixos.server.imports = with inputs.self.modules.nixos; [
+    boot-grub
+    disks-server
+    forgejo-runner
+    swapfile
+    sudo-server
+  ];
+
+  flake.modules.nixos.ai-agents.imports = with inputs.self.modules.nixos; [
+    commandcode
+    omp
+    opencode
+  ];
 }

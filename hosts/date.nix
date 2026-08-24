@@ -8,56 +8,19 @@ in
     specialArgs = { inherit inputs; };
 
     modules = with inputs.self.modules.nixos; [
-      aspectsBase
+      default
+      desktop
 
-      audio
-      boot-optimise
-      boot-systemd
+      ai-agents
       brave
-      colour-picker
-      desktop-gui
-      discord
-      disks-normal
-      docker-rootless
-      editor-extra
-      file-manager
+      distributed-builder
       forgejo-runner
-      forgejo-cli
-      games
-      gammastep
-      graphics
-      hardware-desktop
-      helium
-      keepassxc
-      mprocs
-      nextcloud-client
-      omp
-      opencode
-      packages-gui
-      packages-cli
-      peripherals
-      process-management
-      quickshell
-      rust-desktop
-      shed
-      sops
-      sudo-desktop
-      swap-partition
-      s3
-      s3-upload
-      theme-extra-fonts
-      theme-extra-scripts
-      video-player
-      window-manager
-      zellij
+
       { hardware.facter.reportPath = ./facter/date.json; }
       {
         config = mkConfig inputs "date" "x86_64-linux" {
           systemInfo = {
-            distributedBuilder = {
-              enable = true;
-              speedFactor = 4;
-            };
+            distributedBuilder.speedFactor = 4;
 
             disks.swap.partition = {
               path = "/dev/disk/by-label/swap";
