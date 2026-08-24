@@ -110,43 +110,36 @@ in
       nix.optimise.automatic = true;
     };
 
-  flake.modules.nixos.nix-extra =
-    { lib, config, ... }:
-    let
-      inherit (lib.trivial) floor;
-    in
-    {
-      nix.nixPath = (registryMap |> mapAttrsToList (name: value: "${name}=${value}")) ++ [
-        "nixpkgs=${inputs.nixpkgs}"
-      ];
+  flake.modules.nixos.nix-extra = {
+    nix.nixPath = (registryMap |> mapAttrsToList (name: value: "${name}=${value}")) ++ [
+      "nixpkgs=${inputs.nixpkgs}"
+    ];
 
-      nix.gc = {
-        dates = "weekly";
-        persistent = true;
+    nix.gc = {
+      dates = "weekly";
+      persistent = true;
+    };
+
+    nix.extraOptions = ''
+      min-free = 2G
+    '';
+
+    # OOM configuration for the nix-daemon.
+    systemd = {
+      slices."nix-daemon".sliceConfig = {
+        ManagedOOMMemoryPressure = "kill";
+        ManagedOOMMemoryPressureLimit = "50%";
       };
-
-      nix.extraOptions = ''
-        min-free = 2G
-      '';
-
-      # OOM configuration for the nix-daemon.
-      systemd = {
-        slices."nix-daemon".sliceConfig = {
-          ManagedOOMMemoryPressure = "kill";
-          ManagedOOMMemoryPressureLimit = "50%";
-        };
-        services."nix-daemon".serviceConfig = {
-          Slice = "nix-daemon.slice";
-          MemoryAccounting = true;
-          # Begin throttling memory usage.
-          MemoryHigh = "80%";
-          # Prefer killing nix-daemon child processes if OOM does occur.
-          OOMScoreAdjust = 1000;
-          # Limit CPU to 95% max.
-          CPUQuota = "${toString (floor <| config.systemInfo.threads * 95)}%";
-        };
+      services."nix-daemon".serviceConfig = {
+        Slice = "nix-daemon.slice";
+        MemoryAccounting = true;
+        # Begin throttling memory usage.
+        MemoryHigh = "80%";
+        # Prefer killing nix-daemon child processes if OOM does occur.
+        OOMScoreAdjust = 1000;
       };
     };
+  };
 
   flake.modules.darwin.nix-extra =
     { lib, ... }:
