@@ -208,12 +208,8 @@ in
   flake.mkConfig =
     inputs: host: platform: rest:
     let
-      lib = inputs.nixpkgs.lib;
+      inherit (inputs.nixpkgs) lib;
       inherit (lib) mkMerge;
-      inherit (lib.strings) hasSuffix;
-      inherit (lib.attrsets) optionalAttrs;
-
-      isLinux = hasSuffix "linux" platform;
     in
     mkMerge [
       {
@@ -235,14 +231,6 @@ in
           key = host;
         };
       }
-      (optionalAttrs isLinux {
-        unfree.allowedNames = [
-          "nvidia-x11"
-          "nvidia-settings"
-          "steam"
-          "steam-unwrapped"
-        ];
-      })
       rest
     ];
 

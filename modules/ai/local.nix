@@ -1,3 +1,17 @@
+{ lib, config, ... }:
+let
+  inherit (lib.trivial) warnIf;
+  inherit (config.systemInfo) gpu;
+
+  isGpu = gpu.exists;
+  isNvidiaGpu = gpu.vendor == "nVidia Corporation";
+
+  noGpuWarning =
+    program: config:
+    warnIf (
+      !isGpu
+    ) "${program}: no GPU detected or configured - CPU-only inference will be slow" config;
+in
 {
   flake.modules.nixos.llama-cpp =
     {
@@ -6,6 +20,7 @@
       ...
     }:
     let
+      inherit (lib.modules) mkIf;
       inherit (lib.attrsets) optionalAttrs;
 
       cpuMoeOffload = {
@@ -145,7 +160,7 @@
       );
     in
     {
-      unfree.allowedNames = [
+      unfree.allowedNames = mkIf isNvidiaGpu [
         "cuda_cccl"
         "cuda_cudart"
         "cuda_nvcc"
@@ -154,8 +169,8 @@
       ];
 
       services.llama-cpp = {
-        enable = true;
-        package = pkgs.llama-cpp.override { cudaSupport = true; };
+        enable = noGpuWarning "llama-cpp" true;
+        package = pkgs.llama-cpp.override { cudaSupport = mkIf isNvidiaGpu true; };
 
         settings = {
           host = "127.0.0.1";
@@ -186,8 +201,8 @@
       ];
 
       services.ollama = {
-        enable = true;
-        package = pkgs.ollama-cuda;
+        enable = noGpuWarning "ollama" true;
+        package = if isNvidiaGpu then pkgs.ollama-cuda else pkgs.ollama;
 
         port = 11434;
 
@@ -219,7 +234,7 @@
       unfree.allowedNames = singleton "lmstudio";
 
       hjemModule = { config, ... }: {
-        packages = singleton pkgs.lmstudio;
+        packages = noGpuWarning "lmstudio" <| singleton pkgs.lmstudio;
 
         files.".lmstudio/settings.json" = {
           generator = pkgs.writers.writeJSON "lmstudio-settings.json";

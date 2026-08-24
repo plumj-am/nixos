@@ -54,7 +54,6 @@ in
       {
         config = mkConfig inputs "date" "x86_64-linux" {
           systemInfo = {
-            cores = 12;
             distributedBuilder = {
               enable = true;
               speedFactor = 4;

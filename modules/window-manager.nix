@@ -8,16 +8,23 @@
       ...
     }:
     let
+      inherit (lib.modules) mkIf;
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
       inherit (lib') mkDesktopEntry;
       inherit (config) theme;
+      inherit (config.systemInfo) gpu;
 
       quickshell = getExe pkgs.quickshell;
       quickshellPath = "/home/jam/nixos/modules/quickshell/shell";
     in
     {
       shellAliases.ns = "niri-session";
+
+      unfree.allowedNames = mkIf (gpu.vendor == "nVidia Corporation") [
+        "nvidia-x11"
+        "nvidia-settings"
+      ];
 
       xdg.portal = {
         enable = true;

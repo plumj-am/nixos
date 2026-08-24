@@ -6,6 +6,9 @@
       inherit (lib.options) mkOption;
       inherit (lib.types) listOf str;
       inherit (lib.strings) getName;
+      inherit (lib.modules) mkIf;
+
+      inherit (config.systemInfo) gpu;
     in
     {
       options.unfree.allowedNames = mkOption {
@@ -19,6 +22,11 @@
       };
 
       config.nixpkgs.config.allowUnfreePredicate = pkg: elem (getName pkg) config.unfree.allowedNames;
+
+      config.unfree.allowedNames = mkIf (gpu.vendor == "nVidia Corporation") [
+        "nvidia-x11"
+        "nvidia-settings"
+      ];
     };
 
   flake.modules.darwin.unfree = {

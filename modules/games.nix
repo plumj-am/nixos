@@ -9,14 +9,22 @@
     }:
     let
       inherit (lib.lists) singleton;
-      inherit (lib.trivial) floor;
+      inherit (lib.trivial) floor warnIf;
 
       inherit (config.users.users.jam) home;
+      inherit (config.systemInfo) gpu;
+
+      isGpu = gpu.exists;
 
       threads = toString <| floor <| config.systemInfo.threads * 0.5;
     in
     {
       imports = singleton inputs.steam-config.nixosModules.default;
+
+      unfree.allowedNames = [
+        "steam"
+        "steam-unwrapped"
+      ];
 
       environment.sessionVariables = {
         PROTON_ENABLE_WAYLAND = "1";
@@ -39,7 +47,9 @@
         ];
 
         config = {
-          enable = true;
+          enable = warnIf (
+            !isGpu
+          ) "steam: no GPU detected or configured - GPU-accelerated gaming will be impossible" true;
 
           onSteamRunning = "wait";
           defaultCompatTool = "proton_experimental";

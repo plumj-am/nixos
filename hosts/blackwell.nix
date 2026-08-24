@@ -25,7 +25,6 @@ in
       {
         config = mkConfig inputs "blackwell" "x86_64-linux" {
           systemInfo = {
-            cores = 2;
             distributedBuilder = {
               enable = false;
               speedFactor = 1;

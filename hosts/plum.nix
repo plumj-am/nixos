@@ -50,7 +50,6 @@ in
           };
 
           systemInfo = {
-            cores = 4;
             distributedBuilder = {
               enable = true;
               speedFactor = 3;
