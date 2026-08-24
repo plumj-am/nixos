@@ -200,6 +200,7 @@
                 statusLine = {
                   preset = "compact";
                   separator = "pipe";
+                  transparent = true;
                 };
                 terminal.showImages = true;
                 display = {
