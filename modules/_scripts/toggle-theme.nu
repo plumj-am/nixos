@@ -46,16 +46,6 @@ def get-current-theme []: any -> record<mode: string, scheme: string> {
    }
 }
 
-def is-current [mode_or_scheme: string] {
-   let current = get-current-theme
-
-   if ($current.mode == $mode_or_scheme) or ($current.scheme == $mode_or_scheme) {
-      print "Current theme and scheme already matches the desired settings."
-
-      exit 0
-   }
-}
-
 def toggle-theme [theme: string]: any -> nothing {
    print $"Switching to ($theme) theme."
 
@@ -151,11 +141,7 @@ def main [] {
       reload  - Reload applications"
 }
 
-def "main dark" [
-   --force # Run the theme toggle even if current theme matches desired theme
-]: nothing -> nothing {
-   if not $force { is-current dark }
-
+def "main dark" []: nothing -> nothing {
    toggle-theme dark
 
    try { nu $REBUILD_SCRIPT } catch {|e|
@@ -167,11 +153,7 @@ def "main dark" [
    reload-applications "dark"
 }
 
-def "main light" [
-   --force # Run the theme toggle even if current theme matches desired theme
-]: nothing -> nothing {
-   if not $force { is-current light }
-
+def "main light" []: nothing -> nothing {
    toggle-theme light
 
    try { nu $REBUILD_SCRIPT } catch {|e|
@@ -183,11 +165,7 @@ def "main light" [
    reload-applications "light"
 }
 
-def "main gruvbox" [
-   --force # Run the theme toggle even if current theme matches desired theme
-]: nothing -> nothing {
-   if not $force { is-current gruvbox }
-
+def "main gruvbox" []: nothing -> nothing {
    switch-scheme gruvbox
 
    try { nu $REBUILD_SCRIPT } catch {|e|
@@ -199,11 +177,7 @@ def "main gruvbox" [
    reload-applications
 }
 
-def "main matugen" [
-   --force # Run the theme toggle even if current theme matches desired theme
-]: nothing -> nothing {
-   if not $force { is-current matugen }
-
+def "main matugen" []: nothing -> nothing {
    switch-scheme matugen
 
    try { nu $REBUILD_SCRIPT } catch {|e|
