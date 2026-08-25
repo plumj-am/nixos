@@ -3,7 +3,6 @@
     {
       pkgs,
       lib,
-      lib',
       config,
       ...
     }:
@@ -11,7 +10,6 @@
       inherit (lib.modules) mkIf;
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
-      inherit (lib') mkDesktopEntry;
       inherit (config) theme;
       inherit (config.systemInfo) gpu;
 
@@ -61,13 +59,17 @@
         pkgs.xwayland-satellite
         pkgs.xdg-utils
 
-        (mkDesktopEntry {
+        (pkgs.makeDesktopItem {
+          desktopName = "Screenshot";
           name = "Screenshot";
           exec = "niri msg action screenshot";
+          terminal = false;
         })
-        (mkDesktopEntry {
+        (pkgs.makeDesktopItem {
+          desktopName = "Screenshot Window";
           name = "Screenshot-Window";
           exec = "niri msg action screenshot-window --write-to-disk";
+          terminal = false;
         })
       ];
 

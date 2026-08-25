@@ -10,7 +10,7 @@
     let
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
-      inherit (config.myLib) mkRusticBackup;
+      inherit (config.impureLib) mkRusticBackup;
       inherit (config.sops) secrets;
       inherit (config.ai.subs.commandcode) active;
 

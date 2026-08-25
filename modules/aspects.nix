@@ -1,6 +1,6 @@
-{ inputs, ... }:
+{ self, ... }:
 {
-  flake.modules.darwin.desktop.imports = with inputs.self.modules.darwin; [
+  flake.modules.darwin.desktop.imports = with self.modules.darwin; [
     editor-extra
     peripherals
     radicle
@@ -10,7 +10,7 @@
     theme-extra-fonts
   ];
 
-  flake.modules.nixos.desktop.imports = with inputs.self.modules.nixos; [
+  flake.modules.nixos.desktop.imports = with self.modules.nixos; [
     audio
     boot-optimise
     boot-systemd
@@ -48,7 +48,7 @@
     zyouz
   ];
 
-  flake.modules.nixos.server.imports = with inputs.self.modules.nixos; [
+  flake.modules.nixos.server.imports = with self.modules.nixos; [
     boot-grub
     disks-server
     forgejo-runner
@@ -56,9 +56,14 @@
     sudo-server
   ];
 
-  flake.modules.nixos.ai-agents.imports = with inputs.self.modules.nixos; [
+  flake.modules.nixos.ai-agents.imports = with self.modules.nixos; [
     commandcode
     omp
     opencode
+  ];
+
+  flake.modules.nixos.web-server.imports = with self.modules.nixos; [
+    acme
+    nginx
   ];
 }

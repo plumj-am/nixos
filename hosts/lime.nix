@@ -1,22 +1,32 @@
-{ inputs, ... }:
+{ self, lib, ... }:
 let
-  inherit (inputs.self) mkConfig;
+  inherit (lib.lists) singleton;
 in
 {
   # Lime | Macbook | x86_64-linux | nix-darwin
-  flake.darwinConfigurations.lime = inputs.nix-darwin.lib.darwinSystem {
-    specialArgs = { inherit inputs; };
+  imports =
+    singleton
+    <| lib.systems.darwinSystem "lime" {
+      imports = with self.modules.darwin; [
+        desktop
 
-    modules = with inputs.self.modules.darwin; [
-      default
+        ai-agents
+      ];
 
-      ai-agents
-      desktop
-      {
-        config = mkConfig inputs "lime" "aarch64-darwin" {
-          system.stateVersion = 6;
+      sops.secrets = {
+        password = {
+          sopsFile = ../secrets/lime/password.yaml;
+          neededForUsers = true;
         };
-      }
-    ];
-  };
+        id.sopsFile = ../secrets/lime/id.yaml;
+
+        nix-store-key = {
+          sopsFile = ../secrets/all/nix-store-keys.yaml;
+          key = "lime";
+        };
+      };
+
+      nixpkgs.hostPlatform = "aarch64-darwin";
+      system.stateVersion = 6;
+    };
 }

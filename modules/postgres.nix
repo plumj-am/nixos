@@ -3,14 +3,13 @@
     {
       config,
       lib,
-      lib',
       pkgs,
       ...
     }:
     let
       inherit (lib.modules) mkForce mkOverride;
       inherit (lib.trivial) flip;
-      inherit (lib') mkValue;
+      inherit (lib.options) mkValue;
       inherit (config.networking) hostName;
     in
     {

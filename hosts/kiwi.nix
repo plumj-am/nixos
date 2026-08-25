@@ -1,37 +1,44 @@
-{ inputs, ... }:
+{ self, lib, ... }:
 let
-  inherit (inputs.self) mkConfig;
+  inherit (lib.lists) singleton;
 in
 {
   # Kiwi | server | x86_64-linux | NixOS
-  flake.nixosConfigurations.kiwi = inputs.nixpkgs.lib.nixosSystem {
-    specialArgs = { inherit inputs; };
+  imports =
+    singleton
+    <| lib.systems.nixosSystem "kiwi" {
+      imports = with self.modules.nixos; [
+        server
+        web-server
 
-    modules = with inputs.self.modules.nixos; [
-      default
-      server
+        website-radka
+      ];
 
-      acme
-      distributed-builder
-      nginx
-      website-radka
-      { hardware.facter.reportPath = ./facter/kiwi.json; }
-      {
-        config = mkConfig inputs "kiwi" "x86_64-linux" {
-          networking.domain = "dr-radka.pl";
+      networking.domain = "dr-radka.pl";
 
-          systemInfo = {
-            distributedBuilder.speedFactor = 2;
-
-            disks.swap.file = {
-              path = "/swapfile";
-              size = 1024 * 2;
-            };
-          };
-
-          system.stateVersion = "26.05";
+      systemInfo = {
+        disks.swap.file = {
+          path = "/swapfile";
+          size = 1024 * 2;
         };
-      }
-    ];
-  };
+      };
+
+      sops.secrets = {
+        password = {
+          sopsFile = ../secrets/kiwi/password.yaml;
+          neededForUsers = true;
+        };
+        id.sopsFile = ../secrets/kiwi/id.yaml;
+
+        nix-store-key = {
+          sopsFile = ../secrets/all/nix-store-keys.yaml;
+          key = "kiwi";
+        };
+
+      };
+
+      hardware.facter.reportPath = ./facter/kiwi.json;
+      nixpkgs.hostPlatform = "x86_64-linux";
+      system.stateVersion = "26.05";
+    };
 }

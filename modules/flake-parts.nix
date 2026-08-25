@@ -5,6 +5,7 @@
   ...
 }:
 let
+  inherit (lib.lists) singleton;
   inherit (lib.attrsets) mapAttrs;
   inherit (lib.options) mkOption;
   inherit (lib.types) lazyAttrsOf deferredModule;
@@ -22,21 +23,26 @@ let
       {
         _class = class;
         _file = "${toString moduleLocation}#modules.${escapeNixIdentifier class}.${escapeNixIdentifier moduleName}";
-        imports = [ module ];
+        imports = singleton module;
       };
 in
 {
-  imports = [
-    # NOTE: We do NOT import inputs.parts.flakeModules.modules.
-    # We define flake.modules ourselves with support for a classless "common"
-    # namespace, plus auto-merge into nixos and darwin.
-    {
-      perSystem =
-        { inputs', ... }:
-        {
-          _module.args.pkgs = inputs'.nixpkgs.legacyPackages;
-        };
-    }
+  imports =
+    singleton
+      # NOTE: We do NOT import inputs.parts.flakeModules.modules.
+      # We define flake.modules ourselves with support for a classless "common"
+      # namespace, plus auto-merge into nixos and darwin.
+      {
+        perSystem =
+          { inputs', ... }:
+          {
+            _module.args.pkgs = inputs'.nixpkgs.legacyPackages;
+          };
+      };
+
+  systems = [
+    "x86_64-linux"
+    "aarch64-darwin"
   ];
 
   options.flake.modules = mkOption {

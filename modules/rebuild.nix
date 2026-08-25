@@ -4,30 +4,27 @@
   flake.modules.common.rebuild =
     {
       pkgs,
-      lib',
       ...
     }:
-    let
-      inherit (lib') mkDesktopEntry;
-    in
     {
       environment.systemPackages = [
         pkgs.nh
       ];
 
       hjem.extraModule =
-        { config, ... }:
+        { lib, config, ... }:
+        let
+          inherit (lib.lists) singleton;
+        in
         {
-          packages = [
-            (mkDesktopEntry {
+          packages =
+            singleton
+            <| pkgs.makeDesktopItem {
+              desktopName = "Rebuild";
               name = "Rebuild";
               exec = "${config.directory}/nixos/rebuild.nu";
-            })
-            (mkDesktopEntry {
-              name = "Rebuild-hs";
-              exec = "rebuild-hs --local";
-            })
-          ];
+              terminal = false;
+            };
         };
     };
 }

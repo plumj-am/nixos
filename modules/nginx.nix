@@ -2,13 +2,12 @@
   flake.modules.nixos.nginx =
     {
       lib,
-      lib',
       config,
       ...
     }:
     let
-      inherit (lib) mkForce;
-      inherit (lib') mkConst;
+      inherit (lib.modules) mkForce;
+      inherit (lib.options) mkConst;
       inherit (config.networking) domain;
     in
     {

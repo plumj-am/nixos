@@ -3,14 +3,12 @@
     {
       pkgs,
       lib,
-      lib',
       config,
       ...
     }:
     let
       inherit (lib.meta) getExe;
       inherit (lib.lists) singleton;
-      inherit (lib') mkDesktopEntry;
       inherit (config) theme;
 
       rioThemes = pkgs.fetchFromGitHub {
@@ -25,9 +23,11 @@
         packages = [
           pkgs.rio
 
-          (mkDesktopEntry {
+          (pkgs.makeDesktopItem {
+            desktopName = "Zellij Rio";
             name = "Zellij-Rio";
             exec = "rio --command zellij";
+            terminal = false;
           })
         ];
 

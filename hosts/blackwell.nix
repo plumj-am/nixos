@@ -1,31 +1,46 @@
-{ inputs, ... }:
+{
+  self,
+  lib,
+  ...
+}:
 let
-  inherit (inputs.self) mkConfig;
+  inherit (lib.lists) singleton;
 in
 {
   # Blackwell | server | x86_64-linux | NixOS
-  flake.nixosConfigurations.blackwell = inputs.nixpkgs.lib.nixosSystem {
-    specialArgs = { inherit inputs; };
+  imports =
+    singleton
+    <| lib.systems.nixosSystem "blackwell" {
+      imports = with self.modules.nixos; [
+        server
 
-    modules = with inputs.self.modules.nixos; [
-      default
-      server
+        distributed-builder
+      ];
 
-      distributed-builder
-      {
-        config = mkConfig inputs "blackwell" "x86_64-linux" {
-          systemInfo = {
-            distributedBuilder.speedFactor = 1;
+      systemInfo = {
+        distributedBuilder.speedFactor = 1;
 
-            disks.swap.file = {
-              path = "/swapfile";
-              size = 1024 * 2;
-            };
-          };
-
-          system.stateVersion = "26.05";
+        disks.swap.file = {
+          path = "/swapfile";
+          size = 1024 * 2;
         };
-      }
-    ];
-  };
+      };
+
+      sops.secrets = {
+        password = {
+          sopsFile = ../secrets/blackwell/password.yaml;
+          neededForUsers = true;
+        };
+        id.sopsFile = ../secrets/blackwell/id.yaml;
+
+        nix-store-key = {
+          sopsFile = ../secrets/all/nix-store-keys.yaml;
+          key = "blackwell";
+        };
+      };
+
+      # hardware.facter.reportPath = ./facter/blackwell.json;
+      nixpkgs.hostPlatform = "x86_64-linux";
+      system.stateVersion = "26.05";
+    };
 }

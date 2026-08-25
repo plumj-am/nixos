@@ -4,14 +4,12 @@
       inputs,
       pkgs,
       lib,
-      lib',
       ...
     }:
     let
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
-      inherit (lib') zon;
-      inherit (lib'.generators) toZON;
+      inherit (lib.generators) toZON zon;
 
       # zyouz flake uses pkgs.zig.hook (Zig 0.16) but source targets 0.15.x.
       # build.zig.zon uses enum syntax (0.15+) and std.heap.GeneralPurposeAllocator

@@ -4,16 +4,14 @@
       inputs,
       pkgs,
       lib,
-      lib',
       config,
       ...
     }:
     let
-      inherit (lib.modules) mkForce mkIf;
+      inherit (lib.modules) mkForce mkIf merge;
       inherit (lib.lists) singleton elem;
       inherit (lib.attrsets) mapAttrsToList;
-      inherit (lib') merge;
-      inherit (config.myLib) mkRusticBackup;
+      inherit (config.impureLib) mkRusticBackup;
       inherit (config.networking) domain;
       inherit (config.sops) secrets;
 

@@ -130,13 +130,12 @@ in
     {
       pkgs,
       lib,
-      lib',
       config,
       ...
     }:
     let
       inherit (lib.lists) singleton optional;
-      inherit (lib') merge;
+      inherit (lib.modules) merge;
       inherit (config.networking) hostName;
     in
     {
@@ -211,12 +210,11 @@ in
     {
       pkgs,
       lib,
-      lib',
       config,
       ...
     }:
     let
-      inherit (lib') merge;
+      inherit (lib.modules) merge;
 
       toJSON = lib.generators.toJSON { };
 

@@ -3,15 +3,13 @@
     {
       pkgs,
       lib,
-      lib',
       config,
       ...
     }:
     let
       inherit (lib.lists) singleton;
-      inherit (lib.modules) mkForce;
-      inherit (lib') merge;
-      inherit (config.myLib) mkRusticBackup;
+      inherit (lib.modules) mkForce merge;
+      inherit (config.impureLib) mkRusticBackup;
       inherit (config.networking) domain hostName;
 
       fqdn = "git.${domain}";

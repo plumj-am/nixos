@@ -3,20 +3,20 @@
     {
       pkgs,
       lib,
-      lib',
       ...
     }:
     let
       inherit (lib.meta) getExe;
-      inherit (lib') mkDesktopEntry;
     in
     {
       environment.systemPackages = [
         pkgs.eyedropper
 
-        (mkDesktopEntry {
+        (pkgs.makeDesktopItem {
+          desktopName = "Colour Picker";
           name = "Colour-Picker";
           exec = getExe pkgs.eyedropper;
+          terminal = false;
         })
       ];
     };

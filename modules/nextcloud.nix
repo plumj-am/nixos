@@ -3,14 +3,13 @@
     {
       pkgs,
       lib,
-      lib',
       config,
       ...
     }:
     let
       inherit (lib.lists) singleton;
-      inherit (lib') merge;
-      inherit (config.myLib) mkRusticBackup;
+      inherit (lib.modules) merge;
+      inherit (config.impureLib) mkRusticBackup;
       inherit (config.networking) domain hostName;
       inherit (config.sops) secrets;
 

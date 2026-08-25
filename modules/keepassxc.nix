@@ -44,7 +44,7 @@ in
       inherit (lib.attrsets) genAttrs;
       inherit (lib.lists) singleton;
       inherit (lib.generators) toINI;
-      inherit (config.myLib) mkRusticBackup;
+      inherit (config.impureLib) mkRusticBackup;
     in
     {
       services.rustic.backups.keepassxc = mkRusticBackup "keepassxc" {

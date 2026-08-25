@@ -3,13 +3,12 @@
     {
       pkgs,
       lib,
-      lib',
       config,
       ...
     }:
     let
       inherit (lib.lists) singleton;
-      inherit (lib') merge;
+      inherit (lib.modules) merge;
       inherit (config.networking) domain;
       inherit (config.sops) secrets;
 

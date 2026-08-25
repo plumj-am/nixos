@@ -1,5 +1,6 @@
 { self, ... }:
 {
+  # TODO: move to ../services/rustic.nix
   flake.modules.nixos.default = self.modules.nixos.rustic;
   flake.modules.nixos.rustic =
     {
@@ -125,7 +126,7 @@
           message = "services.rustic.backups.${name} has nothing to do (no paths, pruneOpts, or checkOpts).";
         }) config.services.rustic.backups;
 
-        myLib.mkRusticBackup =
+        impureLib.mkRusticBackup =
           name: rest:
           {
             package = pkgs.rustic;

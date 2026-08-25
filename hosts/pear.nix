@@ -1,24 +1,34 @@
-{ inputs, ... }:
+{ self, lib, ... }:
 let
-  inherit (inputs.self) mkConfig;
+  inherit (lib.lists) singleton;
 in
 {
   # Pear | WSL | x86_64-linux | NixOS-WSL
-  flake.nixosConfigurations.pear = inputs.nixpkgs.lib.nixosSystem {
-    specialArgs = { inherit inputs; };
+  imports =
+    singleton
+    <| lib.systems.nixosSystem "pear" {
+      imports = with self.modules.nixos; [
+        sops
+        sudo-desktop
+        wsl
+        zellij
+      ];
 
-    modules = with inputs.self.modules.nixos; [
-      default
-
-      sops
-      sudo-desktop
-      wsl
-      zellij
-      {
-        config = mkConfig inputs "pear" "x86_64-linux" {
-          system.stateVersion = "26.05";
+      sops.secrets = {
+        password = {
+          sopsFile = ../secrets/pear/password.yaml;
+          neededForUsers = true;
         };
-      }
-    ];
-  };
+        id.sopsFile = ../secrets/pear/id.yaml;
+
+        nix-store-key = {
+          sopsFile = ../secrets/all/nix-store-keys.yaml;
+          key = "pear";
+        };
+      };
+
+      # hardware.facter.reportPath = ./facter/pear.json;
+      nixpkgs.hostPlatform = "x86_64-linux";
+      system.stateVersion = "26.05";
+    };
 }

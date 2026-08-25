@@ -3,8 +3,6 @@
   flake.modules.nixos.default = self.modules.nixos.distributed-builds;
   flake.modules.nixos.distributed-builds =
     {
-      inputs,
-      config,
       lib,
       ...
     }:
@@ -12,25 +10,25 @@
       inherit (lib.attrsets) attrsToList;
       inherit (lib.lists) filter;
       inherit (lib.options) mkOption;
-      inherit (lib.types) ints;
+      inherit (lib.types) ints nullOr;
     in
     {
-      options.systemInfo.distributedBuilder = {
-        speedFactor = mkOption {
-          type = ints.between 1 10;
-          default = 1;
-          description = "Relative speed factor for distributed builds";
-        };
+      options.systemInfo.distributedBuilder.speedFactor = mkOption {
+        type = nullOr <| ints.between 1 10;
+        default = null;
+        description = "Relative speed factor for distributed builds";
       };
 
       config = {
         nix.distributedBuilds = true;
         nix.buildMachines =
-          inputs.self.nixosConfigurations
+          self.nixosConfigurations
           |> attrsToList
           |> filter (
-            { name }:
-            name != config.networking.hostName
+            # deadnix: skip
+            { name, value }:
+            name != value.config.networking.hostName
+            && value.config.systemInfo.distributedBuilder.speedFactor != null
           )
           |> map (
             { name, value }:

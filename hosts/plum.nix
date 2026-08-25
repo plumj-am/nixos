@@ -1,49 +1,58 @@
-{ inputs, ... }:
+{ self, lib, ... }:
 let
-  inherit (inputs.self) mkConfig;
+  inherit (lib.lists) singleton;
 in
 {
   # Plum | server | x86_64-linux | NixOS
-  flake.nixosConfigurations.plum = inputs.nixpkgs.lib.nixosSystem {
-    specialArgs = { inherit inputs; };
+  imports =
+    singleton
+    <| lib.systems.nixosSystem "plum" {
+      imports = with self.modules.nixos; [
+        server
+        web-server
 
-    modules = with inputs.self.modules.nixos; [
-      default
-      server
+        cinny
+        distributed-builder
+        forgejo
+        freshrss-server
+        gerrit
+        goatcounter
+        matrix
+        opengist
+        postgres
+        radicle-explorer
+        uptime-kuma
+        users-extra
+        website-personal
+      ];
 
-      acme
-      cinny
-      distributed-builder
-      forgejo
-      freshrss-server
-      gerrit
-      goatcounter
-      matrix
-      nginx
-      opengist
-      postgres
-      radicle-explorer
-      uptime-kuma
-      users-extra
-      website-personal
-      { hardware.facter.reportPath = ./facter/plum.json; }
-      { disko.devices.disk.disk1.device = "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_102788287"; }
-      {
-        config = mkConfig inputs "plum" "x86_64-linux" {
-          networking.domain = "plumj.am";
+      networking.domain = "plumj.am";
 
-          systemInfo = {
-            distributedBuilder.speedFactor = 3;
+      systemInfo = {
+        distributedBuilder.speedFactor = 3;
 
-            disks.swap.file = {
-              path = "/swapfile";
-              size = 1024 * 8;
-            };
-          };
-
-          system.stateVersion = "26.05";
+        disks.swap.file = {
+          path = "/swapfile";
+          size = 1024 * 8;
         };
-      }
-    ];
-  };
+      };
+      disko.devices.disk.disk1.device = "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_102788287";
+
+      sops.secrets = {
+        password = {
+          sopsFile = ../secrets/plum/password.yaml;
+          neededForUsers = true;
+        };
+        id.sopsFile = ../secrets/plum/id.yaml;
+
+        nix-store-key = {
+          sopsFile = ../secrets/all/nix-store-keys.yaml;
+          key = "plum";
+        };
+      };
+
+      hardware.facter.reportPath = ./facter/plum.json;
+      nixpkgs.hostPlatform = "x86_64-linux";
+      system.stateVersion = "26.05";
+    };
 }
