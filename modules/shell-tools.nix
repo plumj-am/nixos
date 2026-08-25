@@ -77,4 +77,53 @@
         }";
       };
     };
+
+  flake.modules.nixos.shell-tools =
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
+    let
+      inherit (lib.attrsets) filterAttrs mapAttrsToList;
+      inherit (lib.meta) getExe;
+      inherit (lib.strings) toJSON;
+    in
+    {
+      system.activationScripts.text = "${pkgs.writers.writeNu "bat-cache.nu" # nu
+        ''
+          print "refreshing bat cache..."
+
+          let users = r###'${
+            config.users.users
+            |> filterAttrs (_: user: user.isNormalUser)
+            |> mapAttrsToList (name: _: name)
+            |> toJSON
+          }'### | from json
+
+          for user in $users {
+            ^${pkgs.util-linux}/bin/runuser --user $user -- ${getExe pkgs.bat} cache --build
+          }
+        ''
+      }
+      ";
+    };
+
+  flake.modules.darwin.shell-tools =
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
+    let
+      inherit (lib.meta) getExe;
+    in
+    {
+      system.activationScripts.postActivation.text = "${pkgs.writers.writeNu "bat-cache.nu" /* nu */ ''
+        print "refreshing bat cache..."
+        ^/usr/bin/sudo --set-home --user r###'${config.system.primaryUser}'### -- ${getExe pkgs.bat} cache --build
+      ''}";
+    };
 }
