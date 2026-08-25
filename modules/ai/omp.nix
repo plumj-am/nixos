@@ -14,101 +14,6 @@
       inherit (config.ai.subs.commandcode) active;
 
       activeSub = "commandcode-${toString active}";
-
-      mkCommandCodeProvider = name: {
-        ${name} = {
-          baseUrl = "https://api.commandcode.ai/provider/v1";
-          apiKey = "!cat ${secrets."${name}-key".path}";
-          api = "openai-completions";
-          models = [
-            {
-              # high | xhigh
-              id = "deepseek/deepseek-v4-flash";
-              name = "DeepSeek V4 Flash";
-              reasoning = true;
-              thinking = {
-                minLevel = "high";
-                maxLevel = "xhigh";
-                mode = "effort";
-              };
-              input = singleton "text";
-              contextWindow = 1000000;
-              maxTokens = 384000;
-              compat = {
-                supportsDeveloperRole = false;
-                supportsReasoningEffort = true;
-                maxTokensField = "max_tokens";
-                reasoningEffortMap = {
-                  low = "high"; # lowest available for V4 models
-                  high = "high";
-                  xhigh = "max";
-                };
-                supportsToolChoice = false;
-                requiresReasoningContentForToolCalls = true;
-                requiresAssistantContentForToolCalls = true;
-                extraBody.thinking.type = "enabled";
-              };
-            }
-            {
-              # TODO: limited input, wait until full release with full context
-              # minimal | low | medium | high | xhigh
-              id = "poolside/laguna-s-2.1-free";
-              name = "Poolside Laguna S 2.1";
-              reasoning = true;
-              contextWindow = 256000;
-              maxTokens = 131072;
-            }
-            {
-              # minimal | low | medium | high | xhigh
-              id = "meta/muse-spark-1.2-contributor";
-              name = "Meta Muse Spark 1.2";
-              reasoning = true;
-              thinking = {
-                minLevel = "minimal";
-                maxLevel = "xhigh";
-                mode = "effort";
-              };
-              input = [
-                "text"
-                "image"
-              ];
-              cost = {
-                input = 0.1;
-                output = 0.2;
-                cacheRead = 0.002;
-                cacheWrite = 0;
-              };
-              contextWindow = 1048576;
-              maxTokens = 131072;
-              compat = {
-                supportsReasoningEffort = true;
-                supportsToolChoice = false;
-              };
-            }
-            {
-              # minimal | low | medium | high
-              id = "stealth/ox-alpha";
-              name = "Ox Alpha";
-              reasoning = true;
-              input = [
-                "text"
-              ];
-              cost = {
-                input = 0;
-                output = 0;
-                cacheRead = 0;
-                cacheWrite = 0;
-              };
-              contextWindow = 1048576;
-              maxTokens = 131072;
-              compat = {
-                supportsReasoningEffort = false;
-                supportsToolChoice = false;
-              };
-            }
-          ];
-        };
-      };
     in
     {
       ai.secrets = true;
@@ -130,7 +35,107 @@
           ".omp/agent/models.yml" = {
             generator = pkgs.writers.writeYAML "omp-agent-models.yml";
             value = {
-              providers = mkCommandCodeProvider activeSub // {
+              providers = {
+                ${activeSub} = {
+                  baseUrl = "https://api.commandcode.ai/provider/v1";
+                  apiKey = "!cat ${secrets."${activeSub}-key".path}";
+                  api = "openai-completions";
+                  models = [
+                    {
+                      # high | xhigh
+                      id = "deepseek/deepseek-v4-flash";
+                      name = "DeepSeek V4 Flash";
+                      reasoning = true;
+                      thinking = {
+                        minLevel = "high";
+                        maxLevel = "xhigh";
+                        mode = "effort";
+                      };
+                      input = singleton "text";
+                      contextWindow = 1000000;
+                      maxTokens = 384000;
+                      compat = {
+                        supportsDeveloperRole = false;
+                        supportsReasoningEffort = true;
+                        maxTokensField = "max_tokens";
+                        reasoningEffortMap = {
+                          low = "high"; # lowest available for V4 models
+                          high = "high";
+                          xhigh = "max";
+                        };
+                        supportsToolChoice = false;
+                        requiresReasoningContentForToolCalls = true;
+                        requiresAssistantContentForToolCalls = true;
+                        extraBody.thinking.type = "enabled";
+                      };
+                    }
+                    {
+                      # TODO: limited input, wait until full release with full context
+                      # minimal | low | medium | high | xhigh
+                      id = "poolside/laguna-s-2.1-free";
+                      name = "Poolside Laguna S 2.1";
+                      reasoning = true;
+                      contextWindow = 256000;
+                      maxTokens = 131072;
+                    }
+                    {
+                      # minimal | low | medium | high | xhigh
+                      id = "meta/muse-spark-1.2-contributor";
+                      name = "Meta Muse Spark 1.2";
+                      reasoning = true;
+                      thinking = {
+                        minLevel = "minimal";
+                        maxLevel = "xhigh";
+                        mode = "effort";
+                      };
+                      input = [
+                        "text"
+                        "image"
+                      ];
+                      cost = {
+                        input = 0.1;
+                        output = 0.2;
+                        cacheRead = 0.002;
+                        cacheWrite = 0;
+                      };
+                      contextWindow = 1048576;
+                      maxTokens = 131072;
+                      compat = {
+                        supportsReasoningEffort = true;
+                        supportsToolChoice = false;
+                      };
+                    }
+                    {
+                      # minimal | low | medium | high
+                      id = "stealth/ox-alpha";
+                      name = "Ox Alpha";
+                      reasoning = true;
+                      input = [
+                        "text"
+                      ];
+                      cost = {
+                        input = 0;
+                        output = 0;
+                        cacheRead = 0;
+                        cacheWrite = 0;
+                      };
+                      contextWindow = 1048576;
+                      maxTokens = 131072;
+                      compat = {
+                        supportsReasoningEffort = false;
+                        supportsToolChoice = false;
+                      };
+                    }
+                  ];
+                };
+
+                "llama.cpp" = {
+                  baseUrl = "http://127.0.0.1:11435";
+                  api = "openai-completions";
+                  auth = "none";
+                  discovery.type = "llama.cpp";
+                };
+
                 nvidia.apiKey = "!cat ${secrets.nvidia-nim-key.path}";
 
                 # Static defs so these resolve at launch before the remote
@@ -433,7 +438,7 @@
 
         systemd.services.omp-install-plugins-skills = {
           description = "automatic plugin and skill install for oh-my-pi";
-          after = singleton "hjem.target";
+          after = singleton "nixos-rebuild-switch-to-configuration.target";
           wantedBy = singleton "default.target";
           serviceConfig = {
             Type = "oneshot";
