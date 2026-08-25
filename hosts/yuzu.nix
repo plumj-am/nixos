@@ -12,9 +12,7 @@ in
 
         ai-agents
         games
-        # llama-cpp
-        # lmstudio
-        # ollama
+        llama-cpp
       ];
 
       systemInfo = {
