@@ -9,7 +9,7 @@
     let
       inherit (lib.lists) singleton;
       inherit (lib.modules) mkForce merge;
-      inherit (config.impureLib) mkRusticBackup;
+      inherit (config.helpers) rustic;
       inherit (config.networking) domain hostName;
 
       fqdn = "git.${domain}";
@@ -44,7 +44,7 @@
         ];
       };
 
-      services.rustic.backups.forgejo = mkRusticBackup "forgejo" {
+      services.rustic.backups.forgejo = rustic.mkBackup "forgejo" {
         paths = singleton "/var/lib/forgejo";
         timerConfig = {
           OnCalendar = "hourly";

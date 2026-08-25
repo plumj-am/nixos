@@ -11,7 +11,7 @@
       inherit (lib.modules) mkForce mkIf merge;
       inherit (lib.lists) singleton elem;
       inherit (lib.attrsets) mapAttrsToList;
-      inherit (config.impureLib) mkRusticBackup;
+      inherit (config.helpers) rustic;
       inherit (config.networking) domain;
       inherit (config.sops) secrets;
 
@@ -138,7 +138,7 @@
         "gerrit-autosubmit/environment".sopsFile = ../secrets/services/gerrit.yaml;
       };
 
-      services.rustic.backups.gerrit = mkRusticBackup "gerrit" {
+      services.rustic.backups.gerrit = rustic.mkBackup "gerrit" {
         paths = singleton stateDir;
         exclude = singleton "${stateDir}/tmp";
         timerConfig = {

@@ -40,10 +40,10 @@ in
           };
       };
 
-  systems = [
-    "x86_64-linux"
-    "aarch64-darwin"
-  ];
+  # systems = [
+  #   "x86_64-linux"
+  #   "aarch64-darwin"
+  # ];
 
   options.flake.modules = mkOption {
     type = lazyAttrsOf <| lazyAttrsOf deferredModule;

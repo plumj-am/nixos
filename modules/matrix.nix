@@ -3,7 +3,7 @@
     { lib, config, ... }:
     let
       inherit (lib.modules) merge;
-      inherit (config.impureLib) mkRusticBackup;
+      inherit (config.helpers) rustic;
       inherit (config.networking) domain;
       inherit (config.sops) secrets;
 
@@ -26,7 +26,7 @@
         };
       };
 
-      services.rustic.backups.matrix = mkRusticBackup "matrix" {
+      services.rustic.backups.matrix = rustic.mkBackup "matrix" {
         paths = [ "/var/lib/matrix-synapse" ];
         timerConfig = {
           OnCalendar = "hourly";

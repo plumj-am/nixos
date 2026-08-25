@@ -10,7 +10,7 @@
     let
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
-      inherit (config.impureLib) mkRusticBackup;
+      inherit (config.helpers) rustic;
       inherit (config.sops) secrets;
       inherit (config.ai.subs.commandcode) active;
 
@@ -112,7 +112,7 @@
         inputs.hermes-webui.nixosModules.default
       ];
 
-      services.rustic.backups.hermes = mkRusticBackup "hermes" {
+      services.rustic.backups.hermes = rustic.mkBackup "hermes" {
         paths = singleton cfg.stateDir;
         exclude = [
           "${cfg.stateDir}/workspace/*/target"
