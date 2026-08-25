@@ -316,10 +316,9 @@
                 Mod+Ctrl+R hotkey-overlay-title="Soft reload Quickshell" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call shell reload"; }
                 Mod+Ctrl+Shift+R hotkey-overlay-title="Hard reload Quickshell" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call shell reloadHard"; }
                 Ctrl+Backspace hotkey-overlay-title="Open launcher" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call launcher toggle"; }
-                Mod+T { spawn "process-monitor"; }
-                Mod+P { spawn "process-killer"; }
-                Mod+D { spawn "todo-scratchpad"; }
-                Mod+S { spawn "random-scratchpad"; }
+                Mod+T { spawn-sh "process-monitor"; }
+                Mod+D { spawn-sh "todo-scratchpad"; }
+                Mod+S { spawn-sh "random-scratchpad"; }
                 Mod+C hotkey-overlay-title="Open clipboard history" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call clipboard toggle"; }
 
                 XF86MonBrightnessDown { spawn "brightnessctl" "set" "5%-"; }
@@ -331,6 +330,7 @@
               spawn-at-startup "${pkgs.keepassxc}/bin/keepassxc"
               spawn-sh-at-startup "sleep 5; awww-daemon"
               spawn-sh-at-startup "sleep 5; gammastep-indicator"
+              spawn-sh-at-startup "sleep 30; nextcloud" // give time to login to keepass
             '';
 
           xdg.config.files."clipcat/clipcatd.toml".text = # toml

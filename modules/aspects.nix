@@ -39,6 +39,7 @@
     rio
     rust-desktop
     radicle
+    scratchpads
     sudo-desktop
     swap-partition
     theme-extra-fonts
