@@ -55,8 +55,8 @@
           defaultCompatTool = "proton_experimental";
           displayRatesAsBits = true;
 
-          apps."Overwatch" = {
-            id = 2357570;
+          apps."2357570" = {
+            name = "Overwatch";
             updateBehavior = "always";
             desktopEntry.enable = true;
 
