@@ -1,22 +1,22 @@
-{ lib, config, ... }:
+{ lib, ... }:
 let
   inherit (lib.trivial) warnIf;
-  inherit (config.systemInfo) gpu;
 
-  isGpu = gpu.exists;
-  isNvidiaGpu = gpu.vendor == "nVidia Corporation";
+  isGpu = config: config.systemInfo.gpu.exists;
+  isNvidiaGpu = config: config.systemInfo.gpu.vendor == "nVidia Corporation";
 
   noGpuWarning =
-    program: config:
+    program: config: value:
     warnIf (
-      !isGpu
-    ) "${program}: no GPU detected or configured - CPU-only inference will be slow" config;
+      !isGpu config
+    ) "${program}: no GPU detected or configured - CPU-only inference will be slow" value;
 in
 {
   flake.modules.nixos.llama-cpp =
     {
       pkgs,
       lib,
+      config,
       ...
     }:
     let
@@ -156,11 +156,32 @@ in
             repeat-penalty = 1.0;
           }
           // cpuMoeOffload;
+
+          "quimmedes/Ornith-1.5-35B-A3B-XYZ:Q3-XYZ" = {
+            name = "Ornith-1.5-35B-A3B-XYZ:Q3-XYZ";
+            hf-repo = "quimmedes/Ornith-1.5-35B-A3B-XYZ:Q3-XYZ";
+
+            context = "156000";
+            jinja = "on";
+            flash-attention = "on";
+            cache-type-k = "q8_0";
+            cache-type-v = "q8_0";
+            reasoning = "on";
+            batch-size = 2048;
+            ubatch-size = 1024;
+            temp = 0.6;
+            top-p = 0.95;
+            top-k = 20;
+            min-p = 0.0;
+            presence-penalty = 0.0;
+            repeat-penalty = 1.0;
+          }
+          // cpuMoeOffload;
         }
       );
     in
     {
-      unfree.allowedNames = mkIf isNvidiaGpu [
+      unfree.allowedNames = mkIf (isNvidiaGpu config) [
         "cuda_cccl"
         "cuda_cudart"
         "cuda_nvcc"
@@ -169,8 +190,8 @@ in
       ];
 
       services.llama-cpp = {
-        enable = noGpuWarning "llama-cpp" true;
-        package = pkgs.llama-cpp.override { cudaSupport = mkIf isNvidiaGpu true; };
+        enable = noGpuWarning "llama-cpp" config true;
+        package = pkgs.llama-cpp.override { cudaSupport = if (isNvidiaGpu config) then true else false; };
 
         settings = {
           host = "127.0.0.1";
@@ -189,6 +210,7 @@ in
   flake.modules.nixos.ollama =
     {
       pkgs,
+      config,
       ...
     }:
     {
@@ -201,8 +223,8 @@ in
       ];
 
       services.ollama = {
-        enable = noGpuWarning "ollama" true;
-        package = if isNvidiaGpu then pkgs.ollama-cuda else pkgs.ollama;
+        enable = noGpuWarning "ollama" config true;
+        package = if (isNvidiaGpu config) then pkgs.ollama-cuda else pkgs.ollama;
 
         port = 11434;
 
@@ -210,6 +232,7 @@ in
         loadModels = [
           "hf.co/unsloth/Qwen3.8-27B-GGUF:UD-IQ3_XXS"
           "hf.co/ornith-ai/Ornith-1.5-35B-A3B-GGUF:Q4_K_M"
+          "hf.co/quimmedes/Ornith-1.5-35B-A3B-XYZ:Q3-XYZ"
         ];
 
         environmentVariables = {
@@ -234,7 +257,7 @@ in
       unfree.allowedNames = singleton "lmstudio";
 
       hjemModule = { config, ... }: {
-        packages = noGpuWarning "lmstudio" <| singleton pkgs.lmstudio;
+        packages = noGpuWarning "lmstudio" config <| singleton pkgs.lmstudio;
 
         files.".lmstudio/settings.json" = {
           generator = pkgs.writers.writeJSON "lmstudio-settings.json";
