@@ -236,7 +236,7 @@
                   notify = "on";
                 };
                 features.unexpectedStopDetection = true;
-                git.enabled = false; # only affects status bar (using jj anyway)
+                git.enabled = true; # only affects status bar (replaced by pi-jujutsu plugin)
 
                 # [internal]
                 memories.enabled = false;
@@ -387,6 +387,8 @@
                 ponytail = "https://github.com/DietrichGebert/ponytail";
                 "@plannotator/pi-extension" = "^0.26";
                 caveman = "https://github.com/JuliusBrussee/caveman";
+                pi-jujutsu = "^0.1";
+                pi-jj-git-align = "^0.1";
               };
             };
           };
