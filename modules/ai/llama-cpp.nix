@@ -134,9 +134,9 @@ in
         };
 
         # tps  | ctx max
-        # ??   | 1000000
-        "ornith-ai/Ornith-1.5-35B-A3B-GGUF:Q4_K_M" = {
-          hf-repo = "ornith-ai/Ornith-1.5-35B-A3B-GGUF:Q4_K_M";
+        # 40   | 1000000
+        "quimmedes/Ornith-1.5-35B-A3B-XYZ-Q3-XYZ" = {
+          hf-repo = "quimmedes/Ornith-1.5-35B-A3B-XYZ:Q3-XYZ";
 
           ctx-size = "156000";
           jinja = "on";
@@ -156,8 +156,8 @@ in
 
         # tps  | ctx max
         # 40   | 1000000
-        "quimmedes/Ornith-1.5-35B-A3B-XYZ:Q3-XYZ" = {
-          hf-repo = "quimmedes/Ornith-1.5-35B-A3B-XYZ:Q3-XYZ";
+        "quimmedes/Ornith-1.5-35B-A3B-XYZ-Q4-XYZ" = {
+          hf-repo = "quimmedes/Ornith-1.5-35B-A3B-XYZ:Q4-XYZ";
 
           ctx-size = "156000";
           jinja = "on";
