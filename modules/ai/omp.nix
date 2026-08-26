@@ -118,27 +118,6 @@
                       };
                     }
                     {
-                      # minimal | low | medium | high
-                      id = "stealth/ox-alpha";
-                      name = "Ox Alpha";
-                      reasoning = true;
-                      input = [
-                        "text"
-                      ];
-                      cost = {
-                        input = 0;
-                        output = 0;
-                        cacheRead = 0;
-                        cacheWrite = 0;
-                      };
-                      contextWindow = 1048576;
-                      maxTokens = 131072;
-                      compat = {
-                        supportsReasoningEffort = false;
-                        supportsToolChoice = false;
-                      };
-                    }
-                    {
                       # minimal | low | medium | high | xhigh
                       id = "minimax/minimax-m3-free";
                       name = "MiniMax M3";
@@ -202,27 +181,6 @@
                 small = "${activeSub}/minimax/minimax-m3-free:x-high";
                 cheap = "${activeSub}/minimax/minimax-m3-free:x-high";
                 vision = "${activeSub}/meta/muse-spark-1.2-contributor:low";
-
-                bigFallback = [
-                  "opencode-zen/laguna-s-2.1-free:xhigh"
-                  "${activeSub}/deepseek/deepseek-v4-flash:xhigh"
-                  "${activeSub}/meta/muse-spark-1.2-contributor:xhigh"
-                  "nvidia/deepseek-ai/deepseek-v4-flash-0731:auto"
-                ];
-                smallFallback = [
-                  "opencode-zen/laguna-s-2.1-free:high"
-                  "opencode-zen/deepseek-v4-flash-free:auto"
-                  "${activeSub}/deepseek/deepseek-v4-flash:high"
-                  "${activeSub}/meta/muse-spark-1.2-contributor:medium"
-                  "nvidia/deepseek-ai/deepseek-v4-flash-0731:auto"
-                ];
-                cheapFallback = [
-                  "opencode-zen/laguna-s-2.1-free:low"
-                  "opencode-zen/deepseek-v4-flash-free:high"
-                  "${activeSub}/deepseek/deepseek-v4-flash:high"
-                  "${activeSub}/meta/muse-spark-1.2-contributor:low"
-                  "nvidia/deepseek-ai/deepseek-v4-flash-0731:auto"
-                ];
               in
               {
                 # [appearance]
@@ -314,22 +272,11 @@
                 personality = "pragmatic";
                 textVerbosity = "low";
                 retry = {
-                  modelFallback = true;
+                  modelFallback = false;
                   fallbackRevertPolicy = "cooldown-expiry";
                   maxRetries = 100000;
                   maxDelayMs = 600000;
-                  fallbackChains = {
-                    default = smallFallback;
-                    smol = cheapFallback;
-                    slow = bigFallback;
-                    advisor = cheapFallback;
-                    plan = bigFallback;
-                    vision = [ ]; # TODO: add another vision model
-                    designer = [ ];
-                    commit = cheapFallback;
-                    task = cheapFallback;
-                    tiny = cheapFallback;
-                  };
+                  fallbackChains = { };
                 };
 
                 # [providers]

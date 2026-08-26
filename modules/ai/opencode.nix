@@ -37,21 +37,6 @@
       big = "opencode/laguna-s-2.1-free";
       small = "opencode/laguna-s-2.1-free";
       cheap = "opencode/laguna-s-2.1-free";
-
-      bigFallback = [
-        "${activeSub}/deepseek-v4-flash"
-        "${activeSub}/muse-spark-1.2"
-      ];
-      smallFallback = [
-        "opencode/deepseek-v4-flash-free"
-        "${activeSub}/deepseek-v4-flash"
-        "${activeSub}/muse-spark-1.2"
-      ];
-      cheapFallback = [
-        "opencode/deepseek-v4-flash-free"
-        "${activeSub}/deepseek-v4-flash"
-        "${activeSub}/muse-spark-1.2"
-      ];
     in
     {
       ai.secrets = true;
@@ -85,7 +70,6 @@
                 "@plannotator/opencode"
                 "opencode-tps-meter"
                 "@dietrichgebert/ponytail"
-                "opencode-runtime-fallback"
                 [
                   "@prevalentware/opencode-goal-plugin"
                   {
@@ -198,7 +182,6 @@
                 build = {
                   mode = "primary";
                   model = small;
-                  fallback_models = smallFallback;
                   reasoningEffort = "medium";
                   textVerbosity = "low";
                   thinking.type = "enabled";
@@ -207,7 +190,6 @@
                 plan = {
                   mode = "primary";
                   model = big;
-                  fallback_models = bigFallback;
                   reasoningEffort = "max";
                   textVerbosity = "low";
                   thinking.type = "enabled";
@@ -216,7 +198,6 @@
                 general = {
                   mode = "subagent";
                   model = small;
-                  fallback_models = smallFallback;
                   reasoningEffort = "high";
                   textVerbosity = "low";
                   thinking.type = "enabled";
@@ -225,7 +206,6 @@
                 explore = {
                   mode = "subagent";
                   model = cheap;
-                  fallback_models = cheapFallback;
                   reasoningEffort = "low";
                   textVerbosity = "low";
                   thinking.type = "disabled";
@@ -234,7 +214,6 @@
                 scout = {
                   mode = "subagent";
                   model = cheap;
-                  fallback_models = cheapFallback;
                   reasoningEffort = "low";
                   textVerbosity = "low";
                   thinking.type = "enabled";
@@ -332,19 +311,6 @@
               enabled = true;
               autoUpdate = false;
               experimental.allowSubAgents = true;
-            };
-          };
-
-          "opencode/opencode-fallback.json" = {
-            generator = pkgs.writers.writeJSON "opencode-fallback.json";
-            value = {
-              retry_on_errors = [
-                429
-                500
-                502
-                504
-              ];
-              retryable_error_patterns = [ "upstream stream ended before terminal chunk" ];
             };
           };
         };
