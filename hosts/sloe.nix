@@ -13,6 +13,7 @@ in
         web-server
 
         distributed-builder
+        forgejo-runner
         garage
         graft
         graphics

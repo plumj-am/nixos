@@ -52,7 +52,6 @@
   flake.modules.nixos.server.imports = with self.modules.nixos; [
     boot-grub
     disks-server
-    forgejo-runner
     swapfile
     sudo-server
   ];

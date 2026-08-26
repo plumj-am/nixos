@@ -14,6 +14,7 @@ in
         cinny
         distributed-builder
         forgejo
+        forgejo-runner
         freshrss-server
         gerrit
         goatcounter
