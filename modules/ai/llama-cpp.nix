@@ -20,11 +20,16 @@ in
       ...
     }:
     let
-      inherit (lib.lists) unique singleton;
+      inherit (lib.lists) unique singleton head;
       inherit (lib.meta) getExe;
       inherit (lib.modules) mkIf;
       inherit (lib.attrsets) optionalAttrs mapAttrsToList;
-      inherit (lib.strings) concatMapStringsSep;
+      inherit (lib.strings)
+        concatMapStringsSep
+        concatStringsSep
+        replaceString
+        splitString
+        ;
 
       cpuMoeOffload = {
         n-gpu-layers = 99;
@@ -138,7 +143,7 @@ in
         "quimmedes/Ornith-1.5-35B-A3B-XYZ-Q3-XYZ" = {
           hf-repo = "quimmedes/Ornith-1.5-35B-A3B-XYZ:Q3-XYZ";
 
-          ctx-size = "156000";
+          ctx-size = "262144";
           jinja = "on";
           cache-type-k = "q8_0";
           cache-type-v = "q8_0";
@@ -159,7 +164,7 @@ in
         "quimmedes/Ornith-1.5-35B-A3B-XYZ-Q4-XYZ" = {
           hf-repo = "quimmedes/Ornith-1.5-35B-A3B-XYZ:Q4-XYZ";
 
-          ctx-size = "156000";
+          ctx-size = "262144";
           jinja = "on";
           cache-type-k = "q8_0";
           cache-type-v = "q8_0";
@@ -213,28 +218,52 @@ in
         };
       };
 
-      hjemModule = {
-        systemd.services.llama-cpp-install-models = {
+      hjemModule = { config, ... }: {
+        systemd.services.llama-cpp-install-prune-models = {
           serviceConfig = {
             Type = "oneshot";
             TimeoutStartSec = "1h";
           };
-          script =
-            concatMapStringsSep "\n" (repo: ''
-              echo "Downloading ${repo}..."
-              ${getExe pkgs.llama-cpp} download --hf-repo ${repo}
-            '')
-            <| unique
-            <| mapAttrsToList (_: model: model.hf-repo) models;
+          script = "${pkgs.writers.writeNu "llama-cpp-install-prune-models.nu" # nu
+            ''
+              ${
+                concatMapStringsSep "\n" (repo: ''
+                  print "downloading ${repo}..."
+                  ${getExe pkgs.llama-cpp} download --hf-repo ${repo}
+                '')
+                <| unique
+                <| mapAttrsToList (_: model: model.hf-repo) models
+              }
+
+              print "pruning unlisted models..."
+              let hf_cache = "${config.directory}/.cache/huggingface/hub"
+              let keep = [${
+                concatStringsSep " " (
+                  map (n: ''"${n}"'')
+                  <| unique
+                  <| map (r: "models--" + (replaceString "/" "--" <| head <| splitString ":" r))
+                  <| mapAttrsToList (_: m: m.hf-repo) models
+                )
+              }]
+
+              for dir in (ls $"($hf_cache)/models--*" | where type == dir) {
+                let name = $dir.name | path basename
+                if $name not-in $keep {
+                  print $"Removing unlisted model ($name)"
+                  rm --recursive --force $dir.name
+                }
+              }
+            ''
+          }";
         };
 
-        systemd.services.llama-cpp-install-models-trigger = {
+        systemd.services.llama-cpp-install-prune-models-trigger = {
           after = singleton "nixos-activation.service";
           wantedBy = singleton "default.target";
 
           serviceConfig = {
             Type = "oneshot";
-            ExecStart = "${pkgs.systemd}/bin/systemctl --user start --no-block llama-cpp-install-models.service";
+            ExecStart = "${pkgs.systemd}/bin/systemctl --user start --no-block llama-cpp-install-prune-models.service";
           };
         };
       };
