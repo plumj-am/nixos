@@ -126,6 +126,23 @@
                         supportsToolChoice = false;
                       };
                     }
+                    {
+                      # minimal | low | medium | high | xhigh
+                      id = "minimax/minimax-m3-free";
+                      name = "MiniMax M3";
+                      reasoning = true;
+                      input = [
+                        "text"
+                      ];
+                      cost = {
+                        input = 0;
+                        output = 0;
+                        cacheRead = 0;
+                        cacheWrite = 0;
+                      };
+                      contextWindow = 1000000;
+                      maxTokens = 262144;
+                    }
                   ];
                 };
 
@@ -169,9 +186,9 @@
             generator = pkgs.writers.writeYAML "omp-agent-config.yml";
             value =
               let
-                big = "${activeSub}/stealth/ox-alpha:high";
-                small = "${activeSub}/stealth/ox-alpha:high";
-                cheap = "${activeSub}/stealth/ox-alpha:high";
+                big = "${activeSub}/minimax/minimax-m3-free:x-hight";
+                small = "${activeSub}/minimax/minimax-m3-free:x-high";
+                cheap = "${activeSub}/minimax/minimax-m3-free:x-high";
                 vision = "${activeSub}/meta/muse-spark-1.2-contributor:low";
 
                 bigFallback = [

@@ -181,6 +181,16 @@
                       output = 384000;
                     };
                   };
+                  "minimax-m3" = {
+                    id = "minimax/minimax-m3-free";
+                    name = "MiniMax M3";
+                    reasoning = true;
+                    tool_call = true;
+                    limit = {
+                      context = 1000000;
+                      output = 262144;
+                    };
+                  };
                 };
               };
 
