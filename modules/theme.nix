@@ -337,57 +337,12 @@ in
 
   flake.modules.nixos.theme-extra-scripts =
     { pkgs, ... }:
-    let
-      inherit (lib.lists) map;
-
-      pickWallpaper = pkgs.writeScriptBin "pick-wallpaper" <| readFile ./_scripts/pick-wallpaper.nu;
-
-      themeToggleScript = pkgs.writeScriptBin "tt" <| readFile ./_scripts/toggle-theme.nu;
-    in
     {
       environment.systemPackages = [
         pkgs.awww
         pkgs.matugen
-        themeToggleScript
-        pickWallpaper
-      ]
-      ++ (map pkgs.makeDesktopItem [
-        {
-          desktopName = "Dark Mode";
-          name = "Dark-Mode";
-          exec = "tt dark";
-          terminal = false;
-        }
-        {
-          desktopName = "Light Mode";
-          name = "Light-Mode";
-          exec = "tt light";
-          terminal = false;
-        }
-        {
-          desktopName = "Matugen Mode";
-          name = "Matugen-Mode";
-          exec = "tt matugen";
-          terminal = false;
-        }
-        {
-          desktopName = "Gruvbox Mode";
-          name = "Gruvbox-Mode";
-          exec = "tt gruvbox";
-          terminal = false;
-        }
-        {
-          desktopName = "Reload Applications";
-          name = "Reload-Applications";
-          exec = "tt reload";
-          terminal = false;
-        }
-        {
-          desktopName = "Pick Wallpaper";
-          name = "Pick-Wallpaper";
-          exec = "pick-wallpaper";
-          terminal = true;
-        }
-      ]);
+        self.packages.${pkgs.stdenv.hostPlatform.system}.toggle-theme
+        self.packages.${pkgs.stdenv.hostPlatform.system}.pick-wallpaper
+      ];
     };
 }
