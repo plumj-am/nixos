@@ -4,13 +4,12 @@
   flake.modules.common.rebuild =
     {
       pkgs,
-      lib,
       ...
     }:
-    let
-      inherit (lib.lists) singleton;
-    in
     {
-      environment.systemPackages = singleton self.packages.${pkgs.stdenv.hostPlatform.system}.rebuild;
+      environment.systemPackages = [
+        self.packages.${pkgs.stdenv.hostPlatform.system}.default # nh
+        self.packages.${pkgs.stdenv.hostPlatform.system}.rebuild
+      ];
     };
 }
