@@ -33,6 +33,7 @@ in
     imports = [
       (importTree ./hosts)
       (importTree ./modules)
+      (importTree ./packages)
       (importTree ./services)
     ];
   }

@@ -69,8 +69,6 @@
 
             nfc = "nix flake check --log-format internal-json -v err>| rom --json";
 
-            rebuild = "${config.directory}/nixos/rebuild.nu";
-
             nu-config-reference = "nu -c 'config nu --doc | nu-highlight | bat'";
 
             # Frequently mistyped:
