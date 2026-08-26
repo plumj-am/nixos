@@ -10,10 +10,22 @@
     let
       inherit (lib.meta) getExe;
       inherit (lib.lists) singleton;
+      inherit (lib.strings) concatMapStringsSep;
       inherit (config.sops) secrets;
       inherit (config.ai.subs.commandcode) active;
 
       activeSub = "commandcode-${toString active}";
+
+      skills = [
+        {
+          repo = "mattpocock/skills";
+          skills = [
+            "grilling"
+            "grill-me"
+            "grill-with-docs"
+          ];
+        }
+      ];
     in
     {
       ai.secrets = true;
@@ -454,9 +466,6 @@
         };
 
         systemd.services.omp-install-plugins-skills = {
-          description = "automatic plugin and skill install for oh-my-pi";
-          after = singleton "nixos-rebuild-switch-to-configuration.target";
-          wantedBy = singleton "default.target";
           serviceConfig = {
             Type = "oneshot";
             TimeoutStartSec = "120s";
@@ -471,21 +480,34 @@
             pkgs.node-gyp
           ];
           environment.PYTHON = getExe pkgs.python3;
-          script = # sh
+          script = "${pkgs.writers.writeNu "omp-install-plugins-skills.nu" # nu
             ''
+              print "installing omp plugins and skills..."
               cd ~/.omp/plugins
-              rm --force bun.lock node_modules/ || true
+              rm --force --recursive bun.lock node_modules/
               ${getExe pkgs.bun} install --force --refresh
 
-              echo "skills add mattpocock/skills"
-              ${getExe pkgs.skills} add mattpocock/skills \
-                --skill grilling \
-                --skill grill-me \
-                --skill grill-with-docs \
-                --yes \
-                --agent universal \
-                --global
-            '';
+              ${concatMapStringsSep "\n" (entry: ''
+                print "adding skills from ${entry.repo}"
+                (${getExe pkgs.skills} add ${entry.repo}
+                  ${concatMapStringsSep " " (skill: "--skill ${skill}") entry.skills}
+                  --yes
+                  --agent
+                  universal
+                  --global)
+              '') skills}
+            ''
+          }";
+        };
+
+        systemd.services.omp-install-plugins-skills-trigger = {
+          after = singleton "nixos-activation.service";
+          wantedBy = singleton "default.target";
+
+          serviceConfig = {
+            Type = "oneshot";
+            ExecStart = "${pkgs.systemd}/bin/systemctl --user start --no-block omp-install-plugins-skills.service";
+          };
         };
       };
     };
