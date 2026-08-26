@@ -3,7 +3,7 @@ let
   inherit (lib.lists) singleton;
 in
 {
-  # Lime | Macbook | x86_64-linux | nix-darwin
+  # Lime | Macbook | aarch64-darwin | nix-darwin
   imports =
     singleton
     <| lib.systems.darwinSystem "lime" {

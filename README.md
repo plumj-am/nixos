@@ -2,7 +2,7 @@
 
 Dendritic NixOS configurations for 8 personal machines:
 
-| Name      | System  | Platform       | Follows                  | Active |
+| Name      | System  | Platform       | Uses                     | Active |
 | --------- | ------- | -------------- | ------------------------ | :----: |
 | Blackwell | Server  | x86_64-linux   | nixos-unstable-small[^1] |        |
 | Date      | Laptop  | x86_64-linux   | nixos-unstable-small[^1] |   ✔    |
@@ -37,7 +37,7 @@ Almost everything lives under `modules/`.
 Each module (for the most part) is grouped by feature as opposed to individual
 applications/services. Using
 [flake-parts](https://github.com/hercules-ci/flake-parts), these modules live at
-`flake.modules.{common,nixos,darwin}`.
+`flake.modules.{common,darwin,nixos,services}`.
 
 Modules contain 1 or more of the following:
 
@@ -45,16 +45,15 @@ Modules contain 1 or more of the following:
 flake.modules.<class>.<aspect> = {}
 ```
 
-For example:
+For example, we can configure a shared git config for all platforms then add
+platform specific configs too:
 
 ```nix
 {
-  # modules/git.nix
   flake.modules.common.git = { /* ... */ };
-
-  # modules/window-manager.nix
-  flake.modules.nixos.window-manager = { /* ... */ };
-  flake.modules.darwin.window-manager = { /* ... */ };
+  # and/or
+  flake.modules.nixos.git = { /* ... */ };
+  flake.modules.darwin.git = { /* ... */ };
 }
 ```
 
@@ -88,54 +87,11 @@ details.
 }
 ```
 
-The `common`, `darwin`, and `nixos` classes are then used in `hosts/`. Some
-aspects are grouped in `modules/aspects.nix` to avoid repeated configs and a
-`mkConfig` helper is used to simplify the inline config module of each host,
-again to reduce repetition. The implementation for `mkConfig` can be seen in
-`modules/lib.nix`.
+The `common`, `darwin`, and `nixos` classes are then used in
+`modules/aspects.nix` (grouped together) or used individually by `hosts/` in
+their `imports` lists.
 
-Examples of what this looks like:
-
-```nix
-{
-  # For NixOS systems:
-  flake.nixosConfigurations.hostName = inputs.nixpkgs.lib.nixosSystem {
-    specialArgs = { inherit inputs; };
-    modules = with inputs.self.modules.nixos; [
-      # ... other aspects
-      window-manager
-
-      # Inline module for individual config.
-      {
-        config = mkConfig inputs "hostName" "x86_64-linux" {
-          # ... config here
-        };
-      }
-    ];
-  };
-
-  # Or for Darwin systems:
-  flake.darwinConfigurations.hostName = inputs.nix-darwin.lib.darwinSystem {
-    specialArgs = { inherit inputs; };
-    modules = with inputs.self.modules.darwin; [
-      # ... other packages
-      window-manager
-
-      # Inline module for individual config.
-      {
-        config = mkConfig inputs "hostName" "aarch64-darwin" {
-          # ... config here
-        };
-      }
-    ];
-  };
-}
-```
-
-As mentioned before, additional configuration for the hosts is defined in an
-inline module inside the `modules = []` section of each host. There we define
-configurations that are exclusive to the host and can't trivially be made a
-module such as unique `secrets` configuration.
+Systems are constructed using `libs/systems.nix` helpers in `hosts/`.
 
 ## Other tools
 
@@ -146,22 +102,22 @@ All secrets are handled by [sops-nix](https://github.com/mic92/sops-nix).
 ### Imports
 
 Imports are handled by an `importTree` function in `outputs.nix`. It
-automatically imports all nix files in the specified directories (`./modules`
-and `./hosts` in my case). Directories and files prefixed with `_` are excluded
-e.g. `_scripts/`.
+automatically imports all nix files in the specified directories (`./hosts`,
+`./libs`, `./modules`, `./packages`, and `./services` in my case). Directories
+and files prefixed with `_` are excluded e.g. `_scripts/` or `_private.nix`
+would be excluded.
 
-### myLib
+### Library
 
 There may be unfamiliar functions/helpers in some files - these come from
-`modules/lib.nix`. I want to make the lib proper eventually.
+`libs/*.nix` via nixpkgs' `lib.extend`.
 
 ### Theming
 
 I have a custom theming setup which can be seen in `modules/theme.nix`. It does
 rely on a rebuild but it's a simple toggle between light/dark and
-gruvbox/matugen modes by running shortcuts setup in my Quickshell launcher and
-the `tt`/`toggle-theme` script. It automatically updates colour schemes and
-refreshes necessary applications to apply changes.
+gruvbox/matugen modes by running `tt`/`toggle-theme`. It automatically updates
+colour schemes and refreshes necessary applications to apply changes.
 
 The gruvbox mode uses the defined themes in `modules/theme.nix` and some base16
 colours for applications that can make use of them.
@@ -170,33 +126,6 @@ colours for applications that can make use of them.
 
 I have a basic Quickshell setup which I have used to replace Fuzzel, Mako,
 Waybar/Ashell, and more.
-
-Memory consumption idles at 125 MiB and peaks at 140 MiB. CPU usage is basically
-non-existent, peaking at 0.4% when opening the launcher (on an i5-13600KF).
-
-It has the following features (non-exhaustive):
-
-- Bar
-  - Media
-  - Current window
-  - Tray
-  - System stats
-  - Theme toggle
-  - Control center toggle
-  - Notification toggle and count
-  - Privacy module (shows active mic/webcam)
-  - Date/time
-  - Power/session drawer toggle
-- Launcher
-- Control center
-  - Input volume
-  - Output volume
-  - Bluetooth toggle
-  - Network information
-- Notifications
-- Session/power drawer
-- Media controls
-- Clipboard history drawer
 
 The configuration can be found in `modules/quickshell`.
 
@@ -252,14 +181,16 @@ The structure of the repository and a few key files are highlighted below:
 
 ```sh
 .
-├── hosts/             # All hosts live in here
-├── modules/           # All modules live in here
+├── hosts/             # All hosts
+│   └── facter/        # Facter system reports
+├── libs/              # All nixpkgs lib extensions
+├── packages/          # Custom packages
+├── services/          # Custom service modules
+├── modules/           # All modules
 │   ├── theme.nix      # System-wide theming
 │   ├── ...
 │   ├── ai/            # AI tools
-│   │   └── ...
 │   └── quickshell/    # Quickshell configs
-│       └── ...
 ├── secrets/           # Secrets managed by sops
 │   └── ...
 ├── outputs.nix        # Flake outputs
