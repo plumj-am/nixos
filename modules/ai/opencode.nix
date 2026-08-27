@@ -1,6 +1,7 @@
 {
   flake.modules.common.opencode =
     {
+      inputs,
       pkgs,
       lib,
       config,
@@ -17,11 +18,11 @@
 
       opencodePackage = pkgs.symlinkJoin {
         name = "opencode-wrapped";
-        paths = singleton pkgs.opencode;
+        paths = singleton inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.opencode2;
         buildInputs = singleton pkgs.makeWrapper;
         postBuild = # sh
           ''
-            wrapProgram $out/bin/opencode \
+            wrapProgram $out/bin/opencode2 \
               --set OPENCODE_EXPERIMENTAL true \
               --set OPENCODE_ENABLE_EXA 1
           '';
@@ -34,9 +35,9 @@
       #   {type: "free", opencode: $of, commandcode: $cf}
       #   {type: "paid", opencode: [],  commandcode: $cp}
       # ] | table --expand --index false --theme single
-      big = "opencode/laguna-s-2.1-free";
-      small = "opencode/laguna-s-2.1-free";
-      cheap = "opencode/laguna-s-2.1-free";
+      big = "${activeSub}/minimax/minimax-m3-free";
+      small = "${activeSub}/minimax/minimax-m3-free";
+      cheap = "${activeSub}/minimax/minimax-m3-free";
     in
     {
       ai.secrets = true;
@@ -127,7 +128,7 @@
 
                 options = {
                   baseURL = "https://api.commandcode.ai/provider/v1";
-                  apiKey = "{file:${secrets."${activeSub}-key".path}";
+                  apiKey = "{file:${secrets."${activeSub}-key".path}}";
                 };
 
                 timeout = 3000000;
@@ -263,7 +264,7 @@
                   type = "remote";
                   url = "https://mcp.context7.com/mcp";
                   headers = {
-                    CONTEXT7_API_KEY = "{file:${secrets.context7-key.path}";
+                    CONTEXT7_API_KEY = "{file:${secrets.context7-key.path}}";
                   };
                 };
 
