@@ -86,7 +86,6 @@ in
           AllowGroups = [
             "root"
             "wheel"
-            "ssh"
           ];
           PasswordAuthentication = false;
           KbdInteractiveAuthentication = false;
@@ -99,7 +98,7 @@ in
 
       programs.ssh.knownHosts =
         let
-          keys = config.flake.keys;
+          keys = config.flake.entities.sshKeys;
           hosts = [
             "blackwell"
             "date"
@@ -130,15 +129,16 @@ in
         '';
     };
 
-  flake.modules.nixos.openssh-extra-users =
-    { lib, ... }:
+  flake.modules.nixos.openssh-grove-systems =
+    { lib, config, ... }:
     let
       inherit (lib.lists) singleton;
+      inherit (config.flake) entities;
     in
     {
       services.openssh.settings = {
-        AllowUsers = singleton "anamana";
-        AllowGroups = singleton "ssh";
+        AllowUsers = entities.groveSystemsUsernames;
+        AllowGroups = singleton "grove-systems";
       };
     };
 }

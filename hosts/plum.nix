@@ -23,7 +23,6 @@ in
         postgres
         radicle-explorer
         uptime-kuma
-        users-extra
         website-personal
       ];
 

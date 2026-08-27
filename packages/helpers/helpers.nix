@@ -63,7 +63,7 @@
 
               (${getExe pkgs.nix}
                 eval
-                $".#nixosConfigurations.($host).config.flake.keys.($host)")
+                $".#nixosConfigurations.($host).config.flake.entities.sshKeys.($host)")
                 | str trim --char '"' out> tmp-id-pub-($host).txt
 
               print "creating the necessary files..."

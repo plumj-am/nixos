@@ -25,14 +25,20 @@ let
     "did:key:z6MkhQJuAftpcYts9YXwY2GH9ig48ke9BN8QyhTZ4C7gU2Un" # jam@yuzu
     "did:key:z6MkjTz9sd1wn5HXvNb2YVnYWjSfkYieWwutoUeo24cSGQns" # jam@lime
   ];
-
-  radicleUserBase =
+in
+{
+  flake.modules.common.radicle =
     {
+      pkgs,
       lib,
+      config,
       ...
     }:
     let
       inherit (lib.lists) singleton;
+      inherit (config.flake) entities;
+      inherit (config.sops) secrets;
+      inherit (config.networking) hostName;
     in
     {
       sops.secrets."radicle/jam-key" = {
@@ -41,89 +47,73 @@ let
         mode = "600";
       };
 
-      hjem.extraModule =
-        { pkgs, osConfig, ... }:
-        let
-          inherit (osConfig.flake) keys;
-          inherit (osConfig.sops) secrets;
-          inherit (osConfig.networking) hostName;
-        in
-        {
-          packages = [
-            # inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.rsh-rsh
-            pkgs.radicle-node
-            pkgs.radicle-tui
-          ];
+      hjem.extraModule = {
+        packages = [
+          # inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.rsh-rsh
+          pkgs.radicle-node
+          pkgs.radicle-tui
+        ];
 
-          files = {
-            ".radicle/keys/radicle.pub".text = keys."${hostName}-jam-radicle";
-            ".radicle/keys/radicle".source = secrets."radicle/jam-key".path;
-            # TODO: Need to figure out if ^this^ will be a problem when it is not set.
-            # TODO: I don't want it to overwrite the generated key.
-            # TODO: Overall bootstrapping is weak for new/reset hosts...
+        files = {
+          # TODO:
+          ".radicle/keys/radicle.pub".text = entities.radicleKeys.${hostName};
+          ".radicle/keys/radicle".source = secrets."radicle/jam-key".path;
+          # TODO: Need to figure out if ^this^ will be a problem when it is not set.
+          # TODO: I don't want it to overwrite the generated key.
+          # TODO: Overall bootstrapping is weak for new/reset hosts...
 
-            ".radicle/config.json" = {
-              generator = pkgs.writers.writeJSON "radicle-config.json";
-              value = {
-                publicExplorer = "https://rad.plumj.am/nodes/$host/$rid$path";
-                preferredSeeds = personalNodes;
-                web = {
-                  pinned = {
-                    repositories = [ ];
-                  };
-                };
-                cli = {
-                  hints = true;
-                };
-                node = {
-                  alias = "jam@${hostName}.plumj.am";
-                  listen = singleton "[::]:${toString userNodePort}";
-                  peers = {
-                    type = "dynamic";
-                  };
-                  connect = personalNodes;
-                  externalAddresses = singleton "${hostName}.taild29fec.ts.net:${toString userNodePort}";
-                  network = "main";
-                  log = "INFO";
-                  relay = "auto";
-                  limits = {
-                    routingMaxSize = 1000;
-                    routingMaxAge = 604800;
-                    gossipMaxAge = 1209600;
-                    fetchConcurrency = 1;
-                    maxOpenFiles = 4096;
-                    rate = {
-                      inbound = {
-                        fillRate = 5.0;
-                        capacity = 1024;
-                      };
-                      outbound = {
-                        fillRate = 10.0;
-                        capacity = 2048;
-                      };
+          ".radicle/config.json" = {
+            generator = pkgs.writers.writeJSON "radicle-config.json";
+            value = {
+              publicExplorer = "https://rad.plumj.am/nodes/$host/$rid$path";
+              preferredSeeds = personalNodes;
+
+              web.pinned.repositories = [ ];
+
+              cli.hints = true;
+
+              node = {
+                alias = "jam@${hostName}.plumj.am";
+                listen = singleton "[::]:${toString userNodePort}";
+                peers.type = "dynamic";
+                connect = personalNodes;
+                externalAddresses = singleton "${hostName}.taild29fec.ts.net:${toString userNodePort}";
+                network = "main";
+                log = "INFO";
+                relay = "auto";
+                limits = {
+                  routingMaxSize = 1000;
+                  routingMaxAge = 604800;
+                  gossipMaxAge = 1209600;
+                  fetchConcurrency = 1;
+                  maxOpenFiles = 4096;
+                  rate = {
+                    inbound = {
+                      fillRate = 5.0;
+                      capacity = 1024;
                     };
-                    connection = {
-                      inbound = 128;
-                      outbound = 16;
+                    outbound = {
+                      fillRate = 10.0;
+                      capacity = 2048;
                     };
-                    fetchPackReceive = "500.0 MiB";
                   };
-                  workers = 16;
-                  seedingPolicy = {
-                    scope = "followed";
-                    default = "block";
+                  connection = {
+                    inbound = 128;
+                    outbound = 16;
                   };
+                  fetchPackReceive = "500.0 MiB";
+                };
+                workers = 16;
+                seedingPolicy = {
+                  scope = "followed";
+                  default = "block";
                 };
               };
             };
           };
         };
+      };
     };
-in
-{
-  flake.modules.nixos.radicle = radicleUserBase;
-
-  flake.modules.darwin.radicle = radicleUserBase;
 
   flake.modules.common.default = self.modules.common.radicle-node;
   flake.modules.common.radicle-node =
@@ -146,7 +136,7 @@ in
       services.radicle = {
         enable = true;
 
-        publicKey = config.flake.keys.${hostName};
+        publicKey = config.flake.entities.sshKeys.${hostName};
         privateKey = config.sops.secrets.id.path;
         checkConfig = false; # Allows debugging at systemd unit level.
 
@@ -192,17 +182,11 @@ in
           ${config.services.nginx.goatCounterTemplate}
         '';
 
-        locations."/api/" = {
-          proxyPass = "http://127.0.0.1:${toString nodeHttpdPort}";
-        };
+        locations."/api/".proxyPass = "http://127.0.0.1:${toString nodeHttpdPort}";
 
-        locations."/raw/" = {
-          proxyPass = "http://127.0.0.1:${toString nodeHttpdPort}";
-        };
+        locations."/raw/".proxyPass = "http://127.0.0.1:${toString nodeHttpdPort}";
 
-        locations."~ ^/rad:" = {
-          proxyPass = "http://127.0.0.1:${toString nodeHttpdPort}";
-        };
+        locations."~ ^/rad:".proxyPass = "http://127.0.0.1:${toString nodeHttpdPort}";
       };
     };
 

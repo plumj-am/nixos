@@ -59,7 +59,8 @@
     { config, lib, ... }:
     let
       inherit (lib.lists) singleton;
-      inherit (config.flake) keys;
+      inherit (lib.attrsets) mapAttrsToList;
+      inherit (config.flake) entities;
     in
     {
       config = {
@@ -75,7 +76,7 @@
           group = "build";
           isSystemUser = true;
           useDefaultShell = true;
-          openssh.authorizedKeys.keys = keys.all;
+          openssh.authorizedKeys.keys = mapAttrsToList (_: sshKey: sshKey) entities.sshKeys;
         };
       };
     };

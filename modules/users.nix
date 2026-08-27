@@ -8,7 +8,7 @@
       ...
     }:
     let
-      inherit (config.flake) keys;
+      inherit (config.flake) entities;
 
       cfg = config.hjem.users;
     in
@@ -20,7 +20,7 @@
         root = {
           shell = pkgs.nushell;
           hashedPasswordFile = config.sops.secrets.password.path;
-          openssh.authorizedKeys.keys = keys.admins;
+          openssh.authorizedKeys.keys = entities.sshKeysAdmins;
         };
 
         jam = {
@@ -28,7 +28,7 @@
           isNormalUser = true;
           shell = pkgs.nushell;
           hashedPasswordFile = config.sops.secrets.password.path;
-          openssh.authorizedKeys.keys = keys.admins;
+          openssh.authorizedKeys.keys = entities.sshKeysAdmins;
         };
       };
 
@@ -51,32 +51,32 @@
   flake.modules.darwin.users =
     { pkgs, config, ... }:
     let
-      inherit (config.flake) keys;
+      inherit (config.flake) entities;
 
-      home = "/Users/jam";
+      cfg = config.users.users.jam;
     in
     {
       system.primaryUser = "jam";
 
       users.users = {
         jam = {
-          inherit home;
+          home = "/Users/jam";
           description = "Jam";
           shell = pkgs.nushell;
-          openssh.authorizedKeys.keys = keys.admins;
+          openssh.authorizedKeys.keys = entities.sshKeysAdmins;
         };
       };
 
       hjem = {
         clobberByDefault = true;
         users.jam = {
-          user = "jam";
-          directory = home;
+          user = config.system.primaryUser;
+          directory = cfg.home;
         };
       };
     };
 
-  flake.modules.nixos.users-extra =
+  flake.modules.nixos.users-grove-systems =
     {
       inputs,
       pkgs,
@@ -85,31 +85,28 @@
       ...
     }:
     let
-      inherit (lib) mkForce;
+      inherit (lib.modules) mkForce;
       inherit (lib.lists) singleton;
-      inherit (config.flake) keys;
+      inherit (config.flake) entities;
 
       cfg = config.hjem.users;
     in
     {
-      users.groups.ssh = { };
-
       users.users = {
-        anamana = {
-          description = "Anamana";
+        ${entities.people.anamana.userName} = {
+          description = entities.people.anamana.fullName;
           isNormalUser = true;
           shell = pkgs.bash;
-          openssh.authorizedKeys.keys = singleton keys.anamana ++ keys.admins;
-          extraGroups = singleton "ssh";
+          openssh.authorizedKeys.keys = singleton entities.sshKeys.anamana ++ entities.sshKeysAdmins;
+          extraGroups = entities.people.anamana.extraGroups;
         };
       };
 
       hjem.users = {
-        anamana = {
-          user = "anamana";
+        ${entities.people.anamana.userName} = {
+          user = entities.people.anamana.userName;
           directory = "/home/${cfg.anamana.user}";
           packages = [
-            pkgs.sccache
             pkgs.gitMinimal
             pkgs.direnv
             inputs.cade.packages.${pkgs.stdenv.hostPlatform.system}.default
@@ -119,6 +116,7 @@
           xdg.data.files = mkForce { };
           xdg.state.files = mkForce { };
           files = mkForce { };
+          systemd.enable = false;
         };
       };
     };

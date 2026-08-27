@@ -19,9 +19,9 @@ in
         graphics
         hermes
         nextcloud
-        openssh-extra-users
+        openssh-grove-systems
         tend
-        users-extra
+        users-grove-systems
       ];
       networking.domain = "plumj.am";
 
