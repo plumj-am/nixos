@@ -78,6 +78,8 @@
               __GL_SHADER_DISK_CACHE_SKIP_CLEANUP = "1";
               __GL_SHADER_DISK_CACHE_SIZE = "10737418240";
               __GL_SHADER_DISK_CACHE_PATH = "${home}/.local/share/steam-shader-cache/overwatch";
+
+              LD_PRELOAD = "";
             };
           };
         };
@@ -92,11 +94,15 @@
 
       security.rtkit.enable = true; # For low-latency audio
 
-      hjemModule.xdg.data.files."Steam/steam_dev.cfg".text =
-        #cfg
-        ''
-          unShaderBackgroundProcessingThreads ${threads}
-          @ShaderBackgroundProcessingThreads ${threads}
-        '';
+      hjemModule = {
+        xdg.data.files."steam-shader-cache/overwatch".type = "directory";
+
+        xdg.data.files."Steam/steam_dev.cfg".text =
+          #cfg
+          ''
+            unShaderBackgroundProcessingThreads ${threads}
+            @ShaderBackgroundProcessingThreads ${threads}
+          '';
+      };
     };
 }
