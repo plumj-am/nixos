@@ -9,7 +9,6 @@
     let
       inherit (lib.lists) singleton;
       inherit (lib.modules) merge;
-      inherit (config.helpers) rustic;
       inherit (config.networking) domain hostName;
       inherit (config.sops) secrets;
 
@@ -24,14 +23,6 @@
       sops.secrets."nextcloud/plumjam-password" = {
         sopsFile = ../secrets/services/nextcloud.yaml;
         owner = "nextcloud";
-      };
-
-      services.rustic.backups.nextcloud = rustic.mkBackup "nextcloud" {
-        paths = singleton "/var/lib/nextcloud";
-        timerConfig = {
-          OnCalendar = "hourly";
-          Persistent = true;
-        };
       };
 
       services.nextcloud = {
