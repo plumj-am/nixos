@@ -45,19 +45,28 @@ in
   #   "aarch64-darwin"
   # ];
 
-  options.flake.modules = mkOption {
-    type = lazyAttrsOf <| lazyAttrsOf deferredModule;
+  options.flake = {
+    modules = mkOption {
+      type = lazyAttrsOf <| lazyAttrsOf deferredModule;
 
-    apply = mapAttrs (k: mapAttrs (addInfo k));
+      apply = mapAttrs (k: mapAttrs (addInfo k));
 
-    description = ''
-      Groups of modules published by the flake.
+      description = ''
+        Groups of modules published by the flake.
 
-      The outer attributes declare the class of the modules within it.
-      The special attributes "generic" and "common" do not declare a class,
-      allowing their modules to be used in any module class.
-      "common" modules are automatically merged into "nixos" and "darwin".
-    '';
+        The outer attributes declare the class of the modules within it.
+        The special attributes "generic" and "common" do not declare a class,
+        allowing their modules to be used in any module class.
+        "common" modules are automatically merged into "nixos" and "darwin".
+      '';
+    };
+
+    services = mkOption {
+      type = lazyAttrsOf deferredModule;
+      description = ''
+        Services published by the flake.
+      '';
+    };
   };
 
   # Auto-merge common modules into both namespaces.

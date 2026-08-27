@@ -64,13 +64,14 @@ in
       inherit (lib.attrsets) listToAttrs;
     in
     {
-      imports = singleton sshConfigBase;
+      imports = [
+        sshConfigBase
+        self.services.tarssh
+      ];
 
-      networking.firewall.allowedTCPPorts = singleton 22;
+      networking.firewall.allowedTCPPorts = singleton 2222;
 
       programs.ssh.startAgent = true;
-
-      services.sshguard.enable = true;
 
       services.openssh = {
         enable = true;
@@ -127,6 +128,13 @@ in
           Host git.plumj.am
             IdentityFile ${config.sops.secrets.id.path}
         '';
+
+      services.tarssh = {
+        enable = false; # TODO: enable
+        listenAddress = "[::]";
+        listenPort = 22;
+        openFirewall = true;
+      };
     };
 
   flake.modules.nixos.openssh-grove-systems =
