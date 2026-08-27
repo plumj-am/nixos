@@ -7,7 +7,9 @@ Rectangle {
    id: root
 
    property var notification: null
-   property int timeout: notification?.expireTimeout > 0 ? notification.expireTimeout * 1000 : 8000
+   readonly property int maxVisibleMs: 30000
+   property int timeout: Math.max(1, notification?.expireTimeout > 0 ? Math.min(notification.expireTimeout * 1000,
+																				maxVisibleMs) : maxVisibleMs)
    property bool autoDismiss: true
    property bool skipEntryAnimation: false
    property bool hasEntered: skipEntryAnimation
