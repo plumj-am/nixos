@@ -145,7 +145,7 @@
           database.journal_mode = "wal";
 
           model = {
-            default = "deepseek/deepseek-v4-flash";
+            default = "minimax/minimax-m3-free";
             provider = activeSub;
             base_url = "https://api.commandcode.ai/provider/v1";
           };
@@ -168,6 +168,10 @@
               {
                 id = "meta/muse-spark-1.2-contributor";
                 context_length = 1048576;
+              }
+              {
+                id = "minimax/minimax-m3-free";
+                context_length = 1000000;
               }
             ];
           };
