@@ -25,13 +25,11 @@
               let target = $remote | default $hostname
               let is_remote = $target != $hostname
 
-              let privilege = if $is_remote { [] } else { ["sudo"] }
               let subcommand = if $is_nixos { "os" } else { "darwin" }
               let prefix = if $is_nixos { "nixos" } else { "darwin" }
               let target_host = if $is_remote { ["--target-host" $"root@($target)"] } else { [] }
 
               let command = [
-                $privilege
                 ${getExe pkgs.nh}
                 $subcommand
                 switch
@@ -46,8 +44,13 @@
                 ...$rest
               ]
 
+              let command = if not $is_remote {
+                $command | prepend ["sudo"]
+              } else { $command }
+
               print $"rebuilding ($target)..."
               try {
+                print $"running: ($command)"
                 ^($command | first) ...($command | skip 1)
               } catch {
                 error make $"rebuilding ($target) failed"
