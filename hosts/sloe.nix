@@ -18,6 +18,7 @@ in
         graft
         graphics
         hermes
+        mealie
         nextcloud
         openssh-grove-systems
         tend
