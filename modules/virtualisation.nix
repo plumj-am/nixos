@@ -23,6 +23,13 @@
         "iptable_nat"
         "ip_tables"
         "nf_nat"
+        "bridge"
+        "veth"
+        "br_netfilter"
       ];
+      boot.extraModprobeConfig = ''
+        options bridge-nf-call-iptables=1
+        options bridge-nf-call-ip6tables=1
+      '';
     };
 }
