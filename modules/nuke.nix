@@ -57,6 +57,38 @@
           # git-repo's wrapper pulls the full perl-enabled git.
           git-repo = prev.git-repo.override { git = final.gitMinimal; };
 
+          # autolith (numtide/llm-agents.nix) is a writeShellApplication
+          # whose script bakes in the full perl-enabled git and a perl
+          # image-materialize lock. Rebuild it against this pkgs set — where
+          # the git override below makes git perl-free — so the git-init'd
+          # provenance repo and wrapper PATH carry gitMinimal, then scrub
+          # the perl lock for flock(1), which takes the same lockfile and
+          # command arguments.
+          autolith =
+            let
+              src = inputs.llm-agents;
+              flakeLib = import "${src}/lib/default.nix" { inherit (src) inputs; };
+              pkg = import "${src}/packages/autolith/package.nix" {
+                lib = flakeLib;
+                pkgs = final;
+                flake = src;
+                fetchFromGitHub = final.fetchFromGitHub;
+              };
+            in
+            pkg.overrideAttrs (old: {
+              # writeTextFile drvs never run fixupPhase; append to the
+              # buildCommand that installs the script instead.
+              buildCommand = old.buildCommand + ''
+                wrap="$out/bin/autolith"
+                sed -i -E \
+                  -e 's|:[^:]*perl-[0-9][^:]*/bin||g' \
+                  "$wrap"
+                sed -i -E \
+                  -e 's|/nix/store/[a-z0-9]{32}-perl-[0-9.]+/bin/perl "[^"]*"|${final.flock}/bin/flock|' \
+                  "$wrap"
+              '';
+            });
+
           # in aspell, bin/aspell-import is a perl script which imports
           # ispell wordlists. This is not used in KDE
           aspell = prev.aspell.overrideAttrs (old: {
