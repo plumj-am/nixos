@@ -140,7 +140,7 @@
             }
 
             def rebuild [] {
-              try { ${rebuildScript} } catch {|e|
+              try { sudo ${rebuildScript} } catch {|e| # sudo required
                 error make "rebuild failed"
               }
             }
