@@ -117,23 +117,6 @@
                         supportsToolChoice = false;
                       };
                     }
-                    {
-                      # minimal | low | medium | high | xhigh
-                      id = "minimax/minimax-m3-free";
-                      name = "MiniMax M3";
-                      reasoning = true;
-                      input = [
-                        "text"
-                      ];
-                      cost = {
-                        input = 0;
-                        output = 0;
-                        cacheRead = 0;
-                        cacheWrite = 0;
-                      };
-                      contextWindow = 1000000;
-                      maxTokens = 262144;
-                    }
                   ];
                 };
 
@@ -177,9 +160,9 @@
             generator = pkgs.writers.writeYAML "omp-agent-config.yml";
             value =
               let
-                big = "${activeSub}/minimax/minimax-m3-free:x-hight";
-                small = "${activeSub}/minimax/minimax-m3-free:x-high";
-                cheap = "${activeSub}/minimax/minimax-m3-free:x-high";
+                big = "${activeSub}/deepseek/deepseek-v4-flash:x-high";
+                small = "${activeSub}/deepseek/deepseek-v4-flash:low";
+                cheap = "${activeSub}/deepseek/deepseek-v4-flash:low";
                 vision = "${activeSub}/meta/muse-spark-1.2-contributor:low";
               in
               {

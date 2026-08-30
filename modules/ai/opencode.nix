@@ -35,9 +35,9 @@
       #   {type: "free", opencode: $of, commandcode: $cf}
       #   {type: "paid", opencode: [],  commandcode: $cp}
       # ] | table --expand --index false --theme single
-      big = "${activeSub}/minimax/minimax-m3-free";
-      small = "${activeSub}/minimax/minimax-m3-free";
-      cheap = "${activeSub}/minimax/minimax-m3-free";
+      big = "${activeSub}/deepseek/deepseek-v4-flash";
+      small = "${activeSub}/deepseek/deepseek-v4-flash";
+      cheap = "${activeSub}/deepseek/deepseek-v4-flash";
     in
     {
       ai.secrets = true;
@@ -164,16 +164,6 @@
                     limit = {
                       context = 1048576;
                       output = 384000;
-                    };
-                  };
-                  "minimax-m3" = {
-                    id = "minimax/minimax-m3-free";
-                    name = "MiniMax M3";
-                    reasoning = true;
-                    tool_call = true;
-                    limit = {
-                      context = 1000000;
-                      output = 262144;
                     };
                   };
                 };
