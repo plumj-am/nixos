@@ -56,7 +56,8 @@
     sudo-server
   ];
 
-  flake.modules.nixos.ai-agents.imports = with self.modules.nixos; [
+  flake.modules.common.ai-agents.imports = with self.modules.nixos; [
+    autolith
     commandcode
     omp
     opencode
