@@ -16,6 +16,8 @@
       inherit (lib.modules) mkAfter mkIf;
     in
     {
+      imports = singleton inputs.direnv-instant.nixosModules.default;
+
       config.environment.shells = singleton <| getExe pkgs.nushell;
 
       options.shellAliases = mkOption {
@@ -23,6 +25,18 @@
         default = { };
         description = "Additional shell aliases to be merged with defaults";
       };
+
+      config.programs.direnv = {
+        package = pkgs.direnv;
+        silent = true;
+        loadInNixShell = true;
+        nix-direnv = {
+          enable = true;
+          package = pkgs.nix-direnv;
+        };
+      };
+
+      config.programs.direnv-instant.enable = true;
 
       config.hjem.extraModule =
         {
@@ -82,12 +96,11 @@
               }
             '';
 
-          cadeNushellIntegration = # nu
+          direnvInstantNushellIntegration = # nu
             ''
               source ${
-                pkgs.runCommand "cade-hook-nu" { }
-                  ''${getExe inputs.cade.packages.${pkgs.stdenv.hostPlatform.system}.default} hook nushell >> "$out"''
-              }
+                inputs.direnv-instant.packages.${pkgs.stdenv.hostPlatform.system}.default
+              }/share/direnv-instant/nushell.nu
             '';
 
           aliases = defaultAliases // osConfig.shellAliases;
@@ -95,11 +108,9 @@
         {
           packages = [
             pkgs.bash
-            # pkgs.direnv
+            pkgs.direnv
             pkgs.nushell
             pkgs.zoxide
-
-            inputs.cade.packages.${pkgs.stdenv.hostPlatform.system}.default
           ];
 
           files.".zshrc" = mkIf osConfig.nixpkgs.hostPlatform.isDarwin {
@@ -109,7 +120,7 @@
             '';
           };
 
-          # xdg.config.files."direnv/lib/nix-direnv.sh".source = "${pkgs.nix-direnv}/share/nix-direnv/direnvrc";
+          xdg.config.files."direnv/lib/nix-direnv.sh".source = "${pkgs.nix-direnv}/share/nix-direnv/direnvrc";
 
           xdg.config.files."nushell/config.nu".text =
             # nu
@@ -211,30 +222,19 @@
 
               $env.config.hooks.env_change.PWD = [
                 { |before, after| zellij-update-tabname }
-                {||
-                  if (which cade | is-not-empty) {
-                    $env.__CADE_STATUS = ^cade status
-                  }
-                }
               ]
 
               $env.config.hooks.display_output = {
                 if (term size).columns >= 100  { tee { table --expand | print } } | try { if $in != null { $env.last = $in } }
               }
 
-              $env.config.hooks.pre_prompt = [
-                {||
-                  if (which cade | is-not-empty) {
-                    $env.__CADE_STATUS = ^cade status
-                  }
-                }
-              ]
+              $env.config.hooks.pre_prompt = [ ]
 
               ${readFile ./nushell.menus.nu}
               ${readFile ./nushell.functions.nu}
 
               ${zoxideNushellIntegration}
-              ${cadeNushellIntegration}
+              ${direnvInstantNushellIntegration}
 
               def rebuild-all [] {
                 cd /home/jam/nixos; zellij run --in-place -- ./rebuild.nu; zellij run --near-current-pane -- ./rebuild.nu --remote date; zellij run --near-current-pane -- ./rebuild.nu --remote plum; zellij run --near-current-pane -- ./rebuild.nu --remote kiwi; zellij run --near-current-pane -- ./rebuild.nu --remote sloe; }
@@ -330,23 +330,11 @@
               						$" (ansi '${base0A}')($cmd_duration)"
                 				}
 
-                				# See pre_prompt hook.
-                				let cade_status = $env.__CADE_STATUS? | default ""
-                				let cade = if ($cade_status) =~ 'active:  yes' {
-                				  $"\((ansi green)cade(ansi rst)\)"
-                				} else if ($cade_status =~ 'active:  no') and ($cade_status =~ 'root:    none') {
-                				  ""
-                				} else {
-                				  $"\((ansi red)cade(ansi rst)\)"
-                				}
-
                 				let left_prompt = [
                 					$status
                 					$host
                 					" "
                 					$directory
-                					" "
-                					$cade
                 					(char nl)
               					] | str join
 
