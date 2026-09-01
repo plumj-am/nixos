@@ -579,6 +579,6 @@ in
       inherit (lib.lists) singleton;
     in
     {
-      environment.systemPackages = singleton pkgs.brave;
+      environment.systemPackages = singleton <| pkgs.brave.overrideAttrs { flavor = "origin"; };
     };
 }
