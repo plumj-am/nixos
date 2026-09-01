@@ -1,31 +1,26 @@
 { self, ... }:
 {
-  flake.modules.common.default = self.modules.common.jujutsu;
+  flake.modules.common.default.imports = [
+    self.modules.common.jujutsu
+    self.modules.common.jjui
+    self.modules.common.watchman
+    self.modules.common.difftastic
+    self.modules.common.mergiraf
+  ];
+
   flake.modules.common.jujutsu =
     {
       pkgs,
-      lib,
-      config,
       ...
     }:
-    let
-      inherit (lib.lists) singleton;
-      inherit (config) theme;
-    in
     {
-      shellAliases.ju = "jjui";
-
-      hjem.extraModule =
+      hjemModule =
         { osConfig, config, ... }:
         {
           packages = [
             pkgs.jujutsu
-            pkgs.difftastic
-            pkgs.mergiraf
 
             self.packages.${pkgs.stdenv.hostPlatform.system}.maiao
-
-            pkgs.jjui
           ];
 
           xdg.config.files."jj/config.toml" = {
@@ -41,25 +36,12 @@
               ui.conflict-marker-style = "snapshot";
               ui.default-command = "lg";
               ui.diff-editor = ":builtin";
-              ui.diff-formatter = [
-                "difft"
-                "--color"
-                "always"
-                "$left"
-                "$right"
-              ];
-              ui.merge-editor = "mergiraf";
               ui.editor = osConfig.environment.variables.EDITOR;
               ui.graph.style = "curved";
               ui.movement.edit = true;
               ui.pager = ":builtin";
 
               snapshot.max-new-file-size = "10MiB";
-
-              gg = {
-                default-mode = "web";
-                web.default-port = 9999;
-              };
 
               git = {
                 sign-on-push = true; # Sign in bulk on push.
@@ -143,12 +125,6 @@
               ];
 
               aliases.res = [ "resolve" ];
-              aliases.resolve-ast = [
-                "resolve"
-                "--tool"
-                "mergiraf"
-              ];
-              aliases.resa = [ "resolve-ast" ];
 
               aliases.s = [ "split" ];
               aliases.sm = [
@@ -438,71 +414,196 @@
                 '';
             };
           };
-          xdg.config.files."jjui/config.toml" = {
-            generator = pkgs.writers.writeTOML "jjui-config.toml";
-            value = {
-              preview = {
-                position = "bottom";
-                show_at_start = true;
-              };
+        };
+    };
 
-              actions = [
-                {
-                  name = "tug";
-                  lua = # lua
-                    ''
-                      jj_async("tug")
-                      revisions.refresh()
-                    '';
-                }
-                {
-                  name = "gerrit-upload";
-                  lua = # lua
-                    ''
-                      local args = input({
-                        title = "jj gerrit upload <args>",
-                        prompt = "Arguments: "
-                      })
+  flake.modules.common.jjui =
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
+    let
+      inherit (lib.lists) singleton;
+      inherit (config) theme;
+    in
+    {
+      environment.systemPackages = singleton pkgs.jjui;
 
-                      if args ~= nil and args ~= "" then
-                      local argv = {"gerrit", "upload"}
-                        for arg in string.gmatch(args, "%S+") do
-                          table.insert(argv, arg)
-                        end
+      hjemModule = {
+        xdg.config.files."jjui/config.toml" = {
+          generator = pkgs.writers.writeTOML "jjui-config.toml";
+          value = {
+            preview = {
+              position = "bottom";
+              show_at_start = true;
+            };
 
-                        jj_async(argv)
-                        revisions.refresh()
+            ui = {
+              flash_message_display_seconds = 15;
+              colors."selected".bg = "#${theme.colors.base01}";
+            };
+
+            actions = [
+              {
+                name = "tug";
+                lua = # lua
+                  ''
+                    jj_async("tug")
+                    revisions.refresh()
+                  '';
+              }
+              {
+                name = "gerrit-upload";
+                lua = # lua
+                  ''
+                    local args = input({
+                      title = "jj gerrit upload <args>",
+                      prompt = "Arguments: "
+                    })
+
+                    if args ~= nil and args ~= "" then
+                    local argv = {"gerrit", "upload"}
+                      for arg in string.gmatch(args, "%S+") do
+                        table.insert(argv, arg)
                       end
 
-                    '';
-                }
-              ];
+                      jj_async(argv)
+                      revisions.refresh()
+                    end
 
-              bindings = [
-                {
-                  key = singleton "T";
-                  action = "tug";
-                  scope = "revisions";
-                  desc = "tug";
-                }
-                {
-                  key = singleton "P";
-                  action = "ui.preview_toggle_bottom";
-                  scope = "revisions.details";
-                  desc = "toggle preview bottom/right";
-                }
-                {
-                  key = singleton "G";
-                  action = "gerrit-upload";
-                  scope = "revisions";
-                  desc = "gerrit upload";
-                }
-              ];
+                  '';
+              }
+            ];
 
-              ui.flash_message_display_seconds = 15;
-              ui.colors."selected".bg = "#${theme.colors.base01}";
+            bindings = [
+              {
+                key = singleton "T";
+                action = "tug";
+                scope = "revisions";
+                desc = "tug";
+              }
+              {
+                key = singleton "P";
+                action = "ui.preview_toggle_bottom";
+                scope = "revisions.details";
+                desc = "toggle preview bottom/right";
+              }
+              {
+                key = singleton "G";
+                action = "gerrit-upload";
+                scope = "revisions";
+                desc = "gerrit upload";
+              }
+            ];
+          };
+        };
+      };
+    };
+
+  flake.modules.common.difftastic =
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
+    let
+      inherit (lib.modules) mkDefault;
+      inherit (lib.meta) getExe;
+      inherit (lib.lists) singleton;
+
+      difft =
+        pkgs.writeShellScriptBin "difft" # bash
+          ''
+            exec ${getExe pkgs.difftastic} --background ${if config.theme.isDark then "dark" else "light"} "$@"
+          '';
+    in
+    {
+      environment.systemPackages = singleton difft;
+
+      hjemModule = {
+        xdg.config.files."jj/config.toml" = {
+          generator = mkDefault <| pkgs.writers.writeTOML "jj-config.toml";
+          value = {
+            ui.diff-formatter = [
+              (getExe difft)
+              "--color"
+              "always"
+              "$left"
+              "$right"
+            ];
+          };
+        };
+      };
+    };
+
+  flake.modules.common.mergiraf =
+    {
+      pkgs,
+      lib,
+      ...
+    }:
+    let
+      inherit (lib.modules) mkDefault;
+      inherit (lib.meta) getExe;
+      inherit (lib.lists) singleton;
+    in
+    {
+      environment.systemPackages = singleton pkgs.mergiraf;
+
+      hjemModule = {
+        xdg.config.files."jj/config.toml" = {
+          generator = mkDefault <| pkgs.writers.writeTOML "jj-config.toml";
+          value = {
+            aliases = {
+              resa = [ "resolve-ast" ];
+              resolve-ast = [
+                "resolve"
+                "--tool"
+                "mergiraf"
+              ];
+            };
+
+            ui.merge-editor = "mergiraf";
+
+            merge-tools.mergiraf.program = getExe pkgs.mergiraf;
+          };
+        };
+      };
+    };
+
+  flake.modules.common.watchman =
+    { pkgs, lib, ... }:
+    let
+      inherit (lib.modules) mkDefault;
+      inherit (lib.lists) singleton;
+    in
+    {
+      environment.systemPackages = singleton pkgs.watchman;
+
+      hjemModule = {
+        xdg.config.files."watchman/watchman.json" = {
+          generator = pkgs.writers.writeJSON "watchman-watchman.json";
+          value = {
+            ignore_dirs = [
+              ".direnv"
+              "node_modules"
+              "target"
+            ];
+          };
+        };
+
+        xdg.config.files."jj/config.toml" = {
+          generator = mkDefault <| pkgs.writers.writeTOML "jj-config.toml";
+          value = {
+            fsmonitor = {
+              backend = "watchman";
+              fsmonitor.watchman.register-snapshot-trigger = true;
             };
           };
         };
+      };
     };
 }
