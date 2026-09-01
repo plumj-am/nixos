@@ -3,6 +3,7 @@
   flake.modules.nixos.default = self.modules.nixos.distributed-builds;
   flake.modules.nixos.distributed-builds =
     {
+      config,
       lib,
       ...
     }:
@@ -27,14 +28,13 @@
           |> filter (
             # deadnix: skip
             { name, value }:
-            name != value.config.networking.hostName
-            && value.config.systemInfo.distributedBuilder.speedFactor != null
+            name != config.networking.hostName && value.config.systemInfo.distributedBuilder.speedFactor != null
           )
           |> map (
             { name, value }:
             {
               hostName = name;
-              maxJobs = value.config.systemInfo.cores;
+              maxJobs = value.config.systemInfo.threads;
               protocol = "ssh-ng";
               sshUser = "build";
               sshKey = "/root/.ssh/id";

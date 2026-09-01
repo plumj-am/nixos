@@ -14,11 +14,11 @@ in
       imports = with self.modules.nixos; [
         server
 
-        distributed-builder
+        # distributed-builder
       ];
 
       systemInfo = {
-        distributedBuilder.speedFactor = 1;
+        # distributedBuilder.speedFactor = 1;
 
         disks.swap.file = {
           path = "/swapfile";
