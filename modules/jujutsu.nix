@@ -23,6 +23,8 @@
             pkgs.difftastic
             pkgs.mergiraf
 
+            self.packages.${pkgs.stdenv.hostPlatform.system}.maiao
+
             pkgs.jjui
           ];
 
