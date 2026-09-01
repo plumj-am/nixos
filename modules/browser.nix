@@ -550,7 +550,9 @@ in
     in
     {
       environment.systemPackages = [
-        inputs.helium.packages.${pkgs.stdenv.hostPlatform.system}.default
+        (inputs.helium.packages.${pkgs.stdenv.hostPlatform.system}.default.override {
+          withWidevine = true;
+        })
 
         (pkgs.makeDesktopItem {
           exec = "helium --force-light-mode";
