@@ -62,7 +62,7 @@
 
             wrappers = [
               "mangohud"
-              "gamemoderun"
+              # "gamemoderun"
             ];
 
             env = {
