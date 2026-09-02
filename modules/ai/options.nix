@@ -52,7 +52,8 @@
               "exa-key"
               "context7-key"
               "opencode-go-key"
-              "commandcode-auth-json"
+              "commandcode-auth-1-json"
+              "commandcode-auth-2-json"
               "hermes-env"
               "gerrit-mcp-config"
             ];
