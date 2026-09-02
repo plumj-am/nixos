@@ -151,7 +151,7 @@
           };
 
           # Command Code provider - key resolved from .env.
-          providers.commandcode = {
+          providers.${activeSub} = {
             name = "Command Code";
             api = "https://api.commandcode.ai/provider/v1";
             key_env = "${activeSubEnv}_API_KEY";
@@ -166,7 +166,11 @@
                 context_length = 256000;
               }
               {
-                id = "meta/muse-spark-1.2-contributor";
+                id = "meta/muse-spark-1.3-contributor";
+                context_length = 1048576;
+              }
+              {
+                id = "meituan/LongCat-2.0:free";
                 context_length = 1048576;
               }
             ];

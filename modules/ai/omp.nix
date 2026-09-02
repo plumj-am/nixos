@@ -80,20 +80,47 @@
                         requiresAssistantContentForToolCalls = true;
                         extraBody.thinking.type = "enabled";
                       };
+                      cost = {
+                        input = 0.22;
+                        output = 0.66;
+                        cacheRead = 0.007;
+                        cacheWrite = 0;
+                      };
                     }
                     {
                       # TODO: limited input, wait until full release with full context
                       # minimal | low | medium | high | xhigh
                       id = "poolside/laguna-s-2.1-free";
-                      name = "Poolside Laguna S 2.1";
+                      name = "Poolside Laguna S 2.1 free";
                       reasoning = true;
                       contextWindow = 256000;
                       maxTokens = 131072;
+                      cost = {
+                        input = 0;
+                        output = 0;
+                        cacheRead = 0;
+                        cacheWrite = 0;
+                      };
+                    }
+                    {
+                      # TODO: limited input, wait until full release with full context
+                      # minimal | low | medium | high | xhigh
+                      id = "meituan/LongCat-2.0:free";
+                      name = "Meituan LongCat 2.0 free";
+                      reasoning = true;
+                      contextWindow = 1048576;
+                      maxTokens = 131072;
+                      cost = {
+                        input = 0;
+                        output = 0;
+                        cacheRead = 0;
+                        cacheWrite = 0;
+                      };
                     }
                     {
                       # minimal | low | medium | high | xhigh
-                      id = "meta/muse-spark-1.2-contributor";
-                      name = "Meta Muse Spark 1.2";
+                      id = "meta/muse-spark-1.3-contributor";
+                      name = "Meta Muse Spark 1.3 Contributor";
                       reasoning = true;
                       thinking = {
                         minLevel = "minimal";
@@ -162,8 +189,8 @@
               let
                 big = "${activeSub}/deepseek/deepseek-v4-flash:x-high";
                 small = "${activeSub}/deepseek/deepseek-v4-flash:low";
-                cheap = "${activeSub}/deepseek/deepseek-v4-flash:low";
-                vision = "${activeSub}/meta/muse-spark-1.2-contributor:low";
+                cheap = "${activeSub}/meituan/LongCat-2.0-free:auto";
+                vision = "${activeSub}/meta/muse-spark-1.3-contributor:low";
               in
               {
                 # [appearance]

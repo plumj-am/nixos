@@ -156,9 +156,19 @@
                       output = 131072;
                     };
                   };
-                  "muse-spark-1.2" = {
-                    id = "meta/muse-spark-1.2-contributor";
-                    name = "Meta Muse Spark 1.2";
+                  "meituan-longcat-2.0-free" = {
+                    id = "meituan/LongCat-2.0:free";
+                    name = "Meituan LongCat 2.0 free";
+                    reasoning = true;
+                    tool_call = true;
+                    limit = {
+                      context = 1048576;
+                      output = 131072;
+                    };
+                  };
+                  "muse-spark-1.3-contributor" = {
+                    id = "meta/muse-spark-1.3-contributor";
+                    name = "Meta Muse Spark 1.3 Contributor";
                     reasoning = true;
                     tool_call = true;
                     limit = {
