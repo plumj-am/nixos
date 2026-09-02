@@ -92,12 +92,17 @@
     };
 
   flake.modules.nixos.nextcloud-client =
-    { pkgs, lib, ... }:
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
     let
       inherit (lib.lists) singleton;
     in
     {
-      hjem.extraModule = { osConfig, ... }: {
+      hjem.extraModule = {
         packages = singleton pkgs.nextcloud-client;
         # This is probably a bad idea.
         xdg.config.files."Nextcloud/nextcloud.cfg" = {
@@ -133,7 +138,7 @@
               0\Folders\1\journalPath=.sync_2287fed0df6f.db
               0\Folders\1\localPath=/home/jam/Pictures/
               0\Folders\1\paused=false
-              0\Folders\1\targetPath=/${osConfig.networking.hostName}/pictures
+              0\Folders\1\targetPath=/${config.networking.hostName}/pictures
               0\Folders\1\version=2
               0\Folders\1\virtualFilesMode=off
               0\Folders\2\ignoreHiddenFiles=false
