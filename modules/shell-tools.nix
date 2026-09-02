@@ -56,7 +56,7 @@
         xdg.config.files."nushell/config.nu".text = "source ${
           pkgs.writeText "nix-run.nu" # nu
             ''
-              def >? []: string -> string {
+              def ">?" []: string -> string {
                 if ($in | str contains "#") or ($in | str contains ":") {
                   $in
                 } else if $in in ${toJSON <| attrNames self.packages.${config.nixpkgs.hostPlatform.system}} {
@@ -66,12 +66,20 @@
                 }
               }
 
-              def --wrapped , [program: string = "", ...rest] {
-                nix run ($program | >?) -- ...$rest
+              # Examples:
+              # `, nix-tree /run/current-system/sw` -> `nix run nixpkgs#nix-tree -- /run/current-system/sw`
+              # `, nodejs/npx cowsay "lol"`         -> `nix shell nixpkgs#nodejs --command npx cowsay "lol"`
+              def --wrapped "," [program: string = "", ...rest] {
+                if ($program | str contains "/") {
+                  let split = $program | split column "/" "program" "command"
+                  nix shell ($split.program.0 | >?) --command $split.command.0 ...$rest
+                } else {
+                  nix run ($program | >?) -- ...$rest
+                }
               }
 
-              def --wrapped > [...rest: string] {
-                nix shell ...($rest | each { $in | >? })
+              def --wrapped ">" [...rest: string] {
+                nix shell ...($rest | each { >? })
               }
             ''
         }";
