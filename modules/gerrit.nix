@@ -11,6 +11,7 @@
       inherit (lib.modules) mkForce mkIf merge;
       inherit (lib.lists) singleton elem;
       inherit (lib.attrsets) mapAttrsToList;
+      inherit (lib.meta) getExe';
       inherit (config.helpers) rustic;
       inherit (config.networking) domain;
       inherit (config.sops) secrets;
@@ -189,8 +190,8 @@
         Group = "git";
       };
       systemd.services.gerrit.serviceConfig.ExecStartPre = [
-        "+${pkgs.uutils-coreutils-noprefix}/bin/mkdir -p ${stateDir}/groovy"
-        "+${pkgs.uutils-coreutils-noprefix}/bin/cp ${groovyScript} ${stateDir}/groovy/ai-review-agent-openai-compatible-1.0.groovy"
+        "+${getExe' pkgs.uutils-coreutils-noprefix "mkdir"} -p ${stateDir}/groovy"
+        "+${getExe' pkgs.uutils-coreutils-noprefix "cp"} ${groovyScript} ${stateDir}/groovy/ai-review-agent-openai-compatible-1.0.groovy"
       ];
       services.gerrit = {
         enable = true;

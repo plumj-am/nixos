@@ -10,6 +10,7 @@
       inherit (lib.lists) singleton;
       inherit (lib.options) mkOption;
       inherit (lib.modules) mkMerge mkIf;
+      inherit (lib.meta) getExe';
       inherit (lib.types) nullOr int str;
 
       cfg = config.systemInfo.disks;
@@ -58,9 +59,9 @@
                 in
                 ''
                   if ! test -f "${path}"; then
-                    ${pkgs.util-linux}/bin/fallocate -l ${toString size}M "${path}"
-                    ${pkgs.uutils-coreutils-noprefix}/bin/chmod 0600 "${path}"
-                    ${pkgs.util-linux}/bin/mkswap "${path}"
+                    ${getExe' pkgs.util-linux "fallocate"} -l ${toString size}M "${path}"
+                    ${getExe' pkgs.uutils-coreutils-noprefix "chmod"} 0600 "${path}"
+                    ${getExe' pkgs.util-linux "mkswap"} "${path}"
                   else
                     echo "${path}: swapfile already exists, skipping creation"
                   fi
