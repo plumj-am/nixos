@@ -62,7 +62,7 @@
             pkgs.forgejo-cli
             pkgs.gcc
             pkgs.gitMinimal
-            pkgs.gnutar
+            pkgs.uutils-tar
             pkgs.gzip
             pkgs.just
             pkgs.jq
