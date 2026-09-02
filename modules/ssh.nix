@@ -41,24 +41,41 @@ let
 in
 {
   flake.modules.darwin.default = self.modules.darwin.ssh;
-  flake.modules.darwin.ssh = { config, ... }: {
-    imports = [ sshConfigBase ];
+  flake.modules.darwin.ssh =
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
+    let
+      inherit (lib.lists) singleton;
+    in
+    {
+      imports = singleton sshConfigBase;
 
-    services.openssh = {
-      enable = true;
-      extraConfig = # sshd_config
-        ''
-          HostKey ${config.sops.secrets.id.path}
-          PasswordAuthentication no
-          KbdInteractiveAuthentication no
-          AcceptEnv SHELLS COLORTERM
-        '';
+      environment.systemPackages = singleton pkgs.openssh;
+
+      services.openssh = {
+        enable = true;
+        extraConfig = # sshd_config
+          ''
+            HostKey ${config.sops.secrets.id.path}
+            PasswordAuthentication no
+            KbdInteractiveAuthentication no
+            AcceptEnv SHELLS COLORTERM
+          '';
+      };
     };
-  };
 
   flake.modules.nixos.default = self.modules.nixos.ssh;
   flake.modules.nixos.ssh =
-    { config, lib, ... }:
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
     let
       inherit (lib.lists) singleton map;
       inherit (lib.attrsets) listToAttrs;
@@ -68,6 +85,8 @@ in
         sshConfigBase
         self.services.tarssh
       ];
+
+      environment.systemPackages = singleton pkgs.openssh;
 
       networking.firewall.allowedTCPPorts = singleton 2222;
 
