@@ -6,7 +6,6 @@
     {
       shellAliases.wrk = "oha";
 
-      environment.defaultPackages = [ ];
       environment.systemPackages = [
         pkgs.ast-grep
         pkgs.curl
@@ -17,6 +16,8 @@
         pkgs.tokei
         pkgs.typos
         pkgs.uutils-coreutils-noprefix
+        pkgs.uutils-diffutils
+        pkgs.uutils-findutils
         pkgs.sqld
         pkgs.sqlite
         pkgs.oha

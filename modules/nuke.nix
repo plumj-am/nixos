@@ -1,5 +1,5 @@
 { self, ... }:
-# Remove All PErl, webkitgtk, and other shit!
+# Remove All PErl, webkitgtk, GNU coreutils, and other shit!
 # Credit to: <https://github.com/amaanq/dotfiles>
 # nixos-core project: <https://github.com/feel-co/nixos-core>
 #
@@ -13,9 +13,12 @@
       ...
     }:
     let
-      inherit (lib.modules) mkDefault;
-      inherit (lib.lists) singleton filter;
+      inherit (lib.modules) mkDefault mkForce;
+      inherit (lib.lists) singleton filter head;
       inherit (lib.attrsets) optionalAttrs;
+      inherit (lib.trivial) flip;
+      inherit (lib.filesystem) baseNameOf;
+      inherit (lib.strings) replicate stringLength;
     in
     {
       imports = singleton inputs.nixos-core.nixosModules.default;
@@ -24,6 +27,7 @@
         # nixos-core replaces:
         #   update-users-groups.pl      (user/group/shadow sync)
         #   setup-etc.pl                (/etc/static atomic update)
+        #   init-script-builder.sh      (generic /sbin/init creation)
         #   stage-1-init.sh             (legacy initrd boot)
         #   stage-2-init.sh             (system activation post-initrd)
         nixos-core.enable = true;
@@ -31,12 +35,168 @@
         # Unnecessary with flakes.
         tools.nixos-generate-config.enable = mkDefault false;
 
-        # Block perl and webkitgtk.
-        forbiddenDependenciesRegexes = [
-          "^perl$"
-          "webkitgtk"
-        ];
+        # Can't use alongside `replaceDependencies`.
+        # forbiddenDependenciesRegexes = [
+        #   "perl"
+        # ];
+
+        replaceDependencies.replacements =
+          let
+            candidates = [
+              # Not ready for use yet: <https://github.com/uutils/acl>
+              # {
+              #   prev = pkgs.acl;
+              #   final = pkgs.uutils-acl;
+              #   finalName = "u-acl";
+              # }
+              {
+                prev = pkgs.coreutils;
+                final = pkgs.uutils-coreutils-noprefix;
+                finalName = "u-coreutils";
+              }
+              {
+                prev = pkgs.coreutils-full;
+                final = pkgs.uutils-coreutils-noprefix;
+                finalName = "u-coreutils";
+              }
+              {
+                prev = pkgs.diffutils;
+                final = pkgs.uutils-diffutils;
+                finalName = "u-diffutils";
+              }
+              {
+                prev = pkgs.findutils;
+                final = pkgs.uutils-findutils;
+                finalName = "u-findutils";
+              }
+              {
+                prev = pkgs.gnused;
+                final = pkgs.uutils-sed;
+                finalName = "u-sed";
+              }
+              {
+                prev = pkgs.gnutar;
+                final = pkgs.uutils-tar;
+                finalName = "u-tar";
+              }
+              {
+                prev = pkgs.hostname;
+                final = pkgs.uutils-hostname;
+                finalName = "u-hostname";
+              }
+              {
+                prev = pkgs.hostname-debian;
+                final = pkgs.uutils-hostname;
+                finalName = "u-hostname";
+              }
+              {
+                prev = pkgs.procps;
+                final = pkgs.uutils-procps;
+                finalName = "u-procps";
+              }
+              # Waiting for nixpkgs uutils-shadow: <https://github.com/NixOS/nixpkgs/pull/546635>
+              # {
+              #   prev = pkgs.su;
+              #   final = pkgs.uutils-shadow;
+              #   finalName = "u-shadow";
+              # }
+              # {
+              #   prev = pkgs.shadow;
+              #   final = pkgs.uutils-shadow;
+              #   finalName = "u-login";
+              # }
+              # Not ready for use yet: <https://github.com/uutils/util-linux>
+              # {
+              #   prev = pkgs.util-linux;
+              #   final = pkgs.uutils-util-linux;
+              #   finalName = "u-util-linux";
+              # }
+            ];
+          in
+          flip map candidates (
+            {
+              prev,
+              final,
+              finalName,
+            }:
+            let
+              # Extract the actual store path name (without the hash) from a derivation
+              oldStorePathName =
+                let
+                  base = baseNameOf prev.outPath; # e.g. "hash-util-linux-2.42.2-bin"
+                  # Capture everything after the first dash
+                  match = lib.strings.match "^[^-]+-(.*)$" base;
+                in
+                assert match != null;
+                head match;
+
+              name =
+                let
+                  padding = stringLength oldStorePathName - stringLength finalName;
+                in
+                assert padding >= 0;
+                finalName + replicate padding "_";
+
+              mvCompat = final == pkgs.uutils-coreutils-noprefix;
+            in
+            {
+              oldDependency = prev;
+              newDependency = pkgs.symlinkJoin {
+                inherit name;
+                paths = singleton final;
+
+                # Until this is fixed: <https://github.com/uutils/coreutils/issues/11321>.
+                # Without it, we get prompted for mv confirmation during activation.
+                nativeBuildInputs = if mvCompat then [ pkgs.makeWrapper ] else [ ];
+                postBuild =
+                  if mvCompat then
+                    # bash
+                    ''
+                      rm $out/bin/mv
+                      makeWrapper \
+                        ${pkgs.uutils-coreutils-noprefix}/bin/mv \
+                        $out/bin/mv --add-flags "--force"
+                    ''
+                  else
+                    "";
+              };
+            }
+          );
       };
+
+      # original: `[ pkgs.acl pkgs.attr pkgs.bashInteractive pkgs.bzip2 pkgs.coreutils-full pkgs.cpio pkgs.curl pkgs.diffutils pkgs.findutils pkgs.gawk pkgs.getent pkgs.getconf pkgs.gnugrep pkgs.gnupatch pkgs.gnused pkgs.gnutar pkgs.gzip pkgs.xz pkgs.less pkgs.libcap pkgs.ncurses pkgs.netcat pkgs.mkpasswd pkgs.procps pkgs.su pkgs.time pkgs.util-linux pkgs.which pkgs.zstd ]`
+      environment.corePackages = mkForce [
+        pkgs.acl # pkgs.uutils-acl # Not ready for use yet.
+        pkgs.attr
+        pkgs.bzip2
+        pkgs.bashInteractive
+        pkgs.curl
+        pkgs.cpio
+        pkgs.getent
+        pkgs.gawk
+        pkgs.getconf
+        pkgs.gnugrep
+        pkgs.gnupatch
+        pkgs.gzip
+        pkgs.less
+        pkgs.libcap
+        pkgs.mkpasswd
+        pkgs.ncurses
+        pkgs.netcat
+        pkgs.su # pkgs.uutil-shadow # Waiting for nixpkgs.
+        pkgs.util-linux # pkgs.uutils-util-linux # Not ready for use yet.
+        pkgs.uutils-coreutils-noprefix
+        pkgs.uutils-diffutils
+        pkgs.uutils-findutils
+        pkgs.uutils-procps
+        pkgs.uutils-sed
+        pkgs.uutils-tar
+        pkgs.which
+        pkgs.xz
+        pkgs.zstd
+      ];
+
+      environment.defaultPackages = mkForce [ ];
 
       environment.systemPackages =
         singleton
@@ -72,7 +232,7 @@
                 lib = flakeLib;
                 pkgs = final;
                 flake = src;
-                fetchFromGitHub = final.fetchFromGitHub;
+                inherit (final) fetchFromGitHub;
               };
             in
             pkg.overrideAttrs (old: {
@@ -118,6 +278,30 @@
             pythonSupport = false;
             osxkeychainSupport = false;
             withpcre2 = false;
+          };
+
+          bash = prev.bash.override { coreutils = final.uutils-coreutils-noprefix; };
+          mangohud = prev.mangohud.override {
+            coreutils = final.uutils-coreutils-noprefix;
+            gnugrep = final.uutils-coreutils-noprefix;
+            gnused = final.uutils-coreutils-noprefix;
+          };
+          alsa-ucm-conf = prev.alsa-ucm-conf.override { coreutils = final.uutils-coreutils-noprefix; };
+          openresolv = prev.openresolv.override { coreutils = final.uutils-coreutils-noprefix; };
+          # Can't be done: leads to type mismatches.
+          # networkmanager = prev.networkmanager.override { gnused = final.uutils-sed; };
+
+          steam = prev.steam.overrideAttrs { nativeOnly = true; };
+
+          # useless
+          libbluray = prev.libbluray.override { withJava = false; };
+
+          # Uses coreutils for `${coreutils}/bin/false` lol...
+          systemd = prev.systemd.override {
+            coreutils = final.uutils-coreutils-noprefix;
+          };
+          systemdMinimal = prev.systemdMinimal.override {
+            coreutils = final.uutils-coreutils-noprefix;
           };
 
           # hspell: multispell is a perl script.

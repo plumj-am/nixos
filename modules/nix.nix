@@ -78,7 +78,7 @@ in
           "fetch-closure"
         ];
 
-        allow-import-from-derivation = false;
+        allow-import-from-derivation = true; # TODO: disable
         auto-optimise-store = true;
         use-cgroups = true;
         builders-use-substitutes = true;
