@@ -1,6 +1,7 @@
 { self, ... }:
-let
-  yubikeyCommon =
+{
+  flake.modules.common.default = self.modules.nixos.yubikey;
+  flake.modules.common.yubikey =
     { pkgs, ... }:
     {
       environment.systemPackages = [
@@ -25,19 +26,4 @@ let
       services.pcscd.enable = true;
       programs.yubikey-manager.enable = true;
     };
-in
-{
-  flake.modules.nixos.default = self.modules.nixos.yubikey;
-  flake.modules.nixos.yubikey =
-    { pkgs, lib, ... }:
-    let
-      inherit (lib.lists) singleton;
-    in
-    {
-      imports = singleton yubikeyCommon;
-      environment.systemPackages = singleton pkgs.yubioath-flutter;
-    };
-
-  flake.modules.darwin.default = self.modules.darwin.yubikey;
-  flake.modules.darwin.yubikey = yubikeyCommon;
 }
