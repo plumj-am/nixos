@@ -23,6 +23,15 @@
         "nvidia-x11"
         "nvidia-settings"
       ];
+      nixpkgs.overlays = [
+        (_final: prev: {
+          xdg-desktop-portal-gtk = prev.xdg-desktop-portal-gtk.overrideAttrs (oldAttrs: {
+            postInstall = (oldAttrs.postInstall or "") + ''
+              sed -i 's/UseIn=gnome/UseIn=gnome;niri/' "$out/share/xdg-desktop-portal/portals/gtk.portal"
+            '';
+          });
+        })
+      ];
 
       xdg.portal = {
         enable = true;
@@ -34,6 +43,8 @@
         };
 
         extraPortals = [
+          # FileChooser, AppChooser, etc.
+          pkgs.xdg-desktop-portal-gtk
           # [2/2] Niri screensharing fixes.
           pkgs.xdg-desktop-portal-gnome
         ];
