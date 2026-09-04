@@ -28,6 +28,8 @@
             mprocs.log
           '';
 
+        xdg.data.files."gh/extensions/gh-stack".source = "${pkgs.gh-stack}/bin";
+
         xdg.config.files."git/config" = {
           generator = lib.generators.toGitINI;
           value = {
