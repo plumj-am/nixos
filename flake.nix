@@ -105,8 +105,8 @@
       url = "git+file:///home/jam/projects/grove?ref=graft";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    xylem = {
-      url = "git+file:///home/jam/projects/grove?ref=xylem";
+    tend = {
+      url = "git+ssh://git@github.com/grove-systems/grove?ref=refs/pull/155/head";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

@@ -12,26 +12,30 @@
       inherit (config.sops) secrets;
     in
     {
-      # The tend module + package come from the grove flake input.
-      imports = singleton inputs.grove.nixosModules.tend;
+      imports = singleton inputs.tend.nixosModules.tend;
 
-      sops.secrets."tend/token" = {
-        sopsFile = ../secrets/services/tend.yaml;
-        owner = "tend";
-        group = "tend";
-        mode = "600";
+      sops.secrets = {
+        "tend/token" = {
+          sopsFile = ../secrets/services/tend.yaml;
+          owner = "tend";
+          group = "tend";
+          mode = "600";
+        };
+        "tend/app_secret_key" = {
+          sopsFile = ../secrets/services/tend.yaml;
+          owner = "tend";
+          group = "tend";
+          mode = "600";
+        };
       };
 
       services.tend = {
         enable = true;
-        package = inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.tend;
+        package = inputs.tend.packages.${pkgs.stdenv.hostPlatform.system}.tend;
 
         state_dir = "/var/lib/tend";
 
-        # trunk CLI for the post_hook (radka deno.cache.hash regeneration).
-        postHookPath = [
-          inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.trunk
-        ];
+        postHookPath = [ ];
 
         # TEND_FORGEJO__TOKEN and GITHUB_TOKEN (for nix pins).
         environment_file = secrets."tend/token".path;
@@ -39,9 +43,12 @@
         schedule = "daily";
 
         config = {
-          forgejo = {
-            url = "https://git.plumj.am";
-            # token comes from environment_file (TEND_FORGEJO__TOKEN).
+          forge = "github";
+          github = {
+            url = "https://github.com";
+            app_id = 4849861;
+            installation_id = 159495263;
+            private_key_file = secrets."tend/app_secret_key".path;
           };
 
           repos = [
@@ -50,7 +57,7 @@
               owner = "grove-systems";
               repo = "grove";
               base_branch = "master";
-              clone_url = "https://git.plumj.am/grove-systems/grove";
+              clone_url = "https://github.com/grove-systems/grove";
             }
           ];
 
@@ -78,7 +85,7 @@
             force_update = false;
             post_hook = # bash
               ''
-                trunk radka update-deno-cache
+
               '';
           };
         };
