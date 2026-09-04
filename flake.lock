@@ -582,39 +582,23 @@
         "crane": "crane_3",
         "fenix": "fenix_4",
         "flake-parts": "flake-parts_3",
-        "haskell": "haskell",
         "nixpkgs": [
           "nixpkgs"
         ],
         "treefmt": "treefmt_2"
       },
       "locked": {
-        "lastModified": 1787568670,
-        "narHash": "sha256-+q85+bF3OLLHAzhjg55pGFxKJkM6kHolD1f/AUqdrNY=",
+        "lastModified": 1788210846,
+        "narHash": "sha256-tLYPBUID4bB+SAJKfDV8ZMN0TVT6kBeo734yYPTbjds=",
         "ref": "refs/heads/master",
-        "rev": "3868c7b08694bb2dc0558fa98225ea7eec22406a",
-        "revCount": 1919,
+        "rev": "a2a883330c69433b8e09e412edb3b64a199d1bf1",
+        "revCount": 1928,
         "type": "git",
-        "url": "ssh://forgejo@git.plumj.am/grove-systems/grove"
+        "url": "ssh://git@github.com/grove-systems/grove"
       },
       "original": {
         "type": "git",
-        "url": "ssh://forgejo@git.plumj.am/grove-systems/grove"
-      }
-    },
-    "haskell": {
-      "locked": {
-        "lastModified": 1785340889,
-        "narHash": "sha256-jzVi9BpmBiixQU02srk2PTKqJVRgTZs25/eLxSkZeWI=",
-        "owner": "srid",
-        "repo": "haskell-flake",
-        "rev": "0cd8c0235e81a20aa8c21f798989601f6c8ae40f",
-        "type": "github"
-      },
-      "original": {
-        "owner": "srid",
-        "repo": "haskell-flake",
-        "type": "github"
+        "url": "ssh://git@github.com/grove-systems/grove"
       }
     },
     "helium": {

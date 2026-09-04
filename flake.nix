@@ -24,7 +24,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     grove = {
-      url = "git+ssh://forgejo@git.plumj.am/grove-systems/grove";
+      url = "git+ssh://git@github.com/grove-systems/grove";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     helium = {
