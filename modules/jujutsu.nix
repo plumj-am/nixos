@@ -441,6 +441,8 @@
             };
 
             ui = {
+              mouse_support = false;
+              auto_refresh_interval = 30;
               flash_message_display_seconds = 15;
               colors."selected".bg = "#${theme.colors.base01}";
             };
