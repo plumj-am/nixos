@@ -71,6 +71,11 @@
       imports = singleton inputs.graft.nixosModules.graft;
 
       sops.secrets.graft-environment.sopsFile = ../secrets/services/graft.yaml;
+      sops.secrets."graft/grove_github/secret" = {
+        sopsFile = ../secrets/services/graft.yaml;
+        group = "graft";
+        mode = "0440";
+      };
       sops.secrets."graft/cache/secret_key".sopsFile = ../secrets/services/graft.yaml;
       sops.secrets."graft-ssh" = {
         sopsFile = ../secrets/services/graft-ssh.yaml;
@@ -114,7 +119,7 @@
               forgejo_repo_name = "nixos";
             };
 
-            fff-hx = {
+            fff_hx = {
               display_name = "fff.hx";
               forge = "forgejo";
               clone_uri = "https://git.plumj.am/plumjam/fff.hx";
@@ -143,6 +148,25 @@
               forgejo_url = "https://git.plumj.am";
               forgejo_repo_owner = "grove-systems";
               forgejo_repo_name = "grove";
+            };
+
+            grove_github = {
+              display_name = "Grove [GitHub]";
+              forge = "github";
+              clone_uri = "https://github.com/grove-systems/grove.git";
+              flake_ref = ".#checks";
+              systems = [ "x86_64-linux" ];
+              build_timeout_secs = 3600;
+              poll_interval_secs = 30;
+              users = [
+                "plumj-am"
+                "antteheatta"
+              ];
+              github_repo_owner = "grove-systems";
+              github_repo_name = "grove";
+              github_app_id = 4843741;
+              github_app_installation_id = 159367374;
+              github_app_private_key_file = secrets."graft/grove_github/secret".path;
             };
 
             grove = {

@@ -102,7 +102,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     graft = {
-      url = "git+file:///home/jam/projects/grove?ref=graft";
+      url = "git+ssh://git@github.com/grove-systems/grove?ref=refs/pull/93/head";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     tend = {
