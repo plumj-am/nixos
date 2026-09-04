@@ -31,14 +31,6 @@
       url = "github:amaanq/helium-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hermes-agent = {
-      url = "github:NousResearch/hermes-agent";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    hermes-webui = {
-      url = "github:nesquena/hermes-webui";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     hjem = {
       url = "github:feel-co/hjem";
       inputs.nixpkgs.follows = "nixpkgs";
