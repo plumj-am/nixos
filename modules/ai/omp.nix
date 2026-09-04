@@ -187,7 +187,7 @@
             generator = pkgs.writers.writeYAML "omp-agent-config.yml";
             value =
               let
-                big = "${activeSub}/deepseek/deepseek-v4-flash:x-high";
+                big = "${activeSub}/meta/muse-spark-1.3-contributor:x-high";
                 small = "${activeSub}/deepseek/deepseek-v4-flash:low";
                 cheap = "${activeSub}/meituan/LongCat-2.0-free:auto";
                 vision = "${activeSub}/meta/muse-spark-1.3-contributor:low";
