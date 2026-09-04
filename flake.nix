@@ -46,6 +46,10 @@
       url = "github:homebrew/homebrew-core";
       flake = false;
     };
+    jujutsu = {
+      url = "github:jj-vcs/jj?ref=refs/tags/v0.45.1";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     jj-mode-el = {
       url = "github:bolivier/jj-mode.el";
       flake = false;

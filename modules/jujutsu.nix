@@ -2,6 +2,7 @@
 {
   flake.modules.common.default.imports = [
     self.modules.common.jujutsu
+    self.modules.common.jj-stack
     self.modules.common.jjui
     self.modules.common.watchman
     self.modules.common.difftastic
@@ -10,6 +11,7 @@
 
   flake.modules.common.jujutsu =
     {
+      inputs,
       pkgs,
       ...
     }:
@@ -18,7 +20,7 @@
         { osConfig, config, ... }:
         {
           packages = [
-            pkgs.jujutsu
+            inputs.jujutsu.packages.${pkgs.stdenv.hostPlatform.system}.jujutsu
 
             self.packages.${pkgs.stdenv.hostPlatform.system}.maiao
           ];
@@ -415,6 +417,38 @@
             };
           };
         };
+    };
+
+  flake.modules.common.jj-stack =
+    {
+      pkgs,
+      lib,
+      ...
+    }:
+    let
+      inherit (lib.modules) mkDefault;
+      inherit (lib.meta) getExe;
+      inherit (lib.lists) singleton;
+
+      jjStack = self.packages.${pkgs.stdenv.hostPlatform.system}.jj-stack;
+    in
+    {
+      environment.systemPackages = singleton jjStack;
+
+      hjemModule = {
+        xdg.config.files."jj/config.toml" = {
+          generator = mkDefault <| pkgs.writers.writeTOML "jj-config.toml";
+          value = {
+            jj-stack.branch_prefix = "PlumJam";
+            aliases.stack = [
+              "util"
+              "exec"
+              "--"
+              (getExe jjStack)
+            ];
+          };
+        };
+      };
     };
 
   flake.modules.common.jjui =
