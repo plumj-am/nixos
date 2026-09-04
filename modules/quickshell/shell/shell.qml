@@ -169,7 +169,7 @@ ShellRoot {
 			onThemeSwitchClicked: {
 			   var cmd = Common.Theme.mode === "light" ? "dark" : "light"
 			   Quickshell.execDetached({
-										  command: ["tt", cmd, "--force"]
+										  command: ["toggle-theme", cmd]
 									   })
 			}
 		 }
