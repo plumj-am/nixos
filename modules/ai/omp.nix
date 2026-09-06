@@ -10,22 +10,10 @@
     let
       inherit (lib.meta) getExe;
       inherit (lib.lists) singleton;
-      inherit (lib.strings) concatMapStringsSep;
       inherit (config.sops) secrets;
       inherit (config.ai.subs.commandcode) active;
 
       activeSub = "commandcode-${toString active}";
-
-      skills = [
-        {
-          repo = "mattpocock/skills";
-          skills = [
-            "grilling"
-            "grill-me"
-            "grill-with-docs"
-          ];
-        }
-      ];
     in
     {
       ai.secrets = true;
@@ -422,51 +410,6 @@
         xdg.config.files."ponytail/config.json" = {
           generator = pkgs.writers.writeJSON "ponytail-config.json";
           value.defaultMode = "ultra";
-        };
-
-        systemd.services.omp-install-plugins-skills = {
-          serviceConfig = {
-            Type = "oneshot";
-            TimeoutStartSec = "120s";
-          };
-
-          path = [
-            pkgs.bash
-            pkgs.gcc
-            pkgs.gitMinimal
-            pkgs.gnumake
-            pkgs.nodejs
-            pkgs.node-gyp
-          ];
-          environment.PYTHON = getExe pkgs.python3;
-          script = "${pkgs.writers.writeNu "omp-install-plugins-skills.nu" # nu
-            ''
-              print "installing omp plugins and skills..."
-              cd ~/.omp/plugins
-              rm --force --recursive bun.lock node_modules/
-              ${getExe pkgs.bun} install --force --refresh
-
-              ${concatMapStringsSep "\n" (entry: ''
-                print "adding skills from ${entry.repo}"
-                (${getExe pkgs.skills} add ${entry.repo}
-                  ${concatMapStringsSep " " (skill: "--skill ${skill}") entry.skills}
-                  --yes
-                  --agent
-                  universal
-                  --global)
-              '') skills}
-            ''
-          }";
-        };
-
-        systemd.services.omp-install-plugins-skills-trigger = {
-          after = singleton "nixos-activation.service";
-          wantedBy = singleton "default.target";
-
-          serviceConfig = {
-            Type = "oneshot";
-            ExecStart = "${pkgs.systemd}/bin/systemctl --user start --no-block omp-install-plugins-skills.service";
-          };
         };
       };
     };
