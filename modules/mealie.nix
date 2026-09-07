@@ -13,7 +13,7 @@
       fqdn = "mealie.${domain}";
     in
     {
-      services.rustic.backups.matrix = rustic.mkBackup "mealie" {
+      services.rustic.backups.mealie = rustic.mkBackup "mealie" {
         paths = [ "/var/lib/mealie" ];
         timerConfig = {
           OnCalendar = "daily";
