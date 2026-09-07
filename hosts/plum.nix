@@ -18,6 +18,7 @@ in
         freshrss-server
         gerrit
         goatcounter
+        hermes-grove
         matrix
         opengist
         postgres

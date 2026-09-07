@@ -17,7 +17,7 @@ in
         garage
         graft
         graphics
-        hermes
+        hermes-plumjam
         mealie
         nextcloud
         openssh-grove-systems

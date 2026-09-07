@@ -673,36 +673,16 @@
         "uv2nix": "uv2nix"
       },
       "locked": {
-        "lastModified": 1787656905,
-        "narHash": "sha256-Du/jARDTNHpI2MdgUYjl90tIEXVeGrEnuStY2dytTN0=",
+        "lastModified": 1788810629,
+        "narHash": "sha256-KjysmfR8oAWNKPM51vLq2M4zYJHiKzCf08Xjaj55yqc=",
         "owner": "NousResearch",
         "repo": "hermes-agent",
-        "rev": "1bbb6e5bce56e721ab685af4cd87df21bbff4d35",
+        "rev": "869228cab4a8276d3b4c78da9d9939670c47bd0f",
         "type": "github"
       },
       "original": {
         "owner": "NousResearch",
         "repo": "hermes-agent",
-        "type": "github"
-      }
-    },
-    "hermes-webui": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1787565227,
-        "narHash": "sha256-PLaP2jKX/3AhTaC0KVwkakAz14wfWA8BEirMzsr4HmE=",
-        "owner": "nesquena",
-        "repo": "hermes-webui",
-        "rev": "3b9c632a1fa339abcfd457973dcf10810640e760",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nesquena",
-        "repo": "hermes-webui",
         "type": "github"
       }
     },
@@ -1167,7 +1147,6 @@
         "grove": "grove",
         "helium": "helium",
         "hermes-agent": "hermes-agent",
-        "hermes-webui": "hermes-webui",
         "hjem": "hjem",
         "homebrew": "homebrew",
         "homebrew-cask": "homebrew-cask",

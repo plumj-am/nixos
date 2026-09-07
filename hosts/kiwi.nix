@@ -11,6 +11,7 @@ in
         server
         web-server
 
+        hermes-radka
         website-radka
       ];
 

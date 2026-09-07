@@ -16,10 +16,10 @@
 
       security.rtkit.enable = true;
 
-      # Disable built-in audio. Only use NVIDIA audio output.
-      boot.extraModprobeConfig = ''
-        options snd_hda_intel enable=0,1
-      '';
+      # Disables built-in audio. Only use NVIDIA audio output.
+      # boot.extraModprobeConfig = ''
+      #   options snd_hda_intel enable=0,1
+      # '';
 
       environment.systemPackages = singleton pkgs.pwvucontrol; # PipeWire volume control.
     };

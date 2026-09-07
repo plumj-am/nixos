@@ -1,33 +1,32 @@
 {
   flake.modules.common.ai-shared =
     {
+      config,
       pkgs,
       lib,
       ...
     }:
     let
+      inherit (config.ai) skills;
       inherit (lib.meta) getExe;
       inherit (lib.lists) singleton;
       inherit (lib.strings) concatMapStringsSep;
+      # `skills add`/`gh skill install` list skills instead of installing when
+      # no skill is named, so an empty list means "every skill in the repo".
+      # Keep the star quoted: nushell glob-expands a bare `*`.
+      npmSkillFlags =
+        entry:
+        if entry.skills == [ ] then
+          "--skill '*'"
+        else
+          concatMapStringsSep " " (skill: "--skill ${skill}") entry.skills;
 
-      npmSkills = [
-        {
-          repo = "mattpocock/skills";
-          skills = [
-            "grilling"
-            "grill-me"
-            "grill-with-docs"
-          ];
-        }
-      ];
-      ghSkills = [
-        {
-          repo = "bos/jj-stack";
-          skills = [
-            "jj-stack@v0.1.3"
-          ];
-        }
-      ];
+      ghSkillFlags =
+        entry:
+        if entry.skills == [ ] then
+          "--all"
+        else
+          concatMapStringsSep " " (skill: "${skill}") entry.skills;
     in
     {
       hjemModule = {
@@ -57,21 +56,21 @@
               ${concatMapStringsSep "\n" (entry: ''
                 print "adding skills from ${entry.repo}"
                 (${getExe pkgs.skills} add ${entry.repo}
-                  ${concatMapStringsSep " " (skill: "--skill ${skill}") entry.skills}
+                  ${npmSkillFlags entry}
                   --yes
                   --agent universal
                   --global)
-              '') npmSkills}
+              '') skills.npm}
 
               print "installing gh skills..."
               ${concatMapStringsSep "\n" (entry: ''
                 print "adding skills from ${entry.repo}"
                 (${getExe pkgs.gh} skill install ${entry.repo}
-                  ${concatMapStringsSep " " (skill: "${skill}") entry.skills}
+                  ${ghSkillFlags entry}
                   --agent universal
                   --scope user
                   --force)
-              '') ghSkills}
+              '') skills.gh}
             ''
           }";
         };

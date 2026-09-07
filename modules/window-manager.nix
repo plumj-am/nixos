@@ -141,6 +141,14 @@
                 clip-to-geometry false
               }
 
+              window-rule {
+                match app-id=r#"^hermes$"#
+                exclude is-floating=false
+                border {
+                  off
+                }
+              }
+
               input {
                 focus-follows-mouse
                 warp-mouse-to-focus

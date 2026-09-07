@@ -88,6 +88,10 @@ creation_rules:
       key_groups:
           - age: [*jam, *date, *kiwi, *plum, *sloe]
 
+    - path_regex: secrets/services/hermes\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *kiwi, *plum]
+
     - path_regex: secrets/blackwell/[^/]+\.(yaml|json|env|ini)$
       key_groups:
           - age: [*jam, *blackwell]
