@@ -45,7 +45,6 @@
               mode = "600";
             })
             [
-              "agent-env"
               "commandcode-1-key"
               "commandcode-2-key"
               "hetzner-inference-key"
@@ -55,6 +54,8 @@
               "opencode-go-key"
               "commandcode-auth-1-json"
               "commandcode-auth-2-json"
+              "hermes-env"
+              "gerrit-mcp-config"
             ];
 
       config.ai.commands.bash.allow =
