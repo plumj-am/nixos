@@ -38,8 +38,8 @@
               }
             }
 
-            def update-gsettings [is_dark: bool]: any -> nothing {
-              let scheme = if $is_dark { "prefer-dark" } else { "prefer-light" }
+            def update-gsettings []: any -> nothing {
+              let scheme = if ((get-current-theme).mode == "dark") { "prefer-dark" } else { "prefer-light" }
 
               try {
                 dconf write /org/gnome/desktop/interface/color-scheme $"'($scheme)'"
@@ -63,9 +63,7 @@
               print "Updating theme configuration..."
 
               let theme_config = get-current-theme
-
               save-theme-config $theme $theme_config.scheme
-              update-gsettings ($theme == dark)
 
               print $"Switch to the ($theme) theme completed!"
             }
@@ -134,6 +132,7 @@
                   }
                 }
                 { refresh-apps $refreshable_apps }
+                { update-gsettings }
               ] | par-each {|f| do $f}
 
               print "Application reloading complete."
