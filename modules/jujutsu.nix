@@ -54,10 +54,7 @@
 
               remotes.origin.auto-track-bookmarks = "glob:*";
 
-              git.fetch = [
-                "origin"
-                "rad"
-              ];
+              git.fetch = [ "origin" ];
               git.push = "origin";
 
               aliases.".." = [
