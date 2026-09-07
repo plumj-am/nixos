@@ -112,7 +112,7 @@
                       reasoning = true;
                       thinking = {
                         minLevel = "minimal";
-                        maxLevel = "xhigh";
+                        maxLevel = "max";
                         mode = "effort";
                       };
                       input = [
@@ -175,7 +175,7 @@
             generator = pkgs.writers.writeYAML "omp-agent-config.yml";
             value =
               let
-                big = "${activeSub}/meta/muse-spark-1.3-contributor:x-high";
+                big = "${activeSub}/meta/muse-spark-1.3-contributor:max";
                 small = "${activeSub}/deepseek/deepseek-v4-flash:low";
                 cheap = "${activeSub}/meituan/LongCat-2.0-free:auto";
                 vision = "${activeSub}/meta/muse-spark-1.3-contributor:low";

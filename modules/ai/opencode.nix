@@ -35,9 +35,9 @@
       #   {type: "free", opencode: $of, commandcode: $cf}
       #   {type: "paid", opencode: [],  commandcode: $cp}
       # ] | table --expand --index false --theme single
-      big = "${activeSub}/deepseek/deepseek-v4-flash";
+      big = "${activeSub}/meta/muse-spark-1.3-contributor";
       small = "${activeSub}/deepseek/deepseek-v4-flash";
-      cheap = "${activeSub}/deepseek/deepseek-v4-flash";
+      cheap = "${activeSub}/meituan/LongCat-2.0-free";
     in
     {
       ai.secrets = true;

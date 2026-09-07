@@ -32,7 +32,7 @@
         };
       };
 
-      config.ai.subs.commandcode.active = 2;
+      config.ai.subs.commandcode.active = 1;
 
       config.sops.secrets =
         mkIf config.ai.secrets
