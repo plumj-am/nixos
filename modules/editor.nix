@@ -287,6 +287,16 @@ in
                         unit = "   ";
                       };
                     }
+                    {
+                      name = "lang";
+                      scope = "source.lang";
+                      file-types = [ "lang" ];
+                      comment-tokens = [ "#" ];
+                      indent = {
+                        tab-width = 3;
+                        unit = "   ";
+                      };
+                    }
                   ];
                 in
                 denoFmtLanguages ++ baseLanguages;
