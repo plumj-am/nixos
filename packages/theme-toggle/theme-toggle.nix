@@ -139,7 +139,9 @@
             }
 
             def rebuild [] {
-              try { sudo ${rebuildScript} } catch {|e| # sudo required
+              try {
+                sudo env $"NH_FLAKE=($NIXOS_CONFIG)" ${rebuildScript}
+              } catch {|e|
                 error make "rebuild failed"
               }
             }

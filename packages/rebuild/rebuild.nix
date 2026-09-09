@@ -17,7 +17,7 @@
             ] {
               if $help { help main; exit 0 }
 
-              $env.NH_FLAKE = "${self}"
+              if "NH_FLAKE" not-in $env { $env.NH_FLAKE = "${self}" }
 
               let sys = sys host
               let is_nixos = $sys.long_os_version | str lowercase | str contains "linux"
@@ -44,7 +44,8 @@
                 ...$rest
               ]
 
-              let command = if not $is_remote {
+              let is_root = (id -u | str trim) == "0"
+              let command = if (not $is_remote) and (not $is_root) {
                 $command | prepend ["sudo"]
               } else { $command }
 
