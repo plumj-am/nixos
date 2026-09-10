@@ -36,7 +36,7 @@
       #   {type: "paid", opencode: [],  commandcode: $cp}
       # ] | table --expand --index false --theme single
       big = "${activeSub}/meta/muse-spark-1.3-contributor";
-      small = "${activeSub}/deepseek/deepseek-v4-flash";
+      small = "${activeSub}/deepseek/deepseek-v4.1-flash";
       cheap = "${activeSub}/meituan/LongCat-2.0-free";
     in
     {
@@ -135,9 +135,9 @@
                 chunkTimeout = 1500000;
 
                 models = {
-                  deepseek-v4-flash = {
-                    id = "deepseek/deepseek-v4-flash";
-                    name = "DeepSeek V4 Flash";
+                  "deepseek-v4.1-flash" = {
+                    id = "deepseek/deepseek-v4.1-flash";
+                    name = "DeepSeek V4.1 Flash";
                     reasoning = true;
                     tool_call = true;
                     limit = {

@@ -28,7 +28,7 @@
             type = "copy";
             value =
               let
-                normal = "deepseek/deepseek-v4-flash";
+                normal = "deepseek/deepseek-v4.1-flash";
                 cheap = "meituan/LongCat-2.0:free";
               in
               {

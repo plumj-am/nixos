@@ -43,8 +43,8 @@
                   models = [
                     {
                       # high | xhigh
-                      id = "deepseek/deepseek-v4-flash";
-                      name = "DeepSeek V4 Flash";
+                      id = "deepseek/deepseek-v4.1-flash";
+                      name = "DeepSeek V4.1 Flash";
                       reasoning = true;
                       thinking = {
                         minLevel = "high";
@@ -176,7 +176,7 @@
             value =
               let
                 big = "${activeSub}/meta/muse-spark-1.3-contributor:max";
-                small = "${activeSub}/deepseek/deepseek-v4-flash:low";
+                small = "${activeSub}/deepseek/deepseek-v4.1-flash:low";
                 cheap = "${activeSub}/meituan/LongCat-2.0-free:auto";
                 vision = "${activeSub}/meta/muse-spark-1.3-contributor:low";
               in
