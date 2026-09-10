@@ -67,7 +67,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixpkgs = {
-      url = "github:NixOS/nixpkgs/nixos-unstable-small";
+      url = "https://channels.nixos.org/nixos-unstable-small/nixexprs.tar.zst";
     };
     nix-darwin = {
       url = "github:nix-darwin/nix-darwin/master";
