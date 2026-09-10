@@ -10,24 +10,18 @@ Item {
    property bool open: false
 
    function executeAction(action) {
-	  if (action === "lock") {
-		 Quickshell.execDetached({
-									command: ["qs", "ipc", "call", "lock", "toggle"]
-								 })
-	  } else {
-		 var cmd = Common.Utils.sessionCommand(action)
-		 if (!cmd) {
-			var extras = {
-			   "hibernate": ["systemctl", "hibernate"],
-			   "logout": ["niri", "msg", "action", "quit"]
-			}
-			cmd = extras[action]
+	  var cmd = Common.Utils.sessionCommand(action)
+	  if (!cmd) {
+		 var extras = {
+			"hibernate": ["systemctl", "hibernate"],
+			"logout": ["niri", "msg", "action", "quit"]
 		 }
-		 if (cmd)
-			Quickshell.execDetached({
-									   command: cmd
-									})
+		 cmd = extras[action]
 	  }
+	  if (cmd)
+		 Quickshell.execDetached({
+									command: cmd
+								 })
    }
 
    implicitWidth: open ? 80 : 0
@@ -85,11 +79,6 @@ Item {
 				  "name": "Logout",
 				  "action": "logout"
 			   },
-			   {
-				  "icon": "\uf023",
-				  "name": "Lock",
-				  "action": "lock"
-			   }
 			]
 
 			delegate: Rectangle {

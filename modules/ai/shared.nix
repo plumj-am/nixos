@@ -23,10 +23,7 @@
 
       ghSkillFlags =
         entry:
-        if entry.skills == [ ] then
-          "--all"
-        else
-          concatMapStringsSep " " (skill: "${skill}") entry.skills;
+        if entry.skills == [ ] then "--all" else concatMapStringsSep " " (skill: "${skill}") entry.skills;
     in
     {
       hjemModule = {

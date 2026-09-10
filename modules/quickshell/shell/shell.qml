@@ -7,7 +7,6 @@ import "bar/widgets"
 import "bar"
 import "common" as Common
 import "controlcenter" as ControlCenter
-import "lock" as Lock
 import "notifications" as Notifications
 import "services" as Services
 import "session" as Session
@@ -280,13 +279,6 @@ ShellRoot {
 	  onLoaded: {
 		 item.screen = Quickshell.focusedScreen || Quickshell.screens[0]
 	  }
-   }
-
-   Loader {
-	  id: lockLoader
-
-	  active: true
-	  source: "lock/Lock.qml"
    }
 
    Connections {
