@@ -1,8 +1,14 @@
 {
   flake.modules.nixos.gammastep =
-    { pkgs, lib, ... }:
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
     let
       inherit (lib.lists) singleton;
+      inherit (config.localisation) location;
     in
     {
       hjem.extraModule = {
@@ -18,8 +24,8 @@
             };
 
             manual = {
-              lat = 52.23;
-              lon = 21.01;
+              lat = location.latitude;
+              lon = location.longitude;
             };
           };
         };

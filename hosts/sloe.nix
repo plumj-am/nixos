@@ -17,6 +17,7 @@ in
         garage
         graft
         graphics
+        home-assistant
         hermes-plumjam
         mealie
         nextcloud
