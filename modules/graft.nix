@@ -159,7 +159,7 @@
               build_timeout_secs = 3600;
               poll_interval_secs = 30;
               users = [
-                "plumj-am"
+                "plumjam"
                 "antteheatta"
               ];
               github_repo_owner = "grove-systems";
