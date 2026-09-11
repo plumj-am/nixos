@@ -27,9 +27,9 @@
         "veth"
         "br_netfilter"
       ];
-      boot.extraModprobeConfig = ''
-        options bridge-nf-call-iptables=1
-        options bridge-nf-call-ip6tables=1
-      '';
+      boot.kernel.sysctl = {
+        "net.bridge.bridge-nf-call-iptables" = 1;
+        "net.bridge.bridge-nf-call-ip6tables" = 1;
+      };
     };
 }
