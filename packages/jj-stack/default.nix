@@ -53,11 +53,11 @@
     {
       packages.jj-stack = py.buildPythonPackage {
         pname = "jj-stack";
-        version = "0.1.3";
+        version = "0.1.4";
         format = "wheel";
         src = pkgs.fetchurl {
-          url = "https://files.pythonhosted.org/packages/9a/38/fa6b1b2baa91a4be4e256fe1c65e40c41a88ede1b21739a1cd9b81866aaa/jj_stack-0.1.3-py3-none-any.whl";
-          sha256 = "sha256-g+hYJobC1NbrFkJTPz7BRQ2CM6TG+jRFJ5LxIdwOX/8=";
+          url = "https://files.pythonhosted.org/packages/1f/07/4e9aab1ee9f0c6089e32a15463ac3b0bd9d4ffb5d7056223c305e2be0bcd/jj_stack-0.1.4-py3-none-any.whl";
+          sha256 = "sha256-gNtRQtU/CpqQISnsuTXP8L6rgCDbXam0I81YIlxIIvE=";
         };
 
         propagatedBuildInputs = [
