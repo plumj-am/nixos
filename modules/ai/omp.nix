@@ -91,8 +91,6 @@
                       };
                     }
                     {
-                      # TODO: limited input, wait until full release with full context
-                      # minimal | low | medium | high | xhigh
                       id = "meituan/LongCat-2.0:free";
                       name = "Meituan LongCat 2.0 free";
                       reasoning = true;
@@ -102,6 +100,28 @@
                         input = 0;
                         output = 0;
                         cacheRead = 0;
+                        cacheWrite = 0;
+                      };
+                    }
+                    {
+                      id = "Qwen/Qwen3.8-Flash";
+                      name = "Qwen3.8 Flash";
+                      reasoning = true;
+                      thinking = {
+                        minLevel = "low";
+                        maxLevel = "xhigh";
+                        mode = "effort";
+                      };
+                      contextWindow = 1048576;
+                      maxTokens = 131072;
+                      input = [
+                        "text"
+                        "image"
+                      ];
+                      cost = {
+                        input = 0.16;
+                        output = 0.47;
+                        cacheRead = 0.016;
                         cacheWrite = 0;
                       };
                     }
@@ -175,10 +195,10 @@
             generator = pkgs.writers.writeYAML "omp-agent-config.yml";
             value =
               let
-                big = "${activeSub}/meta/muse-spark-1.3-contributor:max";
+                big = "${activeSub}/deepseek/deepseek-v4.1-flash:max";
                 small = "${activeSub}/deepseek/deepseek-v4.1-flash:low";
-                cheap = "${activeSub}/meituan/LongCat-2.0-free:auto";
-                vision = "${activeSub}/meta/muse-spark-1.3-contributor:low";
+                cheap = "${activeSub}/meituan/LongCat-2.0:free:auto";
+                vision = "${activeSub}/Qwen/Qwen3.8-Flash:low";
               in
               {
                 # [appearance]
