@@ -3,7 +3,6 @@
   flake.modules.common.default = self.modules.common.shell;
   flake.modules.common.shell =
     {
-      inputs,
       pkgs,
       lib,
       ...
@@ -16,8 +15,6 @@
       inherit (lib.modules) mkAfter mkIf;
     in
     {
-      imports = singleton inputs.direnv-instant.nixosModules.default;
-
       config.environment.shells = singleton <| getExe pkgs.nushell;
 
       options.shellAliases = mkOption {
@@ -35,8 +32,6 @@
           package = pkgs.nix-direnv;
         };
       };
-
-      config.programs.direnv-instant.enable = true;
 
       config.hjem.extraModule =
         {
@@ -94,13 +89,6 @@
               source ${
                 pkgs.runCommand "zoxide-init-nu" { } ''${getExe pkgs.zoxide} init nushell --cmd=cd >> "$out"''
               }
-            '';
-
-          direnvInstantNushellIntegration = # nu
-            ''
-              source ${
-                inputs.direnv-instant.packages.${pkgs.stdenv.hostPlatform.system}.default
-              }/share/direnv-instant/nushell.nu
             '';
 
           aliases = defaultAliases // osConfig.shellAliases;
@@ -234,7 +222,6 @@
               ${readFile ./nushell.functions.nu}
 
               ${zoxideNushellIntegration}
-              ${direnvInstantNushellIntegration}
 
               def rebuild-all [] {
                 cd /home/jam/nixos; zellij run --in-place -- ./rebuild.nu; zellij run --near-current-pane -- ./rebuild.nu --remote date; zellij run --near-current-pane -- ./rebuild.nu --remote plum; zellij run --near-current-pane -- ./rebuild.nu --remote kiwi; zellij run --near-current-pane -- ./rebuild.nu --remote sloe; }

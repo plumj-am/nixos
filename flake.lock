@@ -158,32 +158,6 @@
         "type": "github"
       }
     },
-    "direnv-instant": {
-      "inputs": {
-        "flake-parts": [
-          "flake-parts"
-        ],
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "treefmt-nix": [
-          "treefmt"
-        ]
-      },
-      "locked": {
-        "lastModified": 1787814413,
-        "narHash": "sha256-F/C/9fgM9zG2uhZ4e4cbznd7EmFfO7lySQV4trmr9K4=",
-        "owner": "Mic92",
-        "repo": "direnv-instant",
-        "rev": "5cef4b3832f28f4f1bd0d2165ec2c0a35961fcd1",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Mic92",
-        "repo": "direnv-instant",
-        "type": "github"
-      }
-    },
     "disko": {
       "inputs": {
         "nixpkgs": [
@@ -673,11 +647,11 @@
         "uv2nix": "uv2nix"
       },
       "locked": {
-        "lastModified": 1788810629,
-        "narHash": "sha256-KjysmfR8oAWNKPM51vLq2M4zYJHiKzCf08Xjaj55yqc=",
+        "lastModified": 1789215322,
+        "narHash": "sha256-gtmrI3z/Ec2oAeiYaaBEdwGwBM9nZEZOkbHoDeP8og8=",
         "owner": "NousResearch",
         "repo": "hermes-agent",
-        "rev": "869228cab4a8276d3b4c78da9d9939670c47bd0f",
+        "rev": "f364c19775617acb6c16140b790cda9fb05e1906",
         "type": "github"
       },
       "original": {
@@ -1134,7 +1108,6 @@
     },
     "root": {
       "inputs": {
-        "direnv-instant": "direnv-instant",
         "disko": "disko",
         "emacs-overlay": "emacs-overlay",
         "fenix": "fenix",

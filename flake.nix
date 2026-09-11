@@ -13,12 +13,6 @@
       url = "github:nix-community/fenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    direnv-instant = {
-      url = "github:Mic92/direnv-instant";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-parts.follows = "flake-parts";
-      inputs.treefmt-nix.follows = "treefmt";
-    };
     gerrit-autosubmit = {
       url = "git+ssh://forgejo@git.plumj.am/plumjam/gerrit-autosubmit";
       inputs.nixpkgs.follows = "nixpkgs";
