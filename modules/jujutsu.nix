@@ -320,7 +320,7 @@
                 # By default, show the repo trunk, the remote bookmarks, and all remote tags. We
                 # don't want to change these in most cases, but in some repos it's useful.
                 "immutable_heads()" =
-                  ''(present(trunk()) | remote_bookmarks() | tags()) ~ bookmarks(glob:"change/*")'';
+                  ''(present(trunk()) | remote_bookmarks() | tags()) ~ bookmarks(glob:"change/*") ~ bookmarks(glob:"jj-stack/*")'';
 
                 # trunk() by default resolves to the latest 'main'/'master' remote bookmark. May
                 # require customization for repos like nixpkgs.
@@ -436,7 +436,7 @@
         xdg.config.files."jj/config.toml" = {
           generator = mkDefault <| pkgs.writers.writeTOML "jj-config.toml";
           value = {
-            jj-stack.branch_prefix = "PlumJam";
+            jj-stack.branch_prefix = "jj-stack";
             aliases.stack = [
               "util"
               "exec"
