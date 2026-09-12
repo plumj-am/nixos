@@ -67,7 +67,6 @@
               };
 
               plugin = [
-                "@tarquinen/opencode-dcp"
                 "@plannotator/opencode"
                 "opencode-tps-meter"
                 "@dietrichgebert/ponytail"
@@ -313,15 +312,6 @@
               enableColorCoding = true;
               showTpsThreshold = 40;
               fastTpsThreshold = 80;
-            };
-          };
-
-          "opencode/dcp.json" = {
-            generator = pkgs.writers.writeJSON "opencode-tui.jsonc";
-            value = {
-              enabled = true;
-              autoUpdate = false;
-              experimental.allowSubAgents = true;
             };
           };
         };

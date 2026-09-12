@@ -401,28 +401,12 @@
               ];
               dependencies = {
                 context-mode = "^1";
-                omp-dynamic-context-pruning = "https://github.com/plumj-am/omp-dynamic-context-pruning";
                 ponytail = "https://github.com/DietrichGebert/ponytail";
                 "@plannotator/pi-extension" = "^0.26";
                 caveman = "https://github.com/JuliusBrussee/caveman";
                 pi-jujutsu = "^0.1";
                 pi-jj-git-align = "^0.1";
               };
-            };
-          };
-
-          ".omp/agent/dcp.json" = {
-            type = "copy";
-            generator = pkgs.writers.writeJSON "omp-agent-dcp.json";
-            value = {
-              enabled = true;
-
-              minContextLimit = 50000;
-              maxContextLimit = 200000;
-
-              showCompression = true;
-
-              experimental.allowSubAgents = true;
             };
           };
         };
