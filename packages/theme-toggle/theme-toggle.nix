@@ -183,6 +183,5 @@
     in
     {
       packages.toggle-theme = toggleTheme;
-      packages.tt = toggleTheme;
     };
 }

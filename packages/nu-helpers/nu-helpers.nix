@@ -5,7 +5,7 @@
       inherit (lib.meta) getExe;
     in
     {
-      packages.helpers =
+      packages.nu-helpers =
         pkgs.writers.writeNuBin "helpers" # nu
           ''
             def main [--help (-h)] {
