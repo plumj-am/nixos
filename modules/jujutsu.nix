@@ -13,17 +13,19 @@
     {
       inputs,
       pkgs,
+      lib,
       ...
     }:
+    let
+      inherit (lib.lists) singleton;
+
+      jujutsu = inputs.jujutsu.packages.${pkgs.stdenv.hostPlatform.system}.jujutsu;
+    in
     {
       hjemModule =
         { osConfig, config, ... }:
         {
-          packages = [
-            inputs.jujutsu.packages.${pkgs.stdenv.hostPlatform.system}.jujutsu
-
-            self.packages.${pkgs.stdenv.hostPlatform.system}.maiao
-          ];
+          packages = singleton jujutsu;
 
           xdg.config.files."jj/config.toml" = {
             generator = pkgs.writers.writeTOML "jj-config.toml";
