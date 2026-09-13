@@ -481,6 +481,10 @@
               colors."selected".bg = "#${theme.colors.base01}";
             };
 
+            revisions.revset = "all()";
+
+            bookmark.interactive_bookmark_pane = true;
+
             actions = [
               {
                 name = "tug";
