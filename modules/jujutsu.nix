@@ -1,12 +1,12 @@
 { self, ... }:
 {
   flake.modules.common.default.imports = [
-    self.modules.common.jujutsu
-    self.modules.common.jj-stack
+    self.modules.common.diff-formatter
     self.modules.common.jjui
-    self.modules.common.watchman
-    self.modules.common.difftastic
+    self.modules.common.jj-stack
+    self.modules.common.jujutsu
     self.modules.common.mergiraf
+    self.modules.common.watchman
   ];
 
   flake.modules.common.jujutsu =
@@ -18,6 +18,7 @@
     }:
     let
       inherit (lib.lists) singleton;
+      inherit (lib.modules) mkDefault;
 
       jujutsu = inputs.jujutsu.packages.${pkgs.stdenv.hostPlatform.system}.jujutsu;
     in
@@ -43,7 +44,7 @@
               ui.editor = osConfig.environment.variables.EDITOR;
               ui.graph.style = "curved";
               ui.movement.edit = true;
-              ui.pager = ":builtin";
+              ui.pager = mkDefault ":builtin";
 
               snapshot.max-new-file-size = "10MiB";
 
@@ -537,7 +538,7 @@
       };
     };
 
-  flake.modules.common.difftastic =
+  flake.modules.common.diff-formatter =
     {
       pkgs,
       lib,
@@ -554,21 +555,37 @@
           ''
             exec ${getExe pkgs.difftastic} --background ${if config.theme.isDark then "dark" else "light"} "$@"
           '';
+
+      inherit (pkgs) hunk;
     in
     {
-      environment.systemPackages = singleton difft;
+      environment.systemPackages = [
+        difft
+        hunk
+      ];
 
       hjemModule = {
         xdg.config.files."jj/config.toml" = {
           generator = mkDefault <| pkgs.writers.writeTOML "jj-config.toml";
           value = {
-            ui.diff-formatter = [
-              (getExe difft)
-              "--color"
-              "always"
-              "$left"
-              "$right"
-            ];
+            "--scope" = singleton {
+              "--when".environments = singleton "JJUI";
+              ui.diff-formatter = [
+                (getExe difft)
+                "--color"
+                "always"
+                "$left"
+                "$right"
+              ];
+            };
+
+            ui = {
+              diff-formatter = ":git";
+              pager = [
+                (getExe hunk)
+                "pager"
+              ];
+            };
           };
         };
       };
