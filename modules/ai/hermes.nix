@@ -45,6 +45,7 @@ let
       inherit (config.sops) secrets;
       inherit (config.helpers) rustic;
 
+      graftctl = inputs.graft.packages.${pkgs.stdenv.hostPlatform.system}.graft-graftctl;
       jujutsu = inputs.jujutsu.packages.${pkgs.stdenv.hostPlatform.system}.jujutsu;
       jjStack = self.packages.${pkgs.stdenv.hostPlatform.system}.jj-stack;
 
@@ -708,6 +709,7 @@ let
           pkgs.file
           pkgs.gh
           pkgs.gitMinimal
+          graftctl
           jjStack
           pkgs.jq
           jujutsu
@@ -1036,6 +1038,7 @@ in
           jjStackUsername = "plum-9000";
         })
         (mkRepoCloneService pkgs cfg "plumj-am" "nixos")
+        (mkRepoCloneService pkgs cfg "grove-systems" "grove")
       ];
     };
 

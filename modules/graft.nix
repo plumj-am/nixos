@@ -76,6 +76,11 @@
         group = "graft";
         mode = "0440";
       };
+      sops.secrets."graft/api/token" = {
+        sopsFile = ../secrets/services/graft.yaml;
+        group = "graft";
+        mode = "0440";
+      };
       sops.secrets."graft/cache/secret_key".sopsFile = ../secrets/services/graft.yaml;
       sops.secrets."graft-ssh" = {
         sopsFile = ../secrets/services/graft-ssh.yaml;
@@ -100,6 +105,9 @@
 
             incrementalize = true;
             cache_url = "http://127.0.0.1:5000";
+
+            api_token_file = secrets."graft/api/token".path;
+            api_scope = "write";
           };
 
           database.path = "ci.db";
@@ -248,6 +256,34 @@
             "s3"
           ];
         };
+      };
+    };
+
+  flake.modules.common.graftctl =
+    {
+      inputs,
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
+    let
+      inherit (lib.lists) singleton;
+      inherit (config.sops) secrets;
+    in
+    {
+      sops.secrets."graft/cli/config" = {
+        sopsFile = ../secrets/services/graft.yaml;
+        owner = "jam";
+        mode = "0440";
+      };
+
+      environment.systemPackages =
+        singleton
+          inputs.graft.packages.${pkgs.stdenv.hostPlatform.system}.graft-graftctl;
+
+      hjemModule = {
+        xdg.config.files."graft/config.toml".source = secrets."graft/cli/config".path;
       };
     };
 

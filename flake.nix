@@ -104,7 +104,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     graft = {
-      url = "git+ssh://git@github.com/grove-systems/grove?ref=refs/pull/497/head";
+      url = "git+ssh://git@github.com/grove-systems/grove?ref=refs/pull/535/head";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     tend = {

@@ -2,6 +2,7 @@
 {
   flake.modules.darwin.desktop.imports = with self.modules.darwin; [
     editor-extra
+    graftctl
     peripherals
     radicle
     rio
@@ -24,6 +25,7 @@
     file-manager
     forgejo-cli
     gammastep
+    graftctl
     graphics
     hardware-desktop
     haskell
