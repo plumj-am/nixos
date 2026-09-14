@@ -54,3 +54,35 @@ def "git summary" [--count(-n): int = 10]: nothing -> nothing {
       | table --index 1 # start index from 1
    } catch { print "Error: Make sure you're in a git repository" }
 }
+
+def "review" [
+   pull_request?: int, # PR to review - if unset, all reviewable PRs are listed
+   --repo(-r): string = "grove-systems/grove" # full owner/repo reference
+] {
+   if $pull_request == null {
+      print "Fetching PRs..."
+
+      let pr_list = gh pr list --repo $repo --limit 9999 --json author,number,reviewRequests,updatedAt
+      | from json
+      | where reviewRequests != []
+      | par-each --keep-order {|pr|
+         {
+            '#':       $pr.number
+            reviewers: ($pr.reviewRequests | get login | str join ", ")
+            author:    $pr.author.login
+            updated:   ($pr.updatedAt | into datetime | format date '%Y-%m-%d %H:%M')
+         }
+      }
+      | sort-by updated
+
+      if ($pr_list | is-not-empty) {
+         print $"The following ($pr_list | length) PRs are waiting for review:"
+
+         $pr_list | table --index false
+      } else {
+         print "No PRs to review."
+      }
+   } else {
+      gh pr diff $pull_request --patch --repo $repo | hunk patch -
+   }
+}
