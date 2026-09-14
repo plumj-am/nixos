@@ -112,6 +112,13 @@
                           };
                           SwitchToMode "locked";
                         }
+                        bind "Ctrl d" {
+                          Run "${getExe pkgs.hunk}" "--watch" {
+                            in_place true
+                            close_on_exit true
+                          };
+                          SwitchToMode "locked";
+                        }
                         bind "Ctrl p" {
                           LaunchOrFocusPlugin "sessionizer" {
                             floating true
