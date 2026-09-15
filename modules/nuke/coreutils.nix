@@ -1,4 +1,39 @@
 { self, ... }:
+let
+  # uutils mv rejects a repeated --force, so a caller-supplied --force or -f
+  # must be dropped before the wrapper adds its own:
+  # <https://github.com/uutils/coreutils/issues/11321>.
+  forcedMv =
+    pkgs:
+    pkgs.writers.writeNu "mv" # nu
+      ''
+        def main --wrapped [...args: string] {
+          let arguments = (
+            $args | reduce --fold {out: [], literal: false} {|arg, acc|
+              if $acc.literal {
+                {out: ($acc.out | append $arg), literal: true}
+              } else if $arg == "--" {
+                {out: ($acc.out | append $arg), literal: true}
+              } else if $arg in ["-f" "--force"] {
+                $acc
+              } else if ($arg | str starts-with "--") {
+                {out: ($acc.out | append $arg), literal: false}
+              } else if ($arg | str starts-with "-") and ($arg | str contains "f") {
+                let stripped = $arg | str replace --all "f" ""
+                if $stripped == "-" { $acc } else {
+                  {out: ($acc.out | append $stripped), literal: false}
+                }
+              } else {
+                {out: ($acc.out | append $arg), literal: false}
+              }
+            }
+            | get out
+          )
+
+          exec ${pkgs.uutils-coreutils-noprefix}/bin/mv --force ...$arguments
+        }
+      '';
+in
 {
   flake.modules.nixos.nuke = self.modules.nixos.nuke-coreutils;
   flake.modules.nixos.nuke-coreutils =
@@ -121,15 +156,12 @@
 
               # Until this is fixed: <https://github.com/uutils/coreutils/issues/11321>.
               # Without it, we get prompted for mv confirmation during activation.
-              nativeBuildInputs = if mvCompat then [ pkgs.makeWrapper ] else [ ];
               postBuild =
                 if mvCompat then
                   # bash
                   ''
                     rm $out/bin/mv
-                    makeWrapper \
-                      ${pkgs.uutils-coreutils-noprefix}/bin/mv \
-                      $out/bin/mv --add-flags "--force"
+                    cp ${forcedMv pkgs} $out/bin/mv
                   ''
                 else
                   "";
@@ -160,5 +192,45 @@
           systemdMinimal = replaceCoreutils "systemdMinimal" { };
         }
       );
+    };
+
+  perSystem =
+    { pkgs, ... }:
+    {
+      checks.mv-force-flag = pkgs.runCommand "mv-force-flag-check" { } ''
+        set -euo pipefail
+
+        mv=${forcedMv pkgs}
+
+        mkdir work
+        cd work
+        printf 'new\n' > expected
+
+        # A caller that passes -f, such as nix-direnv, must keep working.
+        printf 'old\n' > target
+        chmod 0444 target
+        printf 'new\n' > source
+        $mv -f source target
+        cmp target expected
+
+        printf 'old\n' > target
+        chmod 0444 target
+        printf 'new\n' > source
+        $mv --force source target
+        cmp target expected
+
+        # Other short flags survive, including ones clustered with -f.
+        printf 'old\n' > target
+        printf 'new\n' > source
+        $mv -nf source target
+        printf 'old\n' | cmp - target
+
+        # A file named like a flag stays reachable behind `--`.
+        printf 'new\n' > ./-f
+        $mv -- -f target
+        cmp target expected
+
+        touch $out
+      '';
     };
 }
