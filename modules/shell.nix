@@ -118,7 +118,7 @@
                 <| nuLoadEnv osConfig.environment.variables
               }
               ${lib.concatStringsSep "\n" (lib.mapAttrsToList (name: val: "alias ${name} = ${val}") aliases)}
-              $env.config.edit_mode = "vi"
+              $env.config.edit_mode = "helix"
               $env.config.buffer_editor = "${osConfig.environment.variables.EDITOR}"
               $env.config.show_banner = false
               $env.config.footer_mode = "auto"
@@ -189,21 +189,7 @@
                   name: quit_shell
                   modifier: control
                   keycode: char_d
-                  mode: emacs
-                  event: null
-                }
-                {
-                  name: quit_shell
-                  modifier: control
-                  keycode: char_d
-                  mode: vi_insert
-                  event: null
-                }
-                {
-                  name: quit_shell
-                  modifier: control
-                  keycode: char_d
-                  mode: vi_normal
+                  mode: [emacs, vi_insert, vi_normal, helix_insert, helix_normal]
                   event: null
                 }
               ]
