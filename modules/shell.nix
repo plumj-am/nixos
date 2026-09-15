@@ -220,8 +220,9 @@
                 }
               ]
 
-              $env.config.hooks.display_output = {
-                if (term size).columns >= 100  { tee { table --expand | print } } | try { if $in != null { $env.last = $in } }
+              $env.config.hooks.display_output = {||
+                tee { table --expand | print }
+                | try { if $in != null { $env.last = $in } }
               }
 
               $env.config.hooks.pre_prompt = [ ]
@@ -231,7 +232,10 @@
 
               ${carapaceNushellIntegration}
               ${zoxideNushellIntegration}
-              }
+
+              def "_" []: nothing -> any {
+                $env.last?
+              };
 
               def rebuild-all [] {
                 cd /home/jam/nixos; zellij run --in-place -- ./rebuild.nu; zellij run --near-current-pane -- ./rebuild.nu --remote date; zellij run --near-current-pane -- ./rebuild.nu --remote plum; zellij run --near-current-pane -- ./rebuild.nu --remote kiwi; zellij run --near-current-pane -- ./rebuild.nu --remote sloe; }
