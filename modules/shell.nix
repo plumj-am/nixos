@@ -210,6 +210,9 @@
 
               $env.config.hooks.env_change.PWD = [
                 { |before, after| zellij-update-tabname }
+                { ||
+                  ${getExe pkgs.direnv} export json | from json | default {} | load-env
+                }
               ]
 
               $env.config.hooks.display_output = {
