@@ -33,6 +33,8 @@
         };
       };
 
+      config.environment.sessionVariables.CARAPACE_BRIDGES = "inshellisense,carapace,zsh,fish,bash";
+
       config.hjem.extraModule =
         {
           lib,
@@ -87,7 +89,18 @@
           zoxideNushellIntegration = # nu
             ''
               source ${
-                pkgs.runCommand "zoxide-init-nu" { } ''${getExe pkgs.zoxide} init nushell --cmd=cd >> "$out"''
+                pkgs.runCommand "zoxide-init-nu" { } ''
+                  ${getExe pkgs.zoxide} init nushell --cmd=cd >> "$out"
+                ''
+              }
+            '';
+
+          carapaceNushellIntegration = # nu
+            ''
+              source ${
+                pkgs.runCommand "carapace.nu" { } ''
+                  ${getExe pkgs.carapace} _carapace nushell > $out
+                ''
               }
             '';
 
@@ -99,6 +112,12 @@
             pkgs.direnv
             pkgs.nushell
             pkgs.zoxide
+
+            # all for carapace
+            pkgs.carapace
+            pkgs.inshellisense
+            pkgs.zsh
+            pkgs.fish
           ];
 
           files.".zshrc" = mkIf osConfig.nixpkgs.hostPlatform.isDarwin {
@@ -210,7 +229,9 @@
               ${readFile ./nushell.menus.nu}
               ${readFile ./nushell.functions.nu}
 
+              ${carapaceNushellIntegration}
               ${zoxideNushellIntegration}
+              }
 
               def rebuild-all [] {
                 cd /home/jam/nixos; zellij run --in-place -- ./rebuild.nu; zellij run --near-current-pane -- ./rebuild.nu --remote date; zellij run --near-current-pane -- ./rebuild.nu --remote plum; zellij run --near-current-pane -- ./rebuild.nu --remote kiwi; zellij run --near-current-pane -- ./rebuild.nu --remote sloe; }
