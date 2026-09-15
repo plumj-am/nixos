@@ -15,7 +15,7 @@ in
         # nix
         programs.nixfmt = {
           enable = true;
-          package = pkgs.nixfmt;
+          package = pkgs.nixfmt-rs;
         };
         settings.formatter.nixfmt = {
           width = 100;

@@ -496,7 +496,7 @@ in
 
           # Nix
           pkgs.nil
-          pkgs.nixfmt
+          pkgs.nixfmt-rs
 
           # YAML
           pkgs.yaml-language-server
