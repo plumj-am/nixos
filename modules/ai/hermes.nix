@@ -45,7 +45,7 @@ let
       inherit (config.sops) secrets;
       inherit (config.helpers) rustic;
 
-      graftctl = inputs.graft.packages.${pkgs.stdenv.hostPlatform.system}.graft-graftctl;
+      graftctl = inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.graft-graftctl;
       jujutsu = inputs.jujutsu.packages.${pkgs.stdenv.hostPlatform.system}.jujutsu;
       jjStack = self.packages.${pkgs.stdenv.hostPlatform.system}.jj-stack;
 

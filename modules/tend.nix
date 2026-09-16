@@ -12,7 +12,7 @@
       inherit (config.sops) secrets;
     in
     {
-      imports = singleton inputs.tend.nixosModules.tend;
+      imports = singleton inputs.grove.nixosModules.tend;
 
       sops.secrets = {
         "tend/token" = {
@@ -31,7 +31,7 @@
 
       services.tend = {
         enable = true;
-        package = inputs.tend.packages.${pkgs.stdenv.hostPlatform.system}.tend;
+        package = inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.tend;
 
         state_dir = "/var/lib/tend";
 

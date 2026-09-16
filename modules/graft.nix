@@ -68,7 +68,7 @@
       remote_builders = remote_builders_all |> filter (b: b.hostName != hostName);
     in
     {
-      imports = singleton inputs.graft.nixosModules.graft;
+      imports = singleton inputs.grove.nixosModules.graft;
 
       sops.secrets.graft-environment.sopsFile = ../secrets/services/graft.yaml;
       sops.secrets."graft/grove_github/secret" = {
@@ -90,7 +90,7 @@
 
       services.graft = {
         enable = true;
-        package = inputs.graft.packages.${pkgs.stdenv.hostPlatform.system}.graft;
+        package = inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.graft;
 
         state_dir = "/var/lib/graft";
 
@@ -280,7 +280,7 @@
 
       environment.systemPackages =
         singleton
-          inputs.graft.packages.${pkgs.stdenv.hostPlatform.system}.graft-graftctl;
+          inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.graft-graftctl;
 
       hjemModule = {
         xdg.config.files."graft/config.toml".source = secrets."graft/cli/config".path;
