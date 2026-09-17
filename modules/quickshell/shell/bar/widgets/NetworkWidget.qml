@@ -7,7 +7,7 @@ import "../../services"
 Item {
    id: root
 
-   implicitWidth: 60
+   implicitWidth: row.width + 8
    implicitHeight: 24
 
    RowLayout {
@@ -19,8 +19,7 @@ Item {
 	  height: 20
 
 	  Text {
-		 visible: Network.networkType === Types.networkWired || Network.networkType
-				  === Types.networkWireless
+		 visible: Network.activeInterface !== ""
 		 text: Network.networkType === Types.networkWired ? "\uef44" : "\uf1eb"
 		 font.family: Theme.font.icons.family
 		 font.pixelSize: Theme.font.mono.size
@@ -31,12 +30,12 @@ Item {
 	  }
 
 	  Text {
-		 width: 36
-		 text: Utils.formatBytes(Network.rateDown)
+		 visible: Network.activeInterface !== ""
+		 text: "\u2191" + Utils.formatBytes(Network.rateUp) + " \u2193" + Utils.formatBytes(
+				  Network.rateDown)
 		 font.family: Theme.font.mono.family
 		 font.pixelSize: Theme.font.mono.size
 		 color: Theme.foreground
-		 horizontalAlignment: Text.AlignLeft
 		 Layout.alignment: Qt.AlignVCenter
 		 Layout.fillHeight: true
 		 verticalAlignment: Text.AlignVCenter

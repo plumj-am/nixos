@@ -8,64 +8,95 @@ Item {
    id: root
 
    property string activeInterface: ""
-   property int networkType: 0
+   property int networkType: Types.networkWired
+   property real rateUp: 0.0
    property real rateDown: 0.0
    property var lanIPs: []
    property var prevRx: 0
+   property var prevTx: 0
 
-   function setActiveInterface(name, type) {
-	  if (name === activeInterface && type === networkType)
+   function defaultRouteInterface(routes) {
+	  const lines = routes.split("\n").slice(1)
+	  for (const line of lines) {
+		 const fields = line.trim().split(/\s+/)
+		 if (fields.length > 3 && fields[1] === "00000000")
+			return fields[0]
+	  }
+	  return ""
+   }
+
+   function interfaceType(name) {
+	  if (!name)
+		 return Types.networkWired
+	  ueventView.reload()
+	  return ueventView.text().includes("DEVTYPE=wlan") ? Types.networkWireless : Types.networkWired
+   }
+
+   function updateInterface() {
+	  routesView.reload()
+	  const name = defaultRouteInterface(routesView.text())
+	  if (name === activeInterface)
 		 return
 	  activeInterface = name
-	  networkType = type
+	  networkType = interfaceType(name)
 	  prevRx = 0
+	  prevTx = 0
+	  rateUp = 0
 	  rateDown = 0
-	  lanIPProc.running = true
+	  lanIPs = []
+	  lanIPProc.running = name !== ""
    }
 
    function updateRates() {
 	  if (!activeInterface)
 		 return
 	  rxBytesView.reload()
+	  txBytesView.reload()
 	  const rx = parseInt(rxBytesView.text().trim()) || 0
-	  if (prevRx > 0) {
-		 const elapsed = rateTimer.interval / 1000
+	  const tx = parseInt(txBytesView.text().trim()) || 0
+	  const elapsed = rateTimer.interval / 1000
+	  if (prevRx > 0)
 		 rateDown = Math.max(0, rx - prevRx) / elapsed
-	  }
+	  if (prevTx > 0)
+		 rateUp = Math.max(0, tx - prevTx) / elapsed
 	  prevRx = rx
+	  prevTx = tx
+   }
+
+   FileView {
+	  id: routesView
+
+	  path: "/proc/net/route"
+	  blockAllReads: true
+
+	  onLoadFailed: err => console.log("Network: route table load failed:", err)
+   }
+
+   FileView {
+	  id: ueventView
+
+	  path: root.activeInterface ? `/sys/class/net/${root.activeInterface}/uevent` : ""
+	  blockAllReads: true
+
+	  onLoadFailed: err => console.log("Network: uevent load failed:", err)
    }
 
    FileView {
 	  id: rxBytesView
 
 	  path: root.activeInterface ? `/sys/class/net/${root.activeInterface}/statistics/rx_bytes` : ""
+	  blockAllReads: true
 
 	  onLoadFailed: err => console.log("Network: rx_bytes load failed:", err)
    }
 
-   Process {
-	  id: detectIfaceProc
+   FileView {
+	  id: txBytesView
 
-	  running: true
-	  command: ["sh", "-c",
-		 "iface=$(ip route show default 2>/dev/null | awk '{print $5; exit}'); if [ -n \"$iface\" ] && [ -d \"/sys/class/net/$iface/wireless\" ]; then echo \"$iface w\"; elif [ -n \"$iface\" ]; then echo \"$iface e\"; fi"]
+	  path: root.activeInterface ? `/sys/class/net/${root.activeInterface}/statistics/tx_bytes` : ""
+	  blockAllReads: true
 
-	  stdout: StdioCollector {
-		 onStreamFinished: {
-			const parts = text.trim().split(/\s+/)
-			if (parts.length >= 2) {
-			   setActiveInterface(parts[0], parts[1] === 'w' ? 1 : 0)
-			}
-		 }
-	  }
-   }
-
-   Timer {
-	  interval: 30000
-	  running: true
-	  repeat: true
-
-	  onTriggered: detectIfaceProc.running = true
+	  onLoadFailed: err => console.log("Network: tx_bytes load failed:", err)
    }
 
    Process {
@@ -86,6 +117,16 @@ Item {
 			}
 		 }
 	  }
+   }
+
+   // Detection is a poll so a route change (cable, wifi switch) is picked up without events.
+   Timer {
+	  interval: 30000
+	  running: true
+	  repeat: true
+	  triggeredOnStart: true
+
+	  onTriggered: updateInterface()
    }
 
    Timer {

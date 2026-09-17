@@ -8,6 +8,9 @@
         pkgs.quickshell
         inputs.qml-niri.packages.${pkgs.stdenv.hostPlatform.system}.qml-niri
 
+        # Network interface and address queries for the Network service.
+        pkgs.iproute2
+
         # Extra packages.
         pkgs.kdePackages.qt5compat
 
