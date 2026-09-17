@@ -11,8 +11,8 @@ let
     name:
     {
       mainModel ? "deepseek/deepseek-v4.1-flash",
-      fallbackModel ? "meituan/LongCat-2.0:free",
-      smallModel ? "meituan/LongCat-2.0:free",
+      fallbackModel ? "poolside/laguna-s-2.1-free",
+      smallModel ? "poolside/laguna-s-2.1-free",
       visionModel ? "Qwen/Qwen3.8-Flash",
       personality ? "concise",
       npmSkills ? config.ai.skills.npm,
@@ -404,12 +404,16 @@ let
           compression = {
             enabled = true;
             progress_notices = false;
-            model_thresholds = {
-              "deepseek-v4.1-flash" = 0.25; # ~250k
-              "muse-spark-1.3" = 0.25; # ~250k
-              "LongCat-2.0" = 0.25; # ~250k
-              "Qwen3.8" = 0.25; # ~250k
-            };
+            model_thresholds =
+              flip genAttrs (const 0.25) # ~250k
+                [
+                  "deepseek-v4.1-flash"
+                  "muse-spark-1.3"
+                  "laguna-s-2.1"
+                  "LongCat-2.0"
+                  "longcat-2.0"
+                  "Qwen3.8"
+                ];
             idle_compact_after_seconds = 0; # >0 = compact after N s idle
             proactive_prune_tokens = 48000; # >0 = token trigger for tool-result prune
           };

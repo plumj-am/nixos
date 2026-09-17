@@ -269,6 +269,7 @@
                   slow = big;
                   advisor = cheap;
                   plan = big;
+                  librarian = big;
                   inherit vision;
                   designer = vision;
                   commit = cheap;
