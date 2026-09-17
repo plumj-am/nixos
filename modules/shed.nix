@@ -14,7 +14,6 @@
       inherit (lib.fixedPoints) fix;
       inherit (config.s3.caches) fsn1;
 
-      # Same shared args as `./s3-upload.nix`.
       s3SharedArgs = "&priority=43&multipart-upload=true&multipart-threshold=50M&multipart-chunk-size=10M";
       fsn1S3Cache = "s3://plumjam/nix?endpoint=fsn1.your-objectstorage.com&profile=${fsn1.alias}${s3SharedArgs}";
     in
@@ -26,6 +25,10 @@
         package = inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.shed;
 
         state_dir = "/var/lib/shed";
+
+        # Shed owns the post-build hook: every locally built store path lands in
+        # its queue.
+        build_hook.enable = true;
 
         config = fix (config: {
           cache_urls = [

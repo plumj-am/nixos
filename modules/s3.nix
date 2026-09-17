@@ -47,18 +47,6 @@
           default = "/var/lib/s3/.aws/credentials";
           description = "Shared S3 credentials file";
         };
-        # Only upload store paths at least this many bytes. The binary
-        # cache protocol has fixed per-path overhead, so skipping small
-        # paths avoids pointless round-trips to S3/Garage. Default 1 MiB.
-        nixUploadMinSize = lib.mkOption {
-          type = lib.types.ints.unsigned;
-          default = 1048576;
-          defaultText = "1048576";
-          description = ''
-            Minimum path size (bytes) the nix-upload-processor will upload.
-            Paths smaller than this are skipped and recorded as done.
-          '';
-        };
       };
 
       config = {
@@ -131,7 +119,6 @@
     }:
     let
       inherit (lib.meta) getExe;
-      inherit (lib.lists) singleton;
       inherit (config.sops) secrets;
       inherit (config.s3.caches) fsn1 garage;
 
@@ -152,101 +139,6 @@
       garageApiVersion = garage.apiVersion;
       garageS3Cache = "s3://${garageBucket}?endpoint=${garageEndpoint}&profile=${garageAlias}&region=${garageRegion}${s3SharedArgs}";
 
-      uploadProcessor = pkgs.writeShellScriptBin "nix-upload-processor" ''
-        #!/usr/bin/env bash
-        set -eu
-
-        QUEUE_DIR=/var/lib/nix-upload-queue
-        QUEUE_FILE="$QUEUE_DIR/pending"
-        PROCESSING="$QUEUE_DIR/processing"
-        DONE="$QUEUE_DIR/done"
-
-        mkdir -p "$QUEUE_DIR"
-        touch "$QUEUE_FILE" "$PROCESSING" "$DONE"
-
-        export AWS_EC2_METADATA_DISABLED=true
-
-        upload_to() {
-          local cache=$1 path=$2
-          case "$cache" in
-            *${fsn1Endpoint}*)
-              export AWS_ACCESS_KEY_ID=$(cat "$CREDENTIALS_DIRECTORY/s3-plumjam-fsn1-access-key")
-              export AWS_SECRET_ACCESS_KEY=$(cat "$CREDENTIALS_DIRECTORY/s3-plumjam-fsn1-secret-key")
-              ;;
-            *)
-              export AWS_ACCESS_KEY_ID=$(cat "$CREDENTIALS_DIRECTORY/s3-plumjam-garage-access-key")
-              export AWS_SECRET_ACCESS_KEY=$(cat "$CREDENTIALS_DIRECTORY/s3-plumjam-garage-secret-key")
-              ;;
-          esac
-          ${getExe pkgs.nix} copy --to "$cache" "$path" 2>&1
-        }
-
-        # Load already-uploaded paths into associative array to avoid slow grep per path.
-        declare -A DONE_PATHS
-        while IFS= read -r done_path; do
-          DONE_PATHS["$done_path"]=1
-        done < "$DONE"
-
-        while true; do
-          # pending -> processing
-          if [ -s "$QUEUE_FILE" ]; then
-            count=$(wc -l < "$QUEUE_FILE")
-            echo "Processing $count new path(s)"
-            mv "$QUEUE_FILE" "$PROCESSING"
-            touch "$QUEUE_FILE"
-          fi
-
-          # process
-          while IFS= read -r path || [ -n "$path" ]; do
-            [ -z "$path" ] && continue
-            # [ -d "$path" ] || continue
-
-            # Check in-memory set before doing any work.
-            if [[ -v DONE_PATHS["$path"] ]]; then
-              echo "Skipping $path (already uploaded)"
-              continue
-            fi
-
-            size=$(du -sb "$path" 2>/dev/null | ${getExe pkgs.gawk} '{print $1}' || echo "0")
-            # Skip paths below the upload threshold.
-            if [ "$size" -lt ${toString config.s3.nixUploadMinSize} ]; then
-              echo "Skipping $path ($((size / 1024)) KiB) — below ${toString config.s3.nixUploadMinSize} byte threshold"
-              continue
-            fi
-            echo "Uploading $path ($((size / 1024)) KiB)"
-            all_ok=true
-            for cache in "${fsn1S3Cache}" "${garageS3Cache}"; do
-              if upload_to "$cache" "$path"; then
-                echo "  -> $cache OK"
-              else
-                echo "  -> $cache FAILED"
-                all_ok=false
-              fi
-            done
-            if $all_ok; then
-              echo "Uploaded $path successfully"
-              echo "$path" >> "$DONE"
-              DONE_PATHS["$path"]=1
-            else
-              echo "Failed to upload $path to one or more targets"
-            fi
-          done < "$PROCESSING"
-
-          > "$PROCESSING"
-
-          # Trim done file and reload array.
-          if [ -s "$DONE" ]; then
-            tail -n 1000 "$DONE" > "$DONE.tmp" || true
-            mv "$DONE.tmp" "$DONE" || true
-            DONE_PATHS=()
-            while IFS= read -r done_path; do
-              DONE_PATHS["$done_path"]=1
-            done < "$DONE"
-          fi
-
-          sleep 5
-        done
-      '';
       setupAwsCreds = pkgs.writeShellScriptBin "setup-aws-creds" ''
         #!/usr/bin/env bash
         set -euo pipefail
@@ -347,26 +239,7 @@
         setupAwsCreds
         setupMc
         setupScript
-        uploadProcessor
       ];
-
-      environment.etc = {
-        "nix/post-build-hook.sh" = {
-          mode = "0755";
-          text = ''
-            #!/bin/sh
-            set -e
-
-            QUEUE_DIR=/var/lib/nix-upload-queue
-
-            for output in $OUT_PATHS; do
-              echo "$output" >> "$QUEUE_DIR/pending"
-            done
-
-            exit 0
-          '';
-        };
-      };
 
       systemd.tmpfiles.rules = [
         "d ${config.users.users.jam.home}/.mc 0755 jam users -"
@@ -381,7 +254,6 @@
           "network.target"
           "sops.service"
         ];
-        before = [ "nix-upload-processor.service" ];
         wantedBy = [ "multi-user.target" ];
 
         # mc needs glibc.getent
@@ -395,39 +267,6 @@
           Type = "oneshot";
           RemainAfterExit = true;
           ExecStart = getExe setupScript;
-        };
-      };
-
-      systemd.services.nix-upload-processor = {
-        description = "Nix binary cache upload queue processor";
-        after = [
-          "network.target"
-          "nix-daemon.socket"
-          "s3-setup.service"
-        ];
-        wantedBy = singleton "multi-user.target";
-
-        serviceConfig = {
-          ExecStart = "${getExe uploadProcessor}";
-          LoadCredential = [
-            "s3-plumjam-fsn1-access-key:${secrets."s3/fsn1/access-key".path}"
-            "s3-plumjam-fsn1-secret-key:${secrets."s3/fsn1/secret-key".path}"
-            "s3-plumjam-garage-access-key:${secrets."s3/garage/access-key".path}"
-            "s3-plumjam-garage-secret-key:${secrets."s3/garage/secret-key".path}"
-          ];
-          Restart = "on-failure";
-          RestartSec = "10s";
-          StateDirectory = "nix-upload-queue";
-          StateDirectoryMode = "0755";
-          CPUQuota =
-            let
-              cores = config.systemInfo.cores;
-            in
-            "${toString (cores * 50)}%";
-        };
-
-        environment = {
-          AWS_EC2_METADATA_DISABLED = "true";
         };
       };
 
@@ -447,7 +286,6 @@
           "blackwell-store.plumj.am:YmTvW2JngBUxfgWoKHJzxKu7Xhxt4VzK5u3D0Chudn4="
         ];
 
-        post-build-hook = "/etc/nix/post-build-hook.sh";
         secret-key-files = secrets.nix-store-key.path;
       };
     };

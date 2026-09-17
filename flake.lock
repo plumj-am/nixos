@@ -420,17 +420,18 @@
         "fenix": "fenix_3",
         "flake-parts": "flake-parts_2",
         "garnix-incrementalize": "garnix-incrementalize",
+        "kache": "kache",
         "nixpkgs": [
           "nixpkgs"
         ],
         "treefmt": "treefmt"
       },
       "locked": {
-        "lastModified": 1789576222,
-        "narHash": "sha256-Yy09tbEhk3WvsjIuKXgpgqdzJXJytbhfWkT3PKfXCmU=",
+        "lastModified": 1789734629,
+        "narHash": "sha256-c7XW2gRK6tkQQoOjosO+gyA1z5tbhUHzNudyvrWuAMk=",
         "ref": "refs/heads/master",
-        "rev": "53b543a8cbd9ac0a47680192c3605892d5ef282b",
-        "revCount": 2033,
+        "rev": "53d883ac0e37fb3b9929f65eb2e218122ad79b87",
+        "revCount": 2040,
         "type": "git",
         "url": "ssh://git@github.com/grove-systems/grove"
       },
@@ -598,7 +599,7 @@
         "nixpkgs": [
           "nixpkgs"
         ],
-        "rust-overlay": "rust-overlay"
+        "rust-overlay": "rust-overlay_2"
       },
       "locked": {
         "lastModified": 1788450349,
@@ -615,6 +616,29 @@
         "type": "github"
       }
     },
+    "kache": {
+      "inputs": {
+        "nixpkgs": [
+          "grove",
+          "nixpkgs"
+        ],
+        "rust-overlay": "rust-overlay",
+        "treefmt-nix": "treefmt-nix"
+      },
+      "locked": {
+        "lastModified": 1789668013,
+        "narHash": "sha256-twXGqNQuhvx6Q6nN53165LQnk2J2jynefCT7wBM/9tc=",
+        "owner": "kunobi-ninja",
+        "repo": "kache",
+        "rev": "425813aff0df2afb1b9707ef1bfb160e6b7c75e9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "kunobi-ninja",
+        "repo": "kache",
+        "type": "github"
+      }
+    },
     "llm-agents": {
       "inputs": {
         "bun2nix": "bun2nix",
@@ -623,7 +647,7 @@
           "nixpkgs"
         ],
         "systems": "systems_2",
-        "treefmt-nix": "treefmt-nix"
+        "treefmt-nix": "treefmt-nix_2"
       },
       "locked": {
         "lastModified": 1788173616,
@@ -893,7 +917,7 @@
           "nixpkgs"
         ],
         "quickshell": "quickshell",
-        "treefmt-nix": "treefmt-nix_2"
+        "treefmt-nix": "treefmt-nix_3"
       },
       "locked": {
         "lastModified": 1786189893,
@@ -967,7 +991,7 @@
         "nixpkgs": [
           "nixpkgs"
         ],
-        "treefmt-nix": "treefmt-nix_3"
+        "treefmt-nix": "treefmt-nix_4"
       },
       "locked": {
         "lastModified": 1782890834,
@@ -1035,6 +1059,28 @@
       }
     },
     "rust-overlay": {
+      "inputs": {
+        "nixpkgs": [
+          "grove",
+          "kache",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1788248235,
+        "narHash": "sha256-siCQqLbY7AbZ9V3oyc65K8bhNr7QgZTXoqLTws3pv0s=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "6a84c41e705533dcc5569ac0731f18406b4cdf86",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
+      }
+    },
+    "rust-overlay_2": {
       "inputs": {
         "nixpkgs": [
           "jujutsu",
@@ -1181,6 +1227,28 @@
     "treefmt-nix": {
       "inputs": {
         "nixpkgs": [
+          "grove",
+          "kache",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1784369104,
+        "narHash": "sha256-47cxbcZODibHv3rELFQ9vZly0vUNkND/atn/U7HLeb0=",
+        "owner": "numtide",
+        "repo": "treefmt-nix",
+        "rev": "df3c0640565d04a0261253cdd89fce78ec50168a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "treefmt-nix",
+        "type": "github"
+      }
+    },
+    "treefmt-nix_2": {
+      "inputs": {
+        "nixpkgs": [
           "llm-agents",
           "nixpkgs"
         ]
@@ -1199,7 +1267,7 @@
         "type": "github"
       }
     },
-    "treefmt-nix_2": {
+    "treefmt-nix_3": {
       "inputs": {
         "nixpkgs": "nixpkgs_4"
       },
@@ -1217,7 +1285,7 @@
         "type": "github"
       }
     },
-    "treefmt-nix_3": {
+    "treefmt-nix_4": {
       "inputs": {
         "nixpkgs": [
           "run0-sudo-shim",
