@@ -191,6 +191,14 @@ let
           requiredPythonModules = [ ];
         };
       };
+
+      # rtk's Hermes plugin, taken from the same release as the `rtk` binary so the
+      # two cannot drift. `extraPlugins` symlinks it into the plugins directory, and
+      # `settings.plugins.enabled` opts in — Hermes plugins are opt-in by default.
+      rtkHermesPlugin = pkgs.runCommand "rtk-rewrite" { } ''
+        mkdir -p $out
+        cp -r ${pkgs.rtk.src}/hooks/hermes/rtk-rewrite/. $out/
+      '';
     in
     {
       imports = singleton inputs.hermes-agent.nixosModules.default;
@@ -434,6 +442,7 @@ let
               # "email-platform"
               "homeassistant-platform"
               # "matrix-platform"
+              "rtk-rewrite"
               "telegram-platform"
               "web-ddgs"
               "web-exa"
@@ -718,12 +727,13 @@ let
           pkgs.nushell
           pkgs.python3
           pkgs.ripgrep
+          pkgs.rtk
           pkgs.unzip
           pkgs.whois
           pkgs.yq-go
           pkgs.zip
         ];
-        extraPlugins = [ ];
+        extraPlugins = singleton rtkHermesPlugin;
       };
 
       # Seed both commandcode subs into each custom credential pool.

@@ -70,6 +70,18 @@
                   --scope user
                   --force)
               '') skills.gh}
+
+              print "installing rtk extension..."
+              # rtk 0.45.0 has no `--agent omp`: the pi extension is the same file OMP
+              # loads through legacy-pi-compat, and PI_CODING_AGENT_DIR redirects the
+              # install into OMP's agent directory.
+              with-env { PI_CODING_AGENT_DIR: ($env.HOME | path join ".omp/agent") } {
+                ${getExe pkgs.rtk} init --agent pi --global --auto-patch
+              }
+
+              print "installing opencode plugin..."
+              # One file, no config side effects: ~/.config/opencode/plugins/rtk.ts
+              ${getExe pkgs.rtk} init -g --opencode --auto-patch
             ''
           }";
         };

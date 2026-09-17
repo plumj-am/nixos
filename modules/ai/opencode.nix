@@ -47,6 +47,7 @@
           pkgs.python3
           pkgs.uv
           opencodePackage
+          pkgs.rtk # The rtk plugin (installed by the AI plugins service) calls it.
         ];
 
         xdg.config.files = {

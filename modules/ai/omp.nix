@@ -23,6 +23,7 @@
           inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp
           pkgs.bun # Gay but needed for some plugins.
           pkgs.node-gyp # ^
+          pkgs.rtk # Rewrites bash commands; install service drops in its extension.
         ];
 
         # Another that doesn't follow XDG spec, amazing...
