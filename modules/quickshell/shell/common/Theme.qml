@@ -56,7 +56,7 @@ QtObject {
 									  size: 15
 								   },
 								   mono: {
-									  family: "Maple Mono",
+									  family: "Maple Mono NF",
 									  size: 13
 								   },
 								   icons: {
