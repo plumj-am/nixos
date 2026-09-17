@@ -640,25 +640,25 @@ let
 
           instagram = mkIf withInstagram {
             command = "${getExe pkgs.uv}";
-            # NOTE: ig-mcp has no pyproject and its setup.py console script
-            # points at an `async def main()` (never awaited), so run the
-            # module directly instead of the broken `instagram-mcp-server` exe.
+            # Upstream declares only `mcp>=1.2.0` and still imports
+            # `mcp.server.fastmcp`, which mcp 2.x deleted (renamed to
+            # `mcp.server.mcpserver`), so resolution must stay below 2.0 or the
+            # server dies on import. Drop the `--with` once upstream migrates.
             args = [
               "tool"
               "run"
               "--from"
-              "git+https://github.com/jlbadano/ig-mcp"
+              "git+https://github.com/William-Gao/instagram-mcp"
+              "--with"
+              "mcp<2"
               "python"
               "-m"
-              "src.instagram_mcp_server"
+              "instagram_mcp"
             ];
             env = {
               INSTAGRAM_ACCESS_TOKEN = "\${INSTAGRAM_ACCESS_TOKEN}";
-              FACEBOOK_APP_ID = "\${FACEBOOK_APP_ID}";
-              FACEBOOK_APP_SECRET = "\${FACEBOOK_APP_SECRET}";
-              INSTAGRAM_BUSINESS_ACCOUNT_ID = "\${INSTAGRAM_BUSINESS_ACCOUNT_ID}";
-              LOG_LEVEL = "INFO";
-              LOG_FILE = "";
+              INSTAGRAM_FB_ACCESS_TOKEN = "\${INSTAGRAM_FB_ACCESS_TOKEN}";
+              INSTAGRAM_FB_IG_USER_ID = "\${INSTAGRAM_FB_IG_USER_ID}";
             };
           };
 
