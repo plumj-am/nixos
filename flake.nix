@@ -79,10 +79,6 @@
       url = "github:imiric/qml-niri/main";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    run0-sudo-shim = {
-      url = "github:LordGrimmauld/run0-sudo-shim";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     sops = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";

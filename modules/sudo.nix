@@ -9,7 +9,6 @@ in
 {
   flake.modules.nixos.sudo-desktop =
     {
-      inputs,
       pkgs,
       lib,
       ...
@@ -19,7 +18,7 @@ in
 
       package = pkgs.symlinkJoin {
         name = "sudo";
-        paths = singleton inputs.run0-sudo-shim.packages.${pkgs.stdenv.hostPlatform.system}.run0-sudo-shim;
+        paths = singleton pkgs.run0-sudo-shim;
         nativeBuildInputs = singleton pkgs.makeWrapper;
         postBuild = ''
           wrapProgram $out/bin/sudo --add-flags "--run0-extra-arg=--background="
@@ -34,6 +33,17 @@ in
       security = {
         sudo.enable = false;
         polkit.enable = true;
+        run0 = {
+          enable = true;
+          enableSudoAlias = true;
+          sudo-shim = {
+            enable = true;
+            inherit package;
+          };
+
+          wheelNeedsPassword = false;
+          persistentAuth.enable = true;
+        };
 
         pam.services.systemd-run0 = {
           setLoginUid = true;
@@ -41,16 +51,8 @@ in
         };
       };
 
-      # Persistent auth with run0.
+      # Persistent auth for run0.
       services.dbus.implementation = "broker";
-      security.polkit.extraConfig = # js
-        ''
-          polkit.addRule(function(_action, subject) {
-            if (subject.isInGroup("wheel")) {
-              return polkit.Result.YES;
-            }
-          });
-        '';
     };
 
   flake.modules.darwin.sudo-desktop = {
