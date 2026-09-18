@@ -22,9 +22,13 @@ in
     imports = [ bootBase ];
     boot.loader = {
       timeout = 1;
-      systemd-boot.enable = true;
+      systemd-boot = {
+        enable = true;
+        configurationLimit = 20;
+        bootCounting.enable = true;
+      };
+
       efi.canTouchEfiVariables = true;
-      systemd-boot.configurationLimit = 20;
     };
   };
 
