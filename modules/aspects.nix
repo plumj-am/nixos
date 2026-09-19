@@ -46,6 +46,7 @@
     swap-partition
     theme-extra-fonts
     theme-extra-scripts
+    theme-variants
     video-player
     window-manager
     zyouz

@@ -7,7 +7,6 @@ QtObject {
    id: theme
 
    property string mode: "dark"
-   property string scheme: "gruvbox"
    readonly property var schemes: ({
 									  gruvbox: {
 										 dark: {
@@ -48,8 +47,9 @@ QtObject {
 										 }
 									  }
 								   })
-   readonly property var colors: schemes[scheme] ? (schemes[scheme][mode] || schemes.gruvbox.dark) :
-												   schemes.gruvbox.dark
+   property var fileColors: null
+   readonly property var colors: fileColors !== null ? fileColors : (schemes.gruvbox[mode]
+																	 || schemes.gruvbox.dark)
    readonly property var font: ({
 								   sans: {
 									  family: "Lexend",
@@ -97,15 +97,15 @@ QtObject {
    readonly property color error: colors.base08
    readonly property color outline: colors.base03
    property var themeFile: FileView {
-	  path: "/home/jam/nixos/modules/theme.json"
+	  path: "/etc/theme.json"
 
 	  onLoaded: {
 		 try {
 			const data = JSON.parse(text())
 			if (data.mode)
 			theme.mode = data.mode
-			if (data.scheme)
-			theme.scheme = data.scheme
+			if (data.colors)
+			theme.fileColors = data.colors
 		 } catch (e) {
 			console.log("Failed to parse theme.json:", e)
 		 }

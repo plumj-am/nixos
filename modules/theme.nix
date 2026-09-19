@@ -1,4 +1,8 @@
-{ self, lib, ... }:
+{
+  self,
+  lib,
+  ...
+}:
 let
   inherit (lib.options) mkOption;
   inherit (lib.attrsets)
@@ -7,15 +11,7 @@ let
     collect
     isDerivation
     ;
-  inherit (lib.lists) elem;
-  inherit (lib.trivial) fromHexString;
-  inherit (lib.types) attrsOf anything;
-  inherit (lib.strings)
-    fromJSON
-    readFile
-    substring
-    pathExists
-    ;
+  inherit (lib.types) attrsOf anything enum;
 
   gruvboxColors = {
     dark = {
@@ -57,40 +53,14 @@ let
   };
 
   mkThemeConfig =
-    { pkgs }:
+    {
+      pkgs,
+      variant,
+    }:
     let
-      themeConfig = fromJSON <| readFile ./theme.json;
-      variant = themeConfig.mode;
       isDark = variant == "dark";
-      colorScheme = themeConfig.scheme;
 
-      # assert lib.elem variant ["light" "dark"];
-
-      matugenCache = ./theme-matugen-colors.json;
-
-      parseMatugenColors =
-        json: mapAttrs (_: value: substring 1 6 value.${variant}.color) <| (fromJSON json).base16;
-
-      matugenColors =
-        if pathExists matugenCache then
-          parseMatugenColors <| readFile matugenCache
-        else
-          gruvboxColors.${variant};
-
-      colors = if colorScheme == "matugen" then matugenColors else gruvboxColors.${variant};
-
-      hexToRgb =
-        hex:
-        let
-          r = fromHexString <| substring 0 2 hex;
-          g = fromHexString <| substring 2 2 hex;
-          b = fromHexString <| substring 4 2 hex;
-        in
-        [
-          r
-          g
-          b
-        ];
+      colors = gruvboxColors.${variant};
 
       fonts = {
         mono = {
@@ -230,33 +200,26 @@ let
 
       getAppTheme = program: apps.${program}.${variant};
     in
-    assert elem variant [
-      "dark"
-      "light"
-    ];
-    assert elem colorScheme [
-      "gruvbox"
-      "matugen"
-    ];
     {
       inherit
         isDark
-        colorScheme
         variant
         colors
         designSystem
         apps
         getAppTheme
-        hexToRgb
         ;
     };
 in
 {
   flake.modules.common.default = self.modules.common.theme;
   flake.modules.common.theme =
-    { pkgs, ... }:
+    { pkgs, config, ... }:
     let
-      theme = mkThemeConfig { inherit pkgs; };
+      theme = mkThemeConfig {
+        inherit pkgs;
+        variant = config.themeMode;
+      };
       themedApps = [
         "icons"
         "rio"
@@ -273,7 +236,16 @@ in
       options.theme = mkOption {
         type = attrsOf anything;
         default = { };
-        description = "Global theme configuration";
+        description = "Derived global theme configuration. Set `themeMode` instead.";
+      };
+
+      options.themeMode = mkOption {
+        type = enum [
+          "dark"
+          "light"
+        ];
+        default = "light";
+        description = "Active light or dark variant. Override per host with `themeMode`.";
       };
 
       config = {
@@ -286,16 +258,32 @@ in
             inherit (theme)
               apps
               isDark
-              colorScheme
               variant
               colors
               ;
 
             withHash = mapAttrs (_: v: "#${v}") theme.colors;
-            with0x = mapAttrs (_: v: "0x${v}") theme.colors;
-            withRgb = mapAttrs (_: v: theme.hexToRgb v) theme.colors;
           }
           // genAttrs themedApps theme.getAppTheme;
+      };
+    };
+
+  # Builds both variants as a specialisation, so changing the theme switches
+  # between already built systems instead of rebuilding. `tt` activates one with
+  # `nh os switch --specialisation`.
+  flake.modules.nixos.theme-variants =
+    { config, lib, ... }:
+    {
+      # Runtime mirror of the active variant. Read by quickshell and by `tt`;
+      # being a build output it always matches the running system.
+      environment.etc."theme.json".text = builtins.toJSON {
+        mode = config.themeMode;
+        colors = config.theme.withHash;
+      };
+
+      specialisation = {
+        dark.configuration.themeMode = lib.mkForce "dark";
+        light.configuration.themeMode = lib.mkForce "light";
       };
     };
 
@@ -340,7 +328,6 @@ in
     {
       environment.systemPackages = [
         pkgs.awww
-        pkgs.matugen
         self.packages.${pkgs.stdenv.hostPlatform.system}.toggle-theme
         self.packages.${pkgs.stdenv.hostPlatform.system}.pick-wallpaper
       ];

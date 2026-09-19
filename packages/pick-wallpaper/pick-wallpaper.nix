@@ -1,11 +1,8 @@
-{ self, ... }:
 {
   perSystem =
     { lib, pkgs, ... }:
     let
       inherit (lib.meta) getExe;
-
-      rebuildScript = getExe self.packages.${pkgs.stdenv.hostPlatform.system}.rebuild;
     in
     {
       packages.pick-wallpaper =
@@ -42,27 +39,6 @@
 
               print $"Wallpaper set: \(($selected | path basename)\)"
 
-              let theme_config = try {
-                open $"($env.HOME)/nixos/modules/theme.json"
-              } catch {
-                {mode: light, scheme: gruvbox}
-              }
-
-              if $theme_config.scheme == matugen {
-                print "Regenerating matugen colors..."
-
-                try {
-                  ${getExe pkgs.matugen} image $selected --json hex --quiet --source-color-index 0 | save --force $"($env.HOME)/nixos/modules/theme-matugen-colors.json"
-
-                  print "Colors regenerated!"
-
-                  try { ${rebuildScript} } catch { exit 1 }
-
-                  print "Rebuilt system to apply colors."
-                } catch {|e|
-                  print $"Warning: Failed to regenerate colors: ($e.msg)"
-                }
-              }
             }
           '';
     };

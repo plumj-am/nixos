@@ -11,32 +11,7 @@
         pkgs.writers.writeNuBin "toggle-theme" # nu
           ''
             let NIXOS_CONFIG = $"($env.HOME)/nixos"
-            let THEME_CONFIG = $"($NIXOS_CONFIG)/modules/theme.json"
-            let THEME_MATUGEN = $"($NIXOS_CONFIG)/modules/theme-matugen-colors.json"
-
-            def get-current-wallpaper []: any -> string {
-              let wallpaper = awww query
-              | lines
-              | first
-              | parse "{monitor}: image: {path}"
-              | get --optional path.0
-
-              if ($wallpaper | path exists) {
-                $wallpaper
-              } else {
-                ""
-              }
-            }
-
-            def save-theme-config [mode: string, scheme: string] {
-              {mode: $mode, scheme: $scheme}
-              | to json
-              | try { save --force $THEME_CONFIG } catch {|e|
-                print --stderr $"failed to save ($THEME_CONFIG): ($e)"
-
-                exit 1
-              }
-            }
+            let THEME_STATE = "/etc/theme.json"
 
             def update-gsettings []: any -> nothing {
               let scheme = if ((get-current-theme).mode == "dark") { "prefer-dark" } else { "prefer-light" }
@@ -48,64 +23,13 @@
               }
             }
 
-            def get-current-theme []: any -> record<mode: string, scheme: string> {
+            def get-current-theme []: any -> record<mode: string> {
               try {
-                open $THEME_CONFIG
+                open $THEME_STATE
               } catch {
-                print "Failed to load default config, falling back to light/gruvbox"
+                print --stderr $"Failed to read ($THEME_STATE), falling back to dark"
 
-                {mode: light, scheme: gruvbox}
-              }
-            }
-
-            def toggle-theme [theme: string]: any -> nothing {
-              print $"Switching to ($theme) theme."
-              print "Updating theme configuration..."
-
-              let theme_config = get-current-theme
-              save-theme-config $theme $theme_config.scheme
-
-              print $"Switch to the ($theme) theme completed!"
-            }
-
-            def switch-scheme [scheme: string]: any -> nothing {
-              print $"Switching to ($scheme) color scheme."
-
-              let theme_config = get-current-theme
-
-              if $scheme == matugen {
-                print "Generating matugen colors from current wallpaper..."
-
-                let wallpaper = get-current-wallpaper
-
-                if ($wallpaper | is-not-empty) {
-                  matugen image $wallpaper --json hex --quiet --source-color-index 0
-                  | try {
-                    save --force $THEME_MATUGEN
-                  } catch {|e|
-                    error make $"failed to save generated matugen palette: ($e)"
-                  }
-                } else {
-                  print "Warning: Could not detect current wallpaper"
-                }
-              }
-
-              save-theme-config $theme_config.mode $scheme
-            }
-
-            def restart-apps [apps: list<record<name: string, new: list<string>>>]: nothing -> nothing {
-              $apps | par-each {|app|
-                pkill -TERM $app.name | ignore
-
-                for _ in 1..30 {
-                  if (ps | where name =~ $app.name | is-empty) { break }
-
-                  sleep 100ms
-                }
-
-                if (niri msg action spawn -- ...$app.new | complete | get exit_code) != 0 {
-                  print --stderr $"Failed to restart ($app.name)"
-                }
+                {mode: dark}
               }
             }
 
@@ -117,7 +41,7 @@
               }
             }
 
-            def reload-applications [mode?: string]: nothing -> nothing {
+            def reload-applications []: nothing -> nothing {
               print "Reloading applications..."
 
               let refreshable_apps = [
@@ -138,46 +62,33 @@
               print "Application reloading complete."
             }
 
-            def rebuild [] {
+            def switch-variant [mode: string]: nothing -> nothing {
+              let name = $mode
+              print $"Switching to the ($name) theme."
+
               try {
-                sudo env $"NH_FLAKE=($NIXOS_CONFIG)" ${rebuildScript}
-              } catch {|e|
-                error make "rebuild failed"
+                sudo env $"NH_FLAKE=($NIXOS_CONFIG)" ${rebuildScript} --specialisation $name
+              } catch {
+                error make $"switching to the ($name) theme failed"
               }
+
+              reload-applications
             }
 
             def main [] {
-              print $"Usage: tt <dark|light|matugen|gruvbox|reload>
+              print $"Usage: tt <dark|light|reload>
 
-                   dark    - Switch to dark mode
-                   light   - Switch to light mode
-                   matugen - Use generated matugen colours from wallpaper
-                   gruvbox - Use the gruvbox theme
-                   reload  - Reload applications"
+                   dark   - Switch to the dark variant
+                   light  - Switch to the light variant
+                   reload - Reload applications"
             }
 
             def "main dark" []: nothing -> nothing {
-              toggle-theme dark
-              rebuild
-              reload-applications "dark"
+              switch-variant dark
             }
 
             def "main light" []: nothing -> nothing {
-              toggle-theme light
-              rebuild
-              reload-applications "light"
-            }
-
-            def "main gruvbox" []: nothing -> nothing {
-              switch-scheme gruvbox
-              rebuild
-              reload-applications
-            }
-
-            def "main matugen" []: nothing -> nothing {
-              switch-scheme matugen
-              rebuild
-              reload-applications
+              switch-variant light
             }
           '';
     in

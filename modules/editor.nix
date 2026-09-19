@@ -35,8 +35,6 @@ in
     }:
     let
       inherit (lib.attrsets)
-        mapAttrs'
-        nameValuePair
         optionalAttrs
         attrValues
         mapAttrs
@@ -44,18 +42,6 @@ in
       inherit (lib.lists) singleton;
       inherit (lib) elem;
       inherit (config) theme;
-
-      mkThemes =
-        themes:
-        mapAttrs' (
-          name: value:
-          nameValuePair "helix/themes/${name}.toml" {
-            generator = pkgs.writers.writeTOML "helix-theme-${name}";
-            inherit value;
-          }
-        ) themes;
-
-      themes.base16_custom.inherits = "base16_default";
     in
     {
       shellAliases = {
@@ -74,7 +60,7 @@ in
           "helix/config.toml" = {
             generator = pkgs.writers.writeTOML "helix-config.toml";
             value = {
-              theme = if theme.colorScheme == "matugen" then "base16_custom" else theme.helix;
+              theme = theme.helix;
 
               editor = {
                 bufferline = "multiple";
@@ -470,8 +456,7 @@ in
               };
             };
           };
-        }
-        // mkThemes themes;
+        };
       };
     };
 

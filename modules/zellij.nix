@@ -30,24 +30,8 @@
               let
                 modeTemplate = mode: modeBg: "#[bg=${modeBg},fg=#ebdbb2,bold] ${mode} ";
               in
-              with theme.withRgb; # kdl
               ''
-                    theme "${if theme.colorScheme == "matugen" then "custom" else theme.zellij}"
-                    themes {
-                      custom {
-                        bg ${toString base00}
-                        fg ${toString base06}
-                        red ${toString base08}
-                        green ${toString base0B}
-                        yellow ${toString base0A}
-                        blue ${toString base0D}
-                        magenta ${toString base0E}
-                        orange ${toString base09}
-                        cyan ${toString base0C}
-                        black ${toString base01}
-                        white ${toString base05}
-                      }
-                    }
+                    theme "${theme.zellij}"
 
                     default_shell "nu"
                     scrollback_editor "${osConfig.environment.variables.EDITOR}"

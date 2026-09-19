@@ -114,12 +114,13 @@ There may be unfamiliar functions/helpers in some files - these come from
 
 ### Theming
 
-I have a custom theming setup which can be seen in `modules/theme.nix`. It does
-rely on a rebuild but it's a simple toggle between light/dark and
-gruvbox/matugen modes by running `tt`/`toggle-theme`. It automatically updates
-colour schemes and refreshes necessary applications to apply changes.
+I have a custom theming setup which can be seen in `modules/theme.nix`. It's a
+relatively simple toggle between light and dark changed by running
+`toggle-theme`. It automatically updates colour schemes and refreshes necessary
+applications to apply changes.
 
-The gruvbox mode uses the defined themes in `modules/theme.nix` and some base16
+Both variants are built as specialisations, so switching needs no rebuild. The
+themes use the gruvbox palettes defined in `modules/theme.nix` and some base16
 colours for applications that can make use of them.
 
 ### Quickshell
