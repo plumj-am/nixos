@@ -2,17 +2,17 @@
 {
   flake.modules.nixos.default = self.modules.nixos.tailscale;
   flake.modules.nixos.tailscale =
-    { config, ... }:
+    { lib, config, ... }:
     let
+      inherit (lib.lists) singleton;
       inherit (config.sops) secrets;
 
       interface = "ts0";
-      domains = [ "taild29fec.ts.net" ];
     in
     {
       sops.secrets."tailscale/auth-key".sopsFile = ../secrets/services/tailscale.yaml;
 
-      services.resolved.settings.Resolve.Domains = domains;
+      services.resolved.settings.Resolve.Domains = "taild29fec.ts.net";
       services.tailscale = {
         enable = true;
 
@@ -21,6 +21,8 @@
         useRoutingFeatures = "both";
         interfaceName = interface;
       };
+
+      networking.firewall.trustedInterfaces = singleton interface;
     };
 
   flake.modules.darwin.default = self.modules.darwin.tailscale;

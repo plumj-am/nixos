@@ -88,7 +88,10 @@ in
 
       environment.systemPackages = singleton pkgs.openssh;
 
-      networking.firewall.allowedTCPPorts = singleton 2222;
+      networking.firewall.allowedTCPPorts = [
+        2222 # TODO: tarssh
+        22
+      ];
 
       programs.ssh.startAgent = true;
 

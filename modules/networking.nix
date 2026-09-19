@@ -4,25 +4,27 @@
   flake.modules.nixos.networking =
     { lib, ... }:
     let
-      inherit (lib) mkDefault;
+      inherit (lib.lists) singleton;
+      inherit (lib.modules) mkDefault;
     in
     {
-      config = {
-        networking.networkmanager = {
-          enable = true;
-          wifi.powersave = false;
-        };
-        programs.nm-applet.enable = true;
-        users.users.jam.extraGroups = [ "networkmanager" ];
+      networking.networkmanager = {
+        enable = true;
+        wifi.powersave = false;
 
-        networking.firewall = {
-          enable = true;
-          trustedInterfaces = [ "ts0" ];
-          allowedTCPPorts = [ 22 ];
+        settings.connection = {
+          "wifi.cloned-mac-address" = "stable";
+          "ethernet.cloned-mac-address" = "stable";
+          "connection.stable-id" = "\${CONNECTION}/\${BOOT}";
+          "ipv4.dhcp-send-hostname" = "false";
         };
-
-        networking.useDHCP = mkDefault true;
-        networking.interfaces = { };
       };
+      programs.nm-applet.enable = true;
+      users.users.jam.extraGroups = singleton "networkmanager";
+
+      networking.firewall.enable = true;
+
+      networking.useDHCP = mkDefault true;
+      networking.interfaces = { };
     };
 }
