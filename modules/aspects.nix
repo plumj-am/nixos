@@ -62,7 +62,6 @@
   flake.modules.common.ai-agents.imports = with self.modules.common; [
     ai-shared
     autolith
-    commandcode
     omp
     opencode
   ];

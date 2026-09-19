@@ -149,31 +149,6 @@
                   auth = "none";
                   discovery.type = "llama.cpp";
                 };
-
-                nvidia.apiKey = "!cat ${secrets.nvidia-nim-key.path}";
-
-                # Static defs so these resolve at launch before the remote
-                # opencode-zen catalog fetch completes. laguna-s-2.1-free is
-                # NOT in omp's catalog so need to add stuff manually.
-                opencode-zen = {
-                  baseUrl = "https://opencode.ai/zen/v1";
-                  apiKey = "!cat ${secrets.opencode-go-key.path}";
-                  api = "openai-completions";
-                  models = [
-                    {
-                      # minimal | low | medium | high | xhigh
-                      id = "laguna-s-2.1-free";
-                      name = "Poolside Laguna S 2.1";
-                      reasoning = true;
-                      contextWindow = 256000;
-                      maxTokens = 131072;
-                    }
-                    {
-                      # high | xhigh
-                      id = "deepseek-v4-flash-free";
-                    }
-                  ];
-                };
               };
             };
           };
@@ -246,10 +221,7 @@
 
                 # [internal]
                 memories.enabled = false;
-                modelProviderOrder = [
-                  activeSub
-                  "opencode-zen"
-                ];
+                modelProviderOrder = singleton activeSub;
                 modelRoles = {
                   default = normal;
                   smol = small;
