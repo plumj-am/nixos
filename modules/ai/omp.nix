@@ -92,19 +92,6 @@
                       };
                     }
                     {
-                      id = "meituan/LongCat-2.0:free";
-                      name = "Meituan LongCat 2.0 free";
-                      reasoning = true;
-                      contextWindow = 1048576;
-                      maxTokens = 131072;
-                      cost = {
-                        input = 0;
-                        output = 0;
-                        cacheRead = 0;
-                        cacheWrite = 0;
-                      };
-                    }
-                    {
                       id = "Qwen/Qwen3.8-Flash";
                       name = "Qwen3.8 Flash";
                       reasoning = true;
@@ -196,9 +183,9 @@
             generator = pkgs.writers.writeYAML "omp-agent-config.yml";
             value =
               let
-                big = "${activeSub}/deepseek/deepseek-v4.1-flash:max";
-                small = "${activeSub}/deepseek/deepseek-v4.1-flash:low";
-                cheap = "${activeSub}/meituan/LongCat-2.0:free:auto";
+                normal = "${activeSub}/meta/muse-spark-1.3-contributor:max";
+                small = "${activeSub}/deepseek/deepseek-v4.1-flash:xhigh";
+                cheap = "${activeSub}/poolside/laguna-s-2.1-free:auto";
                 vision = "${activeSub}/Qwen/Qwen3.8-Flash:low";
               in
               {
@@ -264,12 +251,12 @@
                   "opencode-zen"
                 ];
                 modelRoles = {
-                  default = small;
-                  smol = cheap;
-                  slow = big;
+                  default = normal;
+                  smol = small;
+                  slow = normal;
                   advisor = cheap;
-                  plan = big;
-                  librarian = big;
+                  plan = normal;
+                  librarian = normal;
                   inherit vision;
                   designer = vision;
                   commit = cheap;

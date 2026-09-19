@@ -28,8 +28,8 @@
             type = "copy";
             value =
               let
-                normal = "deepseek/deepseek-v4.1-flash";
-                cheap = "meituan/LongCat-2.0:free";
+                normal = "meta/muse-spark-1.3-contributor";
+                cheap = "poolside/laguna-s-2.1-free";
               in
               {
                 provider = "command-code";

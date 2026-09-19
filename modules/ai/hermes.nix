@@ -10,8 +10,8 @@ let
   mkHermesAgent =
     name:
     {
-      mainModel ? "deepseek/deepseek-v4.1-flash",
-      fallbackModel ? "poolside/laguna-s-2.1-free",
+      mainModel ? "meta/muse-spark-1.3-contributor",
+      fallbackModel ? "deepseek/deepseek-v4.1-flash",
       smallModel ? "poolside/laguna-s-2.1-free",
       visionModel ? "Qwen/Qwen3.8-Flash",
       personality ? "concise",
@@ -410,7 +410,6 @@ let
                   "deepseek-v4.1-flash"
                   "muse-spark-1.3"
                   "laguna-s-2.1"
-                  "LongCat-2.0"
                   "longcat-2.0"
                   "Qwen3.8"
                 ];

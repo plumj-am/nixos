@@ -35,9 +35,9 @@
       #   {type: "free", opencode: $of, commandcode: $cf}
       #   {type: "paid", opencode: [],  commandcode: $cp}
       # ] | table --expand --index false --theme single
-      big = "${activeSub}/deepseek/deepseek-v4.1-flash";
+      big = "${activeSub}/meta/muse-spark-1.3-contributor";
       small = "${activeSub}/deepseek/deepseek-v4.1-flash";
-      cheap = "${activeSub}/meituan/LongCat-2.0:free";
+      cheap = "${activeSub}/poolside/laguna-s-2.1-free";
     in
     {
       ai.secrets = true;
@@ -153,16 +153,6 @@
                     tool_call = true;
                     limit = {
                       context = 256000;
-                      output = 131072;
-                    };
-                  };
-                  "meituan-longcat-2.0:free" = {
-                    id = "meituan/LongCat-2.0:free";
-                    name = "Meituan LongCat 2.0 free";
-                    reasoning = true;
-                    tool_call = true;
-                    limit = {
-                      context = 1048576;
                       output = 131072;
                     };
                   };
