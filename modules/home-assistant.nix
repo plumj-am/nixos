@@ -7,12 +7,12 @@
       ...
     }:
     let
+      inherit (lib.fixedPoints) fix;
       inherit (lib.lists) singleton;
       inherit (lib.modules) merge;
-      inherit (lib.fixedPoints) fix;
       inherit (config.helpers) rustic;
+      inherit (config.localisation) location time_zone units;
       inherit (config.networking) domain;
-      inherit (config.localisation) location units time_zone;
 
       # Home Assistant pulls in pyturbojpeg, whose check phase needs pytest-memray.
       # That suite fails in the sandbox on Python 3.14, so drop its checks.
@@ -199,10 +199,10 @@
         config = {
           homeassistant = {
             name = "Home";
-            inherit (location) latitude longitude;
+            inherit time_zone;
             unit_system = units.system;
             temperature_unit = units.temperature_short;
-            inherit time_zone;
+            inherit (location) latitude longitude;
           };
         };
 

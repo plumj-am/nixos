@@ -2,8 +2,8 @@
 {
   flake.nixosModules.iso =
     {
-      config,
       lib,
+      config,
       ...
     }:
     let

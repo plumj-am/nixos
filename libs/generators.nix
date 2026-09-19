@@ -1,15 +1,15 @@
 { self }:
 let
   inherit (self.attrsets) attrNames isAttrs;
+  inherit (self.generators) keyValue mkKeyValueDefault;
   inherit (self.lists) genList isList;
-  inherit (self.trivial) isBool isFloat isInt;
   inherit (self.strings)
-    replaceStrings
     concatStringsSep
     isString
+    replaceStrings
     typeOf
     ;
-  inherit (self.generators) keyValue mkKeyValueDefault;
+  inherit (self.trivial) isBool isFloat isInt;
 
 in
 {

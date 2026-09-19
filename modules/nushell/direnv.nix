@@ -8,8 +8,8 @@
       ...
     }:
     let
-      inherit (lib.modules) mkBefore;
       inherit (lib.meta) getExe;
+      inherit (lib.modules) mkBefore;
     in
     {
       programs.direnv = {

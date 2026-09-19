@@ -1,14 +1,14 @@
 {
   flake.modules.nixos.mealie =
     {
-      config,
       lib,
+      config,
       ...
     }:
     let
       inherit (lib.modules) merge;
-      inherit (config.networking) domain;
       inherit (config.helpers) rustic;
+      inherit (config.networking) domain;
 
       fqdn = "mealie.${domain}";
     in

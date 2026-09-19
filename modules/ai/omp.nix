@@ -7,8 +7,8 @@
       ...
     }:
     let
-      inherit (lib.meta) getExe;
       inherit (lib.lists) singleton;
+      inherit (lib.meta) getExe;
 
       # Chain:
       # OMP

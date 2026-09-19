@@ -8,10 +8,10 @@
       ...
     }:
     let
-      inherit (lib.modules) mkForce mkIf merge;
-      inherit (lib.lists) singleton elem;
       inherit (lib.attrsets) mapAttrsToList;
+      inherit (lib.lists) elem singleton;
       inherit (lib.meta) getExe';
+      inherit (lib.modules) merge mkForce mkIf;
       inherit (config.helpers) rustic;
       inherit (config.networking) domain;
       inherit (config.sops) secrets;

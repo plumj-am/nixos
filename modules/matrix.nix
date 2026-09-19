@@ -149,9 +149,9 @@
       ...
     }:
     let
-      inherit (lib.strings) toJSON;
       inherit (lib.lists) singleton;
       inherit (lib.modules) merge;
+      inherit (lib.strings) toJSON;
       inherit (config.networking) domain hostName;
 
       fqdn = "chat.${domain}";

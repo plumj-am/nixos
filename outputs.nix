@@ -1,10 +1,10 @@
 inputs:
 let
-  inherit (inputs.nixpkgs.lib.strings) hasSuffix hasInfix removeSuffix;
-  inherit (inputs.nixpkgs.lib.filesystem) readDir;
-  inherit (inputs.nixpkgs.lib.attrsets) filterAttrs mapAttrs' nameValuePair;
   inherit (inputs.nixpkgs.lib) filter;
+  inherit (inputs.nixpkgs.lib.attrsets) filterAttrs mapAttrs' nameValuePair;
+  inherit (inputs.nixpkgs.lib.filesystem) readDir;
   inherit (inputs.nixpkgs.lib.filesystem) listFilesRecursive;
+  inherit (inputs.nixpkgs.lib.strings) hasInfix hasSuffix removeSuffix;
 
   importTree = path: {
     imports =

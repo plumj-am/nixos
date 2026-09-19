@@ -8,8 +8,8 @@
   flake.modules.nixos.s3 =
     {
       pkgs,
-      config,
       lib,
+      config,
       ...
     }:
     let
@@ -113,14 +113,14 @@
   flake.modules.nixos.s3-upload =
     {
       pkgs,
-      config,
       lib,
+      config,
       ...
     }:
     let
       inherit (lib.meta) getExe;
-      inherit (config.sops) secrets;
       inherit (config.s3.caches) fsn1 garage;
+      inherit (config.sops) secrets;
 
       s3SharedArgs = "&priority=43&multipart-upload=true&multipart-threshold=50M&multipart-chunk-size=10M";
       fsn1Alias = fsn1.alias;

@@ -11,8 +11,8 @@
       inherit (lib.lists) singleton;
       inherit (lib.trivial) floor warnIf;
 
-      inherit (config.users.users.jam) home;
       inherit (config.systemInfo) gpu;
+      inherit (config.users.users.jam) home;
 
       isGpu = gpu.exists;
 

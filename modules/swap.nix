@@ -1,17 +1,17 @@
 {
   flake.modules.nixos.swapfile =
     {
+      pkgs,
       lib,
       config,
-      pkgs,
       ...
     }:
     let
       inherit (lib.lists) singleton;
-      inherit (lib.options) mkOption;
-      inherit (lib.modules) mkMerge mkIf;
       inherit (lib.meta) getExe';
-      inherit (lib.types) nullOr int str;
+      inherit (lib.modules) mkIf mkMerge;
+      inherit (lib.options) mkOption;
+      inherit (lib.types) int nullOr str;
 
       cfg = config.systemInfo.disks;
     in

@@ -2,29 +2,29 @@
 {
   flake.modules.nixos.uptime-kuma =
     {
+      pkgs,
       lib,
       config,
-      pkgs,
       ...
     }:
     let
-      inherit (lib.modules) merge;
-      inherit (lib.strings) optionalString concatMapStringsSep concatStrings;
       inherit (lib.attrsets)
-        filterAttrs
-        isAttrs
         attrNames
         attrValues
+        filterAttrs
+        isAttrs
         mapAttrsToList
         ;
       inherit (lib.lists)
-        singleton
         concatMap
         filter
         groupBy
         length
+        singleton
         ;
       inherit (lib.meta) getExe;
+      inherit (lib.modules) merge;
+      inherit (lib.strings) concatMapStringsSep concatStrings optionalString;
       inherit (config.networking) domain;
 
       fqdn = "uptime.${domain}";

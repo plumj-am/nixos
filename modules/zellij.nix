@@ -4,13 +4,13 @@
   flake.modules.common.zellij =
     {
       pkgs,
-      config,
       lib,
+      config,
       ...
     }:
     let
-      inherit (lib.meta) getExe;
       inherit (lib.lists) singleton;
+      inherit (lib.meta) getExe;
       inherit (config) theme;
     in
     {

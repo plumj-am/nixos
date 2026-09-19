@@ -1,10 +1,10 @@
 {
   flake.modules.nixos.forgejo-runner =
     {
-      config,
-      lib,
-      pkgs,
       inputs,
+      pkgs,
+      lib,
+      config,
       ...
     }:
     let
@@ -36,7 +36,7 @@
         instances.${name} = {
           enable = true;
           tokenFile = secrets."forgejo-runner/token".path;
-          inherit name url labels;
+          inherit labels name url;
 
           settings = {
             runner = {

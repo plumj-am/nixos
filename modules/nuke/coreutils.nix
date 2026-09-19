@@ -43,10 +43,10 @@ in
       ...
     }:
     let
-      inherit (lib.lists) singleton head;
-      inherit (lib.trivial) flip;
       inherit (lib.filesystem) baseNameOf;
+      inherit (lib.lists) head singleton;
       inherit (lib.strings) replicate stringLength;
+      inherit (lib.trivial) flip;
     in
     {
       system.replaceDependencies.replacements =

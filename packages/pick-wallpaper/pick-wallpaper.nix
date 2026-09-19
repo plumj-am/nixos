@@ -1,6 +1,6 @@
 {
   perSystem =
-    { lib, pkgs, ... }:
+    { pkgs, lib, ... }:
     let
       inherit (lib.meta) getExe;
     in

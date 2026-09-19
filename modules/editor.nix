@@ -28,19 +28,19 @@ in
 
   flake.modules.common.helix =
     {
-      lib,
       pkgs,
+      lib,
       config,
       ...
     }:
     let
+      inherit (lib) elem;
       inherit (lib.attrsets)
-        optionalAttrs
         attrValues
         mapAttrs
+        optionalAttrs
         ;
       inherit (lib.lists) singleton;
-      inherit (lib) elem;
       inherit (config) theme;
     in
     {

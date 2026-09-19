@@ -4,8 +4,8 @@
   flake.modules.common.git =
     {
       pkgs,
-      config,
       lib,
+      config,
       ...
     }:
     let

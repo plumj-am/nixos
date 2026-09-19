@@ -4,14 +4,14 @@
   flake.modules.nixos.system-info =
     { lib, config, ... }:
     let
+      inherit (lib.lists) elemAt;
       inherit (lib.options) mkOption;
       inherit (lib.types)
+        bool
         int
         nullOr
         str
-        bool
         ;
-      inherit (lib.lists) elemAt;
       inherit (config.hardware.facter) report;
 
       cpu = if (report != { }) then elemAt report.hardware.cpu 0 else { };

@@ -8,7 +8,7 @@
     }:
     let
       inherit (lib.lists) singleton;
-      inherit (lib.modules) mkForce merge;
+      inherit (lib.modules) merge mkForce;
       inherit (config.helpers) rustic;
       inherit (config.networking) domain hostName;
 

@@ -8,8 +8,8 @@
       ...
     }:
     let
-      inherit (lib.modules) mkForce;
       inherit (lib.lists) singleton;
+      inherit (lib.modules) mkForce;
     in
     {
       # original: `[ pkgs.acl pkgs.attr pkgs.bashInteractive pkgs.bzip2 pkgs.coreutils-full pkgs.cpio pkgs.curl pkgs.diffutils pkgs.findutils pkgs.gawk pkgs.getent pkgs.getconf pkgs.gnugrep pkgs.gnupatch pkgs.gnused pkgs.gnutar pkgs.gzip pkgs.xz pkgs.less pkgs.libcap pkgs.ncurses pkgs.netcat pkgs.mkpasswd pkgs.procps pkgs.su pkgs.time pkgs.util-linux pkgs.which pkgs.zstd ]`

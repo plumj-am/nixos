@@ -3,14 +3,14 @@
   flake.modules.nixos.default = self.modules.nixos.harmonia;
   flake.modules.nixos.harmonia =
     {
-      config,
       lib,
+      config,
       ...
     }:
     let
       inherit (lib.lists) filter singleton;
-      inherit (config.sops) secrets;
       inherit (config.networking) hostName;
+      inherit (config.sops) secrets;
 
       port = 5000;
 

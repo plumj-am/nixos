@@ -14,18 +14,18 @@ let
     mapAttrsToList
     optionalAttrs
     ;
+  inherit (lib.fixedPoints) fix;
   inherit (lib.lists)
     filter
     foldr
     singleton
     ;
+  inherit (lib.strings) hasInfix;
   inherit (lib.trivial)
     const
     importJSON
     warn
     ;
-  inherit (lib.fixedPoints) fix;
-  inherit (lib.strings) hasInfix;
 
   # UNSLOP
   extensions.consent-o-matic.id = "mdjildafknihdffpkfmmpnpoiajfjnjd";
@@ -192,7 +192,7 @@ let
     # BOOKMARKS
     ManagedBookmarks =
       let
-        mkFolder = name: children: { inherit name children; };
+        mkFolder = name: children: { inherit children name; };
 
         mkBookmark = name: url: { inherit name url; };
 
@@ -498,8 +498,8 @@ in
       ...
     }:
     let
-      inherit (lib.strings) toJSON;
       inherit (lib.attrsets) genAttrs;
+      inherit (lib.strings) toJSON;
       inherit (lib.trivial) const flip;
       inherit (config) theme;
     in

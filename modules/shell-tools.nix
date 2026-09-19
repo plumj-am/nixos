@@ -10,8 +10,8 @@
       ...
     }:
     let
-      inherit (lib.meta) getExe;
       inherit (lib.attrsets) attrNames;
+      inherit (lib.meta) getExe;
       inherit (lib.strings) toJSON;
       inherit (config) theme;
 

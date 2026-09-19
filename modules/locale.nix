@@ -5,7 +5,7 @@
     { lib, config, ... }:
     let
       inherit (lib.options) mkOption;
-      inherit (lib.types) float enum str;
+      inherit (lib.types) enum float str;
 
       cfg = config.localisation;
     in

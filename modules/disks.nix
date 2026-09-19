@@ -1,9 +1,9 @@
 {
   flake.modules.nixos.disks-server =
-    { lib, inputs, ... }:
+    { inputs, lib, ... }:
     let
-      inherit (lib.modules) mkDefault;
       inherit (lib.lists) singleton;
+      inherit (lib.modules) mkDefault;
     in
     {
       imports = singleton inputs.disko.nixosModules.disko;

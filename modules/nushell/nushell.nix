@@ -8,11 +8,11 @@
       ...
     }:
     let
+      inherit (lib.attrsets) mapAttrsToList;
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
       inherit (lib.modules) mkAfter mkIf;
       inherit (lib.strings) concatStringsSep;
-      inherit (lib.attrsets) mapAttrsToList;
     in
     {
       environment.shells = singleton <| getExe pkgs.nushell;

@@ -1,11 +1,11 @@
 {
   flake.modules.nixos.boot-optimise =
-    { config, lib, ... }:
+    { lib, config, ... }:
     let
+      inherit (lib.attrsets) genAttrs;
       inherit (lib.lists) singleton;
       inherit (lib.modules) mkForce mkIf mkMerge;
-      inherit (lib.trivial) flip const;
-      inherit (lib.attrsets) genAttrs;
+      inherit (lib.trivial) const flip;
       inherit (config.networking) hostName;
     in
     {

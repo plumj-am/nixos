@@ -1,15 +1,15 @@
 {
   flake.modules.nixos.postgres =
     {
-      config,
-      lib,
       pkgs,
+      lib,
+      config,
       ...
     }:
     let
       inherit (lib.modules) mkForce mkOverride;
-      inherit (lib.trivial) flip;
       inherit (lib.options) mkValue;
+      inherit (lib.trivial) flip;
       inherit (config.networking) hostName;
     in
     {

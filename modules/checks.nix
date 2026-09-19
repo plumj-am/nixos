@@ -7,7 +7,7 @@
       ...
     }:
     let
-      inherit (lib.attrsets) mapAttrs' filterAttrs nameValuePair;
+      inherit (lib.attrsets) filterAttrs mapAttrs' nameValuePair;
       inherit (lib.lists) elem singleton;
 
       sys = pkgs.stdenv.hostPlatform.system;

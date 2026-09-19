@@ -7,9 +7,9 @@
       ...
     }:
     let
-      inherit (lib.modules) mkIf;
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
+      inherit (lib.modules) mkIf;
       inherit (config) theme;
       inherit (config.systemInfo) gpu;
 

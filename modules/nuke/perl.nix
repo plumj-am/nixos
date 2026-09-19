@@ -12,9 +12,9 @@
       ...
     }:
     let
-      inherit (lib.modules) mkDefault;
-      inherit (lib.lists) singleton filter;
       inherit (lib.attrsets) optionalAttrs;
+      inherit (lib.lists) filter singleton;
+      inherit (lib.modules) mkDefault;
     in
     {
       imports = singleton inputs.nixos-core.nixosModules.default;

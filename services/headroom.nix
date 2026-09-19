@@ -2,17 +2,17 @@
 {
   flake.services.headroom =
     {
-      config,
-      lib,
       pkgs,
+      lib,
+      config,
       ...
     }:
     let
+      inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
       inherit (lib.modules) mkIf;
       inherit (lib.options) mkEnableOption mkOption;
-      inherit (lib.types) port package str;
-      inherit (lib.lists) singleton;
+      inherit (lib.types) package port str;
 
       headroom = self.packages.${pkgs.stdenv.hostPlatform.system}.headroom;
 

@@ -40,10 +40,10 @@ in
       ...
     }:
     let
-      inherit (lib.trivial) const flip;
       inherit (lib.attrsets) genAttrs;
-      inherit (lib.lists) singleton;
       inherit (lib.generators) toINI;
+      inherit (lib.lists) singleton;
+      inherit (lib.trivial) const flip;
       inherit (config.helpers) rustic;
     in
     {
@@ -81,8 +81,8 @@ in
   flake.modules.darwin.keepassxc =
     { lib, ... }:
     let
-      inherit (lib.lists) singleton;
       inherit (lib.generators) toINI;
+      inherit (lib.lists) singleton;
     in
     {
       homebrew.casks = singleton "keepassxc";

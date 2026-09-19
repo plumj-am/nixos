@@ -1,16 +1,16 @@
 {
   flake.modules.nixos.video-player =
     {
+      pkgs,
       lib,
       config,
-      pkgs,
       ...
     }:
     let
+      inherit (lib.attrsets) genAttrs;
       inherit (lib.lists) singleton;
       inherit (lib.modules) mkIf;
       inherit (lib.trivial) const flip;
-      inherit (lib.attrsets) genAttrs;
     in
     {
       hjem.extraModule = {

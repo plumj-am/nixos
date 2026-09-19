@@ -77,8 +77,8 @@ in
       ...
     }:
     let
-      inherit (lib.lists) singleton map;
       inherit (lib.attrsets) listToAttrs;
+      inherit (lib.lists) map singleton;
     in
     {
       imports = [

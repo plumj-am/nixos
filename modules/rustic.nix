@@ -3,8 +3,8 @@
   flake.modules.nixos.default = self.modules.nixos.rustic;
   flake.modules.nixos.rustic =
     {
-      config,
       lib,
+      config,
       ...
     }:
     let

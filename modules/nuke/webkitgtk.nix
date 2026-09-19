@@ -8,7 +8,7 @@
       ...
     }:
     let
-      inherit (lib.lists) singleton filter;
+      inherit (lib.lists) filter singleton;
     in
     {
       nixpkgs.overlays = singleton (

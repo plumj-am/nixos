@@ -8,9 +8,9 @@
       ...
     }:
     let
+      inherit (lib.meta) getExe;
       inherit (lib.options) mkOption;
       inherit (lib.types) attrsOf str;
-      inherit (lib.meta) getExe;
     in
     {
       options.shellAliases = mkOption {

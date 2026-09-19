@@ -3,17 +3,17 @@
   flake.modules.common.ai-agents = self.modules.common.ai-shared;
   flake.modules.common.ai-shared =
     {
-      config,
+      inputs,
       pkgs,
       lib,
-      inputs,
+      config,
       ...
     }:
     let
-      inherit (config.ai) skills;
-      inherit (lib.meta) getExe;
       inherit (lib.lists) singleton;
+      inherit (lib.meta) getExe;
       inherit (lib.strings) concatMapStringsSep;
+      inherit (config.ai) skills;
 
       # Pinned with opencode.nix; bump together.
       cavemanInstaller = pkgs.fetchFromGitHub {

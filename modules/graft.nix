@@ -8,7 +8,7 @@
       ...
     }:
     let
-      inherit (lib.lists) singleton foldl' filter;
+      inherit (lib.lists) filter foldl' singleton;
       inherit (lib.modules) merge;
       inherit (config.networking) domain hostName;
       inherit (config.sops) secrets;

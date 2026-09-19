@@ -10,6 +10,10 @@ let
   mkHermesAgent =
     name:
     {
+      inputs,
+      pkgs,
+      lib,
+      config,
       mainModel ? "xiaomi/mimo-v2.6-flash",
       fallbackModel ? "deepseek/deepseek-v4.1-flash",
       smallModel ? "xiaomi/mimo-v2.6-flash",
@@ -26,24 +30,20 @@ let
       gitUsername ? "",
       gitEmail ? "",
       jjStackUsername ? "",
-      inputs,
-      pkgs,
-      lib,
-      config,
       ...
     }:
     let
+      inherit (lib.attrsets) genAttrs mapAttrs optionalAttrs;
       inherit (lib.lists)
-        singleton
         optional
+        singleton
         ;
       inherit (lib.meta) getExe;
-      inherit (lib.attrsets) optionalAttrs genAttrs mapAttrs;
       inherit (lib.modules) mkForce mkIf;
       inherit (lib.strings) concatMapStringsSep optionalString;
-      inherit (lib.trivial) flip const;
-      inherit (config.sops) secrets;
+      inherit (lib.trivial) const flip;
       inherit (config.helpers) rustic;
+      inherit (config.sops) secrets;
 
       graftctl = inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.graft-graftctl;
       jujutsu = inputs.jujutsu.packages.${pkgs.stdenv.hostPlatform.system}.jujutsu;
@@ -998,10 +998,10 @@ in
       imports = [
         (mkHermesAgent "grove" {
           inherit
-            inputs
-            pkgs
-            lib
             config
+            inputs
+            lib
+            pkgs
             ;
           gitUsername = "Grove Keeper";
           gitEmail = "keeper-bot@plumj.am";
@@ -1026,10 +1026,10 @@ in
       imports = [
         (mkHermesAgent "plumjam" {
           inherit
-            inputs
-            pkgs
-            lib
             config
+            inputs
+            lib
+            pkgs
             ;
           personality = "kawaii";
           withKiwi = true;
@@ -1061,10 +1061,10 @@ in
         singleton
         <| mkHermesAgent "radka" {
           inherit
-            inputs
-            pkgs
-            lib
             config
+            inputs
+            lib
+            pkgs
             ;
           personality = "kawaii";
           withInstagram = true;

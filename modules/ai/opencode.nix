@@ -8,8 +8,8 @@
       ...
     }:
     let
-      inherit (lib.lists) singleton;
       inherit (lib.attrsets) genAttrs;
+      inherit (lib.lists) singleton;
       inherit (lib.trivial) const;
       inherit (config.sops) secrets;
 
@@ -52,7 +52,7 @@
             generator = pkgs.writers.writeJSON "opencode-opencode.jsonc";
             value = {
               autoupdate = false;
-              model = model;
+              inherit model;
               small_model = model;
 
               experimental = {

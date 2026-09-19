@@ -1,33 +1,33 @@
 {
   flake.services.rustic =
     {
-      config,
-      lib,
       pkgs,
+      lib,
+      config,
       utils,
       ...
     }:
     let
-      inherit (lib.options) mkOption mkPackageOption;
-      inherit (lib.meta) getExe;
       inherit (lib.attrsets)
+        filterAttrs
         mapAttrs'
+        mapAttrsToList
         nameValuePair
         optionalAttrs
-        filterAttrs
-        mapAttrsToList
-        ;
-      inherit (lib.strings) concatStringsSep escapeShellArg optionalString;
-      inherit (lib.types)
-        nullOr
-        str
-        bool
-        listOf
-        attrsOf
-        submodule
-        anything
         ;
       inherit (lib.lists) optional singleton;
+      inherit (lib.meta) getExe;
+      inherit (lib.options) mkOption mkPackageOption;
+      inherit (lib.strings) concatStringsSep escapeShellArg optionalString;
+      inherit (lib.types)
+        anything
+        attrsOf
+        bool
+        listOf
+        nullOr
+        str
+        submodule
+        ;
 
       inherit (config.networking) hostName;
       inherit (utils.systemdUtils.unitOptions) unitOption;

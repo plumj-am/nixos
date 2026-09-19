@@ -4,13 +4,13 @@
   flake.modules.common.ai-options =
     { lib, config, ... }:
     let
-      inherit (lib.modules) mkIf;
       inherit (lib.attrsets) genAttrs;
-      inherit (lib.trivial) flip const;
-      inherit (lib.options) mkOption mkEnableOption;
-      inherit (lib.types) listOf str;
-      inherit (lib.strings) removeSuffix hasSuffix;
       inherit (lib.lists) filter;
+      inherit (lib.modules) mkIf;
+      inherit (lib.options) mkEnableOption mkOption;
+      inherit (lib.strings) hasSuffix removeSuffix;
+      inherit (lib.trivial) const flip;
+      inherit (lib.types) listOf str;
       skillTypes = import ../../options/skills.nix { inherit lib; };
     in
     {

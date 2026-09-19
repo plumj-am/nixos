@@ -37,8 +37,8 @@ in
     let
       inherit (lib.lists) singleton;
       inherit (config.flake) entities;
-      inherit (config.sops) secrets;
       inherit (config.networking) hostName;
+      inherit (config.sops) secrets;
     in
     {
       sops.secrets."radicle/jam-key" = {
@@ -124,7 +124,7 @@ in
       ...
     }:
     let
-      inherit (lib.lists) singleton optional;
+      inherit (lib.lists) optional singleton;
       inherit (lib.modules) merge;
       inherit (config.networking) hostName;
     in

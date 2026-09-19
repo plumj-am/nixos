@@ -84,8 +84,8 @@
       ...
     }:
     let
-      inherit (lib.modules) mkForce;
       inherit (lib.lists) singleton;
+      inherit (lib.modules) mkForce;
       inherit (config.flake) entities;
 
       cfg = config.hjem.users;

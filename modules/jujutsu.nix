@@ -426,9 +426,9 @@
       ...
     }:
     let
-      inherit (lib.modules) mkDefault;
-      inherit (lib.meta) getExe;
       inherit (lib.lists) singleton;
+      inherit (lib.meta) getExe;
+      inherit (lib.modules) mkDefault;
 
       jjStack = self.packages.${pkgs.stdenv.hostPlatform.system}.jj-stack;
     in
@@ -550,9 +550,9 @@
       ...
     }:
     let
-      inherit (lib.modules) mkDefault;
-      inherit (lib.meta) getExe;
+      inherit (pkgs) hunk;
       inherit (lib.lists) singleton;
+      inherit (lib.meta) getExe;
 
       difft =
         pkgs.writeShellScriptBin "difft" # bash
@@ -560,7 +560,7 @@
             exec ${getExe pkgs.difftastic} --background ${if config.theme.isDark then "dark" else "light"} "$@"
           '';
 
-      inherit (pkgs) hunk;
+      inherit (lib.modules) mkDefault;
     in
     {
       environment.systemPackages = [
@@ -602,9 +602,9 @@
       ...
     }:
     let
-      inherit (lib.modules) mkDefault;
-      inherit (lib.meta) getExe;
       inherit (lib.lists) singleton;
+      inherit (lib.meta) getExe;
+      inherit (lib.modules) mkDefault;
     in
     {
       environment.systemPackages = singleton pkgs.mergiraf;
@@ -633,8 +633,8 @@
   flake.modules.common.watchman =
     { pkgs, lib, ... }:
     let
-      inherit (lib.modules) mkDefault;
       inherit (lib.lists) singleton;
+      inherit (lib.modules) mkDefault;
     in
     {
       environment.systemPackages = singleton pkgs.watchman;

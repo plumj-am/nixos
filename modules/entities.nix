@@ -7,14 +7,14 @@
       inherit (lib.attrsets)
         attrValues
         filterAttrs
-        mapAttrs
         genAttrs
+        mapAttrs
         ;
-      inherit (lib.lists) elem concatMap unique;
-      inherit (lib.types) attrsOf anything;
+      inherit (lib.fixedPoints) fix;
+      inherit (lib.lists) concatMap elem unique;
       inherit (lib.options) mkOption;
       inherit (lib.trivial) const;
-      inherit (lib.fixedPoints) fix;
+      inherit (lib.types) anything attrsOf;
 
       everyone = removeAttrs entities.people [ "self" ];
 

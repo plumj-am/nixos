@@ -31,7 +31,7 @@ _: {
         pname = "headroom-ai";
         version = "0.37.0";
         format = "wheel";
-        src = pkgs.fetchurl { inherit (wheel) url hash; };
+        src = pkgs.fetchurl { inherit (wheel) hash url; };
 
         # Minimal trial set: core plus proxy extra, which is exactly what
         # `headroom proxy` and `headroom wrap *` demand at runtime.

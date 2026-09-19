@@ -2,13 +2,13 @@
 {
   flake.modules.nixos.default = self.modules.nixos.unfree;
   flake.modules.nixos.unfree =
-    { config, lib, ... }:
+    { lib, config, ... }:
     let
       inherit (lib.lists) elem;
-      inherit (lib.options) mkOption;
-      inherit (lib.types) listOf str;
-      inherit (lib.strings) getName;
       inherit (lib.modules) mkIf;
+      inherit (lib.options) mkOption;
+      inherit (lib.strings) getName;
+      inherit (lib.types) listOf str;
 
       inherit (config.systemInfo) gpu;
     in

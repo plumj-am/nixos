@@ -3,8 +3,8 @@
   flake.modules.nixos.default = self.modules.nixos.distributed-builds;
   flake.modules.nixos.distributed-builds =
     {
-      config,
       lib,
+      config,
       ...
     }:
     let
@@ -56,10 +56,10 @@
     };
 
   flake.modules.nixos.distributed-builder =
-    { config, lib, ... }:
+    { lib, config, ... }:
     let
-      inherit (lib.lists) singleton;
       inherit (lib.attrsets) mapAttrsToList;
+      inherit (lib.lists) singleton;
       inherit (config.flake) entities;
     in
     {

@@ -2,8 +2,8 @@
   flake.modules.nixos.forgejo-cli =
     {
       pkgs,
-      config,
       lib,
+      config,
       ...
     }:
     let

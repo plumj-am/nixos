@@ -12,7 +12,7 @@
     {
       config = {
         services.goatcounter = {
-          inherit port address;
+          inherit address port;
 
           enable = true;
           proxy = true;

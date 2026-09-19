@@ -8,8 +8,8 @@
       ...
     }:
     let
-      inherit (lib.types) attrsOf anything;
       inherit (lib.options) mkOption;
+      inherit (lib.types) anything attrsOf;
     in
     {
       options.impureLib = mkOption {

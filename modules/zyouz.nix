@@ -7,9 +7,9 @@
       ...
     }:
     let
+      inherit (lib.generators) toZON zon;
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
-      inherit (lib.generators) toZON zon;
 
       # Can't get nushell to work directly for some reason.
       nu = [
@@ -19,7 +19,7 @@
       ];
 
       mkKeymap = key: action: {
-        inherit key action;
+        inherit action key;
       };
     in
     {

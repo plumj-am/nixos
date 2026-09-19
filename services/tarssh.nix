@@ -1,21 +1,21 @@
 {
   flake.services.tarssh =
     {
-      config,
-      lib,
       pkgs,
+      lib,
+      config,
       ...
     }:
     let
-      inherit (lib.options) mkEnableOption mkOption mkPackageOption;
-      inherit (lib.meta) getExe;
       inherit (lib.lists) optionals;
+      inherit (lib.meta) getExe;
+      inherit (lib.options) mkEnableOption mkOption mkPackageOption;
       inherit (lib.types)
-        nullOr
-        str
-        int
         bool
+        int
+        nullOr
         port
+        str
         ;
       inherit (lib.types) addCheck;
 

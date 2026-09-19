@@ -7,10 +7,10 @@
       ...
     }:
     let
+      inherit (lib.constants) systemdHardened;
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
       inherit (lib.modules) merge;
-      inherit (lib.constants) systemdHardened;
       inherit (config.networking) domain hostName;
       inherit (config.sops) secrets;
 

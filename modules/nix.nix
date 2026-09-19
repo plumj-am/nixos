@@ -5,11 +5,11 @@
   ...
 }:
 let
+  inherit (lib) mkDefault;
   inherit (lib.attrsets) filterAttrs mapAttrsToList;
+  inherit (lib.strings) concatStringsSep;
   inherit (lib.trivial) const;
   inherit (lib.types) isType;
-  inherit (lib.strings) concatStringsSep;
-  inherit (lib) mkDefault;
 
   registryMap = inputs |> filterAttrs (const <| isType "flake");
 in

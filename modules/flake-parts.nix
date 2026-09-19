@@ -5,11 +5,11 @@
   ...
 }:
 let
-  inherit (lib.lists) singleton;
   inherit (lib.attrsets) mapAttrs;
+  inherit (lib.lists) singleton;
   inherit (lib.options) mkOption;
-  inherit (lib.types) lazyAttrsOf deferredModule;
   inherit (lib.strings) escapeNixIdentifier;
+  inherit (lib.types) deferredModule lazyAttrsOf;
 
   # Extended version of flake-parts' addInfo that treats "common" like "generic"
   # (classless), so common modules can be imported into any module class.

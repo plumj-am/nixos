@@ -4,14 +4,14 @@
   ...
 }:
 let
-  inherit (lib.options) mkOption;
   inherit (lib.attrsets)
-    mapAttrs
-    genAttrs
     collect
+    genAttrs
     isDerivation
+    mapAttrs
     ;
-  inherit (lib.types) attrsOf anything enum;
+  inherit (lib.options) mkOption;
+  inherit (lib.types) anything attrsOf enum;
 
   gruvboxColors = {
     dark = {
@@ -202,12 +202,12 @@ let
     in
     {
       inherit
-        isDark
-        variant
+        apps
         colors
         designSystem
-        apps
         getAppTheme
+        isDark
+        variant
         ;
     };
 in
@@ -257,9 +257,9 @@ in
           // {
             inherit (theme)
               apps
+              colors
               isDark
               variant
-              colors
               ;
 
             withHash = mapAttrs (_: v: "#${v}") theme.colors;
@@ -272,7 +272,7 @@ in
   # between already built systems instead of rebuilding. `tt` activates one with
   # `nh os switch --specialisation`.
   flake.modules.nixos.theme-variants =
-    { config, lib, ... }:
+    { lib, config, ... }:
     {
       # Runtime mirror of the active variant. Read by quickshell and by `tt`;
       # being a build output it always matches the running system.
@@ -288,7 +288,7 @@ in
     };
 
   flake.modules.nixos.theme-extra-fonts =
-    { config, pkgs, ... }:
+    { pkgs, config, ... }:
     {
       console = {
         earlySetup = true;
@@ -311,7 +311,7 @@ in
 
   flake.modules.darwin.default = self.modules.darwin.theme-extra-fonts;
   flake.modules.darwin.theme-extra-fonts =
-    { config, pkgs, ... }:
+    { pkgs, config, ... }:
     {
       fonts.packages = [
         config.theme.font.mono.package

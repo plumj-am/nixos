@@ -15,7 +15,7 @@ in
         # nix
         programs.nixfmt = {
           enable = true;
-          package = pkgs.nixfmt-rs;
+          package = inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.organix;
         };
         settings.formatter.nixfmt = {
           width = 100;

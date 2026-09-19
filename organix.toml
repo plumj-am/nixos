@@ -1,0 +1,20 @@
+arg_order = [
+  "self",
+  "self'",
+  "inputs",
+  "inputs'",
+  "pkgs",
+  "modulesPath",
+  "lib",
+  "lib'",
+  "options",
+  "osConfig",
+  "config",
+]
+section_order = [ "imports", "options", "config" ]
+
+inherit_group_order = [ "pkgs", "lib", "osConfig", "config" ]
+sort_inherit_groups = true
+
+
+sort_inherit_names = true
