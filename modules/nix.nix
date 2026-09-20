@@ -150,6 +150,13 @@ in
     };
   };
 
+  flake.modules.nixos.nix-daemon-desktop-scheduling = {
+    nix = {
+      daemonIOSchedClass = "idle";
+      daemonCPUSchedPolicy = "idle";
+    };
+  };
+
   flake.modules.darwin.default = self.modules.darwin.nix-extra;
   flake.modules.darwin.nix-extra =
     { lib, ... }:

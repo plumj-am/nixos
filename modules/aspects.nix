@@ -32,6 +32,7 @@
     helium
     keepassxc
     nextcloud-client
+    nix-daemon-desktop-scheduling
     packages-gui
     packages-cli
     peripherals
