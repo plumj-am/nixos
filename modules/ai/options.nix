@@ -8,7 +8,7 @@
       inherit (lib.attrsets) genAttrs;
       inherit (lib.trivial) flip const;
       inherit (lib.options) mkOption mkEnableOption;
-      inherit (lib.types) listOf str ints;
+      inherit (lib.types) listOf str;
       inherit (lib.strings) removeSuffix hasSuffix;
       inherit (lib.lists) filter;
       skillTypes = import ../../options/skills.nix { inherit lib; };
@@ -16,13 +16,6 @@
     {
       options.ai = {
         secrets = mkEnableOption "include AI secrets with this system/module";
-
-        subs.commandcode.active = mkOption {
-          type = ints.between 1 2;
-          description = ''
-            which commandcode subscription to use in AI tools
-          '';
-        };
 
         commands.bash.allow = mkOption {
           type = listOf str;
@@ -115,8 +108,6 @@
             '';
           }
         ];
-
-        ai.subs.commandcode.active = 2;
 
         sops.secrets =
           mkIf config.ai.secrets
