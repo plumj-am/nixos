@@ -116,7 +116,7 @@
           }
         ];
 
-        ai.subs.commandcode.active = 1;
+        ai.subs.commandcode.active = 2;
 
         sops.secrets =
           mkIf config.ai.secrets
