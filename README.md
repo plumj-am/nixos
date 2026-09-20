@@ -123,6 +123,11 @@ Both variants are built as specialisations, so switching needs no rebuild. The
 themes use the gruvbox palettes defined in `modules/theme.nix` and some base16
 colours for applications that can make use of them.
 
+The active variant survives rebuilds: `rebuild` reads the running theme from
+`/etc/theme.json` and re-applies the matching specialisation, so a plain rebuild
+no longer falls back to the light default. Pass `--no-specialisation` to rebuild
+the plain base configuration instead.
+
 ### Quickshell
 
 I have a basic Quickshell setup which I have used to replace Fuzzel, Mako,

@@ -25,6 +25,18 @@
               let target = $remote | default $hostname
               let is_remote = $target != $hostname
 
+              # Carry the active theme into plain rebuilds: `os switch` without
+              # --specialisation activates the base config, which defaults to
+              # light mode and stomps the selected theme.
+              let active_theme = if $is_remote { "" } else { get-active-theme }
+              let specialisation_args = if ($active_theme == "") {
+                []
+              } else if ($rest | any {|a| $a | str starts-with "--specialisation"}) {
+                []
+              } else {
+                ["--specialisation" $active_theme]
+              }
+
               let subcommand = if $is_nixos { "os" } else { "darwin" }
               let prefix = if $is_nixos { "nixos" } else { "darwin" }
               let target_host = if $is_remote { ["--target-host" $"root@($target)"] } else { [] }
@@ -41,6 +53,7 @@
                 --builders
                 ""
                 ...$target_host
+                ...$specialisation_args
                 ...$rest
               ]
 
@@ -60,6 +73,22 @@
               if $emacs { main reload-emacs }
 
               print $"rebuild for ($target) succeeded."
+            }
+
+            # Reads the active theme mode from /etc/theme.json, a build output
+            # that always matches the config that is currently running.
+            def get-active-theme []: nothing -> string {
+              let theme_state = "/etc/theme.json"
+
+              if (not ($theme_state | path exists)) {
+                ""
+              } else {
+                try {
+                  open $theme_state | get mode? | default ""
+                } catch {|_|
+                  ""
+                }
+              }
             }
 
             def "main reload-emacs" [] {
