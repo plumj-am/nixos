@@ -4,26 +4,17 @@
       inputs,
       pkgs,
       lib,
-      config,
       ...
     }:
     let
       inherit (lib.meta) getExe;
       inherit (lib.lists) singleton;
-      inherit (config.sops) secrets;
-      inherit (config.ai.subs.commandcode) active;
 
-      activeSub = "commandcode-${toString active}";
-
-      # Route the active provider through the local headroom proxy when it is
-      # enabled: OMP appends /chat/completions, so the proxy base must carry
-      # the /v1 segment to match headroom's /v1/chat/completions route. The
-      # headroom service points its upstream at the real commandcode endpoint.
-      commandcodeBaseUrl =
-        if config.services.headroom.enable or false then
-          "http://127.0.0.1:${toString (config.services.headroom.port)}/v1"
-        else
-          "https://api.commandcode.ai/provider/v1";
+      # Chain: OMP -> headroom (compress, :8022) -> litellm (fill-first
+      # across both subs, :8023) -> commandcode. OMP appends
+      # /chat/completions, hence the /v1 base. Key names the gateway.
+      providerKey = "litellm";
+      litellmBaseUrl = "http://127.0.0.1:8022/v1";
     in
     {
       ai.secrets = true;
@@ -47,9 +38,9 @@
             generator = pkgs.writers.writeYAML "omp-agent-models.yml";
             value = {
               providers = {
-                ${activeSub} = {
-                  baseUrl = commandcodeBaseUrl;
-                  apiKey = "!cat ${secrets."${activeSub}-key".path}";
+                ${providerKey} = {
+                  baseUrl = litellmBaseUrl;
+                  apiKey = "sk-litellm-local"; # upstream subs live in litellm env
                   api = "openai-completions";
                   models = [
                     {
@@ -80,9 +71,9 @@
                         extraBody.thinking.type = "enabled";
                       };
                       cost = {
-                        input = 0.22;
-                        output = 0.66;
-                        cacheRead = 0.007;
+                        input = 0.15;
+                        output = 0.6;
+                        cacheRead = 0.003;
                         cacheWrite = 0;
                       };
                     }
@@ -102,7 +93,7 @@
                       };
                     }
                     {
-                      id = "Qwen/Qwen3.8-Flash";
+                      id = "qwen/qwen3.8-flash";
                       name = "Qwen3.8 Flash";
                       reasoning = true;
                       thinking = {
@@ -168,10 +159,13 @@
             generator = pkgs.writers.writeYAML "omp-agent-config.yml";
             value =
               let
-                normal = "${activeSub}/meta/muse-spark-1.3-contributor:max";
-                small = "${activeSub}/deepseek/deepseek-v4.1-flash:xhigh";
-                cheap = "${activeSub}/poolside/laguna-s-2.1-free:auto";
-                vision = "${activeSub}/Qwen/Qwen3.8-Flash:low";
+                max = "${providerKey}/meta/muse-spark-1.3-contributor:max";
+                xhigh = "${providerKey}/meta/muse-spark-1.3-contributor:xhigh";
+                high = "${providerKey}/meta/muse-spark-1.3-contributor:high";
+                medium = "${providerKey}/meta/muse-spark-1.3-contributor:medium";
+                low = "${providerKey}/meta/muse-spark-1.3-contributor:low";
+                minimal = "${providerKey}/meta/muse-spark-1.3-contributor:minimal";
+                vision = "${providerKey}/meta/muse-spark-1.3-contributor:low";
               in
               {
                 # [appearance]
@@ -231,19 +225,18 @@
 
                 # [internal]
                 memories.enabled = false;
-                modelProviderOrder = singleton activeSub;
+                modelProviderOrder = singleton providerKey;
                 modelRoles = {
-                  default = normal;
-                  smol = small;
-                  slow = normal;
-                  advisor = cheap;
-                  plan = normal;
-                  librarian = normal;
+                  default = high;
+                  smol = low;
+                  slow = max;
+                  advisor = low;
+                  plan = xhigh;
                   inherit vision;
                   designer = vision;
-                  commit = cheap;
-                  task = cheap;
-                  tiny = cheap;
+                  commit = minimal;
+                  task = medium;
+                  tiny = minimal;
                 };
                 enabledModels = [ ]; # all
                 shellPath = getExe pkgs.bash;

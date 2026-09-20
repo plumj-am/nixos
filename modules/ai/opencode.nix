@@ -12,9 +12,9 @@
       inherit (lib.attrsets) genAttrs;
       inherit (lib.trivial) const;
       inherit (config.sops) secrets;
-      inherit (config.ai.subs.commandcode) active;
 
-      activeSub = "commandcode-${toString active}";
+      # Local LiteLLM fans out across both commandcode subs.
+      providerKey = "litellm";
 
       opencodePackage = pkgs.symlinkJoin {
         name = "opencode-wrapped";
@@ -35,9 +35,9 @@
       #   {type: "free", opencode: $of, commandcode: $cf}
       #   {type: "paid", opencode: [],  commandcode: $cp}
       # ] | table --expand --index false --theme single
-      big = "${activeSub}/meta/muse-spark-1.3-contributor";
-      small = "${activeSub}/deepseek/deepseek-v4.1-flash";
-      cheap = "${activeSub}/poolside/laguna-s-2.1-free";
+      big = "${providerKey}/meta/muse-spark-1.3-contributor";
+      small = "${providerKey}/deepseek/deepseek-v4.1-flash";
+      cheap = "${providerKey}/poolside/laguna-s-2.1-free";
     in
     {
       ai.secrets = true;
@@ -122,13 +122,13 @@
                 };
               };
 
-              provider.${activeSub} = {
+              provider.${providerKey} = {
                 npm = "@ai-sdk/openai-compatible";
-                name = activeSub;
+                name = providerKey;
 
                 options = {
-                  baseURL = "https://api.commandcode.ai/provider/v1";
-                  apiKey = "{file:${secrets."${activeSub}-key".path}}";
+                  baseURL = "http://127.0.0.1:8022/v1"; # headroom -> litellm -> commandcode
+                  apiKey = "sk-litellm-local"; # forwarded by headroom; subs live in litellm env
                 };
 
                 timeout = 3000000;
@@ -157,7 +157,7 @@
                     };
                   };
                   "qwen3.8-flash" = {
-                    id = "Qwen/Qwen3.8-Flash";
+                    id = "qwen/qwen3.8-flash";
                     name = "Qwen3.8 Flash";
                     reasoning = true;
                     tool_call = true;

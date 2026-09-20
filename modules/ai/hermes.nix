@@ -13,7 +13,7 @@ let
       mainModel ? "meta/muse-spark-1.3-contributor",
       fallbackModel ? "deepseek/deepseek-v4.1-flash",
       smallModel ? "poolside/laguna-s-2.1-free",
-      visionModel ? "Qwen/Qwen3.8-Flash",
+      visionModel ? "meta/muse-spark-1.3-contributor",
       personality ? "concise",
       npmSkills ? config.ai.skills.npm,
       ghSkills ? config.ai.skills.gh,
@@ -49,11 +49,9 @@ let
       jujutsu = inputs.jujutsu.packages.${pkgs.stdenv.hostPlatform.system}.jujutsu;
       jjStack = self.packages.${pkgs.stdenv.hostPlatform.system}.jj-stack;
 
-      providerApi =
-        if config.services.headroom.enable or false then
-          "http://127.0.0.1:${toString (config.services.headroom.port or 8787)}/v1"
-        else
-          "https://api.commandcode.ai/provider/v1";
+      # Hermes holds both sub keys itself, so it uses the direct
+      # headroom instance (port 8787, straight to CommandCode).
+      providerApi = "http://127.0.0.1:8787/v1";
       provider = "commandcode";
       commandcodeSubs = [
         1
@@ -308,6 +306,7 @@ let
               flip genAttrs
                 (const {
                   model = mainModel;
+                  reasoning_effort = "xhigh";
                   fallback_chain = [
                     {
                       inherit provider;
@@ -335,6 +334,7 @@ let
                 flip genAttrs
                   (const {
                     model = smallModel;
+                    reasoning_effort = "medium";
                     fallback_chain = [
                       {
                         provider = "opencode-free";
@@ -467,14 +467,7 @@ let
 
           group_sessions_per_user = true;
 
-          # Gateway streaming
-          streaming = {
-            enabled = false;
-            # transport = "edit";
-            # edit_interval = 0.3;
-            # buffer_threshold = 40;
-            # cursor = " ▉";
-          };
+          streaming.enabled = false; # Gateway streaming
 
           skills = {
             creation_nudge_interval = 15; # remind to save skills every N iterations
@@ -484,13 +477,9 @@ let
           agent = {
             max_turns = 500;
             verbose = false;
-            reasoning_effort = "max"; # max | xhigh | high | medium | low | minimal | none
+            reasoning_effort = "high"; # max | xhigh | high | medium | low | minimal | none
             reasoning_overrides = { }; # per-model: { "claude-opus-4.6" = "high"; }
-            # gateway_timeout = 1800; # seconds, 0 for unlimited
-            # gateway_timeout_warning = 900;
             api_max_retries = 5;
-            # verify_on_stop = "auto"; # auto | true | false
-            # coding_instructions = [ "Clean the diff before you commit." ];
           };
 
           kanban = {
@@ -547,15 +536,8 @@ let
           stt = {
             enabled = true;
             language = ""; # auto-detect or for english: "en"
-            local = {
-              model = "base"; # tiny | base | small | medium | large-v3 | turbo
-            };
-            openai = {
-              model = "whisper-1";
-              language = "";
-            };
+            local.model = "base"; # tiny | base | small | medium | large-v3 | turbo
           };
-
           voice.auto_tts = false;
 
           # "Hey hermes". This backend is headless: the desktop captures the mic
@@ -576,7 +558,10 @@ let
             max_tool_calls = 50;
           };
 
-          delegation.max_iterations = 50;
+          delegation = {
+            reasoning_effort = "medium";
+            max_iterations = 50;
+          };
 
           display = {
             skin = "mono";
