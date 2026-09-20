@@ -3,9 +3,12 @@
     { lib, inputs, ... }:
     let
       inherit (lib.modules) mkDefault;
+      inherit (lib.lists) singleton;
     in
     {
-      imports = [ inputs.disko.nixosModules.disko ];
+      imports = singleton inputs.disko.nixosModules.disko;
+
+      services.fstrim.enable = true;
 
       disko.devices = {
         disk.disk1 = {
@@ -65,6 +68,8 @@
       inherit (lib.lists) singleton;
     in
     {
+      services.fstrim.enable = true;
+
       fileSystems = {
         "/" = {
           device = "/dev/disk/by-label/root";
