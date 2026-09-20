@@ -4,6 +4,8 @@
     let
       inherit (lib.lists) singleton;
       inherit (lib.modules) mkForce mkIf mkMerge;
+      inherit (lib.trivial) flip const;
+      inherit (lib.attrsets) genAttrs;
       inherit (config.networking) hostName;
     in
     {
@@ -30,11 +32,12 @@
           };
 
           # Move each service from multi-user.target -> lazy-start.target.
-          systemd.services = {
-            shed.wantedBy = mkForce <| singleton "lazy-start.target";
-            s3-setup.wantedBy = mkForce <| singleton "lazy-start.target";
-            s3-credentials.wantedBy = mkForce <| singleton "lazy-start.target";
-          };
+          systemd.services = flip genAttrs (const { wantedBy = mkForce <| singleton "lazy-start.target"; }) [
+            "shed"
+            "s3-setup"
+            "headroom"
+            "s3-credentials"
+          ];
 
           # zswap: in-RAM compressed swap. Configured via boot.zswap (kernel
           # params + sysfs watchers) — sysctls under vm.zswap.* don't exist on

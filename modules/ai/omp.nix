@@ -14,6 +14,16 @@
       inherit (config.ai.subs.commandcode) active;
 
       activeSub = "commandcode-${toString active}";
+
+      # Route the active provider through the local headroom proxy when it is
+      # enabled: OMP appends /chat/completions, so the proxy base must carry
+      # the /v1 segment to match headroom's /v1/chat/completions route. The
+      # headroom service points its upstream at the real commandcode endpoint.
+      commandcodeBaseUrl =
+        if config.services.headroom.enable or false then
+          "http://127.0.0.1:${toString (config.services.headroom.port)}/v1"
+        else
+          "https://api.commandcode.ai/provider/v1";
     in
     {
       ai.secrets = true;
@@ -38,7 +48,7 @@
             value = {
               providers = {
                 ${activeSub} = {
-                  baseUrl = "https://api.commandcode.ai/provider/v1";
+                  baseUrl = commandcodeBaseUrl;
                   apiKey = "!cat ${secrets."${activeSub}-key".path}";
                   api = "openai-completions";
                   models = [

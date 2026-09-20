@@ -49,7 +49,11 @@ let
       jujutsu = inputs.jujutsu.packages.${pkgs.stdenv.hostPlatform.system}.jujutsu;
       jjStack = self.packages.${pkgs.stdenv.hostPlatform.system}.jj-stack;
 
-      providerApi = "https://api.commandcode.ai/provider/v1";
+      providerApi =
+        if config.services.headroom.enable or false then
+          "http://127.0.0.1:${toString (config.services.headroom.port or 8787)}/v1"
+        else
+          "https://api.commandcode.ai/provider/v1";
       provider = "commandcode";
       commandcodeSubs = [
         1
