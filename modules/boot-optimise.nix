@@ -35,10 +35,10 @@
           systemd.services = flip genAttrs (const { wantedBy = mkForce <| singleton "lazy-start.target"; }) [
             "headroom"
             "headroom-direct"
-            "litellm"
             "shed"
             "s3-credentials"
             "s3-setup"
+            "vine"
           ];
 
           # zswap: in-RAM compressed swap. Configured via boot.zswap (kernel

@@ -71,7 +71,7 @@
         };
 
         # Direct upstream for Hermes, which handles both subs itself.
-        # OMP/opencode use the chain instance above (-> litellm).
+        # OMP/opencode use the chain instance above (-> vine).
         systemd.services.headroom-direct = {
           description = "Headroom compression proxy (direct upstream, for Hermes)";
           wantedBy = singleton "default.target";

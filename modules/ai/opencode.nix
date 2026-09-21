@@ -13,8 +13,8 @@
       inherit (lib.trivial) const;
       inherit (config.sops) secrets;
 
-      # Local LiteLLM fans out across both commandcode subs.
-      providerKey = "litellm";
+      # Local Vine fans out across both commandcode subs.
+      providerKey = "vine";
 
       opencodePackage = pkgs.symlinkJoin {
         name = "opencode-wrapped";
@@ -126,8 +126,8 @@
                 name = providerKey;
 
                 options = {
-                  baseURL = "http://127.0.0.1:8022/v1"; # headroom -> litellm -> commandcode
-                  apiKey = "sk-litellm-local"; # forwarded by headroom; subs live in litellm env
+                  baseURL = "http://127.0.0.1:8022/v1"; # headroom -> vine -> commandcode
+                  apiKey = "sk-vine-local"; # forwarded by headroom; subs live in vine env
                 };
 
                 timeout = 3000000;

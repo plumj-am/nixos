@@ -427,11 +427,11 @@
         "treefmt": "treefmt"
       },
       "locked": {
-        "lastModified": 1789734629,
-        "narHash": "sha256-c7XW2gRK6tkQQoOjosO+gyA1z5tbhUHzNudyvrWuAMk=",
+        "lastModified": 1790021601,
+        "narHash": "sha256-slEKoL+e0DKGgjNIIzQbmB5Na/tCC409f1MCldng0O4=",
         "ref": "refs/heads/master",
-        "rev": "53d883ac0e37fb3b9929f65eb2e218122ad79b87",
-        "revCount": 2040,
+        "rev": "efeb9ac58f468552c41e1f9a94330cc8eb940760",
+        "revCount": 2106,
         "type": "git",
         "url": "ssh://git@github.com/grove-systems/grove"
       },

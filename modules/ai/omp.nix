@@ -10,11 +10,14 @@
       inherit (lib.meta) getExe;
       inherit (lib.lists) singleton;
 
-      # Chain: OMP -> headroom (compress, :8022) -> litellm (fill-first
-      # across both subs, :8023) -> commandcode. OMP appends
-      # /chat/completions, hence the /v1 base. Key names the gateway.
-      providerKey = "litellm";
-      litellmBaseUrl = "http://127.0.0.1:8022/v1";
+      # Chain:
+      # OMP
+      # -> headroom (compress, :8022)
+      # -> vine (proxy both subs, :8023)
+      # -> commandcode
+      # OMP appends /chat/completions, hence the /v1 base. Key names the gateway.
+      providerKey = "vine";
+      vineBaseUrl = "http://127.0.0.1:8022/v1";
     in
     {
       ai.secrets = true;
@@ -39,8 +42,8 @@
             value = {
               providers = {
                 ${providerKey} = {
-                  baseUrl = litellmBaseUrl;
-                  apiKey = "sk-litellm-local"; # upstream subs live in litellm env
+                  baseUrl = vineBaseUrl;
+                  apiKey = "sk-vine-local"; # upstream subs live in vine env
                   api = "openai-completions";
                   models = [
                     {
