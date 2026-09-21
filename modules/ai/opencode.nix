@@ -70,7 +70,6 @@
               plugin = [
                 "@plannotator/opencode"
                 "opencode-tps-meter"
-                "@dietrichgebert/ponytail"
                 [
                   "@prevalentware/opencode-goal-plugin"
                   {

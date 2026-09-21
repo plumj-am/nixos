@@ -365,7 +365,6 @@
               ];
               dependencies = {
                 context-mode = "^1";
-                ponytail = "https://github.com/DietrichGebert/ponytail";
                 "@plannotator/pi-extension" = "^0.26";
                 caveman = "https://github.com/JuliusBrussee/caveman";
                 pi-jujutsu = "^0.1";
@@ -373,11 +372,6 @@
               };
             };
           };
-        };
-
-        xdg.config.files."ponytail/config.json" = {
-          generator = pkgs.writers.writeJSON "ponytail-config.json";
-          value.defaultMode = "ultra";
         };
       };
     };
