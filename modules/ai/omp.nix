@@ -360,14 +360,12 @@
               trustedDependencies = [
                 "@google/genai"
                 "better-sqlite3"
-                "context-mode"
                 "node-pty"
                 "onnxruntime-node"
                 "protobufjs"
                 "sharp"
               ];
               dependencies = {
-                context-mode = "^1";
                 "@plannotator/pi-extension" = "^0.26";
                 caveman = "https://github.com/JuliusBrussee/caveman";
                 pi-jujutsu = "^0.1";
