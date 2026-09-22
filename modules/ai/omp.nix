@@ -386,7 +386,6 @@
               ];
               dependencies = {
                 "@plannotator/pi-extension" = "^0.26";
-                caveman = "https://github.com/JuliusBrussee/caveman";
                 pi-jujutsu = "^0.1";
                 pi-jj-git-align = "^0.1";
               };

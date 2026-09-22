@@ -6,6 +6,7 @@
       config,
       pkgs,
       lib,
+      inputs,
       ...
     }:
     let
@@ -13,6 +14,14 @@
       inherit (lib.meta) getExe;
       inherit (lib.lists) singleton;
       inherit (lib.strings) concatMapStringsSep;
+
+      # Pinned with opencode.nix; bump together.
+      cavemanInstaller = pkgs.fetchFromGitHub {
+        owner = "JuliusBrussee";
+        repo = "caveman";
+        rev = "v2.7.0";
+        hash = "sha256-dsGzPscjy7FfaovfYML2q+RmuBJwwEJ9sjeHi+Niv6Y=";
+      };
       # `skills add`/`gh skill install` list skills instead of installing when
       # no skill is named, so an empty list means "every skill in the repo".
       # Keep the star quoted: nushell glob-expands a bare `*`.
@@ -42,6 +51,7 @@
             pkgs.gnumake
             pkgs.nodejs
             pkgs.node-gyp
+            inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp
           ];
           environment.PYTHON = getExe pkgs.python3;
           script = "${pkgs.writers.writeNu "install-ai-plugins-skills.nu" # nu
@@ -50,6 +60,8 @@
               cd ~/.omp/plugins
               rm --force --recursive bun.lock node_modules/
               ${getExe pkgs.bun} install --force --refresh
+              print "installing caveman plugins..."
+              node ${cavemanInstaller}/bin/install.js --only omp --only opencode --non-interactive
 
               print "installing npm skills..."
               ${concatMapStringsSep "\n" (entry: ''
