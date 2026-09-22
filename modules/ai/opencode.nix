@@ -28,16 +28,8 @@
           '';
       };
 
-      # let cf = http get api.commandcode.ai/provider/v1/models | get data.id | where ("free" in $it) | sort
-      # let of = http get opencode.ai/zen/v1/models | get data.id | where ("free" in $it) | sort
-      # let cp = http get api.commandcode.ai/provider/v1/models | get data.id | where ("free" not-in $it) | sort
-      # [
-      #   {type: "free", opencode: $of, commandcode: $cf}
-      #   {type: "paid", opencode: [],  commandcode: $cp}
-      # ] | table --expand --index false --theme single
-      big = "${providerKey}/meta/muse-spark-1.3-contributor";
-      small = "${providerKey}/deepseek/deepseek-v4.1-flash";
-      cheap = "${providerKey}/poolside/laguna-s-2.1-free";
+      model = "${providerKey}/xiaomi/mimo-v2.6-flash";
+
     in
     {
       ai.secrets = true;
@@ -60,8 +52,8 @@
             generator = pkgs.writers.writeJSON "opencode-opencode.jsonc";
             value = {
               autoupdate = false;
-              model = small;
-              small_model = cheap;
+              model = model;
+              small_model = model;
 
               experimental = {
                 disable_paste_summary = true;
@@ -155,9 +147,19 @@
                       output = 131072;
                     };
                   };
-                  "qwen3.8-flash" = {
-                    id = "qwen/qwen3.8-flash";
-                    name = "Qwen3.8 Flash";
+                  "mimo-v2.6-flash" = {
+                    id = "xiaomi/mimo-v2.6-flash";
+                    name = "Mimo v2.6 Flash";
+                    reasoning = true;
+                    tool_call = true;
+                    limit = {
+                      context = 1048576;
+                      output = 131072;
+                    };
+                  };
+                  "mimo-v2.6-pro" = {
+                    id = "xiaomi/mimo-v2.6-pro";
+                    name = "Mimo v2.6 Pro";
                     reasoning = true;
                     tool_call = true;
                     limit = {
@@ -181,7 +183,7 @@
               agent = {
                 build = {
                   mode = "primary";
-                  model = small;
+                  inherit model;
                   reasoningEffort = "medium";
                   textVerbosity = "low";
                   thinking.type = "enabled";
@@ -189,7 +191,7 @@
 
                 plan = {
                   mode = "primary";
-                  model = big;
+                  inherit model;
                   reasoningEffort = "max";
                   textVerbosity = "low";
                   thinking.type = "enabled";
@@ -197,7 +199,7 @@
 
                 general = {
                   mode = "subagent";
-                  model = small;
+                  inherit model;
                   reasoningEffort = "high";
                   textVerbosity = "low";
                   thinking.type = "enabled";
@@ -205,7 +207,7 @@
 
                 explore = {
                   mode = "subagent";
-                  model = cheap;
+                  inherit model;
                   reasoningEffort = "low";
                   textVerbosity = "low";
                   thinking.type = "disabled";
@@ -213,7 +215,7 @@
 
                 scout = {
                   mode = "subagent";
-                  model = cheap;
+                  inherit model;
                   reasoningEffort = "low";
                   textVerbosity = "low";
                   thinking.type = "enabled";

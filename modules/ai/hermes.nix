@@ -10,10 +10,10 @@ let
   mkHermesAgent =
     name:
     {
-      mainModel ? "meta/muse-spark-1.3-contributor",
+      mainModel ? "xiaomi/mimo-v2.6-flash",
       fallbackModel ? "deepseek/deepseek-v4.1-flash",
-      smallModel ? "poolside/laguna-s-2.1-free",
-      visionModel ? "meta/muse-spark-1.3-contributor",
+      smallModel ? "xiaomi/mimo-v2.6-flash",
+      visionModel ? "xiaomi/mimo-v2.6-flash",
       personality ? "concise",
       npmSkills ? config.ai.skills.npm,
       ghSkills ? config.ai.skills.gh,
@@ -413,6 +413,7 @@ let
                 [
                   "deepseek-v4.1-flash"
                   "muse-spark-1.3"
+                  "mimo-v2.6"
                   "laguna-s-2.1"
                   "longcat-2.0"
                   "Qwen3.8"

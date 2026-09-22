@@ -96,12 +96,12 @@
                       };
                     }
                     {
-                      id = "qwen/qwen3.8-flash";
-                      name = "Qwen3.8 Flash";
+                      id = "xiaomi/mimo-v2.6-flash";
+                      name = "Mimo v2.6 Flash";
                       reasoning = true;
                       thinking = {
-                        minLevel = "low";
-                        maxLevel = "xhigh";
+                        minLevel = "minimal";
+                        maxLevel = "high";
                         mode = "effort";
                       };
                       contextWindow = 1048576;
@@ -111,9 +111,31 @@
                         "image"
                       ];
                       cost = {
-                        input = 0.16;
-                        output = 0.47;
-                        cacheRead = 0.016;
+                        input = 0.14;
+                        output = 0.28;
+                        cacheRead = 0.0028;
+                        cacheWrite = 0;
+                      };
+                    }
+                    {
+                      id = "xiaomi/mimo-v2.6-pro";
+                      name = "Mimo v2.6 Pro";
+                      reasoning = true;
+                      thinking = {
+                        minLevel = "minimal";
+                        maxLevel = "high";
+                        mode = "effort";
+                      };
+                      contextWindow = 1048576;
+                      maxTokens = 131072;
+                      input = [
+                        "text"
+                        "image"
+                      ];
+                      cost = {
+                        input = 0.435;
+                        output = 0.87;
+                        cacheRead = 0.0036;
                         cacheWrite = 0;
                       };
                     }
@@ -162,13 +184,10 @@
             generator = pkgs.writers.writeYAML "omp-agent-config.yml";
             value =
               let
-                max = "${providerKey}/meta/muse-spark-1.3-contributor:max";
-                xhigh = "${providerKey}/meta/muse-spark-1.3-contributor:xhigh";
-                high = "${providerKey}/meta/muse-spark-1.3-contributor:high";
-                medium = "${providerKey}/meta/muse-spark-1.3-contributor:medium";
-                low = "${providerKey}/meta/muse-spark-1.3-contributor:low";
-                minimal = "${providerKey}/meta/muse-spark-1.3-contributor:minimal";
-                vision = "${providerKey}/meta/muse-spark-1.3-contributor:low";
+                # no granular thinking support yet
+                big = "${providerKey}/xiaomi/mimo-v2.6-pro:auto";
+                small = "${providerKey}/xiaomi/mimo-v2.6-flash:auto";
+                vision = "${providerKey}/xiaomi/mimo-v2.6-flash:auto";
               in
               {
                 # [appearance]
@@ -230,16 +249,16 @@
                 memories.enabled = false;
                 modelProviderOrder = singleton providerKey;
                 modelRoles = {
-                  default = high;
-                  smol = low;
-                  slow = max;
-                  advisor = low;
-                  plan = xhigh;
+                  default = small;
+                  smol = small;
+                  slow = big;
+                  advisor = small;
+                  plan = small;
                   inherit vision;
                   designer = vision;
-                  commit = minimal;
-                  task = medium;
-                  tiny = minimal;
+                  commit = small;
+                  task = small;
+                  tiny = small;
                 };
                 enabledModels = [ ]; # all
                 shellPath = getExe pkgs.bash;
