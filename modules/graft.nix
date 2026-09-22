@@ -9,7 +9,7 @@
     }:
     let
       inherit (lib.lists) filter foldl' singleton;
-      inherit (lib.modules) merge;
+      inherit (lib.modules) merge mkForce;
       inherit (config.networking) domain hostName;
       inherit (config.sops) secrets;
 
@@ -82,6 +82,11 @@
         mode = "0440";
       };
       sops.secrets."graft/cache/secret_key".sopsFile = ../secrets/services/graft.yaml;
+      sops.secrets."graft/cache/htpasswd" = {
+        sopsFile = ../secrets/services/graft.yaml;
+        owner = config.services.nginx.user;
+        mode = "0400";
+      };
       sops.secrets."graft-ssh" = {
         sopsFile = ../secrets/services/graft-ssh.yaml;
         group = "graft";
@@ -231,14 +236,41 @@
 
         inherit remote_builders;
       };
-      # Old subdomain to avoid breaking links.
-      services.nginx.virtualHosts."gerrix.${domain}" = merge config.services.nginx.sslTemplate {
-        locations."/".return = "https://graft.plumj.am$request_uri";
 
+      systemd.services.nix-serve.serviceConfig = {
+        User = mkForce "graft";
+        Group = mkForce "graft";
+      };
+      services.nix-serve = {
+        enable = true;
+        package = inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.nsrs;
+
+        port = 8024;
+
+        secretKeyFile = secrets."graft/cache/secret_key".path;
+
+        extraParams = "--store ${cfg.config.nix.cache_dir} --priority 42";
       };
 
-      services.nginx.virtualHosts."graft.${domain}" = merge config.services.nginx.sslTemplate {
-        locations."/".proxyPass = "http://127.0.0.1:${toString cfg.config.http.port}";
+      nix.settings = {
+        extra-substituters = singleton "https://graft-cache.plumj.am";
+        trusted-public-keys = singleton "graft-cache-1:cJVyGZWQ+v4vG6ajYspWHD5NFvOhJAk7cFbxh/hmSiI=";
+      };
+
+      services.nginx.virtualHosts = {
+        # Old subdomain to avoid breaking links.
+        "gerrix.${domain}" = merge config.services.nginx.sslTemplate {
+          locations."/".return = "https://graft.plumj.am$request_uri";
+        };
+
+        "graft.${domain}" = merge config.services.nginx.sslTemplate {
+          locations."/".proxyPass = "http://127.0.0.1:${toString cfg.config.http.port}";
+        };
+
+        "graft-cache.${domain}" = merge config.services.nginx.sslTemplate {
+          basicAuthFile = secrets."graft/cache/htpasswd".path;
+          locations."/".proxyPass = "http://127.0.0.1:${toString config.services.nix-serve.port}";
+        };
       };
 
       systemd.services.graft = {

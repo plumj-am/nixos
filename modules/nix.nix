@@ -61,11 +61,15 @@ in
         extra-substituters = [
           "https://nix-community.cachix.org"
           "https://cache.numtide.com"
+
+          "https://graft-cache.plumj.am"
         ];
 
         extra-trusted-public-keys = [
           "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
           "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
+
+          "graft-cache-1:cJVyGZWQ+v4vG6ajYspWHD5NFvOhJAk7cFbxh/hmSiI="
         ];
 
         experimental-features = [
@@ -128,10 +132,6 @@ in
       dates = "weekly";
       persistent = true;
     };
-
-    nix.extraOptions = ''
-      min-free = 2G
-    '';
 
     # OOM configuration for the nix-daemon.
     systemd = {
