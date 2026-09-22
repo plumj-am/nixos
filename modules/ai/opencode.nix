@@ -245,7 +245,7 @@
                 };
                 nixfmt = {
                   command = [
-                    "nixfmt"
+                    "organix"
                     "$FILE"
                   ];
                   extensions = [ ".nix" ];

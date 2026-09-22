@@ -214,6 +214,10 @@ in
                       language-servers = [
                         "nil"
                       ];
+                      formatter = {
+                        command = "organix";
+                        args = singleton "-";
+                      };
                     }
                     {
                       name = "toml";
@@ -462,6 +466,7 @@ in
 
   flake.modules.common.editor-extra =
     {
+      inputs,
       pkgs,
       ...
     }:
@@ -481,7 +486,7 @@ in
 
           # Nix
           pkgs.nil
-          pkgs.nixfmt-rs
+          inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.organix
 
           # YAML
           pkgs.yaml-language-server
