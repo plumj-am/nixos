@@ -279,24 +279,10 @@ let
             inherit provider;
             default = mainModel;
           };
-          fallback_providers = [
-            {
-              inherit provider;
-              model = fallbackModel;
-            }
-            {
-              provider = "opencode-free";
-              model = "deepseek-v4-flash-free";
-            }
-            {
-              provider = "nous";
-              model = "meituan/longcat-2.0:free";
-            }
-            {
-              provider = "nous";
-              model = "poolside/laguna-s-2.1:free";
-            }
-          ];
+          fallback_providers = singleton {
+            inherit provider;
+            model = fallbackModel;
+          };
 
           # no need to add commandcode provider - built-in now
           credential_pool_strategies.${provider} = "fill_first";
@@ -307,24 +293,10 @@ let
                 (const {
                   model = mainModel;
                   reasoning_effort = "xhigh";
-                  fallback_chain = [
-                    {
-                      inherit provider;
-                      model = fallbackModel;
-                    }
-                    {
-                      provider = "opencode-free";
-                      model = "deepseek-v4-flash-free";
-                    }
-                    {
-                      provider = "nous";
-                      model = "meituan/longcat-2.0:free";
-                    }
-                    {
-                      provider = "nous";
-                      model = "poolside/laguna-s-2.1:free";
-                    }
-                  ];
+                  fallback_chain = singleton {
+                    inherit provider;
+                    model = fallbackModel;
+                  };
                 })
                 [
                   "review"
@@ -335,20 +307,10 @@ let
                   (const {
                     model = smallModel;
                     reasoning_effort = "medium";
-                    fallback_chain = [
-                      {
-                        provider = "opencode-free";
-                        model = "deepseek-v4-flash-free";
-                      }
-                      {
-                        provider = "nous";
-                        model = "meituan/longcat-2.0:free";
-                      }
-                      {
-                        provider = "nous";
-                        model = "poolside/laguna-s-2.1:free";
-                      }
-                    ];
+                    fallback_chain = singleton {
+                      inherit provider;
+                      model = fallbackModel;
+                    };
                   })
                   [
                     "approval"
@@ -480,7 +442,7 @@ let
             verbose = false;
             reasoning_effort = "high"; # max | xhigh | high | medium | low | minimal | none
             reasoning_overrides = { }; # per-model: { "claude-opus-4.6" = "high"; }
-            api_max_retries = 5;
+            api_max_retries = 10;
           };
 
           kanban = {
