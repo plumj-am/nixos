@@ -93,7 +93,6 @@ let
         "fal"
         "feishu"
         "firecrawl"
-        "hindsight"
         "honcho"
         "messaging"
         "modal"
@@ -203,7 +202,10 @@ let
       '';
     in
     {
-      imports = singleton inputs.hermes-agent.nixosModules.default;
+      imports = [
+        inputs.hermes-agent.nixosModules.default
+        self.modules.common.headroom
+      ];
 
       sops.secrets = {
         "hermes-shared-env" = {
