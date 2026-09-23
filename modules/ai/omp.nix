@@ -4,11 +4,13 @@
       inputs,
       pkgs,
       lib,
+      config,
       ...
     }:
     let
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
+      inherit (config.users.users.jam) home;
 
       # Chain:
       # OMP
@@ -264,7 +266,16 @@
                 shellPath = getExe pkgs.bash;
 
                 # [memory]
-                memory.backend = "off";
+                memory.backend = "mnemopi";
+                mnemopi = {
+                  scoping = "per-project-tagged";
+                  dbPath = "${home}/.omp/agent/memories/mnemopi/mnemopi.db";
+
+                  embeddingVariant = "en";
+                  polyphonicRecall = true;
+                  practiveLinking = true;
+                  enhancedRecall = true;
+                };
 
                 # [model]
                 advisor = {
