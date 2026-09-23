@@ -464,6 +464,7 @@ in
       };
     };
 
+  flake.modules.common.desktop = self.modules.common.editor-extra;
   flake.modules.common.editor-extra =
     {
       inputs,

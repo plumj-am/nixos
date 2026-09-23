@@ -1,3 +1,4 @@
+{ self, ... }:
 let
   sudoExtraConfig = # sudoers
     ''
@@ -7,6 +8,7 @@ let
     '';
 in
 {
+  flake.modules.nixos.desktop = self.modules.nixos.sudo-desktop;
   flake.modules.nixos.sudo-desktop =
     {
       pkgs,
@@ -55,6 +57,7 @@ in
       services.dbus.implementation = "broker";
     };
 
+  flake.modules.darwin.desktop = self.modules.darwin.sudo-desktop;
   flake.modules.darwin.sudo-desktop = {
     security.sudo.extraConfig = sudoExtraConfig;
 
@@ -64,6 +67,7 @@ in
     };
   };
 
+  flake.modules.nixos.server = self.modules.nixos.sudo-server;
   flake.modules.nixos.sudo-server = {
     users.users.jam.extraGroups = [ "wheel" ];
 

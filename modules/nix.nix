@@ -150,6 +150,7 @@ in
     };
   };
 
+  flake.modules.nixos.desktop = self.modules.nixos.nix-daemon-desktop-scheduling;
   flake.modules.nixos.nix-daemon-desktop-scheduling = {
     nix = {
       daemonIOSchedClass = "idle";

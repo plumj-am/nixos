@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.web-server = self.modules.nixos.nginx;
   flake.modules.nixos.nginx =
     {
       lib,

@@ -1,3 +1,4 @@
+{ self, ... }:
 {
   flake.modules.nixos.graft =
     {
@@ -298,6 +299,7 @@
       };
     };
 
+  flake.modules.common.desktop = self.modules.common.graftctl;
   flake.modules.common.graftctl =
     {
       inputs,

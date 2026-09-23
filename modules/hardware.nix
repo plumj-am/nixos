@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.desktop = self.modules.nixos.hardware-desktop;
   flake.modules.nixos.hardware-desktop =
     { pkgs, ... }:
     {

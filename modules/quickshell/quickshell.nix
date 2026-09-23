@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.desktop = self.modules.nixos.quickshell;
   flake.modules.nixos.quickshell =
     { inputs, pkgs, ... }:
     {

@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.common.ai-agents = self.modules.common.omp;
   flake.modules.common.omp =
     {
       inputs,

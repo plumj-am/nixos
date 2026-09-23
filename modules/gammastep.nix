@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.desktop = self.modules.nixos.gammastep;
   flake.modules.nixos.gammastep =
     {
       pkgs,

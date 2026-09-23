@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.desktop = self.modules.nixos.video-player;
   flake.modules.nixos.video-player =
     {
       pkgs,

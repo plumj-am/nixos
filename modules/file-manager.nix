@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.desktop = self.modules.nixos.file-manager;
   flake.modules.nixos.file-manager =
     {
       pkgs,

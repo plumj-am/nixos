@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.web-server = self.modules.nixos.acme;
   flake.modules.nixos.acme =
     {
       lib,

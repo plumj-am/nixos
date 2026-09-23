@@ -27,6 +27,7 @@ let
   ];
 in
 {
+  flake.modules.common.desktop = self.modules.common.radicle;
   flake.modules.common.radicle =
     {
       pkgs,

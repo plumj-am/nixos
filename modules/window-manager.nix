@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.desktop = self.modules.nixos.window-manager;
   flake.modules.nixos.window-manager =
     {
       pkgs,
@@ -389,5 +391,6 @@
     };
 
   # TODO: MacOS scrolling window manager?
+  flake.modules.darwin.desktop = self.modules.darwin.window-manager;
   flake.modules.darwin.window-manager = { };
 }

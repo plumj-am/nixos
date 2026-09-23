@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.server = self.modules.nixos.swapfile;
   flake.modules.nixos.swapfile =
     {
       pkgs,
@@ -70,6 +72,8 @@
         })
       ];
     };
+
+  flake.modules.nixos.desktop = self.modules.nixos.swap-partition;
   flake.modules.nixos.swap-partition =
     { lib, config, ... }:
     let

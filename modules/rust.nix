@@ -105,6 +105,7 @@ in
       };
     };
 
+  flake.modules.nixos.desktop = self.modules.nixos.rust-desktop;
   flake.modules.nixos.rust-desktop =
     {
       inputs,
@@ -124,6 +125,7 @@ in
       environment.systemPackages = singleton <| fenixToolchain inputs pkgs;
     };
 
+  flake.modules.darwin.desktop = self.modules.darwin.rust-desktop;
   flake.modules.darwin.rust-desktop =
     {
       inputs,

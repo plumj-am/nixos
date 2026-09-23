@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.desktop = self.modules.nixos.graphics;
   flake.modules.nixos.graphics =
     { config, ... }:
     {

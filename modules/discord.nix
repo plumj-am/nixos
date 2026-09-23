@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.common.desktop = self.modules.common.discord;
   flake.modules.common.discord =
     # { pkgs, lib, ... }:
     # let

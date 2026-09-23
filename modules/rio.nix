@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.common.desktop = self.modules.common.rio;
   flake.modules.common.rio =
     {
       pkgs,

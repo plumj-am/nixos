@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.desktop = self.modules.nixos.desktop-gui;
   flake.modules.nixos.desktop-gui =
     {
       pkgs,

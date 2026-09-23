@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.desktop = self.modules.nixos.boot-optimise;
   flake.modules.nixos.boot-optimise =
     { lib, config, ... }:
     let

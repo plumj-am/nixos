@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.common.desktop = self.modules.common.pijul;
   flake.modules.common.pijul =
     {
       pkgs,

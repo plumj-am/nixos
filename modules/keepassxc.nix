@@ -1,3 +1,4 @@
+{ self, ... }:
 let
   # https://deepwiki.com/search/provide-a-list-of-all-the-sett_cd736059-5132-4623-bd77-b4df8bee29a4?mode=fast
   keepassConfig = {
@@ -32,6 +33,7 @@ let
   };
 in
 {
+  flake.modules.nixos.desktop = self.modules.nixos.keepassxc;
   flake.modules.nixos.keepassxc =
     {
       pkgs,
@@ -78,6 +80,7 @@ in
       };
     };
 
+  flake.modules.darwin.desktop = self.modules.darwin.keepassxc;
   flake.modules.darwin.keepassxc =
     { lib, ... }:
     let

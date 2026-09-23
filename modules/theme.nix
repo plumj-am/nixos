@@ -268,6 +268,14 @@ in
       };
     };
 
+  flake.modules.nixos.desktop.imports = [
+    self.modules.nixos.theme-variants
+    self.modules.nixos.theme-extra-fonts
+    self.modules.nixos.theme-extra-scripts
+  ];
+
+  flake.modules.darwin.desktop = self.modules.darwin.theme-extra-fonts;
+
   # Builds both variants as a specialisation, so changing the theme switches
   # between already built systems instead of rebuilding. `tt` activates one with
   # `nh os switch --specialisation`.

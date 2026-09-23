@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.common.ai-agents = self.modules.common.opencode;
   flake.modules.common.opencode =
     {
       inputs,

@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.server = self.modules.nixos.disks-server;
   flake.modules.nixos.disks-server =
     { inputs, lib, ... }:
     let
@@ -62,6 +64,7 @@
       };
     };
 
+  flake.modules.nixos.desktop = self.modules.nixos.disks-normal;
   flake.modules.nixos.disks-normal =
     { lib, ... }:
     let

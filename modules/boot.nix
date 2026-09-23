@@ -1,3 +1,4 @@
+{ self, ... }:
 let
   bootBase = {
     boot = {
@@ -18,6 +19,7 @@ let
   };
 in
 {
+  flake.modules.nixos.desktop = self.modules.nixos.boot-systemd;
   flake.modules.nixos.boot-systemd = {
     imports = [ bootBase ];
     boot.loader = {
@@ -32,6 +34,7 @@ in
     };
   };
 
+  flake.modules.nixos.server = self.modules.nixos.boot-grub;
   flake.modules.nixos.boot-grub =
     { modulesPath, ... }:
     {

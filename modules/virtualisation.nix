@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.desktop = self.modules.nixos.docker-rootless;
   flake.modules.nixos.docker-rootless =
     { pkgs, lib, ... }:
     let

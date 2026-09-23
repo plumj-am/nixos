@@ -1,4 +1,6 @@
+{ self, ... }:
 {
+  flake.modules.nixos.desktop = self.modules.nixos.process-management;
   flake.modules.nixos.process-management =
     {
       pkgs,

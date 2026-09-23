@@ -1,5 +1,7 @@
+{ self, ... }:
 {
-  flake.modules.nixos.haskell =
+  flake.modules.common.desktop = self.modules.common.haskell;
+  flake.modules.common.haskell =
     { pkgs, ... }:
     {
       environment.systemPackages = [
@@ -17,13 +19,5 @@
             column-limit: 100
           '';
       };
-    };
-
-  flake.modules.nixos.javascript =
-    { pkgs, ... }:
-    {
-      environment.systemPackages = [
-        pkgs.bun
-      ];
     };
 }

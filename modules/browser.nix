@@ -1,5 +1,6 @@
 # Credit: <https://github.com/RGBCube/ncc/blob/287d7aecf7469bb206ba2708d073d36b87be999e/modules/web-browser.mod.nix>
 {
+  self,
   inputs,
   lib,
   ...
@@ -417,6 +418,7 @@ let
   };
 in
 {
+  flake.modules.darwin.desktop = self.modules.darwin.helium;
   flake.modules.darwin.helium =
     {
       pkgs,
@@ -490,6 +492,7 @@ in
       };
     };
 
+  flake.modules.nixos.desktop = self.modules.nixos.helium;
   flake.modules.nixos.helium =
     {
       pkgs,

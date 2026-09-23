@@ -1,13 +1,13 @@
-{ lib, ... }:
-let
-  inherit (lib.lists) singleton;
-
-  peripheralsLinux =
-    { pkgs, ... }:
+{ self, ... }:
+{
+  flake.modules.nixos.desktop = self.modules.nixos.peripherals;
+  flake.modules.nixos.peripherals =
+    { pkgs, lib, ... }:
+    let
+      inherit (lib.lists) singleton;
+    in
     {
-      hjem.extraModule = {
-        packages = [ pkgs.vial ];
-      };
+      environment.systemPackages = singleton pkgs.vial;
 
       services.libinput = {
         enable = true;
@@ -25,42 +25,35 @@ let
         '';
     };
 
-  peripheralsDarwin =
+  flake.modules.darwin.desktop = self.modules.darwin.peripherals;
+  flake.modules.darwin.peripherals =
     { pkgs, lib, ... }:
     let
-      inherit (lib.generators) toJSON;
+      inherit (lib.lists) singleton;
     in
     {
-      hjem.extraModule = {
-        packages = singleton pkgs.karabiner-elements;
+      environment.systemPackages = singleton pkgs.karabiner-elements;
 
+      hjemModule = {
         xdg.config.files."karabiner/karabiner.json" = {
-          generator = toJSON { };
+          generator = pkgs.writers.writeJSON "karabiner-karabiner.json";
           value = {
             profiles = singleton {
               # Disable built-in keyboard when Corne v4 connected.
-              devices = [
-                {
-                  disable_built_in_keyboard_if_exists = true;
-                  identifiers = {
-                    is_keyboard = true;
-                    product_id = 4;
-                    vendor_id = 18003;
-                  };
-                }
-              ];
+              devices = singleton {
+                disable_built_in_keyboard_if_exists = true;
+                identifiers = {
+                  is_keyboard = true;
+                  product_id = 4;
+                  vendor_id = 18003;
+                };
+              };
               name = "Default profile";
               selected = true;
-              virtual_hid_keyboard = {
-                keyboard_type_v2 = "ansi";
-              };
+              virtual_hid_keyboard.keyboard_type_v2 = "ansi";
             };
           };
         };
       };
     };
-in
-{
-  flake.modules.nixos.peripherals = peripheralsLinux;
-  flake.modules.darwin.peripherals = peripheralsDarwin;
 }

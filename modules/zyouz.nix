@@ -1,5 +1,6 @@
 { self, ... }:
 {
+  flake.modules.common.desktop = self.modules.common.zyouz;
   flake.modules.common.zyouz =
     {
       pkgs,

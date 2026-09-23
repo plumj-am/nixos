@@ -36,6 +36,11 @@
       ];
     };
 
+  flake.modules.nixos.desktop.imports = [
+    self.modules.nixos.packages-gui
+    self.modules.nixos.packages-cli
+  ];
+
   flake.modules.nixos.packages-gui =
     { pkgs, ... }:
     {
