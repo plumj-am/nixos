@@ -252,6 +252,13 @@
         extraParams = "--store ${cfg.config.nix.cache_dir} --priority 42";
       };
 
+      # Substituter storms exhaust the stock 512 connection slots, and
+      # nginx then serves its default 500 page to cache clients.
+      services.nginx = {
+        prependConfig = "worker_processes auto;";
+        eventsConfig = "worker_connections 4096;";
+      };
+
       nix.settings = {
         extra-substituters = singleton "https://graft-cache.plumj.am";
         trusted-public-keys = singleton "graft-cache-1:cJVyGZWQ+v4vG6ajYspWHD5NFvOhJAk7cFbxh/hmSiI=";
