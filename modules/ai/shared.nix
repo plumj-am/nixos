@@ -12,15 +12,19 @@
     let
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
+      inherit (lib.modules) mkForce;
       inherit (lib.strings) concatMapStringsSep;
       inherit (config.ai) skills;
 
-      # Pinned with opencode.nix; bump together.
+      # v2.7.0 has no `omp` id in the provider matrix (`--only omp` exits 2 with
+      # "unknown agent: omp"), so the install service dies before caveman — and
+      # before every later step. omp support landed on main after the tag; pin
+      # the commit until a tagged release ships it.
       cavemanInstaller = pkgs.fetchFromGitHub {
         owner = "JuliusBrussee";
         repo = "caveman";
-        rev = "v2.7.0";
-        hash = "sha256-dsGzPscjy7FfaovfYML2q+RmuBJwwEJ9sjeHi+Niv6Y=";
+        rev = "2fd153c67988e980fb0b2455c90832159a6a5a25";
+        hash = "sha256-KFfU8LmNajKLZcOXOFisn4beTcg2YL+rpasr39UgSZE=";
       };
       # `skills add`/`gh skill install` list skills instead of installing when
       # no skill is named, so an empty list means "every skill in the repo".
@@ -106,6 +110,12 @@
             Type = "oneshot";
             ExecStart = "${pkgs.systemd}/bin/systemctl --user start --no-block install-ai-plugins-skills.service";
           };
+        };
+
+        # technically defined more than once
+        xdg.config.files."caveman/config.json" = {
+          generator = mkForce <| pkgs.writers.writeJSON "caveman-config.json";
+          value.defaultMode = "ultra";
         };
       };
     };
