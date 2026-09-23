@@ -229,7 +229,7 @@
                 };
 
                 # [interaction]
-                autoResume = false;
+                autoResume = true;
                 steeringMode = "all"; # Send all queued messages at once.
                 followUpMode = "all";
                 interruptMode = "wait";
@@ -289,8 +289,9 @@
                 retry = {
                   modelFallback = false;
                   fallbackRevertPolicy = "cooldown-expiry";
-                  maxRetries = 100000;
-                  maxDelayMs = 600000;
+                  waitForUsageReset = true;
+                  maxRetries = 200;
+                  maxDelayMs = 0;
                   fallbackChains = { };
                 };
 
