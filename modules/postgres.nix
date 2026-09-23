@@ -7,6 +7,7 @@
       ...
     }:
     let
+      inherit (lib.constants) tailnet;
       inherit (lib.modules) mkForce mkOverride;
       inherit (lib.options) mkValue;
       inherit (lib.trivial) flip;
@@ -24,7 +25,7 @@
         enableJIT = true;
         enableTCPIP = true;
 
-        settings.listen_addresses = mkForce "::,${hostName}.taild29fec.ts.net";
+        settings.listen_addresses = mkForce "::,${hostName}.${tailnet}";
         authentication =
           mkOverride 500 # ini
             ''

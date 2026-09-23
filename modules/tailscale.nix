@@ -4,6 +4,7 @@
   flake.modules.nixos.tailscale =
     { lib, config, ... }:
     let
+      inherit (lib.constants) tailnet;
       inherit (lib.lists) singleton;
       inherit (config.sops) secrets;
 
@@ -12,7 +13,7 @@
     {
       sops.secrets."tailscale/auth-key".sopsFile = ../secrets/services/tailscale.yaml;
 
-      services.resolved.settings.Resolve.Domains = "taild29fec.ts.net";
+      services.resolved.settings.Resolve.Domains = tailnet;
       services.tailscale = {
         enable = true;
 

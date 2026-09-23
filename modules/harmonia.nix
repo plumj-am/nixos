@@ -8,6 +8,7 @@
       ...
     }:
     let
+      inherit (lib.constants) tailnet;
       inherit (lib.lists) filter singleton;
       inherit (config.networking) hostName;
       inherit (config.sops) secrets;
@@ -48,7 +49,7 @@
       nix.settings = {
         trusted-users = [ "harmonia" ];
         extra-substituters =
-          map (h: "http://${h}.taild29fec.ts.net:${toString port}") <| filter (h: h != hostName) hosts;
+          map (h: "http://${h}.${tailnet}:${toString port}") <| filter (h: h != hostName) hosts;
         # TODO: dedupe here and ./s3-upload.nix.
         trusted-public-keys = [
           "yuzu-store.plumj.am:rRhcZfgv1nSDQxDhgzaudcpyl/JtqoEf4QOsPble7S8="

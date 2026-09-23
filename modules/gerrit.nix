@@ -9,6 +9,7 @@
     }:
     let
       inherit (lib.attrsets) mapAttrsToList;
+      inherit (lib.constants) tailnet;
       inherit (lib.lists) elem singleton;
       inherit (lib.meta) getExe';
       inherit (lib.modules) merge mkForce mkIf;
@@ -365,7 +366,7 @@
         };
 
         locations."/checks/" = {
-          proxyPass = "http://sloe.taild29fec.ts.net:8019";
+          proxyPass = "http://sloe.${tailnet}:8019";
           extraConfig = # nginx
             ''
               auth_request /internal/gerrit-auth-check;

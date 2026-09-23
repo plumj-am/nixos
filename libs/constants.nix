@@ -2,6 +2,8 @@
 { self, ... }:
 {
   constants = {
+    tailnet = "taild29fec.ts.net";
+
     systemdHardened = {
       RuntimeDirectoryMode = "0755";
       ProcSubset = "pid";

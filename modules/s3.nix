@@ -13,6 +13,7 @@
       ...
     }:
     let
+      inherit (lib.constants) tailnet;
       inherit (config.sops) secrets;
 
       caches = {
@@ -27,7 +28,7 @@
         garage = {
           alias = "plumjam-garage";
           bucket = "nix";
-          endpoint = "sloe.taild29fec.ts.net:8015";
+          endpoint = "sloe.${tailnet}:8015";
           region = "garage";
           pathStyle = "on";
           apiVersion = "s3v4";

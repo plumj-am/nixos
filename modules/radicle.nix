@@ -1,5 +1,7 @@
-{ self, ... }:
+{ self, lib, ... }:
 let
+  inherit (lib.constants) tailnet;
+
   domain = "plumj.am";
   fqdn = "rad.${domain}";
 
@@ -9,16 +11,16 @@ let
 
   personalNodes = [
     # User nodes.
-    "z6MkhQJuAftpcYts9YXwY2GH9ig48ke9BN8QyhTZ4C7gU2Un@yuzu.taild29fec.ts.net:8775"
+    "z6MkhQJuAftpcYts9YXwY2GH9ig48ke9BN8QyhTZ4C7gU2Un@yuzu.${tailnet}:8775"
 
     # System nodes.
-    # "z6MkmE6sDg87jysA5F6toYZDE795Nkcv2KfbVaqRLRQFFt6X@blackwell.taild29fec.ts.net:8776"
-    # "...@date.taild29fec.ts.net:8776"
-    "z6MkjPdRVZGSoMnFXL7FtgR7xvdrque51TMRspJ9WAK2gde6@kiwi.taild29fec.ts.net:8776"
-    "z6MkffMv6gHyhQQWT1NH8p3X9hiMdxsAnUhtxXTfx2xZSqzz@plum.taild29fec.ts.net:8776"
-    "z6MkrBKRwq3ADkck29xhyxSvjWiPs9XXoCLxNCZ2egYSNWCv@sloe.taild29fec.ts.net:8776"
-    "z6MkjteiKR9kqhLXnU3oVDDNf3zpoQPnLfMeqZXGsbVJVKeT@yuzu.taild29fec.ts.net:8776"
-    "z6MkjTz9sd1wn5HXvNb2YVnYWjSfkYieWwutoUeo24cSGQns@lime.taild29fec.ts.net:8776"
+    # "z6MkmE6sDg87jysA5F6toYZDE795Nkcv2KfbVaqRLRQFFt6X@blackwell.${tailnet}:8776"
+    # "...@date.${tailnet}:8776"
+    "z6MkjPdRVZGSoMnFXL7FtgR7xvdrque51TMRspJ9WAK2gde6@kiwi.${tailnet}:8776"
+    "z6MkffMv6gHyhQQWT1NH8p3X9hiMdxsAnUhtxXTfx2xZSqzz@plum.${tailnet}:8776"
+    "z6MkrBKRwq3ADkck29xhyxSvjWiPs9XXoCLxNCZ2egYSNWCv@sloe.${tailnet}:8776"
+    "z6MkjteiKR9kqhLXnU3oVDDNf3zpoQPnLfMeqZXGsbVJVKeT@yuzu.${tailnet}:8776"
+    "z6MkjTz9sd1wn5HXvNb2YVnYWjSfkYieWwutoUeo24cSGQns@lime.${tailnet}:8776"
   ];
 
   personalDIDs = [
@@ -78,7 +80,7 @@ in
                 listen = singleton "[::]:${toString userNodePort}";
                 peers.type = "dynamic";
                 connect = personalNodes;
-                externalAddresses = singleton "${hostName}.taild29fec.ts.net:${toString userNodePort}";
+                externalAddresses = singleton "${hostName}.${tailnet}:${toString userNodePort}";
                 network = "main";
                 log = "INFO";
                 relay = "auto";
@@ -167,7 +169,7 @@ in
             follow = personalDIDs;
             externalAddresses =
               optional (hostName == "plum") "${fqdn}:${toString systemNodePort}" # First because it is highlighted in the radicle-explorer.
-              ++ singleton "${hostName}.taild29fec.ts.net:${toString systemNodePort}";
+              ++ singleton "${hostName}.${tailnet}:${toString systemNodePort}";
             workers = 16;
             relay = "always";
             seedingPolicy = {
