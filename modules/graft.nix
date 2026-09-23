@@ -83,11 +83,6 @@
         mode = "0440";
       };
       sops.secrets."graft/cache/secret_key".sopsFile = ../secrets/services/graft.yaml;
-      sops.secrets."graft/cache/htpasswd" = {
-        sopsFile = ../secrets/services/graft.yaml;
-        owner = config.services.nginx.user;
-        mode = "0400";
-      };
       sops.secrets."graft-ssh" = {
         sopsFile = ../secrets/services/graft-ssh.yaml;
         group = "graft";
@@ -253,11 +248,20 @@
         extraParams = "--store ${cfg.config.nix.cache_dir} --priority 42";
       };
 
-      # Substituter storms exhaust the stock 512 connection slots, and
-      # nginx then serves its default 500 page to cache clients.
       services.nginx = {
+        # Substituter storms exhaust the stock 512 connection slots, and
+        # nginx then serves its default 500 page to cache clients.
         prependConfig = "worker_processes auto;";
         eventsConfig = "worker_connections 4096;";
+
+        tailscaleAuth.virtualHosts = singleton "graft-cache.${domain}";
+      };
+
+      # tailscale nginx auth checks the client source address, so nix must
+      # reach the cache over the tailnet instead of the public DNS record.
+      networking.hosts = {
+        "100.94.223.95" = singleton "graft-cache.plumj.am"; # sloe
+        "fd7a:115c:a1e0::5401:df8e" = singleton "graft-cache.plumj.am";
       };
 
       nix.settings = {
@@ -276,7 +280,6 @@
         };
 
         "graft-cache.${domain}" = merge config.services.nginx.sslTemplate {
-          basicAuthFile = secrets."graft/cache/htpasswd".path;
           locations."/".proxyPass = "http://127.0.0.1:${toString config.services.nix-serve.port}";
         };
       };

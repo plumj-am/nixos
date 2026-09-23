@@ -8,6 +8,7 @@
       ...
     }:
     let
+      inherit (lib.constants) tailnet;
       inherit (lib.modules) mkForce;
       inherit (lib.options) mkConst;
       inherit (config.networking) domain;
@@ -85,6 +86,11 @@
         recommendedOptimisation = true;
         recommendedProxySettings = true;
         recommendedTlsSettings = true;
+
+        tailscaleAuth = {
+          enable = true;
+          expectedTailnet = tailnet;
+        };
 
         appendHttpConfig = ''
           add_header Permissions-Policy "interest-cohort=()";
