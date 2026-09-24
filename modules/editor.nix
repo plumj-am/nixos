@@ -51,9 +51,8 @@ in
 
       hjem.extraModule = {
         packages = [
-          pkgs.helix
-          # pkgs.steelix # TODO: enable steelix and disable helix once merged: <https://github.com/NixOS/nixpkgs/pull/540253>
-          # pkgs.steel
+          pkgs.steelix
+          pkgs.steel
         ];
 
         xdg.config.files = {
