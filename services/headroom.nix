@@ -24,7 +24,7 @@
 
         port = mkOption {
           type = port;
-          default = 8787;
+          default = 8022;
           description = "Port for the headroom proxy to listen on.";
         };
 
@@ -35,11 +35,11 @@
         };
 
         # Upstream OpenAI-compatible base for the proxy's /v1/chat/completions
-        # route. The commandcode agent providers append /chat/completions, so a
-        # client base of <proxy>/v1 reaches exactly this + /v1/chat/completions.
+        # route. The AI providers append /chat/completions, so a client base
+        # of <proxy>/v1 reaches exactly this + /v1/chat/completions.
         openaiApiUrl = mkOption {
           type = str;
-          default = "https://api.commandcode.ai/provider";
+          default = "http://127.0.0.1:8023";
           description = "OpenAI-compatible upstream base URL for /v1/chat/completions.";
         };
       };
@@ -70,28 +70,6 @@
           };
         };
 
-        # Direct upstream for Hermes, which handles both subs itself.
-        # OMP/opencode use the chain instance above (-> vine).
-        systemd.services.headroom-direct = {
-          description = "Headroom compression proxy (direct upstream, for Hermes)";
-          wantedBy = singleton "default.target";
-          wants = singleton "network-online.target";
-          after = singleton "network-online.target";
-          serviceConfig = {
-            ExecStart = "${getExe cfg.package} proxy --port 8787 --openai-api-url https://api.commandcode.ai/provider";
-            Restart = "on-failure";
-            RestartSec = 5;
-            StateDirectory = "headroom-direct";
-            WorkingDirectory = "/var/lib/headroom-direct";
-          };
-          environment = {
-            HEADROOM_BEACON = "off";
-            DO_NOT_TRACK = "1";
-            HEADROOM_EXCLUDE_TOOLS = "read_file,headroom_retrieve";
-            HEADROOM_ROLLOUT_CHANNEL = "beta";
-            HEADROOM_OUTPUT_SHAPER = "1";
-          };
-        };
       };
     };
 }

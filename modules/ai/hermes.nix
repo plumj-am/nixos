@@ -49,14 +49,8 @@ let
       jujutsu = inputs.jujutsu.packages.${pkgs.stdenv.hostPlatform.system}.jujutsu;
       jjStack = self.packages.${pkgs.stdenv.hostPlatform.system}.jj-stack;
 
-      # Hermes holds both sub keys itself, so it uses the direct
-      # headroom instance (port 8787, straight to CommandCode).
-      providerApi = "http://127.0.0.1:8787/v1";
-      provider = "commandcode";
-      commandcodeSubs = [
-        1
-        2
-      ];
+      vineProvider = config.ai.providers.headroomVineProxy;
+      provider = vineProvider.name;
 
       cfg = config.services.hermes-agent;
       package = inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.default;
@@ -205,6 +199,7 @@ let
       imports = [
         inputs.hermes-agent.nixosModules.default
         self.modules.common.headroom
+        self.modules.common.vine
       ];
 
       sops.secrets = {
@@ -213,7 +208,7 @@ let
           owner = "hermes";
           group = "hermes";
           mode = "0400";
-          restartUnits = singleton "hermes-auth-seed.service";
+          restartUnits = singleton "hermes-agent.service";
         };
         "hermes-${name}-env" = {
           sopsFile = ../../secrets/services/hermes.yaml;
@@ -286,8 +281,11 @@ let
             model = fallbackModel;
           };
 
-          # no need to add commandcode provider - built-in now
-          credential_pool_strategies.${provider} = "fill_first";
+          providers.${provider} = {
+            base_url = vineProvider.baseUrl;
+            api_mode = "chat_completions";
+            key_env = "VINE_API_KEY";
+          };
           auxiliary =
             mapAttrs (_: v: v // { inherit provider; })
             <|
@@ -573,7 +571,7 @@ let
         ];
 
         # Non-secret env vars.
-        environment = { };
+        environment.VINE_API_KEY = vineProvider.apiKey;
 
         authFile = null;
         authFileForceOverwrite = false;
@@ -693,104 +691,6 @@ let
         extraPlugins = singleton rtkHermesPlugin;
       };
 
-      # Seed both commandcode subs into each custom credential pool.
-      # Direct auth.json write: `hermes auth add` appends a duplicate on
-      # every run and leaks the key on the process cmdline. Idempotent:
-      # only rewrites when entries differ, keeps counters and cooldowns.
-      systemd.services.hermes-auth-seed = {
-        description = "Seed hermes commandcode credential pools";
-        after = singleton "sops-install-secrets.service";
-        serviceConfig = oneshotServiceConfig;
-        script = # python
-          ''
-            ${getExe pkgs.python3} - <<'PY'
-            import json
-            import os
-
-            ENV_FILE = os.environ.get("HERMES_SEED_ENV_FILE", "${secrets."hermes-shared-env".path}")
-            AUTH_JSON = os.environ.get("HERMES_SEED_AUTH_JSON", "${cfg.stateDir}/.hermes/auth.json")
-            BASE_URL = "${providerApi}"
-            POOL_KEY = "${provider}"
-            SUBS = [int(n) for n in "${toString commandcodeSubs}".split()]
-            STATUS_KEYS = ("last_status", "last_status_at", "last_error_code", "last_error_reason", "last_error_message", "last_error_reset_at")
-
-
-            def load_keys(path):
-                keys = {}
-                with open(path, encoding="utf-8") as handle:
-                    for raw in handle:
-                        line = raw.strip()
-                        if not line or line.startswith("#") or "=" not in line:
-                            continue
-                        if line.startswith("export "):
-                            line = line[len("export "):].strip()
-                        name, _, value = line.partition("=")
-                        value = value.strip().strip('"').strip("'")
-                        if len(value) >= 4:
-                            keys[name.strip()] = value
-                return keys
-
-
-            keys = load_keys(ENV_FILE)
-            names = [f"COMMANDCODE_{n}_API_KEY" for n in SUBS]
-            missing = [name for name in names if name not in keys]
-            if missing:
-                raise SystemExit("hermes-auth-seed: missing in " + ENV_FILE + ": " + ", ".join(missing))
-
-            try:
-                with open(AUTH_JSON, encoding="utf-8") as handle:
-                    store = json.load(handle)
-            except (FileNotFoundError, json.JSONDecodeError) as exc:
-                print("hermes-auth-seed: fresh store (" + exc.__class__.__name__ + ")")
-                store = {}
-            if not isinstance(store, dict):
-                store = {}
-            store.setdefault("version", 1)
-            pools = store.get("credential_pool")
-            if not isinstance(pools, dict):
-                pools = {}
-                store["credential_pool"] = pools
-
-            changed = False
-            old_entries = pools.get(POOL_KEY, [])
-            if not isinstance(old_entries, list):
-                old_entries = []
-            old_by_label = {e.get("label"): e for e in old_entries if isinstance(e, dict)}
-            entries = []
-            for prio, n in enumerate(SUBS):
-                label = f"sub-{n}"
-                token = keys[f"COMMANDCODE_{n}_API_KEY"]
-                old = old_by_label.get(label, {})
-                entry = dict(old)
-                entry.update({"id": old.get("id", label), "label": label, "auth_type": "api_key", "priority": prio, "source": "manual", "access_token": token, "base_url": BASE_URL})
-                if old.get("access_token") == token:
-                    entry.setdefault("request_count", 0)
-                else:
-                    entry["request_count"] = 0
-                    for key in STATUS_KEYS:
-                        entry.pop(key, None)
-                entries.append(entry)
-            dropped = sorted({e.get("label", "?") for e in old_entries if isinstance(e, dict)} - {e["label"] for e in entries})
-            if dropped:
-                print("hermes-auth-seed: dropping unmanaged " + POOL_KEY + ": " + ", ".join(dropped))
-            if pools.get(POOL_KEY) != entries:
-                pools[POOL_KEY] = entries
-                changed = True
-
-            if changed:
-                os.makedirs(os.path.dirname(AUTH_JSON), exist_ok=True)
-                tmp = AUTH_JSON + ".tmp"
-                with open(tmp, "w", encoding="utf-8") as handle:
-                    json.dump(store, handle, indent=2)
-                    handle.write("\n")
-                os.chmod(tmp, 0o600)
-                os.replace(tmp, AUTH_JSON)
-                print("hermes-auth-seed: wrote " + AUTH_JSON)
-            else:
-                print("hermes-auth-seed: no change")
-            PY
-          '';
-      };
 
       users.users.hermes.linger = true;
 
@@ -798,12 +698,10 @@ let
         # Single place for pull and order: helpers run only when the
         # agent starts, and complete before it.
         after =
-          singleton "hermes-auth-seed.service"
-          ++ optional needsSkills "hermes-install-skills.service"
+          optional needsSkills "hermes-install-skills.service"
           ++ optional needsGitConfig "hermes-git-config.service";
         wants =
-          singleton "hermes-auth-seed.service"
-          ++ optional needsSkills "hermes-install-skills.service"
+          optional needsSkills "hermes-install-skills.service"
           ++ optional needsGitConfig "hermes-git-config.service";
         restartTriggers = singleton "${cfg.stateDir}/.hermes/.env";
 
