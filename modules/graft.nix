@@ -257,13 +257,6 @@
         tailscaleAuth.virtualHosts = singleton "graft-cache.${domain}";
       };
 
-      # tailscale nginx auth checks the client source address, so nix must
-      # reach the cache over the tailnet instead of the public DNS record.
-      networking.hosts = {
-        "100.94.223.95" = singleton "graft-cache.plumj.am"; # sloe
-        "fd7a:115c:a1e0::5401:df8e" = singleton "graft-cache.plumj.am";
-      };
-
       nix.settings = {
         extra-substituters = singleton "https://graft-cache.plumj.am";
         trusted-public-keys = singleton "graft-cache-1:cJVyGZWQ+v4vG6ajYspWHD5NFvOhJAk7cFbxh/hmSiI=";
