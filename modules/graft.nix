@@ -105,7 +105,7 @@
             checks_api_enabled = true;
 
             incrementalize = true;
-            cache_url = "http://127.0.0.1:5000";
+            cache_url = "https://graft-cache.plumj.am";
 
             api_token_file = secrets."graft/api/token".path;
             api_scope = "write";

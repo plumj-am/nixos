@@ -20,12 +20,23 @@
       # "unknown agent: omp"), so the install service dies before caveman — and
       # before every later step. omp support landed on main after the tag; pin
       # the commit until a tagged release ships it.
-      cavemanInstaller = pkgs.fetchFromGitHub {
+      cavemanSource = pkgs.fetchFromGitHub {
         owner = "JuliusBrussee";
         repo = "caveman";
         rev = "2fd153c67988e980fb0b2455c90832159a6a5a25";
         hash = "sha256-KFfU8LmNajKLZcOXOFisn4beTcg2YL+rpasr39UgSZE=";
       };
+      cavemanInstaller =
+        pkgs.runCommand "caveman-installer-ultra"
+          {
+            nativeBuildInputs = [ pkgs.gnused ];
+          }
+          ''
+            cp -r ${cavemanSource}/. $out
+            chmod -R u+w $out
+            substituteInPlace $out/src/hooks/caveman-config.js \
+              --replace-fail "return 'full';" "return 'ultra';"
+          '';
       # `skills add`/`gh skill install` list skills instead of installing when
       # no skill is named, so an empty list means "every skill in the repo".
       # Keep the star quoted: nushell glob-expands a bare `*`.

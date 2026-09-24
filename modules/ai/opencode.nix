@@ -10,13 +10,22 @@
       ...
     }:
     let
-      inherit (lib.attrsets) genAttrs;
-      inherit (lib.lists) singleton;
+      inherit (lib.attrsets)
+        filterAttrs
+        genAttrs
+        listToAttrs
+        mapAttrs
+        mapAttrs'
+        nameValuePair
+        optionalAttrs
+        ;
+      inherit (lib.lists) singleton takeEnd;
+      inherit (lib.strings) concatStringsSep splitString;
       inherit (lib.trivial) const;
+      inherit (config.ai) defaultModels;
       inherit (config.sops) secrets;
 
-      # Local Vine fans out across both commandcode subs.
-      providerKey = "vine";
+      providerKey = config.ai.providers.headroomVineProxy.name;
 
       opencodePackage = pkgs.symlinkJoin {
         name = "opencode-wrapped";
@@ -30,8 +39,28 @@
           '';
       };
 
-      model = "${providerKey}/xiaomi/mimo-v2.6-flash";
+      shortId =
+        id:
+        id
+        |> splitString "/"
+        |> takeEnd 2
+        |> concatStringsSep "/";
 
+      modelRefs = mapAttrs (_: id: "${providerKey}/${shortId id}") defaultModels;
+
+      mkAgent =
+        {
+          mode ? "subagent",
+          model ? modelRefs.small,
+          effort ? "low",
+          thinking ? true,
+        }:
+        {
+          inherit mode model;
+          reasoningEffort = effort;
+          textVerbosity = "low";
+          thinking.type = if thinking then "enabled" else "disabled";
+        };
     in
     {
       ai.secrets = true;
@@ -54,8 +83,8 @@
             generator = pkgs.writers.writeJSON "opencode-opencode.jsonc";
             value = {
               autoupdate = false;
-              inherit model;
-              small_model = model;
+              model = modelRefs.big;
+              small_model = modelRefs.small;
 
               experimental = {
                 disable_paste_summary = true;
@@ -115,113 +144,57 @@
                 };
               };
 
-              provider.${providerKey} = {
-                npm = "@ai-sdk/openai-compatible";
-                name = providerKey;
+              provider =
+                config.ai.providers
+                |> filterAttrs (_: provider: !(provider ? discoveryType))
+                |> mapAttrs' (
+                  _: provider:
+                  nameValuePair provider.name (
+                    {
+                      models =
+                        config.ai.models
+                        |> map (
+                          model:
+                          nameValuePair (shortId model.id) {
+                            inherit (model) id name reasoning;
+                            tool_call = true;
+                            limit = {
+                              inherit (model) context;
+                              output = model.maxOutput;
+                            };
+                          }
+                        )
+                        |> listToAttrs;
 
-                options = {
-                  baseURL = "http://127.0.0.1:8022/v1"; # headroom -> vine -> commandcode
-                  apiKey = "sk-vine-local"; # forwarded by headroom; subs live in vine env
-                };
+                      inherit (provider) name;
 
-                timeout = 3000000;
-                chunkTimeout = 1500000;
+                      options = {
+                        baseURL = provider.baseUrl;
+                      }
+                      // optionalAttrs (provider ? apiKey) { inherit (provider) apiKey; };
 
-                models = {
-                  "deepseek-v4.1-flash" = {
-                    id = "deepseek/deepseek-v4.1-flash";
-                    name = "DeepSeek V4.1 Flash";
-                    reasoning = true;
-                    tool_call = true;
-                    limit = {
-                      context = 1000000;
-                      output = 384000;
-                    };
-                  };
-                  # TODO: limited input, wait until full release with full context
-                  "laguna-s2.1-free" = {
-                    id = "poolside/laguna-s-2.1-free";
-                    name = "Poolside Laguna S 2.1";
-                    reasoning = true;
-                    tool_call = true;
-                    limit = {
-                      context = 256000;
-                      output = 131072;
-                    };
-                  };
-                  "mimo-v2.6-flash" = {
-                    id = "xiaomi/mimo-v2.6-flash";
-                    name = "Mimo v2.6 Flash";
-                    reasoning = true;
-                    tool_call = true;
-                    limit = {
-                      context = 1048576;
-                      output = 131072;
-                    };
-                  };
-                  "mimo-v2.6-pro" = {
-                    id = "xiaomi/mimo-v2.6-pro";
-                    name = "Mimo v2.6 Pro";
-                    reasoning = true;
-                    tool_call = true;
-                    limit = {
-                      context = 1048576;
-                      output = 131072;
-                    };
-                  };
-                  "muse-spark-1.3-contributor" = {
-                    id = "meta/muse-spark-1.3-contributor";
-                    name = "Meta Muse Spark 1.3 Contributor";
-                    reasoning = true;
-                    tool_call = true;
-                    limit = {
-                      context = 1048576;
-                      output = 384000;
-                    };
-                  };
-                };
-              };
+                      timeout = 60 * 60 * 1000; # 60 min
+                      chunkTimeout = 30 * 60 * 1000; # 30 min
+                    }
+                    // optionalAttrs (provider.type == "openai-compatible") { npm = "@ai-sdk/openai-compatible"; }
+                  )
+                );
 
               agent = {
-                build = {
+                build = mkAgent {
                   mode = "primary";
-                  inherit model;
-                  reasoningEffort = "medium";
-                  textVerbosity = "low";
-                  thinking.type = "enabled";
+                  effort = "medium";
                 };
-
-                plan = {
+                plan = mkAgent {
                   mode = "primary";
-                  inherit model;
-                  reasoningEffort = "max";
-                  textVerbosity = "low";
-                  thinking.type = "enabled";
+                  model = modelRefs.big;
+                  effort = "max";
                 };
-
-                general = {
-                  mode = "subagent";
-                  inherit model;
-                  reasoningEffort = "high";
-                  textVerbosity = "low";
-                  thinking.type = "enabled";
+                general = mkAgent {
+                  effort = "high";
                 };
-
-                explore = {
-                  mode = "subagent";
-                  inherit model;
-                  reasoningEffort = "low";
-                  textVerbosity = "low";
-                  thinking.type = "disabled";
-                };
-
-                scout = {
-                  mode = "subagent";
-                  inherit model;
-                  reasoningEffort = "low";
-                  textVerbosity = "low";
-                  thinking.type = "enabled";
-                };
+                explore = mkAgent { };
+                scout = mkAgent { };
               };
 
               lsp = {

@@ -5,6 +5,7 @@
     {
       inputs,
       pkgs,
+      config,
       ...
     }:
     {
@@ -17,12 +18,15 @@
         ];
 
         xdg.config.files."autolith/init.lisp".text = # lisp
+          let
+            provider = config.ai.providers.headroomVineProxy;
+          in
           ''
             (register-openai-compatible-provider
-             :name            "command-code"
-             :description     "Command Code"
-             :endpoint        "https://api.commandcode.ai/provider/v1/chat/completions"
-             :models-endpoint "https://api.commandcode.ai/provider/v1/models")
+             :name            "${provider.name}"
+             :description     "Vine via Headroom"
+             :endpoint        "${provider.baseUrl}/chat/completions"
+             :models-endpoint "${provider.baseUrl}/models")
           '';
       };
     };

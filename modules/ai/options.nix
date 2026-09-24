@@ -11,6 +11,7 @@
       inherit (lib.strings) hasSuffix removeSuffix;
       inherit (lib.trivial) const flip;
       inherit (lib.types) listOf str;
+
       skillTypes = import ../../options/skills.nix { inherit lib; };
     in
     {

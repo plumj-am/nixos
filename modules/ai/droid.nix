@@ -10,37 +10,23 @@
       ...
     }:
     let
-      inherit (lib.attrsets) genAttrs;
-      inherit (lib.lists) singleton;
+      inherit (lib.attrsets)
+        genAttrs
+        mapAttrs
+        optionalAttrs
+        ;
+      inherit (lib.lists)
+        elem
+        imap1
+        singleton
+        ;
       inherit (lib.trivial) const flip;
+      inherit (config.ai) defaultModels;
       inherit (config.users.users.jam) home;
 
-      providerKey = "vine";
-      vineBaseUrl = "http://127.0.0.1:8022/v1";
+      providerKey = config.ai.providers.headroomVineProxy.name;
 
-      big = "custom:${providerKey}/xiaomi/mimo-v2.6-pro";
-      small = "custom:${providerKey}/xiaomi/mimo-v2.6-flash";
-
-      mkVineModel =
-        index:
-        {
-          id,
-          displayName,
-          maxOutputTokens ? 262144,
-          noImageSupport ? true,
-        }:
-        {
-          inherit
-            displayName
-            index
-            maxOutputTokens
-            noImageSupport
-            ;
-          model = id;
-          id = "custom:${id}";
-          baseUrl = vineBaseUrl;
-          provider = "generic-chat-completion-api";
-        };
+      models = mapAttrs (_: m: "custom:${providerKey}/${m}") defaultModels;
     in
     {
       ai.secrets = true;
@@ -54,41 +40,39 @@
           type = "copy";
           generator = pkgs.writers.writeJSON "factory-settings.json";
           value = {
-            customModels = [
-              (mkVineModel 1 {
-                id = "${providerKey}/xiaomi/mimo-v2.6-flash";
-                displayName = "Mimo v2.6 Flash";
-              })
-              (mkVineModel 2 {
-                id = "${providerKey}/xiaomi/mimo-v2.6-pro";
-                displayName = "Mimo v2.6 Pro";
-              })
-              (mkVineModel 3 {
-                id = "${providerKey}/deepseek/deepseek-v4.1-flash";
-                displayName = "Deepseek v4.1 Flash";
-                maxOutputTokens = 384000;
-                noImageSupport = true;
-                # extraArgs.thinking.type = "enabled";
-              })
-              (mkVineModel 4 {
-                id = "${providerKey}/meta/muse-spark-1.3-contributor";
-                displayName = "Muse Spark 1.3";
-                maxOutputTokens = 131072;
-              })
-            ];
+            customModels =
+              config.ai.models
+              |> imap1 (
+                index: model:
+                let
+                  provider = config.ai.providers.headroomVineProxy;
+                  fullName = "${provider.name}/${model.id}";
+                in
+                {
+                  inherit index;
+                  inherit (provider) baseUrl;
+                  displayName = model.name;
+                  maxOutputTokens = model.maxOutput;
+                  noImageSupport = !(elem "image" model.inputTypes);
+                  provider = "generic-chat-completion-api";
+                  model = model.id;
+                  id = "custom:${fullName}";
+                }
+                // optionalAttrs (provider ? apiKey) { inherit (provider) apiKey; }
+              );
 
-            model = small;
+            model = models.small;
             reasoningEffort = "medium";
 
             sessionDefaultSettings = {
               interactionMode = "auto";
               autonomyLevel = "medium";
-              model = small;
+              model = models.small;
               reasoningEffort = "medium";
             };
 
             subagentAutonomyLevel = "inherit";
-            subagentModelSettings = {
+            subagentModelSettings = with models; {
               lightModel = small;
               mediumModel = small;
               heavyModel = big;
