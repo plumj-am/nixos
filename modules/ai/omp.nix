@@ -85,21 +85,6 @@
                       };
                     }
                     {
-                      # TODO: limited input, wait until full release with full context
-                      # minimal | low | medium | high | xhigh
-                      id = "poolside/laguna-s-2.1-free";
-                      name = "Poolside Laguna S 2.1 free";
-                      reasoning = true;
-                      contextWindow = 256000;
-                      maxTokens = 131072;
-                      cost = {
-                        input = 0;
-                        output = 0;
-                        cacheRead = 0;
-                        cacheWrite = 0;
-                      };
-                    }
-                    {
                       id = "xiaomi/mimo-v2.6-flash";
                       name = "Mimo v2.6 Flash";
                       reasoning = true;
@@ -169,6 +154,29 @@
                         supportsReasoningEffort = true;
                         supportsToolChoice = false;
                       };
+                    }
+                    {
+                      # low | medium | high
+                      id = "stealth/space-bunny-alpha";
+                      name = "Stealth Space Bunny Alpha";
+                      reasoning = true;
+                      thinking = {
+                        minLevel = "low";
+                        maxLevel = "high";
+                        mode = "effort";
+                      };
+                      input = [
+                        "text"
+                        "image"
+                      ];
+                      cost = {
+                        input = 0;
+                        output = 0;
+                        cacheRead = 0;
+                        cacheWrite = 0;
+                      };
+                      contextWindow = 1000000;
+                      maxTokens = 262144;
                     }
                   ];
                 };
