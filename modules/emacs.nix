@@ -43,11 +43,11 @@
           packageRequires = [ (epkgs pkgs).magit ];
         };
 
-      epkgs = pkgs: (withEmacsOverlay pkgs).emacsPackagesFor (withEmacsOverlay pkgs).emacs30-pgtk;
+      epkgs = pkgs: (withEmacsOverlay pkgs).emacsPackagesFor (withEmacsOverlay pkgs).emacs-pgtk;
 
       package =
         let
-          epkgs = (withEmacsOverlay pkgs).emacsPackagesFor (withEmacsOverlay pkgs).emacs30-pgtk;
+          epkgs = (withEmacsOverlay pkgs).emacsPackagesFor (withEmacsOverlay pkgs).emacs-pgtk;
         in
         epkgs.emacsWithPackages (epkgs: [
           epkgs.doom-themes

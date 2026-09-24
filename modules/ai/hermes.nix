@@ -691,7 +691,6 @@ let
         extraPlugins = singleton rtkHermesPlugin;
       };
 
-
       users.users.hermes.linger = true;
 
       systemd.services.hermes-agent = {
@@ -940,24 +939,26 @@ in
 
   flake.modules.common.ai-agents = self.modules.common.hermes-desktop;
   flake.modules.common.hermes-desktop =
+    # {
+    # inputs,
+    # pkgs,
+    # lib,
+    # ...
+    # }:
+    # let
+    # inherit (lib.lists) singleton;
+    # in
     {
-      inputs,
-      pkgs,
-      lib,
-      ...
-    }:
-    let
-      inherit (lib.lists) singleton;
-    in
-    {
-      environment.systemPackages =
-        singleton
-          # TODO: Prefer from hermes repo but broken:
-          # node-v43.4.1-headers.tar.gz> 100 336.6k 100 336.6k   0      0  1.44M      0                              0
-          # error: hash mismatch in fixed-output derivation '/nix/store/rwn52jpnh40765ha2nhapccyhdxxwy39-node-v43.4.1-headers.tar.gz.drv':
-          #          specified: sha256-f8bSbLRmtbP93CJAvEBs+sHWDZ1xP2bcpLhC1EnOmZU=
-          #             got:    sha256-CyzcARd1+GhWr8ED7HBYW2MYD+tgetqZFMkaivaGvw0=
-          # inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.desktop;
-          inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.hermes-desktop;
+      # environment.systemPackages =
+      #   singleton
+      # TODO: Prefer from hermes repo but broken:
+      # node-v43.4.1-headers.tar.gz> 100 336.6k 100 336.6k   0      0  1.44M      0                              0
+      # error: hash mismatch in fixed-output derivation '/nix/store/rwn52jpnh40765ha2nhapccyhdxxwy39-node-v43.4.1-headers.tar.gz.drv':
+      #          specified: sha256-f8bSbLRmtbP93CJAvEBs+sHWDZ1xP2bcpLhC1EnOmZU=
+      #             got:    sha256-CyzcARd1+GhWr8ED7HBYW2MYD+tgetqZFMkaivaGvw0=
+      # inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.desktop;
+      # TODO: bump
+      # Electron version 41.10.6 is EOL
+      # inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.hermes-desktop;
     };
 }

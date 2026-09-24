@@ -50,6 +50,8 @@ in
         mode = "600";
       };
 
+      nixpkgs.config.permittedInsecurePackages = singleton "radicle-node-1.10.3"; # private repos are not encrypted etc.
+
       hjem.extraModule = {
         packages = [
           # inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.rsh-rsh
@@ -132,6 +134,8 @@ in
       inherit (config.networking) hostName;
     in
     {
+      nixpkgs.config.permittedInsecurePackages = singleton "radicle-node-1.10.3"; # private repos are not encrypted etc.
+
       environment.systemPackages = singleton pkgs.radicle-node;
 
       networking.firewall.allowedTCPPorts = singleton systemNodePort;
