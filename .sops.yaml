@@ -92,6 +92,10 @@ creation_rules:
       key_groups:
           - age: [*jam, *kiwi, *plum]
 
+    - path_regex: secrets/services/github-runner\.(yaml|json|env|ini)$
+      key_groups:
+          - age: [*jam, *date, *plum, *sloe]
+
     - path_regex: secrets/blackwell/[^/]+\.(yaml|json|env|ini)$
       key_groups:
           - age: [*jam, *blackwell]

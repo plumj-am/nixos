@@ -15,6 +15,7 @@ in
         distributed-builder
         forgejo
         forgejo-runner
+        github-runner
         freshrss-server
         gerrit
         goatcounter

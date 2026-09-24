@@ -14,6 +14,7 @@ in
         brave
         distributed-builder
         forgejo-runner
+        github-runner
       ];
 
       systemInfo = {

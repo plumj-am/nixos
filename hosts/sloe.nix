@@ -14,6 +14,7 @@ in
 
         distributed-builder
         forgejo-runner
+        github-runner
         garage
         graft
         graphics
