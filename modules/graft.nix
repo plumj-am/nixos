@@ -236,6 +236,8 @@
       systemd.services.nix-serve.serviceConfig = {
         User = mkForce "graft";
         Group = mkForce "graft";
+        # nsrs soft fd limit defaults to 1024; substituter storms trip EMFILE.
+        LimitNOFILE = "524288:524288";
       };
       services.nix-serve = {
         enable = true;
