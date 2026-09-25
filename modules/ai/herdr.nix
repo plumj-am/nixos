@@ -13,6 +13,9 @@
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
       inherit (config) theme;
+
+      # Prebuilt plugin root; herdr reads its manifest from the store path.
+      jjWorkspacePlugin = self.packages.${pkgs.stdenv.hostPlatform.system}.herdr-jj-workspace;
     in
     {
       environment.systemPackages =
@@ -133,8 +136,54 @@
                     command = "${getExe pkgs.hunk} --watch";
                     description = "hunk watch";
                   }
+                  # README chords minus prefix+d, which split_horizontal owns.
+                  {
+                    key = "prefix+a";
+                    type = "plugin_action";
+                    command = "expnn.jj-workspace.new-tab";
+                    description = "jj workspace (tab)";
+                  }
+                  {
+                    key = "prefix+shift+a";
+                    type = "plugin_action";
+                    command = "expnn.jj-workspace.new";
+                    description = "jj workspace";
+                  }
+                  {
+                    key = "prefix+alt+a";
+                    type = "plugin_action";
+                    command = "expnn.jj-workspace.remove";
+                    description = "jj workspace: remove";
+                  }
                 ];
               };
+            };
+          };
+
+          # Minimal registry entry: herdr reloads actions and panes from the
+          # manifest, so the stored entry needs only these fields.
+          xdg.config.files."herdr/plugins.json" = {
+            source = pkgs.writers.writeJSON "herdr-plugins.json" [
+              {
+                plugin_id = "expnn.jj-workspace";
+                name = "jj workspaces";
+                version = "0.5.0";
+                manifest_path = "${jjWorkspacePlugin}/herdr-plugin.toml";
+                plugin_root = toString jjWorkspacePlugin;
+                enabled = true;
+              }
+            ];
+          };
+
+          xdg.config.files."herdr/plugins/config/expnn.jj-workspace/config.toml" = {
+            source = pkgs.writers.writeTOML "herdr-jj-workspace-config.toml" {
+              # Absolute path: the herdr server PATH is minimal.
+              jj.command = "${getExe pkgs.jujutsu}";
+              jj.workspace_root = "${config.directory}/projects/herdr-worktrees";
+
+              # The plugin defaults to opencode, which this config installs
+              # as `opencode2`. Use omp instead.
+              agent.command = "omp";
             };
           };
         };
