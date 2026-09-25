@@ -1,6 +1,6 @@
-{ self, ... }:
+# { self, ... }:
 {
-  flake.modules.common.desktop = self.modules.common.emacs;
+  # flake.modules.common.desktop = self.modules.common.emacs;
   flake.modules.common.emacs =
     {
       inputs,
