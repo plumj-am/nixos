@@ -46,6 +46,7 @@
               ui.movement.edit = true;
               ui.pager = mkDefault ":builtin";
 
+              snapshot.auto-update-stale = true;
               snapshot.max-new-file-size = "10MiB";
 
               git = {
