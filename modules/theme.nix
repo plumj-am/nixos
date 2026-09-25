@@ -144,6 +144,11 @@ let
           light = "gruvbox-light";
         };
 
+        herdr = {
+          dark = "gruvbox";
+          light = "gruvbox-light";
+        };
+
         vivid = {
           dark = "gruvbox-dark";
           light = "gruvbox-light";
@@ -224,6 +229,7 @@ in
         "icons"
         "rio"
         "zellij"
+        "herdr"
         "vivid"
         "nushell"
         "helix"
