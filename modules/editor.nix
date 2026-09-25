@@ -51,7 +51,15 @@ in
 
       hjem.extraModule = {
         packages = [
-          pkgs.steelix
+          # steelix's grammars.json revisions need syncing with the query files in its runtime
+          (pkgs.symlinkJoin {
+            name = "steelix";
+            paths = singleton pkgs.steelix.unwrapped;
+            nativeBuildInputs = singleton pkgs.makeBinaryWrapper;
+            postBuild = ''
+              wrapProgram $out/bin/hx --set HELIX_RUNTIME "${pkgs.helix.runtime}"
+            '';
+          })
           pkgs.steel
         ];
 
