@@ -5,7 +5,7 @@
     self.modules.common.jjui
     self.modules.common.jj-stack
     self.modules.common.jujutsu
-    self.modules.common.mergiraf
+    self.modules.common.weave
     self.modules.common.watchman
   ];
 
@@ -596,7 +596,7 @@
       };
     };
 
-  flake.modules.common.mergiraf =
+  flake.modules.common.weave =
     {
       pkgs,
       lib,
@@ -608,7 +608,7 @@
       inherit (lib.modules) mkDefault;
     in
     {
-      environment.systemPackages = singleton pkgs.mergiraf;
+      environment.systemPackages = singleton pkgs.weave;
 
       hjemModule = {
         xdg.config.files."jj/config.toml" = {
@@ -619,13 +619,29 @@
               resolve-ast = [
                 "resolve"
                 "--tool"
-                "mergiraf"
+                "weave"
               ];
             };
 
-            ui.merge-editor = "mergiraf";
+            ui.merge-editor = "weave";
 
-            merge-tools.mergiraf.program = getExe pkgs.mergiraf;
+            merge-tools.weave = {
+              program = getExe pkgs.weave;
+              merge-args = [
+                "$base"
+                "$left"
+                "$right"
+                "-o"
+                "$output"
+                "-l"
+                "$marker_length"
+                "-p"
+                "$path"
+              ];
+              merge-conflict-exit-codes = [ 1 ];
+              merge-tool-edits-conflict-markers = true;
+              conflict-marker-style = "git";
+            };
           };
         };
       };
