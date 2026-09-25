@@ -55,6 +55,7 @@ _: {
           py.zstandard
           py.websockets
           py.onnxruntime
+          py.pillow
           py.transformers
           py.typing-extensions
           py.watchdog
@@ -62,6 +63,41 @@ _: {
           py.orjson
           py.h2
         ];
+
+        # Why: compaction runs on every request. 1 MiB is below the
+        # steady-state size of the 30-day savings ledger, so the full JSONL
+        # file is re-read, parsed and rewritten under a lock per request.
+        # `format = "wheel"` ships no unpacked tree, so unpack the fetched
+        # wheel from dist/, patch the constant, and repack it. The body runs
+        # in a subshell: a stray `cd` would leak into every later phase.
+        postPatch = ''
+          (
+            shopt -s nullglob
+            wheelroot="$TMPDIR/headroom-wheelroot"
+            mkdir -p "$wheelroot"
+            for whl in dist/*.whl; do
+              ${pkgs.python313.interpreter} -m zipfile -e "$whl" "$wheelroot"
+              substituteInPlace \
+                "$wheelroot/headroom/savings_ledger.py" \
+                --replace-fail '_COMPACT_SIZE_BYTES = 1 * 1024 * 1024' \
+                '_COMPACT_SIZE_BYTES = 64 * 1024 * 1024'
+              # `/stats` recomputes throughput with
+              # `parse_log_files(last_n_hours=1.0)`, which re-reads and
+              # regex-parses every rotated proxy log inside the window. At
+              # the upstream 10s TTL a 10 MB rotation is re-parsed every
+              # 10s, which is a 0.14s / 16%-of-a-core spike each time.
+              # 300s cuts that by 30x; throughput stats go up to 5 min stale.
+              substituteInPlace \
+                "$wheelroot/headroom/proxy/server.py" \
+                --replace-fail 'THROUGHPUT_CACHE_TTL_SECONDS = 10.0' \
+                'THROUGHPUT_CACHE_TTL_SECONDS = 300.0'
+              patched="$PWD/dist/$(basename "$whl")"
+              rm "$whl"
+              ( cd "$wheelroot" && ${pkgs.python313.interpreter} -m zipfile -c "$patched" * )
+              break
+            done
+          )
+        '';
 
         doCheck = false;
         doInstallCheck = false;

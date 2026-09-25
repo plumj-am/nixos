@@ -52,7 +52,7 @@
 
       config.ai.providers.headroomVineProxy = {
         name = "vine";
-        baseUrl = "http://127.0.0.1:8022/v1";
+        baseUrl = "http://sloe.taild29fec.ts.net:8022/v1";
         apiKey = "sk-vine-local"; # forwarded by headroom; subs live in vine env
         type = "openai-compatible";
         auth = "none";
