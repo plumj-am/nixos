@@ -196,6 +196,7 @@
               "--keep-weekly 5"
               "--keep-monthly 3"
             ];
+            runCheck = true;
           }
           // rest;
 
@@ -236,8 +237,22 @@
             // optionalAttrs (backup.environmentFile != null) {
               EnvironmentFile = backup.environmentFile;
             };
+            # `cat config` fails both when the repository is absent and when the
+            # backend cannot read it. Running `init` on the second case replaces
+            # the key file and turns every stored snapshot into undecryptable
+            # garbage, so a repository that this host has already seen is never
+            # re-initialised, no matter what the backend reports.
             preStart = optionalString backup.initialize ''
-              ${rusticCmd} ${cacheFlag} cat config > /dev/null || ${rusticCmd} init
+              if ${rusticCmd} ${cacheFlag} cat config > /dev/null; then
+                touch "$CACHE_DIRECTORY/repository-initialised"
+              elif [ -e "$CACHE_DIRECTORY/repository-initialised" ] \
+                || [ -n "$(find "$CACHE_DIRECTORY" -mindepth 1 -maxdepth 1 -type d -print -quit)" ]; then
+                echo "rustic: the repository is not readable and already holds data; refusing to re-initialise it" >&2
+                exit 1
+              else
+                ${rusticCmd} init
+                touch "$CACHE_DIRECTORY/repository-initialised"
+              fi
             '';
           }
         ) cfg.backups;
