@@ -14,11 +14,7 @@
       inherit (config) theme;
     in
     {
-      shellAliases = {
-        "zellij-ide" = "zellij --layout ~/.config/zellij/layouts/ide.kdl";
-        "zellij-3t2b" = "zellij --layout ~/.config/zellij/layouts/3t2b.kdl";
-        "zellij-detach" = "zellij action detach";
-      };
+      shellAliases."zellij-ide" = "zellij --layout ~/.config/zellij/layouts/ide.kdl";
 
       hjem.extraModule =
         { osConfig, config, ... }:
@@ -261,24 +257,6 @@
                   pane size="75%" split_direction="vertical" {
                       pane focus=true size="68%"
                       pane size="32%"
-                  }
-                  pane size="25%" split_direction="vertical" {
-                      pane size="50%"
-                      pane size="50%"
-                  }
-                  pane size=1 borderless=true {
-                    plugin location="zjstatus"
-                  }
-                }
-              '';
-
-            "zellij/layouts/3t2b.kdl".text = # kdl
-              ''
-                layout {
-                  pane size="75%" split_direction="vertical" {
-                      pane focus=true size="33%"
-                      pane size="34%"
-                      pane size="33%"
                   }
                   pane size="25%" split_direction="vertical" {
                       pane size="50%"
