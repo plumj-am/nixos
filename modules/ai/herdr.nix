@@ -10,180 +10,199 @@
       ...
     }:
     let
-      inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
       inherit (config) theme;
 
-      # Prebuilt plugin root; herdr reads its manifest from the store path.
-      jjWorkspacePlugin = self.packages.${pkgs.stdenv.hostPlatform.system}.herdr-jj-workspace;
+      plugins = {
+        herdrJj = self.packages.${pkgs.stdenv.hostPlatform.system}.herdr-jj;
+      };
     in
     {
-      environment.systemPackages =
-        singleton
-          inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.herdr;
+      environment.systemPackages = [
+        inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.herdr
+
+        self.packages.${pkgs.stdenv.hostPlatform.system}.herdr-ide
+      ];
 
       hjemModule =
         { config, ... }:
+        let
+          worktreesDir = "${config.directory}/projects/herdr-worktrees";
+        in
         {
-          xdg.config.files."herdr/config.toml" = {
-            source = pkgs.writers.writeTOML "herdr-config.toml" {
-              onboarding = false;
+          xdg.config.files = {
+            "herdr/config.toml" = {
+              source = pkgs.writers.writeTOML "herdr-config.toml" {
+                onboarding = false;
 
-              terminal.default_shell = "${getExe pkgs.nushell}";
+                terminal.default_shell = "${getExe pkgs.nushell}";
 
-              ui = {
-                pane_borders = "off";
-                pane_outer_borders = false;
-                pane_gaps = false;
-                pane_scrollbars = false;
+                theme.name = theme.herdr;
 
-                copy_on_select = true;
-                mouse_capture = true;
+                ui = {
+                  pane_borders = "auto";
+                  pane_outer_borders = false;
+                  pane_gaps = false;
+                  pane_scrollbars = false;
 
-                tab_bar_position = "bottom";
-                window_title = "{hostname}: {workspace}";
+                  copy_on_select = true;
+                  mouse_capture = true;
 
-                tab_bar_right_separator = " · ";
-                tab_bar_right = [
-                  { type = "zoom"; }
-                  { type = "hostname"; }
-                  {
-                    type = "datetime";
-                    format = "%H:%M";
-                  }
-                ];
+                  window_title = "{hostname}: {workspace}";
 
-                status_indicators = "symbols";
+                  sidebar_width = 22;
 
-                toast = {
-                  delivery = "herdr";
-                  delay_seconds = 1;
-                  herdr.position = "bottom-right";
+                  agent_panel_sort = "priority";
+                  status_indicators = "symbols";
+
+                  tab_bar_position = "bottom";
+                  tab_bar_right_separator = " · ";
+                  tab_bar_right = [
+                    { type = "zoom"; }
+                    { type = "hostname"; }
+                    {
+                      type = "datetime";
+                      format = "%H:%M";
+                    }
+                  ];
+
+                  toast = {
+                    delivery = "herdr";
+                    delay_seconds = 1;
+                    herdr.position = "bottom-right";
+                  };
+
+                  sound.enabled = true;
+
+                  sidebar.spaces.rows = [
+                    [
+                      "state_icon"
+                      "workspace"
+                    ]
+                    [
+                      "$jj_change"
+                      "$jj_status"
+                    ]
+                  ];
+                  sidebar.agents.rows = [
+                    [
+                      "state_icon"
+                      "workspace"
+                      "tab"
+                    ]
+                    [ "agent" ]
+                  ];
                 };
 
-                sound.enabled = true;
+                worktrees.directory = worktreesDir;
 
-                sidebar.spaces.rows = [
-                  [
-                    "state_icon"
-                    "workspace"
-                  ]
-                  [
-                    "branch"
-                    "git_status"
-                  ]
-                ];
-                sidebar.agents.rows = [
-                  [
-                    "state_icon"
-                    "workspace"
-                    "tab"
-                  ]
-                  [ "agent" ]
-                ];
-              };
+                experimental.pane_history = true;
 
-              theme.name = theme.herdr;
+                keys = {
+                  prefix = "ctrl+g";
 
-              worktrees.directory = "${config.directory}/projects/herdr-worktrees";
+                  focus_pane_left = "alt+h";
+                  focus_pane_up = "alt+k";
+                  focus_pane_down = "alt+j";
+                  focus_pane_right = "alt+l";
+                  zoom = "alt+f";
 
-              keys = {
-                prefix = "ctrl+g";
+                  resize_mode = "alt+r";
 
-                focus_pane_left = "alt+h";
-                focus_pane_up = "alt+k";
-                focus_pane_down = "alt+j";
-                focus_pane_right = "alt+l";
+                  workspace_picker = "prefix+p";
+                  navigate_workspace_down = "j";
+                  navigate_workspace_up = "k";
+                  navigate_pane_left = "";
+                  navigate_pane_down = "";
+                  navigate_pane_up = "";
+                  navigate_pane_right = "";
 
-                zoom = "alt+f";
+                  goto = "prefix+shift+p";
 
-                switch_tab = "prefix+1..9";
+                  split_horizontal = "prefix+ctrl+d";
+                  split_vertical = "prefix+ctrl+r";
+                  close_pane = "prefix+x";
 
-                cycle_pane_next = "alt+n";
-                cycle_pane_previous = "alt+p";
+                  swap_pane_left = "alt+shift+h";
+                  swap_pane_up = "alt+shift+k";
+                  swap_pane_down = "alt+shift+j";
+                  swap_pane_right = "alt+shift+l";
 
-                swap_pane_left = "alt+shift+h";
-                swap_pane_up = "alt+shift+k";
-                swap_pane_down = "alt+shift+j";
-                swap_pane_right = "alt+shift+l";
+                  switch_tab = "prefix+1..9";
+                  switch_workspace = "prefix+alt+1..9";
 
-                split_horizontal = "prefix+d";
+                  move_tab_previous = "prefix+h";
+                  move_tab_next = "prefix+l";
 
-                close_pane = "prefix+x";
+                  copy_mode = "prefix+s";
 
-                move_tab_previous = "prefix+h";
-                move_tab_next = "prefix+l";
+                  settings = "";
 
-                copy_mode = "prefix+alt+s";
+                  reload_config = "prefix+alt+shift+r";
 
-                workspace_picker = "prefix+alt+p";
-
-                resize_pane_left = "prefix+alt+h";
-                resize_pane_up = "prefix+alt+k";
-                resize_pane_down = "prefix+alt+j";
-                resize_pane_right = "prefix+alt+l";
-
-                command = [
-                  {
-                    key = "prefix+j";
-                    type = "pane";
-                    command = "${getExe pkgs.jjui}";
-                    description = "jjui";
-                  }
-                  {
-                    key = "prefix+alt+d";
-                    type = "pane";
-                    command = "${getExe pkgs.hunk} --watch";
-                    description = "hunk watch";
-                  }
-                  # README chords minus prefix+d, which split_horizontal owns.
-                  {
-                    key = "prefix+a";
-                    type = "plugin_action";
-                    command = "expnn.jj-workspace.new-tab";
-                    description = "jj workspace (tab)";
-                  }
-                  {
-                    key = "prefix+shift+a";
-                    type = "plugin_action";
-                    command = "expnn.jj-workspace.new";
-                    description = "jj workspace";
-                  }
-                  {
-                    key = "prefix+alt+a";
-                    type = "plugin_action";
-                    command = "expnn.jj-workspace.remove";
-                    description = "jj workspace: remove";
-                  }
-                ];
+                  command = [
+                    {
+                      key = "prefix+j";
+                      type = "popup";
+                      width = "80%";
+                      height = "80%";
+                      command = "jjui";
+                      description = "jjui";
+                    }
+                    {
+                      key = "prefix+d";
+                      type = "popup";
+                      width = "80%";
+                      height = "80%";
+                      command = "hunk diff --watch";
+                      description = "hunk diff watch";
+                    }
+                    {
+                      key = "prefix+shift+a";
+                      type = "plugin_action";
+                      command = "olivergilan.herdr-jj.create";
+                      description = "new jj workspace";
+                    }
+                    {
+                      key = "prefix+a";
+                      type = "plugin_action";
+                      command = "olivergilan.herdr-jj.open";
+                      description = "open jj workspace";
+                    }
+                    {
+                      key = "prefix+alt+a";
+                      type = "plugin_action";
+                      command = "olivergilan.herdr-jj.remove";
+                      description = "jj workspace: remove";
+                    }
+                  ];
+                };
               };
             };
-          };
 
-          # Minimal registry entry: herdr reloads actions and panes from the
-          # manifest, so the stored entry needs only these fields.
-          xdg.config.files."herdr/plugins.json" = {
-            source = pkgs.writers.writeJSON "herdr-plugins.json" [
-              {
-                plugin_id = "expnn.jj-workspace";
-                name = "jj workspaces";
-                version = "0.5.0";
-                manifest_path = "${jjWorkspacePlugin}/herdr-plugin.toml";
-                plugin_root = toString jjWorkspacePlugin;
-                enabled = true;
-              }
-            ];
-          };
+            # Minimal registry entry: herdr reloads actions and panes from the
+            # manifest, so the stored entry needs only these fields.
+            "herdr/plugins.json" = {
+              source = pkgs.writers.writeJSON "herdr-plugins.json" [
+                {
+                  enabled = true;
+                  plugin_id = "olivergilan.herdr-jj";
+                  name = "Herdr JJ";
+                  version = "0.1.0";
+                  manifest_path = "${plugins.herdrJj}/herdr-plugin.toml";
+                  plugin_root = toString plugins.herdrJj;
+                }
+              ];
+            };
 
-          xdg.config.files."herdr/plugins/config/expnn.jj-workspace/config.toml" = {
-            source = pkgs.writers.writeTOML "herdr-jj-workspace-config.toml" {
-              # Absolute path: the herdr server PATH is minimal.
-              jj.command = "${getExe pkgs.jujutsu}";
-              jj.workspace_root = "${config.directory}/projects/herdr-worktrees";
-
-              # The plugin defaults to opencode, which this config installs
-              # as `opencode2`. Use omp instead.
-              agent.command = "omp";
+            "herdr/plugins/config/olivergilan.herdr-jj/config.toml" = {
+              source = pkgs.writers.writeTOML "herdr-jj-config.toml" {
+                # The plugin rejects a workspace_root that is not absolute.
+                workspace_root = worktreesDir;
+                create_bookmark = false;
+                post_create = "try {direnv allow}; herdr-ide";
+                status_remote = "origin";
+              };
             };
           };
         };
