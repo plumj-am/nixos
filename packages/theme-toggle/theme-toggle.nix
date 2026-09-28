@@ -55,6 +55,11 @@
                     print --stderr "Failed to reload quickshell"
                   }
                 }
+                {
+                  if (herdr server reload-config | complete | get exit_code) != 0 {
+                    print --stderr "Failed to reload herdr"
+                  }
+                }
                 { refresh-apps $refreshable_apps }
                 { update-gsettings }
               ] | par-each {|f| do $f}
