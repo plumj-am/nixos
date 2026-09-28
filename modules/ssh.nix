@@ -1,10 +1,6 @@
 { self, ... }:
 let
   sshConfigBase = {
-    shellAliases = {
-      zzh = "ssh -o RequestTTY=yes -o RemoteCommand='zellij attach --create'";
-    };
-
     hjem.extraModule =
       { config, ... }:
       {

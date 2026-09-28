@@ -10,8 +10,8 @@
       variables = {
         EDITOR = "hx";
         SHELL = getExe pkgs.nushell;
-        TERMINAL = "zellij";
-        TERM_PROGRAM = "zellij";
+        TERMINAL = "herdr";
+        TERM_PROGRAM = "herdr";
         SSH_AUTH_SOCK = "/run/user/1000/ssh-agent";
       };
     in

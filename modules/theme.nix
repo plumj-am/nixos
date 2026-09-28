@@ -139,11 +139,6 @@ let
           light = "gruvbox-light-hard";
         };
 
-        zellij = {
-          dark = "gruvbox-dark";
-          light = "gruvbox-light";
-        };
-
         herdr = {
           dark = "gruvbox";
           light = "gruvbox-light";
@@ -228,7 +223,6 @@ in
       themedApps = [
         "icons"
         "rio"
-        "zellij"
         "herdr"
         "vivid"
         "nushell"

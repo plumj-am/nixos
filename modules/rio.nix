@@ -21,18 +21,9 @@
       };
     in
     {
+      environment.systemPackages = singleton pkgs.rio;
+
       hjemModule = {
-        packages = [
-          pkgs.rio
-
-          (pkgs.makeDesktopItem {
-            desktopName = "Zellij Rio";
-            name = "Zellij-Rio";
-            exec = "rio --command zellij";
-            terminal = false;
-          })
-        ];
-
         xdg.config.files = {
           "rio/config.toml" = {
             generator = pkgs.writers.writeTOML "rio-config.toml";

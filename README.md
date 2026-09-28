@@ -67,7 +67,7 @@ details.
 
 ```nix
 {
-  flake.modules.common.zellij =
+  flake.modules.common.herdr =
     {
       pkgs,
       config,

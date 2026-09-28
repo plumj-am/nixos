@@ -11,7 +11,6 @@ in
         sops
         sudo-desktop
         wsl
-        zellij
       ];
 
       sops.secrets = {

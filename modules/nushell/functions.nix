@@ -10,18 +10,6 @@
       hjemModule = {
         xdg.config.files."nushell/config.nu".text = # nu
           "source ${pkgs.writeText "nushell-functions.nu" ''
-            def zellij-update-tabname []: nothing -> nothing {
-              if "ZELLIJ" in $env {
-                let tab_name = if (pwd) == $env.HOME {
-                  "~"
-                } else {
-                 (pwd | path parse | get stem)
-                }
-
-                zellij action rename-tab $tab_name
-              }
-            }
-
             def "cargo search" [query: string, --limit: int = 10]: nothing -> table {
               cargo search $query --limit $limit
               | lines
