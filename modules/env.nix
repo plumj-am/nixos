@@ -2,10 +2,16 @@
 {
   flake.modules.common.default = self.modules.common.env;
   flake.modules.common.env =
-    { pkgs, lib, ... }:
+    {
+      pkgs,
+      lib,
+      ...
+    }:
     let
       inherit (lib.meta) getExe;
-
+      inherit (lib.modules) mkAfter;
+      inherit (lib.options) mkOption;
+      inherit (lib.types) listOf str;
       # TODO: Make an option.
       variables = {
         EDITOR = "hx";
@@ -16,19 +22,72 @@
       };
     in
     {
-      environment.variables = variables;
+      options.sessionPath = mkOption {
+        type = listOf str;
+        default = [
+          ".local/bin"
+          ".cargo/bin"
+          ".bun/bin"
+        ];
+        example = [
+          ".local/bin"
+          ".cargo/bin"
+        ];
+        description = ''
+          Directories prepended to `PATH` in the user session, in the given
+          order. This is the Hjem equivalent of home-manager's
+          `home.sessionPath`, which Hjem does not provide.
 
-      hjem.extraModule = {
-        environment.sessionVariables = variables;
+          A relative entry is resolved against the user's home directory, so
+          this reads cleanly and works for every configured user. An absolute
+          entry is used as-is.
 
-        # TODO: Add sessionPath equivalent in hjem?
-        # home-manager.sharedModules = [{
-        #   home.sessionPath = [
-        #     "$HOME/.local/bin"
-        #     "$HOME/.cargo/bin"
-        #     "$HOME/.bun/bin"
-        #   ];
-        # }];
+          Hjem's `environment.sessionVariables` can only replace a whole
+          variable, and it exports through a POSIX script that does not expand
+          `$HOME`. Nushell therefore prepends these entries itself, which keeps
+          the inherited `PATH` intact instead of replacing it.
+        '';
+      };
+
+      config = {
+        environment.variables = variables;
+
+        hjem.extraModule = {
+          environment.sessionVariables = variables;
+        };
+
+        hjemModule =
+          {
+            lib,
+            osConfig,
+            config,
+            ...
+          }:
+          let
+            # `osConfig` is the NixOS config, which owns `sessionPath`.
+            # `config` is the hjem user config and only supplies the home
+            # directory.
+            sessionPath = lib.map (
+              entry: if lib.hasPrefix "/" entry then entry else "${config.directory}/${entry}"
+            ) osConfig.sessionPath;
+
+            # Nushell keeps `$env.PATH` as a list, so entries are prepended one
+            # at a time. The list is reversed so the first entry ends up first.
+            nuPathPrepend = lib.concatMapStringsSep "\n" (
+              entry: /* nu */ ''$env.PATH = ($env.PATH | prepend "${lib.toString entry}")''
+            ) (lib.reverseList sessionPath);
+          in
+          {
+            # A session tweak, not a correction to a clobber. Ordered last so
+            # the prepend stays after the other config fragments.
+            xdg.config.files."nushell/config.nu".text =
+              mkAfter
+                # nu
+                ''
+                  # Prepend `sessionPath` to the inherited PATH. See `modules/env.nix`.
+                  ${nuPathPrepend}
+                '';
+          };
       };
     };
 }
