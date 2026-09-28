@@ -50,57 +50,57 @@ QtObject {
 	  expireTimeout: notification.expireTimeout
    }
    historyModel.insert(0, {
-						  "notificationData": data
-					   })
-   while (historyModel.count > maxHistory) {
-	  historyModel.remove(historyModel.count - 1)
-   }
-}
-
-function removeFromHistory(index) {
-   if (index >= 0 && index < historyModel.count) {
-	  historyModel.remove(index)
-   }
-}
-
-function dismiss(index) {
-   removeFromHistory(index)
-}
-
-function dismissById(id) {
-   for (var i = 0; i < historyModel.count; i++) {
-	  if (historyModel.get(i).notificationData.id === id) {
-		 removeFromHistory(i)
-		 return
-	  }
-   }
-}
-
-function dismissAll() {
-   historyModel.clear()
-   seenCount = 0
-}
-
-function invokeAction(notificationData, action) {
-   var tracked = server.trackedNotifications.values.find(function (n) {
-	  return n.id === notificationData.id
+	  "notificationData": data
    })
-   if (tracked && action) {
-	  var trackedAction = action.invoke ? action : tracked.actions.find(function (a) {
-		 return a.identifier === action.identifier
-	  })
-	  if (trackedAction && trackedAction.invoke) {
-		 trackedAction.invoke()
+	  while (historyModel.count > maxHistory) {
+		 historyModel.remove(historyModel.count - 1)
 	  }
-   }
-}
+	  }
 
-function expire(notificationData) {
-   var tracked = server.trackedNotifications.values.find(function (n) {
-	  return n.id === notificationData.id
-   })
-   if (tracked) {
-	  tracked.tracked = false
-   }
-}
-}
+		 function removeFromHistory(index) {
+			if (index >= 0 && index < historyModel.count) {
+			   historyModel.remove(index)
+			}
+			}
+
+			   function dismiss(index) {
+				  removeFromHistory(index)
+			   }
+
+				  function dismissById(id) {
+					 for (var i = 0; i < historyModel.count; i++) {
+						if (historyModel.get(i).notificationData.id === id) {
+						   removeFromHistory(i)
+						   return
+						}
+						}
+						}
+
+						   function dismissAll() {
+							  historyModel.clear()
+							  seenCount = 0
+						   }
+
+							  function invokeAction(notificationData, action) {
+								 var tracked = server.trackedNotifications.values.find(function (n) {
+									return n.id === notificationData.id
+								 })
+									if (tracked && action) {
+									   var trackedAction = action.invoke ? action : tracked.actions.find(function (a) {
+										  return a.identifier === action.identifier
+									   })
+									   if (trackedAction && trackedAction.invoke) {
+										  trackedAction.invoke()
+									   }
+									   }
+									   }
+
+										  function expire(notificationData) {
+											 var tracked = server.trackedNotifications.values.find(function (n) {
+												return n.id === notificationData.id
+											 })
+												if (tracked) {
+												   tracked.tracked = false
+												}
+												}
+												}

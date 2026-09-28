@@ -103,9 +103,9 @@ QtObject {
 		 try {
 			const data = JSON.parse(text())
 			if (data.mode)
-			theme.mode = data.mode
+			   theme.mode = data.mode
 			if (data.colors)
-			theme.fileColors = data.colors
+			   theme.fileColors = data.colors
 		 } catch (e) {
 			console.log("Failed to parse theme.json:", e)
 		 }

@@ -57,7 +57,9 @@
 
                   models =
                     config.ai.models
-                    |> map (model: mapAttrs' (name: value: nameValuePair (modelAttrRenames.${name} or name) value) model);
+                    |> map (
+                      model: mapAttrs' (name: value: nameValuePair (modelAttrRenames.${name} or name) value) model
+                    );
                 in
                 config.ai.providers
                 |> mapAttrs' (
