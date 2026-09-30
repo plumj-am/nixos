@@ -3,18 +3,14 @@
   flake.modules.nixos.web-server = self.modules.nixos.acme;
   flake.modules.nixos.acme =
     {
-      lib,
       config,
       ...
     }:
     let
-      inherit (lib.options) mkValue;
       inherit (config.networking) domain;
       inherit (config.sops) secrets;
     in
     {
-      options.security.acme.users = mkValue [ ];
-
       config = {
         sops.secrets."acme/environment".sopsFile = ../secrets/services/acme.yaml;
 

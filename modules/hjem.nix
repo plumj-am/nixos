@@ -6,52 +6,12 @@
 }:
 let
   inherit (lib.lists) optional singleton;
-  inherit (lib.options) mkOptionNullOr;
-  inherit (lib.types) deferredModule;
 
   mkHjemModule =
     hjemModule:
     { config, ... }:
     {
       imports = singleton hjemModule;
-
-      # Before:
-      # ```nix
-      # {
-      #  flake.modules.common.something =
-      #    {lib, ...}:
-      #    let
-      #      inherit (lib.lists) singleton;
-      #    in
-      #    {
-      #      hjem.extraModules = singleton { };
-      #    };
-      # }
-      # ```
-      #
-      # After:
-      # ```nix
-      # {
-      #   flake.modules.common.something = {
-      #     hjem.extraModule = { };
-      #   };
-      # }
-      # ```
-      options.hjem.extraModule = mkOptionNullOr deferredModule {
-        description = ''
-          Single module to be evaluated as a part of the users module
-          inside `config.hjem.users.<username>`. Use this instead of
-          `extraModules` when you only have one module to add.
-        '';
-      };
-
-      options.hjemModule = mkOptionNullOr deferredModule {
-        description = ''
-          Single module to be evaluated as a part of the users module
-          inside `config.hjem.users.<username>`. Use this instead of
-          `extraModules` when you only have one module to add.
-        '';
-      };
 
       config.hjem.extraModules =
         optional (config.hjem.extraModule != null) config.hjem.extraModule

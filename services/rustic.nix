@@ -3,8 +3,8 @@
     {
       pkgs,
       lib,
-      config,
       utils,
+      config,
       ...
     }:
     let
@@ -20,7 +20,6 @@
       inherit (lib.options) mkOptionNullOr mkOptionOf mkPackageOption;
       inherit (lib.strings) concatStringsSep escapeShellArg optionalString;
       inherit (lib.types)
-        anything
         attrsOf
         bool
         listOf
@@ -28,25 +27,11 @@
         str
         submodule
         ;
-
-      inherit (config.networking) hostName;
       inherit (utils.systemdUtils.unitOptions) unitOption;
 
       cfg = config.services.rustic;
     in
     {
-      options.helpers =
-        mkOptionOf (attrsOf anything) {
-          default = { };
-          description = "Helper exports";
-        }
-        // {
-          rustic = mkOptionOf (attrsOf anything) {
-            default = { };
-            description = "Rustic helper exports";
-          };
-        };
-
       options.services.rustic = {
         passwordFile = mkOptionNullOr str {
           description = "Path to a file containing the rustic repository password.";
@@ -147,40 +132,6 @@
       };
 
       config = {
-        assertions = mapAttrsToList (name: backup: {
-          assertion = backup.paths != [ ] || backup.pruneOpts != [ ] || backup.checkOpts != [ ];
-          message = "services.rustic.backups.${name} has nothing to do (no paths, pruneOpts, or checkOpts).";
-        }) cfg.backups;
-
-        helpers.rustic.mkBackup =
-          name: rest:
-          {
-            package = pkgs.rustic;
-            environmentFile =
-              toString
-              <| pkgs.writeText "rustic-s3-env" ''
-                RUSTIC_REPOSITORY="opendal:s3"
-                ${optionalString (cfg.passwordFile != null) ''RUSTIC_PASSWORD_FILE="${cfg.passwordFile}"''}
-
-                OPENDAL_BUCKET="${cfg.bucket}"
-                OPENDAL_ROOT="/${hostName}/${name}"
-                OPENDAL_ENDPOINT="http://${cfg.endpoint}"
-                OPENDAL_REGION="${cfg.region}"
-
-                AWS_PROFILE=${cfg.alias}
-                ${optionalString (cfg.credentialsFile != null) "AWS_SHARED_CREDENTIALS_FILE=${cfg.credentialsFile}"}
-                AWS_REGION=${cfg.region}
-              '';
-            initialize = true;
-            pruneOpts = [
-              "--keep-daily 8"
-              "--keep-weekly 5"
-              "--keep-monthly 3"
-            ];
-            runCheck = true;
-          }
-          // rest;
-
         systemd.services = mapAttrs' (
           name: backup:
           let

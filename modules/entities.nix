@@ -12,9 +12,7 @@
         ;
       inherit (lib.fixedPoints) fix;
       inherit (lib.lists) concatMap elem unique;
-      inherit (lib.options) mkOptionOf;
       inherit (lib.trivial) const;
-      inherit (lib.types) anything attrsOf;
 
       everyone = removeAttrs entities.people [ "self" ];
 
@@ -145,13 +143,6 @@
       });
     in
     {
-      options.flake.entities = mkOptionOf (attrsOf anything) {
-        default = { };
-        description = ''
-          All persistent entities associated with this configuration collection.
-        '';
-      };
-
       config.flake.entities = entities;
 
       config.users.groups = genAttrs entities.allExtraGroups (const { });

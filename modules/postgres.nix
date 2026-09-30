@@ -9,14 +9,11 @@
     let
       inherit (lib.constants) tailnet;
       inherit (lib.modules) mkForce mkOverride;
-      inherit (lib.options) mkValue;
       inherit (lib.trivial) flip;
       inherit (config.networking) hostName;
     in
     {
       config.environment.systemPackages = [ config.services.postgresql.package ];
-
-      options.services.postgresql.ensure = mkValue [ ];
 
       config.services.postgresql = {
         enable = true;

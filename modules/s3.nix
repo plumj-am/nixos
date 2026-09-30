@@ -14,8 +14,6 @@
     }:
     let
       inherit (lib.constants) tailnet;
-      inherit (lib.options) mkOptionOf;
-      inherit (lib.types) attrs str;
       inherit (config.sops) secrets;
 
       caches = {
@@ -38,19 +36,6 @@
       };
     in
     {
-      options.s3 = {
-        caches = mkOptionOf attrs {
-          type = attrs;
-          default = { };
-          defaultText = "Shared S3 caches configuration";
-          description = "S3 caches keyed by name (fsn1, garage).";
-        };
-        credentialsFile = mkOptionOf str {
-          default = "/var/lib/s3/.aws/credentials";
-          description = "Shared S3 credentials file";
-        };
-      };
-
       config = {
         s3 = {
           inherit caches;

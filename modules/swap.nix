@@ -12,24 +12,10 @@
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe';
       inherit (lib.modules) mkIf mkMerge;
-      inherit (lib.options) mkOptionNullOr mkOptionOf;
-      inherit (lib.types) int str;
 
       cfg = config.systemInfo.disks;
     in
     {
-      options.systemInfo.disks = {
-        swap = {
-          file = {
-            path = mkOptionOf str {
-              default = "/swapfile";
-
-            };
-            size = mkOptionNullOr int;
-          };
-        };
-      };
-
       config = mkMerge [
         {
           boot.zswap.enable = true;
@@ -74,26 +60,10 @@
     { lib, config, ... }:
     let
       inherit (lib.lists) singleton;
-      inherit (lib.options) mkOptionOf;
-      inherit (lib.types) str;
 
       cfg = config.systemInfo.disks;
     in
     {
-      options.systemInfo.disks = {
-        swap.partition = {
-          size = mkOptionOf str {
-            default = "34G";
-          };
-          path = mkOptionOf str {
-            default = "/dev/disk/by-label/swap";
-          };
-        };
-        diskDevice = mkOptionOf str {
-          default = "/dev/nvme0n1";
-        };
-      };
-
       config = {
         boot.zswap.enable = true;
         swapDevices = singleton {

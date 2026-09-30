@@ -9,15 +9,8 @@
     }:
     let
       inherit (lib.meta) getExe;
-      inherit (lib.options) mkOptionOf;
-      inherit (lib.types) attrsOf str;
     in
     {
-      options.shellAliases = mkOptionOf (attrsOf str) {
-        default = { };
-        description = "Additional shell aliases to be merged with defaults";
-      };
-
       config.hjemModule =
         {
           osConfig,

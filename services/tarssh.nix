@@ -7,14 +7,17 @@
       ...
     }:
     let
-      inherit (lib.lists) optionals;
+      inherit (lib.attrsets) optionalAttrs;
+      inherit (lib.lists) optional singleton;
       inherit (lib.meta) getExe;
+      inherit (lib.modules) mkIf;
       inherit (lib.options)
         mkEnableOption
         mkOptionNullOr
         mkOptionOf
         mkPackageOption
         ;
+      inherit (lib.strings) concatStringsSep replicate;
       inherit (lib.types)
         bool
         int
@@ -28,7 +31,7 @@
       listenArg = "${cfg.listenAddress}:${toString cfg.listenPort}";
       needsPrivileges = cfg.listenPort < 1024;
       dynamicUser = cfg.user == null && cfg.group == null;
-      capabilities = optionals needsPrivileges [ "CAP_NET_BIND_SERVICE" ];
+      capabilities = optional needsPrivileges "CAP_NET_BIND_SERVICE";
     in
     {
       options.services.tarssh = {
@@ -114,7 +117,7 @@
         };
       };
 
-      config = lib.mkIf cfg.enable {
+      config = mkIf cfg.enable {
         assertions = [
           {
             assertion = !(cfg.user != null && cfg.user == "root");
@@ -138,30 +141,29 @@
 
         systemd.services.tarssh = {
           description = "SSH tarpit (tarssh)";
-          wantedBy = [ "multi-user.target" ];
-          after = [ "network.target" ];
+          wantedBy = singleton "multi-user.target";
+          after = singleton "network.target";
           serviceConfig =
             let
               userAttrs =
-                lib.optionalAttrs (cfg.user != null) { User = cfg.user; }
-                // lib.optionalAttrs (cfg.group != null) { Group = cfg.group; };
-              verboseFlag =
-                if cfg.verbose > 0 then lib.strings.concatStringsSep " " (lib.replicate cfg.verbose "-v") else "";
+                optionalAttrs (cfg.user != null) { User = cfg.user; }
+                // optionalAttrs (cfg.group != null) { Group = cfg.group; };
+              verboseFlag = if cfg.verbose > 0 then concatStringsSep " " (replicate cfg.verbose "-v") else "";
             in
             {
-              ExecStart = lib.concatStringsSep " " (
+              ExecStart = concatStringsSep " " (
                 [ (getExe cfg.package) ]
                 ++ [ "--listen ${listenArg}" ]
                 ++ [ "--delay ${toString cfg.delay}" ]
                 ++ [ "--timeout ${toString cfg.timeout}" ]
                 ++ [ "--max-clients ${toString cfg.maxClients}" ]
-                ++ optionals (cfg.user != null) [ "--user ${cfg.user}" ]
-                ++ optionals (cfg.group != null) [ "--group ${cfg.group}" ]
-                ++ optionals (cfg.chroot != null) [ "--chroot ${cfg.chroot}" ]
-                ++ optionals cfg.disableLogIdent [ "--disable-log-ident" ]
-                ++ optionals cfg.disableLogLevel [ "--disable-log-level" ]
-                ++ optionals cfg.disableLogTimestamps [ "--disable-log-timestamps" ]
-                ++ optionals (cfg.verbose > 0) [ verboseFlag ]
+                ++ optional (cfg.user != null) "--user ${cfg.user}"
+                ++ optional (cfg.group != null) "--group ${cfg.group}"
+                ++ optional (cfg.chroot != null) "--chroot ${cfg.chroot}"
+                ++ optional cfg.disableLogIdent "--disable-log-ident"
+                ++ optional cfg.disableLogLevel "--disable-log-level"
+                ++ optional cfg.disableLogTimestamps "--disable-log-timestamps"
+                ++ optional (cfg.verbose > 0) verboseFlag
               );
 
               DynamicUser = dynamicUser;
@@ -204,7 +206,7 @@
             };
         };
 
-        networking.firewall.allowedTCPPorts = lib.optional cfg.openFirewall cfg.listenPort;
+        networking.firewall.allowedTCPPorts = optional cfg.openFirewall cfg.listenPort;
       };
     };
 }
