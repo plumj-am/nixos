@@ -622,7 +622,7 @@
     }:
     let
       inherit (lib.lists) singleton;
-      inherit (lib.meta) getExe;
+      inherit (lib.meta) getExe';
       inherit (lib.modules) mkDefault;
     in
     {
@@ -644,7 +644,7 @@
             ui.merge-editor = "weave";
 
             merge-tools.weave = {
-              program = getExe pkgs.weave;
+              program = getExe' pkgs.weave "weave-driver";
               merge-args = [
                 "$base"
                 "$left"
