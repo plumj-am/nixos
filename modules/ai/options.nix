@@ -18,8 +18,42 @@
       inherit (lib.trivial) const flip;
       inherit (lib.types) listOf str;
 
-      skillTypes = import ../../options/skills.nix { inherit lib; };
+      repoSkill = lib.types.submodule {
+        options = {
+          repo = lib.mkOption {
+            type = lib.types.str;
+            description = "Upstream repository that hosts the skill.";
+          };
+          skills = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [ ];
+            description = "List of skill names to install from the repository. Empty means install every skill the repository provides.";
+          };
+          requires = lib.mkOption {
+            type = lib.types.listOf lib.types.package;
+            default = [ ];
+            description = "Packages that must be part of the installed system for this skill set to be installed.";
+          };
+        };
+      };
 
+      localSkill = lib.types.submodule {
+        options = {
+          name = lib.mkOption {
+            type = lib.types.str;
+            description = "Name of the local skill.";
+          };
+          skillmd = lib.mkOption {
+            type = lib.types.lines;
+            description = "Skill instructions in markdown.";
+          };
+          requires = lib.mkOption {
+            type = lib.types.listOf lib.types.package;
+            default = [ ];
+            description = "Packages that must be part of the installed system for this skill set to be installed.";
+          };
+        };
+      };
       # a skill set documents a tool; installing it is only useful when that
       # tool is in the system, so gate on the packages the host actually has
       installedPackages =
@@ -41,21 +75,21 @@
         };
 
         skills.gh = mkOption {
-          type = listOf skillTypes.repoSkill;
+          type = listOf repoSkill;
           default = [ ];
           description = ''
             skills to install from github
           '';
         };
         skills.npm = mkOption {
-          type = listOf skillTypes.repoSkill;
+          type = listOf repoSkill;
           default = [ ];
           description = ''
             skills to install from npm
           '';
         };
         skills.local = mkOption {
-          type = listOf skillTypes.localSkill;
+          type = listOf localSkill;
           default = [ ];
           description = ''
             skills to install from local sources
@@ -64,21 +98,21 @@
         # read-only views of the writable options above, with skill sets whose
         # `requires` packages are missing from this host filtered out
         skills.ghInstalled = mkOption {
-          type = listOf skillTypes.repoSkill;
+          type = listOf repoSkill;
           readOnly = true;
           description = ''
             github skills whose required packages are installed
           '';
         };
         skills.npmInstalled = mkOption {
-          type = listOf skillTypes.repoSkill;
+          type = listOf repoSkill;
           readOnly = true;
           description = ''
             npm skills whose required packages are installed
           '';
         };
         skills.localInstalled = mkOption {
-          type = listOf skillTypes.localSkill;
+          type = listOf localSkill;
           readOnly = true;
           description = ''
             local skills whose required packages are installed
