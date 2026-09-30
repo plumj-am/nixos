@@ -52,10 +52,6 @@
       config = {
         environment.variables = variables;
 
-        hjem.extraModule = {
-          environment.sessionVariables = variables;
-        };
-
         hjemModule =
           {
             lib,
@@ -64,28 +60,20 @@
             ...
           }:
           let
-            # `osConfig` is the NixOS config, which owns `sessionPath`.
-            # `config` is the hjem user config and only supplies the home
-            # directory.
             sessionPath = lib.map (
               entry: if lib.hasPrefix "/" entry then entry else "${config.directory}/${entry}"
             ) osConfig.sessionPath;
-
-            # Nushell keeps `$env.PATH` as a list, so entries are prepended one
-            # at a time. The list is reversed so the first entry ends up first.
-            nuPathPrepend = lib.concatMapStringsSep "\n" (
-              entry: /* nu */ ''$env.PATH = ($env.PATH | prepend "${lib.toString entry}")''
-            ) (lib.reverseList sessionPath);
           in
           {
-            # A session tweak, not a correction to a clobber. Ordered last so
-            # the prepend stays after the other config fragments.
+            environment.sessionVariables = variables;
+
             xdg.config.files."nushell/config.nu".text =
               mkAfter
                 # nu
                 ''
-                  # Prepend `sessionPath` to the inherited PATH. See `modules/env.nix`.
-                  ${nuPathPrepend}
+                  ${lib.concatMapStringsSep "\n" (
+                    entry: /* nu */ ''$env.PATH = ($env.PATH | prepend "${lib.toString entry}")''
+                  ) (lib.reverseList sessionPath)}
                 '';
           };
       };
