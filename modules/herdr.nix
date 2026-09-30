@@ -109,7 +109,7 @@
 
                   resize_mode = "alt+r";
 
-                  workspace_picker = "prefix+p";
+                  workspace_picker = "prefix+ctrl+p";
                   navigate_workspace_down = "j";
                   navigate_workspace_up = "k";
                   navigate_pane_left = "";
@@ -117,22 +117,27 @@
                   navigate_pane_up = "";
                   navigate_pane_right = "";
 
+                  previous_agent = "prefix+p";
+                  next_agent = "prefix+n";
+
+                  previous_workspace = "alt+shift+k";
+                  next_workspace = "alt+shift+j";
                   goto = "prefix+shift+p";
 
                   split_horizontal = "prefix+ctrl+d";
                   split_vertical = "prefix+ctrl+r";
                   close_pane = "prefix+x";
 
-                  swap_pane_left = "alt+shift+h";
-                  swap_pane_up = "alt+shift+k";
-                  swap_pane_down = "alt+shift+j";
-                  swap_pane_right = "alt+shift+l";
+                  swap_pane_left = "alt+ctrl+h";
+                  swap_pane_up = "alt+ctrl+k";
+                  swap_pane_down = "alt+ctrl+j";
+                  swap_pane_right = "alt+ctrl+l";
 
                   switch_tab = "prefix+1..9";
                   switch_workspace = "prefix+alt+1..9";
 
-                  move_tab_previous = "prefix+h";
-                  move_tab_next = "prefix+l";
+                  move_tab_previous = "alt+ctrl+shift+h";
+                  move_tab_next = "alt+ctrl+shift+l";
 
                   copy_mode = "prefix+s";
 
