@@ -49,7 +49,7 @@ in
         e = "hx"; # editor
       };
 
-      hjem.extraModule = {
+      hjem.extraModule = { config, ... }: {
         packages = [
           # steelix's grammars.json revisions need syncing with the query files in its runtime
           (pkgs.symlinkJoin {
@@ -272,7 +272,7 @@ in
                       formatter.command = "nufmt";
                       formatter.args = [
                         "--config"
-                        "/home/jam/.config/nufmt/config.nuon"
+                        "${config.directory}/.config/nufmt/config.nuon"
                         "--stdin"
                       ];
                       language-servers = [
