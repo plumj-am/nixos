@@ -34,6 +34,13 @@
                 {||
                   ${getExe pkgs.direnv} export json | from json | default {} | load-env
                 }
+                # For jj workspaces so git stuff still works.
+                {||
+                  $env.GIT_DIR = match (${getExe pkgs.jujutsu} git root | complete) {
+                    {exit_code: 0, stdout: $out} => { $out | str trim }
+                    _ => { "" }
+                  }
+                }
               ]
             '';
       };
