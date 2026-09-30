@@ -2,10 +2,16 @@
 {
   flake.modules.common.default = self.modules.common.ai-options;
   flake.modules.common.ai-options =
-    { lib, config, ... }:
+    {
+      inputs,
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
     let
       inherit (lib.attrsets) genAttrs;
-      inherit (lib.lists) filter;
+      inherit (lib.lists) all elem filter;
       inherit (lib.modules) mkIf;
       inherit (lib.options) mkEnableOption mkOption;
       inherit (lib.strings) hasSuffix removeSuffix;
@@ -13,6 +19,14 @@
       inherit (lib.types) listOf str;
 
       skillTypes = import ../../options/skills.nix { inherit lib; };
+
+      # a skill set documents a tool; installing it is only useful when that
+      # tool is in the system, so gate on the packages the host actually has
+      installedPackages =
+        (lib.attrByPath [ "environment" "systemPackages" ] [ ] config)
+        ++ (lib.attrByPath [ "home" "packages" ] [ ] config);
+      installedSkills =
+        entries: filter (entry: all (dep: elem dep installedPackages) (entry.requires or [ ])) entries;
     in
     {
       options.ai = {
@@ -47,6 +61,29 @@
             skills to install from local sources
           '';
         };
+        # read-only views of the writable options above, with skill sets whose
+        # `requires` packages are missing from this host filtered out
+        skills.ghInstalled = mkOption {
+          type = listOf skillTypes.repoSkill;
+          readOnly = true;
+          description = ''
+            github skills whose required packages are installed
+          '';
+        };
+        skills.npmInstalled = mkOption {
+          type = listOf skillTypes.repoSkill;
+          readOnly = true;
+          description = ''
+            npm skills whose required packages are installed
+          '';
+        };
+        skills.localInstalled = mkOption {
+          type = listOf skillTypes.localSkill;
+          readOnly = true;
+          description = ''
+            local skills whose required packages are installed
+          '';
+        };
       };
 
       config = {
@@ -58,6 +95,15 @@
               "grill-me"
               "grill-with-docs"
             ];
+          }
+          {
+            repo = "https://github.com/stablyai/orca";
+            skills = [
+              "orchestration"
+              "orca-cli"
+            ];
+            # the orca skills drive the orca CLI, so skip them where it is absent
+            requires = [ inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.orca ];
           }
         ];
         ai.skills.gh = [
@@ -109,6 +155,10 @@
             '';
           }
         ];
+
+        ai.skills.ghInstalled = installedSkills config.ai.skills.gh;
+        ai.skills.npmInstalled = installedSkills config.ai.skills.npm;
+        ai.skills.localInstalled = installedSkills config.ai.skills.local;
 
         sops.secrets =
           mkIf config.ai.secrets

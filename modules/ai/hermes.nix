@@ -19,9 +19,9 @@ let
       smallModel ? config.ai.defaultModels.small,
       visionModel ? config.ai.defaultModels.vision,
       personality ? "concise",
-      npmSkills ? config.ai.skills.npm,
-      ghSkills ? config.ai.skills.gh,
-      localSkills ? config.ai.skills.local,
+      npmSkills ? config.ai.skills.npmInstalled,
+      ghSkills ? config.ai.skills.ghInstalled,
+      localSkills ? config.ai.skills.localInstalled,
       withInstagram ? false,
       withKiwi ? false,
       withLinear ? false,
@@ -349,6 +349,7 @@ let
             cloud_provider = "browser-use";
             inactivity_timeout = 120;
           };
+          web.backend = "nous"; # free perplexity:
 
           command_allowlist = config.ai.commands.bash.allow;
 

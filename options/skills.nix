@@ -11,6 +11,11 @@
         default = [ ];
         description = "List of skill names to install from the repository. Empty means install every skill the repository provides.";
       };
+      requires = lib.mkOption {
+        type = lib.types.listOf lib.types.package;
+        default = [ ];
+        description = "Packages that must be part of the installed system for this skill set to be installed.";
+      };
     };
   };
 
@@ -23,6 +28,11 @@
       skillmd = lib.mkOption {
         type = lib.types.lines;
         description = "Skill instructions in markdown.";
+      };
+      requires = lib.mkOption {
+        type = lib.types.listOf lib.types.package;
+        default = [ ];
+        description = "Packages that must be part of the installed system for this skill set to be installed.";
       };
     };
   };

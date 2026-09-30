@@ -86,7 +86,7 @@
                   --yes
                   --agent universal
                   --global)
-              '') skills.npm}
+              '') skills.npmInstalled}
 
               print "installing gh skills..."
               ${concatMapStringsSep "\n" (entry: ''
@@ -96,7 +96,7 @@
                   --agent universal
                   --scope user
                   --force)
-              '') skills.gh}
+              '') skills.ghInstalled}
 
               print "installing rtk extension..."
               # rtk 0.45.0 has no `--agent omp`: the pi extension is the same file OMP
