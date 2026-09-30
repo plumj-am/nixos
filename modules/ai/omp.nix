@@ -92,8 +92,8 @@
             value = {
               # [appearance]
               theme = {
-                dark = "dark-gruvbox";
-                light = "light-gruvbox";
+                dark = "dark";
+                light = "light";
               };
               symbolPreset = "unicode";
               statusLine = {
@@ -270,6 +270,9 @@
               };
             };
           };
+
+          ".omp/agent/extensions/theme.ts".source =
+            self.packages.${pkgs.stdenv.hostPlatform.system}.omp-theme;
         };
       };
     };
