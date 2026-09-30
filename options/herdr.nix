@@ -4,7 +4,7 @@
   flake.modules.common.herdr-options =
     { lib, ... }:
     let
-      inherit (lib.options) mkOption;
+      inherit (lib.options) mkOptionNullOr mkOptionOf;
       inherit (lib.types)
         enum
         listOf
@@ -14,43 +14,35 @@
         ;
     in
     {
-      options.herdr.keys.command = mkOption {
-        type =
-          listOf
-          <| submodule {
-            options = {
-              key = lib.mkOption {
-                type = str;
-              };
-              type = mkOption {
+      options.herdr.keys.command =
+        mkOptionOf
+          (
+            listOf
+            <| submodule {
+              options = {
+                key = mkOptionOf str;
                 type =
-                  nullOr
-                  <| enum [
-                    "popup"
-                    "pane"
-                    "shell"
-                  ];
-                default = "pane";
+                  mkOptionOf
+                    (
+                      nullOr
+                      <| enum [
+                        "popup"
+                        "pane"
+                        "shell"
+                      ]
+                    )
+                    {
+                      default = "pane";
+                    };
+                width = mkOptionNullOr str;
+                height = mkOptionNullOr str;
+                command = mkOptionNullOr str;
+                description = mkOptionNullOr str;
               };
-              width = mkOption {
-                type = nullOr str;
-                default = null;
-              };
-              height = mkOption {
-                type = nullOr str;
-                default = null;
-              };
-              command = mkOption {
-                type = nullOr str;
-                default = null;
-              };
-              description = mkOption {
-                type = nullOr str;
-                default = null;
-              };
-            };
+            }
+          )
+          {
+            default = [ ];
           };
-        default = [ ];
-      };
     };
 }

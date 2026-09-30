@@ -10,7 +10,7 @@
     let
       inherit (lib.meta) getExe;
       inherit (lib.modules) mkAfter;
-      inherit (lib.options) mkOption;
+      inherit (lib.options) mkOptionOf;
       inherit (lib.types) listOf str;
       # TODO: Make an option.
       variables = {
@@ -22,8 +22,7 @@
       };
     in
     {
-      options.sessionPath = mkOption {
-        type = listOf str;
+      options.sessionPath = mkOptionOf (listOf str) {
         default = [
           ".local/bin"
           ".cargo/bin"

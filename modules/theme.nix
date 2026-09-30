@@ -10,7 +10,7 @@ let
     isDerivation
     mapAttrs
     ;
-  inherit (lib.options) mkOption;
+  inherit (lib.options) mkOptionOf;
   inherit (lib.types) anything attrsOf enum;
 
   gruvboxColors = {
@@ -233,20 +233,21 @@ in
       ];
     in
     {
-      options.theme = mkOption {
-        type = attrsOf anything;
+      options.theme = mkOptionOf (attrsOf anything) {
         default = { };
         description = "Derived global theme configuration. Set `themeMode` instead.";
       };
 
-      options.themeMode = mkOption {
-        type = enum [
-          "dark"
-          "light"
-        ];
-        default = "light";
-        description = "Active light or dark variant. Override per host with `themeMode`.";
-      };
+      options.themeMode =
+        mkOptionOf
+          (enum [
+            "dark"
+            "light"
+          ])
+          {
+            default = "light";
+            description = "Active light or dark variant. Override per host with `themeMode`.";
+          };
 
       config = {
         # makes switching variants faster if they are all present

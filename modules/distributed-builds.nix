@@ -10,13 +10,11 @@
     let
       inherit (lib.attrsets) attrsToList;
       inherit (lib.lists) filter;
-      inherit (lib.options) mkOption;
-      inherit (lib.types) ints nullOr;
+      inherit (lib.options) mkOptionNullOr;
+      inherit (lib.types) ints;
     in
     {
-      options.systemInfo.distributedBuilder.speedFactor = mkOption {
-        type = nullOr <| ints.between 1 10;
-        default = null;
+      options.systemInfo.distributedBuilder.speedFactor = mkOptionNullOr (ints.between 1 10) {
         description = "Relative speed factor for distributed builds";
       };
 

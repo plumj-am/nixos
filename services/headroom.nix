@@ -11,7 +11,7 @@
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
       inherit (lib.modules) mkIf;
-      inherit (lib.options) mkEnableOption mkOption;
+      inherit (lib.options) mkEnableOption mkOptionOf;
       inherit (lib.types) package port str;
 
       headroom = self.packages.${pkgs.stdenv.hostPlatform.system}.headroom;
@@ -22,14 +22,12 @@
       options.services.headroom = {
         enable = mkEnableOption "headroom compression proxy for AI agents";
 
-        port = mkOption {
-          type = port;
+        port = mkOptionOf port {
           default = 8022;
           description = "Port for the headroom proxy to listen on.";
         };
 
-        package = mkOption {
-          type = package;
+        package = mkOptionOf package {
           default = headroom;
           description = "Headroom package to run the proxy from.";
         };
@@ -37,8 +35,7 @@
         # Upstream OpenAI-compatible base for the proxy's /v1/chat/completions
         # route. The AI providers append /chat/completions, so a client base
         # of <proxy>/v1 reaches exactly this + /v1/chat/completions.
-        openaiApiUrl = mkOption {
-          type = str;
+        openaiApiUrl = mkOptionOf str {
           default = "http://127.0.0.1:8023";
           description = "OpenAI-compatible upstream base URL for /v1/chat/completions.";
         };

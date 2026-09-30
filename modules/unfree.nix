@@ -6,15 +6,14 @@
     let
       inherit (lib.lists) elem;
       inherit (lib.modules) mkIf;
-      inherit (lib.options) mkOption;
+      inherit (lib.options) mkOptionOf;
       inherit (lib.strings) getName;
       inherit (lib.types) listOf str;
 
       inherit (config.systemInfo) gpu;
     in
     {
-      options.unfree.allowedNames = mkOption {
-        type = listOf str;
+      options.unfree.allowedNames = mkOptionOf (listOf str) {
         default = [ ];
         description = "List of unfree package names to allow";
         example = [

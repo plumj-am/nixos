@@ -9,12 +9,11 @@
     }:
     let
       inherit (lib.meta) getExe;
-      inherit (lib.options) mkOption;
+      inherit (lib.options) mkOptionOf;
       inherit (lib.types) attrsOf str;
     in
     {
-      options.shellAliases = mkOption {
-        type = attrsOf str;
+      options.shellAliases = mkOptionOf (attrsOf str) {
         default = { };
         description = "Additional shell aliases to be merged with defaults";
       };

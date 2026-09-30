@@ -4,63 +4,65 @@
   flake.modules.nixos.locale =
     { lib, config, ... }:
     let
-      inherit (lib.options) mkOption;
+      inherit (lib.options) mkOptionOf;
       inherit (lib.types) enum float str;
 
       cfg = config.localisation;
     in
     {
       options.localisation = {
-        time_zone = mkOption {
-          type = str;
+        time_zone = mkOptionOf str {
           default = "Europe/Warsaw";
           description = "IANA time zone identifier";
         };
 
-        i18n = mkOption {
-          type = str;
+        i18n = mkOptionOf str {
           default = "en_US.UTF-8";
           description = "i18n locale string";
         };
 
         location = {
-          latitude = mkOption {
-            type = float;
+          latitude = mkOptionOf float {
             default = 52.23;
             description = "approximate latitude of current location";
           };
-          longitude = mkOption {
-            type = float;
+          longitude = mkOptionOf float {
             default = 52.23;
             description = "approximate longitude of current location";
           };
         };
 
         units = {
-          system = mkOption {
-            type = enum [
-              "metric"
-              "imperial"
-            ];
-            default = "metric";
-            description = "unit system to use";
-          };
-          temperature = mkOption {
-            type = enum [
-              "celcius"
-              "fahrenheit"
-            ];
-            default = "celcius";
-            description = "temperature unit to use";
-          };
-          temperature_short = mkOption {
-            type = enum [
-              "C"
-              "F"
-            ];
-            default = if cfg.units.temperature == "fahrenheit" then "F" else "C";
-            description = "temperature unit to use";
-          };
+          system =
+            mkOptionOf
+              (enum [
+                "metric"
+                "imperial"
+              ])
+              {
+                default = "metric";
+                description = "unit system to use";
+              };
+          temperature =
+            mkOptionOf
+              (enum [
+                "celcius"
+                "fahrenheit"
+              ])
+              {
+                default = "celcius";
+                description = "temperature unit to use";
+              };
+          temperature_short =
+            mkOptionOf
+              (enum [
+                "C"
+                "F"
+              ])
+              {
+                default = if cfg.units.temperature == "fahrenheit" then "F" else "C";
+                description = "temperature unit to use";
+              };
         };
       };
 

@@ -7,7 +7,7 @@
 let
   inherit (lib.attrsets) mapAttrs;
   inherit (lib.lists) singleton;
-  inherit (lib.options) mkOption;
+  inherit (lib.options) mkOptionOf;
   inherit (lib.strings) escapeNixIdentifier;
   inherit (lib.types) deferredModule lazyAttrsOf;
 
@@ -46,9 +46,7 @@ in
   # ];
 
   options.flake = {
-    modules = mkOption {
-      type = lazyAttrsOf <| lazyAttrsOf deferredModule;
-
+    modules = mkOptionOf (lazyAttrsOf <| lazyAttrsOf deferredModule) {
       apply = mapAttrs (k: mapAttrs (addInfo k));
 
       description = ''
@@ -61,8 +59,7 @@ in
       '';
     };
 
-    services = mkOption {
-      type = lazyAttrsOf deferredModule;
+    services = mkOptionOf (lazyAttrsOf deferredModule) {
       description = ''
         Services published by the flake.
       '';

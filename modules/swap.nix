@@ -12,8 +12,8 @@
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe';
       inherit (lib.modules) mkIf mkMerge;
-      inherit (lib.options) mkOption;
-      inherit (lib.types) int nullOr str;
+      inherit (lib.options) mkOptionNullOr mkOptionOf;
+      inherit (lib.types) int str;
 
       cfg = config.systemInfo.disks;
     in
@@ -21,15 +21,11 @@
       options.systemInfo.disks = {
         swap = {
           file = {
-            path = mkOption {
-              type = str;
+            path = mkOptionOf str {
               default = "/swapfile";
 
             };
-            size = mkOption {
-              type = nullOr int;
-              default = null;
-            };
+            size = mkOptionNullOr int;
           };
         };
       };
@@ -78,7 +74,7 @@
     { lib, config, ... }:
     let
       inherit (lib.lists) singleton;
-      inherit (lib.options) mkOption;
+      inherit (lib.options) mkOptionOf;
       inherit (lib.types) str;
 
       cfg = config.systemInfo.disks;
@@ -86,17 +82,14 @@
     {
       options.systemInfo.disks = {
         swap.partition = {
-          size = mkOption {
-            type = str;
+          size = mkOptionOf str {
             default = "34G";
           };
-          path = mkOption {
-            type = str;
+          path = mkOptionOf str {
             default = "/dev/disk/by-label/swap";
           };
         };
-        diskDevice = mkOption {
-          type = str;
+        diskDevice = mkOptionOf str {
           default = "/dev/nvme0n1";
         };
       };

@@ -12,7 +12,7 @@
         ;
       inherit (lib.fixedPoints) fix;
       inherit (lib.lists) concatMap elem unique;
-      inherit (lib.options) mkOption;
+      inherit (lib.options) mkOptionOf;
       inherit (lib.trivial) const;
       inherit (lib.types) anything attrsOf;
 
@@ -145,8 +145,7 @@
       });
     in
     {
-      options.flake.entities = mkOption {
-        type = attrsOf anything;
+      options.flake.entities = mkOptionOf (attrsOf anything) {
         default = { };
         description = ''
           All persistent entities associated with this configuration collection.

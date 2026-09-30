@@ -10,45 +10,45 @@
       ...
     }:
     let
-      inherit (lib.attrsets) genAttrs;
+      inherit (lib.attrsets) attrByPath genAttrs;
       inherit (lib.lists) all elem filter;
       inherit (lib.modules) mkIf;
-      inherit (lib.options) mkEnableOption mkOption;
+      inherit (lib.options) mkEnableOption mkOptionOf;
       inherit (lib.strings) hasSuffix removeSuffix;
       inherit (lib.trivial) const flip;
-      inherit (lib.types) listOf str;
+      inherit (lib.types)
+        lines
+        listOf
+        package
+        str
+        submodule
+        ;
 
-      repoSkill = lib.types.submodule {
+      repoSkill = submodule {
         options = {
-          repo = lib.mkOption {
-            type = lib.types.str;
+          repo = mkOptionOf str {
             description = "Upstream repository that hosts the skill.";
           };
-          skills = lib.mkOption {
-            type = lib.types.listOf lib.types.str;
+          skills = mkOptionOf (listOf str) {
             default = [ ];
             description = "List of skill names to install from the repository. Empty means install every skill the repository provides.";
           };
-          requires = lib.mkOption {
-            type = lib.types.listOf lib.types.package;
+          requires = mkOptionOf (listOf package) {
             default = [ ];
             description = "Packages that must be part of the installed system for this skill set to be installed.";
           };
         };
       };
 
-      localSkill = lib.types.submodule {
+      localSkill = submodule {
         options = {
-          name = lib.mkOption {
-            type = lib.types.str;
+          name = mkOptionOf str {
             description = "Name of the local skill.";
           };
-          skillmd = lib.mkOption {
-            type = lib.types.lines;
+          skillmd = mkOptionOf lines {
             description = "Skill instructions in markdown.";
           };
-          requires = lib.mkOption {
-            type = lib.types.listOf lib.types.package;
+          requires = mkOptionOf (listOf package) {
             default = [ ];
             description = "Packages that must be part of the installed system for this skill set to be installed.";
           };
@@ -57,8 +57,8 @@
       # a skill set documents a tool; installing it is only useful when that
       # tool is in the system, so gate on the packages the host actually has
       installedPackages =
-        (lib.attrByPath [ "environment" "systemPackages" ] [ ] config)
-        ++ (lib.attrByPath [ "home" "packages" ] [ ] config);
+        (attrByPath [ "environment" "systemPackages" ] [ ] config)
+        ++ (attrByPath [ "home" "packages" ] [ ] config);
       installedSkills =
         entries: filter (entry: all (dep: elem dep installedPackages) (entry.requires or [ ])) entries;
     in
@@ -66,30 +66,27 @@
       options.ai = {
         secrets = mkEnableOption "include AI secrets with this system/module";
 
-        commands.bash.allow = mkOption {
-          type = listOf str;
+        commands.bash.allow = mkOptionOf (listOf str) {
           default = [ ];
           description = ''
             bash command globs to allow in compatible AI tools
           '';
         };
 
-        skills.gh = mkOption {
+        skills.gh = mkOptionOf (listOf repoSkill) {
           type = listOf repoSkill;
           default = [ ];
           description = ''
             skills to install from github
           '';
         };
-        skills.npm = mkOption {
-          type = listOf repoSkill;
+        skills.npm = mkOptionOf (listOf repoSkill) {
           default = [ ];
           description = ''
             skills to install from npm
           '';
         };
-        skills.local = mkOption {
-          type = listOf localSkill;
+        skills.local = mkOptionOf (listOf localSkill) {
           default = [ ];
           description = ''
             skills to install from local sources
@@ -97,22 +94,19 @@
         };
         # read-only views of the writable options above, with skill sets whose
         # `requires` packages are missing from this host filtered out
-        skills.ghInstalled = mkOption {
-          type = listOf repoSkill;
+        skills.ghInstalled = mkOptionOf (listOf repoSkill) {
           readOnly = true;
           description = ''
             github skills whose required packages are installed
           '';
         };
-        skills.npmInstalled = mkOption {
-          type = listOf repoSkill;
+        skills.npmInstalled = mkOptionOf (listOf repoSkill) {
           readOnly = true;
           description = ''
             npm skills whose required packages are installed
           '';
         };
-        skills.localInstalled = mkOption {
-          type = listOf localSkill;
+        skills.localInstalled = mkOptionOf (listOf localSkill) {
           readOnly = true;
           description = ''
             local skills whose required packages are installed

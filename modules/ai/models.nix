@@ -6,7 +6,7 @@
     let
       inherit (lib.attrsets) filterAttrsRecursive;
       inherit (lib.lists) findFirst singleton;
-      inherit (lib.options) mkOption;
+      inherit (lib.options) mkOptionNullOr mkOptionOf;
       inherit (lib.types)
         addCheck
         anything
@@ -15,7 +15,6 @@
         enum
         ints
         listOf
-        nullOr
         number
         str
         submodule
@@ -33,8 +32,7 @@
       nonNegativeNumber = addCheck number (value: value >= 0);
     in
     {
-      options.ai.defaultModels = mkOption {
-        type = attrsOf str;
+      options.ai.defaultModels = mkOptionOf (attrsOf str) {
         default = { };
         description = ''
           Default models for roles and mappings.
@@ -65,116 +63,63 @@
           fallback = firstOrDefault [ freeWeak.model ] "deepseek/deepseek-v4.1-flash";
         };
 
-      options.ai.models = mkOption {
-        type =
-          listOf
-          <| submodule {
-            options = {
-              id = mkOption {
-                type = str;
-              };
-              name = mkOption {
-                type = str;
-              };
-              reasoning = mkOption {
-                type = bool;
-              };
-              thinking = mkOption {
-                type = submodule {
+      options.ai.models =
+        mkOptionOf
+          (
+            listOf
+            <| submodule {
+              options = {
+                id = mkOptionOf str;
+                name = mkOptionOf str;
+                reasoning = mkOptionOf bool;
+                thinking = mkOptionOf (submodule {
                   options = {
-                    minLevel = mkOption {
-                      type = thinkingLevel;
-                    };
-                    maxLevel = mkOption {
-                      type = thinkingLevel;
-                    };
-                    mode = mkOption {
-                      type = enum [ "effort" ];
-                    };
+                    minLevel = mkOptionOf thinkingLevel;
+                    maxLevel = mkOptionOf thinkingLevel;
+                    mode = mkOptionOf (enum [ "effort" ]);
                   };
-                };
-              };
-              inputTypes = mkOption {
-                type = listOf (enum [
-                  "text"
-                  "image"
-                ]);
-              };
-              context = mkOption {
-                type = ints.positive;
-              };
-              maxOutput = mkOption {
-                type = ints.positive;
-              };
-              costPerMillion = mkOption {
-                type = submodule {
+                });
+                inputTypes = mkOptionOf (
+                  listOf
+                  <| enum [
+                    "text"
+                    "image"
+                  ]
+                );
+                context = mkOptionOf ints.positive;
+                maxOutput = mkOptionOf ints.positive;
+                costPerMillion = mkOptionOf (submodule {
                   options = {
-                    input = mkOption {
-                      type = nonNegativeNumber;
-                    };
-                    output = mkOption {
-                      type = nonNegativeNumber;
-                    };
-                    cacheRead = mkOption {
-                      type = nonNegativeNumber;
-                    };
-                    cacheWrite = mkOption {
-                      type = nonNegativeNumber;
-                    };
+                    input = mkOptionOf nonNegativeNumber;
+                    output = mkOptionOf nonNegativeNumber;
+                    cacheRead = mkOptionOf nonNegativeNumber;
+                    cacheWrite = mkOptionOf nonNegativeNumber;
                   };
-                };
-              };
-              compat = mkOption {
-                type =
-                  nullOr
-                  <| submodule {
-                    options = {
-                      supportsDeveloperRole = mkOption {
-                        type = nullOr bool;
-                        default = null;
-                      };
-                      supportsReasoningEffort = mkOption {
-                        type = nullOr bool;
-                        default = null;
-                      };
-                      supportsToolChoice = mkOption {
-                        type = nullOr bool;
-                        default = null;
-                      };
-                      requiresReasoningContentForToolCalls = mkOption {
-                        type = nullOr bool;
-                        default = null;
-                      };
-                      requiresAssistantContentForToolCalls = mkOption {
-                        type = nullOr bool;
-                        default = null;
-                      };
-                      maxTokensField = mkOption {
-                        type = nullOr str;
-                        default = null;
-                      };
-                      reasoningEffortMap = mkOption {
-                        type = nullOr (attrsOf thinkingLevel);
-                        default = null;
-                      };
-                      # Request body merged verbatim into every call.
-                      extraBody = mkOption {
-                        type = nullOr (attrsOf anything);
-                        default = null;
-                      };
-                    };
+                });
+                compat = mkOptionNullOr (submodule {
+                  options = {
+                    supportsDeveloperRole = mkOptionNullOr bool;
+                    supportsReasoningEffort = mkOptionNullOr bool;
+                    supportsToolChoice = mkOptionNullOr bool;
+                    requiresReasoningContentForToolCalls = mkOptionNullOr bool;
+                    requiresAssistantContentForToolCalls = mkOptionNullOr bool;
+                    maxTokensField = mkOptionNullOr str;
+                    reasoningEffortMap = mkOptionNullOr (attrsOf thinkingLevel);
+                    # Request body merged verbatim into every call.
+                    extraBody = mkOptionNullOr (attrsOf anything);
                   };
-                default = null;
+                });
               };
-            };
+            }
+          )
+          {
+            default = [ ];
+            # Drop optional-null defaults; consumers see only defined keys.
+            apply = map <| filterAttrsRecursive (_: value: value != null);
+            description = ''
+              Typed AI model registry, shared by agent tool configs.
+            '';
           };
-        default = [ ];
-        # Drop optional-null defaults; consumers see only defined keys.
-        apply = map <| filterAttrsRecursive (_: value: value != null);
-        description = ''
-          Typed AI model registry, shared by agent tool configs.
-        '';
-      };
 
       config.ai.models = [
         {

@@ -6,8 +6,8 @@
 }:
 let
   inherit (lib.lists) optional singleton;
-  inherit (lib.options) mkOption;
-  inherit (lib.types) deferredModule nullOr;
+  inherit (lib.options) mkOptionNullOr;
+  inherit (lib.types) deferredModule;
 
   mkHjemModule =
     hjemModule:
@@ -37,9 +37,7 @@ let
       #   };
       # }
       # ```
-      options.hjem.extraModule = mkOption {
-        type = nullOr deferredModule;
-        default = null;
+      options.hjem.extraModule = mkOptionNullOr deferredModule {
         description = ''
           Single module to be evaluated as a part of the users module
           inside `config.hjem.users.<username>`. Use this instead of
@@ -47,9 +45,7 @@ let
         '';
       };
 
-      options.hjemModule = mkOption {
-        type = nullOr deferredModule;
-        default = null;
+      options.hjemModule = mkOptionNullOr deferredModule {
         description = ''
           Single module to be evaluated as a part of the users module
           inside `config.hjem.users.<username>`. Use this instead of
