@@ -466,6 +466,15 @@
     {
       environment.systemPackages = singleton pkgs.jjui;
 
+      herdr.keys.command = singleton {
+        key = "prefix+g";
+        type = "popup";
+        width = "80%";
+        height = "80%";
+        command = "jjui";
+        description = "jjui";
+      };
+
       hjemModule = {
         xdg.config.files."jjui/config.toml" = {
           generator = pkgs.writers.writeTOML "jjui-config.toml";
@@ -568,6 +577,15 @@
         difft
         hunk
       ];
+
+      herdr.keys.command = singleton {
+        key = "prefix+d";
+        type = "popup";
+        width = "80%";
+        height = "80%";
+        command = "hunk diff --watch";
+        description = "hunk diff watch";
+      };
 
       hjemModule = {
         xdg.config.files."jj/config.toml" = {

@@ -6,12 +6,10 @@
       inputs,
       pkgs,
       lib,
-      config,
       ...
     }:
     let
       inherit (lib.meta) getExe;
-      inherit (config) theme;
 
       plugins = {
         herdrJj = self.packages.${pkgs.stdenv.hostPlatform.system}.herdr-jj;
@@ -25,8 +23,10 @@
       ];
 
       hjemModule =
-        { config, ... }:
+        { osConfig, config, ... }:
         let
+          inherit (osConfig) theme;
+
           worktreesDir = "${config.directory}/projects/herdr-worktrees";
         in
         {
@@ -140,23 +140,7 @@
 
                   reload_config = "prefix+alt+shift+r";
 
-                  command = [
-                    {
-                      key = "prefix+j";
-                      type = "popup";
-                      width = "80%";
-                      height = "80%";
-                      command = "jjui";
-                      description = "jjui";
-                    }
-                    {
-                      key = "prefix+d";
-                      type = "popup";
-                      width = "80%";
-                      height = "80%";
-                      command = "hunk diff --watch";
-                      description = "hunk diff watch";
-                    }
+                  command = osConfig.herdr.keys.command ++ [
                     {
                       key = "prefix+shift+a";
                       type = "plugin_action";
