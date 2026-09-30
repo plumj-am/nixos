@@ -1,6 +1,6 @@
 { self, ... }:
 {
-  flake.modules.common.ai-agents = self.modules.common.herdr;
+  flake.modules.common.default = self.modules.common.herdr;
   flake.modules.common.herdr =
     {
       inputs,

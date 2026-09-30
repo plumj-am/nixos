@@ -1,6 +1,6 @@
 { self, ... }:
 {
-  flake.modules.common.default = self.modules.common.herdr-options;
+  flake.modules.common.herdr = self.modules.common.herdr-options;
   flake.modules.common.herdr-options =
     { lib, ... }:
     let
