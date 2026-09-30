@@ -17,7 +17,7 @@
     in
     {
       environment.systemPackages = [
-        inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.herdr
+        inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.herdr
 
         self.packages.${pkgs.stdenv.hostPlatform.system}.herdr-ide
       ];
