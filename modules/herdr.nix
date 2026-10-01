@@ -14,10 +14,14 @@
       plugins = {
         herdrJj = self.packages.${pkgs.stdenv.hostPlatform.system}.herdr-jj;
       };
+
+      herdr = inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.herdr.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [ ./patches/herdr-longer-notification-timeout.patch ];
+      });
     in
     {
       environment.systemPackages = [
-        inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.herdr
+        herdr
 
         self.packages.${pkgs.stdenv.hostPlatform.system}.herdr-ide
       ];

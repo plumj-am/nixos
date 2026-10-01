@@ -1,0 +1,38 @@
+Raise the built-in notification timeouts.
+
+The timeouts are hard-coded in two places: the server keeps an in-app
+toast for a fixed number of seconds, and the client shell keeps a visible
+notification for a fixed number of seconds.
+
+--- a/src/app/api.rs
++++ b/src/app/api.rs
+@@ -710,9 +710,9 @@
+         if self.state.toast != previous_toast {
+             self.toast_deadline = self.state.toast.as_ref().map(|toast| {
+                 let duration = match toast.kind {
+-                    ToastKind::NeedsAttention => Duration::from_secs(8),
+-                    ToastKind::Finished => Duration::from_secs(5),
+-                    ToastKind::UpdateInstalled => Duration::from_secs(3),
++                    ToastKind::NeedsAttention => Duration::from_secs(60),
++                    ToastKind::Finished => Duration::from_secs(20),
++                    ToastKind::UpdateInstalled => Duration::from_secs(3),
+                 };
+                 Instant::now() + duration
+             });
+--- a/src/client/shell/notification_policy.rs
++++ b/src/client/shell/notification_policy.rs
+@@ -14,10 +14,10 @@
+
+ fn notification_duration(kind: SemanticNotificationKind) -> std::time::Duration {
+     std::time::Duration::from_secs(match kind {
+-        SemanticNotificationKind::NeedsAttention => 8,
+-        SemanticNotificationKind::Finished => 5,
+-        SemanticNotificationKind::UpdateInstalled => 3,
+-        SemanticNotificationKind::Custom => 5,
++        SemanticNotificationKind::NeedsAttention => 60,
++        SemanticNotificationKind::Finished => 20,
++        SemanticNotificationKind::UpdateInstalled => 3,
++        SemanticNotificationKind::Custom => 20,
+     })
+ }
+
