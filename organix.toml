@@ -14,7 +14,7 @@ arg_order = [
 ]
 section_order = [ "imports", "options", "config" ]
 
-inherit_group_order = [ "pkgs", "lib", "utils", "osConfig", "config" ]
+inherit_group_order = [ "inputs", "pkgs", "lib", "utils", "osConfig", "config" ]
 sort_inherit_groups = true
 
 sort_inherit_names = true
