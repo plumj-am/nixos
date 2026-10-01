@@ -50,20 +50,41 @@
               $result.stdout | from json | get result.pane.pane_id
             }
 
+            # Resolve the directory for the new panes.
+            def resolve-cwd [requested: string, pane_cwd: string] {
+              let path = (($pane_cwd | path join $requested) | path expand)
+
+              if ($path | path type) != "dir" {
+                error make { msg: $"not a directory: ($path)" }
+              }
+
+              $path
+            }
+
             def run-in [pane: string, cmd: string] {
               ${herdr} pane run $pane $cmd | complete | ignore
             }
 
             def main [
-              --cwd: string = "." # working directory for the new panes
+              --cwd: string       # directory for the new panes; defaults to the pane directory
               --pane: string      # the pane to build in; defaults to the focused one
             ]: nothing -> string {
-              # A default cannot run a command, so resolve the focused pane here.
-              let tl_pane = (if $pane == null {
-                ${herdr} pane current | from json | get result.pane.pane_id
-              } else {
-                $pane
-              })
+              # A default cannot run a command, so read the target pane here.
+              let info = (
+                if $pane == null {
+                  ${herdr} pane current | from json | get result.pane
+                } else {
+                  ${herdr} pane get $pane | from json | get result.pane
+                }
+              )
+
+              let tl_pane = $info.pane_id
+
+              # The pane reports an absolute directory. Use it when the caller
+              # asks for none.
+              let cwd = resolve-cwd (
+                if $cwd == null { $info.cwd? } else { $cwd }
+              ) ($info.cwd? | default $env.PWD)
 
               # Halve by height first: the root becomes the top row, the new pane the
               # bottom row, and each row still spans the full width.
