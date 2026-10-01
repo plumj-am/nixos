@@ -161,7 +161,8 @@
     }:
     let
       inherit (lib.lists) singleton;
-      inherit (lib.modules) mkDefault;
+      inherit (lib.meta) getExe;
+      inherit (lib.modules) mkBefore mkDefault;
 
       jujutsu = inputs.jujutsu.packages.${pkgs.stdenv.hostPlatform.system}.jujutsu;
     in
@@ -560,6 +561,23 @@
                 '';
             };
           };
+
+          xdg.config.files."nushell/config.nu".text =
+            mkBefore
+              # nu
+              ''
+                $env.config.hooks.env_change.PWD = (
+                  $env.config.hooks.env_change.PWD? | default [] | append [
+                    # For jj workspaces so git stuff still works.
+                    {||
+                      $env.GIT_DIR = match (${getExe jujutsu} git root | complete) {
+                        {exit_code: 0, stdout: $out} => { $out | str trim }
+                        _ => { hide-env --ignore-errors GIT_DIR }
+                      }
+                    }
+                  ]
+                )
+              '';
         };
     };
 
