@@ -30,18 +30,20 @@
           mkBefore
             # nu
             ''
-              $env.config.hooks.env_change.PWD = [
-                {||
-                  ${getExe pkgs.direnv} export json | from json | default {} | load-env
-                }
-                # For jj workspaces so git stuff still works.
-                {||
-                  $env.GIT_DIR = match (${getExe pkgs.jujutsu} git root | complete) {
-                    {exit_code: 0, stdout: $out} => { $out | str trim }
-                    _ => { "" }
+              $env.config.hooks.env_change.PWD = (
+                $env.config.hooks.env_change.PWD? | default [] | append [
+                  {||
+                    ${getExe pkgs.direnv} export json | from json | default {} | load-env
                   }
-                }
-              ]
+                  # For jj workspaces so git stuff still works.
+                  {||
+                    $env.GIT_DIR = match (${getExe pkgs.jujutsu} git root | complete) {
+                      {exit_code: 0, stdout: $out} => { $out | str trim }
+                      _ => { hide-env --ignore-errors GIT_DIR }
+                    }
+                  }
+                ]
+              )
             '';
       };
     };
