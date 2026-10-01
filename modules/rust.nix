@@ -1,73 +1,35 @@
 { self, ... }:
-let
-  fenixToolchain =
-    inputs: pkgs:
-    inputs.fenix.packages.${pkgs.stdenv.hostPlatform.system}.complete.withComponents [
-      # Nightly.
-      "cargo"
-      "clippy"
-      "miri"
-      "rustc"
-      "rust-analyzer"
-      "rustfmt"
-      "rust-std"
-      "rust-src"
-    ];
-
-  commonModule =
-    { pkgs, ... }:
-    {
-      environment.sessionVariables.CARGO_NET_GIT_FETCH_WITH_CLI = "true";
-
-      environment.systemPackages = [
-        pkgs.cargo-binstall
-        pkgs.cargo-nextest
-        pkgs.sccache
-      ];
-    };
-
-  desktopModule =
-    { pkgs, ... }:
-    {
-      environment.systemPackages = [
-        pkgs.bacon
-        pkgs.cargo-careful
-        pkgs.cargo-deny
-        pkgs.cargo-generate
-        pkgs.cargo-machete
-        pkgs.cargo-workspaces
-        pkgs.cargo-outdated
-        pkgs.dioxus-cli
-        pkgs.evcxr
-        pkgs.kondo
-      ];
-
-      hjem.extraModule.files.".cargo/config.toml" = {
-        generator = pkgs.writers.writeTOML "cargo-config.toml";
-        value.build.target-dir = ".cargo/target";
-      };
-    };
-in
 {
-  flake.modules.common.default = self.modules.nixos.rust;
+  flake.modules.common.default.imports = [
+    self.modules.common.rust
+    self.modules.common.kache
+  ];
+
   flake.modules.common.rust =
     {
       inputs,
       pkgs,
-      lib,
       ...
     }:
-    let
-      inherit (lib.lists) singleton;
-    in
     {
-      imports =
-        singleton
-        <| commonModule {
-          inherit pkgs;
-        };
+      environment.sessionVariables.CARGO_NET_GIT_FETCH_WITH_CLI = "true";
 
-      environment.systemPackages = singleton <| fenixToolchain inputs pkgs;
+      environment.systemPackages = [
+        (inputs.fenix.packages.${pkgs.stdenv.hostPlatform.system}.complete.withComponents [
+          # Nightly.
+          "cargo"
+          "clippy"
+          "miri"
+          "rustc"
+          "rust-analyzer"
+          "rustfmt"
+          "rust-std"
+          "rust-src"
+        ])
+        pkgs.cargo-binstall
+        pkgs.cargo-nextest
+        pkgs.sccache
+      ];
 
       hjem.extraModule = {
         xdg.config.files."rustfmt/rustfmt.toml" = {
@@ -105,43 +67,91 @@ in
       };
     };
 
-  flake.modules.nixos.desktop = self.modules.nixos.rust-desktop;
-  flake.modules.nixos.rust-desktop =
+  flake.modules.common.desktop = self.modules.common.rust-extra-desktop;
+  flake.modules.common.rust-extra-desktop =
     {
-      inputs,
       pkgs,
       lib,
+      config,
       ...
     }:
     let
       inherit (lib.lists) singleton;
-    in
-    {
-      imports = [
-        (commonModule { inherit pkgs; })
-        (desktopModule { inherit pkgs; })
-      ];
-
-      environment.systemPackages = singleton <| fenixToolchain inputs pkgs;
-    };
-
-  flake.modules.darwin.desktop = self.modules.darwin.rust-desktop;
-  flake.modules.darwin.rust-desktop =
-    {
-      inputs,
-      pkgs,
-      lib,
-      ...
-    }:
-    let
-      inherit (lib.lists) singleton;
+      inherit (lib.modules) mkIf;
       inherit (lib.strings) makeLibraryPath;
     in
     {
-      imports = singleton <| desktopModule { inherit pkgs; };
+      environment.variables.LIBRARY_PATH =
+        mkIf config.nixpkgs.hostPlatform.isDarwin <| makeLibraryPath <| singleton pkgs.libiconv;
 
-      environment.systemPackages = singleton <| fenixToolchain inputs pkgs;
+      environment.systemPackages = [
+        pkgs.bacon
+        pkgs.cargo-careful
+        pkgs.cargo-deny
+        pkgs.cargo-generate
+        pkgs.cargo-machete
+        pkgs.cargo-workspaces
+        pkgs.cargo-outdated
+        pkgs.dioxus-cli
+        pkgs.evcxr
+        pkgs.kondo
+      ];
 
-      environment.variables.LIBRARY_PATH = makeLibraryPath [ pkgs.libiconv ];
+      hjemModule = {
+        files.".cargo/config.toml" = {
+          generator = pkgs.writers.writeTOML "cargo-config.toml";
+          value = {
+            build.jobs = 2;
+          };
+        };
+      };
+    };
+
+  flake.modules.common.kache =
+    {
+      inputs,
+      pkgs,
+      lib,
+      ...
+    }:
+    let
+      inherit (lib.lists) singleton;
+      inherit (lib.meta) getExe;
+      inherit (lib.modules) mkBefore mkDefault;
+    in
+    {
+      environment.systemPackages =
+        singleton
+          inputs.kache.packages.${pkgs.stdenv.hostPlatform.system}.default;
+
+      hjemModule = {
+        files.".cargo/config.toml" = {
+          generator = mkDefault <| pkgs.writers.writeTOML "cargo-config.toml";
+          value = {
+            build.rustc-wrapper = "kache";
+          };
+        };
+
+        xdg.config.files."nushell/config.nu".text =
+          mkBefore
+            # nu
+            ''
+              $env.config.hooks.env_change.PWD = (
+                $env.config.hooks.env_change.PWD? | default [] | append [
+                  {||
+                    $env.KACHE_BASE_DIR = (
+                      try {
+                        ${getExe pkgs.jujutsu} workspace root err> /dev/null | str trim
+                      } catch { try {
+                        ${getExe pkgs.git} rev-parse --show-toplevel err> /dev/null | str trim
+                      } catch {
+                        pwd
+                      }}
+                    )
+                  }
+                ]
+              )
+            '';
+      };
     };
 }

@@ -56,6 +56,10 @@
       url = "github:bolivier/jj-mode.el";
       flake = false;
     };
+    kache = {
+      url = "github:kunobi-ninja/kache";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     llm-agents = {
       url = "github:numtide/llm-agents.nix";
       inputs.nixpkgs.follows = "nixpkgs";
