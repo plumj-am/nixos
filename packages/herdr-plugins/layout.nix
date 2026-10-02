@@ -25,7 +25,7 @@
             const TOP_RATIO = 0.75
             const LEFT_RATIO = 0.68
             const BOTTOM_RATIO = 0.5
-            const TL_COMMAND = "hx"
+            const TL_COMMAND = ""
             const BL_COMMAND = ""
             const TR_COMMAND = "omp"
             const BR_COMMAND = ""
