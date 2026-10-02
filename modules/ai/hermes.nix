@@ -917,6 +917,7 @@ in
     }:
     let
       inherit (lib.lists) singleton;
+      inherit (lib.modules) mkForce;
     in
     {
       imports =
@@ -936,6 +937,12 @@ in
           npmSkills = [ ];
           localSkills = [ ];
         };
+
+      # Nicer experience for non-programmer use.
+      services.hermes-agent.settings = {
+        tool_loop_guardrails.non_interactive_hard_stop_enabled = mkForce false;
+        approvals.mode = mkForce "off";
+      };
     };
 
   flake.modules.common.ai-agents = self.modules.common.hermes-desktop;
