@@ -54,7 +54,7 @@
 
                   window_title = "{hostname}: {workspace}";
 
-                  sidebar_width = 22;
+                  sidebar_width = 21;
 
                   agent_panel_sort = "priority";
                   status_indicators = "symbols";
@@ -84,8 +84,8 @@
                       "workspace"
                     ]
                     [
-                      "$jj_change"
-                      "$jj_status"
+                      # "$jj_status"
+                      # "$jj_change"
                     ]
                   ];
                   sidebar.agents.rows = [
@@ -94,7 +94,7 @@
                       "workspace"
                       "tab"
                     ]
-                    [ "agent" ]
+                    # [ "agent" ]
                   ];
                 };
 
