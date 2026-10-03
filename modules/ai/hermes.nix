@@ -942,6 +942,8 @@ in
       services.hermes-agent.settings = {
         tool_loop_guardrails.non_interactive_hard_stop_enabled = mkForce false;
         approvals.mode = mkForce "off";
+
+        discord.require_mention = mkForce false;
       };
     };
 
