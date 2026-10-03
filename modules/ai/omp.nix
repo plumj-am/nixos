@@ -90,63 +90,22 @@
             type = "copy"; # Sometimes needs to write to config.
             generator = pkgs.writers.writeYAML "omp-agent-config.yml";
             value = {
-              # [appearance]
-              theme = {
-                dark = "dark";
-                light = "light";
-              };
+              theme.dark = "dark";
+              theme.light = "light";
               symbolPreset = "unicode";
-              statusLine = {
-                preset = "compact";
-                separator = "pipe";
-                transparent = true;
-              };
+
+              statusLine.preset = "compact";
+              statusLine.separator = "pipe";
+              statusLine.transparent = true;
+
               terminal.showImages = true;
-              display = {
-                shimmer = "classic";
-                showTokenUsage = true;
-                cacheMissMarker = true;
-              };
+              display.shimmer = "classic";
+              display.showTokenUsage = true;
+              display.cacheMissMarker = true;
               tui.renderMermaid = true;
+              read.renderMarkdown = true;
 
-              # [context]
-              contextPromotion.enabled = false; # do not upgrade model - compact instead.
-              compaction.enabled = true;
-
-              # [editing]
-              lsp = {
-                enabled = true;
-                formatOnWrite = false;
-                diagnosticsOnWrite = true;
-                diagnosticsOnEdit = false;
-                diagnosticsDeduplicate = true;
-              };
-              eval = {
-                js = true;
-                py = true;
-              };
-
-              # [interaction]
-              autoResume = true;
-              steeringMode = "all"; # Send all queued messages at once.
-              followUpMode = "all";
-              interruptMode = "wait";
-              autocompleteMaxVisible = 20;
-              power.sleepPrevention = "off";
-              startup = {
-                quiet = true;
-                setupWizard = false;
-                checkUpdate = false;
-              };
-              ask = {
-                timeout = 0;
-                notify = "on";
-              };
-              features.unexpectedStopDetection = true;
-              git.enabled = true; # only affects status bar (replaced by pi-jujutsu plugin)
-
-              # [internal]
-              memories.enabled = false;
+              enabledModels = [ ]; # all
               modelProviderOrder = singleton providerKey;
               modelRoles = with models; {
                 default = small;
@@ -160,90 +119,118 @@
                 task = small;
                 tiny = small;
               };
-              enabledModels = [ ]; # all
-              shellPath = getExe pkgs.bash;
 
-              # [memory]
-              memory.backend = "mnemopi";
-              mnemopi = {
-                scoping = "per-project-tagged";
-                dbPath = "${home}/.omp/agent/memories/mnemopi/mnemopi.db";
+              providers.tinyModel = "LFM2-350m";
+              providers.tinyModelDevice = "cpu";
+              providers.unexpectedStopModel = "qwen3-1.7b";
 
-                embeddingVariant = "en";
-                polyphonicRecall = true;
-                practiveLinking = true;
-                enhancedRecall = true;
-              };
+              advisor.enabled = true;
+              advisor.syncBacklog = 5;
 
-              # [model]
-              advisor = {
-                enabled = true;
-                syncBacklog = 5;
-              };
-              defaultThinkingLevel = "medium";
-              hideThinkingBlock = true;
+              retry.modelFallback = false;
+              retry.fallbackRevertPolicy = "cooldown-expiry";
+              retry.waitForUsageReset = true;
+              retry.maxRetries = 200;
+              retry.maxDelayMs = 0;
+              retry.fallbackChains = { };
+
+              contextPromotion.enabled = false; # do not upgrade model - compact instead.
+              compaction.enabled = true;
+
+              autoResume = true;
+              features.unexpectedStopDetection = true;
+
+              steeringMode = "all"; # Send all queued messages at once.
+              followUpMode = "all";
+              interruptMode = "wait";
+
               personality = "pragmatic";
               textVerbosity = "low";
-              retry = {
-                modelFallback = false;
-                fallbackRevertPolicy = "cooldown-expiry";
-                waitForUsageReset = true;
-                maxRetries = 200;
-                maxDelayMs = 0;
-                fallbackChains = { };
-              };
+              defaultThinkingLevel = "medium";
+              hideThinkingBlock = true;
 
-              # [providers]
-              secrets.enabled = true;
-              providers = {
-                tinyModel = "LFM2-350m";
-                tinyModelDevice = "cpu";
-                unexpectedStopModel = "qwen3-1.7b";
-              };
-              exa.enabled = true;
+              memories.enabled = true;
+              memory.backend = "mnemopi";
+              mnemopi.scoping = "per-project-tagged";
+              mnemopi.dbPath = "${home}/.omp/agent/memories/mnemopi/mnemopi.db";
+              mnemopi.embeddingVariant = "en";
+              mnemopi.polyphonicRecall = true;
+              mnemopi.practiveLinking = true;
+              mnemopi.enhancedRecall = true;
+              autolearn.enabled = true;
+              autolearn.autoContinue = true;
 
-              # [tasks]
-              plan.enabled = true;
-              goal = {
-                enabled = true;
-                statusInFooter = true;
-              };
               task.eager = "always"; # sub-agent delegation
 
-              # [tools]
-              marketplace.autoUpdate = "notify";
+              ask.timeout = 0;
+              ask.notify = "on";
+              error.notify = "on";
+
               tools.approval = { }; # TODO?
-              todo = {
-                enabled = true;
-                reminders = true;
-                eager = "always";
-              };
+
+              edit.autoRepair.enabled = true;
+
+              shellPath = getExe pkgs.bash;
+              bash.enabled = true;
+              bash.autoBackground.enabled = true;
+              bashInterceptor.enabled = true;
+
+              eval.autoBackground.enabled = true;
+              eval.js = true;
+              eval.py = true;
+              python.interpreter = getExe pkgs.python3;
+
               astGrep.enabled = true;
               debug.enabled = true;
               checkpoint.enabled = true;
               fetch.enabled = true;
+
+              git.enabled = true; # only affects status bar (replaced by pi-jujutsu plugin)
               github.enabled = true;
+
               web_search.enabled = true;
+              exa.enabled = true;
               browser.enabled = true;
+
               async.enabled = true;
               security.enabled = true;
-              skills = {
-                enabled = true;
-                enableCodexUser = false;
-                enableClaudeUser = false;
-                enablePiUser = true;
-                enableAgentsUser = true;
-                enableClaudeProject = false;
-                enablePiProject = false;
-                enableAgentsProject = false;
-              };
+              secrets.enabled = true;
 
-              # [shell]
-              bash = {
-                enabled = true;
-                autoBackground.enabled = true;
-              };
-              bashInterceptor.enabled = true;
+              plan.enabled = true;
+              goal.enabled = true;
+              goal.statusInFooter = true;
+
+              todo.enabled = true;
+              todo.reminders = true;
+              todo.eager = "always";
+
+              ida.python = "${getExe pkgs.python3}";
+              ida.installDir = ""; # TODO?
+
+              lsp.enabled = true;
+              lsp.formatOnWrite = false;
+              lsp.diagnosticsOnWrite = true;
+              lsp.diagnosticsOnEdit = false;
+              lsp.diagnosticsDeduplicate = true;
+
+              skills.enabled = true;
+              skills.enableCodexUser = false;
+              skills.enableClaudeUser = false;
+              skills.enablePiUser = true;
+              skills.enableAgentsUser = true;
+              skills.enableClaudeProject = false;
+              skills.enablePiProject = false;
+              skills.enableAgentsProject = false;
+
+              autocompleteMaxVisible = 20;
+
+              startup.quiet = true;
+              startup.setupWizard = false;
+              startup.checkUpdate = false;
+
+              marketplace.autoUpdate = "notify";
+
+              power.sleepPrevention = "off";
             };
           };
 
