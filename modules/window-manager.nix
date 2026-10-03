@@ -94,6 +94,8 @@
           xdg.config.files."niri/config.kdl".text =
             with theme; # kdl
             ''
+              prefer-no-csd
+
               window-rule {
                 match app-id=r#"^*$"#
                 opacity 1.0
@@ -149,6 +151,12 @@
                 border {
                   off
                 }
+              }
+
+              // Opening when inside a fullscreen game should steal focus.
+              window-rule {
+                match app-id=r#"^com.saivert.pwvucontrol$"#
+                open-focused true
               }
 
               input {
