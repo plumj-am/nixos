@@ -45,7 +45,7 @@
           {
             repo = "bos/jj-stack";
             skills = [
-              "jj-stack@7d8a68f3de6273e4c08c250f8aae1b1c9a2" # v1.3.0 (matches ../jujutsu.nix)
+              "jj-stack@b4071176c04eae24d90d589766466655ed6d3873" # v0.1.6
             ];
           }
           {
