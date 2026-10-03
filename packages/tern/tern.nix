@@ -7,7 +7,7 @@
       ...
     }:
     let
-      system = pkgs.stdenv.hostPlatform.system;
+      inherit (pkgs.stdenv.hostPlatform) system;
 
       # Tern is a closed-beta Stencil Labs product. There is no public
       # download URL (build.stencil.so is auth-gated behind auth.stencil.so)
@@ -68,7 +68,7 @@
       # re-import can, and it gets an allowlist for this name alone.
       unfreePkgs = import pkgs.path {
         hostPlatform = pkgs.stdenv.hostPlatform;
-        system = system;
+        inherit system;
         config = pkgs.config // {
           allowUnfreePredicate = name: lib.getName name == "tern";
         };
@@ -91,7 +91,7 @@
               unfreePkgs.fetchurl {
                 name = filename;
                 url = "file://${release.storePath}";
-                hash = release.hash;
+                inherit (release) hash;
               }
             else
               fail "only x86_64-linux builds are packaged (got ${system})";

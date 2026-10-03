@@ -1,9 +1,7 @@
-{ self, ... }:
 {
   perSystem =
     {
       pkgs,
-      lib,
       ...
     }:
     {
