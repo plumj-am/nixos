@@ -299,8 +299,6 @@ in
                 denoFmtLanguages ++ baseLanguages;
 
               language-server = {
-                fs-watcher-lsp.command = "fs_watcher_lsp";
-
                 nil = {
                   command = "nil";
                   config.nil = {
@@ -411,8 +409,8 @@ in
             ''
               (require "helix/keymaps.scm")
 
-              (require "oil/oil.scm")                         ;; <https://github.com/mattwparas/helix-file-watcher>
-              (require "helix-file-watcher/file-watcher.scm") ;; <https://github.com/Ra77a3l3-jar/oil.hx>
+              (require "oil/oil.scm")                         ;; <https://github.com/Ra77a3l3-jar/oil.hx>
+              (require "helix-file-watcher/file-watcher.scm") ;; <https://github.com/mattwparas/helix-file-watcher>
               (require "scooter/scooter.scm")                 ;; <https://github.com/thomasschafer/scooter.hx>
 
               (keymap (global)
