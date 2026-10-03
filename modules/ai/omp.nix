@@ -273,6 +273,9 @@
 
           ".omp/agent/extensions/theme.ts".source =
             self.packages.${pkgs.stdenv.hostPlatform.system}.omp-theme;
+
+          ".omp/agent/extensions/grove-goal.ts".source =
+            self.packages.${pkgs.stdenv.hostPlatform.system}.omp-grove-goal;
         };
       };
     };
