@@ -22,12 +22,7 @@
       # No unfree allowlist: the package opens its own gate, since a host's
       # `unfree.allowedNames` never reaches a flake-level derivation.
 
-      # gdbus, not the runtime lib: LD_LIBRARY_PATH cannot supply a missing
-      # program, and without it the settings portal never comes up.
-      environment.systemPackages =
-        singleton self.packages.${pkgs.stdenv.hostPlatform.system}.tern
-        # gdbus lives in `bin`; plain `glib` has no bin/ at all.
-        ++ [ pkgs.glib.bin ];
+      environment.systemPackages = singleton self.packages.${pkgs.stdenv.hostPlatform.system}.tern;
 
       hjemModule = {
         xdg.config.files."tern/settings.json" = {
@@ -219,8 +214,8 @@
 
               "${prefix}>alt+shift+r" = "reload_config";
 
-              "${prefix}>a" = "plugin.jj.create";
-              "${prefix}>shift+a" = "plugin.jj.open";
+              "${prefix}>a" = "plugin.jj.open";
+              "${prefix}>shift+a" = "plugin.jj.create";
               "${prefix}>d" = "plugin.jj.remove";
 
               "${prefix}>l" = "plugin.ide.layout";

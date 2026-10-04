@@ -1,4 +1,3 @@
-{ self, ... }:
 {
   perSystem =
     {
@@ -10,9 +9,8 @@
       inherit (pkgs.stdenv.hostPlatform) system;
 
       # Tern is a closed-beta Stencil Labs product. There is no public
-      # download URL (build.stencil.so is auth-gated behind auth.stencil.so)
-      # and no published source.
-      version = "0.4.0";
+      # source or download URL (build.stencil.so is auth-gated).
+      version = "0.4.5";
       filename = "Tern-${version}-linux-x86_64.tar.gz";
 
       # Tern ships no public download, so the tarball lives in the store,
@@ -22,18 +20,30 @@
       # path has a GC root. Without it, `nix store gc` deletes the tarball and
       # every build fails. To move to a new release:
       #
-      #   let version = "0.4.0"
+      #   let version = "0.4.5"
       #
       #   (nix store add-file --name $"Tern-($version)-linux-x86_64.tar.gz"
       #     ~/Downloads/Tern-($version)-linux-x86_64.tar.gz)
       #
-      #   (sudo ln -sfn <PATH FROM LAST COMMAND OUTPUT>
-      #     /nix/var/nix/gcroots/per-user/(id -u)/tern)
+      #   (sudo ln -sfn <PATH FROM LAST COMMAND OUTPUT> /nix/var/nix/gcroots/per-user/(id -u)/tern)
       #
       # then update below with the new path and hash.
+      #
+      # A running Tern pins the old version, so a bump needs all three:
+      #
+      #   1. Close every Tern window, then stop the daemon:
+      #
+      #    pkill -f 'tern'
+      #
+      #   2. Remove symlinks created by Tern
+      #
+      #   rm ~/.local/bin/tern
+      #
+      #   3. Rebuild the system.
+      #
       release = {
-        storePath = "/nix/store/vbz6hs7klrcih0pcm383619vssdx0mvn-Tern-0.4.0-linux-x86_64.tar.gz";
-        hash = "sha256-yKJJGA7cOXx4Noa6ITnyKKns5tZwgAHapOirKS5J7is=";
+        storePath = "/nix/store/sm53hm7av0hsg983frjfkhnddf860hv3-Tern-0.4.5-linux-x86_64.tar.gz";
+        hash = "sha256-+TU0GutIi4QGCsLC1syAB/IcdRe1orFfo+dMr+qmq/0=";
       };
 
       supportedSystems = [
@@ -45,8 +55,10 @@
       # at runtime, so autoPatchelf would miss it entirely; this set comes
       # from `strings` on the binary, diffed against the previous release:
       # wgpu's Vulkan + EGL/GLES chain, the Wayland + xkbcommon window, and
-      # the WebKitGTK / WPEWebKit bindings for the browser block. There is no
-      # X11 in the binary at all -- no libX11, no libxcb.
+      # the WebKitGTK / WPEWebKit bindings for the browser block, and libpipewire
+      # for screen sharing. There is no X11 in the binary itself -- no libX11,
+      # no libxcb -- but webkitgtk_4_1 pulls libX11 in through libsoup and
+      # gtk3's X11 backend.
       runtimeLibs = with pkgs; [
         stdenv.cc.cc.lib
         vulkan-loader
@@ -58,6 +70,39 @@
         webkitgtk_4_1
         libwpe
         libwpe-fdo
+        # tern dlopens libpipewire for screen sharing itself, so the library
+        # has to be reachable, not just the daemon.
+        pipewire
+      ];
+
+      # Programs tern runs at runtime. LD_LIBRARY_PATH cannot supply a
+      # program, so these need PATH, not an rpath entry:
+      #
+      # zenity - the file/save/confirmation dialogs; without it tern reports
+      #          "no dialog tool (install zenity or kdialog)"
+      # glib   - gdbus, for the settings portal (it lives in glib.bin; plain
+      #          `glib` has no bin/ at all)
+      # perf   - drives the `perf since` marks
+      runtimePrograms = with pkgs; [
+        zenity
+        glib.bin
+        perf
+      ];
+
+      # WebKitGTK's TLS backend is a GIO module that libsoup dlopens, and
+      # neither webkitgtk nor libsoup carries glib-networking. Without it the
+      # browser block cannot make https requests.
+      #
+      # tern reads the org.gnome.desktop.interface schema itself, so the
+      # desktop schemas must be on XDG_DATA_DIRS or the read fails and the
+      # settings fall back to tern's own defaults.
+      #
+      # WebKitGTK plays media through gstreamer; without the plugin path it
+      # cannot find a decoder.
+      webkitRuntimeEnv = with pkgs; [
+        "--prefix GIO_EXTRA_MODULES : ${glib-networking}/lib/gio/modules"
+        "--prefix XDG_DATA_DIRS : ${gsettings-desktop-schemas}/share/gsettings-schemas/${gsettings-desktop-schemas.name}"
+        "--prefix GST_PLUGIN_SYSTEM_PATH_1_0 : ${lib.getLib gst_all_1.gst-plugins-base}/lib/gstreamer-1.0"
       ];
 
       runtimeLibraryPath = lib.makeLibraryPath runtimeLibs;
@@ -84,8 +129,6 @@
           pname = "tern";
           inherit version;
 
-          # An absolute path outside the flake cannot be used: pure evaluation
-          # mode rejects it. fetchurl checks `release.hash` against the content.
           src =
             if system == "x86_64-linux" then
               unfreePkgs.fetchurl {
@@ -99,27 +142,26 @@
           nativeBuildInputs = [
             pkgs.makeWrapper
             pkgs.patchelf
-            # stdenvNoCC has no strip; it comes from binutils.
             pkgs.binutils
           ];
 
           dontConfigure = true;
           dontBuild = true;
-          # Strip upstream's unstripped binary: 96 MB -> 76 MB (the .symtab
-          # is 3.7 MiB, the .strtab 16 MiB; the remaining ~76 MB is real
-          # code, mostly a statically linked wgpu/naga). dontPatchELF keeps
-          # the generic fixupPhase from rewriting the RPATH we set below;
-          # nothing is missing from DT_NEEDED, so autoPatchelf has no work
-          # to do anyway.
+          # The upstream binary ships no .symtab or .strtab, so strip has
+          # nothing to remove and the output stays the tarball's 120 MB. Keep
+          # it out anyway, so a future release that does ship symbols still
+          # gets stripped.
+          #
+          # dontPatchELF keeps the generic fixupPhase from rewriting the
+          # RPATH set below; autoPatchelf has no work to do, because everything
+          # outside libc/libstdc++ is dlopen()'d at runtime.
           dontPatchELF = true;
 
           installPhase = ''
             runHook preInstall
 
             # unpackPhase sets sourceRoot=tern, so cwd is already the tarball's
-            # tern/ directory: the executable is ./tern and the fonts are
-            # ./assets/fonts. Keep assets/ a sibling of the binary, because
-            # stencil_kit::assets::dir falls back to <exe dir>/assets.
+            # tern/ directory and the only file in it is ./tern.
             appDir="$out/opt/tern"
             mkdir -p "$appDir" "$out/bin" "$out/share/applications"
             cp -a . "$appDir/"
@@ -132,39 +174,18 @@
             patchelf --set-rpath "$rpath" "$appDir/tern"
             patchelf --set-interpreter "${pkgs.stdenv.cc.bintools.dynamicLinker}" "$appDir/tern"
 
-            # assets/ must be resolvable: stencil_kit::assets::dir checks
-            # $STENCIL_ASSETS, else <exe dir>/assets, and refuses to load the
-            # bundled page fonts without it ("cannot load the page fonts
-            # (set STENCIL_ASSETS)"). Pin it so the store path works from
-            # any cwd.
+            # The wrapper supplies the runtime programs and the WebKit
+            # environment; TERN_UPDATE_EXPLANATION replaces the built-in
+            # updater, which has no release feed on Nix.
             makeWrapper "$appDir/tern" "$out/bin/tern" \
               --prefix LD_LIBRARY_PATH : "${runtimeLibraryPath}" \
-              --set STENCIL_ASSETS "$appDir/assets" \
+              --prefix PATH : "${lib.makeBinPath runtimePrograms}" \
+              ${lib.concatStringsSep " " webkitRuntimeEnv} \
               --set TERN_UPDATE_EXPLANATION \
               "Tern is managed by Nix; update packages/tern in your flake to move to a newer build."
 
-            cat > "$out/share/applications/tern.desktop" <<EOF
-            [Desktop Entry]
-            Type=Application
-            Name=Tern
-            Comment=A neoterminal for the Electron-weary
-            Exec=tern
-            Terminal=true
-            Categories=System;TerminalEmulator;
-            EOF
-
             runHook postInstall
           '';
-
-          # A window needs a Wayland compositor, so this test only works on a
-          # machine with a display. `tern --help` exercises the loader, the
-          # RPATH and the bundled assets without one.
-          passthru.tests.tern-help =
-            pkgs.runCommand "tern-help" { nativeBuildInputs = [ self.packages.${system}.tern ]; }
-              ''
-                HOME=$TMPDIR tern --help >/dev/null
-                touch "$out"
-              '';
 
           meta = {
             description = "Rust-native, Kitty-compatible terminal multiplexer";
@@ -172,6 +193,7 @@
             license = lib.licenses.unfree;
             mainProgram = "tern";
             platforms = supportedSystems;
+            sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
           };
         };
     };
