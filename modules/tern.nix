@@ -33,7 +33,7 @@
 
             theme = "System";
             theme_dark = "dark-gruvbox";
-            theme_light = "light-sand";
+            theme_light = "light-honeycomb"; # gruvbox is ass, way too yellow
             reduce_motion = "system";
             contrast = "Light";
             material = "Glass";
@@ -62,6 +62,13 @@
 
             tabs = "Vertical";
             tabs_autohide = false;
+
+            cursor.shape = null;
+            cursor.blink = false;
+            cursor.programs = true;
+
+            carly.model = "@smol";
+            carly.heartbeat = 30;
 
             font_family = "${theme.font.mono.name} Light";
             font_size = theme.font.size.normal;
@@ -223,6 +230,15 @@
           };
         };
 
+        xdg.config.files."tern/carly/HEARTBEAT.md".text = # markdown
+          ''
+            - Tell me if a pane shows a build failure, say which.
+            - Tell me if an agent has completed it's work with no meaningful advisor notices left.
+            - If an agent has stopped but has unread advisor notices, tell it to check them.
+            - If an agent has stopped due to an error, tell it to "continue", say which. If the
+              error occurs >3 times consecutively with no progress made, notify me.
+          '';
+
         # tern reads ~/.config/tern/plugins/<id>/ for a plugin.toml plus the
         # entries it names; the directory comes from the key, not the source.
         xdg.config.files."tern/plugins/ide/plugin.toml".source = "${
@@ -251,6 +267,16 @@
         xdg.config.files."tern/plugins/jj/window.luau".source = "${
           self.packages.${pkgs.stdenv.hostPlatform.system}.tern-jj-plugin
         }/window.luau";
+
+        # The tern-tools plugin: jjui and hunk, each in a tab that closes when
+        # the program exits.
+        xdg.config.files."tern/plugins/tools/plugin.toml".source = "${
+          self.packages.${pkgs.stdenv.hostPlatform.system}.tern-tools-plugin
+        }/plugin.toml";
+
+        xdg.config.files."tern/plugins/tools/init.luau".source = "${
+          self.packages.${pkgs.stdenv.hostPlatform.system}.tern-tools-plugin
+        }/init.luau";
 
       };
     };
