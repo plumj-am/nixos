@@ -12,7 +12,7 @@
         pkgs.haskellPackages.hlint
       ];
 
-      hjem.extraModule = {
+      hjemModule = {
         xdg.config.files."fourmolu.yaml".text = # yaml
           ''
             indentation: 3

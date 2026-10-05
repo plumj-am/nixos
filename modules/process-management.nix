@@ -12,7 +12,7 @@
       inherit (lib.meta) getExe;
     in
     {
-      hjemModule.packages =
+      environment.systemPackages =
         singleton
         <|
           pkgs.writers.writeNuBin "process-monitor" # nu

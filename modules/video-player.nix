@@ -15,7 +15,9 @@
       inherit (lib.trivial) const flip;
     in
     {
-      hjem.extraModule = {
+      environment.systemPackages = singleton pkgs.haruna;
+
+      hjemModule = {
         xdg.mime-apps.default-applications =
           mkIf config.nixpkgs.hostPlatform.isLinux
           <| flip genAttrs (const "org.kde.haruna.desktop") [
@@ -39,8 +41,6 @@
             "video/x-matroska"
             "video/x-ms-wmv"
           ];
-
-        packages = singleton pkgs.haruna;
       };
     };
 }

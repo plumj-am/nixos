@@ -18,7 +18,7 @@
       ];
 
       # Thanks again twitter:HSVSphere github:RGBCube
-      hjem.extraModule = {
+      hjemModule = {
         xdg.mime-apps.default-applications =
           flip genAttrs (const "org.kde.dolphin.desktop") [
             "inode/directory"

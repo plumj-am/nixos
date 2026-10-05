@@ -25,14 +25,14 @@
     {
       shellAliases.git-graph = ''git log --graph --full-history --pretty=format:"%h%  %d%x20%s"'';
 
-      hjemModule = {
-        packages = [
-          pkgs.gh
-          pkgs.gitMinimal
-          pkgs.difftastic
-          pkgs.git-credential-oauth
-        ];
+      environment.systemPackages = [
+        pkgs.gh
+        pkgs.gitMinimal
+        pkgs.difftastic
+        pkgs.git-credential-oauth
+      ];
 
+      hjemModule = {
         xdg.config.files."git/ignore".text = # .gitignore
           ''
             .claude/
@@ -129,11 +129,11 @@
       inherit (lib.lists) singleton;
     in
     {
+      environment.systemPackages = singleton pkgs.pijul;
+
       hjemModule =
         { config, ... }:
         {
-          packages = singleton pkgs.pijul;
-
           xdg.config.files."pijul/config.toml" = {
             generator = pkgs.writers.writeTOML "pijul-config.toml";
             value = {
@@ -167,11 +167,11 @@
       jujutsu = inputs.jujutsu.packages.${pkgs.stdenv.hostPlatform.system}.jujutsu;
     in
     {
+      environment.systemPackages = singleton jujutsu;
+
       hjemModule =
         { osConfig, config, ... }:
         {
-          packages = singleton jujutsu;
-
           xdg.config.files."jj/config.toml" = {
             generator = pkgs.writers.writeTOML "jj-config.toml";
             value = {

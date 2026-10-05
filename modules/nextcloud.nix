@@ -104,8 +104,9 @@
       inherit (lib.lists) singleton;
     in
     {
-      hjem.extraModule = {
-        packages = singleton pkgs.nextcloud-client;
+      environment.systemPackages = singleton pkgs.nextcloud-client;
+
+      hjemModule = {
         # This is probably a bad idea.
         xdg.config.files."Nextcloud/nextcloud.cfg" = {
           type = "copy";

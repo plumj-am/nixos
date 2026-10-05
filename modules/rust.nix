@@ -31,7 +31,7 @@
         pkgs.sccache
       ];
 
-      hjem.extraModule = {
+      hjemModule = {
         xdg.config.files."rustfmt/rustfmt.toml" = {
           generator = pkgs.writers.writeTOML "rustfmt-rustfmt.toml";
           value = {

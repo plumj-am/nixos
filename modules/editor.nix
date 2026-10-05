@@ -49,20 +49,20 @@ in
         e = "hx"; # editor
       };
 
-      hjem.extraModule = { config, ... }: {
-        packages = [
-          # steelix's grammars.json revisions need syncing with the query files in its runtime
-          (pkgs.symlinkJoin {
-            name = "steelix";
-            paths = singleton pkgs.steelix.unwrapped;
-            nativeBuildInputs = singleton pkgs.makeBinaryWrapper;
-            postBuild = ''
-              wrapProgram $out/bin/hx --set HELIX_RUNTIME "${pkgs.helix.runtime}"
-            '';
-          })
-          pkgs.steel
-        ];
+      environment.systemPackages = [
+        # steelix's grammars.json revisions need syncing with the query files in its runtime
+        (pkgs.symlinkJoin {
+          name = "steelix";
+          paths = singleton pkgs.steelix.unwrapped;
+          nativeBuildInputs = singleton pkgs.makeBinaryWrapper;
+          postBuild = ''
+            wrapProgram $out/bin/hx --set HELIX_RUNTIME "${pkgs.helix.runtime}"
+          '';
+        })
+        pkgs.steel
+      ];
 
+      hjemModule = { config, ... }: {
         xdg.config.files = {
           "helix/config.toml" = {
             generator = pkgs.writers.writeTOML "helix-config.toml";
@@ -477,56 +477,54 @@ in
       ...
     }:
     {
-      hjem.extraModule = {
-        packages = [
-          # Rust
-          # rust-analyzer is in modules/common/rust.nix
-          pkgs.lldb
-          pkgs.leptosfmt
+      environment.systemPackages = [
+        # Rust
+        # rust-analyzer is in modules/common/rust.nix
+        pkgs.lldb
+        pkgs.leptosfmt
 
-          # Assembler
-          pkgs.asm-lsp
+        # Assembler
+        pkgs.asm-lsp
 
-          # TypeScript etc.
-          pkgs.deno
+        # TypeScript etc.
+        pkgs.deno
 
-          # Nix
-          pkgs.nil
-          inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.organix
+        # Nix
+        pkgs.nil
+        inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.organix
 
-          # YAML
-          pkgs.yaml-language-server
+        # YAML
+        pkgs.yaml-language-server
 
-          # JSON
-          pkgs.vscode-json-languageserver
+        # JSON
+        pkgs.vscode-json-languageserver
 
-          # TOML
-          pkgs.taplo
+        # TOML
+        pkgs.taplo
 
-          # Svelte
-          pkgs.svelte-language-server
+        # Svelte
+        pkgs.svelte-language-server
 
-          # SQL
-          pkgs.sqruff
+        # SQL
+        pkgs.sqruff
 
-          # Markdown
-          pkgs.markdown-oxide
+        # Markdown
+        pkgs.markdown-oxide
 
-          # Just
-          pkgs.just-lsp
+        # Just
+        pkgs.just-lsp
 
-          # Haskell
-          pkgs.fourmolu
-          pkgs.stylish-haskell
-          pkgs.haskell-language-server
+        # Haskell
+        pkgs.fourmolu
+        pkgs.stylish-haskell
+        pkgs.haskell-language-server
 
-          # Nushell
-          pkgs.nu-lint
-          pkgs.nufmt
+        # Nushell
+        pkgs.nu-lint
+        pkgs.nufmt
 
-          # QML
-          pkgs.qt6Packages.qtdeclarative
-        ];
-      };
+        # QML
+        pkgs.qt6Packages.qtdeclarative
+      ];
     };
 }

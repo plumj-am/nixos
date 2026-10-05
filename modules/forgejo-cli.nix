@@ -21,9 +21,9 @@
 
       shellAliases.fj = "fj --host https://git.plumj.am";
 
-      hjem.extraModule = {
-        packages = singleton pkgs.forgejo-cli;
+      environment.systemPackages = singleton pkgs.forgejo-cli;
 
+      hjemModule = {
         xdg.data.files."forgejo-cli/keys.json".source = secrets."forgejo-cli/config".path;
       };
     };

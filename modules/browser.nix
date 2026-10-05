@@ -473,7 +473,7 @@ in
           ''
       }";
 
-      hjem.extraModule = {
+      hjemModule = {
         files."Library/Application Support/net.imput.helium/NativeMessagingHosts/org.keepassxc.keepassxc_browser.json".text =
           toJSON {
             name = "org.keepassxc.keepassxc_browser";
@@ -521,7 +521,7 @@ in
 
       environment.etc."chromium/policies/managed/policies.json".text = toJSON policy;
 
-      hjem.extraModule = {
+      hjemModule = {
         xdg.config.files."helium/Default/Preferences" = {
           type = "copy";
           text = toJSON (preferences theme);

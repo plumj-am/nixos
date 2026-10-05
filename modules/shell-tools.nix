@@ -26,28 +26,28 @@
         fzf = "skim";
       };
 
-      hjem.extraModule = {
-        packages = [
-          pkgs.bat
-          pkgs.bottom
-          pkgs.eza
-          pkgs.fd
-          pkgs.skim
-          pkgs.jaq
-          pkgs.less
-          pkgs.ripgrep
-          pkgs.vivid
+      environment.sessionVariables = {
+        MANPAGER = pager;
+        PAGER = pager;
+        BAT_PAGER = "${less} --quit-if-one-screen --RAW-CONTROL-CHARS";
+        RIPGREP_CONFIG_PATH = "%h/.config/ripgrep/ripgreprc";
+      };
 
-          inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.rustle
-        ];
+      environment.systemPackages = [
+        pkgs.bat
+        pkgs.bottom
+        pkgs.eza
+        pkgs.fd
+        pkgs.skim
+        pkgs.jaq
+        pkgs.less
+        pkgs.ripgrep
+        pkgs.vivid
 
-        environment.sessionVariables = {
-          MANPAGER = pager;
-          PAGER = pager;
-          BAT_PAGER = "${less} --quit-if-one-screen --RAW-CONTROL-CHARS";
-          RIPGREP_CONFIG_PATH = "%h/.config/ripgrep/ripgreprc";
-        };
+        inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.rustle
+      ];
 
+      hjemModule = {
         xdg.config.files."ripgrep/ripgreprc".text = ''
           --line-number
           --smart-case

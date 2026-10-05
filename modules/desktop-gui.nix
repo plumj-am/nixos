@@ -72,7 +72,7 @@
         XCURSOR_SIZE = "24";
       };
 
-      hjem.extraModule = {
+      hjemModule = {
         files.".gtkrc-2.0".text = gtk2;
         xdg.config.files."gtk-3.0/settings.ini".text = gtk3;
         xdg.config.files."gtk-4.0/settings.ini".text = gtk4;

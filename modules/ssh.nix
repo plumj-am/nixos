@@ -1,7 +1,7 @@
 { self, ... }:
 let
   sshConfigBase = {
-    hjem.extraModule =
+    hjemModule =
       { config, ... }:
       {
         # HACK: Use copy type to prevent permissions issues on the resulting symlink.

@@ -67,7 +67,7 @@
       };
     };
     # FIXME: Doesn't work for some reason.
-    hjem.extraModule = {
+    hjemModule = {
       files.".hushlogin".text = "";
     };
   };

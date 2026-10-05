@@ -5,7 +5,7 @@
       config = {
         nix.settings.use-xdg-base-directories = true;
 
-        hjem.extraModule = {
+        hjemModule = {
           environment.sessionVariables = {
             XDG_CACHE_HOME = "${config.directory}/.cache";
             XDG_CONFIG_HOME = "${config.directory}/.config";

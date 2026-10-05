@@ -13,9 +13,9 @@
       inherit (config.localisation) location;
     in
     {
-      hjem.extraModule = {
-        packages = singleton pkgs.gammastep;
+      environment.systemPackages = singleton pkgs.gammastep;
 
+      hjemModule = {
         xdg.config.files."gammastep/config.ini" = {
           generator = lib.generators.toINI { };
           value = {

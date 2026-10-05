@@ -65,14 +65,14 @@
     {
       ai.secrets = true;
 
-      hjem.extraModule = {
-        packages = [
-          pkgs.python3
-          pkgs.uv
-          opencodePackage
-          pkgs.rtk # The rtk plugin (installed by the AI plugins service) calls it.
-        ];
+      environment.systemPackages = [
+        pkgs.python3
+        pkgs.uv
+        opencodePackage
+        pkgs.rtk # The rtk plugin (installed by the AI plugins service) calls it.
+      ];
 
+      hjemModule = {
         xdg.config.files = {
           "opencode/AGENTS.md" = {
             type = "copy";

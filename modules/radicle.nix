@@ -52,13 +52,13 @@ in
 
       nixpkgs.config.permittedInsecurePackages = singleton "radicle-node-1.10.3"; # private repos are not encrypted etc.
 
-      hjem.extraModule = {
-        packages = [
-          # inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.rsh-rsh
-          pkgs.radicle-node
-          pkgs.radicle-tui
-        ];
+      environment.systemPackages = [
+        # inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.rsh-rsh
+        pkgs.radicle-node
+        pkgs.radicle-tui
+      ];
 
+      hjemModule = {
         files = {
           # TODO:
           ".radicle/keys/radicle.pub".text = entities.radicleKeys.${hostName};

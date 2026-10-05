@@ -17,6 +17,11 @@
     {
       environment.shells = singleton <| getExe pkgs.nushell;
 
+      environment.systemPackages = [
+        pkgs.bash
+        pkgs.nushell
+      ];
+
       hjemModule =
         {
           lib,
@@ -30,11 +35,6 @@
           '';
         in
         {
-          packages = [
-            pkgs.bash
-            pkgs.nushell
-          ];
-
           files.".zshrc" = mkIf osConfig.nixpkgs.hostPlatform.isDarwin {
             # zsh
             text = mkAfter ''

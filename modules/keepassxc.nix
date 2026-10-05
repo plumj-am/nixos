@@ -57,12 +57,12 @@ in
         };
       };
 
-      hjem.extraModule = {
+      environment.systemPackages = singleton <| pkgs.keepassxc.override { withKeePassYubiKey = true; };
+
+      hjemModule = {
         xdg.mime-apps.default-applications = flip genAttrs (const "org.keepassxc.KeePassXC.desktop") [
           "application/x-keepass2"
         ];
-
-        packages = singleton <| pkgs.keepassxc.override { withKeePassYubiKey = true; };
 
         files."keepassxc".type = "directory";
         xdg.config.files."keepassxc/keepassxc.ini" = {
@@ -90,7 +90,7 @@ in
     {
       homebrew.casks = singleton "keepassxc";
 
-      hjem.extraModule = {
+      hjemModule = {
         files = {
           "Library/Application Support/KeePassXC/keepassxc.ini" = {
             generator = toINI { };

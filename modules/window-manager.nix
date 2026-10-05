@@ -65,6 +65,8 @@
       };
 
       environment.systemPackages = [
+        pkgs.niri
+
         pkgs.brightnessctl
         pkgs.clipcat
         pkgs.polkit_gnome
@@ -86,11 +88,9 @@
         })
       ];
 
-      hjem.extraModule =
+      hjemModule =
         { config, ... }:
         {
-          packages = singleton pkgs.niri;
-
           xdg.config.files."niri/config.kdl".text =
             with theme; # kdl
             ''
