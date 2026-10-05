@@ -4,7 +4,6 @@
   outputs = inputs: import ./outputs.nix inputs;
 
   inputs = {
-    emacs-overlay.url = "github:nix-community/emacs-overlay";
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";

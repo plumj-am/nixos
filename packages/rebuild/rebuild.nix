@@ -11,7 +11,6 @@
           ''
             def --wrapped main [
                --remote: string # The host to build (defaults to current)
-               --emacs (-e)     # Also reload emacs
                --help (-h)      # Show this help message
                ...rest: string  # Extra arguments to pass to nh
             ] {
@@ -70,8 +69,6 @@
                 error make $"rebuilding ($target) failed"
               }
 
-              if $emacs { main reload-emacs }
-
               print $"rebuild for ($target) succeeded."
             }
 
@@ -88,15 +85,6 @@
                 } catch {|_|
                   ""
                 }
-              }
-            }
-
-            def "main reload-emacs" [] {
-              print "reloading emacs config..."
-              try {
-                emacsclient --eval '(load-file "/home/jam/.config/emacs/init.el")' | ignore
-              } catch {|e|
-                error make $"reloading emacs failed: ($e)"
               }
             }
           '';
