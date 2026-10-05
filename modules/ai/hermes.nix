@@ -913,7 +913,6 @@ in
     }:
     let
       inherit (lib.lists) singleton;
-      inherit (lib.modules) mkForce;
     in
     {
       imports =
@@ -925,6 +924,7 @@ in
             lib
             pkgs
             ;
+          mainModel = "xiaomi/mimo-v2.6-pro";
           personality = "kawaii";
           withInstagram = true;
           withKiwi = true;
@@ -935,11 +935,20 @@ in
         };
 
       # Nicer experience for non-programmer use.
+      #
+      # Never wrap such values in `mkForce`: the upstream `settings` type
+      # (`deepConfigType`) merges definition values with `lib.recursiveUpdate`.
+      # It bypasses the module system's override-marker resolution, so `mkForce`
+      # survives as a literal `{ _type = "override"; content = ...; priority = 50; }`
+      # attribute set in config.yaml. Hermes then reads a dict where it wants a
+      # string or bool, `_normalize_approval_mode` falls back to "manual".
+      #
+      # This definition is the last one, so plain values win.
       services.hermes-agent.settings = {
-        tool_loop_guardrails.non_interactive_hard_stop_enabled = mkForce false;
-        approvals.mode = mkForce "off";
+        tool_loop_guardrails.non_interactive_hard_stop_enabled = false;
+        approvals.mode = "off";
 
-        discord.require_mention = mkForce false;
+        discord.require_mention = false;
       };
     };
 
