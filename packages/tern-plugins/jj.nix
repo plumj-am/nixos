@@ -63,11 +63,34 @@
                 -- !nonstrict
                 local ui = tern.ui
 
-                local HINT = {
-                  prompt = "letters type the name, Backspace deletes, Enter confirms, Esc cancels",
-                  pick = "Up and Down choose, Enter opens, Esc cancels",
-                  confirm = "Enter confirms, Esc cancels",
+                -- One keycap row per hint, the way Tern's own sheets write them
+                local HINTS = {
+                  prompt = {
+                    { nil, "type the workspace name" },
+                    { { "enter" }, "confirm" },
+                    { { "esc" }, "cancel" },
+                  },
+                  pick = {
+                    { { "up", "down" }, "choose" },
+                    { { "enter" }, "open" },
+                    { { "esc" }, "cancel" },
+                  },
+                  confirm = {
+                    { { "enter" }, "confirm" },
+                    { { "esc" }, "cancel" },
+                  },
                 }
+
+                local function hints(mode)
+                  local parts = {}
+                  for _, entry in ipairs(HINTS[mode] or {}) do
+                    if entry[1] ~= nil then
+                      table.insert(parts, ui.node("kbd", { keys = entry[1] }))
+                    end
+                    table.insert(parts, ui.text({ t = entry[2], s = "muted" }))
+                  end
+                  return ui.row(parts)
+                end
 
                 local function field(line, index)
                   local at = 1
@@ -95,6 +118,9 @@
                   }
                   if req.mode == "prompt" then
                     req.placeholder = field(head, 4)
+                  elseif req.mode == "pick" then
+                    -- The workspace the asking pane is in, so its row reads current
+                    req.current = field(head, 4)
                   end
 
                   for index = 2, #args do
@@ -107,19 +133,104 @@
                   return req
                 end
 
-                local function rows(state, req)
-                  local parts = {}
-                  for index, item in ipairs(req.items) do
-                    local marker = index == state.selected and "> " or "  "
-                    local detail = item.root ~= "" and item.change or "no checkout"
-                    table.insert(parts, ui.text(marker .. item.name .. "   " .. detail))
+                local function item_named(req, name)
+                  for _, item in ipairs(req.items) do
+                    if item.name == name then
+                      return item
+                    end
                   end
-                  return parts
+                  return nil
+                end
+
+                -- The rows a pick request shows: the sheet's search line only draws
+                -- the query, so filtering and the match offsets are ours. Offsets are
+                -- UTF-16 in the protocol and workspace names are ASCII, so the byte
+                -- offsets of string.find are the same numbers.
+                local function catalog(state, req)
+                  local query = string.lower(state.query)
+                  local items, order = {}, {}
+                  local current = nil
+
+                  for _, item in ipairs(req.items) do
+                    local label = item.name
+                    local lower = string.lower(label)
+                    local at = nil
+                    if query ~= "" then
+                      at = string.find(lower, query, 1, true)
+                      if at == nil then
+                        at = string.find(string.lower(item.change), query, 1, true)
+                      end
+                    end
+
+                    if query == "" or at ~= nil then
+                      local hits = nil
+                      if at ~= nil and string.find(lower, query, 1, true) ~= nil then
+                        hits = { { at - 1, at - 1 + #query } }
+                      end
+
+                      table.insert(items, {
+                        id = label,
+                        label = label,
+                        detail = item.root == "" and "no checkout" or item.root,
+                        mono = true,
+                        icon = "branch",
+                        tone = item.root == "" and "muted" or nil,
+                        disabled = item.root == "" and "this workspace has no checkout" or nil,
+                        hits = hits,
+                        facts = { change = item.change },
+                      })
+                      table.insert(order, label)
+                      if item.root ~= "" and item.root == req.current then
+                        current = label
+                      end
+                    end
+                  end
+
+                  return items, order, current
+                end
+
+                local function in_order(order, name)
+                  for _, listed in ipairs(order) do
+                    if listed == name then
+                      return true
+                    end
+                  end
+                  return false
+                end
+
+                -- The answer the window half reads out of the block's title
+                local function submit(state, answer)
+                  state.answered = true
+                  state.answer = answer
                 end
 
                 tern.block.define("dialog", {
                   init = function(cx, args, saved)
-                    return { req = request(args), buffer = "", selected = 1, answered = false }
+                    local req = request(args)
+                    local selected = nil
+                    for _, item in ipairs(req.items) do
+                      if item.root ~= "" and item.root == req.current then
+                        selected = item.name
+                      end
+                    end
+                    for _, item in ipairs(req.items) do
+                      if selected == nil and item.root ~= "" then
+                        selected = item.name
+                      end
+                    end
+                    if selected == nil and req.items[1] ~= nil then
+                      selected = req.items[1].name
+                    end
+
+                    return {
+                      req = req,
+                      buffer = "",
+                      cursor = 0,
+                      query = "",
+                      selected = selected,
+                      answered = false,
+                      focused = false,
+                    }
                   end,
 
                   title = function(state)
@@ -131,24 +242,67 @@
 
                   view = function(state, cx)
                     local req = state.req
-                    local parts = { ui.text({ t = req.title, s = "strong" }) }
 
+                    if req.mode == "pick" then
+                      local items, order, current = catalog(state, req)
+                      if state.selected == nil or not in_order(order, state.selected) then
+                        state.selected = order[1]
+                      end
+
+                      return {
+                        main = ui.col({ ui.text({ t = req.title, s = "strong" }) }),
+                        layer = ui.col({
+                          ui.node("picker", {
+                            key = "picker",
+                            size = "md",
+                            icon = "branch",
+                            title = req.title,
+                            subtitle = req.message ~= "" and req.message or nil,
+                            noun = "workspaces",
+                            query = state.query,
+                            cursor = #state.query,
+                            items = items,
+                            order = order,
+                            selected = state.selected,
+                            current = current ~= nil and { current } or {},
+                            columns = { { id = "change", head = "change", format = "dim", priority = 50 } },
+                            empty = { ui.span("No jj workspaces match", "muted") },
+                            total = #req.items,
+                            preview = "none",
+                            actions = {
+                              { id = "close", label = "Cancel", keys = { "esc" } },
+                              { id = "open", label = "Open", keys = { "enter" }, primary = true },
+                            },
+                          }),
+                        }),
+                      }
+                    end
+
+                    local parts = { ui.text({ t = req.title, s = "strong" }) }
                     if req.message ~= "" then
                       table.insert(parts, ui.text({ t = req.message, s = "muted" }))
                     end
-                    if req.mode == "pick" then
-                      for _, row in ipairs(rows(state, req)) do
-                        table.insert(parts, row)
+
+                    if req.mode == "prompt" then
+                      table.insert(
+                        parts,
+                        ui.node("input", {
+                          key = "name",
+                          text = state.buffer,
+                          cursor = state.cursor,
+                          placeholder = req.placeholder,
+                          prompt = { ui.span("› ", "muted") },
+                        })
+                      )
+
+                      -- The caret blinks only on the field the surface has focused
+                      if not state.focused then
+                        state.focused = true
+                        cx:frame({ { "focus", "main.name" } })
                       end
-                    elseif req.mode == "prompt" then
-                      local shown = state.buffer
-                      if shown == "" then
-                        shown = req.placeholder
-                      end
-                      table.insert(parts, ui.text(shown))
                     end
 
-                    table.insert(parts, ui.text({ t = HINT[req.mode] or "", s = "muted" }))
+                    table.insert(parts, hints(req.mode))
                     return { main = ui.col(parts) }
                   end,
 
@@ -159,32 +313,50 @@
                     end
 
                     if key.name == "escape" then
-                      state.answered = true
-                      state.answer = "cancel"
+                      submit(state, "cancel")
                       return true
                     end
 
-                    if key.name == "enter" then
-                      state.answered = true
-                      if req.mode == "confirm" then
-                        state.answer = "ok:"
-                      elseif req.mode == "pick" then
-                        local item = req.items[state.selected]
-                        state.answer = "ok:" .. (item and item.name or "")
+                    if key.name == "enter" and not key.shift then
+                      if req.mode == "pick" then
+                        submit(state, "ok:" .. (state.selected or ""))
+                      elseif req.mode == "prompt" then
+                        submit(state, "ok:" .. state.buffer)
                       else
-                        state.answer = "ok:" .. state.buffer
+                        submit(state, "ok:")
                       end
                       return true
                     end
 
                     if req.mode == "pick" then
-                      local count = #req.items
-                      if key.name == "up" then
-                        state.selected = (state.selected - 2) % count + 1
+                      local _, order = catalog(state, req)
+                      local count = #order
+                      if key.name == "up" or key.name == "down" then
+                        if count == 0 then
+                          return false
+                        end
+                        local index = 1
+                        for position, listed in ipairs(order) do
+                          if listed == state.selected then
+                            index = position
+                          end
+                        end
+                        if key.name == "up" then
+                          index = (index - 2) % count + 1
+                        else
+                          index = index % count + 1
+                        end
+                        state.selected = order[index]
                         return true
                       end
-                      if key.name == "down" then
-                        state.selected = state.selected % count + 1
+                      if key.name == "backspace" then
+                        state.query = string.sub(state.query, 1, math.max(0, #state.query - 1))
+                        state.selected = nil
+                        return true
+                      end
+                      if key.text ~= nil and not (key.ctrl or key.meta) then
+                        state.query = state.query .. key.text
+                        state.selected = nil
                         return true
                       end
                       return false
@@ -192,16 +364,70 @@
 
                     if req.mode == "prompt" then
                       if key.name == "backspace" then
-                        state.buffer = string.sub(state.buffer, 1, math.max(0, #state.buffer - 1))
+                        if state.cursor > 0 then
+                          state.buffer = string.sub(state.buffer, 1, state.cursor - 1)
+                            .. string.sub(state.buffer, state.cursor + 1)
+                          state.cursor = state.cursor - 1
+                        end
                         return true
                       end
-                      if key.text ~= nil then
-                        state.buffer = state.buffer .. key.text
+                      if key.name == "left" then
+                        state.cursor = math.max(0, state.cursor - 1)
+                        return true
+                      end
+                      if key.name == "right" then
+                        state.cursor = math.min(#state.buffer, state.cursor + 1)
+                        return true
+                      end
+                      if key.name == "home" then
+                        state.cursor = 0
+                        return true
+                      end
+                      if key.name == "end" then
+                        state.cursor = #state.buffer
+                        return true
+                      end
+                      if key.text ~= nil and not (key.ctrl or key.meta) then
+                        state.buffer = string.sub(state.buffer, 1, state.cursor)
+                          .. key.text
+                          .. string.sub(state.buffer, state.cursor + 1)
+                        state.cursor = state.cursor + #key.text
                         return true
                       end
                     end
 
                     return false
+                  end,
+
+                  -- Pointer input: the sheet's rows, its action bar, and a click
+                  -- into the name field
+                  event = function(state, ev, cx)
+                    if state.answered then
+                      return
+                    end
+
+                    if ev.ev == "select" or ev.ev == "activate" then
+                      if type(ev.item) == "string" and item_named(state.req, ev.item) ~= nil then
+                        state.selected = ev.item
+                      end
+                      if ev.ev == "activate" then
+                        submit(state, "ok:" .. (state.selected or ""))
+                      end
+                      return
+                    end
+
+                    if ev.ev == "action" then
+                      if ev.act == "close" then
+                        submit(state, "cancel")
+                      elseif ev.act == "open" then
+                        submit(state, "ok:" .. (state.selected or ""))
+                      end
+                      return
+                    end
+
+                    if ev.ev == "focus" then
+                      cx:frame({ { "focus", ev.id } })
+                    end
                   end,
                 })
               '';
@@ -461,18 +687,31 @@
                     local args = { req.mode .. "\t" .. req.title .. "\t" .. (req.message or "") }
                     if req.mode == "prompt" then
                       args[1] = args[1] .. "\t" .. (req.placeholder or "")
+                    elseif req.mode == "pick" then
+                      -- The checkout the asking pane is in: the sheet marks its row
+                      args[1] = args[1] .. "\t" .. (req.current or "")
                     end
                     for _, item in ipairs(req.items or {}) do
                       table.insert(args, item.name .. "\t" .. (item.change or "") .. "\t" .. (item.root or ""))
                     end
 
-                    local pane = cx:new_block("jj.dialog", args, "tab")
+                    -- Beside the focused block, then floated over it: the dialog is
+                    -- an overlay, so the tab and its layout stay as they were.
+                    local pane = cx:new_block("jj.dialog", args, "beside", { focus = false })
                     if pane == nil then
                       warn(cx, "error", "the jj dialog block is not available", "no Ready plugin defines jj.dialog")
                       return
                     end
 
-                    -- Focused explicitly: the first frame is not there yet to claim it
+                    local floated, err = cx.layout:float(pane)
+                    if not floated then
+                      cx.layout:close(pane)
+                      warn(cx, "error", "could not overlay the jj dialog", err)
+                      return
+                    end
+
+                    -- A new overlay is a glance: focusing it expands it, so keys
+                    -- reach the dialog.
                     cx.layout:focus(pane)
                     waiting = { pane = pane, cb = cb }
                   end
@@ -694,7 +933,7 @@
                         return
                       end
 
-                      table.insert(reports, { pick = { items = items, main_root = main_root } })
+                      table.insert(reports, { pick = { items = items, main_root = main_root, current = root } })
                     end)
                   end)
                 end
@@ -1027,6 +1266,7 @@
                             title = "open jj workspace",
                             message = report.pick.main_root,
                             items = report.pick.items,
+                            current = report.pick.current,
                           }, function(answer_cx, action, picked)
                             if action ~= "ok" then
                               return

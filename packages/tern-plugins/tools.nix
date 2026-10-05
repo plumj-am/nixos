@@ -6,7 +6,7 @@
     }:
     {
       # tern-tools plugin: open programs in a tab that closes when the
-      # program exits.
+      # program exits, and return the focus where it came from.
       packages.tern-tools-plugin =
         let
           manifest = pkgs.writers.writeTOML "tern-tools-plugin.toml" {
@@ -24,15 +24,31 @@
             pkgs.writers.writeText "tern-tools-init.luau" # luau
               ''
                 --!nonstrict
-                -- Open PROGRAMS[PROGRAM] in a tab, and close that tab when the program exits.
+                -- Open PROGRAMS[PROGRAM] as a picture-in-picture overlay over the
+                -- focused pane: the overlay goes away with its program, and the
+                -- focus under it comes back.
                 local PROGRAMS = {
                   jjui = { title = "jjui", command = "jjui" },
                   hunk = { title = "hunk", command = "hunk diff --watch" },
                 }
 
-                -- Tabs this plugin opened, and the panes running a program in one.
-                local tool_tabs = {}
-                local program_panes = {}
+                -- A floating pane is a picture-in-picture card; the float call takes
+                -- no size, so the card is sized here. Tern sizes the pane's grid from
+                -- the box, so the program gets the matching cells (95x47 for 760x798
+                -- in a 950x998 window). Scoped to floating panes running a program:
+                -- shells and block panes float at Tern's own size.
+                tern.css(
+                  "overlay",
+                  [[
+                    .tn-pane.pip.agent {
+                      transform: none !important;
+                      left: 10% !important;
+                      top: 10% !important;
+                      width: 80% !important;
+                      height: 80% !important;
+                    }
+                  ]]
+                )
 
                 for name, program in pairs(PROGRAMS) do
                   tern.command({
@@ -41,44 +57,34 @@
                     icon = "terminal",
                     group = "tern-tools",
                     run = function(cx)
-                      -- The program is the tab's pane program, so the pane ends
-                      -- when the user quits the TUI.
-                      local pane = cx.layout:new_tab({ command = program.command })
+                      local origin = cx.session:focused()
+                      if origin == nil then
+                        cx:toast("error", "no focused pane to overlay " .. program.title)
+                        return
+                      end
+
+                      -- A pane joins a tab through a split; the split stops showing
+                      -- once the pane floats over the pane it came from.
+                      local pane = cx.layout:split(origin, "right", { command = program.command }, { focus = false })
                       if pane == nil then
                         cx:toast("error", "could not open " .. program.title)
                         return
                       end
 
-                      program_panes[pane] = true
-                      local tab = cx.session:tab_of(pane)
-                      if tab ~= nil then
-                        tool_tabs[tab] = true
+                      local floated, err = cx.layout:float(pane, origin)
+                      if not floated then
+                        cx.layout:close(pane)
+                        cx:toast("error", "could not overlay " .. program.title, err)
+                        return
                       end
+
+                      -- A new overlay is a glance: focusing it expands it, so keys
+                      -- reach the program, and closing it hands the focus back to
+                      -- the pane it covers.
+                      cx.layout:focus(pane)
                     end,
                   })
                 end
-
-                -- The program, or the shell that reported it, ended: take the tab
-                -- with it. A non-zero status is the program's exit; a zero status
-                -- with no line is its shell finishing.
-                tern.on("command_finished", function(ev, cx)
-                  if not program_panes[ev.pane] then
-                    return
-                  end
-                  program_panes[ev.pane] = nil
-
-                  local tab = cx.session:tab_of(ev.pane)
-                  if tab == nil or not tool_tabs[tab] then
-                    return
-                  end
-                  tool_tabs[tab] = nil
-                  cx.layout:close(ev.pane)
-                end)
-
-                -- Closed by hand, so nothing to remember any more.
-                tern.on("pane_closed", function(ev, _cx)
-                  program_panes[ev.pane] = nil
-                end)
               '';
         in
         pkgs.runCommand "tern-tools-plugin" { } ''
