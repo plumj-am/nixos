@@ -37,19 +37,25 @@
       #   * status: bookmarks or change id, plus !, *N and +N/-N
       packages.tern-jj-plugin =
         let
-          manifest = pkgs.writers.writeText "tern-jj-plugin.toml" ''
-            schema = 1
-            id = "jj"
-            name = "tern-jj"
-            version = "0.1.0"
-            description = "Create, open, remove and inspect Jujutsu workspaces from Tern."
-            icon = "branch"
+          manifest = pkgs.writers.writeTOML "tern-jj-plugin.toml" {
+            schema = 1;
+            id = "jj";
+            name = "tern-jj";
+            version = "0.1.0";
+            description = "Create, open, remove and inspect Jujutsu workspaces from Tern.";
+            icon = "branch";
 
-            blocks = [{ id = "dialog", title = "jj workspace", icon = "branch" }]
+            blocks = [
+              {
+                id = "dialog";
+                title = "jj workspace";
+                icon = "branch";
+              }
+            ];
 
-            host = "host.luau"
-            window = "init.luau"
-          '';
+            host = "host.luau";
+            window = "init.luau";
+          };
 
           host =
             pkgs.writers.writeText "tern-jj-host.luau" # luau
@@ -1106,11 +1112,11 @@
 
         in
         pkgs.runCommand "tern-jj-plugin" { } ''
-          mkdir -p "$out"
-          ln -s ${manifest} "$out/plugin.toml"
-          ln -s ${host} "$out/host.luau"
-          ln -s ${entry} "$out/init.luau"
-          ln -s ${window} "$out/window.luau"
+          mkdir --parents "$out"
+          ln --symbolic ${manifest} "$out/plugin.toml"
+          ln --symbolic ${host} "$out/host.luau"
+          ln --symbolic ${entry} "$out/init.luau"
+          ln --symbolic ${window} "$out/window.luau"
         '';
     };
 }

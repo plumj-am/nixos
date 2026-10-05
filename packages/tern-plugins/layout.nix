@@ -9,16 +9,15 @@
       # names, so both are written into one store path from strings, not loose files
       packages.tern-ide-plugin =
         let
-          manifest = pkgs.writers.writeText "tern-ide-plugin.toml" ''
-            schema = 1
-            id = "ide"
-            name = "tern-ide"
-            version = "0.1.0"
-            description = "IDE-like four-cell workspace layout with explicit split ratios."
+          manifest = pkgs.writers.writeTOML "tern-ide-plugin.toml" {
+            schema = 1;
+            id = "ide";
+            name = "tern-ide";
+            version = "0.1.0";
+            description = "IDE-like four-cell workspace layout with explicit split ratios.";
 
-            # Window-level entry only, so `window` names the entry file and no `host` key exists
-            window = "init.luau"
-          '';
+            window = "init.luau";
+          };
 
           entry =
             pkgs.writers.writeText "tern-ide-init.luau" # luau
@@ -177,9 +176,9 @@
               '';
         in
         pkgs.runCommand "tern-ide-plugin" { } ''
-          mkdir -p "$out"
-          ln -s ${manifest} "$out/plugin.toml"
-          ln -s ${entry} "$out/init.luau"
+          mkdir --parents "$out"
+          ln --symbolic ${manifest} "$out/plugin.toml"
+          ln --symbolic ${entry} "$out/init.luau"
         '';
     };
 }

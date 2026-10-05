@@ -9,16 +9,16 @@
       # program exits.
       packages.tern-tools-plugin =
         let
-          manifest = pkgs.writers.writeText "tern-tools-plugin.toml" ''
-            schema = 1
-            id = "tools"
-            name = "tern-tools"
-            version = "0.1.0"
-            description = "Run programs in a tab that closes when the program exits."
-            icon = "terminal"
+          manifest = pkgs.writers.writeTOML "tern-tools-plugin.toml" {
+            schema = 1;
+            id = "tools";
+            name = "tern-tools";
+            version = "0.1.0";
+            description = "Run programs in a tab that closes when the program exits.";
+            icon = "terminal";
 
-            window = "init.luau"
-          '';
+            window = "init.luau";
+          };
 
           entry =
             pkgs.writers.writeText "tern-tools-init.luau" # luau
@@ -82,9 +82,9 @@
               '';
         in
         pkgs.runCommand "tern-tools-plugin" { } ''
-          mkdir -p "$out"
-          ln -s ${manifest} "$out/plugin.toml"
-          ln -s ${entry} "$out/init.luau"
+          mkdir --parents "$out"
+          ln --symbolic ${manifest} "$out/plugin.toml"
+          ln --symbolic ${entry} "$out/init.luau"
         '';
     };
 }
