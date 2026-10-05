@@ -29,7 +29,7 @@
               if ($existing | is-not-empty) {
                 niri msg action close-window --id $existing
               } else {
-                (rio
+                (${getExe self.packages.${pkgs.stdenv.hostPlatform.system}.tern}
                   --app-id $CLASS_NAME
                   --title-placeholder "Process Monitor"
                   --command ${getExe pkgs.bottom} --basic)

@@ -62,7 +62,7 @@
         enable-spring-load-actions-on-all-items = true;
 
         persistent-apps = [
-          { app = "/Applications/Nix\ User\ Apps/rio.app"; }
+          { app = "/Applications/Nix\ User\ Apps/Tern.app"; }
         ];
       };
     };

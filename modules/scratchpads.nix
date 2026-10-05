@@ -42,11 +42,11 @@
             }
 
             if ($existing | is-empty) {
-              (^${getExe pkgs.rio}
+              (^${getExe self.packages.${pkgs.stdenv.hostPlatform.system}.tern}
                 --app-id $scratchpad_class
                 --title-placeholder "${name}"
                 --working-dir $notes_dir
-                --command ${getExe pkgs.helix} $notes_path)
+                --command ${getExe pkgs.steelix} $notes_path)
             } else if $compositor == "niri" and $niri_bin != null {
               let id = $existing | first | get id?
               if $id != null { ^$niri_bin msg action close-window --id $id }

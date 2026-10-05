@@ -334,24 +334,6 @@
         "type": "github"
       }
     },
-    "flake-utils_2": {
-      "inputs": {
-        "systems": "systems_4"
-      },
-      "locked": {
-        "lastModified": 1731533236,
-        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "type": "github"
-      }
-    },
     "garnix-incrementalize": {
       "inputs": {
         "nixpkgs": [
@@ -439,28 +421,6 @@
       "original": {
         "owner": "amaanq",
         "repo": "helium-flake",
-        "type": "github"
-      }
-    },
-    "herdr": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "rust-overlay": "rust-overlay_2"
-      },
-      "locked": {
-        "lastModified": 1790708764,
-        "narHash": "sha256-uu452Xe23pSvFk7w7fKPjiaqY5QenUIljao2SFAxpc0=",
-        "owner": "herdrdev",
-        "repo": "herdr",
-        "rev": "7b116c05bfda646af39d2524c54e70c751f57ee8",
-        "type": "github"
-      },
-      "original": {
-        "owner": "herdrdev",
-        "ref": "refs/tags/v0.9.3",
-        "repo": "herdr",
         "type": "github"
       }
     },
@@ -603,7 +563,7 @@
         "nixpkgs": [
           "nixpkgs"
         ],
-        "rust-overlay": "rust-overlay_3"
+        "rust-overlay": "rust-overlay_2"
       },
       "locked": {
         "lastModified": 1788450349,
@@ -648,7 +608,7 @@
         "nixpkgs": [
           "nixpkgs"
         ],
-        "rust-overlay": "rust-overlay_4",
+        "rust-overlay": "rust-overlay_3",
         "treefmt-nix": "treefmt-nix_2"
       },
       "locked": {
@@ -936,7 +896,6 @@
         "gerrit-autosubmit": "gerrit-autosubmit",
         "grove": "grove",
         "helium": "helium",
-        "herdr": "herdr",
         "hermes-agent": "hermes-agent",
         "hjem": "hjem",
         "homebrew": "homebrew",
@@ -954,8 +913,7 @@
         "sops": "sops",
         "steam-config": "steam-config",
         "treefmt": "treefmt_2",
-        "ublock": "ublock",
-        "zyouz": "zyouz"
+        "ublock": "ublock"
       }
     },
     "rust-analyzer-src": {
@@ -1034,27 +992,6 @@
     "rust-overlay_2": {
       "inputs": {
         "nixpkgs": [
-          "herdr",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1783577481,
-        "narHash": "sha256-EWMxOWrJ031f8f/lrcEmhTRs4npw1/5N3Hcjin846c8=",
-        "owner": "oxalica",
-        "repo": "rust-overlay",
-        "rev": "4cdea398dc491b082dccdce0fad1ed0b75fa3394",
-        "type": "github"
-      },
-      "original": {
-        "owner": "oxalica",
-        "repo": "rust-overlay",
-        "type": "github"
-      }
-    },
-    "rust-overlay_3": {
-      "inputs": {
-        "nixpkgs": [
           "jujutsu",
           "nixpkgs"
         ]
@@ -1073,7 +1010,7 @@
         "type": "github"
       }
     },
-    "rust-overlay_4": {
+    "rust-overlay_3": {
       "inputs": {
         "nixpkgs": [
           "kache",
@@ -1167,21 +1104,6 @@
       }
     },
     "systems_3": {
-      "locked": {
-        "lastModified": 1681028828,
-        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
-        "owner": "nix-systems",
-        "repo": "default",
-        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-systems",
-        "repo": "default",
-        "type": "github"
-      }
-    },
-    "systems_4": {
       "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
@@ -1357,28 +1279,6 @@
       "original": {
         "owner": "pyproject-nix",
         "repo": "uv2nix",
-        "type": "github"
-      }
-    },
-    "zyouz": {
-      "inputs": {
-        "flake-utils": "flake-utils_2",
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1780351560,
-        "narHash": "sha256-D256c4WJ8heV/jDK95IfB5VN8sSOMDx/i2bMDp7XjUA=",
-        "owner": "plumj-am",
-        "repo": "zyouz",
-        "rev": "1a376ae045bdd9d5f2afa3222bcca4499816e311",
-        "type": "github"
-      },
-      "original": {
-        "owner": "plumj-am",
-        "ref": "tmp",
-        "repo": "zyouz",
         "type": "github"
       }
     }

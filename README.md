@@ -67,7 +67,7 @@ details.
 
 ```nix
 {
-  flake.modules.common.herdr =
+  flake.modules.common.tern =
     {
       pkgs,
       config,

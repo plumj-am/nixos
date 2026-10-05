@@ -42,8 +42,6 @@ in
     #
     # I hate this garbage so much I'd rather write a generator than write
     # the damn config.
-    #
-    # See a usage example in ./zyouz.nix.
     toZON =
       value:
       let

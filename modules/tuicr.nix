@@ -40,20 +40,6 @@
               editor = config.environment.variables.EDITOR;
             };
           };
-
-          "herdr/config.toml" = {
-            generator = mkDefault <| pkgs.writers.writeTOML "herdr-config.toml";
-            value = {
-              keys.command = singleton {
-                key = "prefix+r";
-                type = "popup";
-                width = "80%";
-                height = "80%";
-                command = "tuicr";
-                description = "GitHub review tool";
-              };
-            };
-          };
         };
       };
     };

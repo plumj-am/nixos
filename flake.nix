@@ -24,10 +24,6 @@
       url = "github:amaanq/helium-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    herdr = {
-      url = "github:herdrdev/herdr?ref=refs/tags/v0.9.3";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     hermes-agent = {
       url = "github:NousResearch/hermes-agent";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -101,10 +97,6 @@
     ublock = {
       flake = false;
       url = "github:imputnet/uBlock";
-    };
-    zyouz = {
-      url = "github:plumj-am/zyouz/tmp";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 }

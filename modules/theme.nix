@@ -131,17 +131,6 @@ let
       };
 
       apps = {
-
-        rio = {
-          dark = "gruvbox-dark-hard";
-          light = "gruvbox-light-hard";
-        };
-
-        herdr = {
-          dark = "gruvbox";
-          light = "gruvbox-light";
-        };
-
         vivid = {
           dark = "gruvbox-dark";
           light = "gruvbox-light";
@@ -220,8 +209,6 @@ in
       };
       themedApps = [
         "icons"
-        "rio"
-        "herdr"
         "vivid"
         "nushell"
         "helix"

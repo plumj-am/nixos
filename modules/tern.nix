@@ -252,7 +252,6 @@
           self.packages.${pkgs.stdenv.hostPlatform.system}.tern-ide-plugin
         }/init.luau";
 
-        # The tern-jj plugin, the tern port of herdr-jj.
         xdg.config.files."tern/plugins/jj/plugin.toml".source = "${
           self.packages.${pkgs.stdenv.hostPlatform.system}.tern-jj-plugin
         }/plugin.toml";

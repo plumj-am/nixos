@@ -117,7 +117,7 @@
               }
 
               window-rule {
-                match app-id=r#"rio"#
+                match app-id=r#"so.stencil.tern"#
                 open-maximized false
               }
 
@@ -289,7 +289,7 @@
                 Mod+Shift+slash { show-hotkey-overlay; }
 
                 Mod+B repeat=false hotkey-overlay-title="Spawn Helium" { spawn "helium"; }
-                Mod+Z repeat=false hotkey-overlay-title="Spawn Rio" { spawn "rio"; }
+                Mod+Z repeat=false hotkey-overlay-title="Spawn Tern" { spawn "tern"; }
                 Mod+X repeat=false hotkey-overlay-title="Spawn Quickshell" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath}"; }
 
                 Mod+Q repeat=false { close-window; }
