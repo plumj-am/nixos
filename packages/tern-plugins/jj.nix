@@ -364,6 +364,51 @@
                     return false
                   end
 
+                  -- A workspace owns its tab: closing one pane leaves an empty tab behind, so every pane of that tab goes
+                  local function close_tab(cx, tab)
+                    local leaves = {}
+                    for _, info in ipairs(cx.session:panes()) do
+                      if info.tab == tab then
+                        table.insert(leaves, info.pane)
+                      end
+                    end
+                    if #leaves == 0 then
+                      return false
+                    end
+                    for _, pane in ipairs(leaves) do
+                      local ok, err = pcall(cx.layout.close, cx.layout, pane)
+                      if not ok then
+                        tern.log.info("tern-jj: pane already closed", pane, err)
+                      end
+                    end
+                    return true
+                  end
+
+                  -- The tab holding the removed workspace: the focused pane's tab, else the one in that directory
+                  local function tab_for_workspace(cx, root, pane)
+                    if pane ~= nil then
+                      local from_pane = cx.session:tab_of(pane)
+                      if from_pane ~= nil then
+                        return from_pane
+                      end
+                    end
+                    for _, info in ipairs(cx.session:tabs()) do
+                      if info.cwd == root then
+                        return info.id
+                      end
+                    end
+                    return nil
+                  end
+
+                  -- A tab is named repo/workspace, so tabs of one repository read together and two workspaces of the same name stay apart
+                  local function tab_name(root, name)
+                    local main_root = main_root_of(root)
+                    if main_root == nil then
+                      return name
+                    end
+                    return repo_name(main_root) .. "/" .. name
+                  end
+
                   local function open_in(cx, root, name, created)
                     table.insert(reports, { open = { root = root, name = name, created = created } })
                   end
@@ -579,8 +624,8 @@
                               "--name",
                               name,
                               "--revision",
-                              -- The source workspace's own change, not trunk()
-                              "@",
+                              -- heads(trunk() | root()), not @: a new worktree starts from the trunk, and a repository without one starts from its root
+                              "heads(trunk() | root())",
                               checkout,
                             }, function(add_result)
                               if add_result.status ~= 0 then
@@ -736,7 +781,7 @@
                               -- Queued, not closed: the workspace is gone so its tab goes too, and a jj callback's cx is dead
                               tabs[root] = nil
                               inflight = inflight + 1
-                              table.insert(reports, { close_pane = pane })
+                              table.insert(reports, { close_tab = { root = root, pane = pane } })
 
                               if not tern.fs.exists(root) then
                                 warn(cx, "success", "forgot " .. name)
@@ -912,6 +957,9 @@
                     return info.cwd
                   end
 
+                  -- Defined with the queue, further down: every command starts it, since work a command queues has no event of its own to drain it
+                  local pump
+
                   local function jj_command(id, title, icon, run)
                     tern.command({
                       id = id,
@@ -928,6 +976,7 @@
                           return
                         end
                         run(cx, cwd)
+                        pump(cx)
                       end,
                     })
                   end
@@ -943,6 +992,7 @@
                     group = "tern-jj",
                     run = function(cx)
                       refresh_status(cx)
+                      pump(cx)
                     end,
                   })
 
@@ -996,11 +1046,13 @@
                         elseif report.refresh ~= nil then
                           inflight = inflight - 1
                           refresh_status(cx)
-                        elseif report.close_pane ~= nil then
+                        elseif report.close_tab ~= nil then
                           inflight = inflight - 1
-                          local ok, err = pcall(cx.layout.close, cx.layout, report.close_pane)
-                          if not ok then
-                            tern.log.info("tern-jj: pane already closed", report.close_pane, err)
+                          local tab = tab_for_workspace(cx, report.close_tab.root, report.close_tab.pane)
+                          if tab == nil then
+                            tern.log.info("tern-jj: no tab held the removed workspace", report.close_tab.root)
+                          else
+                            close_tab(cx, tab)
                           end
                         elseif report.jj_next ~= nil then
                           inflight = inflight - 1
@@ -1013,7 +1065,13 @@
                           if tab ~= nil and focus_tab(cx, tab) then
                             show(cx, "info", "focused " .. name, root)
                           else
-                            local opened = cx.layout:new_tab({ cwd = root, name = name })
+                            -- new_tab takes a launch, which carries no name, and answers with its pane, not its tab
+                            local label = tab_name(root, name)
+                            local opened = cx.layout:new_tab({ cwd = root })
+                            local tab = opened ~= nil and cx.session:tab_of(opened) or nil
+                            if tab ~= nil then
+                              cx.layout:name_tab(tab, label)
+                            end
                             if opened == nil then
                               if report.open.created then
                                 local main_root = main_root_of(root)
@@ -1026,7 +1084,7 @@
                                 show(cx, "error", "could not open a tab for " .. name, root)
                               end
                             else
-                              tabs[root] = opened
+                              tabs[root] = tab
                               if postCreate ~= "" then
                                 -- Waits for the pane's shell to reach a prompt
                                 for _, info in ipairs(cx.session:tabs()) do
@@ -1057,7 +1115,7 @@
                   end
 
                   -- The pump: it keeps the chain going without a clock
-                  local function pump(cx)
+                  pump = function(cx)
                     flush(cx)
 
                     -- On `inflight`, not the queue: a step that spawned the next one keeps it alive
