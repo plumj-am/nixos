@@ -223,9 +223,12 @@
 
               "${prefix}>a" = "plugin.jj.open";
               "${prefix}>shift+a" = "plugin.jj.create";
-              "${prefix}>d" = "plugin.jj.remove";
+              "${prefix}>alt+a" = "plugin.jj.remove";
 
               "${prefix}>l" = "plugin.ide.layout";
+
+              "${prefix}>g" = "plugin.tools.jjui";
+              "${prefix}>d" = "plugin.tools.hunk";
             };
           };
         };
@@ -262,14 +265,10 @@
           self.packages.${pkgs.stdenv.hostPlatform.system}.tern-jj-plugin
         }/init.luau";
 
-        # The window half, which init.luau compiles: the load budget is too
-        # small for it.
         xdg.config.files."tern/plugins/jj/window.luau".source = "${
           self.packages.${pkgs.stdenv.hostPlatform.system}.tern-jj-plugin
         }/window.luau";
 
-        # The tern-tools plugin: jjui and hunk, each in a tab that closes when
-        # the program exits.
         xdg.config.files."tern/plugins/tools/plugin.toml".source = "${
           self.packages.${pkgs.stdenv.hostPlatform.system}.tern-tools-plugin
         }/plugin.toml";
