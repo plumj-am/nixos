@@ -196,11 +196,7 @@ let
       '';
     in
     {
-      imports = [
-        inputs.hermes-agent.nixosModules.default
-        self.modules.common.headroom
-        self.modules.common.vine
-      ];
+      imports = [ inputs.hermes-agent.nixosModules.default ];
 
       sops.secrets = {
         "hermes-shared-env" = {

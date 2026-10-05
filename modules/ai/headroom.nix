@@ -1,11 +1,13 @@
 { self, ... }:
 {
-  flake.modules.common.headroom =
+  flake.modules.nixos.headroom =
     {
       lib,
+      config,
       ...
     }:
     let
+      inherit (lib.constants) tailnet;
       inherit (lib.lists) singleton;
     in
     {
@@ -26,8 +28,8 @@
         openaiApiUrl = "http://127.0.0.1:8023";
       };
 
-      # Headroom binds 127.0.0.Tailscale IP of sloe, so
+      # Headroom binds this host's tailnet name, so
       # the proxy answers on the tailnet and on no other interface.
-      systemd.services.headroom.environment.HEADROOM_HOST = "sloe.taild29fec.ts.net";
+      systemd.services.headroom.environment.HEADROOM_HOST = "${config.networking.hostName}.${tailnet}";
     };
 }

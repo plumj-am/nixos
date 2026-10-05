@@ -1,7 +1,6 @@
-{ self, ... }:
+{ ... }:
 {
-  flake.modules.common.ai-agents = self.modules.common.vine;
-  flake.modules.common.vine =
+  flake.modules.nixos.vine =
     {
       inputs,
       pkgs,

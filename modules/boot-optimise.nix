@@ -35,11 +35,9 @@
 
           # Move each service from multi-user.target -> lazy-start.target.
           systemd.services = flip genAttrs (const { wantedBy = mkForce <| singleton "lazy-start.target"; }) [
-            "headroom"
             "shed"
             "s3-credentials"
             "s3-setup"
-            "vine"
           ];
 
           # zswap: in-RAM compressed swap. Configured via boot.zswap (kernel

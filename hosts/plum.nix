@@ -19,12 +19,14 @@ in
         freshrss-server
         gerrit
         goatcounter
+        headroom
         hermes-grove
         matrix
         opengist
         postgres
         radicle-explorer
         uptime-kuma
+        vine
         website-personal
       ];
 
