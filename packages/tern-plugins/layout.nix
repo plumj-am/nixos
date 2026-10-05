@@ -5,10 +5,8 @@
       ...
     }:
     {
-      # The tern-ide plugin, packaged so hjem can copy it into
-      # ~/.config/tern/plugins/ide/. tern loads a plugin from a directory holding
-      # plugin.toml plus the window entry it names, so both are written into one
-      # store path from strings kept here, not as loose files.
+      # tern loads a plugin from a directory holding plugin.toml plus the entry it
+      # names, so both are written into one store path from strings, not loose files
       packages.tern-ide-plugin =
         let
           manifest = pkgs.writers.writeText "tern-ide-plugin.toml" ''
@@ -18,8 +16,7 @@
             version = "0.1.0"
             description = "IDE-like four-cell workspace layout with explicit split ratios."
 
-            # Only window-level entry points, so `window` names the entry file
-            # and there is no host entry.
+            # Window-level entry only, so `window` names the entry file and no `host` key exists
             window = "init.luau"
           '';
 
@@ -27,41 +24,13 @@
             pkgs.writers.writeText "tern-ide-init.luau" # luau
               ''
                 --!nonstrict
-                -- Build an IDE-like four-cell workspace layout in the focused tab,
-                -- with the same ratios as herdr-ide.
-                --
-                --   +-----------------------+
-                --   | 68x75        | 32x75  |
-                --   |              |        |
-                --   +-----------------------+
-                --   | 50x25     | 50x25     |
-                --   +-----------------------+
-                --
-                -- Two constraints:
-                --
-                --   * `cx.layout:tab(spec)` takes no tab argument. It always builds
-                --     into the first tab and MERGES into whatever tree is there, so
-                --     it cannot rebuild the tab the user is sitting in.
-                --   * `cx.layout:resize` takes CELLS, not a ratio, and reports false
-                --     when no divider moved.
-                --
-                -- So the tree is built with the split primitive, then each divider
-                -- is measured and moved once. `cx.session:layout(tab)` exposes every
-                -- split's ratio, which is the only window-side size signal there is
-                -- (PaneInfo carries no cell size; BlockCx.cols/rows is host-only).
-                -- Nothing is closed.
-
                 local TOP_RATIO = 0.75
                 local LEFT_RATIO = 0.68
                 local BOTTOM_RATIO = 0.5
                 local AGENT_COMMAND = "omp"
 
-                -- The split node that directly contains `pane`, or nil at a leaf /
-                -- off-tree. A TabTree leaf is {pane=...}; every other node is a
-                -- split with [1] and [2], and `split` names its axis. The parent of
-                -- the leaf IS the divider that resizes it, so this is the only node
-                -- that matters. Matching on "has children" instead would pick a
-                -- nested divider and overshoot.
+                -- A TabTree leaf is {pane=...}; every other node is a split with [1] and [2], `split` naming its axis
+                -- The leaf's parent IS the divider that resizes it; a "has children" match would pick a nested divider
                 local function parent_of(node, pane)
                   if node == nil or node.pane ~= nil then
                     return nil
@@ -81,15 +50,8 @@
                   return parent_of(left, pane) or parent_of(right, pane)
                 end
 
-                -- `split` here is TabTree's value as the caller passes it: "right"
-                -- for a vertical divider, "down" for a horizontal one. That is NOT
-                -- the `axis` field `tern inspect` prints ("Row"/"Column"), which is
-                -- why this tests the split direction and not "Row".
-                --
-                -- resize grows a pane TOWARD dir, so on a divider that moves the
-                -- pane toward the SIBLING. To widen `pane` across its own divider,
-                -- grow away from that sibling: the first subtree grows right/down,
-                -- the second left/up.
+                -- `split` is the TabTree value as passed here ("right"/"down"), NOT the "Row"/"Column" axis of `tern inspect`
+                -- resize grows a pane TOWARD dir, i.e. toward its sibling, so widening across a divider means growing away
                 local function grow_across(split, is_first)
                   if split == "right" then
                     return is_first and "right" or "left"
@@ -97,8 +59,6 @@
                   return is_first and "down" or "up"
                 end
 
-                -- Current share of `pane` on its divider. ratio is the FIRST
-                -- subtree's share.
                 local function share_of(found)
                   if found.first then
                     return found.node.ratio
@@ -109,19 +69,8 @@
                   return 1 - found.node.ratio
                 end
 
-                -- Move one divider to `want` in a single resize.
-                --
-                -- The cell size is not exposed anywhere on the window side: PaneInfo
-                -- has no cell fields and BlockCx.cols/rows is host-only. But resize
-                -- moves whole cells, so one 1-cell probe measures the axis: if that
-                -- moves the share by d, the axis is 1/d cells and `want` sits
-                -- (want-here)/d cells away. Stepping one cell at a time cannot land
-                -- on a fraction, which is why this probes and then jumps.
-                --
-                -- Direction is measured rather than assumed: the probe shows which
-                -- way resize actually moves the share, and the correcting call uses
-                -- that sign. `resize(pane, probe, -1)` is the exact inverse of the
-                -- probe, so undoing it needs no sign reasoning.
+                -- Cell size is not exposed window-side (PaneInfo has no cell fields, BlockCx.cols/rows is host-only), so a
+                -- 1-cell probe measures the axis; resize(pane, probe, -1) is its exact inverse
                 local function nudge(cx, pane, split, want)
                   local function measure()
                     local tab = cx.session:tab_of(pane)
@@ -189,8 +138,7 @@
                   icon = "layout",
                   group = "tern-ide",
                   run = function(cx)
-                    -- The user's pane. cx.session:focused() is nil in a headless
-                    -- session, so fall back to the first pane of the window.
+                    -- cx.session:focused() is nil in a headless session, so fall back to the window's first pane
                     local pane = cx.session:focused()
                     if pane == nil then
                       for _, other in cx.session:panes() do
@@ -202,12 +150,7 @@
                       return
                     end
 
-                    -- Order matters. Splitting down first gives the two rows;
-                    -- splitting each row right then gives the four cells. Splitting
-                    -- right first instead leaves the last pane spanning the full
-                    -- height, a three-region tree.
-                    --
-                    -- focus = false keeps the user's pane focused throughout.
+                    -- Split down before right, else the tree comes out three-region; focus = false keeps the user's pane focused
                     local south = cx.layout:split(pane, "down", nil, { focus = false })
                     if south == nil then
                       return
@@ -220,7 +163,6 @@
                     end
                     nudge(cx, pane, "right", LEFT_RATIO)
 
-                    -- 0.50 is what an even split already gives, so no nudge.
                     local br = cx.layout:split(south, "right", nil, { focus = false })
                     if br == nil then
                       return
@@ -230,11 +172,7 @@
                   end,
                 })
 
-                -- A chord the tmux preset does not use. ctrl+g>l was tried first
-                -- and tern dropped it: the keymap preset already owns that chord,
-                -- and a plugin bind that collides is left out. Not reachable from
-                -- `tern send`, which writes to a pane's pty rather than the window
-                -- keymap.
+                -- tern silently drops a plugin bind whose chord the keymap preset already owns, so pick an unused one
                 tern.bind("ctrl+alt+shift+f9", "plugin.ide.layout")
               '';
         in

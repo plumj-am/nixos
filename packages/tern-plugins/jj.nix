@@ -8,14 +8,12 @@
     let
       inherit (pkgs.lib) toJSON;
 
-      # Inlined into the window half: a hook's budget is too small for a file
-      # read. New checkouts land in <workspace_root>/<repo>/<workspace-slug>.
+      # Inlined into the window half: a hook's budget is too small for a file read; new checkouts land in <workspace_root>/<repo>/<workspace-slug>
       settings = {
         workspace_root = "~/projects/tern-worktrees";
         create_bookmark = false;
         post_create = "try {direnv allow}";
 
-        # NOTE: no plugin-to-plugin dispatch yet (0.4.0)?
         post_create_actions = [ "plugin.ide.layout" ];
 
         status_remote = "origin";
@@ -32,8 +30,7 @@
       '';
     in
     {
-      # tern-jj: Jujutsu workspace integration for Tern
-      #
+      # tern-jj: Jujutsu workspace integration
       #   * create: fetch, a workspace on @, then a tab
       #   * open:   list workspaces, focus or add a tab
       #   * remove: snapshot, forget, delete the checkout
@@ -48,17 +45,12 @@
             description = "Create, open, remove and inspect Jujutsu workspaces from Tern."
             icon = "branch"
 
-            # One dialog block for all three workflows: the request arrives as
-            # its arguments, the answer leaves as its title.
             blocks = [{ id = "dialog", title = "jj workspace", icon = "branch" }]
 
             host = "host.luau"
             window = "init.luau"
           '';
 
-          # The dialog block. Typing is read from `key` rather than an input
-          # node, which is the one input path needing nothing beyond what every
-          # block already has.
           host =
             pkgs.writers.writeText "tern-jj-host.luau" # luau
               ''
@@ -71,7 +63,6 @@
                   confirm = "Enter confirms, Esc cancels",
                 }
 
-                -- The tab-separated field `index` of `line`.
                 local function field(line, index)
                   local at = 1
                   for _ = 1, index - 1 do
@@ -88,7 +79,6 @@
                   return string.sub(line, at, stop - 1)
                 end
 
-                -- "mode<TAB>title<TAB>message" heads the arguments; each later one is a row.
                 local function request(args)
                   local head = args[1] or ""
                   local req = {
@@ -111,7 +101,6 @@
                   return req
                 end
 
-                -- The pick list's rows, the cursor drawn as text.
                 local function rows(state, req)
                   local parts = {}
                   for index, item in ipairs(req.items) do
@@ -127,7 +116,6 @@
                     return { req = request(args), buffer = "", selected = 1, answered = false }
                   end,
 
-                  -- The answer: "cancel", or "ok:" with the value.
                   title = function(state)
                     if not state.answered then
                       return state.req and state.req.title or nil
@@ -212,20 +200,14 @@
                 })
               '';
 
-          # The window half: the palette commands, the jj command lines, and the
-          # status line formatter. It is a separate file rather than the entry,
-          # because the entry's load hook has a budget that compiling this much
-          # Luau exceeds. See `entry` below.
           window =
             pkgs.writers.writeText "tern-jj-window.luau" # luau
               ''
                   -- !nonstrict
-                  -- Each step runs on a later event, on that event's live cx.
                   local ui = tern.ui
 
                   ${settingsLuau}
 
-                  -- jj status template.
                   local STATUS_TEMPLATE = table.concat({
                     'if(conflict, "1", "") ++ "\\x1f" ++ ',
                     'if(empty, "1", "") ++ "\\x1f" ++ ',
@@ -234,7 +216,7 @@
                     'local_bookmarks.map(|b| b.name()).join(" ") ++ "\\n"',
                   })
 
-                  -- Expanded here: a child process gets the tilde literally.
+                  -- Expanded here: a child process gets the tilde literally
                   local workspaceRoot = SETTINGS.workspace_root
                   if string.sub(workspaceRoot, 1, 2) == "~/" then
                     workspaceRoot = (tern.getenv("HOME") or "") .. string.sub(workspaceRoot, 2)
@@ -248,7 +230,6 @@
                     return (string.gsub(text or "", "%s+$", ""))
                   end
 
-                  -- Process output is one string, not lines.
                   local function lines(text)
                     local out = {}
                     for line in string.gmatch(text or "", "([^\n]*)\n?") do
@@ -259,7 +240,7 @@
                     return out
                   end
 
-                  -- Reports are queued: raised in a jj callback, the cx is already dead.
+                  -- Reports are queued: raised in a jj callback, the cx is already dead
                   local reports = {}
 
                   local function show(cx, level, text, sub)
@@ -271,7 +252,6 @@
                     table.insert(reports, { level = level, text = text, sub = sub })
                   end
 
-                  -- A failed jj run, reported with the line jj printed.
                   local function failed(cx, action, result)
                     local detail = trim(result.stderr)
                     if detail == "" then
@@ -280,10 +260,8 @@
                     warn(cx, "error", action .. " failed", detail ~= "" and detail or nil)
                   end
 
-                  -- jj runs still waiting to be picked up.
                   local inflight = 0
 
-                  -- One jj run.
                   local function jj(args, opts, on_done)
                     if type(opts) == "function" then
                       on_done, opts = opts, nil
@@ -298,7 +276,6 @@
                     end)
                   end
 
-                  -- The checkout's own workspace root, asked of jj.
                   local function root_of(cwd, cb)
                     jj({ "jj", "--no-pager", "--ignore-working-copy", "-R", cwd, "workspace", "root" }, function(result)
                       local root = trim(result.stdout)
@@ -309,7 +286,6 @@
                     end)
                   end
 
-                -- The main workspace's root, or nil.
                 local function main_root_of(root)
                   local pointer = root .. "/.jj/repo"
                   if not tern.fs.exists(pointer) then
@@ -318,11 +294,11 @@
 
                   local ok, text = pcall(tern.fs.read, pointer)
                   if ok and text ~= nil then
-                    -- Relative to `<root>/.jj`, not `<root>`:
+                    -- Relative to `<root>/.jj`, not `<root>`
                     local store = trim(text)
                     local joined = string.sub(store, 1, 1) == "/" and store or (root .. "/.jj/" .. store)
 
-                    -- Normalised here; tern.fs has no path resolution.
+                    -- Normalised here; tern.fs has no path resolution
                     local segments = {}
                     for part in string.gmatch(joined, "[^/]+") do
                       if part == ".." then
@@ -334,7 +310,6 @@
 
                     local resolved = "/" .. table.concat(segments, "/")
 
-                    -- The store is at `<main>/.jj/repo`, so both come off.
                     local main = string.match(resolved, "^(.*)/%.jj/repo$")
                     if main == nil or main == "" then
                       return nil
@@ -342,7 +317,6 @@
                     return main
                   end
 
-                  -- Reading failed, so the path is a directory:
                   return root
                 end
 
@@ -354,7 +328,7 @@
                     return name
                   end
 
-                  -- A workspace name is jj's: [A-Za-z0-9._/-].
+                  -- A workspace name is jj's: [A-Za-z0-9._/-]
                   local function valid_name(name)
                     if type(name) ~= "string" or name == "" then
                       return false
@@ -372,7 +346,6 @@
                     return out
                   end
 
-                  -- Tabs this plugin opened, by checkout.
                   local tabs = {}
 
                   local function focus_tab(cx, tab)
@@ -385,12 +358,10 @@
                     return false
                   end
 
-                  -- Focus a checkout or give it a tab; queued, because
                   local function open_in(cx, root, name, created)
                     table.insert(reports, { open = { root = root, name = name, created = created } })
                   end
 
-                  -- Undo a create run: forget the workspace, drop the
                   local function rollback(cx, main_root, name, root)
                     local function forget()
                       jj({
@@ -433,7 +404,6 @@
                     end)
                   end
 
-                  -- The dialog. A command opens it with the request as arguments.
                   local waiting = nil
 
                   local function ask(cx, req, cb)
@@ -445,19 +415,18 @@
                       table.insert(args, item.name .. "\t" .. (item.change or "") .. "\t" .. (item.root or ""))
                     end
 
-                    -- A tab, so the dialog owns the keys:
                     local pane = cx:new_block("jj.dialog", args, "tab")
                     if pane == nil then
                       warn(cx, "error", "the jj dialog block is not available", "no Ready plugin defines jj.dialog")
                       return
                     end
 
-                    -- Focused explicitly: the first frame is not there yet to claim it.
+                    -- Focused explicitly: the first frame is not there yet to claim it
                     cx.layout:focus(pane)
                     waiting = { pane = pane, cb = cb }
                   end
 
-                  -- The block's title is the answer: "cancel" or "ok:<value>".
+                  -- The block's title is the answer: "cancel" or "ok:<value>"
                   local function answer(cx, pane, title)
                     if waiting == nil or waiting.pane ~= pane then
                       return
@@ -469,14 +438,11 @@
                     local cb = waiting.cb
                     waiting = nil
 
-                    -- Closed first: it ends the block.
                     cx.layout:close(pane)
 
-                    -- The event's cx; the command's died with its call.
                     cb(cx, title == "cancel" and "cancel" or "ok", title == "cancel" and nil or string.sub(title, 4))
                   end
 
-                  -- Every workspace of the main one, with its change and checkout.
                   local function list_workspaces(main_root, cb)
                     jj({
                       "jj",
@@ -530,12 +496,10 @@
                     end)
                   end
 
-                -- The tab a new workspace needs.
                 local function step_after_add(cx, main_root, name, root, checkout)
                   open_in(cx, checkout, name, true)
                 end
 
-                  -- Create. The name is asked while the command's own cx is
                 local function create(cx, cwd)
                   ask(cx, {
                     mode = "prompt",
@@ -550,7 +514,6 @@
                       return
                     end
 
-                    -- Root, then the list, then the work; each step is
                     jj({ "jj", "--no-pager", "--ignore-working-copy", "-R", cwd, "workspace", "root" }, function(root_result)
                       local root = trim(root_result.stdout)
                       if root_result.status ~= 0 or root == "" then
@@ -580,7 +543,6 @@
                           return
                         end
 
-                        -- Fetch first; a failure only warns, since the parent is @.
                         jj({
                           "jj",
                           "--no-pager",
@@ -594,7 +556,6 @@
                             warn(cx, "info", "fetch failed, using the local change", trim(fetch_result.stderr))
                           end
 
-                          -- `workspace add` will not create the checkout's parent, so
                           jj({ "mkdir", "-p", "--", checkout }, function(mkdir_result)
                             if mkdir_result.status ~= 0 then
                               warn(cx, "error", "could not create " .. checkout, trim(mkdir_result.stderr))
@@ -604,7 +565,7 @@
                             jj({
                               "jj",
                               "--no-pager",
-                              -- No --ignore-working-copy: it updates a working copy.
+                              -- No --ignore-working-copy: this one updates a working copy
                               "-R",
                               main_root,
                               "workspace",
@@ -612,7 +573,7 @@
                               "--name",
                               name,
                               "--revision",
-                              -- The source workspace's own change; trunk() is
+                              -- The source workspace's own change, not trunk()
                               "@",
                               checkout,
                             }, function(add_result)
@@ -638,7 +599,6 @@
                                 "--revision",
                                 "@",
                               }, function(bookmark_result)
-                                -- A failed
                                 if bookmark_result.status ~= 0 then
                                   failed(cx, "jj bookmark create " .. name, bookmark_result)
                                 end
@@ -652,8 +612,6 @@
                   end)
                 end
 
-
-                -- Open.
                 local function open(cx, cwd)
                   jj({
                     "jj",
@@ -685,16 +643,12 @@
                         return
                       end
 
-                      -- Queued: this is a jj
                       table.insert(reports, { pick = { items = items, main_root = main_root } })
                     end)
                   end)
                 end
 
-                  -- Remove. The main workspace is refused, as in herdr-jj.
                   local function remove(cx, cwd)
-                    -- The pane to close once the workspace is gone: the one the
-                    -- command was invoked from, which is always this workspace's.
                     local pane = cx.session:focused()
                     ask(cx, {
                       mode = "confirm",
@@ -745,7 +699,6 @@
                             return
                           end
 
-                          -- Snapshot first, so what is forgotten is a change jj
                           jj({
                             "jj",
                             "--no-pager",
@@ -759,7 +712,6 @@
                               return
                             end
 
-                            -- Forget, then delete: forgetting comes
                             jj({
                               "jj",
                               "--no-pager",
@@ -775,9 +727,7 @@
                                 return
                               end
 
-                              -- The workspace is gone, so its tab goes too.
-                              -- Queued, not closed here: this is a jj callback
-                              -- and closing a pane needs a live cx.
+                              -- Queued, not closed: the workspace is gone so its tab goes too, and a jj callback's cx is dead
                               tabs[root] = nil
                               inflight = inflight + 1
                               table.insert(reports, { close_pane = pane })
@@ -801,7 +751,6 @@
                     end)
                   end
 
-                  -- The status line, from a local table only: a formatter must be
                   local cache = {}
 
                   local function status_of(pane)
@@ -822,7 +771,6 @@
 
                   tern.chrome.status(status_of)
 
-                  -- jj's status line, per checkout.
                   local function parse_status(cwd, text)
                     local conflict, empty, change, files, bookmarks = string.match(
                       text or "",
@@ -883,7 +831,6 @@
                     end)
                   end
 
-                  -- Ahead/behind for a bookmark the remote also has.
                   local function with_distance(entry, names, index, done)
                     if index > #names then
                       done()
@@ -912,7 +859,6 @@
                     end)
                   end
 
-                  -- Read every visible checkout once, then redraw; a
                   local function refresh_status(cx)
                     local cwds = {}
                     for _, pane in ipairs(cx.session:panes()) do
@@ -948,7 +894,6 @@
                     step()
                   end
 
-                  -- The focused pane's checkout.
                   local function focused_cwd(cx)
                     local pane = cx.session:focused()
                     if pane == nil then
@@ -995,24 +940,13 @@
                     end,
                   })
 
-                  -- ctrl+alt+shift+j  new workspace
-                  -- ctrl+alt+shift+f10 open workspace
-                  -- ctrl+alt+shift+r  remove workspace
-                  -- ctrl+alt+shift+f8 refresh status
-                  --
-                  -- Two chords are NOT ours and must stay that way: f9 belongs
-                  -- to the tern-ide plugin's plugin.ide.layout, and the tmux
-                  -- preset owns o. Tern drops a bind whose chord is already
-                  -- taken, without saying so.
+                  -- f9 and o are NOT ours and must stay that way: f9 is tern-ide's plugin.ide.layout and tmux owns o; tern silently drops a bind whose chord is taken
                   tern.bind("ctrl+alt+shift+j", "plugin.jj.create")
                   tern.bind("ctrl+alt+shift+f10", "plugin.jj.open")
                   tern.bind("ctrl+alt+shift+r", "plugin.jj.remove")
                   tern.bind("ctrl+alt+shift+f8", "plugin.jj.refresh-status")
 
-                  -- One jj call per window event.
-
-                  -- Carry out what the last jj run queued: a toast, a tab, or the
-                  -- next step. Bounded, since a continuation may queue more work.
+                  -- Carry out what the last jj run queued: a toast, a tab, or the next step. Bounded, since a continuation may queue more work
                   local function flush(cx)
                     for _ = 1, 32 do
                       if #reports == 0 then
@@ -1031,7 +965,6 @@
                             show(cx, "error", "could not run " .. report.run_action)
                           end
                         elseif report.pick ~= nil then
-                          -- Asked here, not in the jj
                           inflight = inflight + 1
                           ask(cx, {
                             mode = "pick",
@@ -1059,8 +992,6 @@
                           refresh_status(cx)
                         elseif report.close_pane ~= nil then
                           inflight = inflight - 1
-                          -- The tab belongs to the workspace just removed, so
-                          -- it goes with it. Already gone is not worth a toast.
                           local ok, err = pcall(cx.layout.close, cx.layout, report.close_pane)
                           if not ok then
                             tern.log.info("tern-jj: pane already closed", report.close_pane, err)
@@ -1078,7 +1009,6 @@
                           else
                             local opened = cx.layout:new_tab({ cwd = root, name = name })
                             if opened == nil then
-                              -- Only a workspace this run created is undone; one the
                               if report.open.created then
                                 local main_root = main_root_of(root)
                                 if main_root ~= nil then
@@ -1105,7 +1035,7 @@
                                 end
                               end
 
-                              -- Any tern action, in order, after the shell command.
+                              -- Any tern action, in order, after the shell command
                               for _, action in ipairs(postCreateActions or {}) do
                                 inflight = inflight + 1
                                 table.insert(reports, { run_action = action })
@@ -1120,11 +1050,11 @@
                     end
                   end
 
-                  -- The pump: it keeps the chain going without a clock.
+                  -- The pump: it keeps the chain going without a clock
                   local function pump(cx)
                     flush(cx)
 
-                    -- On `inflight`, not the queue: a step that spawned the
+                    -- On `inflight`, not the queue: a step that spawned the next one keeps it alive
                     if inflight == 0 then
                       return
                     end
@@ -1139,16 +1069,12 @@
                     end)
                   end
 
-                  -- The dialog's answer, and the window's own titles, arrive
                   tern.on("title", function(ev, cx)
                     answer(cx, ev.pane, ev.title)
                     pump(cx)
                   end)
 
-                  -- A focus change is the one event worth a status refresh.
-                  -- Queued, not called: a focus hook has a 50 ms budget and
-                  -- refresh_status spawns jj, so calling it here tripped
-                  -- "focus exceeded 50 ms" and disabled the handler.
+                  -- Queued, not called: a focus hook has a 50 ms budget and refresh_status spawns jj, so calling it here tripped "focus exceeded 50 ms" and disabled the handler
                   tern.on("focus", function(ev, cx)
                     inflight = inflight + 1
                     table.insert(reports, { refresh = true })
@@ -1156,12 +1082,7 @@
                   end)
               '';
 
-          # The entry the manifest names.
-          #
-          # It is short on purpose. The window half is far more Luau than the
-          # load hook's budget allows, so the entry compiles it with loadstring
-          # and runs it on the first tick. There is no recurring timer: nothing
-          # in this plugin needs a clock.
+          # The manifest's entry. Short on purpose: the window half exceeds the load hook's budget, so the entry compiles it with loadstring and runs it on the first tick. No recurring timer, since nothing in this plugin needs a clock
           entry =
             pkgs.writers.writeText "tern-jj-entry.luau" # luau
               ''
