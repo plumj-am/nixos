@@ -24,34 +24,6 @@
       hjemModule = {
         xdg.config.files."nushell/config.nu".text = # nu
           ''
-            # TODO: remove below once fixed in Tern!!
-            # TODO: remove below once fixed in Tern!!
-
-            # Tern starts each pane from a login-environment capture instead of
-            # its own environment. The capture runs `printenv PATH` in a
-            # scrubbed login shell; when it fails, tern falls back to the
-            # libc default (/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin),
-            # which on NixOS holds only bash, sh and env. Every profile
-            # directory is then gone and aliases like ls -> eza stop
-            # resolving. Seed PATH first: carapace.nu below reads $env.PATH
-            # unguarded, and a missing column is an error, not an empty
-            # string, so the whole config would die before any later block.
-            # TODO: remove once fixed in Tern!!
-            let profile_dirs = [
-              "/run/wrappers/bin"
-              $"/etc/profiles/per-user/($env.USER)/bin"
-              "/nix/var/nix/profiles/default/bin"
-              "/run/current-system/sw/bin"
-            ]
-            $env.PATH = (
-              ($env.PATH? | default [])
-              | append $profile_dirs
-              | uniq
-            )
-
-            # TODO: remove above once fixed in Tern!!
-            # TODO: remove above once fixed in Tern!!
-
             $env.config.completions.algorithm = "substring"
             $env.config.completions.sort = "smart"
             $env.config.completions.case_sensitive = false

@@ -14,9 +14,14 @@
     let
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
+      inherit (lib.modules) mkBefore mkForce;
       inherit (config) theme;
 
       prefix = "ctrl+g";
+
+      # The login shell shim (packages/tern/tern.nix): bash for Tern's login
+      # probe, nushell for everything else.
+      loginShell = "${self.packages.${pkgs.stdenv.hostPlatform.system}.tern-login-shell}/bin/nu";
     in
     {
       # No unfree allowlist: the package opens its own gate, since a host's
@@ -24,7 +29,42 @@
 
       environment.systemPackages = singleton self.packages.${pkgs.stdenv.hostPlatform.system}.tern;
 
+      # Tern learns the login environment by probing `$SHELL` (see
+      # packages/tern/tern.nix), and it links its own ~/.local/bin/tern and
+      # desktop entries to the binary it runs, so launches skip the package
+      # wrapper and the SHELL it sets. Give the shim to the session instead:
+      # niri is a user service and takes its environment from the user
+      # manager, so every process it starts -- Tern included -- answers the
+      # probe.
+      environment.variables.SHELL = mkForce loginShell;
+      systemd.user.settings.Manager.DefaultEnvironment = [ "SHELL=${loginShell}" ];
+
       hjemModule = {
+        environment.sessionVariables.SHELL = mkForce loginShell;
+
+        # Tern builds a session's first pane, and every pane it restores,
+        # before its login-environment capture is known, and starts them with
+        # the libc default PATH. Put the profile directories back when they
+        # are missing -- before carapace.nu (sourced by
+        # modules/nushell/completions.nix) reads $env.PATH.
+        xdg.config.files."nushell/config.nu".text =
+          mkBefore
+            # nu
+            ''
+              let path = ($env.PATH? | default [])
+              if ("/run/current-system/sw/bin" not-in $path) {
+                $env.PATH = ($path | append [
+                  "/run/wrappers/bin"
+                  # $env.USER is not guaranteed, and when it is missing the
+                  # whole config fails to load. $nu.home-dir falls back to
+                  # passwd, so its last component is always the user name.
+                  $"/etc/profiles/per-user/($nu.home-dir | path basename)/bin"
+                  "/nix/var/nix/profiles/default/bin"
+                  "/run/current-system/sw/bin"
+                ])
+              }
+            '';
+
         xdg.config.files."tern/settings.json" = {
           generator = pkgs.writers.writeJSON "tern-settings.json";
           type = "copy";

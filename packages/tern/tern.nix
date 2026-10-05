@@ -107,6 +107,45 @@
 
       runtimeLibraryPath = lib.makeLibraryPath runtimeLibs;
 
+      # Tern learns the login environment by running a probe through the
+      # login shell in a pty:
+      #
+      #   $SHELL -l -i -c 'echo __tern_login_path__; printenv PATH; echo __tern_login_path__'
+      #
+      # It takes the program from $SHELL (or the passwd database), not from
+      # the settings' `shell`, so the configured nushell is asked to answer a
+      # POSIX probe. Nushell cannot: it prints only the final pipeline's
+      # value, so the leading marker never appears and the reader times out.
+      # It also needs `printenv` on PATH, which the probe's scrubbed PATH does
+      # not hold on NixOS. On a timeout Tern falls back to the libc default
+      # PATH, which has no profile directories: panes and the agents Tern
+      # spawns (omp, carly) then lose jj, cargo and everything else from
+      # /etc/profiles/per-user/$USER/bin.
+      #
+      # Give the probe the shell its protocol was written for, and leave
+      # every other use of $SHELL on nushell. The probe keeps the same
+      # argument list, because Tern adds no nushell-specific flags.
+      loginProbe = pkgs.writeShellScript "tern-login-shell-probe" ''
+        case " $* " in
+          *__tern_login_path__*)
+            exec ${lib.getExe pkgs.bashInteractive} "$@"
+            ;;
+        esac
+        exec ${lib.getExe pkgs.nushell} "$@"
+      '';
+
+      # Tern links its desktop entries and ~/.local/bin/tern to the binary it
+      # was started from, and it is started from the wrapper (or its linked
+      # path) directly, so the wrapper's environment is not always there. The
+      # session's SHELL points at this shim (see modules/env.nix) as well, so
+      # the probe works however Tern was started.
+      #
+      # The program is installed as bin/nu so $SHELL keeps the file name of a
+      # real shell, and Tern's shell detection sees the shell it configured.
+      loginShell = pkgs.runCommand "tern-login-shell" { } ''
+        install -Dm755 ${loginProbe} $out/bin/nu
+      '';
+
       # Flake packages build against the flake-level pkgs, not the host's, so
       # a host's `unfree.allowedNames` never reaches this derivation. The gate
       # binds at nixpkgs import time, so `pkgs.extend` cannot open it: only a
@@ -121,6 +160,8 @@
 
     in
     {
+      packages.tern-login-shell = loginShell;
+
       packages.tern =
         let
           fail = msg: throw "tern: ${msg}";
@@ -177,9 +218,16 @@
             # The wrapper supplies the runtime programs and the WebKit
             # environment; TERN_UPDATE_EXPLANATION replaces the built-in
             # updater, which has no release feed on Nix.
+            #
+            # SHELL is the login shell the environment capture spawns; the
+            # shim above keeps that probe on bash while everything else stays
+            # on nushell. The session sets the same shim, so the wrapper is
+            # not needed for the probe -- it keeps Tern working in a session
+            # that started before the shim landed.
             makeWrapper "$appDir/tern" "$out/bin/tern" \
               --prefix LD_LIBRARY_PATH : "${runtimeLibraryPath}" \
               --prefix PATH : "${lib.makeBinPath runtimePrograms}" \
+              --set SHELL ${loginShell}/bin/nu \
               ${lib.concatStringsSep " " webkitRuntimeEnv} \
               --set TERN_UPDATE_EXPLANATION \
               "Tern is managed by Nix; update packages/tern in your flake to move to a newer build."
