@@ -10,11 +10,11 @@
       config.ai.defaultModels =
         let
           freeStrong = {
-            model = "stealth/space-bunny-alpha";
-            vision = true;
+            model = null;
+            vision = false;
           };
           freeWeak = {
-            model = null;
+            model = "inclusionai/ling-3.1-flash:free";
             vision = false;
           };
 
@@ -23,12 +23,19 @@
         in
         {
           # strong -> weak -> default
-          small = firstOrDefault [ freeStrong.model freeWeak.model ] "xiaomi/mimo-v2.6-flash";
-          vision = firstOrDefault [ (visionOf freeStrong) (visionOf freeWeak) ] "xiaomi/mimo-v2.6-flash";
+          tiny = firstOrDefault [ freeStrong.model freeWeak.model ] "stepfun/Step-3.5-Flash";
           # strong -> default
-          big = firstOrDefault [ freeStrong.model ] "xiaomi/mimo-v2.6-pro";
+          small = firstOrDefault [ freeStrong.model ] "deepseek/deepseek-v4.1-flash";
+          # strong -> weak -> default
+          vision = firstOrDefault [
+            (visionOf freeStrong)
+            (visionOf freeWeak)
+          ] "xiaomi/mimo-v2.6-flash";
+          # strong -> default
+          big = firstOrDefault [ freeStrong.model ] "z-ai/glm-5.3-flash";
           # weak -> default
-          fallback = firstOrDefault [ freeWeak.model ] "deepseek/deepseek-v4.1-flash";
+          fallback = firstOrDefault [ freeStrong.model ] "xiaomi/mimo-v2.6-flash";
+          decision = "typesafe/jev";
         };
 
       config.ai.models = [
@@ -138,9 +145,47 @@
           };
         }
         {
-          # low | medium | high
-          id = "stealth/space-bunny-alpha";
-          name = "Space Bunny Alpha";
+          id = "z-ai/glm-5.3-flash";
+          name = "Z.ai GLM 5.3 Flash";
+          reasoning = true;
+          thinking = {
+            minLevel = "low";
+            maxLevel = "max";
+            mode = "effort";
+          };
+          inputTypes = [
+            "text"
+            "image"
+          ];
+          costPerMillion = {
+            input = 0.15;
+            output = 0.5;
+            cacheRead = 0.03;
+            cacheWrite = 0;
+          };
+          context = 1000000;
+          maxOutput = 262144;
+        }
+        {
+          id = "stepfun/Step-3.5-Flash";
+          name = "Stepfun Step 3.5 Flash";
+          reasoning = true;
+          thinking = null;
+          inputTypes = [
+            "text"
+          ];
+          costPerMillion = {
+            input = 0.09;
+            output = 0.3;
+            cacheRead = 0.02;
+            cacheWrite = 0;
+          };
+          context = 262144;
+          maxOutput = 131072;
+        }
+        {
+          id = "inclusionai/ling-3.1-flash:free";
+          name = "Inclusion Ling 3.1 Flash";
           reasoning = true;
           thinking = {
             minLevel = "low";
@@ -149,7 +194,6 @@
           };
           inputTypes = [
             "text"
-            "image"
           ];
           costPerMillion = {
             input = 0;
@@ -157,8 +201,24 @@
             cacheRead = 0;
             cacheWrite = 0;
           };
-          context = 1000000;
-          maxOutput = 262144;
+          context = 262144;
+          maxOutput = 131072;
+        }
+        # decision model
+        {
+          id = "typesafe/jev";
+          name = "Typesafe Jev";
+          reasoning = false;
+          thinking = null;
+          inputTypes = [ "text" ];
+          costPerMillion = {
+            input = 0.042;
+            output = 0;
+            cacheRead = 0;
+            cacheWrite = 0;
+          };
+          context = 32000;
+          maxOutput = 131072; # no idea
         }
       ];
     };

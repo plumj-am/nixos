@@ -112,12 +112,13 @@
                 smol = small;
                 slow = big;
                 advisor = small;
-                plan = small;
+                plan = big;
                 inherit vision;
                 designer = vision;
                 commit = small;
-                task = small;
-                tiny = small;
+                task = tiny;
+                tiny = tiny;
+                judge = decision;
               };
 
               providers.tinyModel = "LFM2-350m";
@@ -132,7 +133,12 @@
               retry.waitForUsageReset = true;
               retry.maxRetries = 200;
               retry.maxDelayMs = 0;
-              retry.fallbackChains = { };
+              retry.fallbackChains = {
+                judge = [
+                  "@tiny"
+                  "@smol"
+                ];
+              };
 
               contextPromotion.enabled = false; # do not upgrade model - compact instead.
               compaction.enabled = true;

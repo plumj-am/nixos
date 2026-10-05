@@ -47,7 +47,7 @@
                 id = mkOptionOf str;
                 name = mkOptionOf str;
                 reasoning = mkOptionOf bool;
-                thinking = mkOptionOf (submodule {
+                thinking = mkOptionNullOr (submodule {
                   options = {
                     minLevel = mkOptionOf thinkingLevel;
                     maxLevel = mkOptionOf thinkingLevel;
