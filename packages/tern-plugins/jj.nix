@@ -2,11 +2,12 @@
   perSystem =
     {
       pkgs,
-      lib,
       ...
     }:
     let
       inherit (pkgs.lib) toJSON;
+
+      inherit (import ./_lib.nix) ideLayout;
 
       # Inlined into the window half: a hook's budget is too small for a file read; new checkouts land in <workspace_root>/<repo>/<workspace-slug>
       settings = {
@@ -14,7 +15,12 @@
         create_bookmark = false;
         post_create = "try {direnv allow}";
 
-        post_create_actions = [ "plugin.ide.layout" ];
+        # Four-cell layout on the new workspace's tab. This is a setting rather
+        # than a post_create_action because tern cannot dispatch a plugin.*
+        # action from another plugin (plugin commands are bindable but absent
+        # from the action registry), so the layout is inlined and run here
+        # until calling other plugins is supported.
+        ide_layout = true;
 
         status_remote = "origin";
       };
@@ -24,7 +30,7 @@
           workspace_root = ${toJSON settings.workspace_root},
           create_bookmark = ${if settings.create_bookmark then "true" else "false"},
           post_create = ${toJSON settings.post_create},
-          post_create_actions = { ${lib.concatMapStringsSep ", " toJSON settings.post_create_actions} },
+          ide_layout = ${if settings.ide_layout then "true" else "false"},
           status_remote = ${toJSON settings.status_remote},
         }
       '';
@@ -278,14 +284,17 @@
                       }
                     end
 
-                    local parts = { ui.text({ t = req.title, s = "strong" }) }
+                    -- Prompt and confirm are dialogs too: a glass card centered
+                    -- over the pane, the question as its head, rather than loose
+                    -- text drawn at the top of the (pip) block
+                    local body = {}
                     if req.message ~= "" then
-                      table.insert(parts, ui.text({ t = req.message, s = "muted" }))
+                      table.insert(body, ui.text({ t = req.message, s = "muted" }))
                     end
 
                     if req.mode == "prompt" then
                       table.insert(
-                        parts,
+                        body,
                         ui.node("input", {
                           key = "name",
                           text = state.buffer,
@@ -298,12 +307,24 @@
                       -- The caret blinks only on the field the surface has focused
                       if not state.focused then
                         state.focused = true
-                        cx:frame({ { "focus", "main.name" } })
+                        cx:frame({ { "focus", "layer.sheet.name" } })
                       end
                     end
 
-                    table.insert(parts, hints(req.mode))
-                    return { main = ui.col(parts) }
+                    table.insert(body, hints(req.mode))
+
+                    return {
+                      main = ui.col({}),
+                      layer = ui.col({
+                        ui.node("overlay", {
+                          key = "sheet",
+                          role = "jj.dialog",
+                          size = req.mode == "prompt" and "md" or "sm",
+                          modal = true,
+                          head = { ui.span(req.title) },
+                        }, body),
+                      }),
+                    }
                   end,
 
                   key = function(state, key, cx)
@@ -440,6 +461,8 @@
 
                   ${settingsLuau}
 
+                  ${ideLayout}
+
                   local STATUS_TEMPLATE = table.concat({
                     'if(conflict, "1", "") ++ "\\x1f" ++ ',
                     'if(empty, "1", "") ++ "\\x1f" ++ ',
@@ -455,7 +478,7 @@
                   end
                   local createBookmark = SETTINGS.create_bookmark
                   local postCreate = SETTINGS.post_create
-                  local postCreateActions = SETTINGS.post_create_actions
+                  local ideLayoutEnabled = SETTINGS.ide_layout
                   local statusRemote = SETTINGS.status_remote
 
                   local function trim(text)
@@ -1251,15 +1274,7 @@
                       reports = {}
 
                       for _, report in ipairs(queued) do
-                        if report.run_action ~= nil then
-                          inflight = inflight - 1
-
-                          local ok, err = pcall(cx.action, cx, report.run_action)
-                          if not ok then
-                            tern.log.warn("tern-jj: action failed", report.run_action, err)
-                            show(cx, "error", "could not run " .. report.run_action)
-                          end
-                        elseif report.pick ~= nil then
+                        if report.pick ~= nil then
                           inflight = inflight + 1
                           ask(cx, {
                             mode = "pick",
@@ -1298,6 +1313,16 @@
                           inflight = inflight - 1
                           report.jj_next(report.result)
                         elseif report.open ~= nil then
+                          -- Only the pick path owes a count here: it added one
+                          -- when it queued its dialog. A create arrives from a
+                          -- jj callback, and `jj_next` consumes the count the
+                          -- `jj()` call added before the callback runs, so
+                          -- decrementing that too drove the count negative and
+                          -- left the pump settling every 120 ms forever.
+                          if not report.open.created then
+                            inflight = inflight - 1
+                          end
+
                           local root = report.open.root
                           local name = report.open.name
 
@@ -1325,24 +1350,39 @@
                               end
                             else
                               tabs[root] = tab
+
+                              -- post_create first, while the tab is still a single
+                              -- pane, so the panes the layout splits off inherit
+                              -- its directory and setup.
+                              --
+                              -- Typed straight away rather than after a settle: a
+                              -- fresh pane's pty buffers input until its shell
+                              -- reads it, and settle's contract is to wait for a
+                              -- command to finish -- there is no command yet, so
+                              -- it burns its whole 30 s deadline first. That put
+                              -- post_create ~30 s after the tab opened.
                               if postCreate ~= "" then
-                                -- Waits for the pane's shell to reach a prompt
-                                for _, info in ipairs(cx.session:tabs()) do
-                                  if info.id == opened then
-                                    cx.session:settle(info.pane, 30000):next(function(_, _, live)
-                                      if live ~= nil then
-                                        live:run(info.pane, postCreate .. "\r")
-                                      end
-                                    end)
-                                    break
-                                  end
-                                end
+                                cx:run(opened, postCreate .. "\r")
                               end
 
-                              -- Any tern action, in order, after the shell command
-                              for _, action in ipairs(postCreateActions or {}) do
-                                inflight = inflight + 1
-                                table.insert(reports, { run_action = action })
+                              -- `opened` is the new PANE id (session:tabs() yields
+                              -- TAB ids), which is what split takes.
+                              if ideLayoutEnabled then
+                                -- Its own continuation: every `:next` runs as the
+                                -- `await` hook, whose 50 ms budget covers
+                                -- everything one callback does, and the layout is
+                                -- by far the heaviest step here. Sharing a callback
+                                -- with it tripped "await exceeded 50 ms" and
+                                -- disabled the hook until reload.
+                                tern.sleep(0):next(function(_, _, idle)
+                                  if idle == nil then
+                                    return
+                                  end
+                                  if not ide_layout_apply(idle, opened) then
+                                    warn(idle, "error", "could not lay out " .. name)
+                                  end
+                                  pump(idle)
+                                end)
                               end
                               show(cx, "success", "opened " .. name, root)
                             end

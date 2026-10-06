@@ -35,12 +35,14 @@
                 -- A floating pane is a picture-in-picture card; the float call takes
                 -- no size, so the card is sized here. Tern sizes the pane's grid from
                 -- the box, so the program gets the matching cells (95x47 for 760x798
-                -- in a 950x998 window). Scoped to floating panes running a program:
-                -- shells and block panes float at Tern's own size.
+                -- in a 950x998 window). Scoped to the focused card: a command
+                -- floats then focuses, and a glance card or an unfocused float
+                -- keeps Tern's own size. The percentages resolve against the
+                -- window's stage, so the card centers in the window, not its owner.
                 tern.css(
                   "overlay",
                   [[
-                    .tn-pane.pip.agent {
+                    .tn-pane.pip.on.pip-focus {
                       transform: none !important;
                       left: 10% !important;
                       top: 10% !important;
