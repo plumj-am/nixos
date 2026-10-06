@@ -9,17 +9,13 @@
 
       inherit (import ./_lib.nix) ideLayout;
 
-      # Inlined into the window half: a hook's budget is too small for a file read; new checkouts land in <workspace_root>/<repo>/<workspace-slug>
+      # Inlined into the window half: a hook's budget is too small for a file read. New checkouts land in <workspace_root>/<repo>/<workspace-slug>
       settings = {
         workspace_root = "~/projects/tern-worktrees";
         create_bookmark = false;
         post_create = "try {direnv allow}";
 
-        # Four-cell layout on the new workspace's tab. This is a setting rather
-        # than a post_create_action because tern cannot dispatch a plugin.*
-        # action from another plugin (plugin commands are bindable but absent
-        # from the action registry), so the layout is inlined and run here
-        # until calling other plugins is supported.
+        # A setting, not a post_create_action: a plugin cannot dispatch another plugin's action.
         ide_layout = true;
 
         status_remote = "origin";
@@ -36,11 +32,8 @@
       '';
     in
     {
-      # tern-jj: Jujutsu workspace integration
-      #   * create: fetch, a workspace on @, then a tab
-      #   * open:   list workspaces, focus or add a tab
-      #   * remove: snapshot, forget, delete the checkout
-      #   * status: bookmarks or change id, plus !, *N and +N/-N
+      # tern-jj: Jujutsu workspace integration. create: fetch, workspace on @, tab.
+      # open: list, focus or add tab. remove: snapshot, forget, delete checkout. status: bookmarks/change id, !, *N, +N/-N
       packages.tern-jj-plugin =
         let
           manifest = pkgs.writers.writeTOML "tern-jj-plugin.toml" {
@@ -148,10 +141,8 @@
                   return nil
                 end
 
-                -- The rows a pick request shows: the sheet's search line only draws
-                -- the query, so filtering and the match offsets are ours. Offsets are
-                -- UTF-16 in the protocol and workspace names are ASCII, so the byte
-                -- offsets of string.find are the same numbers.
+                -- Filtering and the match offsets are ours: offsets are UTF-16 in the
+                -- protocol but workspace names are ASCII, so string.find bytes match.
                 local function catalog(state, req)
                   local query = string.lower(state.query)
                   local items, order = {}, {}
@@ -284,9 +275,7 @@
                       }
                     end
 
-                    -- Prompt and confirm are dialogs too: a glass card centered
-                    -- over the pane, the question as its head, rather than loose
-                    -- text drawn at the top of the (pip) block
+                    -- Prompt and confirm are dialogs: a glass card over the pane, not loose text.
                     local body = {}
                     if req.message ~= "" then
                       table.insert(body, ui.text({ t = req.message, s = "muted" }))
@@ -420,8 +409,6 @@
                     return false
                   end,
 
-                  -- Pointer input: the sheet's rows, its action bar, and a click
-                  -- into the name field
                   event = function(state, ev, cx)
                     if state.answered then
                       return
@@ -613,7 +600,7 @@
                     return false
                   end
 
-                  -- A workspace owns its tab: closing one pane leaves an empty tab behind, so every pane of that tab goes
+                  -- A workspace owns its tab, so every pane of that tab goes.
                   local function close_tab(cx, tab)
                     local leaves = {}
                     for _, info in ipairs(cx.session:panes()) do
@@ -633,7 +620,7 @@
                     return true
                   end
 
-                  -- The tab holding the removed workspace: the focused pane's tab, else the one in that directory
+                  -- Which tab holds the removed workspace: the pane's tab, else the one in that directory.
                   local function tab_for_workspace(cx, root, pane)
                     if pane ~= nil then
                       local from_pane = cx.session:tab_of(pane)
@@ -649,7 +636,7 @@
                     return nil
                   end
 
-                  -- A tab is named repo/workspace, so tabs of one repository read together and two workspaces of the same name stay apart
+                  -- A tab is named repo/workspace.
                   local function tab_name(root, name)
                     local main_root = main_root_of(root)
                     if main_root == nil then
@@ -711,15 +698,14 @@
                     if req.mode == "prompt" then
                       args[1] = args[1] .. "\t" .. (req.placeholder or "")
                     elseif req.mode == "pick" then
-                      -- The checkout the asking pane is in: the sheet marks its row
+                      -- The checkout the asking pane is in.
                       args[1] = args[1] .. "\t" .. (req.current or "")
                     end
                     for _, item in ipairs(req.items or {}) do
                       table.insert(args, item.name .. "\t" .. (item.change or "") .. "\t" .. (item.root or ""))
                     end
 
-                    -- Beside the focused block, then floated over it: the dialog is
-                    -- an overlay, so the tab and its layout stay as they were.
+                    -- Created beside the block then floated, so the tab and its layout stay.
                     local pane = cx:new_block("jj.dialog", args, "beside", { focus = false })
                     if pane == nil then
                       warn(cx, "error", "the jj dialog block is not available", "no Ready plugin defines jj.dialog")
@@ -733,13 +719,12 @@
                       return
                     end
 
-                    -- A new overlay is a glance: focusing it expands it, so keys
-                    -- reach the dialog.
+                    -- A new overlay is a glance, so focusing it expands it.
                     cx.layout:focus(pane)
                     waiting = { pane = pane, cb = cb }
                   end
 
-                  -- The block's title is the answer: "cancel" or "ok:<value>"
+                  -- The block's title is the answer.
                   local function answer(cx, pane, title)
                     if waiting == nil or waiting.pane ~= pane then
                       return
@@ -886,7 +871,7 @@
                               "--name",
                               name,
                               "--revision",
-                              -- heads(trunk() | root()), not @: a new worktree starts from the trunk, and a repository without one starts from its root
+                              -- heads(trunk() | root()) not @, so a repository with no trunk starts at its root.
                               "heads(trunk() | root())",
                               checkout,
                             }, function(add_result)
@@ -1040,7 +1025,7 @@
                                 return
                               end
 
-                              -- Queued, not closed: the workspace is gone so its tab goes too, and a jj callback's cx is dead
+                              -- Queued rather than closed: a jj callback's cx is dead.
                               tabs[root] = nil
                               inflight = inflight + 1
                               table.insert(reports, { close_tab = { root = root, pane = pane } })
@@ -1219,7 +1204,7 @@
                     return info.cwd
                   end
 
-                  -- Defined with the queue, further down: every command starts it, since work a command queues has no event of its own to drain it
+                  -- Declared here with the queue: a command's queued work has no event of its own.
                   local pump
 
                   local function jj_command(id, title, icon, run)
@@ -1258,13 +1243,13 @@
                     end,
                   })
 
-                  -- f9 and o are NOT ours and must stay that way: f9 is tern-ide's plugin.ide.layout and tmux owns o; tern silently drops a bind whose chord is taken
+                  -- f9 and o are not ours: tern silently drops a bind whose chord is taken.
                   tern.bind("ctrl+alt+shift+j", "plugin.jj.create")
                   tern.bind("ctrl+alt+shift+f10", "plugin.jj.open")
                   tern.bind("ctrl+alt+shift+r", "plugin.jj.remove")
                   tern.bind("ctrl+alt+shift+f8", "plugin.jj.refresh-status")
 
-                  -- Carry out what the last jj run queued: a toast, a tab, or the next step. Bounded, since a continuation may queue more work
+                  -- Carries out what the last jj run queued; bounded, since a continuation may queue more.
                   local function flush(cx)
                     for _ = 1, 32 do
                       if #reports == 0 then
@@ -1313,12 +1298,8 @@
                           inflight = inflight - 1
                           report.jj_next(report.result)
                         elseif report.open ~= nil then
-                          -- Only the pick path owes a count here: it added one
-                          -- when it queued its dialog. A create arrives from a
-                          -- jj callback, and `jj_next` consumes the count the
-                          -- `jj()` call added before the callback runs, so
-                          -- decrementing that too drove the count negative and
-                          -- left the pump settling every 120 ms forever.
+                          -- Only the pick path owes a decrement: it added one when it queued its dialog.
+                          -- A create's count is consumed by `jj_next`; getting this wrong left the pump settling every 120 ms.
                           if not report.open.created then
                             inflight = inflight - 1
                           end
@@ -1330,7 +1311,7 @@
                           if tab ~= nil and focus_tab(cx, tab) then
                             show(cx, "info", "focused " .. name, root)
                           else
-                            -- new_tab takes a launch, which carries no name, and answers with its pane, not its tab
+                            -- new_tab takes a launch that carries no name, and answers with its pane, not its tab.
                             local label = tab_name(root, name)
                             local opened = cx.layout:new_tab({ cwd = root })
                             local tab = opened ~= nil and cx.session:tab_of(opened) or nil
@@ -1351,29 +1332,17 @@
                             else
                               tabs[root] = tab
 
-                              -- post_create first, while the tab is still a single
-                              -- pane, so the panes the layout splits off inherit
-                              -- its directory and setup.
-                              --
-                              -- Typed straight away rather than after a settle: a
-                              -- fresh pane's pty buffers input until its shell
-                              -- reads it, and settle's contract is to wait for a
-                              -- command to finish -- there is no command yet, so
-                              -- it burns its whole 30 s deadline first. That put
-                              -- post_create ~30 s after the tab opened.
+                              -- post_create first, while the tab is one pane, so the layout's splits
+                              -- inherit its setup. Typed straight away: a fresh pane's pty buffers
+                              -- input, and a settle has no command to wait for, so it burns its 30 s.
                               if postCreate ~= "" then
                                 cx:run(opened, postCreate .. "\r")
                               end
 
-                              -- `opened` is the new PANE id (session:tabs() yields
-                              -- TAB ids), which is what split takes.
+                              -- `opened` is the new pane id, which is what split takes.
                               if ideLayoutEnabled then
-                                -- Its own continuation: every `:next` runs as the
-                                -- `await` hook, whose 50 ms budget covers
-                                -- everything one callback does, and the layout is
-                                -- by far the heaviest step here. Sharing a callback
-                                -- with it tripped "await exceeded 50 ms" and
-                                -- disabled the hook until reload.
+                                -- Its own continuation: every `:next` runs as the `await` hook in a
+                                -- 50 ms budget, and sharing a callback tripped "await exceeded 50 ms".
                                 tern.sleep(0):next(function(_, _, idle)
                                   if idle == nil then
                                     return
@@ -1418,7 +1387,7 @@
                     pump(cx)
                   end)
 
-                  -- Queued, not called: a focus hook has a 50 ms budget and refresh_status spawns jj, so calling it here tripped "focus exceeded 50 ms" and disabled the handler
+                  -- Queued: the focus hook's 50 ms budget cannot cover refresh_status spawning jj.
                   tern.on("focus", function(ev, cx)
                     inflight = inflight + 1
                     table.insert(reports, { refresh = true })
@@ -1426,7 +1395,7 @@
                   end)
               '';
 
-          # The manifest's entry. Short on purpose: the window half exceeds the load hook's budget, so the entry compiles it with loadstring and runs it on the first tick. No recurring timer, since nothing in this plugin needs a clock
+          # The manifest's entry: the window half exceeds the load hook's budget, so the entry compiles it with loadstring on the first tick, and needs no timer.
           entry =
             pkgs.writers.writeText "tern-jj-entry.luau" # luau
               ''

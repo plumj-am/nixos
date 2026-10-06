@@ -8,8 +8,7 @@
       inherit (import ./_lib.nix) ideLayout;
     in
     {
-      # tern loads a plugin from a directory holding plugin.toml plus the entry it
-      # names, so both are written into one store path from strings, not loose files
+      # plugin.toml and the entry it names are written into one store path
       packages.tern-ide-plugin =
         let
           manifest = pkgs.writers.writeTOML "tern-ide-plugin.toml" {
@@ -42,7 +41,7 @@
                   end,
                 })
 
-                -- tern silently drops a plugin bind whose chord the keymap preset already owns, so pick an unused one
+                -- tern drops a plugin bind whose chord the keymap preset owns
                 tern.bind("ctrl+alt+shift+f9", "plugin.ide.layout")
               '';
         in

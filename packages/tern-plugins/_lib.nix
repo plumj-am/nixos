@@ -1,23 +1,16 @@
 # Shared Luau for the tern-plugins packages. outputs.nix skips any path holding
 # "/_", so this file is not pulled into the flake's module tree.
 {
-  # The IDE four-cell layout, inlined into every plugin that wants it.
-  #
-  # A plugin cannot call another plugin's `tern.command` by name: tern 0.5.2
-  # keeps plugin commands in the keymap but out of the action registry, so
-  # `cx.action("plugin.ide.layout")` answers "Unknown action" even inside the
-  # plugin that registered it. Inlining the code is the only way to share it.
-  #
-  # Callers use `ide_layout_apply(cx, pane)`; `ide_layout_pane(cx)` picks the
-  # focused pane, or the window's first when nothing is focused (headless).
-  # Names are prefixed so this can sit beside an inliner's own locals.
+  # tern 0.5.2 keeps plugin commands in the keymap but out of the action registry, so
+  # `cx.action("plugin.ide.layout")` answers "Unknown action"; inlining is the only way to share.
+  # Callers use `ide_layout_apply(cx, pane)` and `ide_layout_pane(cx)`; locals are prefixed to avoid clashes.
   ideLayout = ''
     local IDE_TOP_RATIO = 0.75
     local IDE_LEFT_RATIO = 0.68
     local IDE_AGENT_COMMAND = "omp"
 
-    -- A TabTree leaf is {pane=...}; every other node is a split with [1] and [2], `split` naming its axis
-    -- The leaf's parent IS the divider that resizes it; a "has children" match would pick a nested divider
+    -- TabTree node: a leaf is {pane=...}; else a split with [1], [2] and a `split` axis.
+    -- The leaf's parent IS the divider that resizes it; a "has children" match would pick a nested divider.
     local function ide_parent_of(node, pane)
       if node == nil or node.pane ~= nil then
         return nil
@@ -37,8 +30,8 @@
       return ide_parent_of(left, pane) or ide_parent_of(right, pane)
     end
 
-    -- `split` is the TabTree value as passed here ("right"/"down"), NOT the "Row"/"Column" axis of `tern inspect`
-    -- resize grows a pane TOWARD dir, i.e. toward its sibling, so widening across a divider means growing away
+    -- `split` here is "right"/"down", not the "Row"/"Column" axis `tern inspect` prints.
+    -- resize grows a pane toward dir (toward its sibling), so widening means growing away.
     local function ide_grow_across(split, is_first)
       if split == "right" then
         return is_first and "right" or "left"
@@ -56,8 +49,8 @@
       return 1 - found.node.ratio
     end
 
-    -- Cell size is not exposed window-side (PaneInfo has no cell fields, BlockCx.cols/rows is host-only), so a
-    -- 1-cell probe measures the axis; resize(pane, probe, -1) is its exact inverse
+    -- Cell size is not exposed window-side (PaneInfo has no cell fields, BlockCx.cols/rows is host-only).
+    -- A 1-cell probe measures the axis; resize(pane, probe, -1) is its exact inverse.
     local function ide_nudge(cx, pane, split, want)
       local function measure()
         local tab = cx.session:tab_of(pane)
@@ -119,7 +112,7 @@
       end
     end
 
-    -- The pane the layout applies to: the focused one, else the window's first
+    -- Focused pane, else the window's first (headless).
     local function ide_layout_pane(cx)
       local pane = cx.session:focused()
       if pane ~= nil then
@@ -131,7 +124,7 @@
       return nil
     end
 
-    -- Split down before right, else the tree comes out three-region; focus = false keeps the caller's pane focused
+    -- Split down before right, else the tree comes out three-region; focus = false keeps the caller's pane.
     local function ide_layout_apply(cx, pane)
       if pane == nil then
         return false

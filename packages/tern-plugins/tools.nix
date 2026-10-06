@@ -5,8 +5,8 @@
       ...
     }:
     {
-      # tern-tools plugin: open programs in a tab that closes when the
-      # program exits, and return the focus where it came from.
+      # tern-tools: a program runs in a tab that closes with it, and the focus
+      # comes back
       packages.tern-tools-plugin =
         let
           manifest = pkgs.writers.writeTOML "tern-tools-plugin.toml" {
@@ -24,21 +24,18 @@
             pkgs.writers.writeText "tern-tools-init.luau" # luau
               ''
                 --!nonstrict
-                -- Open PROGRAMS[PROGRAM] as a picture-in-picture overlay over the
-                -- focused pane: the overlay goes away with its program, and the
-                -- focus under it comes back.
+                -- Open a program as a picture-in-picture overlay over the focused
+                -- pane: it goes away with its program, and the focus comes back
                 local PROGRAMS = {
                   jjui = { title = "jjui", command = "jjui" },
                   hunk = { title = "hunk", command = "hunk diff --watch" },
                 }
 
-                -- A floating pane is a picture-in-picture card; the float call takes
-                -- no size, so the card is sized here. Tern sizes the pane's grid from
-                -- the box, so the program gets the matching cells (95x47 for 760x798
-                -- in a 950x998 window). Scoped to the focused card: a command
-                -- floats then focuses, and a glance card or an unfocused float
-                -- keeps Tern's own size. The percentages resolve against the
-                -- window's stage, so the card centers in the window, not its owner.
+                -- A float takes no size, so the card is sized here (95x47 cells for
+                -- 760x798 in a 950x998 window). Scoped to the focused card, because a
+                -- command floats then focuses while a glance card keeps Tern's own
+                -- size. The percentages resolve against the window's stage, not the
+                -- owner, so the card centres in the window.
                 tern.css(
                   "overlay",
                   [[
@@ -66,7 +63,7 @@
                       end
 
                       -- A pane joins a tab through a split; the split stops showing
-                      -- once the pane floats over the pane it came from.
+                      -- once the pane floats
                       local pane = cx.layout:split(origin, "right", { command = program.command }, { focus = false })
                       if pane == nil then
                         cx:toast("error", "could not open " .. program.title)
@@ -81,8 +78,7 @@
                       end
 
                       -- A new overlay is a glance: focusing it expands it, so keys
-                      -- reach the program, and closing it hands the focus back to
-                      -- the pane it covers.
+                      -- reach the program
                       cx.layout:focus(pane)
                     end,
                   })
