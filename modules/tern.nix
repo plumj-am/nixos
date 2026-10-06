@@ -75,7 +75,7 @@
             theme_dark = "dark-gruvbox";
             theme_light = "light-honeycomb"; # gruvbox is ass, way too yellow
             reduce_motion = "system";
-            contrast = "Light";
+            contrast = "Off"; # automatic contrast correction
             material = "Glass";
             opacity = 70;
             blur = 0;
@@ -89,6 +89,7 @@
             status_bar = true;
             density = "Islands";
             pane_headers = "Never";
+            system_title_bar = true;
 
             native_surfaces = true;
             surface_headings = null;
@@ -108,10 +109,15 @@
             cursor.programs = true;
 
             carly.model = "@smol";
-            carly.heartbeat = 30;
+            carly.heartbeat = 10;
 
-            font_family = "${theme.font.mono.name} Light";
+            font_family = theme.font.mono.name;
+            code_font = theme.font.mono.name;
+            browse_font = theme.font.mono.name;
+            editor_font = theme.font.mono.name;
+            ui_font = theme.font.sans.name;
             font_size = theme.font.size.normal;
+            font_weight = 300;
 
             scrollback_lines = 200000;
 
@@ -251,15 +257,18 @@
               "${prefix}>ctrl+r" = "split_right";
               "${prefix}>x" = "close_pane";
 
+              "${prefix}>shift+r" = "rename_tab";
+              "${prefix}>b" = "toggle_sidebar";
+              "${prefix}>shift+X" = "close_tab";
+
               "alt+ctrl+h" = "move_pane:left";
               "alt+ctrl+j" = "move_pane:down";
               "alt+ctrl+k" = "move_pane:up";
               "alt+ctrl+l" = "move_pane:right";
 
               "${prefix}>ctrl+p" = "palette";
+              "ctrl+shift+p" = "palette";
               "${prefix}>:" = "palette";
-
-              "${prefix}>alt+shift+r" = "reload_config";
 
               "${prefix}>a" = "plugin.jj.open";
               "${prefix}>shift+a" = "plugin.jj.create";
