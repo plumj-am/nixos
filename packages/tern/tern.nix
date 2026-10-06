@@ -10,7 +10,7 @@
 
       # Tern is a closed-beta Stencil Labs product. There is no public
       # source or download URL (build.stencil.so is auth-gated).
-      version = "0.4.5";
+      version = "0.5.1";
       filename = "Tern-${version}-linux-x86_64.tar.gz";
 
       # Tern ships no public download, so the tarball lives in the store,
@@ -20,7 +20,7 @@
       # path has a GC root. Without it, `nix store gc` deletes the tarball and
       # every build fails. To move to a new release:
       #
-      #   let version = "0.4.5"
+      #   let version = "0.5.1"
       #
       #   (nix store add-file --name $"Tern-($version)-linux-x86_64.tar.gz"
       #     ~/Downloads/Tern-($version)-linux-x86_64.tar.gz)
@@ -42,8 +42,8 @@
       #   3. Rebuild the system.
       #
       release = {
-        storePath = "/nix/store/sm53hm7av0hsg983frjfkhnddf860hv3-Tern-0.4.5-linux-x86_64.tar.gz";
-        hash = "sha256-+TU0GutIi4QGCsLC1syAB/IcdRe1orFfo+dMr+qmq/0=";
+        storePath = "/nix/store/mj4fs9ja1wijnng55yc7zrkkknnbr26a-Tern-0.5.1-linux-x86_64.tar.gz";
+        hash = "sha256-DP15+l9LTdXcKAAJdcLcyHcNEj15BY02CblBkRn8qlU=";
       };
 
       supportedSystems = [
@@ -54,17 +54,20 @@
       # libgcc_s, plus libstdc++ as of 0.4.0. Everything else is dlopen()'d
       # at runtime, so autoPatchelf would miss it entirely; this set comes
       # from `strings` on the binary, diffed against the previous release:
-      # wgpu's Vulkan + EGL/GLES chain, the Wayland + xkbcommon window, and
-      # the WebKitGTK / WPEWebKit bindings for the browser block, and libpipewire
-      # for screen sharing. There is no X11 in the binary itself -- no libX11,
-      # no libxcb -- but webkitgtk_4_1 pulls libX11 in through libsoup and
-      # gtk3's X11 backend.
+      # wgpu's Vulkan + EGL/GLES chain, the Wayland and X11 windows, the
+      # WebKitGTK / WPEWebKit bindings for the browser block, and libpipewire
+      # for screen sharing. X11 came with 0.5.0 (STENCIL_DISPLAY_SERVER);
+      # tern dlopens libxcb.so.1 there, and libxkbcommon covers
+      # libxkbcommon-x11.so.0 too, since both ship in one lib/ directory.
+      # libX11 itself is still not in the binary -- webkitgtk_4_1 pulls it in
+      # through libsoup and gtk3's X11 backend.
       runtimeLibs = with pkgs; [
         stdenv.cc.cc.lib
         vulkan-loader
         libglvnd
         wayland
         libxkbcommon
+        libxcb
         glib
         gtk3
         webkitgtk_4_1
@@ -134,11 +137,13 @@
         exec ${lib.getExe pkgs.nushell} "$@"
       '';
 
-      # Tern links its desktop entries and ~/.local/bin/tern to the binary it
-      # was started from, and it is started from the wrapper (or its linked
-      # path) directly, so the wrapper's environment is not always there. The
-      # session's SHELL points at this shim (see modules/env.nix) as well, so
-      # the probe works however Tern was started.
+      # Tern links ~/.local/bin/tern to the binary it was started from, so it
+      # can be started by a path the wrapper never touched, where its
+      # environment is missing. (Since 0.5.0 a Tern under /nix/store writes no
+      # such link and no desktop entries, so this is only a safety net for a
+      # Tern started some other way.) The session's SHELL points at this shim
+      # (see modules/env.nix) as well, so the probe works however Tern was
+      # started.
       #
       # The program is installed as bin/nu so $SHELL keeps the file name of a
       # real shell, and Tern's shell detection sees the shell it configured.
@@ -188,10 +193,8 @@
 
           dontConfigure = true;
           dontBuild = true;
-          # The upstream binary ships no .symtab or .strtab, so strip has
-          # nothing to remove and the output stays the tarball's 120 MB. Keep
-          # it out anyway, so a future release that does ship symbols still
-          # gets stripped.
+          # Doesn't do anything yet but a future release that does ship symbols
+          # will get stripped.
           #
           # dontPatchELF keeps the generic fixupPhase from rewriting the
           # RPATH set below; autoPatchelf has no work to do, because everything
@@ -204,7 +207,7 @@
             # unpackPhase sets sourceRoot=tern, so cwd is already the tarball's
             # tern/ directory and the only file in it is ./tern.
             appDir="$out/opt/tern"
-            mkdir -p "$appDir" "$out/bin" "$out/share/applications"
+            mkdir -p "$appDir" "$out/bin"
             cp -a . "$appDir/"
             chmod -R u+w "$appDir"
 
@@ -216,8 +219,7 @@
             patchelf --set-interpreter "${pkgs.stdenv.cc.bintools.dynamicLinker}" "$appDir/tern"
 
             # The wrapper supplies the runtime programs and the WebKit
-            # environment; TERN_UPDATE_EXPLANATION replaces the built-in
-            # updater, which has no release feed on Nix.
+            # environment.
             #
             # SHELL is the login shell the environment capture spawns; the
             # shim above keeps that probe on bash while everything else stays
@@ -228,9 +230,7 @@
               --prefix LD_LIBRARY_PATH : "${runtimeLibraryPath}" \
               --prefix PATH : "${lib.makeBinPath runtimePrograms}" \
               --set SHELL ${loginShell}/bin/nu \
-              ${lib.concatStringsSep " " webkitRuntimeEnv} \
-              --set TERN_UPDATE_EXPLANATION \
-              "Tern is managed by Nix; update packages/tern in your flake to move to a newer build."
+              ${lib.concatStringsSep " " webkitRuntimeEnv}
 
             runHook postInstall
           '';
