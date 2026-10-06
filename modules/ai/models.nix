@@ -14,7 +14,7 @@
             vision = false;
           };
           freeWeak = {
-            model = null;
+            model = "inclusionai/ling-3.1-flash:free";
             vision = false;
           };
 
@@ -23,7 +23,7 @@
         in
         {
           # strong -> weak -> default
-          tiny = firstOrDefault [ freeStrong.model freeWeak.model ] "stepfun/Step-3.5-Flash";
+          tiny = firstOrDefault [ freeStrong.model freeWeak.model ] "deepseek/deepseek-v4.1-flash";
           # strong -> default
           small = firstOrDefault [ freeStrong.model ] "deepseek/deepseek-v4.1-flash";
           # strong -> weak -> default
@@ -33,7 +33,7 @@
           ] "xiaomi/mimo-v2.6-flash";
           # strong -> default
           big = firstOrDefault [ freeStrong.model ] "z-ai/glm-5.3-flash";
-          # weak -> default
+          # strong -> default
           fallback = firstOrDefault [ freeStrong.model ] "xiaomi/mimo-v2.6-flash";
           decision = "typesafe/jev";
         };
@@ -167,17 +167,21 @@
           maxOutput = 262144;
         }
         {
-          id = "stepfun/Step-3.5-Flash";
-          name = "Stepfun Step 3.5 Flash";
+          id = "inclusionai/ling-3.1-flash:free";
+          name = "Inclusion Ling 3.1 Flash";
           reasoning = true;
-          thinking = null;
+          thinking = {
+            minLevel = "low";
+            maxLevel = "high";
+            mode = "effort";
+          };
           inputTypes = [
             "text"
           ];
           costPerMillion = {
-            input = 0.09;
-            output = 0.3;
-            cacheRead = 0.02;
+            input = 0;
+            output = 0;
+            cacheRead = 0;
             cacheWrite = 0;
           };
           context = 262144;

@@ -106,15 +106,17 @@
               tui.renderMermaid = true;
               read.renderMarkdown = true;
 
+              prewalk.enabled = true; # start big, implement with small.
+
               enabledModels = [ ]; # all
               modelProviderOrder = singleton providerKey;
               modelRoles = with models; {
                 inherit tiny vision;
-                default = small;
+                default = "${big}:max"; # prewalk; rest use medium default
                 smol = small;
-                slow = big;
+                slow = "${big}:high";
                 advisor = small;
-                plan = big;
+                plan = "${big}:max";
                 designer = vision;
                 commit = small;
                 task = tiny;
