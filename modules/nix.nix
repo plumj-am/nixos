@@ -14,7 +14,6 @@ let
   registryMap = inputs |> filterAttrs (const <| isType "flake");
 in
 {
-
   flake.modules.common.default = self.modules.common.nix;
   flake.modules.common.nix =
     {
@@ -132,31 +131,28 @@ in
       dates = "weekly";
       persistent = true;
     };
-
-    # OOM configuration for the nix-daemon.
-    systemd = {
-      slices."nix-daemon".sliceConfig = {
-        ManagedOOMMemoryPressure = "kill";
-        ManagedOOMMemoryPressureLimit = "50%";
-      };
-      services."nix-daemon".serviceConfig = {
-        Slice = "nix-daemon.slice";
-        MemoryAccounting = true;
-        # Begin throttling memory usage.
-        MemoryHigh = "80%";
-        # Prefer killing nix-daemon child processes if OOM does occur.
-        OOMScoreAdjust = 1000;
-      };
-    };
   };
 
   flake.modules.nixos.desktop = self.modules.nixos.nix-daemon-desktop-scheduling;
-  flake.modules.nixos.nix-daemon-desktop-scheduling = {
-    nix = {
-      daemonIOSchedClass = "idle";
-      daemonCPUSchedPolicy = "idle";
+  flake.modules.nixos.nix-daemon-desktop-scheduling =
+    { config, ... }:
+    let
+      inherit (lib.modules) mkForce;
+      inherit (lib.trivial) floor max;
+    in
+    {
+      nix = {
+        # desktops: yuzu = 20, date = 12
+        settings.max-jobs =
+          mkForce
+          <| max 2
+          <| floor
+          <| config.systemInfo.threads * 3 / 4;
+
+        daemonIOSchedClass = "idle";
+        daemonCPUSchedPolicy = "idle";
+      };
     };
-  };
 
   flake.modules.darwin.default = self.modules.darwin.nix-extra;
   flake.modules.darwin.nix-extra =
