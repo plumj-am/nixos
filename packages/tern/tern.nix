@@ -10,7 +10,7 @@
 
       # Tern is a closed-beta Stencil Labs product. There is no public
       # source or download URL (build.stencil.so is auth-gated).
-      version = "0.5.1";
+      version = "0.6.2";
       filename = "Tern-${version}-linux-x86_64.tar.gz";
 
       # Tern ships no public download, so the tarball lives in the store,
@@ -20,7 +20,7 @@
       # path has a GC root. Without it, `nix store gc` deletes the tarball and
       # every build fails. To move to a new release:
       #
-      #   let version = "0.5.1"
+      #   let version = "<new version>"
       #
       #   (nix store add-file --name $"Tern-($version)-linux-x86_64.tar.gz"
       #     ~/Downloads/Tern-($version)-linux-x86_64.tar.gz)
@@ -29,31 +29,31 @@
       #
       # then update below with the new path and hash.
       #
-      # A running Tern pins the old version, so a bump needs all three:
-      #
-      #   1. Close every Tern window, then stop the daemon:
-      #
-      #    pkill -f 'tern'
-      #
-      #   2. Remove symlinks created by Tern
-      #
-      #   rm ~/.local/bin/tern
-      #
-      #   3. Rebuild the system.
+      # A running Tern pins the old version. To retire an old session: close
+      # every old-version window first (an open one respawns its own daemon
+      # from the old store path), then launch Tern fresh. Never
+      # `pkill -f tern` -- the daemon hosts live panes. Only if the old
+      # daemon still owns /run/user/$UID/tern/daemon.sock, run
+      # "Restart session daemon" from a new-version window. Pre-0.5
+      # leftovers (~/.local/bin/tern, ~/.local/share/applications/
+      # so.stencil.tern*.desktop) point at the raw store binary and skip this
+      # wrapper: repoint the desktop entries' Exec at
+      # /run/current-system/sw/bin/tern after the old session is gone -- a
+      # running old Tern recreates them. Then rebuild the system.
       #
       release = {
-        storePath = "/nix/store/mj4fs9ja1wijnng55yc7zrkkknnbr26a-Tern-0.5.1-linux-x86_64.tar.gz";
-        hash = "sha256-DP15+l9LTdXcKAAJdcLcyHcNEj15BY02CblBkRn8qlU=";
+        storePath = "/nix/store/ljlj0wpis9v77izz0xz8nvhrwin0afir-Tern-0.6.2-linux-x86_64.tar.gz";
+        hash = "sha256-SLlYBqviEef1EdkJ0hq9mF9k/a20+c3dBqrDCvAAPJc=";
       };
 
       supportedSystems = [
         "x86_64-linux"
       ];
-
       # DT_NEEDED holds only libc/libm/libdl/libpthread/librt/libutil/
       # libgcc_s, plus libstdc++ as of 0.4.0. Everything else is dlopen()'d
       # at runtime, so autoPatchelf would miss it entirely; this set comes
-      # from `strings` on the binary, diffed against the previous release:
+      # from `strings` on the binary, diffed against the previous release
+      # (0.6.2 adds no new dlopen targets):
       # wgpu's Vulkan + EGL/GLES chain, the Wayland and X11 windows, the
       # WebKitGTK / WPEWebKit bindings for the browser block, and libpipewire
       # for screen sharing. X11 came with 0.5.0 (STENCIL_DISPLAY_SERVER);
@@ -113,16 +113,21 @@
       # Tern learns the login environment by running a probe through the
       # login shell in a pty:
       #
-      #   $SHELL -l -i -c 'echo __tern_login_path__; printenv PATH; echo __tern_login_path__'
+      #   $SHELL -l -i -c "printf '__tern_login_env__\n'; /usr/bin/env -0; printf '__tern_login_env__\n'"
+      #
+      # 0.6.0 used `echo __tern_login_path__` around five `printenv` calls;
+      # 0.6.2 renamed the marker to __tern_login_env__ and reads one
+      # NUL-separated `env -0` dump between the two markers (verified by
+      # running the binary with SHELL pointed at a logging shim).
       #
       # It takes the program from $SHELL (or the passwd database), not from
       # the settings' `shell`, so the configured nushell is asked to answer a
-      # POSIX probe. Nushell cannot: it prints only the final pipeline's
-      # value, so the leading marker never appears and the reader times out.
-      # It also needs `printenv` on PATH, which the probe's scrubbed PATH does
-      # not hold on NixOS. On a timeout Tern falls back to the libc default
-      # PATH, which has no profile directories: panes and the agents Tern
-      # spawns (omp, carly) then lose jj, cargo and everything else from
+      # POSIX probe. Nushell cannot: `printf` is no nushell builtin, and the
+      # probe's scrubbed PATH (env -i PATH=/usr/local/bin:/usr/bin:/bin)
+      # holds no printf on NixOS, so the shell dies before the first marker
+      # and the reader times out. On a timeout Tern falls back to the libc
+      # default PATH, which has no profile directories: panes and the agents
+      # Tern spawns (omp, carly) then lose jj, cargo and everything else from
       # /etc/profiles/per-user/$USER/bin.
       #
       # Give the probe the shell its protocol was written for, and leave
@@ -130,7 +135,7 @@
       # argument list, because Tern adds no nushell-specific flags.
       loginProbe = pkgs.writeShellScript "tern-login-shell-probe" ''
         case " $* " in
-          *__tern_login_path__*)
+          *__tern_login_env__*)
             exec ${lib.getExe pkgs.bashInteractive} "$@"
             ;;
         esac
