@@ -79,7 +79,6 @@
       inherit (lib.lists) singleton;
       inherit (lib.modules) mkIf;
       inherit (lib.strings) makeLibraryPath;
-      inherit (lib.trivial) max;
     in
     {
       environment.variables.LIBRARY_PATH =
@@ -97,16 +96,6 @@
         pkgs.evcxr
         pkgs.kondo
       ];
-
-      hjemModule = {
-        files.".cargo/config.toml" = {
-          generator = pkgs.writers.writeTOML "cargo-config.toml";
-          value = {
-            # >=2 cores
-            build.jobs = max 2 (config.systemInfo.threads / 5);
-          };
-        };
-      };
     };
 
   flake.modules.common.kache =

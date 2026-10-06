@@ -5,7 +5,6 @@
   flake.modules.nixos.desktop = self.modules.nixos.tern;
   flake.modules.nixos.tern =
     {
-      inputs,
       pkgs,
       lib,
       config,
@@ -146,7 +145,7 @@
 
             shell = "${getExe pkgs.nushell}";
             agent_command = "PI_OMP_NATIVE=1 ${
-              getExe inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp
+              getExe self.packages.${pkgs.stdenv.hostPlatform.system}.omp-wrapped
             }";
 
             command_lenses = true;

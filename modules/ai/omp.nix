@@ -3,7 +3,6 @@
   flake.modules.common.ai-agents = self.modules.common.omp;
   flake.modules.common.omp =
     {
-      inputs,
       pkgs,
       lib,
       config,
@@ -24,12 +23,14 @@
       providerKey = config.ai.providers.headroomVineProxy.name;
 
       models = mapAttrs (_: m: "${providerKey}/${m}") defaultModels;
+
+      system = pkgs.stdenv.hostPlatform.system;
     in
     {
       ai.secrets = true;
 
       environment.systemPackages = [
-        inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp
+        self.packages.${system}.omp-wrapped
         pkgs.bun # Gay but needed for some plugins.
         pkgs.node-gyp # ^
         pkgs.rtk # Rewrites bash commands; install service drops in its extension.
