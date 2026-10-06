@@ -14,7 +14,7 @@
             vision = false;
           };
           freeWeak = {
-            model = "inclusionai/ling-3.1-flash:free";
+            model = null;
             vision = false;
           };
 
@@ -178,27 +178,6 @@
             input = 0.09;
             output = 0.3;
             cacheRead = 0.02;
-            cacheWrite = 0;
-          };
-          context = 262144;
-          maxOutput = 131072;
-        }
-        {
-          id = "inclusionai/ling-3.1-flash:free";
-          name = "Inclusion Ling 3.1 Flash";
-          reasoning = true;
-          thinking = {
-            minLevel = "low";
-            maxLevel = "high";
-            mode = "effort";
-          };
-          inputTypes = [
-            "text"
-          ];
-          costPerMillion = {
-            input = 0;
-            output = 0;
-            cacheRead = 0;
             cacheWrite = 0;
           };
           context = 262144;
