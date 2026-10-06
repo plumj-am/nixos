@@ -10,7 +10,6 @@
     }:
     let
       inherit (lib.lists) singleton;
-      inherit (lib.modules) mkDefault;
     in
     {
       environment.systemPackages = singleton pkgs.tuicr;

@@ -108,16 +108,15 @@
               enabledModels = [ ]; # all
               modelProviderOrder = singleton providerKey;
               modelRoles = with models; {
+                inherit tiny vision;
                 default = small;
                 smol = small;
                 slow = big;
                 advisor = small;
                 plan = big;
-                inherit vision;
                 designer = vision;
                 commit = small;
                 task = tiny;
-                tiny = tiny;
                 judge = decision;
               };
 
