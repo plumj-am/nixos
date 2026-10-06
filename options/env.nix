@@ -19,7 +19,7 @@
           ".cargo/bin"
         ];
         description = ''
-          Directories prepended to `PATH` in the user session, in the given
+          Directories appended to `PATH` in the user session, in the given
           order. This is the Hjem equivalent of home-manager's
           `home.sessionPath`, which Hjem does not provide.
 
@@ -29,7 +29,7 @@
 
           Hjem's `environment.sessionVariables` can only replace a whole
           variable, and it exports through a POSIX script that does not expand
-          `$HOME`. Nushell therefore prepends these entries itself, which keeps
+          `$HOME`. Nushell therefore appends these entries itself, which keeps
           the inherited `PATH` intact instead of replacing it.
         '';
       };
