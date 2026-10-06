@@ -81,8 +81,8 @@
 
             antialias = true;
             msaa = "off";
-            sync_to_display = true;
-            frame_latency = 2;
+            sync_to_display = false;
+            frame_latency = 1;
 
             layout = "Studio";
             status_bar = true;
@@ -94,7 +94,7 @@
             surface_headings = null;
             surface_diffs = "Split";
             surface_fold = true;
-            surface_chat = "Reader";
+            surface_chat = "Spine";
 
             native_completion = true;
             native_editing = true;
@@ -269,6 +269,9 @@
               "ctrl+shift+p" = "palette";
               "${prefix}>:" = "palette";
 
+              "${prefix}>i" = "inbox";
+              "ctrl+shift+i" = "inbox";
+
               "${prefix}>a" = "plugin.jj.open";
               "${prefix}>shift+a" = "plugin.jj.create";
               "${prefix}>alt+a" = "plugin.jj.remove";
@@ -284,7 +287,6 @@
         xdg.config.files."tern/carly/HEARTBEAT.md".text = # markdown
           ''
             - Tell me if a pane shows a build failure, say which.
-            - Tell me if an agent has completed it's work with no meaningful advisor notices left.
             - If an agent has stopped but has unread advisor notices, tell it to check them.
             - If an agent has stopped due to an error, tell it to "continue", say which. If the
               error occurs >3 times consecutively with no progress made, notify me.
