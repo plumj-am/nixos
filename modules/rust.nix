@@ -79,6 +79,7 @@
       inherit (lib.lists) singleton;
       inherit (lib.modules) mkIf;
       inherit (lib.strings) makeLibraryPath;
+      inherit (lib.trivial) max;
     in
     {
       environment.variables.LIBRARY_PATH =
@@ -101,7 +102,8 @@
         files.".cargo/config.toml" = {
           generator = pkgs.writers.writeTOML "cargo-config.toml";
           value = {
-            build.jobs = 2;
+            # >=2 cores
+            build.jobs = max 2 (config.systemInfo.threads / 5);
           };
         };
       };
