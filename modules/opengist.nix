@@ -56,8 +56,13 @@
         };
       };
 
-      services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
-        locations."/".proxyPass = "http://0.0.0.0:${toString port}";
+      services.ferronVhosts.${fqdn} = merge config.services.ferron.sslTemplate {
+        proxy = "http://0.0.0.0:${toString port}";
+
+        config = # kdl
+          ''
+            ${config.services.ferron.headers}
+          '';
       };
 
       environment.etc."opengist/config.yml".text = # yml

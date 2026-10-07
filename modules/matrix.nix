@@ -121,23 +121,51 @@
         };
       };
 
-      services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
-        extraConfig = ''
-          ${config.services.nginx.goatCounterTemplate}
-        '';
-        locations."/_matrix".proxyPass = "http://[::1]:${toString port}";
-        locations."/_synapse/client".proxyPass = "http://[::1]:${toString port}";
-        locations."/_synapse/admin".proxyPass = "http://[::1]:${toString port}";
+      services.ferronVhosts.${fqdn} = merge config.services.ferron.sslTemplate {
+        config = # kdl
+          ''
+            # `localhost` resolves to ::1 with IPv4 fallback.
+            location "/_matrix" {
+                proxy "http://localhost:${toString port}/_matrix" {
+                    request_header -Accept-Encoding
+                }
+            }
+
+            location "/_synapse/client" {
+                proxy "http://localhost:${toString port}/_synapse/client" {
+                    request_header -Accept-Encoding
+                }
+            }
+
+            location "/_synapse/admin" {
+                proxy "http://localhost:${toString port}/_synapse/admin" {
+                    request_header -Accept-Encoding
+                }
+            }
+
+            ${config.services.ferron.goatCounterTemplate}
+            ${config.services.ferron.headers}
+          '';
       };
 
-      services.nginx.virtualHosts.${domain} = merge config.services.nginx.sslTemplate {
-        locations."/.well-known/matrix/client".extraConfig = ''
-          			return 200 '{"m.homeserver": {"base_url": "https://${fqdn}"}}';
-          		'';
+      # The apex host is also declared by the website-personal module, together
+      # with the site's security header set, so this vhost adds only the
+      # Matrix discovery endpoints.
+      services.ferronVhosts.${domain} = merge config.services.ferron.sslTemplate {
+        config = # kdl
+          ''
+            location "/.well-known/matrix/client" {
+                status 200 {
+                    body "{\"m.homeserver\": {\"base_url\": \"https://${fqdn}\"}}"
+                }
+            }
 
-        locations."/.well-known/matrix/server".extraConfig = ''
-          			return 200 '{"m.server": "${fqdn}:443"}';
-          		'';
+            location "/.well-known/matrix/server" {
+                status 200 {
+                    body "{\"m.server\": \"${fqdn}:443\"}"
+                }
+            }
+          '';
       };
     };
 
@@ -155,7 +183,7 @@
       inherit (config.networking) domain hostName;
 
       fqdn = "chat.${domain}";
-      root = pkgs.cinny;
+      root = "${pkgs.cinny}";
 
       cinnyConfig = {
         allowCustomHomeservers = false;
@@ -180,6 +208,10 @@
           rooms = [ ];
         };
       };
+
+      # Ferron string literals are double-quoted; escape quotes and backslashes
+      # coming from the generated JSON.
+      escapeFerronString = s: builtins.replaceStrings [ "\\" "\"" ] [ "\\\\" "\\\"" ] s;
     in
     {
       assertions = singleton {
@@ -187,40 +219,37 @@
         message = "The Cinny module should be used on the host running Matrix, but you're trying to enable it on '${hostName}'.";
       };
 
-      services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
+      services.ferronVhosts.${fqdn} = merge config.services.ferron.sslTemplate {
         inherit root;
 
-        locations."= /config.json".extraConfig = # nginx
+        config = # kdl
           ''
-            default_type application/json;
-            return 200 '${toJSON cinnyConfig}';
-          '';
+            status 200 {
+                url /config.json
+                body "${escapeFerronString (toJSON cinnyConfig)}"
+            }
 
-        locations."/".extraConfig = # nginx
-          ''
-            proxy_hide_header Content-Security-Policy;
-            add_header Content-Security-Policy "script-src 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain}; object-src 'self' ${domain} *.${domain}; img-src 'self' data: https: blob:; base-uri 'self'; frame-ancestors 'self';" always;
-            add_header X-Frame-Options DENY always;
-            add_header X-Content-Type-Options nosniff always;
-            add_header X-XSS-Protection "1; mode=block" always;
-            add_header Permissions-Policy "camera=(), geolocation=(), payment=(), usb=()" always;
-            add_header Referrer-Policy no-referrer always;
-          '';
+            header -Content-Security-Policy
+            header +Content-Security-Policy "script-src 'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain}; object-src 'self' ${domain} *.${domain}; img-src 'self' data: https: blob:; base-uri 'self'; frame-ancestors 'self';"
+            header -X-Frame-Options
+            header +X-Frame-Options DENY
+            header -X-Content-Type-Options
+            header +X-Content-Type-Options nosniff
+            header -X-XSS-Protection
+            header +X-XSS-Protection "1; mode=block"
+            header -Permissions-Policy
+            header +Permissions-Policy "camera=(), geolocation=(), payment=(), usb=()"
+            header -Referrer-Policy
+            header +Referrer-Policy no-referrer
 
-        extraConfig = # nginx
-          ''
-            rewrite ^/config.json$ /config.json break;
-            rewrite ^/manifest.json$ /manifest.json break;
-
-            rewrite ^/sw.js$ /sw.js break;
-            rewrite ^/pdf.worker.min.js$ /pdf.worker.min.js break;
-
-            rewrite ^/public/(.*)$ /public/$1 break;
-            rewrite ^/assets/(.*)$ /assets/$1 break;
-
-            rewrite ^(.+)$ /index.html break;
+            # SPA fallback: real files and directories win, everything else
+            # serves index.html.
+            rewrite r"^/.+$" "/index.html" {
+                last
+                file false
+                directory false
+            }
           '';
       };
-
     };
 }

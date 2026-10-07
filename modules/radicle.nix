@@ -130,7 +130,6 @@ in
     }:
     let
       inherit (lib.lists) optional singleton;
-      inherit (lib.modules) merge;
       inherit (config.networking) hostName;
     in
     {
@@ -184,17 +183,6 @@ in
           };
         };
       };
-      services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
-        extraConfig = ''
-          ${config.services.nginx.goatCounterTemplate}
-        '';
-
-        locations."/api/".proxyPass = "http://127.0.0.1:${toString nodeHttpdPort}";
-
-        locations."/raw/".proxyPass = "http://127.0.0.1:${toString nodeHttpdPort}";
-
-        locations."~ ^/rad:".proxyPass = "http://127.0.0.1:${toString nodeHttpdPort}";
-      };
     };
 
   flake.modules.nixos.radicle-explorer =
@@ -238,19 +226,38 @@ in
       });
     in
     {
-      services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
-        serverAliases = [
-          "radicle.${domain}"
-          "seed.${domain}"
-        ];
-        locations."/" = {
-          index = "index.html";
-          inherit root;
-          extraConfig = # nginx
-            ''
-              try_files $uri $uri/ /index.html;
-            '';
-        };
-      };
+      services.ferronVhosts."${fqdn}, radicle.${domain}, seed.${domain}" =
+        merge config.services.ferron.sslTemplate
+          {
+            root = "${root}";
+
+            index = [ "index.html" ];
+
+            config = # kdl
+              ''
+                ${config.services.ferron.headers}
+
+                # nginx `try_files $uri $uri/ /index.html`, except that the
+                # radicle node HTTP API paths proxy to the local node (the
+                # nginx-era node vhost merged into this server block).
+                match explorer_api {
+                    request.uri.path ~ r"^/(api/|raw/|rad:)"
+                }
+
+                if_not explorer_api {
+                    rewrite r"^/.*" "/" {
+                        last
+                        directory false
+                        file false
+                    }
+                }
+
+                if explorer_api {
+                    proxy "http://127.0.0.1:${toString nodeHttpdPort}" {
+                        request_header -Accept-Encoding
+                    }
+                }
+              '';
+          };
     };
 }

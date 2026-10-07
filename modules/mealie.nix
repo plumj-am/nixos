@@ -38,8 +38,13 @@
         };
       };
 
-      services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
-        locations."/".proxyPass = "http://127.0.0.1:${toString config.services.mealie.port}";
+      services.ferronVhosts.${fqdn} = merge config.services.ferron.sslTemplate {
+        proxy = "http://127.0.0.1:${toString config.services.mealie.port}";
+
+        config = # kdl
+          ''
+            ${config.services.ferron.headers}
+          '';
       };
     };
 }

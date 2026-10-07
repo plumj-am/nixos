@@ -118,16 +118,23 @@
         };
       };
 
-      services.nginx.virtualHosts.${fqdnS3} = merge config.services.nginx.sslTemplate {
-        extraConfig = # nginx
+      services.ferronVhosts.${fqdnS3} = merge config.services.ferron.sslTemplate {
+        # `localhost` resolves to ::1 with IPv4 fallback.
+        proxy = "http://localhost:${toString portS3}";
+
+        config = # kdl
           ''
-            client_max_body_size 5g;
+            ${config.services.ferron.headers}
           '';
-        locations."/".proxyPass = "http://[::1]:${toString portS3}";
       };
 
-      services.nginx.virtualHosts.${fqdnWebUI} = merge config.services.nginx.sslTemplate {
-        locations."/".proxyPass = "http://[::1]:${toString portWebUI}";
+      services.ferronVhosts.${fqdnWebUI} = merge config.services.ferron.sslTemplate {
+        proxy = "http://localhost:${toString portWebUI}";
+
+        config = # kdl
+          ''
+            ${config.services.ferron.headers}
+          '';
       };
 
       systemd.services.garage-bootstrap = {

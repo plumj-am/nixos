@@ -49,6 +49,13 @@
                 lib.optionalString (osConfig.environment.variables != { })
                 <| nuLoadEnv osConfig.environment.variables
               }
+              ${
+                # hjem's sessionVariables otherwise only materialise as an
+                # unsourced POSIX load-env script; load them here too so
+                # per-user variables (e.g. RIPGREP_CONFIG_PATH) reach nushell.
+                lib.optionalString (config.environment.sessionVariables != { })
+                <| nuLoadEnv config.environment.sessionVariables
+              }
               $env.config.edit_mode = "helix"
               $env.config.buffer_editor = "${osConfig.environment.variables.EDITOR}"
               $env.config.show_banner = false

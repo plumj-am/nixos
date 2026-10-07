@@ -179,6 +179,27 @@
         "type": "github"
       }
     },
+    "ferron": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791131260,
+        "narHash": "sha256-bQ3tCG6fTj+bg0VVj04SJgs6RyT9Pl7RqEEoY6xBl48=",
+        "owner": "ferronweb",
+        "repo": "ferron",
+        "rev": "00078aff8c5c8ded96ef477491238cd7bac42999",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ferronweb",
+        "ref": "3.x",
+        "repo": "ferron",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -892,6 +913,7 @@
       "inputs": {
         "disko": "disko",
         "fenix": "fenix",
+        "ferron": "ferron",
         "flake-parts": "flake-parts",
         "gerrit-autosubmit": "gerrit-autosubmit",
         "grove": "grove",

@@ -18,15 +18,13 @@
           proxy = true;
         };
 
-        services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
-          locations."/" = {
-            proxyPass = "http://${address}:${toString port}";
-            proxyWebsockets = true;
-            extraConfig = # nginx
-              ''
-                proxy_hide_header X-Content-Type-Options;
-              '';
-          };
+        services.ferronVhosts.${fqdn} = merge config.services.ferron.sslTemplate {
+          proxy = "http://${address}:${toString port}";
+
+          config = # kdl
+            ''
+              ${config.services.ferron.headers}
+            '';
         };
       };
     };

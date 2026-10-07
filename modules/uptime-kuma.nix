@@ -12,19 +12,25 @@
         attrNames
         attrValues
         filterAttrs
-        isAttrs
         mapAttrsToList
         ;
       inherit (lib.lists)
         concatMap
         filter
         groupBy
+        head
         length
-        singleton
         ;
       inherit (lib.meta) getExe;
       inherit (lib.modules) merge;
-      inherit (lib.strings) concatMapStringsSep concatStrings optionalString;
+      inherit (lib.strings)
+        concatMapStringsSep
+        concatStrings
+        hasInfix
+        hasPrefix
+        optionalString
+        splitString
+        ;
       inherit (config.networking) domain;
 
       fqdn = "uptime.${domain}";
@@ -39,39 +45,38 @@
       # deprecated. So the wanted monitors are written straight into SQLite by
       # a preStart script.
       #
-      # The monitors come from every host in the flake that serves nginx. A
-      # virtual host counts as public when it asks for an ACME certificate,
-      # which is what `merge config.services.nginx.sslTemplate` sets.
+      # The monitors come from every host in the flake that serves ferron. A
+      # virtual host counts as public when it asks for a TLS certificate,
+      # which is what `merge config.services.ferron.sslTemplate` sets.
       # Services without a virtual host (postgres, the build machines) need a
       # monitor of their own.
       servesRoot =
         vhost:
-        let
-          slash = vhost.locations."/" or { };
-          set = name: (slash.${name} or null) != null;
-        in
-        isAttrs slash
-        && !set "return"
-        && (set "proxyPass" || set "root" || set "alias" || set "tryFiles" || vhost.root != null);
+        vhost.proxy != null
+        || vhost.root != null
+        || vhost.spaFallback
+        || hasInfix "proxy " vhost.config
+        || hasInfix "root " vhost.config;
 
-      publicVhost = vhost: (vhost.useACMEHost or null) != null && servesRoot vhost;
+      publicVhost = vhost: vhost.tls.cert != null && servesRoot vhost;
 
       # Virtual host name -> the hosts that serve it, so a name served from two
-      # places stays one monitor.
+      # places stays one monitor. A ferron selector can list aliases
+      # ("a.example, b.example"); the first name is the vhost name.
       monitored =
-        filterAttrs (name: _: name != fqdn && name != "_" && name != "localhost")
+        filterAttrs (name: _: name != fqdn && name != "localhost" && !hasPrefix "*" name)
         <| groupBy (entry: entry.name)
         <| concatMap (
           hostConfig:
           mapAttrsToList (
-            name: _: {
+            selector: _: {
               host = hostConfig.config.networking.hostName;
-              inherit name;
+              name = head (splitString ", " selector);
             }
           )
-          <| filterAttrs (_: publicVhost) hostConfig.config.services.nginx.virtualHosts
+          <| filterAttrs (_: publicVhost) (hostConfig.config.services.ferronVhosts or { })
         )
-        <| filter (hostConfig: hostConfig.config.services.nginx.enable)
+        <| filter (hostConfig: hostConfig.config.services.ferron.enable or false)
         <| attrValues self.nixosConfigurations;
 
       monitoredNames = attrNames monitored;
@@ -243,19 +248,13 @@
         ];
       };
 
-      services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
-        serverAliases = singleton "status.${domain}";
-        locations."/" = {
-          proxyPass = "http://${host}:${toString port}";
-          proxyWebsockets = true;
-          extraConfig = # nginx
-            ''
-              proxy_set_header Host $host;
-              proxy_set_header X-Real-IP $remote_addr;
-              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-              proxy_set_header X-Forwarded-Proto $scheme;
-            '';
-        };
+      services.ferronVhosts."${fqdn}, status.${domain}" = merge config.services.ferron.sslTemplate {
+        proxy = "http://${host}:${toString port}";
+
+        config = # kdl
+          ''
+            ${config.services.ferron.headers}
+          '';
       };
     };
 }

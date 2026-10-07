@@ -14,6 +14,10 @@
 
       fqdn = "git.${domain}";
       port = 8001;
+
+      # Served statically instead of proxied (replaces the old nginx
+      # `alias = ./robots.txt`). `writeTextDir` puts the file at the root.
+      robotsRoot = pkgs.writeTextDir "robots.txt" (builtins.readFile ./robots.txt);
     in
     {
       sops.secrets = {
@@ -163,14 +167,27 @@
           };
       };
 
-      services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
-        extraConfig = ''
-          ${config.services.nginx.goatCounterTemplate}
-          client_max_body_size 75M;
-        '';
-        locations."/".proxyPass = "http://[::1]:${toString port}";
+      services.ferronVhosts.${fqdn} = merge config.services.ferron.sslTemplate {
+        config = # kdl
+          ''
+            ${config.services.ferron.headers}
 
-        locations."= /robots.txt".alias = ./robots.txt;
+            match robots_txt {
+                request.uri.path == "/robots.txt"
+            }
+
+            if robots_txt {
+                root ${robotsRoot}
+            }
+
+            if_not robots_txt {
+                proxy "http://localhost:${toString port}" {
+                    request_header -Accept-Encoding
+                }
+            }
+
+            ${config.services.ferron.goatCounterTemplate}
+          '';
       };
     };
 }

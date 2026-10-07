@@ -12,6 +12,10 @@
       url = "github:nix-community/fenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    ferron = {
+      url = "github:ferronweb/ferron/3.x";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     gerrit-autosubmit = {
       url = "git+ssh://forgejo@git.plumj.am/plumjam/gerrit-autosubmit";
       inputs.nixpkgs.follows = "nixpkgs";

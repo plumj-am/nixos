@@ -194,8 +194,12 @@
               snapshot.max-new-file-size = "10MiB";
 
               git = {
-                sign-on-push = true; # Sign in bulk on push.
+                executable-path = getExe pkgs.gitMinimal;
                 subprocess = true;
+
+                colocate = true;
+
+                sign-on-push = true; # Sign in bulk on push.
                 private-commits = "blacklist()"; # Prevent pushing WIP commits.
                 write-change-id-header = true;
               };

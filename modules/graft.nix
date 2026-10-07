@@ -9,6 +9,7 @@
       ...
     }:
     let
+      inherit (lib.constants) tailnet;
       inherit (lib.lists) filter foldl' singleton;
       inherit (lib.modules) merge mkForce;
       inherit (config.networking) domain hostName;
@@ -250,32 +251,73 @@
         extraParams = "--store ${cfg.config.nix.cache_dir} --priority 42";
       };
 
-      services.nginx = {
-        # Substituter storms exhaust the stock 512 connection slots, and
-        # nginx then serves its default 500 page to cache clients.
-        prependConfig = "worker_processes auto;";
-        eventsConfig = "worker_connections 4096;";
-
-        tailscaleAuth.virtualHosts = singleton "graft-cache.${domain}";
-      };
+      # tailscale-nginx-auth gates the cache host. Ferron reaches it over its
+      # unix socket, so the ferron user must be in the socket's group.
+      services.tailscaleAuth.enable = true;
+      users.users.ferron.extraGroups = [ config.services.tailscaleAuth.group ];
 
       nix.settings = {
         extra-substituters = singleton "https://graft-cache.plumj.am";
         trusted-public-keys = singleton "graft-cache-1:cJVyGZWQ+v4vG6ajYspWHD5NFvOhJAk7cFbxh/hmSiI=";
       };
 
-      services.nginx.virtualHosts = {
+      services.ferronVhosts = {
         # Old subdomain to avoid breaking links.
-        "gerrix.${domain}" = merge config.services.nginx.sslTemplate {
-          locations."/".return = "https://graft.plumj.am$request_uri";
+        "gerrix.${domain}" = merge config.services.ferron.sslTemplate {
+          config = # kdl
+            ''
+              ${config.services.ferron.headers}
+              status 301 {
+                  location "https://graft.plumj.am{{request.uri}}"
+              }
+            '';
         };
 
-        "graft.${domain}" = merge config.services.nginx.sslTemplate {
-          locations."/".proxyPass = "http://127.0.0.1:${toString cfg.config.http.port}";
+        "graft.${domain}" = merge config.services.ferron.sslTemplate {
+          proxy = "http://127.0.0.1:${toString cfg.config.http.port}";
+
+          config = # kdl
+            ''
+              ${config.services.ferron.headers}
+            '';
         };
 
-        "graft-cache.${domain}" = merge config.services.nginx.sslTemplate {
-          locations."/".proxyPass = "http://127.0.0.1:${toString config.services.nix-serve.port}";
+        "graft-cache.${domain}" = merge config.services.ferron.sslTemplate {
+          proxy = "http://127.0.0.1:${toString config.services.nix-serve.port}";
+
+          # nginx renamed the auth response's Tailscale-* headers to
+          # X-Webauth-* downstream; ferron's `copy` only copies same-name, so
+          # the Tailscale-* headers are copied through and renamed here.
+          # Expected-Tailnet is sent to both the auth subrequest and the
+          # backend (nginx sent it to the backend only).
+          proxyExtraConfig = # kdl
+            ''
+              request_header X-Webauth-User "{{request.header.tailscale_user}}"
+              request_header X-Webauth-Name "{{request.header.tailscale_name}}"
+              request_header X-Webauth-Login "{{request.header.tailscale_login}}"
+              request_header X-Webauth-Tailnet "{{request.header.tailscale_tailnet}}"
+              request_header X-Webauth-Profile-Picture "{{request.header.tailscale_profile_picture}}"
+              request_header Expected-Tailnet "${tailnet}"
+            '';
+
+          config = # kdl
+            ''
+              ${config.services.ferron.headers}
+
+              auth_to http://localhost {
+                  unix /run/tailscale-nginx-auth/tailscale-nginx-auth.sock
+
+                  request_header Host "graft-cache.${domain}"
+                  request_header Remote-Addr "{{remote.ip}}"
+                  request_header Remote-Port "{{remote.port}}"
+                  request_header Original-URI "{{request.uri}}"
+                  request_header X-Scheme "{{request.scheme}}"
+                  request_header X-Auth-Request-Redirect "https://graft-cache.${domain}{{request.uri}}"
+                  request_header Expected-Tailnet "${tailnet}"
+
+                  copy Tailscale-User Tailscale-Name Tailscale-Login Tailscale-Tailnet Tailscale-Profile-Picture
+              }
+            '';
         };
       };
 

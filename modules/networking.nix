@@ -41,8 +41,8 @@
     {
       # tailscale nginx auth checks the client source address, so nix must
       # reach the cache over the tailnet instead of the public DNS record.
-      # nginx resolves proxy_pass upstream names at config test, before
-      # MagicDNS answers during boot, so pin sloe's tailnet name here too.
+      # Pin sloe's tailnet name so the record resolves before MagicDNS
+      # answers during boot.
       networking.hosts = {
         "100.94.223.95" = [
           "graft-cache.plumj.am" # sloe

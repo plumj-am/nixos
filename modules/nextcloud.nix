@@ -48,6 +48,9 @@
 
           log_type = "file";
 
+          # Ferron and the loopback nginx both proxy; trust their X-Forwarded-For.
+          trusted_proxies = [ "127.0.0.1" ];
+
           enabledPreviewProviders = [
             "OC\\Preview\\BMP"
             "OC\\Preview\\GIF"
@@ -84,10 +87,28 @@
         };
       };
 
-      services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
-        extraConfig = ''
-          ${config.services.nginx.headers}
-        '';
+      # Ferron terminates TLS; nginx (nixpkgs-generated PHP rules) serves PHP
+      # to it on loopback only.
+      services.nginx.virtualHosts.${fqdn} = {
+        listen = singleton {
+          addr = "127.0.0.1";
+          port = 8082;
+        };
+
+        extraConfig = # nginx
+          ''
+            # Hand the real client address from ferron down to PHP.
+            fastcgi_param HTTP_X_FORWARDED_FOR $http_x_forwarded_for;
+          '';
+      };
+
+      services.ferronVhosts.${fqdn} = merge config.services.ferron.sslTemplate {
+        proxy = "http://127.0.0.1:8082";
+
+        config = # kdl
+          ''
+            ${config.services.ferron.headers}
+          '';
       };
 
     };

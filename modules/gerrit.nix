@@ -339,45 +339,34 @@
 
       networking.firewall.allowedTCPPorts = singleton 29418;
 
-      services.nginx.recommendedProxySettings = mkForce false;
-      services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
-        locations."/" = {
-          proxyPass = "http://localhost:${httpPort}";
-          extraConfig = # nginx
-            ''
-              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-              proxy_set_header Host $host:443;
-              proxy_buffering off;
-              proxy_read_timeout 3600;
-              proxy_cookie_path / /; # Reset from commonHttpConfig in ./nginx.nix
-              # Gerrit should be left to handle it's own cookies or it breaks oauth.
-            '';
-        };
-        locations."/internal/gerrit-auth-check" = {
-          proxyPass = "http://localhost:${httpPort}/a/accounts/self";
-          extraConfig = # nginx
-            ''
-              internal;
-              proxy_pass_request_body off;
-              proxy_set_header Content-Length "";
-              # Forward the browser's Gerrit session cookie
-              proxy_set_header Cookie $http_cookie;
-            '';
-        };
+      services.ferronVhosts.${fqdn} = merge config.services.ferron.sslTemplate {
+        config = # kdl
+          ''
+            ${config.services.ferron.headers}
 
-        locations."/checks/" = {
-          proxyPass = "http://sloe.${tailnet}:8019";
-          extraConfig = # nginx
-            ''
-              auth_request /internal/gerrit-auth-check;
-              # The Gerrit checks plugin fetches /checks/api; graft serves /api/checks.
-              rewrite ^/checks/api$ /api/checks break;
-              proxy_set_header Host $host;
-              proxy_set_header X-Real-IP $remote_addr;
-              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-              proxy_set_header X-Forwarded-Proto $scheme;
-            '';
-        };
+            # Gerrit streams long operations (proxy_read_timeout 3600).
+            http {
+                timeout "1h"
+            }
+
+            # The Gerrit checks plugin fetches /checks/api; graft serves /api/checks.
+            location "/checks/api" {
+                auth_to "http://localhost:${httpPort}/a/accounts/self"
+                proxy "http://sloe.${tailnet}:8019/api/checks"
+            }
+
+            location "/checks/" {
+                auth_to "http://localhost:${httpPort}/a/accounts/self"
+                proxy "http://sloe.${tailnet}:8019/checks/"
+            }
+
+            location "/" {
+                proxy "http://localhost:${httpPort}" {
+                    request_header -Host
+                    request_header +Host "${fqdn}:443"
+                }
+            }
+          '';
       };
     };
 }

@@ -72,9 +72,9 @@
             server_host = singleton "127.0.0.1";
             server_port = port;
             cors_allowed_origins = singleton "https://cast.home-assistant.io";
-            # The nginx frontend always sends X-Forwarded-For, and Home Assistant
-            # answers every request carrying it with HTTP 400 unless the proxy is
-            # trusted.
+            # The ferron frontend always sends X-Forwarded-For, and Home
+            # Assistant answers every request carrying it with HTTP 400 unless
+            # the proxy is trusted.
             use_x_forwarded_for = true;
             trusted_proxies = [
               "127.0.0.1/32"
@@ -296,11 +296,13 @@
         install -m600 ${httpStoreFile} "${config.services.home-assistant.configDir}/.storage/http"
       '';
 
-      services.nginx.virtualHosts.${fqdn} = merge config.services.nginx.sslTemplate {
-        locations."/" = {
-          proxyPass = "http://127.0.0.1:${toString port}";
-          proxyWebsockets = true;
-        };
+      services.ferronVhosts.${fqdn} = merge config.services.ferron.sslTemplate {
+        proxy = "http://127.0.0.1:${toString port}";
+
+        config = # kdl
+          ''
+            ${config.services.ferron.headers}
+          '';
       };
 
       # Device discovery needs inbound UDP that the default policy refuses.
