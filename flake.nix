@@ -48,7 +48,7 @@
       flake = false;
     };
     jujutsu = {
-      url = "github:jj-vcs/jj?ref=refs/tags/v0.45.1";
+      url = "github:jj-vcs/jj?ref=refs/tags/v0.46.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     jj-mode-el = {
