@@ -19,7 +19,11 @@
       prefix = "ctrl+g";
 
       # The login shell shim (packages/tern/tern.nix): bash for Tern's login
-      # probe, nushell for everything else.
+      # probe, nushell -- with the OSC 133;C payload Tern claims commands
+      # from -- for everything else. The shim owns that payload, not this
+      # module, because Tern starts a session's first pane and every pane it
+      # restores with the login shell: the same shim serves the `shell`
+      # setting below, so no pane can miss the payload.
       loginShell = "${self.packages.${pkgs.stdenv.hostPlatform.system}.tern-login-shell}/bin/nu";
     in
     {
@@ -143,7 +147,7 @@
 
             confirm_close = "running_programs";
 
-            shell = "${getExe pkgs.nushell}";
+            shell = "${loginShell}";
             agent_command = "PI_OMP_NATIVE=1 ${
               getExe self.packages.${pkgs.stdenv.hostPlatform.system}.omp-wrapped
             }";
@@ -333,6 +337,14 @@
         xdg.config.files."tern/plugins/links/init.luau".source = "${
           self.packages.${pkgs.stdenv.hostPlatform.system}.tern-links-plugin
         }/init.luau";
+
+        xdg.config.files."tern/plugins/lenses/plugin.toml".source = "${
+          self.packages.${pkgs.stdenv.hostPlatform.system}.tern-lenses-plugin
+        }/plugin.toml";
+
+        xdg.config.files."tern/plugins/lenses/host.luau".source = "${
+          self.packages.${pkgs.stdenv.hostPlatform.system}.tern-lenses-plugin
+        }/host.luau";
 
       };
     };

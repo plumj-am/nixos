@@ -130,16 +130,66 @@
       # Tern spawns (omp, carly) then lose jj, cargo and everything else from
       # /etc/profiles/per-user/$USER/bin.
       #
+      # Tern claims a command from the `cmdline` payload of the OSC 133;C
+      # mark its shell integration sends; the bare mark claims nothing, so no
+      # lens and no other command surface runs. Its integrations for bash,
+      # zsh, fish, xonsh and powershell send the payload; nushell sends the
+      # mark alone, so the nushell this shim runs gets a config that sources
+      # the user's own (which `--config` alone replaces) and then appends the
+      # payload those integrations send.
+      #
+      # The payload hangs off this shim rather than the settings' `shell`,
+      # because Tern builds a session's first pane, and every pane it
+      # restores, with the login shell: a payload only in `shell` would leave
+      # every restored pane claiming nothing at all.
+      nuConfig =
+        pkgs.writers.writeText "tern-nu-config.nu" # nu
+          ''
+            source ($nu.default-config-dir | path join "config.nu")
+
+            $env.config.hooks.pre_execution = (
+              $env.config.hooks.pre_execution? | default [] | append [
+                {||
+                  try {
+                    let line = (commandline)
+                    if not ($line | is-empty) {
+                      # POSIX single-quoting: a quote inside the word closes,
+                      # escapes and reopens it, so Tern reads one word per
+                      # argument back. Built from code points, so neither this
+                      # file nor the Nix string carries the backslash literally.
+                      let sq = "\u{27}"
+                      let esc = ($sq + "\u{5c}" + $sq + $sq)
+                      # Tern claims a command from the alias-expanded line when the
+                      # shell reports one (its own integrations send both fields);
+                      # nushell reports the typed words, so expand the first word
+                      # here when it names an alias -- `ll` then reaches Tern's own
+                      # ls family as `eza -la`, which it can read.
+                      let head = ($line | split row " " | first)
+                      let hit = (try { scope aliases | where name == $head | get expansion? } catch { [] })
+                      let rest = ($line | str replace --regex "^[^ ]+" "")
+                      let full = (if ($hit | is-empty) { $line } else { ($hit | first) + $rest })
+                      let typed = ($sq + ($line | str replace --all -- $sq $esc) + $sq)
+                      let expanded = ($sq + ($full | str replace --all -- $sq $esc) + $sq)
+                      print -n $"\u{1b}]133;C;cmdline=($typed);cmdline_expanded=($expanded)\u{7}"
+                    }
+                  } catch { }
+                }
+              ]
+            )
+          '';
+
       # Give the probe the shell its protocol was written for, and leave
-      # every other use of $SHELL on nushell. The probe keeps the same
-      # argument list, because Tern adds no nushell-specific flags.
+      # every other use of $SHELL on nushell -- with the payload config, so a
+      # pane Tern starts with this shell reports its command lines too. The
+      # probe keeps the same argument list, because Tern adds no
+      # nushell-specific flags.
       loginProbe = pkgs.writeShellScript "tern-login-shell-probe" ''
         case " $* " in
           *__tern_login_env__*)
             exec ${lib.getExe pkgs.bashInteractive} "$@"
             ;;
         esac
-        exec ${lib.getExe pkgs.nushell} "$@"
+        exec ${lib.getExe pkgs.nushell} --config ${nuConfig} "$@"
       '';
 
       # Tern links ~/.local/bin/tern to the binary it was started from, so it
