@@ -326,6 +326,14 @@
           self.packages.${pkgs.stdenv.hostPlatform.system}.tern-tools-plugin
         }/init.luau";
 
+        xdg.config.files."tern/plugins/links/plugin.toml".source = "${
+          self.packages.${pkgs.stdenv.hostPlatform.system}.tern-links-plugin
+        }/plugin.toml";
+
+        xdg.config.files."tern/plugins/links/init.luau".source = "${
+          self.packages.${pkgs.stdenv.hostPlatform.system}.tern-links-plugin
+        }/init.luau";
+
       };
     };
 }
