@@ -30,7 +30,6 @@
         MANPAGER = pager;
         PAGER = pager;
         BAT_PAGER = "${less} --quit-if-one-screen --RAW-CONTROL-CHARS";
-        RIPGREP_CONFIG_PATH = "%h/.config/ripgrep/ripgreprc";
       };
 
       environment.systemPackages = [
@@ -47,7 +46,9 @@
         inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.rustle
       ];
 
-      hjemModule = {
+      hjemModule = { osConfig, config, ... }: {
+        # can't use `config.directory` - infinite recursion.
+        environment.sessionVariables.RIPGREP_CONFIG_PATH = "/home/${config.user}/.config/ripgrep/ripgreprc";
         xdg.config.files."ripgrep/ripgreprc".text = ''
           --line-number
           --smart-case
@@ -59,7 +60,7 @@
               def ">?" []: string -> string {
                 if ($in | str contains "#") or ($in | str contains ":") {
                   $in
-                } else if $in in ${toJSON <| attrNames self.packages.${config.nixpkgs.hostPlatform.system}} {
+                } else if $in in ${toJSON <| attrNames self.packages.${osConfig.nixpkgs.hostPlatform.system}} {
                   "path:${self}#" + $in
                 } else {
                   "path:${inputs.nixpkgs}#" + $in
