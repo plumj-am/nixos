@@ -18,19 +18,21 @@
 
       prefix = "ctrl+g";
 
+      flakePackages = self.packages.${pkgs.stdenv.hostPlatform.system};
+
       # The login shell shim (packages/tern/tern.nix): bash for Tern's login
       # probe, nushell -- with the OSC 133;C payload Tern claims commands
       # from -- for everything else. The shim owns that payload, not this
       # module, because Tern starts a session's first pane and every pane it
       # restores with the login shell: the same shim serves the `shell`
       # setting below, so no pane can miss the payload.
-      loginShell = "${self.packages.${pkgs.stdenv.hostPlatform.system}.tern-login-shell}/bin/nu";
+      loginShell = "${flakePackages.tern-login-shell}/bin/nu";
     in
     {
       # No unfree allowlist: the package opens its own gate, since a host's
       # `unfree.allowedNames` never reaches a flake-level derivation.
 
-      environment.systemPackages = singleton self.packages.${pkgs.stdenv.hostPlatform.system}.tern;
+      environment.systemPackages = singleton flakePackages.tern;
 
       # Tern learns the login environment by probing `$SHELL` (see
       # packages/tern/tern.nix), and it links its own ~/.local/bin/tern and
@@ -148,9 +150,7 @@
             confirm_close = "running_programs";
 
             shell = "${loginShell}";
-            agent_command = "PI_OMP_NATIVE=1 ${
-              getExe self.packages.${pkgs.stdenv.hostPlatform.system}.omp-wrapped
-            }";
+            agent_command = "PI_OMP_NATIVE=1 ${getExe flakePackages.omp-wrapped}";
 
             command_lenses = true;
             program_colors = true;
@@ -195,7 +195,7 @@
               use_local_ssh_agent = true;
               ssh_private_key = "";
               ssh_public_key = "";
-              external_editor = "hx";
+              external_editor = "${getExe pkgs.steelix}";
               gpg_program = "";
               gpg_key_id = "";
               sign_commits_by_default = false;
@@ -298,53 +298,38 @@
 
         # tern reads ~/.config/tern/plugins/<id>/ for a plugin.toml plus the
         # entries it names; the directory comes from the key, not the source.
-        xdg.config.files."tern/plugins/ide/plugin.toml".source = "${
-          self.packages.${pkgs.stdenv.hostPlatform.system}.tern-ide-plugin
-        }/plugin.toml";
+        xdg.config.files."tern/plugins/ide/plugin.toml".source =
+          "${flakePackages.tern-ide-plugin}/plugin.toml";
 
-        xdg.config.files."tern/plugins/ide/init.luau".source = "${
-          self.packages.${pkgs.stdenv.hostPlatform.system}.tern-ide-plugin
-        }/init.luau";
+        xdg.config.files."tern/plugins/ide/init.luau".source = "${flakePackages.tern-ide-plugin}/init.luau";
 
-        xdg.config.files."tern/plugins/jj/plugin.toml".source = "${
-          self.packages.${pkgs.stdenv.hostPlatform.system}.tern-jj-plugin
-        }/plugin.toml";
+        xdg.config.files."tern/plugins/jj/plugin.toml".source =
+          "${flakePackages.tern-jj-plugin}/plugin.toml";
 
-        xdg.config.files."tern/plugins/jj/host.luau".source = "${
-          self.packages.${pkgs.stdenv.hostPlatform.system}.tern-jj-plugin
-        }/host.luau";
+        xdg.config.files."tern/plugins/jj/host.luau".source = "${flakePackages.tern-jj-plugin}/host.luau";
 
-        xdg.config.files."tern/plugins/jj/init.luau".source = "${
-          self.packages.${pkgs.stdenv.hostPlatform.system}.tern-jj-plugin
-        }/init.luau";
+        xdg.config.files."tern/plugins/jj/init.luau".source = "${flakePackages.tern-jj-plugin}/init.luau";
 
-        xdg.config.files."tern/plugins/jj/window.luau".source = "${
-          self.packages.${pkgs.stdenv.hostPlatform.system}.tern-jj-plugin
-        }/window.luau";
+        xdg.config.files."tern/plugins/jj/window.luau".source =
+          "${flakePackages.tern-jj-plugin}/window.luau";
 
-        xdg.config.files."tern/plugins/tools/plugin.toml".source = "${
-          self.packages.${pkgs.stdenv.hostPlatform.system}.tern-tools-plugin
-        }/plugin.toml";
+        xdg.config.files."tern/plugins/tools/plugin.toml".source =
+          "${flakePackages.tern-tools-plugin}/plugin.toml";
 
-        xdg.config.files."tern/plugins/tools/init.luau".source = "${
-          self.packages.${pkgs.stdenv.hostPlatform.system}.tern-tools-plugin
-        }/init.luau";
+        xdg.config.files."tern/plugins/tools/init.luau".source =
+          "${flakePackages.tern-tools-plugin}/init.luau";
 
-        xdg.config.files."tern/plugins/links/plugin.toml".source = "${
-          self.packages.${pkgs.stdenv.hostPlatform.system}.tern-links-plugin
-        }/plugin.toml";
+        xdg.config.files."tern/plugins/links/plugin.toml".source =
+          "${flakePackages.tern-links-plugin}/plugin.toml";
 
-        xdg.config.files."tern/plugins/links/init.luau".source = "${
-          self.packages.${pkgs.stdenv.hostPlatform.system}.tern-links-plugin
-        }/init.luau";
+        xdg.config.files."tern/plugins/links/init.luau".source =
+          "${flakePackages.tern-links-plugin}/init.luau";
 
-        xdg.config.files."tern/plugins/lenses/plugin.toml".source = "${
-          self.packages.${pkgs.stdenv.hostPlatform.system}.tern-lenses-plugin
-        }/plugin.toml";
+        xdg.config.files."tern/plugins/lenses/plugin.toml".source =
+          "${flakePackages.tern-lenses-plugin}/plugin.toml";
 
-        xdg.config.files."tern/plugins/lenses/host.luau".source = "${
-          self.packages.${pkgs.stdenv.hostPlatform.system}.tern-lenses-plugin
-        }/host.luau";
+        xdg.config.files."tern/plugins/lenses/host.luau".source =
+          "${flakePackages.tern-lenses-plugin}/host.luau";
 
       };
     };
