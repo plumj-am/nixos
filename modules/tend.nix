@@ -43,9 +43,12 @@
         schedule = "daily";
 
         config = {
-          forge = "github";
-          github = {
+          forge = {
+            type = "github";
             url = "https://github.com";
+          };
+
+          github = {
             app_id = 4849861;
             installation_id = 159495263;
             private_key_file = secrets."tend/app_secret_key".path;

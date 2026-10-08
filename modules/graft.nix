@@ -124,9 +124,6 @@
               build_timeout_secs = 3600;
               poll_interval_secs = 30;
               users = [ "plumjam" ];
-              forgejo_url = "https://git.plumj.am";
-              forgejo_repo_owner = "plumjam";
-              forgejo_repo_name = "nixos";
             };
 
             fff_hx = {
@@ -138,9 +135,6 @@
               build_timeout_secs = 3600;
               poll_interval_secs = 30;
               users = [ "plumjam" ];
-              forgejo_url = "https://git.plumj.am";
-              forgejo_repo_owner = "plumjam";
-              forgejo_repo_name = "fff.hx";
             };
 
             grove_forgejo = {
@@ -155,9 +149,6 @@
                 "plumjam"
                 "antteheatta"
               ];
-              forgejo_url = "https://git.plumj.am";
-              forgejo_repo_owner = "grove-systems";
-              forgejo_repo_name = "grove";
             };
 
             grove_github = {
@@ -172,8 +163,6 @@
                 "plumjam"
                 "antteheatta"
               ];
-              github_repo_owner = "grove-systems";
-              github_repo_name = "grove";
               github_app_id = 4843741;
               github_app_installation_id = 159367374;
               github_app_private_key_file = secrets."graft/grove_github/secret".path;
@@ -191,12 +180,7 @@
                 "plumjam"
                 "antteheatta"
               ];
-              gerrit_url = "https://gerrit.plumj.am";
               gerrit_username = "graft";
-              gerrit_sub_projects = singleton {
-                name = "grove";
-                branch = "master";
-              };
             };
           };
 
@@ -208,8 +192,6 @@
             ];
             forgejo = {
               client_id = "78af9c96-2e61-4ab8-a3fd-5834020e6c73";
-              auth_url = "https://git.plumj.am/login/oauth/authorize";
-              token_url = "https://git.plumj.am/login/oauth/access_token";
               redirect_url = "https://graft.plumj.am/auth/callback";
             };
           };
