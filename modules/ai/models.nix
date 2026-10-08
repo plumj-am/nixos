@@ -10,11 +10,11 @@
       config.ai.defaultModels =
         let
           freeStrong = {
-            model = null;
+            model = "inclusionai/ling-3.1-flash:free";
             vision = false;
           };
           freeWeak = {
-            model = "inclusionai/ling-3.1-flash:free";
+            model = "poolside/laguna-s-2.1-free";
             vision = false;
           };
 
@@ -43,11 +43,9 @@
           # high | xhigh
           id = "deepseek/deepseek-v4.1-flash";
           name = "DeepSeek V4.1 Flash";
-          reasoning = true;
           thinking = {
             minLevel = "high";
             maxLevel = "xhigh";
-            mode = "effort";
           };
           inputTypes = singleton "text";
           context = 1000000;
@@ -76,11 +74,9 @@
         {
           id = "xiaomi/mimo-v2.6-flash";
           name = "Mimo v2.6 Flash";
-          reasoning = true;
           thinking = {
             minLevel = "minimal";
             maxLevel = "high";
-            mode = "effort";
           };
           context = 1048576;
           maxOutput = 131072;
@@ -98,11 +94,9 @@
         {
           id = "xiaomi/mimo-v2.6-pro";
           name = "Mimo v2.6 Pro";
-          reasoning = true;
           thinking = {
             minLevel = "minimal";
             maxLevel = "high";
-            mode = "effort";
           };
           context = 1048576;
           maxOutput = 131072;
@@ -121,11 +115,9 @@
           # minimal | low | medium | high | xhigh
           id = "meta/muse-spark-1.3-contributor";
           name = "Meta Muse Spark 1.3 Contributor";
-          reasoning = true;
           thinking = {
             minLevel = "minimal";
             maxLevel = "max";
-            mode = "effort";
           };
           inputTypes = [
             "text"
@@ -147,11 +139,9 @@
         {
           id = "z-ai/glm-5.3-flash";
           name = "Z.ai GLM 5.3 Flash";
-          reasoning = true;
           thinking = {
             minLevel = "low";
             maxLevel = "max";
-            mode = "effort";
           };
           inputTypes = [
             "text"
@@ -169,23 +159,30 @@
         {
           id = "inclusionai/ling-3.1-flash:free";
           name = "Inclusion Ling 3.1 Flash";
-          reasoning = true;
+          free = true;
           thinking = {
             minLevel = "low";
             maxLevel = "high";
-            mode = "effort";
           };
           inputTypes = [
             "text"
           ];
-          costPerMillion = {
-            input = 0;
-            output = 0;
-            cacheRead = 0;
-            cacheWrite = 0;
-          };
           context = 262144;
-          maxOutput = 131072;
+          maxOutput = 32768;
+        }
+        {
+          id = "poolside/laguna-s-2.1-free";
+          name = "Poolside Laguna S 2.1";
+          free = true;
+          thinking = {
+            minLevel = "low";
+            maxLevel = "high";
+          };
+          inputTypes = [
+            "text"
+          ];
+          context = 256000;
+          maxOutput = 32768;
         }
         # decision model
         {
@@ -201,7 +198,7 @@
             cacheWrite = 0;
           };
           context = 32000;
-          maxOutput = 131072; # no idea
+          maxOutput = 32000; # no idea
         }
       ];
     };

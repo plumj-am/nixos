@@ -4,8 +4,9 @@
   flake.modules.common.ai-models-options =
     { lib, ... }:
     let
-      inherit (lib.attrsets) filterAttrsRecursive;
+      inherit (lib.attrsets) filterAttrsRecursive removeAttrs;
       inherit (lib.options) mkOptionNullOr mkOptionOf;
+      inherit (lib.trivial) flip;
       inherit (lib.types)
         addCheck
         anything
@@ -46,12 +47,16 @@
               options = {
                 id = mkOptionOf str;
                 name = mkOptionOf str;
-                reasoning = mkOptionOf bool;
+                reasoning = mkOptionOf bool {
+                  default = true;
+                };
                 thinking = mkOptionNullOr (submodule {
                   options = {
                     minLevel = mkOptionOf thinkingLevel;
                     maxLevel = mkOptionOf thinkingLevel;
-                    mode = mkOptionOf (enum [ "effort" ]);
+                    mode = mkOptionOf (enum [ "effort" ]) {
+                      default = "effort";
+                    };
                   };
                 });
                 inputTypes = mkOptionOf (
@@ -63,6 +68,12 @@
                 );
                 context = mkOptionOf ints.positive;
                 maxOutput = mkOptionOf ints.positive;
+                free = mkOptionOf bool {
+                  default = false;
+                  description = ''
+                    Whether the model is free. If set, all costs are set to 0.
+                  '';
+                };
                 costPerMillion = mkOptionOf (submodule {
                   options = {
                     input = mkOptionOf nonNegativeNumber;
@@ -90,7 +101,25 @@
           {
             default = [ ];
             # Drop optional-null defaults; consumers see only defined keys.
-            apply = map <| filterAttrsRecursive (_: value: value != null);
+            # Free models report zero cost regardless of declared numbers.
+            apply = map (
+              model:
+              let
+                cleaned = model |> filterAttrsRecursive (_: value: value != null) |> (flip removeAttrs [ "free" ]);
+              in
+              if model.free then
+                cleaned
+                // {
+                  costPerMillion = {
+                    input = 0;
+                    output = 0;
+                    cacheRead = 0;
+                    cacheWrite = 0;
+                  };
+                }
+              else
+                cleaned
+            );
             description = ''
               Typed AI model registry, shared by agent tool configs.
             '';
