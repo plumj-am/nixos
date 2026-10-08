@@ -28,7 +28,6 @@
 
         hjemModule =
           {
-            lib,
             osConfig,
             config,
             ...
