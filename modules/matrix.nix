@@ -148,7 +148,7 @@
           '';
       };
 
-      # The apex host is also declared by the website-personal module, together
+      # The apex host is also declared by the website-plumjam module, together
       # with the site's security header set, so this vhost adds only the
       # Matrix discovery endpoints.
       services.ferronVhosts.${domain} = merge config.services.ferron.sslTemplate {

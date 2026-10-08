@@ -27,7 +27,7 @@ in
         radicle-explorer
         uptime-kuma
         vine
-        website-personal
+        website-plumjam
       ];
 
       networking.domain = "plumj.am";
