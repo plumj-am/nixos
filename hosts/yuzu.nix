@@ -11,6 +11,7 @@ in
         desktop
 
         ai-agents
+        comfyui
         dynamic-mac-address
         games
         llama-cpp

@@ -95,6 +95,17 @@ in
         "cuda_nvrtc"
       ];
 
+      nix.settings = {
+        extra-substituters = [
+          "https://cache.flox.dev"
+          "https://cache.nixos-cuda.org"
+        ];
+        extra-trusted-public-keys = [
+          "flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs="
+          "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
+        ];
+      };
+
       services.llama-cpp = {
         enable = noGpuWarning "llama-cpp" config true;
         package = pkgs.llama-cpp.override { cudaSupport = if (isNvidiaGpu config) then true else false; };

@@ -4,6 +4,10 @@
   outputs = inputs: import ./outputs.nix inputs;
 
   inputs = {
+    comfyui = {
+      url = "github:utensils/comfyui-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     determinate = {
       url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
     };
