@@ -91,41 +91,23 @@
                   ""
                 }
 
-                let cmd_duration = ($env.CMD_DURATION_MS | into int) * 1ms
-                let cmd_duration = if $cmd_duration <= 2sec {
-                  ""
-                } else {
-                  let cmd_duration = if $cmd_duration >= 60sec {
-                    $cmd_duration | format duration min
-                  } else {
-                    $cmd_duration | format duration sec
-                  }
-                  $" (ansi '${base0A}')($cmd_duration)"
-                }
-
                 let left_prompt = [
                   $status
                   $host
-                  " "
+                  (char sp)
                   $directory
                   (char nl)
                 ] | str join
 
                 let right_prompt = [
-                  (if ($cmd_duration | is-not-empty) {
-                    [
-                      $cmd_duration
-                      " "
-                      $bar
-                      $bar
-                      " "
-                    ] | str join
-                  })
                   (if ($jj_output | is-not-empty) {
                     [
+                      $bar
+                      $bar
+                      (char sp)
                       (ansi rst)
                       $jj_output
-                      " "
+                      (char sp)
                       $bar
                       $bar
                     ] | str join
