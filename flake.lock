@@ -476,15 +476,14 @@
         "kache": "kache",
         "nixpkgs": [
           "nixpkgs"
-        ],
-        "treefmt": "treefmt"
+        ]
       },
       "locked": {
-        "lastModified": 1790290289,
-        "narHash": "sha256-8RO9EOcoU+xl7j0d85bDW4zldO3rBZ9N9W0EYdNCOKo=",
+        "lastModified": 1791722391,
+        "narHash": "sha256-eP7fbJgAnqAiL7M+ps7LALRHrcR9KZyRxxOL9+j9gyc=",
         "ref": "refs/heads/master",
-        "rev": "adcc4b77c4ef6f2760a9defd1cec30d0ba2cbd31",
-        "revCount": 2125,
+        "rev": "c2482bf68086dd38c6cc4ed85d13887b6ccbbafa",
+        "revCount": 2205,
         "type": "git",
         "url": "ssh://git@github.com/grove-systems/grove"
       },
@@ -1043,7 +1042,7 @@
         "qml-niri": "qml-niri",
         "sops": "sops",
         "steam-config": "steam-config",
-        "treefmt": "treefmt_2",
+        "treefmt": "treefmt",
         "ublock": "ublock"
       }
     },
@@ -1284,7 +1283,6 @@
     "treefmt": {
       "inputs": {
         "nixpkgs": [
-          "grove",
           "nixpkgs"
         ]
       },
@@ -1376,26 +1374,6 @@
         "owner": "numtide",
         "repo": "treefmt-nix",
         "rev": "97a30861b13c3731a84e09405414398fbf3e109f",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "treefmt-nix",
-        "type": "github"
-      }
-    },
-    "treefmt_2": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1786901030,
-        "narHash": "sha256-WSFCsDSE5ffgD2MqzkM2CYjeFiKhRF/dJUN8uedb6YE=",
-        "owner": "numtide",
-        "repo": "treefmt-nix",
-        "rev": "27b3b12a8e6375f28ebe122f07d230ca5459bbfa",
         "type": "github"
       },
       "original": {
