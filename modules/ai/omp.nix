@@ -161,7 +161,8 @@
               memory.backend = "mnemopi";
               mnemopi.scoping = "per-project-tagged";
               mnemopi.dbPath = "${home}/.omp/agent/memories/mnemopi/mnemopi.db";
-              mnemopi.embeddingVariant = "en";
+              mnemopi.noEmbeddings = true;
+              mnemopi.llmMode = "none";
               mnemopi.polyphonicRecall = true;
               mnemopi.practiveLinking = true;
               mnemopi.enhancedRecall = true;
