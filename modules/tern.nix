@@ -306,8 +306,6 @@
         xdg.config.files."tern/plugins/jj/plugin.toml".source =
           "${flakePackages.tern-jj-plugin}/plugin.toml";
 
-        xdg.config.files."tern/plugins/jj/host.luau".source = "${flakePackages.tern-jj-plugin}/host.luau";
-
         xdg.config.files."tern/plugins/jj/init.luau".source = "${flakePackages.tern-jj-plugin}/init.luau";
 
         xdg.config.files."tern/plugins/jj/window.luau".source =

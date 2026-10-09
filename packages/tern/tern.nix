@@ -8,59 +8,47 @@
     let
       inherit (pkgs.stdenv.hostPlatform) system;
 
-      # Tern is a closed-beta Stencil Labs product. There is no public
-      # source or download URL (build.stencil.so is auth-gated).
-      version = "0.6.2";
+      # Tern is a closed-beta Stencil Labs product. There is no public source
+      # or download URL yet (build.stencil.so is auth-gated).
+      version = "0.8.0";
       filename = "Tern-${version}-linux-x86_64.tar.gz";
 
-      # Tern ships no public download, so the tarball lives in the store,
-      # added by hand. It stays out of version control.
+      # No public download: the tarball lives in the store, added by hand.
       #
-      # fetchurl copies the content and does not reference this path, so the
-      # path has a GC root. Without it, `nix store gc` deletes the tarball and
-      # every build fails. To move to a new release:
+      # fetchurl copies the content without referencing the path, so the
+      # path needs a GC root or `nix store gc` deletes it and the build fails.
       #
-      #   let version = "<new version>"
+      # For a new release:
+      /*
+         nix store add-file --name "Tern-<version>-linux-x86_64.tar.gz" ~/Downloads/Tern-<version>-linux-x86_64.tar.gz
+
+         sudo ln -sfn <PATH> /nix/var/nix/gcroots/per-user/$(id -u)/tern
+      */
       #
-      #   (nix store add-file --name $"Tern-($version)-linux-x86_64.tar.gz"
-      #     ~/Downloads/Tern-($version)-linux-x86_64.tar.gz)
+      # then update version, storePath and hash below.
       #
-      #   (sudo ln -sfn <PATH FROM LAST COMMAND OUTPUT> /nix/var/nix/gcroots/per-user/(id -u)/tern)
-      #
-      # then update below with the new path and hash.
-      #
-      # A running Tern pins the old version. To retire an old session: close
-      # every old-version window first (an open one respawns its own daemon
-      # from the old store path), then launch Tern fresh. Never
-      # `pkill -f tern` -- the daemon hosts live panes. Only if the old
-      # daemon still owns /run/user/$UID/tern/daemon.sock, run
-      # "Restart session daemon" from a new-version window. Pre-0.5
-      # leftovers (~/.local/bin/tern, ~/.local/share/applications/
-      # so.stencil.tern*.desktop) point at the raw store binary and skip this
-      # wrapper: repoint the desktop entries' Exec at
-      # /run/current-system/sw/bin/tern after the old session is gone -- a
-      # running old Tern recreates them. Then rebuild the system.
-      #
+      # A running Tern pins the old version. To retire an old session:
+      # - `pkill -f tern` isn't necessary
+      # - close every old-version window first (an open one respawns its own
+      #   daemon from the old store path)
+      # - launch Tern fresh
+      # - run "Restart session daemon" from a new-version window
       release = {
-        storePath = "/nix/store/ljlj0wpis9v77izz0xz8nvhrwin0afir-Tern-0.6.2-linux-x86_64.tar.gz";
-        hash = "sha256-SLlYBqviEef1EdkJ0hq9mF9k/a20+c3dBqrDCvAAPJc=";
+        storePath = "/nix/store/nkchzbvcdcj9j2cc4hyjplr9qpg7wl5s-Tern-0.8.0-linux-x86_64.tar.gz";
+        hash = "sha256-rFAYq0ggMj8iehO1CpLQKtLmHw9q8yQmlw/9tpLZcKY=";
       };
 
-      supportedSystems = [
-        "x86_64-linux"
-      ];
-      # DT_NEEDED holds only libc/libm/libdl/libpthread/librt/libutil/
-      # libgcc_s, plus libstdc++ as of 0.4.0. Everything else is dlopen()'d
-      # at runtime, so autoPatchelf would miss it entirely; this set comes
-      # from `strings` on the binary, diffed against the previous release
-      # (0.6.2 adds no new dlopen targets):
-      # wgpu's Vulkan + EGL/GLES chain, the Wayland and X11 windows, the
-      # WebKitGTK / WPEWebKit bindings for the browser block, and libpipewire
-      # for screen sharing. X11 came with 0.5.0 (STENCIL_DISPLAY_SERVER);
-      # tern dlopens libxcb.so.1 there, and libxkbcommon covers
-      # libxkbcommon-x11.so.0 too, since both ship in one lib/ directory.
-      # libX11 itself is still not in the binary -- webkitgtk_4_1 pulls it in
-      # through libsoup and gtk3's X11 backend.
+      # DT_NEEDED holds only libc/libm/libdl/libpthread/librt/libutil/ libgcc_s,
+      # plus libstdc++ as of 0.4.0. Everything else is dlopen()'d at runtime,
+      # so autoPatchelf would miss it; this set comes from `strings` on the
+      # binary, diffed against the previous release (0.7.0 added
+      # libpulse-simple.so.0): wgpu's Vulkan + EGL/GLES chain, the Wayland and
+      # X11 windows, the WebKitGTK / WPEWebKit bindings for the browser block,
+      # and libpipewire for screen sharing. X11 came with 0.5.0
+      # (STENCIL_DISPLAY_SERVER); tern dlopens libxcb.so.1 there, and
+      # libxkbcommon covers libxkbcommon-x11.so.0 too, since both ship in one
+      # lib/. libX11 itself is still not in the binary -- webkitgtk_4_1 pulls it
+      # in through libsoup and gtk3's X11 backend.
       runtimeLibs = with pkgs; [
         stdenv.cc.cc.lib
         vulkan-loader
@@ -73,18 +61,19 @@
         webkitgtk_4_1
         libwpe
         libwpe-fdo
-        # tern dlopens libpipewire for screen sharing itself, so the library
-        # has to be reachable, not just the daemon.
+        # tern dlopens libpipewire for screen sharing itself, so the library has
+        # to be reachable, not just the daemon.
         pipewire
+        # tern dlopens libpulse-simple.so.0 itself as of 0.7.0 (PulseAudio simple
+        # API), so it has to be reachable too.
       ];
 
-      # Programs tern runs at runtime. LD_LIBRARY_PATH cannot supply a
-      # program, so these need PATH, not an rpath entry:
+      # Programs tern runs at runtime: LD_LIBRARY_PATH cannot
+      # supply a program, so these need PATH, not an rpath
+      # entry:
       #
-      # zenity - the file/save/confirmation dialogs; without it tern reports
-      #          "no dialog tool (install zenity or kdialog)"
-      # glib   - gdbus, for the settings portal (it lives in glib.bin; plain
-      #          `glib` has no bin/ at all)
+      # zenity - the file/save/confirmation dialogs; without it tern reports "no dialog tool (install zenity or kdialog)"
+      # glib   - gdbus, for the settings portal (it lives in glib.bin; plain `glib` has no bin/ at all)
       # perf   - drives the `perf since` marks
       runtimePrograms = with pkgs; [
         zenity
@@ -93,12 +82,12 @@
       ];
 
       # WebKitGTK's TLS backend is a GIO module that libsoup dlopens, and
-      # neither webkitgtk nor libsoup carries glib-networking. Without it the
+      # neither webkitgtk nor libsoup carries glib-networking -- without it the
       # browser block cannot make https requests.
       #
-      # tern reads the org.gnome.desktop.interface schema itself, so the
-      # desktop schemas must be on XDG_DATA_DIRS or the read fails and the
-      # settings fall back to tern's own defaults.
+      # tern reads the org.gnome.desktop.interface schema itself, so the desktop
+      # schemas must be on XDG_DATA_DIRS or the read fails and the settings fall
+      # back to tern's own defaults.
       #
       # WebKitGTK plays media through gstreamer; without the plugin path it
       # cannot find a decoder.
@@ -110,38 +99,36 @@
 
       runtimeLibraryPath = lib.makeLibraryPath runtimeLibs;
 
-      # Tern learns the login environment by running a probe through the
-      # login shell in a pty:
+      # Tern learns the login environment by running a probe through the login
+      # shell in a pty:
       #
-      #   $SHELL -l -i -c "printf '__tern_login_env__\n'; /usr/bin/env -0; printf '__tern_login_env__\n'"
+      #   $SHELL -l -i -c "printf '__stencil_login_env__\n'; /usr/bin/env -0; printf '__stencil_login_env__\n'"
       #
       # 0.6.0 used `echo __tern_login_path__` around five `printenv` calls;
-      # 0.6.2 renamed the marker to __tern_login_env__ and reads one
-      # NUL-separated `env -0` dump between the two markers (verified by
-      # running the binary with SHELL pointed at a logging shim).
+      # 0.6.2 renamed the marker to __tern_login_env__;
+      # 0.7.0 renamed it to __stencil_login_env__;
+      # it reads one NUL-separated `env -0` dump between the two markers (check
+      # by running the binary with SHELL pointed at a logging shim).
       #
-      # It takes the program from $SHELL (or the passwd database), not from
-      # the settings' `shell`, so the configured nushell is asked to answer a
-      # POSIX probe. Nushell cannot: `printf` is no nushell builtin, and the
-      # probe's scrubbed PATH (env -i PATH=/usr/local/bin:/usr/bin:/bin)
-      # holds no printf on NixOS, so the shell dies before the first marker
-      # and the reader times out. On a timeout Tern falls back to the libc
-      # default PATH, which has no profile directories: panes and the agents
-      # Tern spawns (omp, carly) then lose jj, cargo and everything else from
-      # /etc/profiles/per-user/$USER/bin.
+      # It takes the program from $SHELL (or the passwd database), not from the
+      # settings' `shell`, so the configured nushell is asked to answer a POSIX
+      # probe. Nushell cannot: `printf` is not a nushell builtin and the probe's
+      # scrubbed PATH (env -i PATH=/usr/local/bin:/usr/bin:/bin) holds no printf
+      # on NixOS, so the shell dies before the first marker and the reader times
+      # out. On a timeout Tern falls back to the libc default PATH, which has no
+      # profile directories.
       #
-      # Tern claims a command from the `cmdline` payload of the OSC 133;C
-      # mark its shell integration sends; the bare mark claims nothing, so no
-      # lens and no other command surface runs. Its integrations for bash,
-      # zsh, fish, xonsh and powershell send the payload; nushell sends the
-      # mark alone, so the nushell this shim runs gets a config that sources
-      # the user's own (which `--config` alone replaces) and then appends the
-      # payload those integrations send.
+      # Tern claims a command from the `cmdline` payload of the OSC 133;C mark
+      # its shell integration sends; the bare mark claims nothing, so no lens
+      # and no other command surface runs. Its integrations for bash, zsh, etc.
+      # send the payload; nushell sends the mark alone, so the nushell this
+      # shim runs gets a config that sources the user's own (which `--config`
+      # alone replaces) and then appends the payload those integrations send.
       #
       # The payload hangs off this shim rather than the settings' `shell`,
-      # because Tern builds a session's first pane, and every pane it
-      # restores, with the login shell: a payload only in `shell` would leave
-      # every restored pane claiming nothing at all.
+      # because Tern builds a session's first pane, and every pane it restores,
+      # with the login shell: a payload only in `shell` would leave every
+      # restored pane claiming nothing at all.
       nuConfig =
         pkgs.writers.writeText "tern-nu-config.nu" # nu
           ''
@@ -178,14 +165,14 @@
             )
           '';
 
-      # Give the probe the shell its protocol was written for, and leave
-      # every other use of $SHELL on nushell -- with the payload config, so a
-      # pane Tern starts with this shell reports its command lines too. The
-      # probe keeps the same argument list, because Tern adds no
-      # nushell-specific flags.
+      # Give the probe the shell its protocol was written for, and leave every
+      # other use of $SHELL on nushell -- with the payload config, so a pane
+      # Tern starts with this shell reports its command lines too. The probe
+      # keeps the same argument list, because Tern adds no nushell-specific
+      # flags.
       loginProbe = pkgs.writeShellScript "tern-login-shell-probe" ''
         case " $* " in
-          *__tern_login_env__*)
+          *__stencil_login_env__*)
             exec ${lib.getExe pkgs.bashInteractive} "$@"
             ;;
         esac
@@ -194,22 +181,21 @@
 
       # Tern links ~/.local/bin/tern to the binary it was started from, so it
       # can be started by a path the wrapper never touched, where its
-      # environment is missing. (Since 0.5.0 a Tern under /nix/store writes no
-      # such link and no desktop entries, so this is only a safety net for a
-      # Tern started some other way.) The session's SHELL points at this shim
-      # (see modules/env.nix) as well, so the probe works however Tern was
+      # environment is missing. The session's SHELL points at this shim (see
+      # modules/env.nix) as well, so the probe works regardless of how Tern was
       # started.
       #
-      # The program is installed as bin/nu so $SHELL keeps the file name of a
-      # real shell, and Tern's shell detection sees the shell it configured.
+      # Installed as bin/nu so $SHELL keeps the file name of a real shell, and
+      # Tern's shell detection sees the shell it configured.
       loginShell = pkgs.runCommand "tern-login-shell" { } ''
         install -Dm755 ${loginProbe} $out/bin/nu
       '';
 
-      # Flake packages build against the flake-level pkgs, not the host's, so
-      # a host's `unfree.allowedNames` never reaches this derivation. The gate
-      # binds at nixpkgs import time, so `pkgs.extend` cannot open it: only a
-      # re-import can, and it gets an allowlist for this name alone.
+      # Flake packages build against the flake-level pkgs, not the host's, so a
+      # host's `unfree.allowedNames` never reaches this derivation.
+      #
+      # The gate binds at nixpkgs import time, so `pkgs.extend` cannot open it:
+      # only a re-import can, and it gets an allowlist for this name alone.
       unfreePkgs = import pkgs.path {
         hostPlatform = pkgs.stdenv.hostPlatform;
         inherit system;
@@ -248,11 +234,11 @@
 
           dontConfigure = true;
           dontBuild = true;
-          # Doesn't do anything yet but a future release that does ship symbols
-          # will get stripped.
+          # Nothing to configure or build. Strip is a no-op for now but a future
+          # release that does ship symbols will get stripped.
           #
-          # dontPatchELF keeps the generic fixupPhase from rewriting the
-          # RPATH set below; autoPatchelf has no work to do, because everything
+          # dontPatchELF keeps the generic fixupPhase from rewriting the RPATH
+          # set below; autoPatchelf has no work to do, because everything
           # outside libc/libstdc++ is dlopen()'d at runtime.
           dontPatchELF = true;
 
@@ -273,14 +259,13 @@
             patchelf --set-rpath "$rpath" "$appDir/tern"
             patchelf --set-interpreter "${pkgs.stdenv.cc.bintools.dynamicLinker}" "$appDir/tern"
 
-            # The wrapper supplies the runtime programs and the WebKit
-            # environment.
+            # Runtime programs and WebKit environment.
             #
-            # SHELL is the login shell the environment capture spawns; the
-            # shim above keeps that probe on bash while everything else stays
-            # on nushell. The session sets the same shim, so the wrapper is
-            # not needed for the probe -- it keeps Tern working in a session
-            # that started before the shim landed.
+            # SHELL is the login shell the environment capture spawns; the shim
+            # above keeps that probe on bash while everything else stays on
+            # nushell. The session sets the same shim, so the wrapper is not
+            # needed for the probe -- it keeps Tern working in a session that
+            # started before the shim was made.
             makeWrapper "$appDir/tern" "$out/bin/tern" \
               --prefix LD_LIBRARY_PATH : "${runtimeLibraryPath}" \
               --prefix PATH : "${lib.makeBinPath runtimePrograms}" \
@@ -295,7 +280,7 @@
             homepage = "https://stencil.so/tern";
             license = lib.licenses.unfree;
             mainProgram = "tern";
-            platforms = supportedSystems;
+            platforms = [ "x86_64-linux" ];
             sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
           };
         };
