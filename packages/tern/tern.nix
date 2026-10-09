@@ -10,7 +10,7 @@
 
       # Tern is a closed-beta Stencil Labs product. There is no public
       # source or download URL (build.stencil.so is auth-gated).
-      version = "0.6.2";
+      version = "0.7.2";
       filename = "Tern-${version}-linux-x86_64.tar.gz";
 
       # Tern ships no public download, so the tarball lives in the store,
@@ -42,8 +42,8 @@
       # running old Tern recreates them. Then rebuild the system.
       #
       release = {
-        storePath = "/nix/store/ljlj0wpis9v77izz0xz8nvhrwin0afir-Tern-0.6.2-linux-x86_64.tar.gz";
-        hash = "sha256-SLlYBqviEef1EdkJ0hq9mF9k/a20+c3dBqrDCvAAPJc=";
+        storePath = "/nix/store/mgigbb95clncbwiqmp4n1qp428q8cq7j-Tern-0.7.2-linux-x86_64.tar.gz";
+        hash = "sha256-lE5vJgdkobeQlgq2pOmzIne5NSlm0ShnUclZcnbV0pE=";
       };
 
       supportedSystems = [
@@ -53,7 +53,8 @@
       # libgcc_s, plus libstdc++ as of 0.4.0. Everything else is dlopen()'d
       # at runtime, so autoPatchelf would miss it entirely; this set comes
       # from `strings` on the binary, diffed against the previous release
-      # (0.6.2 adds no new dlopen targets):
+      # (0.7.0 added libpulse-simple.so.0 -- PulseAudio simple API;
+      # 0.7.1 and 0.7.2 add no new dlopen target):
       # wgpu's Vulkan + EGL/GLES chain, the Wayland and X11 windows, the
       # WebKitGTK / WPEWebKit bindings for the browser block, and libpipewire
       # for screen sharing. X11 came with 0.5.0 (STENCIL_DISPLAY_SERVER);
@@ -76,6 +77,9 @@
         # tern dlopens libpipewire for screen sharing itself, so the library
         # has to be reachable, not just the daemon.
         pipewire
+        # tern dlopens libpulse-simple.so.0 itself as of 0.7.0
+        # (PulseAudio simple API), so the library has to be
+        # reachable, like libpipewire above.
       ];
 
       # Programs tern runs at runtime. LD_LIBRARY_PATH cannot supply a
@@ -113,12 +117,14 @@
       # Tern learns the login environment by running a probe through the
       # login shell in a pty:
       #
-      #   $SHELL -l -i -c "printf '__tern_login_env__\n'; /usr/bin/env -0; printf '__tern_login_env__\n'"
+      #   $SHELL -l -i -c "printf '__stencil_login_env__\n'; /usr/bin/env -0; printf '__stencil_login_env__\n'"
       #
       # 0.6.0 used `echo __tern_login_path__` around five `printenv` calls;
-      # 0.6.2 renamed the marker to __tern_login_env__ and reads one
-      # NUL-separated `env -0` dump between the two markers (verified by
-      # running the binary with SHELL pointed at a logging shim).
+      # 0.6.2 renamed the marker to __tern_login_env__; 0.7.0
+      # renamed it to __stencil_login_env__ and reads one
+      # NUL-separated `env -0` dump between the two markers
+      # (verified by running the binary with SHELL pointed at
+      # a logging shim).
       #
       # It takes the program from $SHELL (or the passwd database), not from
       # the settings' `shell`, so the configured nushell is asked to answer a
@@ -185,7 +191,7 @@
       # nushell-specific flags.
       loginProbe = pkgs.writeShellScript "tern-login-shell-probe" ''
         case " $* " in
-          *__tern_login_env__*)
+          *__stencil_login_env__*)
             exec ${lib.getExe pkgs.bashInteractive} "$@"
             ;;
         esac

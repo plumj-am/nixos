@@ -44,408 +44,15 @@
             description = "Create, open, remove and inspect Jujutsu workspaces from Tern.";
             icon = "branch";
 
-            blocks = [
-              {
-                id = "dialog";
-                title = "jj workspace";
-                icon = "branch";
-              }
-            ];
+            # No dialog block: the window half asks with cx:pick and
+            # cx:prompt, which Tern draws over the focused pane.
 
-            host = "host.luau";
             window = "init.luau";
           };
-
-          host =
-            pkgs.writers.writeText "tern-jj-host.luau" # luau
-              ''
-                -- !nonstrict
-                local ui = tern.ui
-
-                -- One keycap row per hint, the way Tern's own sheets write them
-                local HINTS = {
-                  prompt = {
-                    { nil, "type the workspace name" },
-                    { { "enter" }, "confirm" },
-                    { { "esc" }, "cancel" },
-                  },
-                  pick = {
-                    { { "up", "down" }, "choose" },
-                    { { "enter" }, "open" },
-                    { { "esc" }, "cancel" },
-                  },
-                  confirm = {
-                    { { "enter" }, "confirm" },
-                    { { "esc" }, "cancel" },
-                  },
-                }
-
-                local function hints(mode)
-                  local parts = {}
-                  for _, entry in ipairs(HINTS[mode] or {}) do
-                    if entry[1] ~= nil then
-                      table.insert(parts, ui.node("kbd", { keys = entry[1] }))
-                    end
-                    table.insert(parts, ui.text({ t = entry[2], s = "muted" }))
-                  end
-                  return ui.row(parts)
-                end
-
-                local function field(line, index)
-                  local at = 1
-                  for _ = 1, index - 1 do
-                    local next_at = string.find(line, "\t", at, true)
-                    if next_at == nil then
-                      return ""
-                    end
-                    at = next_at + 1
-                  end
-                  local stop = string.find(line, "\t", at, true)
-                  if stop == nil then
-                    return string.sub(line, at)
-                  end
-                  return string.sub(line, at, stop - 1)
-                end
-
-                local function request(args)
-                  local head = args[1] or ""
-                  local req = {
-                    mode = field(head, 1),
-                    title = field(head, 2),
-                    message = field(head, 3),
-                    items = {},
-                  }
-                  if req.mode == "prompt" then
-                    req.placeholder = field(head, 4)
-                  elseif req.mode == "pick" then
-                    -- The workspace the asking pane is in, so its row reads current
-                    req.current = field(head, 4)
-                  end
-
-                  for index = 2, #args do
-                    table.insert(req.items, {
-                      name = field(args[index], 1),
-                      change = field(args[index], 2),
-                      root = field(args[index], 3),
-                    })
-                  end
-                  return req
-                end
-
-                local function item_named(req, name)
-                  for _, item in ipairs(req.items) do
-                    if item.name == name then
-                      return item
-                    end
-                  end
-                  return nil
-                end
-
-                -- Filtering and the match offsets are ours: offsets are UTF-16 in the
-                -- protocol but workspace names are ASCII, so string.find bytes match.
-                local function catalog(state, req)
-                  local query = string.lower(state.query)
-                  local items, order = {}, {}
-                  local current = nil
-
-                  for _, item in ipairs(req.items) do
-                    local label = item.name
-                    local lower = string.lower(label)
-                    local at = nil
-                    if query ~= "" then
-                      at = string.find(lower, query, 1, true)
-                      if at == nil then
-                        at = string.find(string.lower(item.change), query, 1, true)
-                      end
-                    end
-
-                    if query == "" or at ~= nil then
-                      local hits = nil
-                      if at ~= nil and string.find(lower, query, 1, true) ~= nil then
-                        hits = { { at - 1, at - 1 + #query } }
-                      end
-
-                      table.insert(items, {
-                        id = label,
-                        label = label,
-                        detail = item.root == "" and "no checkout" or item.root,
-                        mono = true,
-                        icon = "branch",
-                        tone = item.root == "" and "muted" or nil,
-                        disabled = item.root == "" and "this workspace has no checkout" or nil,
-                        hits = hits,
-                        facts = { change = item.change },
-                      })
-                      table.insert(order, label)
-                      if item.root ~= "" and item.root == req.current then
-                        current = label
-                      end
-                    end
-                  end
-
-                  return items, order, current
-                end
-
-                local function in_order(order, name)
-                  for _, listed in ipairs(order) do
-                    if listed == name then
-                      return true
-                    end
-                  end
-                  return false
-                end
-
-                -- The answer the window half reads out of the block's title
-                local function submit(state, answer)
-                  state.answered = true
-                  state.answer = answer
-                end
-
-                tern.block.define("dialog", {
-                  init = function(cx, args, saved)
-                    local req = request(args)
-                    local selected = nil
-                    for _, item in ipairs(req.items) do
-                      if item.root ~= "" and item.root == req.current then
-                        selected = item.name
-                      end
-                    end
-                    for _, item in ipairs(req.items) do
-                      if selected == nil and item.root ~= "" then
-                        selected = item.name
-                      end
-                    end
-                    if selected == nil and req.items[1] ~= nil then
-                      selected = req.items[1].name
-                    end
-
-                    return {
-                      req = req,
-                      buffer = "",
-                      cursor = 0,
-                      query = "",
-                      selected = selected,
-                      answered = false,
-                      focused = false,
-                    }
-                  end,
-
-                  title = function(state)
-                    if not state.answered then
-                      return state.req and state.req.title or nil
-                    end
-                    return state.answer
-                  end,
-
-                  view = function(state, cx)
-                    local req = state.req
-
-                    if req.mode == "pick" then
-                      local items, order, current = catalog(state, req)
-                      if state.selected == nil or not in_order(order, state.selected) then
-                        state.selected = order[1]
-                      end
-
-                      return {
-                        main = ui.col({ ui.text({ t = req.title, s = "strong" }) }),
-                        layer = ui.col({
-                          ui.node("picker", {
-                            key = "picker",
-                            size = "md",
-                            icon = "branch",
-                            title = req.title,
-                            subtitle = req.message ~= "" and req.message or nil,
-                            noun = "workspaces",
-                            query = state.query,
-                            cursor = #state.query,
-                            items = items,
-                            order = order,
-                            selected = state.selected,
-                            current = current ~= nil and { current } or {},
-                            columns = { { id = "change", head = "change", format = "dim", priority = 50 } },
-                            empty = { ui.span("No jj workspaces match", "muted") },
-                            total = #req.items,
-                            preview = "none",
-                            actions = {
-                              { id = "close", label = "Cancel", keys = { "esc" } },
-                              { id = "open", label = "Open", keys = { "enter" }, primary = true },
-                            },
-                          }),
-                        }),
-                      }
-                    end
-
-                    -- Prompt and confirm are dialogs: a glass card over the pane, not loose text.
-                    local body = {}
-                    if req.message ~= "" then
-                      table.insert(body, ui.text({ t = req.message, s = "muted" }))
-                    end
-
-                    if req.mode == "prompt" then
-                      table.insert(
-                        body,
-                        ui.node("input", {
-                          key = "name",
-                          text = state.buffer,
-                          cursor = state.cursor,
-                          placeholder = req.placeholder,
-                          prompt = { ui.span("› ", "muted") },
-                        })
-                      )
-
-                      -- The caret blinks only on the field the surface has focused
-                      if not state.focused then
-                        state.focused = true
-                        cx:frame({ { "focus", "layer.sheet.name" } })
-                      end
-                    end
-
-                    table.insert(body, hints(req.mode))
-
-                    return {
-                      main = ui.col({}),
-                      layer = ui.col({
-                        ui.node("overlay", {
-                          key = "sheet",
-                          role = "jj.dialog",
-                          size = req.mode == "prompt" and "md" or "sm",
-                          modal = true,
-                          head = { ui.span(req.title) },
-                        }, body),
-                      }),
-                    }
-                  end,
-
-                  key = function(state, key, cx)
-                    local req = state.req
-                    if state.answered then
-                      return false
-                    end
-
-                    if key.name == "escape" then
-                      submit(state, "cancel")
-                      return true
-                    end
-
-                    if key.name == "enter" and not key.shift then
-                      if req.mode == "pick" then
-                        submit(state, "ok:" .. (state.selected or ""))
-                      elseif req.mode == "prompt" then
-                        submit(state, "ok:" .. state.buffer)
-                      else
-                        submit(state, "ok:")
-                      end
-                      return true
-                    end
-
-                    if req.mode == "pick" then
-                      local _, order = catalog(state, req)
-                      local count = #order
-                      if key.name == "up" or key.name == "down" then
-                        if count == 0 then
-                          return false
-                        end
-                        local index = 1
-                        for position, listed in ipairs(order) do
-                          if listed == state.selected then
-                            index = position
-                          end
-                        end
-                        if key.name == "up" then
-                          index = (index - 2) % count + 1
-                        else
-                          index = index % count + 1
-                        end
-                        state.selected = order[index]
-                        return true
-                      end
-                      if key.name == "backspace" then
-                        state.query = string.sub(state.query, 1, math.max(0, #state.query - 1))
-                        state.selected = nil
-                        return true
-                      end
-                      if key.text ~= nil and not (key.ctrl or key.meta) then
-                        state.query = state.query .. key.text
-                        state.selected = nil
-                        return true
-                      end
-                      return false
-                    end
-
-                    if req.mode == "prompt" then
-                      if key.name == "backspace" then
-                        if state.cursor > 0 then
-                          state.buffer = string.sub(state.buffer, 1, state.cursor - 1)
-                            .. string.sub(state.buffer, state.cursor + 1)
-                          state.cursor = state.cursor - 1
-                        end
-                        return true
-                      end
-                      if key.name == "left" then
-                        state.cursor = math.max(0, state.cursor - 1)
-                        return true
-                      end
-                      if key.name == "right" then
-                        state.cursor = math.min(#state.buffer, state.cursor + 1)
-                        return true
-                      end
-                      if key.name == "home" then
-                        state.cursor = 0
-                        return true
-                      end
-                      if key.name == "end" then
-                        state.cursor = #state.buffer
-                        return true
-                      end
-                      if key.text ~= nil and not (key.ctrl or key.meta) then
-                        state.buffer = string.sub(state.buffer, 1, state.cursor)
-                          .. key.text
-                          .. string.sub(state.buffer, state.cursor + 1)
-                        state.cursor = state.cursor + #key.text
-                        return true
-                      end
-                    end
-
-                    return false
-                  end,
-
-                  event = function(state, ev, cx)
-                    if state.answered then
-                      return
-                    end
-
-                    if ev.ev == "select" or ev.ev == "activate" then
-                      if type(ev.item) == "string" and item_named(state.req, ev.item) ~= nil then
-                        state.selected = ev.item
-                      end
-                      if ev.ev == "activate" then
-                        submit(state, "ok:" .. (state.selected or ""))
-                      end
-                      return
-                    end
-
-                    if ev.ev == "action" then
-                      if ev.act == "close" then
-                        submit(state, "cancel")
-                      elseif ev.act == "open" then
-                        submit(state, "ok:" .. (state.selected or ""))
-                      end
-                      return
-                    end
-
-                    if ev.ev == "focus" then
-                      cx:frame({ { "focus", ev.id } })
-                    end
-                  end,
-                })
-              '';
-
           window =
             pkgs.writers.writeText "tern-jj-window.luau" # luau
               ''
                   -- !nonstrict
-                  local ui = tern.ui
-
                   ${settingsLuau}
 
                   ${ideLayout}
@@ -691,54 +298,53 @@
                     end)
                   end
 
-                  local waiting = nil
-
-                  local function ask(cx, req, cb)
-                    local args = { req.mode .. "\t" .. req.title .. "\t" .. (req.message or "") }
-                    if req.mode == "prompt" then
-                      args[1] = args[1] .. "\t" .. (req.placeholder or "")
-                    elseif req.mode == "pick" then
-                      -- The checkout the asking pane is in.
-                      args[1] = args[1] .. "\t" .. (req.current or "")
-                    end
-                    for _, item in ipairs(req.items or {}) do
-                      table.insert(args, item.name .. "\t" .. (item.change or "") .. "\t" .. (item.root or ""))
-                    end
-
-                    -- Created beside the block then floated, so the tab and its layout stay.
-                    local pane = cx:new_block("jj.dialog", args, "beside", { focus = false })
-                    if pane == nil then
-                      warn(cx, "error", "the jj dialog block is not available", "no Ready plugin defines jj.dialog")
-                      return
-                    end
-
-                    local floated, err = cx.layout:float(pane)
-                    if not floated then
-                      cx.layout:close(pane)
-                      warn(cx, "error", "could not overlay the jj dialog", err)
-                      return
-                    end
-
-                    -- A new overlay is a glance, so focusing it expands it.
-                    cx.layout:focus(pane)
-                    waiting = { pane = pane, cb = cb }
+                  -- cx:pick and cx:prompt draw over the focused pane
+                  -- themselves; a :next callback gets a fresh cx as
+                  -- its third argument, and nil as its result when
+                  -- the user dismissed the picker or field.
+                  local function ask_prompt(cx, req, cb)
+                    cx:prompt({ placeholder = req.placeholder }):next(
+                      function(text, _err, live)
+                        if live == nil then
+                          return
+                        end
+                        if text == nil then
+                          cb(live, "cancel", nil)
+                          return
+                        end
+                        cb(live, "ok", text)
+                      end
+                    )
                   end
 
-                  -- The block's title is the answer.
-                  local function answer(cx, pane, title)
-                    if waiting == nil or waiting.pane ~= pane then
-                      return
+                  local function ask_pick(cx, req, cb)
+                    local items = {}
+                    for _, item in ipairs(req.items or {}) do
+                      table.insert(items, {
+                        label = item.name,
+                        detail = item.change .. "  "
+                          .. (item.root == "" and "no checkout" or item.root),
+                        current = item.root ~= "" and item.root == req.current or nil,
+                        icon = "branch",
+                        -- Ride along so the :next callback reads
+                        -- them directly, no second lookup.
+                        name = item.name,
+                        change = item.change,
+                        root = item.root,
+                      })
                     end
-                    if title ~= "cancel" and string.sub(title, 1, 3) ~= "ok:" then
-                      return
-                    end
 
-                    local cb = waiting.cb
-                    waiting = nil
-
-                    cx.layout:close(pane)
-
-                    cb(cx, title == "cancel" and "cancel" or "ok", title == "cancel" and nil or string.sub(title, 4))
+                    cx:pick({ items = items }):next(
+                      function(choice, _err, live)
+                        if live == nil then
+                          return
+                        end
+                        if choice == nil then
+                          return
+                        end
+                        cb(live, "ok", choice)
+                      end
+                    )
                   end
 
                   local function list_workspaces(main_root, cb)
@@ -799,12 +405,8 @@
                 end
 
                 local function create(cx, cwd)
-                  ask(cx, {
-                    mode = "prompt",
-                    title = "new jj workspace",
-                    placeholder = "workspace name",
-                  }, function(cx, action, name)
-                    if action ~= "ok" then
+                  ask_prompt(cx, { placeholder = "workspace name" }, function(cx, action, name)
+                    if action ~= "ok" or name == nil or name == "" then
                       return
                     end
                     if not valid_name(name) then
@@ -947,11 +549,7 @@
                 end
 
                   local function remove(cx, cwd)
-                    local pane = cx.session:focused()
-                    ask(cx, {
-                      mode = "confirm",
-                      title = "remove jj workspace",
-                    }, function(cx, action)
+                    ask_prompt(cx, { placeholder = "remove this jj workspace?" }, function(cx, action)
                       if action ~= "ok" then
                         return
                       end
@@ -1261,27 +859,18 @@
                       for _, report in ipairs(queued) do
                         if report.pick ~= nil then
                           inflight = inflight + 1
-                          ask(cx, {
-                            mode = "pick",
-                            title = "open jj workspace",
-                            message = report.pick.main_root,
+                          ask_pick(cx, {
                             items = report.pick.items,
                             current = report.pick.current,
-                          }, function(answer_cx, action, picked)
-                            if action ~= "ok" then
+                          }, function(answer_cx, _action, choice)
+                            if choice == nil then
                               return
                             end
-                            for _, item in ipairs(report.pick.items) do
-                              if item.name == picked then
-                                if item.root == "" then
-                                  warn(answer_cx, "error", "no checkout for " .. picked, "the workspace has no directory")
-                                  return
-                                end
-                                open_in(answer_cx, item.root, picked)
-                                return
-                              end
+                            if choice.root == "" then
+                              warn(answer_cx, "error", "no checkout for " .. choice.name, "the workspace has no directory")
+                              return
                             end
-                            warn(answer_cx, "error", "no jj workspace named " .. tostring(picked))
+                            open_in(answer_cx, choice.root, choice.name)
                           end)
                         elseif report.refresh ~= nil then
                           inflight = inflight - 1
@@ -1382,8 +971,7 @@
                     end)
                   end
 
-                  tern.on("title", function(ev, cx)
-                    answer(cx, ev.pane, ev.title)
+                  tern.on("title", function(_ev, cx)
                     pump(cx)
                   end)
 
@@ -1421,7 +1009,6 @@
         pkgs.runCommand "tern-jj-plugin" { } ''
           mkdir --parents "$out"
           ln --symbolic ${manifest} "$out/plugin.toml"
-          ln --symbolic ${host} "$out/host.luau"
           ln --symbolic ${entry} "$out/init.luau"
           ln --symbolic ${window} "$out/window.luau"
         '';
