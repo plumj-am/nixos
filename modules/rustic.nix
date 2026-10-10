@@ -12,7 +12,6 @@
 
       inherit (config.s3.caches.garage)
         alias
-        bucket
         endpoint
         region
         ;
@@ -25,10 +24,15 @@
       services.rustic = {
         inherit
           alias
-          bucket
           endpoint
           region
           ;
+        # The garage cache bucket ("nix") is a shed binary
+        # cache: shed evicts from cache_urls, so backups
+        # written there would be silently dropped. Use the
+        # dedicated "backups" bucket garage-bootstrap
+        # provisions instead.
+        bucket = "backups";
         credentialsFile = config.s3.credentialsFile;
         passwordFile = config.sops.secrets."rustic/password".path;
       };
