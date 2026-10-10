@@ -12,7 +12,7 @@
         caches = mkOptionOf attrs {
           default = { };
           defaultText = "Shared S3 caches configuration";
-          description = "S3 caches keyed by name (fsn1, garage).";
+          description = "S3 caches keyed by name (garage).";
         };
         credentialsFile = mkOptionOf str {
           default = "/var/lib/s3/.aws/credentials";

@@ -33,11 +33,16 @@
       garageBootstrap = pkgs.writeShellScript "garage-bootstrap" ''
         set -euo pipefail
 
-        for _ in $(seq 1 30); do
+        # garage's data dir takes minutes to initialize before the
+        # RPC socket answers, even though the unit is already
+        # `active` (After= orders unit start, not daemon
+        # readiness; garage has no Type=notify). Retry for up to
+        # ~5 minutes so a cold start never exhausts the loop.
+        for _ in $(seq 1 60); do
           if node_id="$(${garageCli} node id 2>/dev/null | cut -d@ -f1)" && [ -n "$node_id" ]; then
             break
           fi
-          sleep 1
+          sleep 5
         done
 
         if [ -z "''${node_id:-}" ]; then

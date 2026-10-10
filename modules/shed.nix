@@ -12,10 +12,10 @@
     let
       inherit (lib.fixedPoints) fix;
       inherit (lib.lists) length singleton;
-      inherit (config.s3.caches) fsn1;
+      inherit (config.s3.caches) garage;
 
       s3SharedArgs = "&priority=43&multipart-upload=true&multipart-threshold=50M&multipart-chunk-size=10M";
-      fsn1S3Cache = "s3://plumjam/nix?endpoint=fsn1.your-objectstorage.com&profile=${fsn1.alias}${s3SharedArgs}";
+      garageS3Cache = "s3://${garage.bucket}?endpoint=http://${garage.endpoint}&profile=${garage.alias}&region=${garage.region}${s3SharedArgs}";
     in
     {
       imports = singleton inputs.grove.nixosModules.shed;
@@ -32,9 +32,7 @@
 
         config = fix (config: {
           cache_urls = [
-            fsn1S3Cache
-            # TODO: Garage has been returning "is not supported" for narinfo
-            # PUTs; disabled until fixed.
+            garageS3Cache
           ];
           scan_interval_secs = 6 * 3600;
           min_size_bytes = 10240;

@@ -17,14 +17,6 @@
       inherit (config.sops) secrets;
 
       caches = {
-        fsn1 = {
-          alias = "plumjam-fsn1";
-          bucket = "plumjam";
-          prefix = "nix";
-          endpoint = "fsn1.your-objectstorage.com";
-          pathStyle = "off";
-          apiVersion = "s3v4";
-        };
         garage = {
           alias = "plumjam-garage";
           bucket = "nix";
@@ -49,14 +41,12 @@
         users.groups.s3 = { };
 
         sops.secrets = {
-          "s3/fsn1/access-key".sopsFile = ../secrets/all/s3.yaml;
-          "s3/fsn1/secret-key".sopsFile = ../secrets/all/s3.yaml;
           "s3/garage/access-key".sopsFile = ../secrets/all/s3.yaml;
           "s3/garage/secret-key".sopsFile = ../secrets/all/s3.yaml;
         };
 
-        # One-time systemd service: reads the four sops-rendered secret files
-        # via $CREDENTIALS_DIRECTORY and writes a combined AWS credentials
+        # One-time systemd service: reads the two sops-rendered secret files
+        # via $CREDENTIALS_DIRECTORY and writes an AWS credentials
         # file readable by the `s3` group.
         systemd.services.s3-credentials = {
           description = "Materialise shared AWS credentials for S3 consumers";
@@ -67,8 +57,6 @@
             StateDirectory = "s3";
             StateDirectoryMode = "0755";
             LoadCredential = [
-              "s3-fsn1-access-key:${secrets."s3/fsn1/access-key".path}"
-              "s3-fsn1-secret-key:${secrets."s3/fsn1/secret-key".path}"
               "s3-garage-access-key:${secrets."s3/garage/access-key".path}"
               "s3-garage-secret-key:${secrets."s3/garage/secret-key".path}"
             ];
@@ -79,9 +67,6 @@
                   mkdir -p /var/lib/s3/.aws
                   umask 077
                   cat > /var/lib/s3/.aws/credentials <<EOF
-                  [${caches.fsn1.alias}]
-                  aws_access_key_id=$(cat "$CREDENTIALS_DIRECTORY/s3-fsn1-access-key")
-                  aws_secret_access_key=$(cat "$CREDENTIALS_DIRECTORY/s3-fsn1-secret-key")
                   [${caches.garage.alias}]
                   aws_access_key_id=$(cat "$CREDENTIALS_DIRECTORY/s3-garage-access-key")
                   aws_secret_access_key=$(cat "$CREDENTIALS_DIRECTORY/s3-garage-secret-key")
@@ -106,17 +91,10 @@
     }:
     let
       inherit (lib.meta) getExe;
-      inherit (config.s3.caches) fsn1 garage;
+      inherit (config.s3.caches) garage;
       inherit (config.sops) secrets;
 
       s3SharedArgs = "&priority=43&multipart-upload=true&multipart-threshold=50M&multipart-chunk-size=10M";
-      fsn1Alias = fsn1.alias;
-      fsn1Bucket = fsn1.bucket;
-      fsn1Prefix = fsn1.prefix;
-      fsn1Endpoint = fsn1.endpoint;
-      fsn1PathStyle = fsn1.pathStyle;
-      fsn1ApiVersion = fsn1.apiVersion;
-      fsn1S3Cache = "s3://${fsn1Bucket}/${fsn1Prefix}?endpoint=${fsn1Endpoint}&profile=${fsn1Alias}${s3SharedArgs}";
 
       garageAlias = garage.alias;
       garageBucket = garage.bucket;
@@ -124,7 +102,7 @@
       garageRegion = garage.region;
       garagePathStyle = garage.pathStyle;
       garageApiVersion = garage.apiVersion;
-      garageS3Cache = "s3://${garageBucket}?endpoint=${garageEndpoint}&profile=${garageAlias}&region=${garageRegion}${s3SharedArgs}";
+      garageS3Cache = "s3://${garageBucket}?endpoint=http://${garageEndpoint}&profile=${garageAlias}&region=${garageRegion}${s3SharedArgs}";
 
       setupAwsCreds = pkgs.writeShellScriptBin "setup-aws-creds" ''
         #!/usr/bin/env bash
@@ -135,15 +113,10 @@
         group=$3
         mkdir -p "$dir"
 
-        fsn1AccessKey=$(cat ${secrets."s3/fsn1/access-key".path})
-        fsn1SecretKey=$(cat ${secrets."s3/fsn1/secret-key".path})
         garageAccessKey=$(cat ${secrets."s3/garage/access-key".path})
         garageSecretKey=$(cat ${secrets."s3/garage/secret-key".path})
 
         cat > "$dir/credentials" <<EOF
-        [${fsn1Alias}]
-        aws_access_key_id=$fsn1AccessKey
-        aws_secret_access_key=$fsn1SecretKey
         [${garageAlias}]
         aws_access_key_id=$garageAccessKey
         aws_secret_access_key=$garageSecretKey
@@ -161,13 +134,6 @@
         export MC_CONFIG_DIR="$config_dir"
         mkdir -p "$config_dir"
 
-        ${getExe pkgs.minio-client} --quiet alias set ${fsn1Alias} \
-          https://${fsn1Endpoint} \
-          "$(cat ${secrets."s3/fsn1/access-key".path})" \
-          "$(cat ${secrets."s3/fsn1/secret-key".path})" \
-          --api ${fsn1ApiVersion} \
-          --path ${fsn1PathStyle}
-
         ${getExe pkgs.minio-client} --quiet alias set ${garageAlias} \
           http://${garageEndpoint} \
           "$(cat ${secrets."s3/garage/access-key".path})" \
@@ -175,9 +141,6 @@
           --api ${garageApiVersion} \
           --path ${garagePathStyle}
 
-        if ! ${getExe pkgs.minio-client} --quiet ilm ls --json ${fsn1Alias}/${fsn1Bucket} | ${getExe pkgs.jq} -e '.config.Rules[]? | select(.Expiration.Days == 14)'; then
-          ${getExe pkgs.minio-client} --quiet ilm add --expire-days 14 ${fsn1Alias}/${fsn1Bucket} 2>/dev/null || true
-        fi
         if ! ${getExe pkgs.minio-client} --quiet ilm ls --json ${garageAlias}/${garageBucket} | ${getExe pkgs.jq} -e '.config.Rules[]? | select(.Expiration.Days == 14)'; then
           ${getExe pkgs.minio-client} --quiet ilm add --expire-days 14 ${garageAlias}/${garageBucket} 2>/dev/null || true
         fi
@@ -203,8 +166,19 @@
         Priority: 43
         EOF
 
-                MC_CONFIG_DIR=/root/.mc \
-                ${getExe pkgs.minio-client} cp --quiet "$nix_cache_info" ${fsn1Alias}/${fsn1Bucket}/${fsn1Prefix}/nix-cache-info
+                # garage-bootstrap.service orders after garage.service but
+                # the daemon takes minutes to bind :8015 after its unit
+                # starts; `After=` orders unit start, not readiness. Wait
+                # for the S3 API to answer before uploading. Garage
+                # replies 403 to an anonymous GET, so any HTTP status
+                # (not a connection error) means it is listening.
+                for _ in $(seq 1 60); do
+                  if ${getExe pkgs.curl} -sS --max-time 2 \
+                    -o /dev/null "http://${garageEndpoint}/"; then
+                    break
+                  fi
+                  sleep 1
+                done
 
                 MC_CONFIG_DIR=/root/.mc \
                 ${getExe pkgs.minio-client} cp --quiet "$nix_cache_info" ${garageAlias}/${garageBucket}/nix-cache-info
@@ -212,9 +186,6 @@
                 rm "$nix_cache_info"
 
                 echo "S3 setup complete."
-                echo "  Fsn1 Bucket: ${fsn1Bucket}"
-                echo "  Fsn1 Endpoint: ${fsn1Endpoint}"
-                echo "  Fsn1 Substituter: ${fsn1S3Cache}"
                 echo "  Garage Bucket: ${garageAlias}"
                 echo "  Garage Endpoint: ${garageEndpoint}"
                 echo "  Garage Substituter: ${garageS3Cache}"
@@ -237,9 +208,17 @@
 
       systemd.services.s3-setup = {
         description = "S3 credential & cache setup";
-        after = [
-          "network.target"
-          "sops.service"
+        # Only sloe runs the garage daemon; on other hosts
+        # garage-bootstrap.service does not exist, so the
+        # After/Wants would reference a missing unit and
+        # fail to activate. The readiness retry in the
+        # script already handles a slow garage start.
+        after = [ "network.target" "sops.service" ]
+          ++ lib.optionals config.services.garage.enable [
+            "garage-bootstrap.service"
+          ];
+        wants = lib.optionals config.services.garage.enable [
+          "garage-bootstrap.service"
         ];
         wantedBy = [ "multi-user.target" ];
 
@@ -259,7 +238,6 @@
 
       nix.settings = {
         extra-substituters = [
-          fsn1S3Cache
           garageS3Cache
         ];
 
