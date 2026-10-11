@@ -257,9 +257,9 @@
               ];
 
               aliases.r = [ "rebase" ];
-              # Retrunk a series. Typically used as `jj retrunk -s ...`, and notably can be
-              # used with open:
-              # - jj retrunk -s 'all:roots(open())'
+              # Retrunk a series. Typically used as `jj retrunk -s ...`, and notably
+              # can be used with open:
+              # - jj retrunk -s 'roots(open())'
               aliases.retrunk = [
                 "rebase"
                 "-d"
@@ -272,7 +272,7 @@
                 "-d"
                 "trunk()"
                 "-s"
-                "all:roots(trunk()..stack(@))"
+                "roots(trunk()..stack())"
               ];
 
               aliases.res = [ "resolve" ];
