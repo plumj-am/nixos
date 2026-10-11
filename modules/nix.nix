@@ -85,6 +85,7 @@ in
         auto-optimise-store = true;
         use-cgroups = true;
         builders-use-substitutes = true;
+        fallback = true;
         flake-registry = "";
         http-connections = 0;
         max-jobs = "auto";
