@@ -89,7 +89,10 @@
                     return out
                   end
 
-                  -- Reports are queued: raised in a jj callback, the cx is already dead
+                  -- Reports are queued: raised in a jj callback. That callback's
+                  -- cx is fresh and live, so it pumps the chain itself (see `jj`).
+                  local pump
+
                   local reports = {}
 
                   local function show(cx, level, text, sub)
@@ -118,9 +121,22 @@
                     if on_done ~= nil then
                       inflight = inflight + 1
                     end
-                    tern.process.run(args, opts or {}, function(result)
+                    tern.process.run(args, opts or {}, function(result, cb_cx)
                       if on_done ~= nil then
                         table.insert(reports, { jj_next = on_done, result = result })
+                        -- The next step runs the moment the process exits: no settle
+                        -- poll, no waiting for a focus or title event to re-arm pump.
+                        if cb_cx ~= nil then
+                          pump(cb_cx)
+                        else
+                          -- The cx is optional; a nil one still owes
+                          -- the chain a step, on a fresh one.
+                          tern.sleep(0):next(function(_, _, fresh)
+                            if fresh ~= nil then
+                              pump(fresh)
+                            end
+                          end)
+                        end
                       end
                     end)
                   end
@@ -207,24 +223,50 @@
                     return false
                   end
 
-                  -- A workspace owns its tab, so every pane of that tab goes.
+                  -- A workspace owns its tab, so every pane of that tab
+                  -- goes. A close can take the tab with it, so each
+                  -- pass re-reads the panes: a stale id only fails its
+                  -- pcall, never the panes that follow it.
                   local function close_tab(cx, tab)
-                    local leaves = {}
-                    for _, info in ipairs(cx.session:panes()) do
-                      if info.tab == tab then
-                        table.insert(leaves, info.pane)
+                    local closed = false
+                    local guard = 0
+                    while true do
+                      guard = guard + 1
+                      if guard > 16 then
+                        return closed
+                      end
+                      local leaves = {}
+                      for _, info in ipairs(cx.session:panes()) do
+                        if info.tab == tab then
+                          table.insert(leaves, info.pane)
+                        end
+                      end
+                      if #leaves == 0 then
+                        return closed
+                      end
+                      local before = #leaves
+                      for _, pane in ipairs(leaves) do
+                        local ok, err = pcall(cx.layout.close, cx.layout, pane)
+                        if not ok then
+                          tern.log.info("tern-jj: pane already closed", pane, err)
+                        end
+                      end
+                      closed = true
+                      -- All panes closed: the tab went with them.
+                      local remains = false
+                      for _, info in ipairs(cx.session:panes()) do
+                        if info.tab == tab then
+                          remains = true
+                        end
+                      end
+                      if not remains then
+                        return closed
+                      end
+                      if #leaves == before then
+                        -- Nothing took: a pane refuses to close.
+                        return closed
                       end
                     end
-                    if #leaves == 0 then
-                      return false
-                    end
-                    for _, pane in ipairs(leaves) do
-                      local ok, err = pcall(cx.layout.close, cx.layout, pane)
-                      if not ok then
-                        tern.log.info("tern-jj: pane already closed", pane, err)
-                      end
-                    end
-                    return true
                   end
 
                   -- Which tab holds the removed workspace: the pane's tab, else the one in that directory.
@@ -310,9 +352,11 @@
                         end
                         if text == nil then
                           cb(live, "cancel", nil)
+                          pump(live)
                           return
                         end
                         cb(live, "ok", text)
+                        pump(live)
                       end
                     )
                   end
@@ -340,9 +384,14 @@
                           return
                         end
                         if choice == nil then
+                          -- Balances the caller's inflight bump: a
+                          -- dismissed pick owes the chain a step.
+                          inflight = inflight - 1
+                          pump(live)
                           return
                         end
                         cb(live, "ok", choice)
+                        pump(live)
                       end
                     )
                   end
@@ -549,6 +598,9 @@
                 end
 
                   local function remove(cx, cwd)
+                    -- The pane the command ran from: it holds the tab
+                    -- that the removal closes.
+                    local pane = cx.session:focused()
                     ask_prompt(cx, { placeholder = "remove this jj workspace?" }, function(cx, action)
                       if action ~= "ok" then
                         return
@@ -623,7 +675,8 @@
                                 return
                               end
 
-                              -- Queued rather than closed: a jj callback's cx is dead.
+                              -- Queued: a raw rm callback has no
+                              -- report of its own, so it pumps itself.
                               tabs[root] = nil
                               inflight = inflight + 1
                               table.insert(reports, { close_tab = { root = root, pane = pane } })
@@ -633,12 +686,24 @@
                                 return
                               end
 
-                              tern.process.run({ "rm", "-rf", "--", root }, { timeout_ms = 300000 }, function(rm_result)
+                              tern.process.run({ "rm", "-rf", "--", root }, { timeout_ms = 300000 }, function(rm_result, rm_cx)
                                 if rm_result.status ~= 0 then
                                   warn(cx, "error", "forgot " .. name .. ", but could not delete its checkout", root)
-                                  return
+                                else
+                                  warn(cx, "success", "removed " .. name, root)
                                 end
-                                warn(cx, "success", "removed " .. name, root)
+                                -- Warned before pumping: the toast
+                                -- report must be queued when the
+                                -- pump flushes.
+                                if rm_cx ~= nil then
+                                  pump(rm_cx)
+                                else
+                                  tern.sleep(0):next(function(_, _, fresh)
+                                    if fresh ~= nil then
+                                      pump(fresh)
+                                    end
+                                  end)
+                                end
                               end)
                             end)
                           end)
@@ -802,8 +867,7 @@
                     return info.cwd
                   end
 
-                  -- Declared here with the queue: a command's queued work has no event of its own.
-                  local pump
+                  -- `pump` is hoisted above the queue: jj callbacks call it.
 
                   local function jj_command(id, title, icon, run)
                     tern.command({
@@ -863,6 +927,10 @@
                             items = report.pick.items,
                             current = report.pick.current,
                           }, function(answer_cx, _action, choice)
+                            -- ask_pick pumped once on
+                            -- resolve; the queued open
+                            -- needs its own re-arm.
+                            pump(answer_cx)
                             if choice == nil then
                               return
                             end
@@ -871,6 +939,7 @@
                               return
                             end
                             open_in(answer_cx, choice.root, choice.name)
+                            pump(answer_cx)
                           end)
                         elseif report.refresh ~= nil then
                           inflight = inflight - 1
@@ -952,19 +1021,30 @@
                     end
                   end
 
-                  -- The pump: it keeps the chain going without a clock
+                  -- The pump: jj callbacks drive it (see `jj`); this
+                  -- fallback covers the paths no process callback
+                  -- reaches.
+                  local poll_armed = false
                   pump = function(cx)
                     flush(cx)
 
-                    -- On `inflight`, not the queue: a step that spawned the next one keeps it alive
-                    if inflight == 0 then
+                    -- On `inflight`, not the queue: a step that spawned
+                    -- the next one keeps it alive. But a flush pass can
+                    -- queue a report of its own (an open, a toast) with
+                    -- no process to pump it, so the poller covers those.
+                    if inflight == 0 and #reports == 0 then
+                      poll_armed = false
                       return
                     end
-                    local pane = cx.session:focused()
-                    if pane == nil then
+                    -- One poller at a time: every focus event used
+                    -- to arm its own settle chain, and each fired
+                    -- one re-armed, so N events left N pollers.
+                    if poll_armed then
                       return
                     end
-                    cx.session:settle(pane, 120):next(function(_, _, live)
+                    poll_armed = true
+                    tern.sleep(120):next(function(_, _, live)
+                      poll_armed = false
                       if live ~= nil then
                         pump(live)
                       end
