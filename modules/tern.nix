@@ -90,7 +90,7 @@
             sync_to_display = false;
             frame_latency = 1;
 
-            layout = "Studio";
+            layout = "Rail";
             status_bar = true;
             density = "Islands";
             pane_headers = "Never";
@@ -115,6 +115,8 @@
 
             carly.model = "@smol";
             carly.heartbeat = 10;
+
+            clawdi = true;
 
             font_family = theme.font.mono.name;
             code_font = theme.font.mono.name;
@@ -285,6 +287,43 @@
               "${prefix}>g" = "plugin.tools.jjui";
               "${prefix}>d" = "plugin.tools.hunk";
             };
+          };
+        };
+
+        xdg.config.files."tern/clawdi/settings.json" = {
+          generator = pkgs.writers.writeJSON "tern-clawdi-settings.json";
+          value = {
+            petPosition = {
+              x = 1700.0;
+              y = -140.0;
+            };
+            petSize = 20;
+            skin = "cat";
+            stretchIntervalMin = 9999; # idk how to turn it off
+            taskCompleteSoundVolume = 0.1;
+          };
+        };
+
+        xdg.config.files."tern/clawdi/pattern.json" = {
+          generator = pkgs.writers.writeJSON "tern-clawdi-pattern.json";
+          value = {
+            baseColor = "#1A1A1A";
+            body = [ ];
+            earL = [ ];
+            earR = [ ];
+            eyeBgColor = "#FFFFFF";
+            eyeColor = "#1A1A1A";
+            eyeColorLeft = "#1A1A1A";
+            eyeColorRight = "#1A1A1A";
+            head = [ ];
+            legFl = [ ];
+            legFr = [ ];
+            legRl = [ ];
+            legRr = [ ];
+            oddEye = false;
+            outlineColor = "#FFFFFF";
+            selectedPresetId = "black-cat";
+            tail = [ ];
           };
         };
 

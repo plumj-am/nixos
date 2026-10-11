@@ -95,6 +95,13 @@
             ''
               prefer-no-csd
 
+              layer-rule {
+                match namespace=r#"^so.stencil.tern$"#
+                match layer="overlay"
+
+                opacity 0.75
+              }
+
               window-rule {
                 match app-id=r#"^*$"#
                 opacity 1.0
