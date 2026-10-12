@@ -3,7 +3,6 @@
   flake.modules.common.ai-agents = self.modules.common.ai-shared;
   flake.modules.common.ai-shared =
     {
-      inputs,
       pkgs,
       lib,
       config,
@@ -66,7 +65,7 @@
             pkgs.gnumake
             pkgs.nodejs
             pkgs.node-gyp
-            inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp
+            self.packages.${pkgs.stdenv.hostPlatform.system}.omp-wrapped
           ];
           environment.PYTHON = getExe pkgs.python3;
           script = "${pkgs.writers.writeNu "install-ai-plugins-skills.nu" # nu
