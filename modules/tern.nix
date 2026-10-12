@@ -155,7 +155,7 @@
             agent_command = "PI_OMP_NATIVE=1 ${getExe flakePackages.omp-wrapped}";
 
             command_lenses = true;
-            program_colors = true;
+            program_colors = false; # use tern palette
             composer_text = "Markdown";
             prompt_style = "imported";
             new_tabs = "Focused";
