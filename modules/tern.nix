@@ -88,7 +88,7 @@
             antialias = true;
             msaa = "off";
             sync_to_display = false;
-            frame_latency = 1;
+            frames_queued = 1;
 
             layout = "Rail";
             status_bar = true;
@@ -186,7 +186,7 @@
               preview_click = false;
             };
             git = {
-              auto_fetch_minutes = 5;
+              auto_fetch_minutes = 0;
               auto_prune = true;
               default_branch_name = "master";
               pull_mode = "FastForward";
@@ -195,13 +195,13 @@
               profiles = [ ];
               profile = null;
               use_local_ssh_agent = true;
-              ssh_private_key = "";
-              ssh_public_key = "";
+              ssh_private_key = "~/.ssh/id";
+              ssh_public_key = "~/.ssh/id.pub";
               external_editor = "${getExe pkgs.steelix}";
               gpg_program = "";
               gpg_key_id = "";
-              sign_commits_by_default = false;
-              sign_tags_by_default = false;
+              sign_commits_by_default = true;
+              sign_tags_by_default = true;
               notify_operation_success = true;
               notify_operation_failure = true;
               use_git_executable = true;
