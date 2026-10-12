@@ -22,6 +22,7 @@ Dendritic NixOS configurations for 8 personal machines:
 ## Features
 
 - Multiple hosts
+- Determinate Nix for all systems
 - Dendritic structure with
   [flake-parts](https://github.com/hercules-ci/flake-parts)
 - [Hjem](https://github.com/feel-co/hjem) for $HOME management
