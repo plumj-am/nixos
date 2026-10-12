@@ -295,7 +295,7 @@
                   request_header Original-URI "{{request.uri}}"
                   request_header X-Scheme "{{request.scheme}}"
                   request_header X-Auth-Request-Redirect "https://graft-cache.${domain}{{request.uri}}"
-                  request_header Expected-Tailnet "${tailnet}"
+                  request_header Expected-Tailnet "${tailnet}."
 
                   copy Tailscale-User Tailscale-Name Tailscale-Login Tailscale-Tailnet Tailscale-Profile-Picture
               }
