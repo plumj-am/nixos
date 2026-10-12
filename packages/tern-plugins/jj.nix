@@ -104,24 +104,42 @@
                     table.insert(reports, { level = level, text = text, sub = sub })
                   end
 
-                  local function failed(cx, action, result)
+                  -- One place for process-failure detail, so a killed
+                  -- process says so instead of failing with no reason.
+                  local function detail_of(result)
                     local detail = trim(result.stderr)
                     if detail == "" then
                       detail = trim(result.stdout)
                     end
+                    if result.timed_out then
+                      detail = detail == "" and "timed out and was killed" or (detail .. " (timed out; killed)")
+                    end
+                    return detail
+                  end
+
+                  local function failed(cx, action, result)
+                    local detail = detail_of(result)
                     warn(cx, "error", action .. " failed", detail ~= "" and detail or nil)
                   end
 
                   local inflight = 0
 
-                  local function jj(args, opts, on_done)
+                  local jj
+                  local function run_jj(args, opts, on_done)
                     if type(opts) == "function" then
                       on_done, opts = opts, nil
                     end
                     if on_done ~= nil then
                       inflight = inflight + 1
                     end
-                    tern.process.run(args, opts or {}, function(result, cb_cx)
+                    -- A hung jj (a held repo lock, a busy remote) would
+                    -- otherwise never call back: the chain stalls until
+                    -- the plugin reloads. The timeout ends it.
+                    local options = opts or {}
+                    if options.timeout_ms == nil then
+                      options.timeout_ms = 120000
+                    end
+                    tern.process.run(args, options, function(result, cb_cx)
                       if on_done ~= nil then
                         table.insert(reports, { jj_next = on_done, result = result })
                         -- The next step runs the moment the process exits: no settle
@@ -140,6 +158,8 @@
                       end
                     end)
                   end
+                  jj = run_jj
+
 
                   local function root_of(cwd, cb)
                     jj({ "jj", "--no-pager", "--ignore-working-copy", "-R", cwd, "workspace", "root" }, function(result)
@@ -223,50 +243,27 @@
                     return false
                   end
 
-                  -- A workspace owns its tab, so every pane of that tab
-                  -- goes. A close can take the tab with it, so each
-                  -- pass re-reads the panes: a stale id only fails its
-                  -- pcall, never the panes that follow it.
+                  -- A workspace owns its tab: closing every pane of
+                  -- that tab takes the tab with it.
+                  -- Closing is bounded to one hook pass: the 50 ms hook
+                  -- budget covers a handful of pane reads, and every
+                  -- cx.session call marshals IPC. One pass closes what
+                  -- went; the next event (a pane_closed fires as each
+                  -- pane goes) finishes the rest.
                   local function close_tab(cx, tab)
-                    local closed = false
-                    local guard = 0
-                    while true do
-                      guard = guard + 1
-                      if guard > 16 then
-                        return closed
-                      end
-                      local leaves = {}
-                      for _, info in ipairs(cx.session:panes()) do
-                        if info.tab == tab then
-                          table.insert(leaves, info.pane)
-                        end
-                      end
-                      if #leaves == 0 then
-                        return closed
-                      end
-                      local before = #leaves
-                      for _, pane in ipairs(leaves) do
-                        local ok, err = pcall(cx.layout.close, cx.layout, pane)
-                        if not ok then
-                          tern.log.info("tern-jj: pane already closed", pane, err)
-                        end
-                      end
-                      closed = true
-                      -- All panes closed: the tab went with them.
-                      local remains = false
-                      for _, info in ipairs(cx.session:panes()) do
-                        if info.tab == tab then
-                          remains = true
-                        end
-                      end
-                      if not remains then
-                        return closed
-                      end
-                      if #leaves == before then
-                        -- Nothing took: a pane refuses to close.
-                        return closed
+                    local leaves = {}
+                    for _, info in ipairs(cx.session:panes()) do
+                      if info.tab == tab then
+                        table.insert(leaves, info.pane)
                       end
                     end
+                    for _, pane in ipairs(leaves) do
+                      local ok, err = pcall(cx.layout.close, cx.layout, pane)
+                      if not ok then
+                        tern.log.info("tern-jj: pane already closed", pane, err)
+                      end
+                    end
+                    return #leaves > 0
                   end
 
                   -- Which tab holds the removed workspace: the pane's tab, else the one in that directory.
@@ -378,15 +375,18 @@
                       })
                     end
 
+                    -- The caller bumped inflight for the dialog itself, so
+                    -- its promise resolving always owes one decrement: a
+                    -- dismissed pick and a bad root both end the pick, and
+                    -- a missed decrement left the pump settling forever.
                     cx:pick({ items = items }):next(
                       function(choice, _err, live)
                         if live == nil then
+                          inflight = inflight - 1
                           return
                         end
+                        inflight = inflight - 1
                         if choice == nil then
-                          -- Balances the caller's inflight bump: a
-                          -- dismissed pick owes the chain a step.
-                          inflight = inflight - 1
                           pump(live)
                           return
                         end
@@ -719,15 +719,10 @@
                       return nil
                     end
                     local entry = cache[pane.cwd]
-                    if type(entry) ~= "table" then
+                    if type(entry) ~= "table" or entry.segments == nil then
                       return nil
                     end
-
-                    local segments = { { text = entry.change, icon = "branch" } }
-                    for _, part in ipairs(entry.parts) do
-                      table.insert(segments, part)
-                    end
-                    return segments
+                    return entry.segments
                   end
 
                   tern.chrome.status(status_of)
@@ -748,10 +743,16 @@
                     if empty ~= "1" then
                       table.insert(parts, { text = "*" .. files, tone = "muted", icon = "file" })
                     end
-                    if bookmarks ~= nil and bookmarks ~= "" then
-                      return { change = bookmarks, parts = parts, cwd = cwd }
+                    -- The segments the status bar shows, built once
+                    -- here: the status hook fires per pane per
+                    -- redraw, and allocating a fresh table every
+                    -- call tripped its 4 ms budget. with_distance
+                    -- rebuilds it when it prepends a distance part.
+                    local segments = { { text = (bookmarks ~= nil and bookmarks ~= "") and bookmarks or ("@" .. change), icon = "branch" } }
+                    for _, part in ipairs(parts) do
+                      table.insert(segments, part)
                     end
-                    return { change = "@" .. change, parts = parts, cwd = cwd }
+                    return { change = (bookmarks ~= nil and bookmarks ~= "") and bookmarks or ("@" .. change), parts = parts, segments = segments, cwd = cwd }
                   end
 
                   local function read_status(cwd, cb)
@@ -814,6 +815,13 @@
                         end
                         if distance ~= "" then
                           table.insert(entry.parts, 1, { text = distance, tone = "muted", icon = "arrow-right" })
+                          -- A distance part joined the front:
+                          -- rebuild the cached segments so the
+                          -- status hook shows it.
+                          entry.segments = { { text = entry.change, icon = "branch" } }
+                          for _, part in ipairs(entry.parts) do
+                            table.insert(entry.segments, part)
+                          end
                         end
                         with_distance(entry, names, index + 1, done)
                       end)
@@ -911,114 +919,139 @@
                   tern.bind("ctrl+alt+shift+r", "plugin.jj.remove")
                   tern.bind("ctrl+alt+shift+f8", "plugin.jj.refresh-status")
 
-                  -- Carries out what the last jj run queued; bounded, since a continuation may queue more.
+                  -- Carries out what the last jj run queued.
+                  -- One report per pass: each carries window IPC
+                  -- (a toast, a tab, a close), and a pass bills
+                  -- to the hook that pumped it. Draining the
+                  -- queue in one pass billed them all to that
+                  -- hook, tripping its budget and disabling the
+                  -- plugin until a reload. `sleep(0)` re-arms the
+                  -- rest as their own passes.
                   local function flush(cx)
-                    for _ = 1, 32 do
-                      if #reports == 0 then
-                        return
-                      end
-                      local queued = reports
-                      reports = {}
+                    if #reports == 0 then
+                      return
+                    end
+                    local report = reports[1]
+                    table.remove(reports, 1)
 
-                      for _, report in ipairs(queued) do
-                        if report.pick ~= nil then
-                          inflight = inflight + 1
-                          ask_pick(cx, {
-                            items = report.pick.items,
-                            current = report.pick.current,
-                          }, function(answer_cx, _action, choice)
-                            -- ask_pick pumped once on
-                            -- resolve; the queued open
-                            -- needs its own re-arm.
-                            pump(answer_cx)
-                            if choice == nil then
-                              return
-                            end
-                            if choice.root == "" then
-                              warn(answer_cx, "error", "no checkout for " .. choice.name, "the workspace has no directory")
-                              return
-                            end
-                            open_in(answer_cx, choice.root, choice.name)
-                            pump(answer_cx)
-                          end)
-                        elseif report.refresh ~= nil then
-                          inflight = inflight - 1
-                          refresh_status(cx)
-                        elseif report.close_tab ~= nil then
-                          inflight = inflight - 1
-                          local tab = tab_for_workspace(cx, report.close_tab.root, report.close_tab.pane)
-                          if tab == nil then
-                            tern.log.info("tern-jj: no tab held the removed workspace", report.close_tab.root)
-                          else
-                            close_tab(cx, tab)
+                    local function continue()
+                      if #reports > 0 then
+                        tern.sleep(0):next(function(_, _, live)
+                          if live ~= nil then
+                            pump(live)
                           end
-                        elseif report.jj_next ~= nil then
-                          inflight = inflight - 1
-                          report.jj_next(report.result)
-                        elseif report.open ~= nil then
-                          -- Only the pick path owes a decrement: it added one when it queued its dialog.
-                          -- A create's count is consumed by `jj_next`; getting this wrong left the pump settling every 120 ms.
-                          if not report.open.created then
-                            inflight = inflight - 1
-                          end
-
-                          local root = report.open.root
-                          local name = report.open.name
-
-                          local tab = tabs[root]
-                          if tab ~= nil and focus_tab(cx, tab) then
-                            show(cx, "info", "focused " .. name, root)
-                          else
-                            -- new_tab takes a launch that carries no name, and answers with its pane, not its tab.
-                            local label = tab_name(root, name)
-                            local opened = cx.layout:new_tab({ cwd = root })
-                            local tab = opened ~= nil and cx.session:tab_of(opened) or nil
-                            if tab ~= nil then
-                              cx.layout:name_tab(tab, label)
-                            end
-                            if opened == nil then
-                              if report.open.created then
-                                local main_root = main_root_of(root)
-                                if main_root ~= nil then
-                                  rollback(cx, main_root, name, root)
-                                else
-                                  show(cx, "error", "could not open a tab for " .. name, root)
-                                end
-                              else
-                                show(cx, "error", "could not open a tab for " .. name, root)
-                              end
-                            else
-                              tabs[root] = tab
-
-                              -- post_create first, while the tab is one pane, so the layout's splits
-                              -- inherit its setup. Typed straight away: a fresh pane's pty buffers
-                              -- input, and a settle has no command to wait for, so it burns its 30 s.
-                              if postCreate ~= "" then
-                                cx:run(opened, postCreate .. "\r")
-                              end
-
-                              -- `opened` is the new pane id, which is what split takes.
-                              if ideLayoutEnabled then
-                                -- Its own continuation: every `:next` runs as the `await` hook in a
-                                -- 50 ms budget, and sharing a callback tripped "await exceeded 50 ms".
-                                tern.sleep(0):next(function(_, _, idle)
-                                  if idle == nil then
-                                    return
-                                  end
-                                  if not ide_layout_apply(idle, opened) then
-                                    warn(idle, "error", "could not lay out " .. name)
-                                  end
-                                  pump(idle)
-                                end)
-                              end
-                              show(cx, "success", "opened " .. name, root)
-                            end
-                          end
-                        else
-                          show(cx, report.level, report.text, report.sub)
-                        end
+                        end)
                       end
                     end
+
+                    if report.pick ~= nil then
+                      inflight = inflight + 1
+                      ask_pick(cx, {
+                        items = report.pick.items,
+                        current = report.pick.current,
+                      }, function(answer_cx, _action, choice)
+                        -- ask_pick pumped once on
+                        -- resolve; the queued open
+                        -- needs its own re-arm.
+                        pump(answer_cx)
+                        if choice == nil then
+                          return
+                        end
+                        -- No checkout: the pick ends here. ask_pick
+                        -- already took the dialog's decrement, so this
+                        -- return balances it; before, the count never
+                        -- reached zero and the pump settled forever.
+                        if choice.root == "" then
+                          warn(answer_cx, "error", "no checkout for " .. choice.name, "the workspace has no directory")
+                          return
+                        end
+                        open_in(answer_cx, choice.root, choice.name)
+                        pump(answer_cx)
+                      end)
+                      return
+                    end
+                    if report.refresh ~= nil then
+                      inflight = inflight - 1
+                      refresh_status(cx)
+                      return
+                    end
+                    if report.close_tab ~= nil then
+                      inflight = inflight - 1
+                      local tab = tab_for_workspace(cx, report.close_tab.root, report.close_tab.pane)
+                      if tab == nil then
+                        tern.log.info("tern-jj: no tab held the removed workspace", report.close_tab.root)
+                      else
+                        close_tab(cx, tab)
+                      end
+                      return
+                    end
+                    if report.jj_next ~= nil then
+                      inflight = inflight - 1
+                      report.jj_next(report.result)
+                      return
+                    end
+                    if report.open ~= nil then
+                      -- No decrement here: ask_pick already took
+                      -- the dialog's decrement for every pick
+                      -- ending (dismissed, empty root, chosen).
+                      -- A create's count is consumed by `jj_next`.
+
+                      local root = report.open.root
+                      local name = report.open.name
+
+                      local tab = tabs[root]
+                      if tab ~= nil and focus_tab(cx, tab) then
+                        show(cx, "info", "focused " .. name, root)
+                      else
+                        -- new_tab takes a launch that carries no name, and answers with its pane, not its tab.
+                        local label = tab_name(root, name)
+                        local opened = cx.layout:new_tab({ cwd = root })
+                        local tab = opened ~= nil and cx.session:tab_of(opened) or nil
+                        if tab ~= nil then
+                          cx.layout:name_tab(tab, label)
+                        end
+                        if opened == nil then
+                          if report.open.created then
+                            local main_root = main_root_of(root)
+                            if main_root ~= nil then
+                              rollback(cx, main_root, name, root)
+                            else
+                              show(cx, "error", "could not open a tab for " .. name, root)
+                            end
+                          else
+                            show(cx, "error", "could not open a tab for " .. name, root)
+                          end
+                        else
+                          tabs[root] = tab
+
+                          -- post_create first, while the tab is one pane, so the layout's splits
+                          -- inherit its setup. Typed straight away: a fresh pane's pty buffers
+                          -- input, and a settle has no command to wait for, so it burns its 30 s.
+                          if postCreate ~= "" then
+                            cx:run(opened, postCreate .. "\r")
+                          end
+
+                          -- `opened` is the new pane id, which is what split takes.
+                          if ideLayoutEnabled then
+                            -- Its own continuation: every `:next` runs as the `await` hook in a
+                            -- 50 ms budget, and sharing a callback tripped "await exceeded 50 ms".
+                            tern.sleep(0):next(function(_, _, idle)
+                              if idle == nil then
+                                return
+                              end
+                              if not ide_layout_apply(idle, opened) then
+                                warn(idle, "error", "could not lay out " .. name)
+                              end
+                              pump(idle)
+                            end)
+                          end
+                          show(cx, "success", "opened " .. name, root)
+                        end
+                      end
+                      return
+                    end
+                    show(cx, report.level, report.text, report.sub)
+                    continue()
                   end
 
                   -- The pump: jj callbacks drive it (see `jj`); this
@@ -1056,31 +1089,46 @@
                   end)
 
                   -- Queued: the focus hook's 50 ms budget cannot cover refresh_status spawning jj.
+                  -- One refresh per quiet period: a focus storm (every pane
+                  -- switch fires one) queued a scan each, and one flush ran
+                  -- them all inside a single hook pass, tripping the budget
+                  -- and disabling the plugin until a reload.
+                  local focus_due = false
                   tern.on("focus", function(ev, cx)
-                    inflight = inflight + 1
-                    table.insert(reports, { refresh = true })
-                    pump(cx)
+                    if focus_due then
+                      return
+                    end
+                    focus_due = true
+                    tern.sleep(500):next(function(_, _, live)
+                      focus_due = false
+                      if live == nil then
+                        return
+                      end
+                      inflight = inflight + 1
+                      table.insert(reports, { refresh = true })
+                      pump(live)
+                    end)
                   end)
               '';
 
-          # The manifest's entry: the window half exceeds the load hook's budget, so the entry compiles it with loadstring on the first tick, and needs no timer.
+          # The manifest's entry: the window half exceeds the load hook's
+          # budget, so the entry compiles it on the first timer tick, where
+          # the compile gets its own budget, and needs no settle.
           entry =
             pkgs.writers.writeText "tern-jj-entry.luau" # luau
               ''
                 -- !nonstrict
-                local body = loadstring(tern.fs.read("window.luau"))
-
-                if type(body) ~= "function" then
-                  tern.log.error("tern-jj: window.luau did not compile")
-                  return
-                end
-
                 local started = false
                 tern.timer(1, function()
                   if started then
                     return
                   end
                   started = true
+                  local body = loadstring(tern.fs.read("window.luau"))
+                  if type(body) ~= "function" then
+                    tern.log.error("tern-jj: window.luau did not compile")
+                    return
+                  end
                   body()
                 end)
               '';
