@@ -18,11 +18,19 @@
         };
       };
 
-      security.rtkit.enable = true;
+      # AX211 (8087:0033) drops A2DP completion reports when USB autosuspend
+      # fires mid-stream -> choppy. Journal today: 10 "Failure in Bluetooth
+      # audio transport" plus "Missing completion reports ... firmware bug?".
+      boot.extraModprobeConfig = ''
+        options btusb enable_autosuspend=N
+      '';
 
-      # Disables built-in audio. Only use NVIDIA audio output.
-      # boot.extraModprobeConfig = ''
-      #   options snd_hda_intel enable=0,1
-      # '';
+      # rfcomm required for HFP/PBAP/AVRCP; not autoloaded -> "Protocol not
+      # supported (93)" in bluetoothd. AAC needs no config: SPA loads
+      # `libspa-codec-bluez5-aac.so` and negotiates the best mutually-advertised
+      # codec automatically.
+      boot.kernelModules = singleton "rfcomm";
+
+      security.rtkit.enable = true;
     };
 }
