@@ -210,7 +210,11 @@
 
           nodes.max_retries = 3;
 
-          builder.max_concurrent = foldl' (acc: b: acc + b.maxJobs) 0 <| remote_builders_all;
+          # Sum of the builders actually forwarded to `nix.buildMachines` (the
+          # host itself is not a dispatch target). The executor probes these
+          # hosts and derives a dynamic headroom from the same list, so the
+          # static cap and the dynamic total agree.
+          builder.max_concurrent = foldl' (acc: b: acc + b.maxJobs) 0 remote_builders;
         };
 
         inherit remote_builders;
