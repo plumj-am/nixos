@@ -2,7 +2,16 @@
 {
   flake.modules.nixos.desktop = self.modules.nixos.hardware-desktop;
   flake.modules.nixos.hardware-desktop =
-    { pkgs, ... }:
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
+    let
+      inherit (lib.modules) mkIf;
+      inherit (config.networking) hostName;
+    in
     {
       hardware = {
         enableRedistributableFirmware = true; # Fixes iwlwifi firmware.
@@ -11,6 +20,14 @@
           powerOnBoot = true;
         };
       };
+
+      # No wifi use for yuzu. Blacklisting iwlwifi frees the AX211's shared
+      # WLAN/BT antenna -> no coex contention.
+      boot.blacklistedKernelModules = mkIf (hostName == "yuzu") [
+        "iwlwifi"
+        "iwlmvm"
+      ];
+
       services.blueman.enable = true;
 
       environment.systemPackages = [
