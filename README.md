@@ -94,6 +94,45 @@ their `imports` lists.
 
 Systems are constructed using `libs/systems.nix` helpers in `hosts/`.
 
+## Flake outputs
+
+There are several packages and service modules exposed in this flake which you
+can use.
+
+> [!NOTE]
+> `inputs.grove` is a private flake input I use for some parts of my configs. If
+> you face any issues using the packages/services below, just set this to ignore
+> it (you won't need it): `inputs.plumjam.inputs.grove.follows = "";`.
+
+### Packages
+
+There are a few programs I have packaged with Nix available in `./packages`
+which you can consume and use in your own configs:
+
+- headroom ([source](https://github.com/headroomlabs-ai/headroom))
+- jj-stack ([source](https://github.com/bos/jj-stack))
+- maiao ([source](https://github.com/runetes/maiao))
+- omp-plugins ([source](https://github.com/can1357/oh-my-pi))
+- raddebugger ([source](https://github.com/EpicGames/raddebugger))
+- tern (currently closed beta - bring your own source)
+- tern-plugins
+
+Custom packages for my own use but also part of this flake:
+
+- rebuild
+- toggle-theme
+- pick-wallpaper
+- nu-helpers
+
+### Services
+
+I also offer a few services packaged as NixOS modules in `./services` which you
+can consume and use in your own configs:
+
+- rustic ([source](https://github.com/rustic-rs/rustic))
+- tarssh ([source](https://github.com/Freaky/tarssh))
+- headroom ([source](https://github.com/headroomlabs-ai/headroom))
+
 ## Other tools
 
 ### Secrets
