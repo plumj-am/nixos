@@ -17,14 +17,6 @@
       inherit (config.sops) secrets;
 
       caches = {
-        fsn1 = {
-          alias = "plumjam-fsn1";
-          bucket = "plumjam";
-          prefix = "nix";
-          endpoint = "fsn1.your-objectstorage.com";
-          pathStyle = "off";
-          apiVersion = "s3v4";
-        };
         garage = {
           alias = "plumjam-garage";
           bucket = "nix";
@@ -49,8 +41,6 @@
         users.groups.s3 = { };
 
         sops.secrets = {
-          "s3/fsn1/access-key".sopsFile = ../secrets/all/s3.yaml;
-          "s3/fsn1/secret-key".sopsFile = ../secrets/all/s3.yaml;
           "s3/garage/access-key".sopsFile = ../secrets/all/s3.yaml;
           "s3/garage/secret-key".sopsFile = ../secrets/all/s3.yaml;
         };
@@ -67,8 +57,6 @@
             StateDirectory = "s3";
             StateDirectoryMode = "0755";
             LoadCredential = [
-              "s3-fsn1-access-key:${secrets."s3/fsn1/access-key".path}"
-              "s3-fsn1-secret-key:${secrets."s3/fsn1/secret-key".path}"
               "s3-garage-access-key:${secrets."s3/garage/access-key".path}"
               "s3-garage-secret-key:${secrets."s3/garage/secret-key".path}"
             ];
@@ -79,9 +67,6 @@
                   mkdir -p /var/lib/s3/.aws
                   umask 077
                   cat > /var/lib/s3/.aws/credentials <<EOF
-                  [${caches.fsn1.alias}]
-                  aws_access_key_id=$(cat "$CREDENTIALS_DIRECTORY/s3-fsn1-access-key")
-                  aws_secret_access_key=$(cat "$CREDENTIALS_DIRECTORY/s3-fsn1-secret-key")
                   [${caches.garage.alias}]
                   aws_access_key_id=$(cat "$CREDENTIALS_DIRECTORY/s3-garage-access-key")
                   aws_secret_access_key=$(cat "$CREDENTIALS_DIRECTORY/s3-garage-secret-key")
@@ -106,17 +91,10 @@
     }:
     let
       inherit (lib.meta) getExe;
-      inherit (config.s3.caches) fsn1 garage;
+      inherit (config.s3.caches) garage;
       inherit (config.sops) secrets;
 
       s3SharedArgs = "&priority=43&multipart-upload=true&multipart-threshold=50M&multipart-chunk-size=10M";
-      fsn1Alias = fsn1.alias;
-      fsn1Bucket = fsn1.bucket;
-      fsn1Prefix = fsn1.prefix;
-      fsn1Endpoint = fsn1.endpoint;
-      fsn1PathStyle = fsn1.pathStyle;
-      fsn1ApiVersion = fsn1.apiVersion;
-      fsn1S3Cache = "s3://${fsn1Bucket}/${fsn1Prefix}?endpoint=${fsn1Endpoint}&profile=${fsn1Alias}${s3SharedArgs}";
 
       garageAlias = garage.alias;
       garageBucket = garage.bucket;
@@ -135,22 +113,24 @@
         group=$3
         mkdir -p "$dir"
 
-        fsn1AccessKey=$(cat ${secrets."s3/fsn1/access-key".path})
-        fsn1SecretKey=$(cat ${secrets."s3/fsn1/secret-key".path})
         garageAccessKey=$(cat ${secrets."s3/garage/access-key".path})
         garageSecretKey=$(cat ${secrets."s3/garage/secret-key".path})
 
-        cat > "$dir/credentials" <<EOF
-        [${fsn1Alias}]
-        aws_access_key_id=$fsn1AccessKey
-        aws_secret_access_key=$fsn1SecretKey
+        # Idempotent: rewrite the credentials file only when its content
+        # differs from what we would write (e.g. after secret rotation),
+        # so an unchanged setup is a no-op.
+        wanted=$(mktemp)
+        trap 'rm -f "$wanted"' EXIT
+        cat > "$wanted" <<EOF
         [${garageAlias}]
         aws_access_key_id=$garageAccessKey
         aws_secret_access_key=$garageSecretKey
         region=${garageRegion}
         EOF
-        chmod 600 "$dir/credentials"
-        chown $user:$group "$dir/credentials"
+
+        if [ ! -f "$dir/credentials" ] || [ "$(md5sum "$wanted" | cut -d' ' -f1)" != "$(md5sum "$dir/credentials" | cut -d' ' -f1)" ]; then
+          install -m 600 -o $user -g $group "$wanted" "$dir/credentials"
+        fi
       '';
 
       setupMc = pkgs.writeShellScriptBin "setup-mc" ''
@@ -161,63 +141,78 @@
         export MC_CONFIG_DIR="$config_dir"
         mkdir -p "$config_dir"
 
-        ${getExe pkgs.minio-client} --quiet alias set ${fsn1Alias} \
-          https://${fsn1Endpoint} \
-          "$(cat ${secrets."s3/fsn1/access-key".path})" \
-          "$(cat ${secrets."s3/fsn1/secret-key".path})" \
-          --api ${fsn1ApiVersion} \
-          --path ${fsn1PathStyle}
+        # Idempotent alias set: `mc alias set` rewrites the alias config
+        # unconditionally; skip it when the stored alias already matches
+        # the desired URL, API, path style, and keys.
+        set_alias_if_changed() {
+          local name=$1 url=$2 access=$3 secret=$4 api=$5 path=$6
+          local current
+          if current=$(${getExe pkgs.minio-client} alias list --json "$name" 2>/dev/null) \
+            && [ "$(echo "$current" | ${getExe pkgs.jq} -r '.URL')" = "$url" ] \
+            && [ "$(echo "$current" | ${getExe pkgs.jq} -r '.api')" = "$api" ] \
+            && [ "$(echo "$current" | ${getExe pkgs.jq} -r '.path')" = "$path" ] \
+            && [ "$(echo "$current" | ${getExe pkgs.jq} -r '.accessKey')" = "$access" ] \
+            && [ "$(echo "$current" | ${getExe pkgs.jq} -r '.secretKey')" = "$secret" ]; then
+            return 0
+          fi
+          ${getExe pkgs.minio-client} --quiet alias set "$name" \
+            "$url" "$access" "$secret" \
+            --api "$api" \
+            --path "$path"
+        }
 
-        ${getExe pkgs.minio-client} --quiet alias set ${garageAlias} \
+        set_alias_if_changed ${garageAlias} \
           http://${garageEndpoint} \
           "$(cat ${secrets."s3/garage/access-key".path})" \
           "$(cat ${secrets."s3/garage/secret-key".path})" \
-          --api ${garageApiVersion} \
-          --path ${garagePathStyle}
+          ${garageApiVersion} \
+          ${garagePathStyle}
 
-        if ! ${getExe pkgs.minio-client} --quiet ilm ls --json ${fsn1Alias}/${fsn1Bucket} | ${getExe pkgs.jq} -e '.config.Rules[]? | select(.Expiration.Days == 14)'; then
-          ${getExe pkgs.minio-client} --quiet ilm add --expire-days 14 ${fsn1Alias}/${fsn1Bucket} 2>/dev/null || true
-        fi
         if ! ${getExe pkgs.minio-client} --quiet ilm ls --json ${garageAlias}/${garageBucket} | ${getExe pkgs.jq} -e '.config.Rules[]? | select(.Expiration.Days == 14)'; then
           ${getExe pkgs.minio-client} --quiet ilm add --expire-days 14 ${garageAlias}/${garageBucket} 2>/dev/null || true
         fi
       '';
 
       setupScript = pkgs.writeShellScriptBin "s3-setup" ''
-                #!/usr/bin/env bash
-                set -eu
+        #!/usr/bin/env bash
+        set -eu
 
-                # jam
-                ${getExe setupAwsCreds} ${config.users.users.jam.home}/.aws jam users
-                ${getExe setupMc} ${config.users.users.jam.home}/.mc
-                chown -R jam:users ${config.users.users.jam.home}/.mc
+        # jam
+        ${getExe setupAwsCreds} ${config.users.users.jam.home}/.aws jam users
+        ${getExe setupMc} ${config.users.users.jam.home}/.mc
+        chown -R jam:users ${config.users.users.jam.home}/.mc
 
-                # root
-                ${getExe setupAwsCreds} /root/.aws root root
-                ${getExe setupMc} /root/.mc
+        # root
+        ${getExe setupAwsCreds} /root/.aws root root
+        ${getExe setupMc} /root/.mc
 
-                nix_cache_info=$(mktemp)
-                cat > "$nix_cache_info" << EOF
+        nix_cache_info=$(mktemp)
+        trap 'rm -f "$nix_cache_info"' EXIT
+        cat > "$nix_cache_info" << EOF
         StoreDir: /nix/store
         WantMassQuery: 1
         Priority: 43
         EOF
 
-                MC_CONFIG_DIR=/root/.mc \
-                ${getExe pkgs.minio-client} cp --quiet "$nix_cache_info" ${fsn1Alias}/${fsn1Bucket}/${fsn1Prefix}/nix-cache-info
+        # Idempotent upload: push nix-cache-info only when the remote
+        # object is missing or its content differs.
+        upload_if_changed() {
+          local target=$1
+          local remote_hash
+          if remote_hash=$(${getExe pkgs.minio-client} cat --quiet "$target" 2>/dev/null | md5sum | cut -d' ' -f1) \
+            && [ "$remote_hash" = "$(md5sum "$nix_cache_info" | cut -d' ' -f1)" ]; then
+            return 0
+          fi
+          MC_CONFIG_DIR=/root/.mc \
+          ${getExe pkgs.minio-client} cp --quiet "$nix_cache_info" "$target"
+        }
 
-                MC_CONFIG_DIR=/root/.mc \
-                ${getExe pkgs.minio-client} cp --quiet "$nix_cache_info" ${garageAlias}/${garageBucket}/nix-cache-info
+        upload_if_changed ${garageAlias}/${garageBucket}/nix-cache-info
 
-                rm "$nix_cache_info"
-
-                echo "S3 setup complete."
-                echo "  Fsn1 Bucket: ${fsn1Bucket}"
-                echo "  Fsn1 Endpoint: ${fsn1Endpoint}"
-                echo "  Fsn1 Substituter: ${fsn1S3Cache}"
-                echo "  Garage Bucket: ${garageAlias}"
-                echo "  Garage Endpoint: ${garageEndpoint}"
-                echo "  Garage Substituter: ${garageS3Cache}"
+        echo "S3 setup complete."
+        echo "  Garage Bucket: ${garageAlias}"
+        echo "  Garage Endpoint: ${garageEndpoint}"
+        echo "  Garage Substituter: ${garageS3Cache}"
       '';
     in
     {
@@ -254,12 +249,12 @@
           Type = "oneshot";
           RemainAfterExit = true;
           ExecStart = getExe setupScript;
+          TimeoutStartSec = "60s";
         };
       };
 
       nix.settings = {
         extra-substituters = [
-          fsn1S3Cache
           garageS3Cache
         ];
 
