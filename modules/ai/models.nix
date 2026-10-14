@@ -10,7 +10,7 @@
       config.ai.defaultModels =
         let
           freeStrong = {
-            model = "inclusionai/ling-3.1-flash:free";
+            model = "stealth/cat-jam:free";
             vision = false;
           };
           freeWeak = {
@@ -157,18 +157,18 @@
           maxOutput = 262144;
         }
         {
-          id = "inclusionai/ling-3.1-flash:free";
-          name = "Inclusion Ling 3.1 Flash";
+          id = "stealth/cat-jam:free";
+          name = "Stealth Cat Jam";
           free = true;
           thinking = {
-            minLevel = "low";
-            maxLevel = "high";
+            minLevel = "minimal";
+            maxLevel = "max";
           };
           inputTypes = [
             "text"
           ];
-          context = 262144;
-          maxOutput = 32768;
+          context = 1048576;
+          maxOutput = 262144;
         }
         {
           id = "poolside/laguna-s-2.1-free";
