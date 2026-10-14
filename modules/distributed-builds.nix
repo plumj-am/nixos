@@ -39,6 +39,7 @@
                 "cgroups"
                 "kvm"
                 "nixos-test"
+                "recursive-nix"
                 "uid-range" # For nspawn vm tests.
               ];
               system = value.config.nixpkgs.hostPlatform.system;

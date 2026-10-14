@@ -73,33 +73,49 @@ in
 
         experimental-features = [
           "auto-allocate-uids" # For nspawn vm tests.
+          "ca-derivations"
+          "cgroups"
+          "fetch-closure"
           "flakes"
           "nix-command"
           "pipe-operators"
-          "cgroups"
-          "ca-derivations"
-          "fetch-closure"
+          "recursive-nix"
+          "verified-fetches"
+          "wasm-derivations"
         ];
 
         allow-import-from-derivation = true; # TODO: disable
+
         auto-optimise-store = true;
-        use-cgroups = true;
-        builders-use-substitutes = true;
-        fallback = true;
+
         flake-registry = "";
         http-connections = 0;
+        http3 = true;
+
+        builders-use-substitutes = true;
+        fallback = true;
+
+        use-cgroups = true;
         max-jobs = "auto";
         cores = 0;
+
         show-trace = true;
+        log-lines = 100;
+        warn-dirty = false;
+
         eval-cache = true;
         pure-eval = true;
+        eval-cores = 0;
+        eval-max-fibers = 4; # default
+        lazy-trees = true;
+
         trusted-users = [
           "root"
           "@wheel"
           "build"
           "gitea-runner"
         ];
-        warn-dirty = false;
+
         use-xdg-base-directories = true;
 
         run-diff-hook = true;
@@ -111,6 +127,7 @@ in
           "big-parallel"
           "kvm"
           "nixos-test"
+          "recursive-nix"
           "uid-range" # For nspawn vm tests.
         ];
       };

@@ -21,7 +21,7 @@
 
               # `NIX_CONFIG` appends to `/etc/nix/nix.conf` instead of replacing it.
               # Last occurrence of an option wins. `--flags` always win over both.
-              $env.NIX_CONFIG = $"($env.NIX_CONFIG? | default "")(char nl)max-jobs = ($usable_cpus)(char nl)cores = 1"
+              $env.NIX_CONFIG = $"($env.NIX_CONFIG? | default "")(char nl)max-jobs = ($usable_cpus)(char nl)eval-cores = 1(char nl)eval-max-fibers = 1(char nl)cores = 1"
 
               # The environment form of `build.jobs`, with the rule
               # max 2 (threads / 5). `--jobs` still wins over this.
