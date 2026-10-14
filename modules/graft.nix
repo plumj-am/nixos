@@ -11,11 +11,17 @@
     let
       inherit (lib.constants) tailnet;
       inherit (lib.lists) filter foldl' singleton;
+      inherit (lib.meta) getExe;
       inherit (lib.modules) merge mkForce;
       inherit (config.networking) domain hostName;
       inherit (config.sops) secrets;
 
       cfg = config.services.graft;
+
+      graftCacheServeConfig = pkgs.writers.writeJSON "tailscale-serve-graft-cache.json" {
+        version = "0.0.1";
+        endpoints."tcp:8024" = "tcp://127.0.0.1:${toString config.services.nix-serve.port}";
+      };
 
       remote_builders_all =
         let
@@ -106,7 +112,7 @@
             checks_api_enabled = true;
 
             incrementalize = true;
-            cache_url = "https://graft-cache.plumj.am";
+            cache_url = "http://graft-cache.${tailnet}:8024";
 
             api_token_file = secrets."graft/api/token".path;
             api_scope = "write";
@@ -237,14 +243,39 @@
         extraParams = "--store ${cfg.config.nix.cache_dir} --priority 42";
       };
 
-      # tailscale-nginx-auth gates the cache host. Ferron reaches it over its
-      # unix socket, so the ferron user must be in the socket's group.
-      services.tailscaleAuth.enable = true;
-      users.users.ferron.extraGroups = [ config.services.tailscaleAuth.group ];
-
       nix.settings = {
-        extra-substituters = singleton "https://graft-cache.plumj.am";
+        extra-substituters = singleton "http://graft-cache.${tailnet}:8024";
         trusted-public-keys = singleton "graft-cache-1:cJVyGZWQ+v4vG6ajYspWHD5NFvOhJAk7cFbxh/hmSiI=";
+      };
+
+      services.tailscale.extraUpFlags = singleton "--advertise-tags=tag:server,tag:cache";
+
+      systemd.services.tailscale-serve-graft-cache = {
+        description = "Advertise svc:graft-cache via Tailscale Serve";
+        wantedBy = singleton "multi-user.target";
+        wants = [
+          "tailscaled.service"
+          "tailscaled-autoconnect.service"
+          "nix-serve.service"
+        ];
+        after = [
+          "tailscaled.service"
+          "tailscaled-autoconnect.service"
+          "nix-serve.service"
+        ];
+        # The Service may not exist in the console yet, and tags land with
+        # tailscaled-autoconnect: retry instead of failing the boot.
+        startLimitIntervalSec = 0;
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+          Restart = "on-failure";
+          RestartSec = "5s";
+        };
+        script = ''
+          ${getExe pkgs.tailscale} serve set-config --service=svc:graft-cache ${graftCacheServeConfig}
+          ${getExe pkgs.tailscale} serve advertise svc:graft-cache
+        '';
       };
 
       services.ferronVhosts = {
@@ -265,44 +296,6 @@
           config = # kdl
             ''
               ${config.services.ferron.headers}
-            '';
-        };
-
-        "graft-cache.${domain}" = merge config.services.ferron.sslTemplate {
-          proxy = "http://127.0.0.1:${toString config.services.nix-serve.port}";
-
-          # nginx renamed the auth response's Tailscale-* headers to
-          # X-Webauth-* downstream; ferron's `copy` only copies same-name, so
-          # the Tailscale-* headers are copied through and renamed here.
-          # Expected-Tailnet is sent to both the auth subrequest and the
-          # backend (nginx sent it to the backend only).
-          proxyExtraConfig = # kdl
-            ''
-              request_header X-Webauth-User "{{request.header.tailscale_user}}"
-              request_header X-Webauth-Name "{{request.header.tailscale_name}}"
-              request_header X-Webauth-Login "{{request.header.tailscale_login}}"
-              request_header X-Webauth-Tailnet "{{request.header.tailscale_tailnet}}"
-              request_header X-Webauth-Profile-Picture "{{request.header.tailscale_profile_picture}}"
-              request_header Expected-Tailnet "${tailnet}"
-            '';
-
-          config = # kdl
-            ''
-              ${config.services.ferron.headers}
-
-              auth_to http://localhost {
-                  unix /run/tailscale-nginx-auth/tailscale-nginx-auth.sock
-
-                  request_header Host "graft-cache.${domain}"
-                  request_header Remote-Addr "{{remote.ip}}"
-                  request_header Remote-Port "{{remote.port}}"
-                  request_header Original-URI "{{request.uri}}"
-                  request_header X-Scheme "{{request.scheme}}"
-                  request_header X-Auth-Request-Redirect "https://graft-cache.${domain}{{request.uri}}"
-                  request_header Expected-Tailnet "${tailnet}."
-
-                  copy Tailscale-User Tailscale-Name Tailscale-Login Tailscale-Tailnet Tailscale-Profile-Picture
-              }
             '';
         };
       };

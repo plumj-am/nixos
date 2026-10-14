@@ -37,18 +37,15 @@
     let
       inherit (lib.constants) tailnet;
       inherit (lib.lists) singleton;
+
+      graftCache = "graft-cache.${tailnet}";
     in
     {
-      # tailscale nginx auth checks the client source address, so nix must
-      # reach the cache over the tailnet instead of the public DNS record.
-      # Pin sloe's tailnet name so the record resolves before MagicDNS
-      # answers during boot.
       networking.hosts = {
-        "100.94.223.95" = [
-          "graft-cache.plumj.am" # sloe
-          "sloe.${tailnet}"
-        ];
-        "fd7a:115c:a1e0::5401:df8e" = singleton "graft-cache.plumj.am";
+        "100.127.89.136" = singleton graftCache;
+        "fd7a:115c:a1e0::a839:5989" = singleton graftCache;
+
+        "100.94.223.95" = singleton "sloe.${tailnet}";
       };
     };
 }

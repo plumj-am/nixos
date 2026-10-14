@@ -5,8 +5,9 @@
   ...
 }:
 let
-  inherit (lib) mkDefault;
   inherit (lib.attrsets) filterAttrs mapAttrsToList;
+  inherit (lib.constants) tailnet;
+  inherit (lib.modules) mkDefault;
   inherit (lib.strings) concatStringsSep;
   inherit (lib.trivial) const;
   inherit (lib.types) isType;
@@ -61,7 +62,7 @@ in
           "https://nix-community.cachix.org"
           "https://cache.numtide.com"
 
-          "https://graft-cache.plumj.am"
+          "http://graft-cache.${tailnet}:8024"
         ];
 
         extra-trusted-public-keys = [
