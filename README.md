@@ -28,7 +28,8 @@ Dendritic NixOS configurations for 8 personal machines:
 - [Hjem](https://github.com/feel-co/hjem) for $HOME management
 - No `specialArgs` or janky passing around of configs between layers[^4]
 
-[^4]: Apart from inherit `specialArgs = { inherit inputs; };` for each host. It
+[^4]:
+    Apart from inherit `specialArgs = { inherit inputs; };` for each host. It
     is necessary for any host configuration.
 
 ## How it works

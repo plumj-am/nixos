@@ -1,20 +1,11 @@
 { self, ... }:
 let
-  denoJsTsLanguages = {
+  oxfmtJsTsLanguages = {
     JavaScript = "js";
     JSX = "jsx";
     TSX = "tsx";
     TypeScript = "ts";
   };
-
-  denoFmtArgs = [
-    "fmt"
-    "--use-tabs"
-    "--no-semicolons"
-    "--indent-width"
-    "4"
-    "--unstable-component"
-  ];
 in
 {
   flake.modules.common.default.imports = [
@@ -42,6 +33,19 @@ in
         ;
       inherit (lib.lists) singleton;
       inherit (config) theme;
+
+      oxfmtConfigFile = pkgs.writers.writeJSON ".oxfmtrc.json" {
+        bracketSameLine = true;
+        printWidth = 100;
+        semi = true;
+        tabWidth = 3;
+        useTabs = true;
+      };
+
+      oxfmtArgs = [
+        "--config"
+        "${oxfmtConfigFile}"
+      ];
     in
     {
       shellAliases = {
@@ -159,32 +163,27 @@ in
                     {
                       inherit name;
                       auto-format = true;
-                      formatter.command = "deno";
-                      formatter.args = denoFmtArgs ++ [
-                        "--ext"
-                        ext
-                        "-"
+                      formatter.command = "oxfmt";
+                      formatter.args = oxfmtArgs ++ [
+                        "--stdin-filepath"
+                        "%{buffer_name}"
                       ];
                     }
-                    // optionalAttrs (elem ext (attrValues denoJsTsLanguages)) {
+                    // optionalAttrs (elem ext (attrValues oxfmtJsTsLanguages)) {
                       language-servers = singleton "deno";
                     };
 
-                  denoFmtLanguages =
+                  oxfmtLanguages =
                     {
-                      astro = "astro";
                       css = "css";
-                      html = "html";
                       javascript = "js";
                       json = "json";
                       jsonc = "jsonc";
                       jsx = "jsx";
                       markdown = "md";
                       scss = "scss";
-                      svelte = "svelte";
                       tsx = "tsx";
                       typescript = "ts";
-                      vue = "vue";
                       yaml = "yaml";
                     }
                     |> mapAttrs languageConfig
@@ -296,7 +295,7 @@ in
                     }
                   ];
                 in
-                denoFmtLanguages ++ baseLanguages;
+                oxfmtLanguages ++ baseLanguages;
 
               language-server = {
                 nil = {
@@ -487,7 +486,9 @@ in
         pkgs.asm-lsp
 
         # TypeScript etc.
+        # deno kept for its LSP; formatting goes through oxfmt.
         pkgs.deno
+        pkgs.oxfmt
 
         # Nix
         pkgs.nil

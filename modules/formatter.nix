@@ -30,7 +30,7 @@ in
         };
         settings.formatter.taplo =
           let
-            settings = (pkgs.formats.toml { }).generate "taplo.toml" {
+            settings = pkgs.writers.writeTOML "taplo.toml" {
               formatting = {
                 align_entries = true;
                 column_width = 100;
@@ -48,26 +48,35 @@ in
             ];
           };
 
-        # css html js jsx less markdown md sass scss ts tsx
-        programs.deno = {
+        # css html js jsx less markdown md sass scss ts tsx yaml yml
+        # TODO: add more languages once they move to the "Native" section here:
+        # <https://oxc.rs/docs/guide/usage/formatter/language-support.html#native>
+        programs.oxfmt = {
           enable = true;
-          package = pkgs.deno;
+          package = pkgs.oxfmt;
           excludes = [
+            "*.html"
             "*.json"
             "*.jsonc"
             "*.yaml" # sops files
           ];
         };
-        settings.formatter.deno = {
-          options = [
-            "fmt"
-            "--use-tabs"
-            "--no-semicolons"
-            "--indent-width"
-            "4"
-            "--unstable-component"
-          ];
-        };
+        settings.formatter.oxfmt =
+          let
+            configFile = pkgs.writers.writeJSON ".oxfmtrc.json" {
+              bracketSameLine = true;
+              printWidth = 100;
+              semi = true;
+              tabWidth = 3;
+              useTabs = true;
+            };
+          in
+          {
+            options = [
+              "--config"
+              "${configFile}"
+            ];
+          };
 
         settings.formatter.nufmt =
           let

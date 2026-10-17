@@ -10,21 +10,21 @@
 - Use jj, never git.
 - Prefer provided read/edit tools whenever possible; avoid `sed` and similar.
 - Preferred scripting language chain:
-  1. nushell
-  2. python
-  3. bash - last resort
+   1. nushell
+   2. python
+   3. bash - last resort
 - Fallback chain for tool calls:
-  1. builtin tool
-  2. system tool
-  3. devshell with `nix develop`
-  4. `nix run/shell`
+   1. builtin tool
+   2. system tool
+   3. devshell with `nix develop`
+   4. `nix run/shell`
 - Do not send questions as plain text, use an available tool (e.g. question,
   interview).
 - Documentation can be looked up with:
-  - `context7`
-  - `gh_grep`
-  - extract Rust documentation directly from `~/.cargo/registry` for the correct
-    version of the crate
+   - `context7`
+   - `gh_grep`
+   - extract Rust documentation directly from `~/.cargo/registry` for the correct
+     version of the crate
 - Web search is possible via the Exa tool.
 
 ## Rust
