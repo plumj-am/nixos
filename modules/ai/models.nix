@@ -10,7 +10,7 @@
       config.ai.defaultModels =
         let
           freeStrong = {
-            model = "stealth/cat-jam:free";
+            model = null;
             vision = false;
           };
           freeWeak = {
@@ -154,20 +154,6 @@
             cacheWrite = 0;
           };
           context = 1000000;
-          maxOutput = 262144;
-        }
-        {
-          id = "stealth/cat-jam:free";
-          name = "Stealth Cat Jam";
-          free = true;
-          thinking = {
-            minLevel = "minimal";
-            maxLevel = "max";
-          };
-          inputTypes = [
-            "text"
-          ];
-          context = 1048576;
           maxOutput = 262144;
         }
         {
