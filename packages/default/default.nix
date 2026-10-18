@@ -1,9 +1,22 @@
-{ self, ... }:
+{ self, inputs, ... }:
 {
   perSystem =
-    { pkgs, lib, ... }:
+    {
+      pkgs,
+      lib,
+      ...
+    }:
     let
       inherit (lib.meta) getExe;
+
+      # pkgs.nh bakes its nom PATH prefix from the `nix-output-monitor`
+      # argument, so the swap must go through `override`; `overrideAttrs`
+      # cannot reach it.
+      nh =
+        getExe
+        <| pkgs.nh.override {
+          nix-output-monitor = inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.nom-rs;
+        };
     in
     {
       packages.default =
@@ -11,7 +24,7 @@
           ''
             def --wrapped main [...arguments] {
               $env.NH_FLAKE = "${self}"
-              exec ${getExe pkgs.nh} ...$arguments
+              exec ${nh} ...$arguments
             }
           '';
     };
