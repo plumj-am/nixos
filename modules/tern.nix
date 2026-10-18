@@ -374,9 +374,36 @@
         xdg.config.files."tern/plugins/tab-status/init.luau".source =
           "${flakePackages.tern-tab-status-plugin}/init.luau";
 
-        xdg.config.files."tern/plugins/tab-status/tab-status.css".source =
-          "${flakePackages.tern-tab-status-plugin}/tab-status.css";
+        xdg.config.files."tern/plugins/chime/plugin.toml".source =
+          "${flakePackages.tern-chime-plugin}/plugin.toml";
 
+        xdg.config.files."tern/plugins/chime/sounds.toml" = {
+          generator = pkgs.writers.writeTOML "tern-plugins-chime-sounds.toml";
+          value = {
+            only_unfocused = false;
+            min_seconds = 30; # for shell command notifications
+            volume = 2; # %
+
+            alert = "sounds/alert.wav";
+            yield = "sounds/yield.wav";
+            done = "sounds/done.wav";
+          };
+        };
+
+        xdg.config.files."tern/plugins/chime/src/window.luau".source =
+          "${flakePackages.tern-chime-plugin}/src/window.luau";
+
+        xdg.config.files."tern/plugins/chime/scripts/play.vbs".source =
+          "${flakePackages.tern-chime-plugin}/scripts/play.vbs";
+
+        xdg.config.files."tern/plugins/chime/sounds/alert.wav".source =
+          "${flakePackages.tern-chime-plugin}/sounds/alert.wav";
+
+        xdg.config.files."tern/plugins/chime/sounds/done.wav".source =
+          "${flakePackages.tern-chime-plugin}/sounds/done.wav";
+
+        xdg.config.files."tern/plugins/chime/sounds/yield.wav".source =
+          "${flakePackages.tern-chime-plugin}/sounds/yield.wav";
       };
     };
 }
