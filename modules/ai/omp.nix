@@ -112,9 +112,9 @@
               modelProviderOrder = singleton providerKey;
               modelRoles = with models; {
                 inherit tiny vision;
-                default = "${big}:max"; # prewalk; rest use medium default
+                default = "${small}:high";
                 smol = small;
-                slow = "${big}:high";
+                slow = "${big}:max";
                 advisor = small;
                 plan = "${big}:max";
                 designer = vision;
@@ -144,6 +144,7 @@
 
               contextPromotion.enabled = false; # do not upgrade model - compact instead.
               compaction.enabled = true;
+              compaction.thresholdTokens = 400000; # context maintenance starts at 400k tokens for applicable models
 
               autoResume = true;
               features.unexpectedStopDetection = true;
