@@ -10,11 +10,11 @@
       config.ai.defaultModels =
         let
           freeStrong = {
-            model = null;
-            vision = false;
+            model = "minimax/minimax-m3.1-flash:free";
+            vision = true;
           };
           freeWeak = {
-            model = "poolside/laguna-s-2.1-free";
+            model = "reflection/beam:free";
             vision = false;
           };
 
@@ -32,7 +32,7 @@
             (visionOf freeWeak)
           ] "xiaomi/mimo-v2.6-flash";
           # strong -> default
-          big = firstOrDefault [ freeStrong.model ] "z-ai/glm-5.3-flash";
+          big = firstOrDefault [ freeStrong.model ] "deepseek/deepseek-v4.1-flash";
           # strong -> default
           fallback = firstOrDefault [ freeStrong.model ] "xiaomi/mimo-v2.6-flash";
           decision = "typesafe/jev";
@@ -153,6 +153,36 @@
             cacheRead = 0.03;
             cacheWrite = 0;
           };
+          context = 1000000;
+          maxOutput = 262144;
+        }
+        {
+          id = "reflection/beam:free";
+          name = "Reflection Beam 1.0";
+          free = true;
+          thinking = {
+            minLevel = "low";
+            maxLevel = "max";
+          };
+          inputTypes = [
+            "text"
+            "image"
+          ];
+          context = 1048576;
+          maxOutput = 262144;
+        }
+        {
+          id = "minimax/minimax-m3.1-flash:free";
+          name = "MiniMax M3.1 Flash";
+          free = true;
+          thinking = {
+            minLevel = "low";
+            maxLevel = "max";
+          };
+          inputTypes = [
+            "text"
+            "image"
+          ];
           context = 1000000;
           maxOutput = 262144;
         }
