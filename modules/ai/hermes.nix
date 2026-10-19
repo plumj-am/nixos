@@ -811,33 +811,6 @@ let
         '';
       };
     };
-
-  mkRepoCloneService = pkgs: cfg: owner: repo: {
-    systemd.services."hermes-clone-${owner}-${repo}" = {
-      description = "Clone the ${owner}/${repo} repo from GitHub";
-      wantedBy = [ "hermes-agent.service" ];
-      serviceConfig = oneshotServiceConfig;
-      environment.HOME = cfg.stateDir;
-      path = [ pkgs.gitMinimal ];
-      script = "${pkgs.writers.writeNu "hermes-clone-${owner}-${repo}.nu" # nu
-        ''
-          let owner = "${owner}"
-          let repo = "${repo}"
-          let full = $"($owner)/($repo)"
-          let clone_dir = ("${cfg.workingDirectory}" | path join $repo)
-
-          if not ($clone_dir | path join ".git" | path exists) {
-            print $"cloning ($full) to ($clone_dir)..."
-            try {
-              ${pkgs.gh}/bin/gh repo clone $full $clone_dir
-            } catch {|e|
-              error make $"repo clone failed in ($clone_dir): ($e)"
-            }
-          }
-        ''
-      }";
-    };
-  };
 in
 {
   flake.modules.nixos.hermes-grove =
@@ -848,9 +821,6 @@ in
       config,
       ...
     }:
-    let
-      cfg = config.services.hermes-agent;
-    in
     {
       imports = [
         (mkHermesAgent "grove" {
@@ -864,7 +834,6 @@ in
           gitEmail = "keeper-bot@plumj.am";
           jjStackUsername = "keeper";
         })
-        (mkRepoCloneService pkgs cfg "grove-systems" "grove")
       ];
     };
 
@@ -876,9 +845,6 @@ in
       config,
       ...
     }:
-    let
-      cfg = config.services.hermes-agent;
-    in
     {
       imports = [
         (mkHermesAgent "plumjam" {
@@ -897,8 +863,6 @@ in
           gitEmail = "plumbot@plumj.am";
           jjStackUsername = "plum-9000";
         })
-        (mkRepoCloneService pkgs cfg "plumj-am" "nixos")
-        (mkRepoCloneService pkgs cfg "grove-systems" "grove")
       ];
     };
 
