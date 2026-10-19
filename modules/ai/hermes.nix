@@ -923,7 +923,6 @@ in
             lib
             pkgs
             ;
-          mainModel = "xiaomi/mimo-v2.6-pro";
           personality = "kawaii";
           withInstagram = true;
           withKiwi = true;
