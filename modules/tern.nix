@@ -132,8 +132,8 @@
             smooth_scroll = true;
             overscroll = true;
 
-            link_click = "Click";
-            link_target = "Tern";
+            link_click = "Command"; # open links with ctrl+click
+            link_target = "Browser"; # open in external browser
             hyperlinks = "allow";
 
             clipboard_write = "allow";
@@ -300,7 +300,7 @@
             petSize = 20;
             skin = "cat";
             stretchIntervalMin = 9999; # idk how to turn it off
-            taskCompleteSoundVolume = 0.1;
+            taskCompleteSoundVolume = 0.0;
           };
         };
 
