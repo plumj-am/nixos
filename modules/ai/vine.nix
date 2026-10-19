@@ -51,6 +51,13 @@
                 "xiaomi/mimo-v2.6-flash" = "mimo-v2.6-flash";
                 "xiaomi/mimo-v2.6-pro" = "mimo-v2.6-pro";
               };
+
+              # client-sent ids this upstream does not serve; exact match
+              skip_models = [
+                "minimax/minimax-m3.1-flash:free"
+                "reflection/beam:free"
+                "typesafe/jev"
+              ];
             };
           };
         };
