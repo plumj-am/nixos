@@ -3,8 +3,6 @@
   flake.modules.common.default = self.modules.common.ai-skills;
   flake.modules.common.ai-skills =
     {
-      inputs,
-      pkgs,
       lib,
       config,
       ...
@@ -30,15 +28,6 @@
               "grill-me"
               "grill-with-docs"
             ];
-          }
-          {
-            repo = "https://github.com/stablyai/orca";
-            skills = [
-              "orchestration"
-              "orca-cli"
-            ];
-            # the orca skills drive the orca CLI, so skip them where it is absent
-            requires = [ inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.orca ];
           }
         ];
         ai.skills.gh = [
