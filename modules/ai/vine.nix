@@ -17,9 +17,7 @@
       ai.secrets = true;
 
       sops.templates."vine-env".content = ''
-        VINE_UPSTREAMS_COMMANDCODE__API_KEYS=${sops.placeholder."commandcode-1-key"},${
-          sops.placeholder."commandcode-2-key"
-        }
+        VINE_UPSTREAMS_COMMANDCODE__API_KEYS=${sops.placeholder."commandcode-1-key"}
         VINE_UPSTREAMS_OPENDESIGN__API_KEYS=${sops.placeholder."opendesign-1-key"}
       '';
 
