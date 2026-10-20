@@ -203,12 +203,28 @@
                 }
                 ]==]
 
+                -- The static sheet never changes; only the gates below it
+                -- do. Installing the whole sheet on every rebuild made the
+                -- window restyle on every title event, and a restyle is
+                -- what makes the next frame slow: the chrome formatter
+                -- then trips its 4 ms budget, because it runs while the
+                -- window builds a frame.
+                --
+                -- So the sheet is one sheet, as it was, and it is
+                -- installed only when a gate changed. The gates stay in
+                -- the same sheet as the rules they override, so their
+                -- order inside it does not change.
+                --
+                -- The first rebuild always installs, so the sheet is
+                -- there even when no gate changed. A sentinel, not nil:
+                -- an empty gate list is a real value.
+                local last_gates = false
                 local function rebuild(cx)
                 	local panes = cx.session:panes()
                 	local tabs = cx.session:tabs()
 
                 	local tiled = {}
-                	for _, pane in panes do
+                	for _, pane in ipairs(panes) do
                 		if pane.tab ~= nil and not pane.floating and not pane.parked then
                 			tiled[pane.tab] = tiled[pane.tab] or {}
                 			table.insert(tiled[pane.tab], pane.kind)
@@ -274,45 +290,52 @@
                 				where.group,
                 				where.index
                 			)
-                			gates[#gates + 1] = rowsel .. " .tn-dk-c::before, " .. rowsel .. " .tn-dk-c::after { display: none }"
+                		gates[#gates + 1] = rowsel .. " .tn-dk-c::before, " .. rowsel .. " .tn-dk-c::after { display: none }"
                 		end
                 	end
-                	tern.css("ui", CSS .. "\n" .. table.concat(gates, "\n"))
+
+                	-- The sheet is installed only when a gate changed. A
+                	-- title event fires on every agent frame, and
+                	-- reinstalling on each one restyled the window every
+                	-- time: "title exceeded 50 ms", and the slow frames
+                	-- that followed tripped the chrome formatter too.
+                	local sheet = table.concat(gates, "\n")
+                	if sheet == last_gates then
+                		return
+                	end
+                	last_gates = sheet
+                	tern.css("ui", CSS .. "\n" .. sheet)
                 end
 
                 tern.on("window_start", function(cx)
                 	rebuild(cx)
                 end)
 
-                -- Titles change constantly (every agent frame), and a full
-                -- sheet reinstall on each event trips the 50 ms hook budget,
-                -- which disables the hook until reload. Coalesce bursts.
-                local pending = nil
-                local function schedule()
-                	if pending ~= nil then
-                		return
-                	end
-                	pending = tern.timer(150, function(fresh)
-                		pending = nil
-                		if fresh ~= nil then
-                			rebuild(fresh)
-                		end
-                	end)
-                end
+                -- Titles change constantly (every agent frame), so the
+                -- event handlers do the least they can: they set a flag.
+                -- Arming a timer per event allocated a timer on every
+                -- frame, and the handler's own 50 ms budget covers that
+                -- allocation, so a burst of frames tripped it and
+                -- disabled the hook until the next reload.
+                local dirty = false
 
                 for _, event in { "focus", "pane_created", "pane_closed", "tab_created", "tab_closed", "title" } do
                 	tern.on(event, function(_ev, _cx)
-                		schedule()
+                		dirty = true
                 	end)
                 end
 
-                -- A reload lands after window_start, so the first sheet is
-                -- built from a one-shot timer, whose callback gets a cx.
-                tern.timer(0, function(cx)
-                	if cx ~= nil then
-                		rebuild(cx)
-                	end
-                end)
+                -- One timer for the life of the plugin does the rebuild
+                -- when the flag is set. A timer callback gets a fresh cx,
+                -- so the rebuild runs in its own 50 ms budget.
+                local function poll(fresh)
+                	if fresh ~= nil and dirty then
+                		dirty = false
+                		rebuild(fresh)
+                		end
+                	tern.timer(150, poll)
+                end
+                tern.timer(150, poll)
               '';
         in
         pkgs.runCommand "tern-tab-status-plugin" { } ''

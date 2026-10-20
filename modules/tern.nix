@@ -350,6 +350,11 @@
         xdg.config.files."tern/plugins/jj/window.luau".source =
           "${flakePackages.tern-jj-plugin}/window.luau";
 
+        # The host half runs in the session daemon: it owns the jj CLI,
+        # the status refresh and the workspace work, so the window's UI
+        # thread does not.
+        xdg.config.files."tern/plugins/jj/host.luau".source = "${flakePackages.tern-jj-plugin}/host.luau";
+
         xdg.config.files."tern/plugins/tools/plugin.toml".source =
           "${flakePackages.tern-tools-plugin}/plugin.toml";
 
@@ -382,13 +387,26 @@
           value = {
             only_unfocused = false;
             min_seconds = 30; # for shell command notifications
-            volume = 2; # %
+            # The plugin reads this file for the first time now: the read
+            # used to fail on the symlink, so the volume never applied and
+            # the plugin played at its default. Two percent is inaudible.
+            volume = 50; # %
 
             alert = "sounds/alert.wav";
             yield = "sounds/yield.wav";
             done = "sounds/done.wav";
           };
         };
+
+        # The host half runs in the session daemon: it owns the config
+        # read, the mute flag, the player probe and the playback, so the
+        # window's UI thread does not.
+        xdg.config.files."tern/plugins/chime/src/host.luau".source =
+          "${flakePackages.tern-chime-plugin}/src/host.luau";
+
+        # The channel between the two halves.
+        xdg.config.files."tern/plugins/chime/src/shared.luau".source =
+          "${flakePackages.tern-chime-plugin}/src/shared.luau";
 
         xdg.config.files."tern/plugins/chime/src/window.luau".source =
           "${flakePackages.tern-chime-plugin}/src/window.luau";
