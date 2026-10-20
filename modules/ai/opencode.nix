@@ -19,25 +19,13 @@
         nameValuePair
         optionalAttrs
         ;
-      inherit (lib.lists) singleton takeEnd;
+      inherit (lib.lists) takeEnd;
       inherit (lib.strings) concatStringsSep splitString;
       inherit (lib.trivial) const;
       inherit (config.ai) defaultModels;
       inherit (config.sops) secrets;
 
       providerKey = config.ai.providers.headroomVineProxy.name;
-
-      opencodePackage = pkgs.symlinkJoin {
-        name = "opencode-wrapped";
-        paths = singleton inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.opencode2;
-        buildInputs = singleton pkgs.makeWrapper;
-        postBuild = # sh
-          ''
-            wrapProgram $out/bin/opencode2 \
-              --set OPENCODE_EXPERIMENTAL true \
-              --set OPENCODE_ENABLE_EXA 1
-          '';
-      };
 
       shortId =
         id:
@@ -66,9 +54,10 @@
       ai.secrets = true;
 
       environment.systemPackages = [
+        inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.opencode
+
         pkgs.python3
         pkgs.uv
-        opencodePackage
         pkgs.rtk # The rtk plugin (installed by the AI plugins service) calls it.
       ];
 

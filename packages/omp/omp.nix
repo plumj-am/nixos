@@ -10,7 +10,7 @@
     let
       inherit (lib.meta) getExe;
 
-      omp = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.omp;
+      omp = inputs.omp.packages.${pkgs.stdenv.hostPlatform.system}.omp;
     in
     {
       packages.omp-wrapped =
