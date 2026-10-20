@@ -187,6 +187,17 @@
                 "antteheatta"
               ];
               gerrit_username = "graft";
+              # The Gerrit project name is the last path segment of the clone
+              # URI, but graft derives only the base URL from that URI and
+              # queries `project:` for the name. Without this the query is
+              # `project:` and matches no project, so the archive is never
+              # polled.
+              gerrit_sub_projects = [
+                {
+                  name = "grove";
+                  branch = "master";
+                }
+              ];
             };
           };
 
