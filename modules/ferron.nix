@@ -307,6 +307,17 @@
           certs.${domain}.reloadServices = [ "ferron.service" ];
         };
 
+        # systemd's default soft limit is 1024 open files. Ferron holds one
+        # file descriptor per live connection, so a burst of concurrent
+        # clients fills the table and `accept()` fails with EMFILE
+        # ("Failed to accept connection: Too many open files"). The kernel
+        # still completes the handshake and queues the connection, but
+        # nothing ever accepts it, so every client hangs until it times out
+        # and the accept backlog saturates. {gerrit,git}.plumj.am became
+        # unreachable by graft. The hard limit is already 524288, so only the
+        # soft limit needs raising.
+        systemd.services.ferron.serviceConfig.LimitNOFILE = "524288:524288";
+
         services.ferron = {
           enable = true;
           package = inputs.ferron.packages.${pkgs.stdenv.hostPlatform.system}.ferron-bin;
