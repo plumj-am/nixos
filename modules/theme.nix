@@ -251,10 +251,13 @@ in
   # `nh os switch --specialisation`.
   flake.modules.nixos.theme-variants =
     { lib, config, ... }:
+    let
+      inherit (lib.strings) toJSON;
+    in
     {
       # Runtime mirror of the active variant. Read by quickshell and by `tt`;
       # being a build output it always matches the running system.
-      environment.etc."theme.json".text = builtins.toJSON {
+      environment.etc."theme.json".text = toJSON {
         mode = config.themeMode;
         colors = config.theme.withHash;
       };

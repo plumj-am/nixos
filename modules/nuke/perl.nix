@@ -14,7 +14,9 @@
     let
       inherit (lib.attrsets) optionalAttrs;
       inherit (lib.lists) filter singleton;
+      inherit (lib.lists) isList;
       inherit (lib.modules) mkDefault;
+      inherit (lib.trivial) isFunction;
     in
     {
       imports = singleton inputs.nixos-core.nixosModules.default;
@@ -173,9 +175,9 @@
               noPerl = p: (p.pname or "") != "perl";
               filterTargetPkgs =
                 tp:
-                if builtins.isFunction tp then
+                if isFunction tp then
                   pkgs: filter noPerl (tp pkgs)
-                else if builtins.isList tp then
+                else if isList tp then
                   filter noPerl tp
                 else
                   tp;
@@ -186,7 +188,7 @@
                   targetPkgs = filterTargetPkgs resolved.targetPkgs;
                 };
             in
-            if builtins.isFunction args then
+            if isFunction args then
               # finalAttrs-style call (e.g. appimageTools.wrapType2/wrapAppImage,
               # via lib.extendMkDerivation { constructDrv = buildFHSEnv; ... }).
               # Wrap the function so prev.buildFHSEnv still does the self-reference

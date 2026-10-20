@@ -179,7 +179,7 @@
     let
       inherit (lib.lists) singleton;
       inherit (lib.modules) merge;
-      inherit (lib.strings) toJSON;
+      inherit (lib.strings) replaceStrings toJSON;
       inherit (config.networking) domain hostName;
 
       fqdn = "chat.${domain}";
@@ -211,7 +211,7 @@
 
       # Ferron string literals are double-quoted; escape quotes and backslashes
       # coming from the generated JSON.
-      escapeFerronString = s: builtins.replaceStrings [ "\\" "\"" ] [ "\\\\" "\\\"" ] s;
+      escapeFerronString = s: replaceStrings [ "\\" "\"" ] [ "\\\\" "\\\"" ] s;
     in
     {
       assertions = singleton {

@@ -9,6 +9,7 @@
     let
       inherit (lib.lists) singleton;
       inherit (lib.modules) merge mkForce;
+      inherit (lib.strings) readFile;
       inherit (config.helpers) rustic;
       inherit (config.networking) domain hostName;
 
@@ -17,7 +18,7 @@
 
       # Served statically instead of proxied (replaces the old nginx
       # `alias = ./robots.txt`). `writeTextDir` puts the file at the root.
-      robotsRoot = pkgs.writeTextDir "robots.txt" (builtins.readFile ./robots.txt);
+      robotsRoot = pkgs.writeTextDir "robots.txt" (readFile ./robots.txt);
     in
     {
       sops.secrets = {

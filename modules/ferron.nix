@@ -10,6 +10,8 @@
       ...
     }:
     let
+      inherit (lib.attrsets) attrNames;
+      inherit (lib.strings) match replaceStrings;
       inherit (config.networking) domain;
 
       cfg = config.services.ferron;
@@ -32,12 +34,12 @@
       # The rendering logic below is copied from the upstream module
       # (nix/module.nix in ferronweb/ferron) and must stay in sync with it.
 
-      indent4 = s: "    " + builtins.replaceStrings [ "\n" ] [ "\n    " ] s;
+      indent4 = s: "    " + replaceStrings [ "\n" ] [ "\n    " ] s;
 
       # Header values are always double-quoted (CSP et al. contain spaces
       # and semicolons). Backslashes and double quotes are escaped; `{{...}}`
       # interpolation passes through untouched.
-      escapeHeaderValue = s: "\"" + builtins.replaceStrings [ "\\" "\"" ] [ "\\\\" "\\\"" ] s + "\"";
+      escapeHeaderValue = s: "\"" + replaceStrings [ "\\" "\"" ] [ "\\\\" "\\\"" ] s + "\"";
 
       headersLines =
         headers:
@@ -114,8 +116,8 @@
         ${cfg.extraConfig}
       '';
 
-      explicitPortHosts = lib.filter (name: builtins.match ".*:[0-9]+$" name != null) (
-        builtins.attrNames config.services.ferronVhosts
+      explicitPortHosts = lib.filter (name: match ".*:[0-9]+$" name != null) (
+        attrNames config.services.ferronVhosts
       );
     in
     {
@@ -272,10 +274,10 @@
             # (its content is empty), but the submodule key itself remains.
             # Anything beyond that shape is a vhost defined on the bypassed
             # option - it would silently never be rendered.
-            assertion = builtins.attrNames cfg.hosts == [ "*:80" ] && cfg.hosts."*:80".config == "";
+            assertion = attrNames cfg.hosts == [ "*:80" ] && cfg.hosts."*:80".config == "";
             message = ''
               services.ferron.hosts carries definitions beyond the upstream
-              demo block (${lib.concatStringsSep ", " (builtins.attrNames cfg.hosts)}).
+              demo block (${lib.concatStringsSep ", " (attrNames cfg.hosts)}).
               The web-server aspect renders services.ferronVhosts through
               services.ferron.configFile; move host definitions there.
             '';

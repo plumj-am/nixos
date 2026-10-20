@@ -15,7 +15,7 @@
         nameValuePair
         optionalAttrs
         ;
-      inherit (lib.lists) optional singleton;
+      inherit (lib.lists) head optional singleton;
       inherit (lib.meta) getExe;
       inherit (lib.options) mkOptionNullOr mkOptionOf mkPackageOption;
       inherit (lib.strings) concatStringsSep escapeShellArg optionalString;
@@ -139,7 +139,7 @@
             excludeFile = optional (backup.exclude != [ ]) (
               pkgs.writeText "rustic-exclude-${name}" (concatStringsSep "\n" backup.exclude)
             );
-            excludeFlags = optional (backup.exclude != [ ]) "--glob-file=${builtins.head excludeFile}";
+            excludeFlags = optional (backup.exclude != [ ]) "--glob-file=${head excludeFile}";
             pathsQuoted = map escapeShellArg backup.paths;
             doBackup = backup.paths != [ ];
             cacheFlag = "--cache-dir \"$CACHE_DIRECTORY\"";

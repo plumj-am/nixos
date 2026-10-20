@@ -25,13 +25,12 @@ in
       ...
     }:
     let
-      inherit (lib) elem;
       inherit (lib.attrsets)
         attrValues
         mapAttrs
         optionalAttrs
         ;
-      inherit (lib.lists) singleton;
+      inherit (lib.lists) elem singleton;
       inherit (config) theme;
 
       oxfmtConfigFile = pkgs.writers.writeJSON ".oxfmtrc.json" {

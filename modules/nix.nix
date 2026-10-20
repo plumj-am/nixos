@@ -177,7 +177,7 @@ in
   flake.modules.darwin.nix-extra =
     { lib, ... }:
     let
-      inherit (lib) mkForce;
+      inherit (lib.modules) mkForce;
     in
     {
       nix.optimise.automatic = mkForce false;
