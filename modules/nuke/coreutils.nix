@@ -83,11 +83,11 @@ in
               final = pkgs.uutils-sed;
               finalName = "u-sed";
             }
-            {
-              prev = pkgs.gnutar;
-              final = pkgs.uutils-tar;
-              finalName = "u-tar";
-            }
+            # {
+            #   prev = pkgs.gnutar;
+            #   final = pkgs.uutils-tar;
+            #   finalName = "u-tar";
+            # }
             {
               prev = pkgs.hostname;
               final = pkgs.uutils-hostname;

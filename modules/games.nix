@@ -36,6 +36,8 @@
         __GL_SHADER_DISK_CACHE_SIZE = "10737418240";
       };
 
+      environment.systemPackages = singleton <| pkgs.bottles.override { removeWarningPopup = true; };
+
       programs.steam = {
         enable = true;
         protontricks.enable = true;
