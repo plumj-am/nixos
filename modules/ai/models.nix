@@ -10,8 +10,8 @@
       config.ai.defaultModels =
         let
           freeStrong = {
-            model = "minimax/minimax-m3.1-flash:free";
-            vision = true;
+            model = null;
+            vision = false;
           };
           freeWeak = {
             model = "reflection/beam:free";
@@ -30,7 +30,7 @@
           vision = firstOrDefault [
             (visionOf freeStrong)
             (visionOf freeWeak)
-          ] "xiaomi/mimo-v2.6-flash";
+          ] "deepseek/deepseek-v4.1-flash";
           # strong -> default
           big = firstOrDefault [ freeStrong.model ] "deepseek/deepseek-v4.1-flash";
           # strong -> default
@@ -170,6 +170,10 @@
           ];
           context = 1048576;
           maxOutput = 262144;
+          compat = {
+            requiresReasoningContentForToolCalls = true;
+            requiresAssistantContentForToolCalls = true;
+          };
         }
         {
           id = "minimax/minimax-m3.1-flash:free";
