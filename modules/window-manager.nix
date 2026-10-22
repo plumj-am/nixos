@@ -121,19 +121,21 @@
               }
 
               window-rule {
-                match app-id=r#"^vesktop|wasistlos|thunderbird$"#
+                match app-id=r#"^(vesktop|wasistlos|thunderbird)$"#
                 open-maximized true
                 open-on-workspace "comms"
               }
 
               window-rule {
                 match app-id=r#"^steam$"#
+                match app-id=r#"^steam_proton$"# title=r#"^Battle.net$"#
                 open-maximized true
                 open-on-workspace "games"
               }
 
               window-rule {
                 match app-id=r#"^steam_app_*"#
+                match app-id=r#"^steam_proton$"# title=r#"^Overwatch$"#
                 opacity 1.0
                 open-on-workspace "games"
                 open-fullscreen true
