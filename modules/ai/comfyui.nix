@@ -48,5 +48,20 @@
 
         bundledCustomNodes = true;
       };
+
+      # Telemetry situation is unclear but there's definitely traffic I don't
+      # recognise coming from comfyui. I'll probably dig into it more later.
+      # Keep loopback, so only the local web UI at 127.0.0.1:8025 stays
+      # reachable. Block any other network traffic.
+      systemd.services.comfyui.serviceConfig = {
+        IPAddressDeny = "any";
+        IPAddressAllow = "localhost";
+        RestrictAddressFamilies = [
+          "AF_UNIX"
+          "AF_INET"
+          "AF_INET6"
+          "AF_NETLINK"
+        ];
+      };
     };
 }
