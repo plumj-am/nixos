@@ -5,7 +5,7 @@
       ...
     }:
     let
-      inherit (import ./_lib.nix) ideLayout stepped;
+      inherit (import ./_lib.nix) ideLayout;
     in
     {
       # plugin.toml and the entry it names are written into one store path
@@ -26,7 +26,6 @@
               ''
                 --!nonstrict
                 ${ideLayout}
-                ${stepped}
 
                 tern.command({
                   id = "layout",
@@ -38,14 +37,7 @@
                     if pane == nil then
                       return
                     end
-
-                    -- One step per pass. The layout splits twice, resizes
-                    -- twice and opens an agent block, and every one of
-                    -- those marshals IPC to the daemon. In one pass the
-                    -- whole chain was billed to the command's 50 ms
-                    -- budget: "command layout exceeded 50 ms".
-                    local steps = ide_layout_steps(pane)
-                    stepped(steps)
+                    ide_layout_apply(cx, pane)
                   end,
                 })
 
