@@ -8,12 +8,12 @@
       ...
     }:
     let
+      inherit (lib.constants) tailnet;
       inherit (lib.lists) singleton;
-      inherit (lib.modules) merge;
-      inherit (config.networking) domain hostName;
+      inherit (config.networking) hostName;
       inherit (config.sops) secrets;
 
-      fqdn = "cloud.${domain}";
+      tailnetFqdn = "${hostName}.${tailnet}";
     in
     {
       assertions = singleton {
@@ -30,8 +30,8 @@
         enable = true;
         package = pkgs.nextcloud33;
 
-        hostName = fqdn;
-        https = true;
+        hostName = tailnetFqdn;
+        https = false;
 
         configureRedis = true;
         database.createLocally = true;
@@ -48,8 +48,9 @@
 
           log_type = "file";
 
-          # Ferron and the loopback nginx both proxy; trust their X-Forwarded-For.
-          trusted_proxies = [ "127.0.0.1" ];
+          overwriteprotocol = "http";
+          overwritehost = "${tailnetFqdn}:8082";
+          "overwrite.cli.url" = "http://${tailnetFqdn}:8082";
 
           enabledPreviewProviders = [
             "OC\\Preview\\BMP"
@@ -87,28 +88,13 @@
         };
       };
 
-      # Ferron terminates TLS; nginx (nixpkgs-generated PHP rules) serves PHP
-      # to it on loopback only.
-      services.nginx.virtualHosts.${fqdn} = {
+      # Nginx has to be the PHP frontend but this way we only serve it over the
+      # tailnet, at least.
+      services.nginx.virtualHosts.${tailnetFqdn} = {
         listen = singleton {
-          addr = "127.0.0.1";
+          addr = "0.0.0.0";
           port = 8082;
         };
-
-        extraConfig = # nginx
-          ''
-            # Hand the real client address from ferron down to PHP.
-            fastcgi_param HTTP_X_FORWARDED_FOR $http_x_forwarded_for;
-          '';
-      };
-
-      services.ferronVhosts.${fqdn} = merge config.services.ferron.sslTemplate {
-        proxy = "http://127.0.0.1:8082";
-
-        config = # kdl
-          ''
-            ${config.services.ferron.headers}
-          '';
       };
 
     };
@@ -122,6 +108,7 @@
       ...
     }:
     let
+      inherit (lib.constants) tailnet;
       inherit (lib.lists) singleton;
     in
     {
@@ -190,7 +177,7 @@
               0\serverHasValidSubscription=false
               0\serverTextColor=@Variant(\0\0\0\x43\x1\xff\xff\xff\xff\xff\xff\xff\xff\0\0)
               0\serverVersion=33.0.5.1
-              0\url=https://cloud.plumj.am
+              0\url=http://sloe.${tailnet}:8082
               0\version=13
               0\webflow_user=plumjam
               version=13
