@@ -922,6 +922,26 @@
         "type": "github"
       }
     },
+    "mitos": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792766108,
+        "narHash": "sha256-L8vv/yVT4Vrh1BDddNniiRk5zDIWAMxqgxUmSCC/d0U=",
+        "owner": "mitos-editor",
+        "repo": "mitos",
+        "rev": "b93fcc25524f4f9a045a45f74c67e86a6899de69",
+        "type": "github"
+      },
+      "original": {
+        "owner": "mitos-editor",
+        "repo": "mitos",
+        "type": "github"
+      }
+    },
     "nix": {
       "inputs": {
         "bdwgc": "bdwgc",
@@ -1399,6 +1419,7 @@
         "jj-mode-el": "jj-mode-el",
         "jujutsu": "jujutsu",
         "kache": "kache_2",
+        "mitos": "mitos",
         "nix-darwin": "nix-darwin",
         "nixos-core": "nixos-core",
         "nixos-wsl": "nixos-wsl",

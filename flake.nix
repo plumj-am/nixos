@@ -66,6 +66,11 @@
       url = "github:kunobi-ninja/kache";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Waiting for this: <https://github.com/NixOS/nixpkgs/pull/576743>
+    mitos = {
+      url = "github:mitos-editor/mitos";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixos-core = {
       url = "github:manic-systems/nixos-core";
       inputs.nixpkgs.follows = "nixpkgs";

@@ -15,7 +15,7 @@
 
       # TODO: Make an option.
       variables = {
-        EDITOR = "hx";
+        EDITOR = "ms";
         SHELL = getExe pkgs.nushell;
         TERMINAL = "tern";
         TERM_PROGRAM = "tern";

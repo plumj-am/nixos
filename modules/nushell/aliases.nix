@@ -24,9 +24,9 @@
           aliases = {
             mp = "mprocs";
 
-            todo = "hx ${config.directory}/notes/todo.md";
-            notes = "hx ${config.directory}/notes";
-            random = "hx ${config.directory}/notes/random.md";
+            todo = "ms ${config.directory}/notes/todo.md";
+            notes = "ms ${config.directory}/notes";
+            random = "ms ${config.directory}/notes/random.md";
 
             rm = "rm --recursive --verbose";
             cp = "cp --recursive --verbose --progress";

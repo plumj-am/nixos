@@ -45,7 +45,7 @@
               print "Reloading applications..."
 
               let refreshable_apps = [
-                {name: "hx", signal: "USR1"}
+                {name: "ms", signal: "USR1"}
                 {name: "opencode", signal: "USR2"}
               ]
 

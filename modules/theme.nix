@@ -141,9 +141,10 @@ let
           light = "light-theme";
         };
 
-        helix = {
-          dark = "gruvbox_dark_hard";
-          light = "gruvbox_light_hard";
+        # TODO: add gruvbox_{dark,light}_hard
+        mitos = {
+          dark = "gruvbox";
+          light = "gruvbox_light";
         };
 
         bat = {
@@ -211,7 +212,7 @@ in
         "icons"
         "vivid"
         "nushell"
-        "helix"
+        "mitos"
         "bat"
         "gtk"
         "qt"

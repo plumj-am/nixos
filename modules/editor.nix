@@ -10,15 +10,16 @@ in
 {
   flake.modules.common.default.imports = [
     self.modules.common.disable-nano
-    self.modules.common.helix
+    self.modules.common.mitos
   ];
 
   flake.modules.common.disable-nano = {
     programs.nano.enable = false;
   };
 
-  flake.modules.common.helix =
+  flake.modules.common.mitos =
     {
+      inputs,
       pkgs,
       lib,
       config,
@@ -47,30 +48,18 @@ in
       ];
     in
     {
-      shellAliases = {
-        h = "hx";
-        e = "hx"; # editor
-      };
+      shellAliases.hx = "ms";
 
-      environment.systemPackages = [
-        # steelix's grammars.json revisions need syncing with the query files in its runtime
-        (pkgs.symlinkJoin {
-          name = "steelix";
-          paths = singleton pkgs.steelix.unwrapped;
-          nativeBuildInputs = singleton pkgs.makeBinaryWrapper;
-          postBuild = ''
-            wrapProgram $out/bin/hx --set HELIX_RUNTIME "${pkgs.helix.runtime}"
-          '';
-        })
-        pkgs.steel
-      ];
+      environment.systemPackages =
+        singleton
+          inputs.mitos.packages.${pkgs.stdenv.hostPlatform.system}.mitos;
 
       hjemModule = { config, ... }: {
         xdg.config.files = {
-          "helix/config.toml" = {
-            generator = pkgs.writers.writeTOML "helix-config.toml";
+          "mitos/config.toml" = {
+            generator = pkgs.writers.writeTOML "mitos-config.toml";
             value = {
-              theme = theme.helix;
+              theme = theme.mitos;
 
               editor = {
                 bufferline = "multiple";
@@ -152,8 +141,8 @@ in
                 };
             };
           };
-          "helix/languages.toml" = {
-            generator = pkgs.writers.writeTOML "helix-languages.toml";
+          "mitos/languages.toml" = {
+            generator = pkgs.writers.writeTOML "mitos-languages.toml";
             value = {
               language =
                 let
@@ -395,43 +384,6 @@ in
               };
             };
           };
-
-          "helix/helix.scm".text = # scheme
-            ''
-
-            '';
-
-          # TODO: script/automate install via forge e.g.
-          #   STEEL_HOME=/home/jam/.steel forge pkg install --git <repo>
-          "helix/init.scm".text = # scheme
-            ''
-              (require "helix/keymaps.scm")
-
-              (require "oil/oil.scm")                         ;; <https://github.com/Ra77a3l3-jar/oil.hx>
-              (require "helix-file-watcher/file-watcher.scm") ;; <https://github.com/mattwparas/helix-file-watcher>
-              (require "scooter/scooter.scm")                 ;; <https://github.com/thomasschafer/scooter.hx>
-
-              (keymap (global)
-                (normal
-                  (space
-                    (o
-                      (o ":oil")
-                      (e ":oil-enter")
-                      (b ":oil-back")
-                      (g ":oil-root")
-                      (s ":oil-save")
-                      (r ":oil-refresh")
-                      (q ":oil-close")
-                      (h ":oil-toggle-hidden")
-                      (i ":oil-toggle-git-ignored")
-                      (m
-                        (y ":oil-yank")
-                        (x ":oil-cut")
-                        (p ":oil-paste")
-                        (c ":oil-clipboard-clear"))))))
-
-              (spawn-watcher)
-            '';
 
           "nufmt/config.nuon".text = # nuon
             ''
