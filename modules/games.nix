@@ -38,6 +38,8 @@
 
       environment.systemPackages = singleton <| pkgs.bottles.override { removeWarningPopup = true; };
 
+      boot.kernelPackages = pkgs.linuxPackages_zen;
+
       programs.steam = {
         enable = true;
         protontricks.enable = true;
