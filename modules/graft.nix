@@ -20,7 +20,9 @@
 
       graftCacheServeConfig = pkgs.writers.writeJSON "tailscale-serve-graft-cache.json" {
         version = "0.0.1";
-        endpoints."tcp:8024" = "tcp://127.0.0.1:${toString config.services.nix-serve.port}";
+        # Portless URL: `http://graft-cache.${tailnet}`, a plain-HTTP handler
+        # on the Service VIP (the target protocol selects the handler type).
+        endpoints."tcp:80" = "http://127.0.0.1:${toString config.services.nix-serve.port}";
       };
 
       remote_builders_all =
@@ -112,7 +114,7 @@
             checks_api_enabled = true;
 
             incrementalize = true;
-            cache_url = "http://graft-cache.${tailnet}:8024";
+            cache_url = "http://graft-cache.${tailnet}";
 
             api_token_file = secrets."graft/api/token".path;
             api_scope = "write";
@@ -255,7 +257,7 @@
       };
 
       nix.settings = {
-        extra-substituters = singleton "http://graft-cache.${tailnet}:8024";
+        extra-substituters = singleton "http://graft-cache.${tailnet}";
         trusted-public-keys = singleton "graft-cache-1:cJVyGZWQ+v4vG6ajYspWHD5NFvOhJAk7cFbxh/hmSiI=";
       };
 

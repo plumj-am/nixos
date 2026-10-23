@@ -62,7 +62,7 @@ in
           "https://nix-community.cachix.org"
           "https://cache.numtide.com"
 
-          "http://graft-cache.${tailnet}:8024"
+          "http://graft-cache.${tailnet}"
         ];
 
         extra-trusted-public-keys = [

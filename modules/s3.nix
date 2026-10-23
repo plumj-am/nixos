@@ -102,7 +102,7 @@
       garageRegion = garage.region;
       garagePathStyle = garage.pathStyle;
       garageApiVersion = garage.apiVersion;
-      garageS3Cache = "s3://${garageBucket}?endpoint=${garageEndpoint}&profile=${garageAlias}&region=${garageRegion}${s3SharedArgs}";
+      garageS3Cache = "s3://${garageBucket}?endpoint=http://${garageEndpoint}&profile=${garageAlias}&region=${garageRegion}${s3SharedArgs}";
 
       setupAwsCreds = pkgs.writeShellScriptBin "setup-aws-creds" ''
         #!/usr/bin/env bash
