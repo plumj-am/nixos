@@ -1400,6 +1400,23 @@
         "url": "https://git.outfoxxed.me/outfoxxed/quickshell"
       }
     },
+    "rex": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792794925,
+        "narHash": "sha256-GdRo3o9t2jkgdx3aGc0TSFEHhobVgQt1zDBB2pm5DBY=",
+        "type": "tarball",
+        "url": "https://pkgs.superlogical.com/rex/nix/snapshot/0.0.1792794925-g175679.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://pkgs.superlogical.com/rex/nix/snapshot.tar.gz"
+      }
+    },
     "root": {
       "inputs": {
         "comfyui": "comfyui",
@@ -1428,6 +1445,7 @@
         "opencode": "opencode",
         "plumj-am": "plumj-am",
         "qml-niri": "qml-niri",
+        "rex": "rex",
         "sops": "sops",
         "steam-config": "steam-config",
         "treefmt": "treefmt",
