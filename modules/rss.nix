@@ -2,12 +2,11 @@
   flake.modules.nixos.freshrss-server =
     { lib, config, ... }:
     let
-      inherit (lib.lists) singleton;
-      inherit (lib.modules) merge;
-      inherit (config.networking) domain;
+      inherit (lib.constants) tailnet;
+      inherit (config.networking) hostName;
       inherit (config.sops) secrets;
 
-      fqdn = "rss.${domain}";
+      tailnetFqdn = "${hostName}.${tailnet}";
     in
     {
       sops.secrets."rss-server/admin-password" = {
@@ -23,32 +22,24 @@
 
         database.type = "sqlite";
 
-        virtualHost = fqdn;
-        baseUrl = "https://${fqdn}";
+        virtualHost = tailnetFqdn;
+        baseUrl = "http://${tailnetFqdn}:8083";
 
         defaultUser = "admin";
         passwordFile = secrets."rss-server/admin-password".path;
       };
 
-      # Ferron terminates TLS; nginx (nixpkgs-generated PHP rules) serves PHP
-      # to it on loopback only.
-      services.nginx.virtualHosts.${fqdn}.listen = singleton {
-        addr = "127.0.0.1";
-        port = 8083;
-      };
-
-      services.ferronVhosts.${fqdn} = merge config.services.ferron.sslTemplate {
-        config = # kdl
-          ''
-            ${config.services.ferron.headers}
-            ${config.services.ferron.goatCounterTemplate}
-
-            location "/" {
-                proxy "http://127.0.0.1:8083" {
-                    request_header -Accept-Encoding
-                }
-            }
-          '';
-      };
+      # Tailnet only: bind all interfaces, but the firewall trusts only ts0
+      # and this port is not in allowedTCPPorts.
+      services.nginx.virtualHosts.${tailnetFqdn}.listen = [
+        {
+          addr = "0.0.0.0";
+          port = 8083;
+        }
+        {
+          addr = "[::]";
+          port = 8083;
+        }
+      ];
     };
 }
