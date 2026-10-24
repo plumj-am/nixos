@@ -66,13 +66,13 @@
 
             wrappers = [
               "mangohud"
-              # "gamemoderun"
+              "gamemoderun"
             ];
 
             env = {
               TZ = "Europe/Warsaw";
 
-              DXVK_CONFIG = "dxvk.trackPipelineLifetime=True;dxvk.enableGraphicsPipelineLibrary=True;dxvk.numCompilerThreads=${threads}";
+              DXVK_CONFIG = "dxvk.trackPipelineLifetime = True;dxvk.enableGraphicsPipelineLibrary = True;dxvk.numCompilerThreads = ${threads}";
               DXVK_HUD = "compiler";
 
               PROTON_ENABLE_WAYLAND = "1";
