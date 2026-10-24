@@ -104,6 +104,9 @@ in
                   characters.tab = "→";
                   render.tab = "all";
                 };
+                spelling.languages = singleton "en_US";
+
+                workspace-trust.trusted = singleton "~/projects/*";
               };
 
               keys =
@@ -120,22 +123,34 @@ in
 
                     "D" = "extend_to_line_end";
 
-                    "space"."B" =
-                      '':sh echo $"# git blame:(char nl)  (git blame -L %{cursor_line},+1 %{buffer_name} | cut -c1-60)"'';
+                    space."B" = ":blame";
                   };
                 in
                 {
                   select = shared;
                   normal = shared // {
                     "'" = {
-                      # Hack to have a custom popup helper with a title.
-                      _ = "@ File Management\n";
-
-                      t = "@:sh touch <C-r>%";
-                      r = "@:sh rm <C-r>%";
-                      k = "@:sh mkdir <C-r>%";
-                      m = "@:sh mv <C-r>% <C-r>%";
-                      c = "@:sh cp <C-r>% <C-r>%";
+                      label = "File Management";
+                      t = {
+                        label = "Touch";
+                        command = "@:sh touch <C-r>%";
+                      };
+                      r = {
+                        label = "Remove";
+                        command = "@:sh rm <C-r>%";
+                      };
+                      k = {
+                        label = "Make directory";
+                        command = "@:sh mkdir <C-r>%";
+                      };
+                      m = {
+                        label = "Move";
+                        command = "@:sh mv <C-r>% <C-r>%";
+                      };
+                      c = {
+                        label = "Copy";
+                        command = "@:sh cp <C-r>% <C-r>%";
+                      };
                     };
                   };
                 };
