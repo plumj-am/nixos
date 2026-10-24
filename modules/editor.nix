@@ -104,8 +104,6 @@ in
                   characters.tab = "→";
                   render.tab = "all";
                 };
-                spelling.languages = singleton "en_US";
-
                 workspace-trust.trusted = singleton "~/projects/*";
               };
 
@@ -263,6 +261,15 @@ in
                       name = "markdown";
                       auto-format = true;
                       language-servers = singleton "markdown-oxide";
+                      spelling.languages = singleton "en_US";
+                    }
+                    {
+                      name = "git-commit";
+                      spelling.languages = singleton "en_US";
+                    }
+                    {
+                      name = "jjdescription";
+                      spelling.languages = singleton "en_US";
                     }
                     {
                       name = "just";
