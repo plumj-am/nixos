@@ -345,11 +345,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791131260,
-        "narHash": "sha256-bQ3tCG6fTj+bg0VVj04SJgs6RyT9Pl7RqEEoY6xBl48=",
+        "lastModified": 1792720256,
+        "narHash": "sha256-iiUCuM27meZok4xv3bP8Keg+QoJV40k7FE3ApZ2lHcQ=",
         "owner": "ferronweb",
         "repo": "ferron",
-        "rev": "00078aff8c5c8ded96ef477491238cd7bac42999",
+        "rev": "460b572456670a5e54d94d7ebde600319745e4c1",
         "type": "github"
       },
       "original": {
