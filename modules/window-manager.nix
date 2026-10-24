@@ -3,6 +3,7 @@
   flake.modules.nixos.desktop = self.modules.nixos.window-manager;
   flake.modules.nixos.window-manager =
     {
+      inputs,
       pkgs,
       lib,
       config,
@@ -14,6 +15,7 @@
       inherit (config) theme;
       inherit (config.systemInfo) gpu;
 
+      canopyBar = getExe inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.canopy-canopy-bar;
       quickshell = getExe pkgs.quickshell;
       quickshellPath = "/home/jam/nixos/modules/quickshell/shell";
     in
@@ -351,6 +353,12 @@
                 Mod+S { spawn-sh "random-scratchpad"; }
                 Mod+C hotkey-overlay-title="Open clipboard history" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call clipboard toggle"; }
 
+                // The bar that used to open these drawers is gone, so each one has its own keybind.
+                Mod+N hotkey-overlay-title="Toggle notification drawer" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call drawers toggle notif"; }
+                Mod+M hotkey-overlay-title="Toggle media drawer" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call drawers toggle media"; }
+                Mod+Shift+N hotkey-overlay-title="Toggle session drawer" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call drawers toggle session"; }
+                Mod+Shift+M hotkey-overlay-title="Toggle control center" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call drawers toggle controlCenter"; }
+
                 XF86MonBrightnessDown { spawn "brightnessctl" "set" "5%-"; }
                 XF86MonBrightnessUp { spawn "brightnessctl" "set" "+5%"; }
               }
@@ -358,9 +366,10 @@
               spawn-sh-at-startup "${quickshell} --path ${quickshellPath}"
               spawn-at-startup "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
               spawn-at-startup "${pkgs.keepassxc}/bin/keepassxc"
+              spawn-at-startup "${canopyBar}"
               spawn-sh-at-startup "sleep 5; awww-daemon"
               spawn-sh-at-startup "sleep 5; gammastep-indicator"
-              spawn-sh-at-startup "sleep 30; nextcloud" // give time to login to keepass
+              spawn-sh-at-startup "sleep 30; nextcloud" // give time to login to keepassxc
             '';
 
           xdg.config.files."clipcat/clipcatd.toml".text = # toml
@@ -373,7 +382,7 @@
 
               [watcher]
               enable_primary = true
-              # Default min_length = 1 drops single-char copies; keep everything.
+              # Default `min_length = 1` drops single-char copies; keep everything.
               filter_text_min_length = 0
 
               [desktop_notification]

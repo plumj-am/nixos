@@ -4,7 +4,6 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import "bar/widgets"
-import "bar"
 import "common" as Common
 import "controlcenter" as ControlCenter
 import "notifications" as Notifications
@@ -12,6 +11,21 @@ import "services" as Services
 import "session" as Session
 
 ShellRoot {
+   id: root
+
+   // Bar height reserve, kept in step with the canopy bar. The quickshell bar is
+   // gone, so drawers hang below that reserve instead of below their own bar.
+   readonly property int topInset: Common.Config.data.bar.size
+
+   // One entry per screen, so the drawer IPC targets can reach every window.
+   property list<var> drawerWindows: []
+
+   function toggleDrawer(name) {
+	  for (const window of root.drawerWindows) {
+		 window.toggleDrawer(name)
+	  }
+   }
+
    function toggleLauncher() {
 	  if (clipboardLoader.item)
 		 clipboardLoader.item.isOpen = false
@@ -88,6 +102,8 @@ ShellRoot {
 			intersection: Intersection.Xor
 		 }
 
+		 Component.onCompleted: root.drawerWindows.push(window)
+
 		 Variants {
 			id: childRegions
 
@@ -153,26 +169,6 @@ ShellRoot {
 			color: Common.Theme.background
 		 }
 
-		 // Bar
-		 Bar {
-			id: bar
-
-			y: window.topMargin
-			mediaDrawerOpen: window.mediaOpen
-			notifDrawerOpen: window.notifOpen
-
-			onNotificationClicked: window.toggleDrawer("notif")
-			onMediaClicked: window.toggleDrawer("media")
-			onSessionClicked: window.toggleDrawer("session")
-			onControlCenterClicked: window.toggleDrawer("controlCenter")
-			onThemeSwitchClicked: {
-			   var cmd = Common.Theme.mode === "light" ? "dark" : "light"
-			   Quickshell.execDetached({
-										  command: ["toggle-theme", cmd]
-									   })
-			}
-		 }
-
 		 // Notification drawer (top-right)
 		 Notifications.NotificationDrawer {
 			id: notifDrawer
@@ -180,7 +176,7 @@ ShellRoot {
 			open: window.notifOpen
 			popupMode: window.notifAutoOpened
 			anchors.top: parent.top
-			anchors.topMargin: window.topMargin + bar.barSize
+			anchors.topMargin: window.topMargin + root.topInset
 			anchors.right: parent.right
 		 }
 
@@ -190,7 +186,7 @@ ShellRoot {
 
 			open: window.mediaOpen
 			anchors.top: parent.top
-			anchors.topMargin: window.topMargin + bar.barSize
+			anchors.topMargin: window.topMargin + root.topInset
 			anchors.left: parent.left
 		 }
 
@@ -207,7 +203,7 @@ ShellRoot {
 
 			open: window.controlCenterOpen
 			anchors.top: parent.top
-			anchors.topMargin: window.topMargin + bar.barSize
+			anchors.topMargin: window.topMargin + root.topInset
 			anchors.right: parent.right
 		 }
 
@@ -233,21 +229,6 @@ ShellRoot {
 			// Notifications now appear as toasts via ToastManager.
 			// Drawer only opens via manual interaction (onNotificationClicked).
 		 }
-	  }
-   }
-
-   // Exclusion zone: reserves space at top so windows tile below the bar
-   Variants {
-	  model: Quickshell.screens
-
-	  delegate: PanelWindow {
-		 required property var modelData
-
-		 screen: modelData
-		 anchors.top: true
-		 color: "transparent"
-		 WlrLayershell.namespace: "quickshell:topExclusionZone"
-		 exclusiveZone: Common.Config.data.bar.size
 	  }
    }
 
@@ -311,6 +292,26 @@ ShellRoot {
    }
 
 	  target: "notifications"
+   }
+
+   // Drawer toggles, so the notification, media, session, and control center
+   // drawers stay reachable without the bar buttons that used to open them.
+   IpcHandler {
+	  function toggle(name: string): void {
+	  root.toggleDrawer(name)
+   }
+
+	  function close(): void {
+						   for (const window of root.drawerWindows) {
+							  window.notifOpen = false
+							  window.notifAutoOpened = false
+							  window.mediaOpen = false
+							  window.sessionOpen = false
+							  window.controlCenterOpen = false
+						   }
+						}
+
+	  target: "drawers"
    }
 
    IpcHandler {
