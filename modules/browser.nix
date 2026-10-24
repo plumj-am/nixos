@@ -566,15 +566,6 @@ in
           desktopName = "Helium";
           genericName = "Web Browser";
         })
-        (pkgs.makeDesktopItem {
-          exec = "helium --force-dark-mode";
-          mimeTypes = singleton "image/jpeg";
-          name = "helium-dark";
-          type = "Application";
-          icon = "helium";
-          desktopName = "Helium Dark";
-          genericName = "Web Browser";
-        })
       ];
     };
 
