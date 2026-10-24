@@ -16,6 +16,10 @@
       inherit (config.systemInfo) gpu;
 
       canopyBar = getExe inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.canopy-canopy-bar;
+      canopyLauncher =
+        getExe
+          inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.canopy-canopy-launcher;
+
       quickshell = getExe pkgs.quickshell;
       quickshellPath = "/home/jam/nixos/modules/quickshell/shell";
     in
@@ -347,7 +351,7 @@
 
                 Mod+Ctrl+R hotkey-overlay-title="Soft reload Quickshell" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call shell reload"; }
                 Mod+Ctrl+Shift+R hotkey-overlay-title="Hard reload Quickshell" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call shell reloadHard"; }
-                Ctrl+Backspace hotkey-overlay-title="Open launcher" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call launcher toggle"; }
+                Ctrl+Backspace hotkey-overlay-title="Open canopy launcher" { spawn "${canopyLauncher}"; }
                 Mod+T { spawn-sh "process-monitor"; }
                 Mod+D { spawn-sh "todo-scratchpad"; }
                 Mod+S { spawn-sh "random-scratchpad"; }

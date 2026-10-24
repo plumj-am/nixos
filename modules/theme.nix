@@ -60,6 +60,8 @@ let
 
       colors = gruvboxColors.${variant};
 
+      palettes = mapAttrs (_: v: mapAttrs (_: c: "#${c}") v) gruvboxColors;
+
       fonts = {
         mono = {
           iosevka = {
@@ -195,6 +197,7 @@ let
         designSystem
         getAppTheme
         isDark
+        palettes
         variant
         ;
     };
@@ -230,6 +233,7 @@ in
               apps
               colors
               isDark
+              palettes
               variant
               ;
 

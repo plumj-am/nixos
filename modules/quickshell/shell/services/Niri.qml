@@ -14,9 +14,4 @@ QtObject {
    }
    readonly property var focusedWindow: niri.focusedWindow
 
-   signal launcherToggleRequested
-
-   function toggleLauncher() {
-	  launcherToggleRequested()
-   }
 }

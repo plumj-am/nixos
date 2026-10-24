@@ -26,18 +26,7 @@ ShellRoot {
 	  }
    }
 
-   function toggleLauncher() {
-	  if (clipboardLoader.item)
-		 clipboardLoader.item.isOpen = false
-	  if (launcherLoader.item) {
-		 launcherLoader.item.screen = Quickshell.focusedScreen || Quickshell.screens[0]
-		 launcherLoader.item.isOpen = !launcherLoader.item.isOpen
-	  }
-   }
-
    function toggleClipboard() {
-	  if (launcherLoader.item)
-		 launcherLoader.item.isOpen = false
 	  if (clipboardLoader.item) {
 		 clipboardLoader.item.screen = Quickshell.focusedScreen || Quickshell.screens[0]
 		 clipboardLoader.item.isOpen = !clipboardLoader.item.isOpen
@@ -232,18 +221,6 @@ ShellRoot {
 	  }
    }
 
-   // Launcher stays as separate overlay PanelWindow
-   Loader {
-	  id: launcherLoader
-
-	  active: true
-	  source: "launcher/Launcher.qml"
-
-	  onLoaded: {
-		 item.screen = Quickshell.focusedScreen || Quickshell.screens[0]
-	  }
-   }
-
    Loader {
 	  id: toastManagerLoader
 
@@ -260,22 +237,6 @@ ShellRoot {
 	  onLoaded: {
 		 item.screen = Quickshell.focusedScreen || Quickshell.screens[0]
 	  }
-   }
-
-   Connections {
-	  function onLauncherToggleRequested() {
-		 toggleLauncher()
-	  }
-
-	  target: Services.Niri
-   }
-
-   IpcHandler {
-	  function toggle(): void {
-	  toggleLauncher()
-   }
-
-	  target: "launcher"
    }
 
    IpcHandler {
