@@ -152,8 +152,7 @@ in
     };
   };
 
-  flake.modules.nixos.desktop = self.modules.nixos.nix-daemon-desktop-scheduling;
-  flake.modules.nixos.nix-daemon-desktop-scheduling =
+  flake.modules.nixos.nix-desktop-limit-jobs =
     { config, ... }:
     let
       inherit (lib.modules) mkForce;
@@ -167,9 +166,6 @@ in
           <| max 2
           <| floor
           <| config.systemInfo.threads * 3 / 4;
-
-        daemonIOSchedClass = "idle";
-        daemonCPUSchedPolicy = "idle";
       };
     };
 

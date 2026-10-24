@@ -15,6 +15,7 @@ in
         dynamic-mac-address
         games
         llama-cpp
+        nix-desktop-limit-jobs
       ];
 
       systemInfo = {
