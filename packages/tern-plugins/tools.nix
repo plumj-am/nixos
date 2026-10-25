@@ -29,6 +29,7 @@
                 local PROGRAMS = {
                   jjui = { title = "jjui", command = "jjui" },
                   hunk = { title = "hunk", command = "hunk diff --watch" },
+                  copse = { title = "copse", command = "copse" },
                 }
 
                 -- A float takes no size, so the card is sized here (95x47 cells for
