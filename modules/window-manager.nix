@@ -15,13 +15,18 @@
       inherit (config) theme;
       inherit (config.systemInfo) gpu;
 
-      canopyBar = getExe inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.canopy-canopy-bar;
-      canopyLauncher =
-        getExe
-          inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.canopy-canopy-launcher;
-
-      quickshell = getExe pkgs.quickshell;
-      quickshellPath = "/home/jam/nixos/modules/quickshell/shell";
+      canopyBar = getExe inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.canopy-bar;
+      canopyClipboard = "";
+      # getExe
+      #   inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.canopy-clipboard;
+      canopyControl = "";
+      # getExe
+      #   inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.canopy-control;
+      canopyLauncher = getExe inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.canopy-launcher;
+      canopyMedia = "";
+      # getExe inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.canopy-media;
+      canopyNotify = "";
+      # getExe inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.canopy-notify;
     in
     {
       shellAliases.ns = "niri-session";
@@ -297,7 +302,6 @@
 
                 Mod+B repeat=false hotkey-overlay-title="Spawn Helium" { spawn "helium"; }
                 Mod+Z repeat=false hotkey-overlay-title="Spawn Tern" { spawn "tern"; }
-                Mod+X repeat=false hotkey-overlay-title="Spawn Quickshell" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath}"; }
 
                 Mod+Q repeat=false { close-window; }
                 Mod+Tab repeat=false { toggle-overview; }
@@ -349,28 +353,24 @@
                 Mod+Shift+Comma { consume-or-expel-window-left; }
                 Mod+Shift+Period { consume-or-expel-window-right; }
 
-                Mod+Ctrl+R hotkey-overlay-title="Soft reload Quickshell" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call shell reload"; }
-                Mod+Ctrl+Shift+R hotkey-overlay-title="Hard reload Quickshell" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call shell reloadHard"; }
                 Ctrl+Backspace hotkey-overlay-title="Open canopy launcher" { spawn "${canopyLauncher}"; }
                 Mod+T { spawn-sh "process-monitor"; }
                 Mod+D { spawn-sh "todo-scratchpad"; }
                 Mod+S { spawn-sh "random-scratchpad"; }
-                Mod+C hotkey-overlay-title="Open clipboard history" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call clipboard toggle"; }
-
-                // The bar that used to open these drawers is gone, so each one has its own keybind.
-                Mod+N hotkey-overlay-title="Toggle notification drawer" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call drawers toggle notif"; }
-                Mod+M hotkey-overlay-title="Toggle media drawer" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call drawers toggle media"; }
-                Mod+Shift+N hotkey-overlay-title="Toggle session drawer" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call drawers toggle session"; }
-                Mod+Shift+M hotkey-overlay-title="Toggle control center" { spawn-sh "${quickshell} --no-duplicate --path ${quickshellPath} ipc call drawers toggle controlCenter"; }
+                // Mod+C hotkey-overlay-title="Open clipboard history" { spawn "${canopyClipboard}"; }
+                // Mod+N hotkey-overlay-title="Open notification drawer" { spawn "${canopyNotify}" "drawer"; }
+                // Mod+M hotkey-overlay-title="Open media panel" { spawn "${canopyMedia}" "panel"; }
+                // Mod+Shift+M hotkey-overlay-title="Open control centre" { spawn "${canopyControl}"; }
 
                 XF86MonBrightnessDown { spawn "brightnessctl" "set" "5%-"; }
                 XF86MonBrightnessUp { spawn "brightnessctl" "set" "+5%"; }
               }
 
-              spawn-sh-at-startup "${quickshell} --path ${quickshellPath}"
               spawn-at-startup "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
               spawn-at-startup "${pkgs.keepassxc}/bin/keepassxc"
               spawn-at-startup "${canopyBar}"
+              // spawn-at-startup "${canopyNotify}" "serve"
+              // spawn-at-startup "${canopyMedia}" "serve"
               spawn-sh-at-startup "sleep 5; awww-daemon"
               spawn-sh-at-startup "sleep 5; gammastep-indicator"
               spawn-sh-at-startup "sleep 30; nextcloud" // give time to login to keepassxc

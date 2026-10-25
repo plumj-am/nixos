@@ -169,13 +169,6 @@ The active variant survives rebuilds: `rebuild` reads the running theme from
 no longer falls back to the light default. Pass `--no-specialisation` to rebuild
 the plain base configuration instead.
 
-### Quickshell
-
-I have a basic Quickshell setup which I have used to replace Fuzzel, Mako,
-Waybar/Ashell, and more.
-
-The configuration can be found in `modules/quickshell`.
-
 ## Other comments
 
 The previous version of my configurations can be seen on the
@@ -237,7 +230,6 @@ The structure of the repository and a few key files are highlighted below:
 │   ├── theme.nix      # System-wide theming
 │   ├── ...
 │   ├── ai/            # AI tools
-│   └── quickshell/    # Quickshell configs
 ├── secrets/           # Secrets managed by sops
 │   └── ...
 ├── outputs.nix        # Flake outputs

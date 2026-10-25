@@ -50,11 +50,6 @@
               ]
 
               [
-                {
-                  if (qs --no-duplicate -p /home/jam/nixos/modules/quickshell/shell ipc call shell reload | complete | get exit_code) != 0 {
-                    print --stderr "Failed to reload quickshell"
-                  }
-                }
                 { refresh-apps $refreshable_apps }
                 { update-gsettings }
               ] | par-each {|f| do $f}

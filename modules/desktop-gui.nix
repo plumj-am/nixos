@@ -45,6 +45,10 @@
 
     in
     {
+      # Battery and power queries for desktop apps; the Canopy bar reads sysfs
+      # itself, so this is not a shell dependency.
+      services.upower.enable = true;
+
       qt = {
         enable = true;
 

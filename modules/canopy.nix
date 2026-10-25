@@ -5,10 +5,12 @@
     {
       inputs,
       pkgs,
+      lib,
       config,
       ...
     }:
     let
+      inherit (lib.meta) getExe';
       inherit (config) theme;
 
       font = {
@@ -24,10 +26,25 @@
       };
     in
     {
-      environment.systemPackages = with inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}; [
-        canopy-canopy-bar
-        canopy-canopy-launcher
-      ];
+      environment.systemPackages =
+        (with inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}; [
+          canopy-bar
+          # canopy-clipboard
+          # canopy-control
+          canopy-launcher
+          # canopy-media
+          # canopy-notify
+        ])
+        ++ [
+          # Needed by canopy-control.
+          pkgs.brightnessctl
+          pkgs.bluez
+          pkgs.bluez-tools
+          pkgs.iproute2
+
+          # Needed by canopy-notify.
+          pkgs.libnotify
+        ];
 
       hjemModule = {
         xdg.config.files."canopy/bar.toml" = {
@@ -50,6 +67,9 @@
               right = [
                 "tray"
                 "separator"
+                # "notify"
+                # "media"
+                # "separator"
                 "cpu"
                 "ram"
                 "disk"
@@ -134,6 +154,70 @@
             };
           };
         };
+        xdg.config.files."canopy/notify.toml" = {
+          generator = pkgs.writers.writeTOML "canopy-notify.toml";
+          value = {
+            max_rows = 8;
+            relative_time = true;
+            panel = {
+              anchor = "top-right";
+              margin = 40;
+              width = 380;
+              height = 480;
+              padding = 12;
+              radius = 10;
+              border_width = 1;
+            };
+          };
+        };
+
+        xdg.config.files."canopy/media.toml" = {
+          generator = pkgs.writers.writeTOML "canopy-media.toml";
+          value = {
+            show_album = true;
+            panel = {
+              anchor = "top-left";
+              margin = 40;
+              width = 360;
+              height = 180;
+              padding = 16;
+              radius = 10;
+              border_width = 1;
+            };
+          };
+        };
+
+        xdg.config.files."canopy/clipboard.toml" = {
+          generator = pkgs.writers.writeTOML "canopy-clipboard.toml";
+          value = {
+            max_entries = 50;
+            prompt = "";
+            panel = {
+              anchor = "bottom";
+              margin = 0;
+              width = 500;
+              height = 440;
+              padding = 12;
+              radius = 10;
+              border_width = 1;
+            };
+          };
+        };
+
+        xdg.config.files."canopy/control.toml" = {
+          generator = pkgs.writers.writeTOML "canopy-control.toml";
+          value = {
+            panel = {
+              anchor = "top-right";
+              margin = 0;
+              width = 360;
+              height = 340;
+              padding = 12;
+              radius = 10;
+              border_width = 1;
+            };
+          };
+        };
 
         xdg.config.files."canopy/dark-theme.toml" = {
           generator = pkgs.writers.writeTOML "canopy-dark-theme.toml";
@@ -144,5 +228,11 @@
           value.colors = theme.palettes.light;
         };
       };
+
+      # hjem relinks the generated configs above on every switch, so ask the bar
+      # to re-read them once the user manifest has been applied.
+      systemd.services."hjem-activate@".postStart = ''
+        ${getExe' pkgs.procps "pkill"} --signal USR1 canopy-* || true
+      '';
     };
 }

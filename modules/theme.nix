@@ -260,8 +260,8 @@ in
       inherit (lib.strings) toJSON;
     in
     {
-      # Runtime mirror of the active variant. Read by quickshell and by `tt`;
-      # being a build output it always matches the running system.
+      # Runtime mirror of the active variant. Read by `toggle-theme`; being a
+      # build output it always matches the running system.
       environment.etc."theme.json".text = toJSON {
         mode = config.themeMode;
         colors = config.theme.withHash;

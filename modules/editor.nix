@@ -503,9 +503,6 @@ in
         # Nushell
         pkgs.nu-lint
         pkgs.nufmt
-
-        # QML
-        pkgs.qt6Packages.qtdeclarative
       ];
     };
 }

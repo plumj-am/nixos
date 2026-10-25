@@ -191,11 +191,6 @@
                   command = [ "nil" ];
                   extensions = [ ".nix" ];
                 };
-
-                qmlls = {
-                  command = [ "qmlls" ];
-                  extensions = [ ".qml" ];
-                };
               };
 
               formatter = {
