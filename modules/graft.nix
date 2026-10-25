@@ -353,7 +353,7 @@
 
       environment.systemPackages =
         singleton
-          inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.graft-graftctl;
+          inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.graftctl;
 
       hjemModule = {
         xdg.config.files."graft/config.toml".source = secrets."graft/cli/config".path;
