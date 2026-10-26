@@ -423,12 +423,6 @@
           xdg.config.files."tern/plugins/links/init.luau".source =
             "${flakePackages.tern-links-plugin}/init.luau";
 
-          xdg.config.files."tern/plugins/lenses/plugin.toml".source =
-            "${flakePackages.tern-lenses-plugin}/plugin.toml";
-
-          xdg.config.files."tern/plugins/lenses/host.luau".source =
-            "${flakePackages.tern-lenses-plugin}/host.luau";
-
           xdg.config.files."tern/plugins/tab-status/plugin.toml".source =
             "${flakePackages.tern-tab-status-plugin}/plugin.toml";
 
