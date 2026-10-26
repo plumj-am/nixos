@@ -39,6 +39,10 @@ in
         };
       };
 
+      # Nobody stays logged in here, and the remote Tern service must answer
+      # before the first login: keep jam's user manager up from boot.
+      tern.remote.linger = true;
+
       # Used as a server when not used as a laptop.
       services.logind.settings.Login = {
         HandleLidSwitch = "ignore";

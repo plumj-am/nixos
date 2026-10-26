@@ -25,12 +25,17 @@ in
         opengist
         postgres
         radicle-explorer
+        tern
         uptime-kuma
         vine
         website-plumjam
       ];
 
       networking.domain = "plumj.am";
+
+      # Nobody stays logged in here, and the remote Tern service must answer
+      # before the first login: keep jam's user manager up from boot.
+      tern.remote.linger = true;
 
       systemInfo = {
         distributedBuilder.speedFactor = 3;

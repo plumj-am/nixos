@@ -24,6 +24,7 @@ in
         nextcloud
         openssh-grove-systems
         tend
+        tern
         users-grove-systems
       ];
       networking.domain = "plumj.am";
@@ -50,6 +51,10 @@ in
           key = "sloe";
         };
       };
+
+      # Nobody stays logged in here, and the remote Tern service must answer
+      # before the first login: keep jam's user manager up from boot.
+      tern.remote.linger = true;
 
       # Very large disk, can hold on to things for longer.
       nix.gc = {
