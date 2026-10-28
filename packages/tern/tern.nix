@@ -10,7 +10,7 @@
 
       # Tern is a closed-beta Stencil Labs product. There is no public source
       # or download URL yet (build.stencil.so is auth-gated).
-      version = "0.9.5";
+      version = "0.9.8";
       filename = "Tern-${version}-linux-x86_64.tar.gz";
 
       # No public download: the tarball lives in the store, added by hand.
@@ -18,11 +18,15 @@
       # fetchurl copies the content without referencing the path, so the
       # path needs a GC root or `nix store gc` deletes it and the build fails.
       #
-      # For a new release:
+      # For a new release (flat mode is required: plain `nix store add-file`
+      # NAR-hashes the file, so fetchurl finds no store path for it and the
+      # sandboxed build fails with `curl: (37) Could not open file`):
       /*
-         nix store add-file --name "Tern-<version>-linux-x86_64.tar.gz" ~/Downloads/Tern-<version>-linux-x86_64.tar.gz
+         nix-store --add-fixed sha256 ~/Downloads/Tern-<version>-linux-x86_64.tar.gz
 
          sudo ln -sfn <PATH> /nix/var/nix/gcroots/per-user/$(id -u)/tern
+
+         nix hash file --type sha256 --base64 ~/Downloads/Tern-<version>-linux-x86_64.tar.gz
       */
       #
       # then update version, storePath and hash below.
@@ -34,8 +38,8 @@
       # - launch Tern fresh
       # - run "Restart session daemon" from a new-version window
       release = {
-        storePath = "/nix/store/h1s7zqq11flh72smxvvfsxpcpyyjs7dl-Tern-0.9.5-linux-x86_64.tar.gz";
-        hash = "sha256-ApOSXrYtSrfOLOuLx17Ox6xYNeh+awudb+vn0MgKzlI=";
+        storePath = "/nix/store/sf37q34jwp68m7ndrlz76szswimkqbsy-Tern-0.9.8-linux-x86_64.tar.gz";
+        hash = "sha256-TCCTx1UXTmAtT4bJeB5UOhVkrxrvI/NCFSLUNs9goFQ=";
       };
 
       # DT_NEEDED holds only libc/libm/libdl/libpthread/librt/libutil/ libgcc_s,
@@ -115,8 +119,12 @@
       # probe. Nushell cannot: `printf` is not a nushell builtin and the probe's
       # scrubbed PATH (env -i PATH=/usr/local/bin:/usr/bin:/bin) holds no printf
       # on NixOS, so the shell dies before the first marker and the reader times
-      # out. On a timeout Tern falls back to the libc default PATH, which has no
-      # profile directories.
+      # out. On a timeout Tern falls back to that same scrubbed PATH, which has
+      # no profile directories -- checked on 0.9.8: a pane whose probe failed
+      # carries PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin exactly. The
+      # NixOS paths 0.9.8 does know (/etc/profiles/per-user/<user>/bin,
+      # ~/.nix-profile/bin, /run/current-system/sw/bin) only widen where it
+      # looks for agents, omp and git; they never reach a pane's own PATH.
       #
       # Tern claims a command from the `cmdline` payload of the OSC 133;C mark
       # its shell integration sends; the bare mark claims nothing, so no lens
@@ -124,6 +132,9 @@
       # send the payload; nushell sends the mark alone, so the nushell this
       # shim runs gets a config that sources the user's own (which `--config`
       # alone replaces) and then appends the payload those integrations send.
+      # 0.9.8 still ships no nushell integration (bash, zsh, fish, pwsh and
+      # xonsh only), and nushell 0.115 still prints its own bare `133;C`, with
+      # ST instead of BEL, right after ours; Tern reads the payload first.
       #
       # The payload hangs off this shim rather than the settings' `shell`,
       # because Tern builds a session's first pane, and every pane it restores,
