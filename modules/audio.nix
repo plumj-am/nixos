@@ -2,12 +2,31 @@
 {
   flake.modules.nixos.desktop = self.modules.nixos.audio;
   flake.modules.nixos.audio =
-    { pkgs, lib, ... }:
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
     let
       inherit (lib.lists) singleton;
     in
     {
-      environment.systemPackages = singleton pkgs.pwvucontrol; # PipeWire volume control.
+      environment.systemPackages = [
+        pkgs.pwvucontrol # PipeWire volume control.
+
+        # pw-play is a symlink; shadow it with a wrapper that pins the stream
+        # volume to 1%. Caller flags still win because pw-cat keeps the last
+        # `--volume`.
+        #
+        # Why is this so loud by default lol.
+        (
+          lib.hiPrio
+          <| pkgs.writeShellScriptBin "pw-play" ''
+            exec ${config.services.pipewire.package}/bin/pw-play --volume=0.01 "$@"
+          ''
+        )
+      ];
 
       services.pipewire = {
         enable = true;
