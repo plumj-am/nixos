@@ -437,7 +437,6 @@
             value = {
               only_unfocused = false;
               min_seconds = 30; # for shell command notifications
-              volume = 2; # %
 
               alert = "sounds/alert.wav";
               yield = "sounds/yield.wav";
