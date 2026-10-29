@@ -8,8 +8,8 @@
     self.modules.common.diff-formatter
     self.modules.common.jj-stack
     self.modules.common.jjui
+    self.modules.common.mergiraf
     self.modules.common.watchman
-    self.modules.common.weave
   ];
 
   flake.modules.common.git =
@@ -761,7 +761,7 @@
       };
     };
 
-  flake.modules.common.weave =
+  flake.modules.common.mergiraf =
     {
       pkgs,
       lib,
@@ -769,11 +769,11 @@
     }:
     let
       inherit (lib.lists) singleton;
-      inherit (lib.meta) getExe';
+      inherit (lib.meta) getExe;
       inherit (lib.modules) mkDefault;
     in
     {
-      environment.systemPackages = singleton pkgs.weave;
+      environment.systemPackages = singleton pkgs.mergiraf;
 
       hjemModule = {
         xdg.config.files."jj/config.toml" = {
@@ -784,29 +784,13 @@
               resolve-ast = [
                 "resolve"
                 "--tool"
-                "weave"
+                "mergiraf"
               ];
             };
 
-            ui.merge-editor = "weave";
+            ui.merge-editor = "mergiraf";
 
-            merge-tools.weave = {
-              program = getExe' pkgs.weave "weave-driver";
-              merge-args = [
-                "$base"
-                "$left"
-                "$right"
-                "-o"
-                "$output"
-                "-l"
-                "$marker_length"
-                "-p"
-                "$path"
-              ];
-              merge-conflict-exit-codes = [ 1 ];
-              merge-tool-edits-conflict-markers = true;
-              conflict-marker-style = "git";
-            };
+            merge-tools.mergiraf.program = getExe pkgs.mergiraf;
           };
         };
       };
