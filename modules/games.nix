@@ -1,3 +1,4 @@
+{ self, ... }:
 {
   flake.modules.nixos.games =
     {
@@ -18,7 +19,11 @@
       threads = toString <| floor <| config.systemInfo.threads * 0.5;
     in
     {
-      imports = singleton inputs.steam-config.nixosModules.default;
+      imports = [
+        self.modules.nixos.game-nix-yield
+
+        inputs.steam-config.nixosModules.default
+      ];
 
       unfree.allowedNames = [
         "steam"
@@ -107,6 +112,92 @@
             unShaderBackgroundProcessingThreads ${threads}
             @ShaderBackgroundProcessingThreads ${threads}
           '';
+      };
+    };
+
+  flake.modules.nixos.game-nix-yield =
+    { pkgs, lib, ... }:
+    let
+      inherit (lib.lists) singleton;
+      inherit (lib.meta) getExe';
+      inherit (lib.strings) concatStringsSep;
+
+      # Steam's reaper process lives for the whole game session, so its presence
+      # is a game-agnostic "game running" signal.
+      gamePattern = "ubuntu12_32/reaper SteamLaunch";
+
+      gameProperties = [
+        "CPUWeight=20"
+        "IOWeight=20"
+        "MemoryHigh=50%"
+        # No MemorySwapMax: builds may use swap freely while a game runs. The
+        # oomd swap trip point is not affected either way - SwapUsedLimit= is
+        # measured against system-wide swap, not a per-cgroup `memory.swap.max`
+        # (see oomd.conf(5)). `memory.high` throttles; the swap kill stays a
+        # system-level backstop.
+        #
+        # `memory.high` throttling raises the slice's own PSI, which the oomd
+        # policy would otherwise answer with a kill. While a game runs, builds
+        # are throttled instead of killed: pressure kills are off, and the
+        # kernel OOM killer inside the slice remains the backstop.
+        "ManagedOOMMemoryPressure=auto"
+      ];
+
+      idleProperties = [
+        "CPUWeight=100"
+        "IOWeight=100"
+        "MemoryHigh=infinity"
+        # Restore the "sacrifice builds" policy from modules/systemd-oomd.nix.
+        "ManagedOOMMemoryPressure=kill"
+      ];
+
+      apply =
+        properties:
+        "${getExe' pkgs.systemd "systemctl"} set-property --runtime nix.slice "
+        + concatStringsSep " " properties;
+    in
+    {
+      systemd.services.game-nix-yield = {
+        description = "Throttle Nix builds while a Steam game runs";
+
+        serviceConfig = {
+          Type = "oneshot";
+          RuntimeDirectory = "game-nix-yield";
+          RuntimeDirectoryPreserve = "yes";
+          ExecStart =
+            pkgs.writers.writeNu "game-nix-yield.nu"
+              # nu
+              ''
+                let state = "/run/game-nix-yield/state"
+
+                let want = if (^${getExe' pkgs.procps "pgrep"} --full '${gamePattern}' | complete).exit_code == 0 {
+                  "game"
+                } else {
+                  "idle"
+                }
+
+                let have = if ($state | path exists) { open --raw $state | str trim } else { "idle" }
+
+                if $want == $have { exit 0 }
+
+                match $want {
+                  "game" => { ${apply gameProperties} },
+                  _      => { ${apply idleProperties} }
+                }
+
+                $want | save --force $state
+              '';
+        };
+      };
+
+      systemd.timers.game-nix-yield = {
+        wantedBy = singleton "timers.target";
+
+        timerConfig = {
+          OnBootSec = "30s";
+          OnUnitActiveSec = "3s";
+          AccuracySec = "1s";
+        };
       };
     };
 }
