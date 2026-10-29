@@ -351,6 +351,7 @@
 
                 "${prefix}>g" = "plugin.tools.jjui";
                 "${prefix}>d" = "plugin.tools.hunk";
+                "${prefix}>c" = "plugin.tools.copse";
               };
             };
           };
