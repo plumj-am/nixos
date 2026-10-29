@@ -10,7 +10,6 @@
     let
       inherit (lib.lists) singleton;
       inherit (lib.trivial) floor warnIf;
-
       inherit (config.systemInfo) gpu;
       inherit (config.users.users.jam) home;
 
@@ -48,6 +47,7 @@
         extraPackages = [
           pkgs.mangohud
           pkgs.winetricks
+          pkgs.pulseaudio # Needs `pactl` at runtime.
         ];
 
         config = {
