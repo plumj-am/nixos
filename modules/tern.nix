@@ -11,10 +11,11 @@
       ...
     }:
     let
-      inherit (lib.attrsets) optionalAttrs;
-      inherit (lib.lists) singleton;
+      inherit (lib.attrsets) attrNames optionalAttrs;
+      inherit (lib.lists) filter singleton;
       inherit (lib.meta) getExe;
       inherit (lib.modules) mkBefore mkForce;
+      inherit (lib.strings) concatLines;
       inherit (config) theme;
 
       prefix = "ctrl+g";
@@ -30,6 +31,9 @@
       loginShell = "${flakePackages.tern-login-shell}/bin/nu";
     in
     {
+      # Marks this host for every other host's `tern remote` host list.
+      tern.installed = true;
+
       # No unfree allowlist: the package opens its own gate, since a host's
       # `unfree.allowedNames` never reaches a flake-level derivation.
       #
@@ -55,7 +59,7 @@
       users.users.jam.linger = config.tern.remote.linger;
 
       hjemModule =
-        { config, ... }:
+        { osConfig, config, ... }:
         {
           environment.sessionVariables.SHELL = mkForce loginShell;
 
@@ -350,6 +354,20 @@
               };
             };
           };
+
+          # The hosts `tern remote` offers to attach to: every other host that
+          # includes this module, read from the marker each one sets. The marker is
+          # a constant, and only this list reads it, so evaluating another host's
+          # configuration stops at that option instead of recursing into its copy
+          # of this list.
+          xdg.config.files."tern/hosts".text =
+            concatLines
+            <| filter (
+              name:
+              name != osConfig.networking.hostName
+              && (self.nixosConfigurations.${name}.config.tern.installed or false)
+            )
+            <| attrNames self.nixosConfigurations;
 
           xdg.config.files."tern/clawdi/settings.json" = {
             generator = pkgs.writers.writeJSON "tern-clawdi-settings.json";

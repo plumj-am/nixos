@@ -8,6 +8,16 @@
       inherit (lib.types) bool;
     in
     {
+      options.tern.installed = mkOptionOf bool {
+        default = false;
+        internal = true;
+        description = ''
+          Whether this host includes the Tern module. The module sets it
+          itself; every host that has it reads the flag from the other hosts to
+          build the `tern remote` host list.
+        '';
+      };
+
       options.tern.remote.linger = mkOptionOf bool {
         default = false;
         description = ''
