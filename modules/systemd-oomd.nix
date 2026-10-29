@@ -22,6 +22,11 @@
     systemd.slices = {
       "system".sliceConfig.ManagedOOMSwap = "kill";
 
+      # Reclaim protection, not a reservation: costs nothing while memory is
+      # uncontended, and keeps builds from evicting the interactive session's
+      # pages when they are not.
+      "user".sliceConfig.MemoryLow = "25%";
+
       # nix-daemon.slice nests under nix.slice. Nix's per-build cgroups carry no
       # memory accounting, so a pressure kill here takes the daemon and every
       # running build.
