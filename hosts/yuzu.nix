@@ -16,7 +16,6 @@ in
         games
         gpu-unlock
         llama-cpp
-        nix-desktop-limit-jobs
       ];
 
       systemInfo = {

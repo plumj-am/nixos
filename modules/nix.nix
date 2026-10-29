@@ -152,23 +152,6 @@ in
     };
   };
 
-  flake.modules.nixos.nix-desktop-limit-jobs =
-    { config, ... }:
-    let
-      inherit (lib.modules) mkForce;
-      inherit (lib.trivial) floor max;
-    in
-    {
-      nix = {
-        # desktops: yuzu = 20, date = 12
-        settings.max-jobs =
-          mkForce
-          <| max 2
-          <| floor
-          <| config.systemInfo.threads * 3 / 4;
-      };
-    };
-
   flake.modules.darwin.default = self.modules.darwin.nix-extra;
   flake.modules.darwin.nix-extra =
     { lib, ... }:
