@@ -929,11 +929,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792766108,
-        "narHash": "sha256-L8vv/yVT4Vrh1BDddNniiRk5zDIWAMxqgxUmSCC/d0U=",
+        "lastModified": 1793311452,
+        "narHash": "sha256-3DUXzc6Z8bzEjv64EXI2KEobd3xn5JVQh1cXbZmfWcw=",
         "owner": "mitos-editor",
         "repo": "mitos",
-        "rev": "b93fcc25524f4f9a045a45f74c67e86a6899de69",
+        "rev": "418baae405a23114077da08d454988bb8921f72a",
         "type": "github"
       },
       "original": {

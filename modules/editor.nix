@@ -37,6 +37,7 @@ in
       oxfmtConfigFile = pkgs.writers.writeJSON ".oxfmtrc.json" {
         bracketSameLine = true;
         printWidth = 100;
+        proseWrap = "always";
         semi = true;
         tabWidth = 3;
         useTabs = true;
@@ -150,6 +151,12 @@ in
                         command = "@:sh cp <C-r>% <C-r>%";
                       };
                     };
+                  };
+
+                  # TODO: Check later after version bump. It doesn't work for some reason.
+                  picker = {
+                    "C-d" = "preview_scroll_down";
+                    "C-u" = "preview_scroll_up";
                   };
                 };
             };
