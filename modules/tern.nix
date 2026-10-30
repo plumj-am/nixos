@@ -137,6 +137,7 @@
             type = "copy";
             value = {
               auto_update = false;
+              desktop_integration = true;
 
               theme = "System";
               theme_dark = "dark-gruvbox";
@@ -146,6 +147,8 @@
               material = "Glass";
               opacity = 70;
               blur = 0;
+              padding_x = 6;
+              padding_y = 6;
 
               antialias = true;
               msaa = "off";
@@ -163,6 +166,7 @@
               surface_diffs = "Split";
               surface_fold = true;
               surface_chat = "Spine";
+              keep_composer_open = true;
 
               native_completion = true;
               native_editing = true;
@@ -214,7 +218,7 @@
               confirm_close = "running_programs";
 
               shell = "${loginShell}";
-              agent_command = "PI_OMP_NATIVE=1 ${getExe flakePackages.omp-wrapped}";
+              agent_command = "${getExe flakePackages.omp-wrapped}";
 
               command_lenses = true;
               program_colors = false; # use tern palette
@@ -230,6 +234,11 @@
               share_sessions = true;
               ask_to_move = true;
               prefs_width = 440;
+
+              agents = {
+                notify_needs_attention = true;
+                notify_turn_finished = true;
+              };
 
               files = {
                 markdown_rendered = true;
