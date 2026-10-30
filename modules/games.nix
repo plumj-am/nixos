@@ -104,6 +104,21 @@
       security.rtkit.enable = true; # For low-latency audio
 
       hjemModule = {
+        xdg.config.files."MangoHud/MangoHud.conf".text = ''
+          font_size=18
+          background_alpha=0.2
+          fps_metrics=avg,0.01
+
+          gpu_temp
+          gpu_core_clock
+          vram
+
+          cpu_stats
+          cpu_temp
+          cpu_mhz
+          procmem
+        '';
+
         xdg.data.files."steam-shader-cache/overwatch".type = "directory";
 
         xdg.data.files."Steam/steam_dev.cfg".text =
