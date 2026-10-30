@@ -68,7 +68,7 @@
     };
     # Waiting for this: <https://github.com/NixOS/nixpkgs/pull/576743>
     mitos = {
-      url = "github:mitos-editor/mitos";
+      url = "github:mitos-editor/mitos?ref=refs/tags/v0.1.3";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-core = {
