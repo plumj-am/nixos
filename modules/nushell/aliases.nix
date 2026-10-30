@@ -44,7 +44,6 @@
 
             oops = "nix run nixpkgs#sqlite -- ${config.xdg.config.directory}/nushell/history.sqlite3 'DELETE FROM history WHERE rowid IN (SELECT rowid FROM history ORDER BY rowid DESC LIMIT 5);'";
 
-            cat = "${getExe pkgs.bat} --theme ${theme.bat}";
             less = "${getExe pkgs.bat} --plain";
 
             nfc = "nix flake check --log-format internal-json -v err>| rom --json";
@@ -55,13 +54,29 @@
             nxi = "nix";
           };
 
-          aliases' = aliases // osConfig.shellAliases;
+          # `environment.shellAliases` targets POSIX shells. An entry that
+          # re-invokes the command it shadows (`ls = "ls --color=tty"`) is a
+          # parse error in nushell and would take the whole alias file down with
+          # it, so those stay out.
+          inheritableShellAliases = lib.filterAttrs (
+            name: value: (lib.head (lib.splitString " " value)) != name
+          ) osConfig.shellAliases;
+
+          aliases' = aliases // inheritableShellAliases;
         in
         {
           xdg.config.files."nushell/config.nu".text =
             # nu
             ''
               source ${pkgs.writeText "nushell-aliases.nu" ''
+                ${
+                  # Nushell aliases are parsed once, so `cat` has to be a
+                  # definition to follow the live theme (`$env.THEME_BAT` is set
+                  # by nushell-prompt.nu).
+                  lib.optionalString (!(aliases' ? cat)) ''
+                    def --wrapped cat [...args] { ${getExe pkgs.bat} --theme ($env.THEME_BAT? | default "${theme.bat}") ...$args }
+                  ''
+                }
                 ${lib.concatStringsSep "\n" (lib.mapAttrsToList (name: val: "alias ${name} = ${val}") aliases')}
               ''}
             '';
