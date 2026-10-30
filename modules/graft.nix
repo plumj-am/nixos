@@ -153,6 +153,12 @@
               systems = [ "x86_64-linux" ];
               build_timeout_secs = 3600;
               poll_interval_secs = 30;
+              # The Grove flake exports `flake.graph.<system>`, so graft can
+              # ask it which checks a change reaches. Shadow first: the
+              # decision is logged against the derivation comparison and
+              # nothing is skipped, so a graph bug shows up as an "unsound"
+              # warning instead of a missed build.
+              graph_mode = "shadow";
               users = [
                 "plumjam"
                 "antteheatta"
@@ -174,6 +180,8 @@
               github_app_id = 4843741;
               github_app_installation_id = 159367374;
               github_app_private_key_file = secrets."graft/grove_github/secret".path;
+              # Same flake output as the Forgejo project: shadow, then "skip".
+              graph_mode = "shadow";
             };
 
             grove = {
