@@ -1,4 +1,3 @@
-{ self, ... }:
 {
   flake.modules.nixos.games =
     {
@@ -17,12 +16,15 @@
       isGpu = gpu.exists;
 
       threads = toString <| floor <| config.systemInfo.threads * 0.5;
+
+      grovePkgs = inputs.grove.packages.${pkgs.stdenv.hostPlatform.system};
     in
     {
       imports = [
         self.modules.nixos.game-nix-yield
 
         inputs.steam-config.nixosModules.default
+        inputs.grove.nixosModules.gamemode
       ];
 
       unfree.allowedNames = [
@@ -40,7 +42,12 @@
         __GL_SHADER_DISK_CACHE_SIZE = "10737418240";
       };
 
-      environment.systemPackages = singleton <| pkgs.bottles.override { removeWarningPopup = true; };
+      environment.systemPackages = [
+        grovePkgs.gmrs-client
+        grovePkgs.gmrs-client-auto
+
+        (pkgs.bottles.override { removeWarningPopup = true; })
+      ];
 
       boot.kernelPackages = pkgs.linuxPackages_zen;
 
@@ -94,7 +101,20 @@
         };
       };
 
-      programs.gamemode.enable = true;
+      services.gamemode = {
+        enable = true;
+        package = grovePkgs.gmrs-daemon;
+        helperPackage = grovePkgs.gmrs-priv;
+      };
+
+      users.users.jam.extraGroups = singleton "gamemode";
+
+      security.pam.loginLimits = singleton {
+        domain = "@gamemode";
+        type = "-";
+        item = "nice";
+        value = "-10";
+      };
 
       hardware.graphics = {
         enable = true;
