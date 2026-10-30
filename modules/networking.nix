@@ -2,12 +2,14 @@
 {
   flake.modules.nixos.default = self.modules.nixos.networking;
   flake.modules.nixos.networking =
-    { lib, ... }:
+    { pkgs, lib, ... }:
     let
       inherit (lib.lists) singleton;
       inherit (lib.modules) mkDefault;
     in
     {
+      environment.systemPackages = singleton pkgs.wireshark;
+
       networking.networkmanager = {
         enable = true;
         wifi.powersave = false;
