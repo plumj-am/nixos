@@ -176,16 +176,15 @@
           };
         }
         {
-          id = "minimax/minimax-m3.1-flash:free";
-          name = "MiniMax M3.1 Flash";
+          id = "inclusionai/ling-3.1-flash-1019:free";
+          name = "Inclusion Ling 3.1 Flash";
           free = true;
           thinking = {
             minLevel = "low";
-            maxLevel = "max";
+            maxLevel = "high";
           };
           inputTypes = [
             "text"
-            "image"
           ];
           context = 1000000;
           maxOutput = 262144;

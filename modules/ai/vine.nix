@@ -8,6 +8,8 @@
       ...
     }:
     let
+      inherit (lib.attrsets) genAttrs;
+      inherit (lib.filesystem) baseNameOf;
       inherit (lib.lists) singleton;
       inherit (config) sops;
     in
@@ -43,15 +45,16 @@
               url = "https://amr-link.open-design.ai/v1";
               order = 20;
               # what model is sent and what the upstream calls it
-              model_map = {
-                "deepseek/deepseek-v4.1-flash" = "deepseek-v4.1-flash";
-                "z-ai/glm-5.3-flash" = "glm-5.3-flash";
-                "xiaomi/mimo-v2.6-flash" = "mimo-v2.6-flash";
-                "xiaomi/mimo-v2.6-pro" = "mimo-v2.6-pro";
-              };
+              model_map = genAttrs [
+                "deepseek/deepseek-v4.1-flash"
+                "z-ai/glm-5.3-flash"
+                "xiaomi/mimo-v2.6-flash"
+                "xiaomi/mimo-v2.6-pro"
+              ] baseNameOf;
 
               # client-sent ids this upstream does not serve; exact match
               skip_models = [
+                "inclusionai/ling-3.1-flash-1019:free"
                 "minimax/minimax-m3.1-flash:free"
                 "reflection/beam:free"
                 "typesafe/jev"
