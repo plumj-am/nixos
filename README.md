@@ -111,7 +111,6 @@ There are a few programs I have packaged with Nix available in `./packages`
 which you can consume and use in your own configs:
 
 - headroom ([source](https://github.com/headroomlabs-ai/headroom))
-- jj-stack ([source](https://github.com/bos/jj-stack))
 - maiao ([source](https://github.com/runetes/maiao))
 - omp-plugins ([source](https://github.com/can1357/oh-my-pi))
 - raddebugger ([source](https://github.com/EpicGames/raddebugger))

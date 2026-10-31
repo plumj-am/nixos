@@ -587,6 +587,7 @@
 
   flake.modules.common.jj-stack =
     {
+      inputs,
       pkgs,
       lib,
       ...
@@ -596,12 +597,16 @@
       inherit (lib.meta) getExe;
       inherit (lib.modules) mkDefault;
 
-      jjStack = self.packages.${pkgs.stdenv.hostPlatform.system}.jj-stack;
+      jjStack = inputs.jj-stack.packages.${pkgs.stdenv.hostPlatform.system}.jj-stack;
     in
     {
       environment.systemPackages = singleton jjStack;
 
       hjemModule = {
+        # The skill ships inside the package; omp and hermes read `~/.agents/skills`
+        # (`skills.enableAgentsUser`, `skills.external_dirs`).
+        files.".agents/skills/jj-stack".source = "${jjStack}/share/skills/jj-stack/jj-stack";
+
         xdg.config.files."jj/config.toml" = {
           generator = mkDefault <| pkgs.writers.writeTOML "jj-config.toml";
           value = {

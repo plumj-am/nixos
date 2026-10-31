@@ -1,4 +1,3 @@
-{ self, ... }:
 let
   oneshotServiceConfig = {
     Type = "oneshot";
@@ -47,7 +46,7 @@ let
 
       graftctl = inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.graftctl;
       jujutsu = inputs.jujutsu.packages.${pkgs.stdenv.hostPlatform.system}.jujutsu;
-      jjStack = self.packages.${pkgs.stdenv.hostPlatform.system}.jj-stack;
+      jjStack = inputs.jj-stack.packages.${pkgs.stdenv.hostPlatform.system}.jj-stack;
 
       vineProvider = config.ai.providers.headroomVineProxy;
       provider = vineProvider.name;

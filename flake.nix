@@ -66,6 +66,10 @@
       url = "github:bolivier/jj-mode.el";
       flake = false;
     };
+    jj-stack = {
+      url = "github:plumj-am/jj-stack/patch/PlumJam-tuzutqoxxsqu";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     kache = {
       url = "github:kunobi-ninja/kache";
       inputs.nixpkgs.follows = "nixpkgs";

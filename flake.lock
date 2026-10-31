@@ -840,6 +840,27 @@
         "type": "github"
       }
     },
+    "jj-stack": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1793282930,
+        "narHash": "sha256-B/N/R6XxKT+ibVAJBICYMG76LhRyArUVpbHJEbUJg8M=",
+        "owner": "plumj-am",
+        "repo": "jj-stack",
+        "rev": "ce0c3db2f434f7529b4a507dd642a81880fb211d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "plumj-am",
+        "ref": "patch/PlumJam-tuzutqoxxsqu",
+        "repo": "jj-stack",
+        "type": "github"
+      }
+    },
     "jujutsu": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -1346,6 +1367,7 @@
         "homebrew-cask": "homebrew-cask",
         "homebrew-core": "homebrew-core",
         "jj-mode-el": "jj-mode-el",
+        "jj-stack": "jj-stack",
         "jujutsu": "jujutsu",
         "kache": "kache_2",
         "mitos": "mitos",
