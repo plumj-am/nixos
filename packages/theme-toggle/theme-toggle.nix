@@ -41,22 +41,6 @@
               }
             }
 
-            def reload-applications []: nothing -> nothing {
-              print "Reloading applications..."
-
-              let refreshable_apps = [
-                {name: "ms", signal: "USR1"}
-                {name: "opencode", signal: "USR2"}
-              ]
-
-              [
-                { refresh-apps $refreshable_apps }
-                { update-gsettings }
-              ] | par-each {|f| do $f}
-
-              print "Application reloading complete."
-            }
-
             def switch-variant [mode: string]: nothing -> nothing {
               let name = $mode
               print $"Switching to the ($name) theme."
@@ -67,7 +51,7 @@
                 error make $"switching to the ($name) theme failed"
               }
 
-              reload-applications
+              update-gsettings
             }
 
             def main [] {

@@ -9,11 +9,15 @@ let
 in
 {
   flake.modules.common.default.imports = [
-    self.modules.common.disable-nano
     self.modules.common.mitos
   ];
 
-  flake.modules.common.disable-nano = {
+  flake.modules.nixos.default.imports = [
+    self.modules.nixos.disable-nano
+    self.modules.nixos.mitos-reload
+  ];
+
+  flake.modules.nixos.disable-nano = {
     programs.nano.enable = false;
   };
 
@@ -504,5 +508,16 @@ in
         pkgs.nu-lint
         pkgs.nufmt
       ];
+    };
+
+  flake.modules.nixos.mitos-reload =
+    { pkgs, lib, ... }:
+    let
+      inherit (lib.meta) getExe';
+    in
+    {
+      systemd.services."hjem-activate@".postStart = ''
+        ${getExe' pkgs.procps "pkill"} --signal USR1 --exact ms || true
+      '';
     };
 }

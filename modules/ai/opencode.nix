@@ -267,5 +267,18 @@
           };
         };
       };
+
+    };
+
+  flake.modules.nixos.default = self.modules.nixos.opencode-reload;
+  flake.modules.nixos.opencode-reload =
+    { pkgs, lib, ... }:
+    let
+      inherit (lib.meta) getExe';
+    in
+    {
+      systemd.services."hjem-activate@".postStart = ''
+        ${getExe' pkgs.procps "pkill"} --signal USR2 --exact opencode || true
+      '';
     };
 }
