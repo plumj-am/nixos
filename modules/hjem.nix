@@ -1,27 +1,20 @@
+{ self, ... }:
 {
-  self,
-  inputs,
-  lib,
-  ...
-}:
-let
-  inherit (lib.lists) optional singleton;
-
-  mkHjemModule =
-    hjemModule:
-    { config, ... }:
+  flake.modules.common.hjem =
+    { lib, config, ... }:
+    let
+      inherit (lib.lists) optional;
+    in
     {
-      imports = singleton hjemModule;
-
       config.hjem.extraModules =
         optional (config.hjem.extraModule != null) config.hjem.extraModule
         ++ optional (config.hjemModule != null) config.hjemModule;
-    };
-in
-{
-  flake.modules.nixos.default = self.modules.nixos.hjem;
-  flake.modules.nixos.hjem = mkHjemModule inputs.hjem.nixosModules.default;
 
-  flake.modules.darwin.default = self.modules.nixos.hjem;
-  flake.modules.darwin.hjem = mkHjemModule inputs.hjem.darwinModules.default;
+    };
+
+  flake.modules.nixos.default = self.modules.nixos.hjem;
+  flake.modules.nixos.hjem = { inputs, ... }: inputs.hjem.nixosModules.default;
+
+  flake.modules.darwin.default = self.modules.darwin.hjem;
+  flake.modules.darwin.hjem = { inputs, ... }: inputs.hjem.darwinModules.default;
 }

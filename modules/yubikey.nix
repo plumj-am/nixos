@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.default = self.modules.nixos.yubikey;
-  flake.modules.common.yubikey =
+  flake.modules.nixos.default = self.modules.nixos.yubikey;
+  flake.modules.nixos.yubikey =
     { pkgs, ... }:
     {
       environment.systemPackages = [
