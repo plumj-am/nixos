@@ -272,15 +272,6 @@ in
                       name = "markdown";
                       auto-format = true;
                       language-servers = singleton "markdown-oxide";
-                      spelling.languages = singleton "en_US";
-                    }
-                    {
-                      name = "git-commit";
-                      spelling.languages = singleton "en_US";
-                    }
-                    {
-                      name = "jjdescription";
-                      spelling.languages = singleton "en_US";
                     }
                     {
                       name = "just";
