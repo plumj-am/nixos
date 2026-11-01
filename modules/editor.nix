@@ -67,11 +67,16 @@ in
               theme = theme.mitos;
 
               editor = {
+                border-style = "plain";
+                breadcrumb = {
+                  enable = true;
+                  path = "full";
+                };
                 bufferline = "multiple";
+                command-line.show = "auto";
                 completion-timeout = 5;
                 completion-replace = true;
                 completion-trigger-len = 1;
-                color-modes = true;
                 cursorline = true;
                 file-picker.hidden = false;
                 idle-timeout = 0;
@@ -82,6 +87,29 @@ in
                 trim-trailing-whitespace = true;
                 true-color = true;
                 statusline = {
+                  mode.color = true;
+
+                  left = [
+                    "mode"
+                    "spinner"
+                    "debug-session"
+                    "branch"
+                    "file-name"
+                    "read-only-indicator"
+                    "file-modification-indicator"
+                  ];
+                  right = [
+                    "code-action-hint"
+                    "diagnostics"
+                    "selections"
+                    "register"
+                    "primary-selection-length"
+                    "search-position"
+                    "position-percentage"
+                    "position"
+                    "file-encoding"
+                  ];
+
                   diagnostics = [
                     "hint"
                     "info"
