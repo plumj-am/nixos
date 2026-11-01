@@ -43,6 +43,10 @@
       url = "github:feel-co/hjem";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    hokum = {
+      url = "github:anomalyco/hokum";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     homebrew = {
       url = "github:zhaofengli/nix-homebrew";
     };

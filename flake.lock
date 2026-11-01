@@ -733,6 +733,26 @@
         "type": "github"
       }
     },
+    "hokum": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1793506764,
+        "narHash": "sha256-SCGQ1CQgrVNwtyAOI6cQIgKC2EGqRdnRJmE9dVhuaQw=",
+        "owner": "anomalyco",
+        "repo": "hokum",
+        "rev": "f30af6ae2762bf9a3b41b9cbccac6e01cbed08ab",
+        "type": "github"
+      },
+      "original": {
+        "owner": "anomalyco",
+        "repo": "hokum",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -1321,6 +1341,7 @@
         "helium": "helium",
         "hermes-agent": "hermes-agent",
         "hjem": "hjem",
+        "hokum": "hokum",
         "homebrew": "homebrew",
         "homebrew-cask": "homebrew-cask",
         "homebrew-core": "homebrew-core",
