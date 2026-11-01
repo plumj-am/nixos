@@ -43,7 +43,11 @@
         path = singleton pkgs.gitMinimal;
 
         serviceConfig = systemdHardened // {
-          Type = "notify";
+          # Opengist 1.15 binds its listener but never sends READY=1, so
+          # `Type = "notify"` made systemd kill the fully-started process at
+          # TimeoutStartUSec (90s) and restart it, over and over. It serves
+          # fine in between, which is why the site answered intermittently.
+          Type = "exec";
           User = user;
           Group = user;
           ExecStart = "${getExe pkgs.opengist} --config /etc/opengist/config.yml";
