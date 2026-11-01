@@ -85,6 +85,36 @@
                 gh pr diff $pull_request --patch --repo $repo | hunk patch -
               }
             }
+
+            def loop-check [] {
+              loop {
+                # `jj resolve --list` exits non-zero when there are no conflicts
+                let conflicts = jj resolve --list | complete
+                if $conflicts.exit_code == 0 {
+                  let result = jj resolve --tool mergiraf | complete
+                  if $result.exit_code != 0 {
+                    error make $"conflict resolution failed:(char nl)($result.stderr)"
+                  }
+                }
+
+                trim
+
+                nix run .#formatter.x86_64-linux
+
+                let check = nix run .#graph -- check | complete
+                if $check.exit_code != 0 {
+                  print $"stdout:(char nl)($check.stdout)"
+                  print $"stderr:(char nl)($check.stderr)"
+                  error make "graph check failed"
+                }
+
+                let res = jj edit @+ | complete
+                # no more revisions to move to -> we're done
+                if ($res.stderr | str contains "Revset `@+` didn't resolve to any revisions") { break }
+
+                if $res.exit_code != 0 { error make $"`jj edit @+` failed: ($res.stderr)" }
+              }
+            }
           ''}";
       };
     };

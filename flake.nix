@@ -20,7 +20,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     ferron = {
-      url = "github:ferronweb/ferron/3.x";
+      url = "github:plumj-am/ferron/patch/PlumJam-lulvvzznxuyo";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     gerrit-autosubmit = {

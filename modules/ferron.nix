@@ -320,7 +320,9 @@
 
         services.ferron = {
           enable = true;
-          package = inputs.ferron.packages.${pkgs.stdenv.hostPlatform.system}.ferron-bin;
+          # `ferron-bin` package downloads an upstream release binary instead of
+          # building the pinned revision, so use `ferron` package.
+          package = inputs.ferron.packages.${pkgs.stdenv.hostPlatform.system}.ferron;
           openFirewall = false;
 
           # Access and application logs go to stdout, which systemd

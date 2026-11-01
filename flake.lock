@@ -330,16 +330,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1792720256,
-        "narHash": "sha256-iiUCuM27meZok4xv3bP8Keg+QoJV40k7FE3ApZ2lHcQ=",
-        "owner": "ferronweb",
+        "lastModified": 1793573590,
+        "narHash": "sha256-FIfgqCbR+GoU2/Jxns0bhEwmRZNoNhIuuvVrD1phw8o=",
+        "owner": "plumj-am",
         "repo": "ferron",
-        "rev": "460b572456670a5e54d94d7ebde600319745e4c1",
+        "rev": "f681e641b747aff628edef6b6a64d47288f58191",
         "type": "github"
       },
       "original": {
-        "owner": "ferronweb",
-        "ref": "3.x",
+        "owner": "plumj-am",
+        "ref": "patch/PlumJam-lulvvzznxuyo",
         "repo": "ferron",
         "type": "github"
       }
