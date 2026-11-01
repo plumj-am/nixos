@@ -230,7 +230,7 @@
               skills.enableAgentsUser = true;
               skills.enableClaudeProject = false;
               skills.enablePiProject = false;
-              skills.enableAgentsProject = false;
+              skills.enableAgentsProject = true;
 
               autocompleteMaxVisible = 20;
 
