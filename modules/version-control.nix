@@ -160,9 +160,11 @@
       ...
     }:
     let
+      inherit (lib.attrsets) mapAttrs;
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
       inherit (lib.modules) mkBefore mkDefault;
+      inherit (lib.strings) splitString;
 
       jujutsu = inputs.jujutsu.packages.${pkgs.stdenv.hostPlatform.system}.jujutsu;
     in
@@ -209,241 +211,86 @@
               git.fetch = [ "origin" ];
               git.push = "origin";
 
-              aliases.".." = [
-                "edit"
-                "@-"
-              ];
-              aliases.",," = [
-                "edit"
-                "@+"
-              ];
+              # NOTE: assumes every space should be split. If using revsets just
+              # remove the spaces between them if possible.
+              aliases = mapAttrs (_: splitString " ") {
+                ".." = "edit @-";
+                ",," = "edit @+";
 
-              aliases.a = [ "abandon" ];
+                a = "abandon";
 
-              aliases.b = [ "bookmark" ];
-              aliases.bs = [
-                "bookmark"
-                "set"
-              ];
-              aliases.bc = [
-                "bookmark"
-                "create"
-              ];
+                b = "bookmark";
+                bs = "bookmark set";
+                bc = "bookmark create";
 
-              aliases.c = [ "commit" ];
-              aliases.ci = [
-                "commit"
-                "--interactive"
-              ];
+                c = "commit";
 
-              aliases.e = [ "edit" ];
+                e = "edit";
 
-              aliases.fetch = [
-                "git"
-                "fetch"
-              ];
-              aliases.f = [
-                "git"
-                "fetch"
-              ];
+                init = "git init --colocate";
+                i = "git init --colocate";
+                clone = "git clone --colocate";
+                cl = "git clone --colocate";
 
-              aliases.fr = [
-                "new"
-                "trunk()"
-              ];
-              aliases.fresh = [
-                "new"
-                "trunk()"
-              ];
+                fetch = "git fetch";
+                f = "git fetch";
+                push = "git push";
+                p = "git push";
+                pb = "git push --bookmark";
 
-              aliases.r = [ "rebase" ];
-              # Retrunk a series. Typically used as `jj retrunk -s ...`, and notably
-              # can be used with open:
-              # - jj retrunk -s 'roots(open())'
-              aliases.retrunk = [
-                "rebase"
-                "-d"
-                "trunk()"
-              ];
+                fr = "new trunk()";
+                fresh = "new trunk()";
 
-              # Retrunk the current stack of work.
-              aliases.reheat = [
-                "rebase"
-                "-d"
-                "trunk()"
-                "-s"
-                "roots(trunk()..stack())"
-              ];
+                r = "rebase";
+                # Retrunk a series. Typically used as `jj retrunk -s ...`, and notably
+                # can be used with open:
+                # jj retrunk -s 'roots(open())'
+                retrunk = "rebase --destination trunk()";
+                # Retrunk the current stack of work.
+                reheat = "rebase --destination trunk() --source roots(trunk()..stack())";
 
-              aliases.res = [ "resolve" ];
+                res = "resolve";
 
-              aliases.s = [ "split" ];
-              aliases.sm = [
-                "split"
-                "--message"
-              ];
+                s = "split";
+                sq = "squash";
+                sqf = "squash --from";
+                sqi = "squash --interactive";
 
-              aliases.sq = [ "squash" ];
-              aliases.sqf = [
-                "squash"
-                "--from"
-              ];
-              aliases.sqi = [
-                "squash"
-                "--interactive"
-              ];
-              aliases.sqm = [
-                "squash"
-                "--message"
-              ];
-              aliases.sqmi = [
-                "squash"
-                "--interactive"
-                "--message"
-              ];
-              # Take content from any change, and move it into @.
-              # - jj consume xyz path/to/file`
-              aliases.consume = [
-                "squash"
-                "--into"
-                "@"
-                "--from"
-              ];
-              # Eject content from @ into any other change.
-              # - jj eject xyz --interactive
-              aliases.eject = [
-                "squash"
-                "--from"
-                "@"
-                "--into"
-              ];
+                # Take content from any change, and move it into @.
+                # jj consume xyz path/to/file`
+                consume = "squash --into @ --from";
+                # Eject content from @ into any other change.
+                # - jj eject xyz --interactive
+                eject = "squash --from @ --into";
 
-              aliases.sh = [ "show" ];
+                tug = "bookmark move --from closest(@-) --to closest_pushable(@)";
+                t = "tug";
 
-              aliases.tug = [
-                "bookmark"
-                "move"
-                "--from"
-                "closest(@-)"
-                "--to"
-                "closest_pushable(@)"
-              ];
-              aliases.t = [ "tug" ];
+                sh = "show";
+                d = "diff";
+                ds = "diff --stat";
 
-              aliases.push = [
-                "git"
-                "push"
-              ];
-              aliases.p = [
-                "git"
-                "push"
-              ];
-              aliases.pb = [
-                "git"
-                "push"
-                "--bookmark"
-              ];
+                l = "log";
+                la = "log --revisions ::";
+                ls = "log --summary";
+                lsa = "log --summary --revisions ::";
+                lp = "log --patch";
+                lpa = "log --patch --revisions ::";
+                lg = "log --summary --revisions current() --limit 4";
+                # Get all open stacks of work.
+                open = "log --revision open()";
 
-              aliases.init = [
-                "git"
-                "init"
-                "--colocate"
-              ];
-              aliases.i = [
-                "git"
-                "init"
-                "--colocate"
-              ];
+                el = "evolog";
+                ol = "op log";
 
-              aliases.clone = [
-                "git"
-                "clone"
-                "--colocate"
-              ];
-              aliases.cl = [
-                "git"
-                "clone"
-                "--colocate"
-              ];
-
-              aliases.d = [ "diff" ];
-              aliases.ds = [
-                "diff"
-                "--stat"
-              ];
-
-              aliases.l = [ "log" ];
-              aliases.la = [
-                "log"
-                "--revisions"
-                "::"
-              ];
-              aliases.ls = [
-                "log"
-                "--summary"
-              ];
-              aliases.lsa = [
-                "log"
-                "--summary"
-                "--revisions"
-                "::"
-              ];
-              aliases.lp = [
-                "log"
-                "--patch"
-              ];
-              aliases.lpa = [
-                "log"
-                "--patch"
-                "--revisions"
-                "::"
-              ];
-              aliases.lg = [
-                "log"
-                "--summary"
-                "--revisions"
-                "current()"
-                "--limit=4"
-              ];
-              # Get all open stacks of work.
-              aliases.open = [
-                "log"
-                "--revision"
-                "open()"
-              ];
-
-              aliases.el = [ "evolog" ];
-              aliases.ol = [
-                "op"
-                "log"
-              ];
-
-              aliases.w = [ "workspace" ];
-
-              aliases.wa = [
-                "workspace"
-                "add"
-              ];
-              aliases.wf = [
-                "workspace"
-                "forget"
-              ];
-              aliases.wl = [
-                "workspace"
-                "list"
-              ];
-              aliases.wr = [
-                "workspace"
-                "rename"
-              ];
-              aliases.wro = [
-                "workspace"
-                "root"
-              ];
-              aliases.wu = [
-                "workspace"
-                "update-stale"
-              ];
+                w = "workspace";
+                wa = "workspace add";
+                wf = "workspace forget";
+                wl = "workspace list";
+                wr = "workspace rename";
+                wro = "workspace root";
+                wu = "workspace update-stale";
+              };
 
               revset-aliases = {
                 "current()" = "ancestors(reachable(@, mutable()), 2)";
@@ -616,6 +463,14 @@
               "exec"
               "--"
               (getExe jjStack)
+            ];
+
+            aliases.restack = [
+              "rebase"
+              "--destination"
+              "trunk()"
+              "--source"
+              ''roots(::bookmarks(glob:"jj-stack/*") & (trunk()..)) & mutable()''
             ];
           };
         };
