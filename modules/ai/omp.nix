@@ -25,6 +25,125 @@
       models = mapAttrs (_: m: "${providerKey}/${m}") defaultModels;
 
       system = pkgs.stdenv.hostPlatform.system;
+
+      # Guardrails for mistakes that recur in previous sessions. Conditions match the
+      # agent's own output, so they gate the action before it runs.
+      ttsrRules = {
+        no-system-switch = ''
+          ---
+          description: Do not switch the running system
+          condition: '(?:nh\s+os\s+(?:switch|boot)|nixos-rebuild\s+(?:switch|boot|test)|nix\s+run\s+\.#rebuild)'
+          scope: 'tool:bash'
+          ---
+
+          Do not activate or switch the system. Build and smoke-test only; the user
+          runs `nh os switch` or `nixos-rebuild switch` themselves and reports back.
+          If a switch is required to finish the task, say so and stop.
+        '';
+
+        no-secret-decrypt = ''
+          ---
+          description: Do not decrypt sops secrets
+          condition: '(?:sops\s+(?:-d|--decrypt)|sops\s+-e)'
+          scope: 'tool:bash'
+          ---
+
+          Never decrypt secrets. There is no permission to read the plaintext and it
+          must not enter the session log. Work from module option names; ask the user
+          for the value only if it is truly required.
+        '';
+
+        flake-check-tail = ''
+          ---
+          description: Keep the nix flake check exit status
+          condition: 'nix\s+flake\s+check[^\n|]*\|\s*(?:tail|head)'
+          scope: 'tool:bash'
+          ---
+
+          Do not pipe `nix flake check` into tail or head. That hides the exit status
+          and the failing check name, and the whole cached check re-runs. Let it
+          print, or capture the log and read the file.
+        '';
+
+        no-sleep-poll = ''
+          ---
+          description: Do not sleep-poll a background job
+          condition: 'sleep\s+\d+\s*(?:&&|;)\s*(?:ps|pgrep|pidwait|stat|ls|tail|cat|grep)'
+          scope: 'tool:bash'
+          ---
+
+          Do not poll. The job was backgrounded because it outlived the call, and its
+          result is delivered automatically. Do other work, or end the turn and read
+          the job with `proc://bg_N` later.
+        '';
+
+        no-python-rewrite = ''
+          ---
+          description: Do not rewrite files with python one-liners
+          condition:
+            - '\.write_text\('
+            - 'open\([^)\n]{0,80}["\x27]w["\x27]\)'
+          scope: 'tool:bash'
+          ---
+
+          Do not modify files through python. Use the `edit` tool for existing files
+          and `write` for new ones: they give a diff preview and fuzzy matching, and
+          they keep the hashline state consistent.
+        '';
+
+        builders-empty = ''
+          ---
+          description: Do not disable builders with an empty value
+          condition: '--builders\s+(?:[\x27\x22]{2}|$)'
+          scope: 'tool:bash'
+          ---
+
+          An empty builders list is not the local-only switch the user wants. Use the
+          exact flag they named and confirm it did what they expected, rather than
+          substituting another flag that looks equivalent.
+        '';
+
+        nix-pure-parse = ''
+          ---
+          description: Parse-check Nix files impurely
+          condition: 'nix-instantiate\s+--parse(?![^\n]*--impure)'
+          scope: 'tool:bash'
+          ---
+
+          `nix-instantiate --parse` on a repo path fails in pure evaluation mode. Pass
+          `--impure`, or feed the file on stdin, and never pipe the output through
+          tail: that hides the exit status you are checking.
+        '';
+
+        nix-double-prefix = ''
+          ---
+          description: Fix a doubled system prefix in a Nix installable
+          condition: '#packages\.x86_64-linux\.packages\.'
+          scope: 'tool:bash'
+          ---
+
+          The installable repeats the system prefix. Use
+          `.#packages.x86_64-linux.<name>` once, or `.#<name>` when the host's package
+          set is already the default.
+        '';
+
+        premature-done = ''
+          ---
+          description: Ground a completion claim in real output
+          condition:
+            - '(?i)all (?:checks|tests) (?:pass|green)'
+            - '(?i)fully verified'
+            - '(?i)verification (?:is )?complete'
+            - '(?i)everything (?:passes|is green)'
+          scope: 'text'
+          interruptMode: prose-only
+          ---
+
+          You are claiming completion. Name the exact command and the pin it ran
+          against, and paste the output you saw. If it was a channel nixpkgs, a cached
+          result, a subset of checks, or a build with no smoke run, say that instead.
+        '';
+      };
     in
     {
       ai.secrets = true;
@@ -271,7 +390,8 @@
 
           ".omp/agent/extensions/grove-goal.ts".source =
             self.packages.${pkgs.stdenv.hostPlatform.system}.omp-grove-goal;
-        };
+        }
+        // mapAttrs' (name: text: nameValuePair ".omp/agent/rules/${name}.md" { inherit text; }) ttsrRules;
       };
     };
 }
