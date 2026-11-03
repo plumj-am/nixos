@@ -82,7 +82,6 @@ in
           "pipe-operators"
           "recursive-nix"
           "verified-fetches"
-          "wasm-derivations"
         ];
 
         allow-import-from-derivation = true; # TODO: disable
@@ -91,7 +90,6 @@ in
 
         flake-registry = "";
         http-connections = 0;
-        http3 = true;
 
         builders-use-substitutes = true;
         fallback = true;
@@ -106,9 +104,6 @@ in
 
         eval-cache = true;
         pure-eval = true;
-        eval-cores = 0;
-        eval-max-fibers = 4; # default
-        lazy-trees = true;
 
         trusted-users = [
           "root"
