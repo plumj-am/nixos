@@ -12,6 +12,11 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    evix = {
+      # evix links `nixVersions.nix_2_35`; the pinned unstable-small carries it.
+      url = "github:manic-systems/evix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     fenix = {
       url = "github:nix-community/fenix";
       inputs.nixpkgs.follows = "nixpkgs";

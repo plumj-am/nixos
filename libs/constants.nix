@@ -4,6 +4,31 @@
   constants = {
     tailnet = "taild29fec.ts.net";
 
+    # Hosts that serve `evix worker` over the tailnet, and how many parallel
+    # connections the master opens to each. Kept here because the client shim
+    # is a package and cannot read a host's NixOS module.
+    #
+    # One connection per host: each worker is a fresh Nix evaluator that loads
+    # the flake's inputs before the handshake completes, and evix's setup
+    # deadline is 30 seconds. Two per host miss it on a cold cache.
+    evix = {
+      port = 7357;
+      remotes = [
+        {
+          host = "sloe";
+          workers = 1;
+        }
+        {
+          host = "plum";
+          workers = 1;
+        }
+        {
+          host = "date";
+          workers = 1;
+        }
+      ];
+    };
+
     systemdHardened = {
       RuntimeDirectoryMode = "0755";
       ProcSubset = "pid";

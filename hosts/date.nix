@@ -13,6 +13,7 @@ in
         ai-agents
         brave
         distributed-builder
+        evix-worker
         forgejo-runner
         github-runner
       ];

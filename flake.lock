@@ -168,6 +168,26 @@
         "type": "github"
       }
     },
+    "evix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1793508686,
+        "narHash": "sha256-cezmXO+cQa1lp+GRP+UulVvST/VqFM3casLDkww2/8Q=",
+        "owner": "manic-systems",
+        "repo": "evix",
+        "rev": "76f39f63fa208a63450c017684b39e7d014e6387",
+        "type": "github"
+      },
+      "original": {
+        "owner": "manic-systems",
+        "repo": "evix",
+        "type": "github"
+      }
+    },
     "fenix": {
       "inputs": {
         "nixpkgs": [
@@ -1138,6 +1158,7 @@
       "inputs": {
         "comfyui": "comfyui",
         "disko": "disko",
+        "evix": "evix",
         "fenix": "fenix",
         "ferron": "ferron",
         "flake-parts": "flake-parts_2",

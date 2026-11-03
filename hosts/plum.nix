@@ -13,6 +13,7 @@ in
 
         cinny
         distributed-builder
+        evix-worker
         forgejo
         forgejo-runner
         github-runner

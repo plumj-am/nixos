@@ -13,6 +13,7 @@ in
         web-server
 
         distributed-builder
+        evix-worker
         forgejo-runner
         github-runner
         garage
