@@ -1,6 +1,9 @@
 { self, ... }:
 {
-  flake.modules.nixos.default = self.modules.nixos.networking;
+  flake.modules.nixos.default.imports = [
+    self.modules.nixos.networking
+    self.modules.nixos.hosts
+  ];
   flake.modules.nixos.networking =
     { lib, ... }:
     let
@@ -31,8 +34,7 @@
     };
   };
 
-  flake.modules.common.default = self.modules.common.hosts;
-  flake.modules.common.hosts =
+  flake.modules.nixos.hosts =
     { lib, ... }:
     let
       inherit (lib.constants) tailnet;
