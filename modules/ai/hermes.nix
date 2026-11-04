@@ -414,6 +414,7 @@ let
               # "whatsapp-platform"
               # "spotify"
             ];
+            disabled = [ "dingtalk-platform" ];
           };
 
           # for messaging platforms
@@ -620,9 +621,8 @@ let
               INSTAGRAM_FB_IG_USER_ID = "\${INSTAGRAM_FB_IG_USER_ID}";
             };
           };
-
           "x.md" = mkIf withX {
-            url = "https://x.pcstyle.dev/mcp";
+            url = "https://mdfromx.com/mcp";
             auth = null;
           };
 
