@@ -47,12 +47,15 @@
               url = "https://amr-link.open-design.ai/v1";
               order = 20;
               # what model is sent and what the upstream calls it
-              model_map = genAttrs [
-                "deepseek/deepseek-v4.1-flash"
-                "z-ai/glm-5.3-flash"
-                "xiaomi/mimo-v2.6-flash"
-                "xiaomi/mimo-v2.6-pro"
-              ] baseNameOf;
+              model_map =
+                genAttrs [
+                  "z-ai/glm-5.3-flash"
+                  "xiaomi/mimo-v2.6-flash"
+                  "xiaomi/mimo-v2.6-pro"
+                ] baseNameOf
+                // {
+                  "deepseek/deepseek-v4.1-flash" = "deepseek-v4.1-flash-eco";
+                };
 
               # client-sent ids this upstream does not serve; exact match
               skip_models = [
