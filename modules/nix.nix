@@ -145,6 +145,12 @@ in
       dates = "weekly";
       persistent = true;
     };
+
+    # A full store turns every fsync-heavy step into a multi-second stall, which dominated the VM-test timings. Hosts with a large store raise the floor.
+    nix.settings = {
+      min-free = lib.mkDefault "3G";
+      min-free-check-interval = lib.mkDefault 60;
+    };
   };
 
   flake.modules.darwin.default = self.modules.darwin.nix-extra;

@@ -61,6 +61,9 @@ in
         };
       };
 
+      # A builder on a small disk: hold a floor that the disk can still meet.
+      nix.settings.min-free = "10G";
+
       hardware.facter.reportPath = ./facter/plum.json;
       nixpkgs.hostPlatform = "x86_64-linux";
       system.stateVersion = "26.05";

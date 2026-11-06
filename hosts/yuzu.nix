@@ -38,6 +38,9 @@ in
         };
       };
 
+      # Large disk, and the host that runs the VM tests locally: keep a wide margin.
+      nix.settings.min-free = "50G";
+
       hardware.facter.reportPath = ./facter/yuzu.json;
       nixpkgs.hostPlatform = "x86_64-linux";
       system.stateVersion = "26.05";

@@ -52,6 +52,9 @@ in
         IdleAction = "ignore";
       };
 
+      # Large disk on a builder: keep a wide margin so a build cannot fill it.
+      nix.settings.min-free = "30G";
+
       hardware.facter.reportPath = ./facter/date.json;
       nixpkgs.hostPlatform = "x86_64-linux";
       system.stateVersion = "26.05";

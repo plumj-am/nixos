@@ -57,11 +57,13 @@ in
       # before the first login: keep jam's user manager up from boot.
       tern.remote.linger = true;
 
-      # Very large disk, can hold on to things for longer.
+      # Very large disk, can hold on to things for longer. The wide margin
+      # matters here because garbage is only collected every two weeks.
       nix.gc = {
         options = mkForce "--delete-older-than 14d";
         dates = mkForce "*-*-01/14 00:00:00"; # Every 2 weeks.
       };
+      nix.settings.min-free = "100G";
 
       hardware.facter.reportPath = ./facter/sloe.json;
       nixpkgs.hostPlatform = "x86_64-linux";
