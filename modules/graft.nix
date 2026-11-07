@@ -130,7 +130,7 @@
               flake_ref = ".#checks";
               systems = [ "x86_64-linux" ];
               build_timeout_secs = 3600;
-              poll_interval_secs = 30;
+              poll_interval_millis = 30000;
               users = [ "plumjam" ];
             };
 
@@ -141,7 +141,7 @@
               flake_ref = ".#checks";
               systems = [ "x86_64-linux" ];
               build_timeout_secs = 3600;
-              poll_interval_secs = 30;
+              poll_interval_millis = 30000;
               users = [ "plumjam" ];
             };
 
@@ -152,7 +152,7 @@
               flake_ref = ".#checks";
               systems = [ "x86_64-linux" ];
               build_timeout_secs = 3600;
-              poll_interval_secs = 30;
+              poll_interval_millis = 30000;
               # The Grove flake exports `flake.graph.<system>`, so graft can
               # ask it which checks a change reaches. Shadow first: the
               # decision is logged against the derivation comparison and
@@ -172,7 +172,7 @@
               flake_ref = ".#checks";
               systems = [ "x86_64-linux" ];
               build_timeout_secs = 3600;
-              poll_interval_secs = 30;
+              poll_interval_millis = 30000;
               users = [
                 "plumjam"
                 "antteheatta"
@@ -191,7 +191,7 @@
               flake_ref = ".#checks";
               systems = [ "x86_64-linux" ];
               build_timeout_secs = 3600;
-              poll_interval_secs = 604800;
+              poll_interval_millis = 604800000;
               users = [
                 "plumjam"
                 "antteheatta"
