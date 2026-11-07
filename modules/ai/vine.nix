@@ -22,6 +22,10 @@
         VINE_UPSTREAMS_COMMANDCODE__API_KEYS=${sops.placeholder."commandcode-1-key"},${
           sops.placeholder."commandcode-2-key"
         }
+        VINE_UPSTREAMS_COMMANDCODE_DECISION__API_KEYS=${sops.placeholder."commandcode-1-key"},${
+          sops.placeholder."commandcode-2-key"
+        }
+        VINE_UPSTREAMS_TYPESAFE_DECISION__API_KEYS=${sops.placeholder."typesafe-1-key"}
         VINE_UPSTREAMS_OPENDESIGN__API_KEYS=${sops.placeholder."opendesign-1-key"}
       '';
 
@@ -41,12 +45,23 @@
             commandcode = {
               url = "https://api.commandcode.ai/provider/v1";
               order = 10;
-              model_map = { };
+              skip_models = singleton "typesafe/jev";
+            };
+            commandcode_decision = {
+              url = "https://api.commandcode.ai/provider/v1/systemone";
+              order = 15;
+              only_models = singleton "typesafe/jev";
+            };
+            typesafe_decision = {
+              url = "https://api.typesafe.ai/v1/systemone";
+              order = 20;
+              model_map."typesafe/jev" = "jev-latest";
+              only_models = singleton "typesafe/jev";
             };
             opendesign = {
               url = "https://amr-link.open-design.ai/v1";
-              order = 20;
-              # what model is sent and what the upstream calls it
+              order = 30;
+              # What model is sent and what the upstream calls it.
               model_map =
                 genAttrs [
                   "z-ai/glm-5.3-flash"

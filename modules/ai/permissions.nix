@@ -30,6 +30,7 @@
                 "commandcode-1-key"
                 "commandcode-2-key"
                 "opendesign-1-key"
+                "typesafe-1-key"
                 "exa-key"
                 "context7-key"
                 "opencode-go-key"
