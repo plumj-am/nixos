@@ -220,8 +220,8 @@
               shell = "${loginShell}";
               agent_command = "${getExe flakePackages.omp-wrapped}";
 
-              command_lenses = true;
-              program_colors = false; # use tern palette
+              command_lenses = false; # Disable native views for supported commands.
+              program_colors = false; # Use Tern palette.
               composer_text = "Markdown";
               prompt_style = "imported";
               new_tabs = "Focused";
