@@ -10,7 +10,7 @@
 
       # Tern is a closed-beta Stencil Labs product. There is no public source
       # or download URL yet (build.stencil.so is auth-gated).
-      version = "0.9.12";
+      version = "0.9.16";
       filename = "Tern-${version}-linux-x86_64.tar.gz";
 
       # No public download: the tarball lives in the store, added by hand.
@@ -38,8 +38,8 @@
       # - launch Tern fresh
       # - run "Restart session daemon" from a new-version window
       release = {
-        storePath = "/nix/store/03x5k70db4v66hsg735whxmk81ryynvc-Tern-0.9.12-linux-x86_64.tar.gz";
-        hash = "sha256-9n6MK/9DfzNlrjpHi7wY9jr7blO9bnzVVrrHziTRNpM=";
+        storePath = "/nix/store/bggs36hwvx75hsd8kcazafd67ffvpxph-Tern-0.9.16-linux-x86_64.tar.gz";
+        hash = "sha256-xofjF2IrQohGsAjaUMcAzhkhan/fXRlVW7gNaZiofD0=";
       };
 
       # DT_NEEDED holds only libc/libm/libdl/libpthread/librt/libutil/ libgcc_s,
