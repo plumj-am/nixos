@@ -36,10 +36,19 @@
         "nvidia-settings"
       ];
       nixpkgs.overlays = [
+        # See ./patches/niri-smithay-context-id-fallback.patch
+        (_final: prev: {
+          niri = prev.niri.overrideAttrs (oldAttrs: {
+            postPatch = (oldAttrs.postPatch or "") + ''
+              patch -p1 --fuzz=0 --directory="$cargoDepsCopy/source-git-0/smithay-0.7.0" \
+                < ${./patches/niri-smithay-context-id-fallback.patch}
+            '';
+          });
+        })
         (_final: prev: {
           xdg-desktop-portal-gtk = prev.xdg-desktop-portal-gtk.overrideAttrs (oldAttrs: {
             postInstall = (oldAttrs.postInstall or "") + ''
-              sed -i 's/UseIn=gnome/UseIn=gnome;niri/' "$out/share/xdg-desktop-portal/portals/gtk.portal"
+              sed --in-place 's/UseIn=gnome/UseIn=gnome;niri/' "$out/share/xdg-desktop-portal/portals/gtk.portal"
             '';
           });
         })
