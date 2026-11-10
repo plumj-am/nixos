@@ -152,21 +152,6 @@
     },
     "crane_2": {
       "locked": {
-        "lastModified": 1788465171,
-        "narHash": "sha256-Y1/TTVXjYXGF068IThQH9fPSZ0SIE74PABlUxnWTUH0=",
-        "owner": "ipetkov",
-        "repo": "crane",
-        "rev": "eb35abda9f232cc6610b1d1e3200d15c49b7ac54",
-        "type": "github"
-      },
-      "original": {
-        "owner": "ipetkov",
-        "repo": "crane",
-        "type": "github"
-      }
-    },
-    "crane_3": {
-      "locked": {
         "lastModified": 1758758545,
         "narHash": "sha256-NU5WaEdfwF6i8faJ2Yh+jcK9vVFrofLcwlD/mP65JrI=",
         "owner": "ipetkov",
@@ -678,7 +663,6 @@
     "grove": {
       "inputs": {
         "advisory-db": "advisory-db",
-        "crane": "crane_2",
         "fenix": "fenix_3",
         "flake-parts": "flake-parts_4",
         "garnix-incrementalize": "garnix-incrementalize",
@@ -688,11 +672,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1793386345,
-        "narHash": "sha256-SasYM2FQmn9dcOen/xv0qMWmBYXZpWU0+346EiltH9E=",
+        "lastModified": 1794352405,
+        "narHash": "sha256-HGtSRL3gHEpLnBtER2MQJkQgxlrvuNrjYWkvlIpBGms=",
         "ref": "refs/heads/master",
-        "rev": "6c9575440895e735f1f0e275299165a6e2583df4",
-        "revCount": 2348,
+        "rev": "e479781e2954f4b27ee0aed614c1a5cb62be08a7",
+        "revCount": 2552,
         "type": "git",
         "url": "ssh://git@github.com/grove-systems/grove"
       },
@@ -1284,7 +1268,7 @@
     "plumj-am": {
       "inputs": {
         "advisory-db": "advisory-db_2",
-        "crane": "crane_3",
+        "crane": "crane_2",
         "fenix": "fenix_4",
         "flake-utils": "flake-utils_2",
         "nixpkgs": [
