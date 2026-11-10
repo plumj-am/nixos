@@ -54,6 +54,15 @@ let
       cfg = config.services.hermes-agent;
       package = inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
+      hermesEnvFiles = [
+        secrets."hermes-shared-env".path
+        secrets."hermes-${name}-env".path
+      ];
+
+      restartHermes =
+        [ "hermes-agent.service" ]
+        ++ optional (cfg.backend.mode != "none") "hermes-backend.service";
+
       needsGitConfig = gitUsername != "" && gitEmail != "" && jjStackUsername != "";
       needsSkills = npmSkills != [ ] || ghSkills != [ ] || localSkills != [ ];
 
@@ -202,14 +211,14 @@ let
           owner = "hermes";
           group = "hermes";
           mode = "0400";
-          restartUnits = singleton "hermes-agent.service";
+          restartUnits = restartHermes;
         };
         "hermes-${name}-env" = {
           sopsFile = ../../secrets/services/hermes.yaml;
           owner = "hermes";
           group = "hermes";
           mode = "0400";
-          restartUnits = singleton "hermes-agent.service";
+          restartUnits = restartHermes;
         };
       }
       // optionalAttrs needsGitConfig {
@@ -692,11 +701,13 @@ let
         # Single place for pull and order: helpers run only when the
         # agent starts, and complete before it.
         after =
-          optional needsSkills "hermes-install-skills.service"
+          [ "sops-install-secrets.service" ]
+          ++ optional needsSkills "hermes-install-skills.service"
           ++ optional needsGitConfig "hermes-git-config.service";
         wants =
           optional needsSkills "hermes-install-skills.service"
           ++ optional needsGitConfig "hermes-git-config.service";
+        requires = singleton "sops-install-secrets.service";
         restartTriggers = singleton "${cfg.stateDir}/.hermes/.env";
 
         # libopus for the Discord voice channels: discord.py resolves it with
@@ -706,6 +717,7 @@ let
 
         # NOTE: No `MemoryDenyWriteExecute` - breaks CPython JIT-ish paths
         serviceConfig = {
+          EnvironmentFile = hermesEnvFiles;
           UnsetEnvironment = singleton "INVOCATION_ID"; # HACK: run cron in-process - loads of workarounds needed otherwise
           UMask = "0007";
           NoNewPrivileges = true;
@@ -732,6 +744,15 @@ let
             cfg.workingDirectory
           ];
         };
+      };
+
+      # Upstream runs the dashboard and desktop backend as a separate unit.
+      # It needs the same sops env: the basic-auth provider reads
+      # HERMES_DASHBOARD_BASIC_AUTH_* before the 0.0.0.0 bind is allowed.
+      systemd.services.hermes-backend = mkIf (cfg.backend.mode != "none") {
+        after = singleton "sops-install-secrets.service";
+        requires = singleton "sops-install-secrets.service";
+        serviceConfig.EnvironmentFile = hermesEnvFiles;
       };
 
       systemd.services.hermes-install-skills = mkIf needsSkills {
