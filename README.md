@@ -23,23 +23,21 @@ Dendritic NixOS configurations for 8 personal machines:
 
 - Multiple hosts
 - Determinate Nix for all systems
-- Dendritic structure with
-  [flake-parts](https://github.com/hercules-ci/flake-parts)
+- Dendritic structure with [flake-parts](https://github.com/hercules-ci/flake-parts)
 - [Hjem](https://github.com/feel-co/hjem) for $HOME management
 - No `specialArgs` or janky passing around of configs between layers[^4]
 
 [^4]:
-    Apart from inherit `specialArgs = { inherit inputs; };` for each host. It
-    is necessary for any host configuration.
+    Apart from inherit `specialArgs = { inherit inputs; };` for each host. It is necessary for any
+    host configuration.
 
 ## How it works
 
 Almost everything lives under `modules/`.
 
 Each module (for the most part) is grouped by feature as opposed to individual
-applications/services. Using
-[flake-parts](https://github.com/hercules-ci/flake-parts), these modules live at
-`flake.modules.{common,darwin,nixos,services}`.
+applications/services. Using [flake-parts](https://github.com/hercules-ci/flake-parts), these
+modules live at `flake.modules.{common,darwin,nixos,services}`.
 
 Modules contain 1 or more of the following:
 
@@ -47,8 +45,8 @@ Modules contain 1 or more of the following:
 flake.modules.<class>.<aspect> = {}
 ```
 
-For example, we can configure a shared git config for all platforms then add
-platform specific configs too:
+For example, we can configure a shared git config for all platforms then add platform specific
+configs too:
 
 ```nix
 {
@@ -59,12 +57,11 @@ platform specific configs too:
 }
 ```
 
-`hjem` modules are included within the `common`, `nixos`, and `darwin` classes
-via `hjem.extraModule` as can be seen below. `hjem.extraModule` is a custom
-option that lets me use `hjem.extraModules = []` as a `singleton` without
-needing to specify it every time. See `modules/hjem.nix` for the implementation
-but, note that there is no implementation for `common` due to how the `common`
-class works (by auto-merging). See the "Other comments" section below for more
+`hjem` modules are included within the `common`, `nixos`, and `darwin` classes via
+`hjem.extraModule` as can be seen below. `hjem.extraModule` is a custom option that lets me use
+`hjem.extraModules = []` as a `singleton` without needing to specify it every time. See
+`modules/hjem.nix` for the implementation but, note that there is no implementation for `common` due
+to how the `common` class works (by auto-merging). See the "Other comments" section below for more
 details.
 
 ```nix
@@ -89,26 +86,23 @@ details.
 }
 ```
 
-The `common`, `darwin`, and `nixos` classes are then used in
-`modules/aspects.nix` (grouped together) or used individually by `hosts/` in
-their `imports` lists.
+The `common`, `darwin`, and `nixos` classes are then used in `modules/aspects.nix` (grouped
+together) or used individually by `hosts/` in their `imports` lists.
 
 Systems are constructed using `libs/systems.nix` helpers in `hosts/`.
 
 ## Flake outputs
 
-There are several packages and service modules exposed in this flake which you
-can use.
+There are several packages and service modules exposed in this flake which you can use.
 
-> [!NOTE]
-> `inputs.grove` is a private flake input I use for some parts of my configs. If
-> you face any issues using the packages/services below, just set this to ignore
-> it (you won't need it): `inputs.plumjam.inputs.grove.follows = "";`.
+> [!NOTE] `inputs.grove` is a private flake input I use for some parts of my configs. If you face
+> any issues using the packages/services below, just set this to ignore it (you won't need it):
+> `inputs.plumjam.inputs.grove.follows = "";`.
 
 ### Packages
 
-There are a few programs I have packaged with Nix available in `./packages`
-which you can consume and use in your own configs:
+There are a few programs I have packaged with Nix available in `./packages` which you can consume
+and use in your own configs:
 
 - headroom ([source](https://github.com/headroomlabs-ai/headroom))
 - maiao ([source](https://github.com/runetes/maiao))
@@ -126,8 +120,8 @@ Custom packages for my own use but also part of this flake:
 
 ### Services
 
-I also offer a few services packaged as NixOS modules in `./services` which you
-can consume and use in your own configs:
+I also offer a few services packaged as NixOS modules in `./services` which you can consume and use
+in your own configs:
 
 - rustic ([source](https://github.com/rustic-rs/rustic))
 - tarssh ([source](https://github.com/Freaky/tarssh))
@@ -141,60 +135,52 @@ All secrets are handled by [sops-nix](https://github.com/mic92/sops-nix).
 
 ### Imports
 
-Imports are handled by an `importTree` function in `outputs.nix`. It
-automatically imports all nix files in the specified directories (`./hosts`,
-`./libs`, `./modules`, `./packages`, and `./services` in my case). Directories
-and files prefixed with `_` are excluded e.g. `_scripts/` or `_private.nix`
+Imports are handled by an `importTree` function in `outputs.nix`. It automatically imports all nix
+files in the specified directories (`./hosts`, `./libs`, `./modules`, `./packages`, and `./services`
+in my case). Directories and files prefixed with `_` are excluded e.g. `_scripts/` or `_private.nix`
 would be excluded.
 
 ### Library
 
-There may be unfamiliar functions/helpers in some files - these come from
-`libs/*.nix` via nixpkgs' `lib.extend`.
+There may be unfamiliar functions/helpers in some files - these come from `libs/*.nix` via nixpkgs'
+`lib.extend`.
 
 ### Theming
 
-I have a custom theming setup which can be seen in `modules/theme.nix`. It's a
-relatively simple toggle between light and dark changed by running
-`toggle-theme`. It automatically updates colour schemes and refreshes necessary
-applications to apply changes.
+I have a custom theming setup which can be seen in `modules/theme.nix`. It's a relatively simple
+toggle between light and dark changed by running `nix run .#toggle-theme`. It automatically updates
+colour schemes and refreshes necessary applications to apply changes.
 
-Both variants are built as specialisations, so switching needs no rebuild. The
-themes use the gruvbox palettes defined in `modules/theme.nix` and some base16
-colours for applications that can make use of them.
+Both variants are built as specialisations. The themes use the gruvbox palettes defined in
+`modules/theme.nix` and some base16 colours for applications that can make use of them.
 
-The active variant survives rebuilds: `rebuild` reads the running theme from
-`/etc/theme.json` and re-applies the matching specialisation, so a plain rebuild
-no longer falls back to the light default. Pass `--no-specialisation` to rebuild
-the plain base configuration instead.
+The active variant survives rebuilds: `rebuild` reads the running theme from `/etc/theme.json` and
+re-applies the matching specialisation.
 
 ## Other comments
 
 The previous version of my configurations can be seen on the
-[pre-dendritic](https://git.plumj.am/plumjam/nixos/src/branch/pre-dendritic)
-branch if you are interested. The dendritic version was merged from pull request
+[pre-dendritic](https://git.plumj.am/plumjam/nixos/src/branch/pre-dendritic) branch if you are
+interested. The dendritic version was merged from pull request
 [#1](https://git.plumj.am/plumjam/nixos/pulls/1) in commit
-[#750cdc5fba](https://git.plumj.am/plumjam/nixos/commit/750cdc5fba89d8d29961cf9255bf6029d0bb8465)
-on 2026-01-29.
+[#750cdc5fba](https://git.plumj.am/plumjam/nixos/commit/750cdc5fba89d8d29961cf9255bf6029d0bb8465) on
+2026-01-29.
 
-A version using [Hjem Rum](https://github.com/snugnug/hjem-rum) can be seen on
-the [hjem-rum](https://git.plumj.am/plumjam/nixos/src/branch/hjem-rum) branch.
-Hjem Rum was removed in pull request
-[#2](https://git.plumj.am/plumjam/nixos/pulls/2) in commit
-[962048fa7a](https://git.plumj.am/plumjam/nixos/commit/962048fa7a385d7663ee7a007d23e857586e1136)
-on 2026-02-01. I'd like to mention that it is an excellent tool! I just didn't
-really need it and I already use generators or write config files directly for
-the most part anyway.
+A version using [Hjem Rum](https://github.com/snugnug/hjem-rum) can be seen on the
+[hjem-rum](https://git.plumj.am/plumjam/nixos/src/branch/hjem-rum) branch. Hjem Rum was removed in
+pull request [#2](https://git.plumj.am/plumjam/nixos/pulls/2) in commit
+[962048fa7a](https://git.plumj.am/plumjam/nixos/commit/962048fa7a385d7663ee7a007d23e857586e1136) on
+2026-02-01. I'd like to mention that it is an excellent tool! I just didn't really need it and I
+already use generators or write config files directly for the most part anyway.
 
-`osConfig` comes from Hjem and can be used to access the system-level `config`
-alongside the hjem level `config`.
+`osConfig` comes from Hjem and can be used to access the system-level `config` alongside the hjem
+level `config`.
 
-`flake.modules.common` works by merging automatically with
-`flake.modules.{nixos,darwin}`. Basically, all the `common` aspects can be
-accessed from either `common`, `nixos`, or `darwin`.
+`flake.modules.common` works by merging automatically with `flake.modules.{nixos,darwin}`.
+Basically, all the `common` aspects can be accessed from either `common`, `nixos`, or `darwin`.
 
-If you're interested in learning more about dendritic Nix, feel free to learn
-from my config and consider checking the following links:
+If you're interested in learning more about dendritic Nix, feel free to learn from my config and
+consider checking the following links:
 
 - <https://dendrix.oeiuwq.com/Dendritic.html>
 - <https://github.com/Doc-Steve/dendritic-design-with-flake-parts>
@@ -211,8 +197,8 @@ Documentation for flake-parts:
 
 ## Contributing
 
-If you're more experienced with this style of configuration, I'm happy to accept
-criticism or suggestions for improvements via an issue or pull request.
+If you're more experienced with this style of configuration, I'm happy to accept criticism or
+suggestions for improvements via an issue or pull request.
 
 ## Map
 
