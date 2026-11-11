@@ -457,14 +457,14 @@
           xdg.config.files."tern/plugins/tab-status/init.luau".source =
             "${flakePackages.tern-tab-status-plugin}/init.luau";
 
-          xdg.config.files."tern/plugins/rail-band/plugin.toml".source =
-            "${flakePackages.tern-rail-band-plugin}/plugin.toml";
+          xdg.config.files."tern/plugins/custom-rail-style/plugin.toml".source =
+            "${flakePackages.tern-custom-rail-style}/plugin.toml";
 
-          xdg.config.files."tern/plugins/rail-band/init.luau".source =
-            "${flakePackages.tern-rail-band-plugin}/init.luau";
+          xdg.config.files."tern/plugins/custom-rail-style/init.luau".source =
+            "${flakePackages.tern-custom-rail-style}/init.luau";
 
-          xdg.config.files."tern/plugins/rail-band/rail-band.css".source =
-            "${flakePackages.tern-rail-band-plugin}/rail-band.css";
+          xdg.config.files."tern/plugins/custom-rail-style/tern-custom-rail-style.css".source =
+            "${flakePackages.tern-custom-rail-style}/tern-custom-rail-style.css";
 
           xdg.config.files."tern/plugins/chime/plugin.toml".source =
             "${flakePackages.tern-chime-plugin}/plugin.toml";
