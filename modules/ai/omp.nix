@@ -217,15 +217,24 @@
               statusLine.preset = "compact";
               statusLine.separator = "pipe";
               statusLine.transparent = true;
+              composer.tokenRate = true;
 
               terminal.showImages = true;
+              terminal.showProgress = true;
               display.shimmer = "classic";
               display.showTokenUsage = true;
               display.cacheMissMarker = true;
+              display.showTurnTime = true;
+              display.subagentLivePreview = true;
               tui.renderMermaid = true;
+              tui.autoGraph = "smart";
+              tui.titleState = false;
+              tui.textSizing = true;
               read.renderMarkdown = true;
+              title.generator = "tiny";
 
               prewalk.enabled = true; # start big, implement with small.
+              prewalk.auto = "on";
 
               enabledModels = [ ]; # all
               modelProviderOrder = singleton providerKey;
@@ -263,10 +272,14 @@
 
               contextPromotion.enabled = false; # do not upgrade model - compact instead.
               compaction.enabled = true;
-              compaction.thresholdTokens = 400000; # context maintenance starts at 400k tokens for applicable models
+              compaction.thresholdTokens = 400 * 1000; # context maintenance starts at 400k tokens for applicable models
+              compaction.idleEnabled = true;
+              compaction.idleThresholdTokens = 300 * 1000;
+              compaction.idleTimeoutSeconds = 30 * 60;
 
               autoResume = true;
               features.unexpectedStopDetection = true;
+              recap.idleSeconds = 60 * 10;
 
               steeringMode = "all"; # Send all queued messages at once.
               followUpMode = "all";
@@ -289,7 +302,8 @@
               autolearn.enabled = true;
               autolearn.autoContinue = true;
 
-              task.eager = "always"; # sub-agent delegation
+              task.eager = "always"; # Sub-agent delegation.
+              task.enableEffort = true; # Let caller set sub-agent thinking level.
 
               ask.timeout = 0;
               ask.notify = "on";
@@ -303,6 +317,8 @@
               bash.enabled = true;
               bash.autoBackground.enabled = true;
               bashInterceptor.enabled = true;
+
+              computer.enabled = true;
 
               eval.autoBackground.enabled = true;
               eval.js = true;

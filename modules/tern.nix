@@ -164,8 +164,8 @@
               native_surfaces = true;
               surface_headings = null;
               surface_diffs = "Split";
-              surface_fold = true;
-              surface_chat = "Spine";
+              surface_fold = false;
+              surface_chat = "Reader";
               keep_composer_open = true;
 
               native_completion = true;
@@ -384,7 +384,7 @@
             value = {
               petPosition = {
                 x = 1700.0;
-                y = -140.0;
+                y = -120.0;
               };
               petSize = 20;
               skin = "cat";
