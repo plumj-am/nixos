@@ -274,8 +274,8 @@
               compaction.enabled = true;
               compaction.thresholdTokens = 400 * 1000; # context maintenance starts at 400k tokens for applicable models
               compaction.idleEnabled = true;
-              compaction.idleThresholdTokens = 300 * 1000;
-              compaction.idleTimeoutSeconds = 30 * 60;
+              compaction.idleThresholdTokens = 200 * 1000;
+              compaction.idleTimeoutSeconds = 60 * 60;
 
               autoResume = true;
               features.unexpectedStopDetection = true;
