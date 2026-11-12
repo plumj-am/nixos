@@ -457,6 +457,12 @@
           xdg.config.files."tern/plugins/tab-status/init.luau".source =
             "${flakePackages.tern-tab-status-plugin}/init.luau";
 
+          xdg.config.files."tern/plugins/agent-status/plugin.toml".source =
+            "${flakePackages.tern-agent-status-plugin}/plugin.toml";
+
+          xdg.config.files."tern/plugins/agent-status/init.luau".source =
+            "${flakePackages.tern-agent-status-plugin}/init.luau";
+
           xdg.config.files."tern/plugins/custom-rail-style/plugin.toml".source =
             "${flakePackages.tern-custom-rail-style}/plugin.toml";
 
