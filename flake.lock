@@ -276,11 +276,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1793573590,
-        "narHash": "sha256-FIfgqCbR+GoU2/Jxns0bhEwmRZNoNhIuuvVrD1phw8o=",
+        "lastModified": 1794500112,
+        "narHash": "sha256-HZPVHmkYCRcZ45Uc+8XM1DWgQceAzFyeyu2HN5zFsP4=",
         "owner": "plumj-am",
         "repo": "ferron",
-        "rev": "f681e641b747aff628edef6b6a64d47288f58191",
+        "rev": "9e8415bdc764f3d77499629947cd9ba7f9d49112",
         "type": "github"
       },
       "original": {
