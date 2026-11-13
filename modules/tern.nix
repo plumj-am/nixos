@@ -161,6 +161,19 @@
               pane_headers = "Never";
               system_title_bar = true;
 
+              widget_look = "pills";
+              widgets = [
+                {
+                  id = "cwd";
+                  style = "path";
+                }
+                { id = "status"; } # plugins
+                { id = "spacer"; }
+                { id = "run"; }
+                { id = "lines"; }
+                { id = "size"; }
+              ];
+
               native_surfaces = true;
               surface_headings = null;
               surface_diffs = "Split";
@@ -384,7 +397,7 @@
             value = {
               petPosition = {
                 x = 1700.0;
-                y = -120.0;
+                y = -90.0;
               };
               petSize = 20;
               skin = "cat";
