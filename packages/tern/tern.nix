@@ -10,7 +10,7 @@
 
       # Tern is a closed-beta Stencil Labs product. There is no public source
       # or download URL yet (build.stencil.so is auth-gated).
-      version = "0.9.18";
+      version = "0.9.21";
       filename = "Tern-${version}-linux-x86_64.tar.gz";
 
       # No public download: the tarball lives in the store, added by hand.
@@ -38,8 +38,8 @@
       # - launch Tern fresh
       # - run "Restart session daemon" from a new-version window
       release = {
-        storePath = "/nix/store/syjx60h7r8nhii8ql4xavq1aqhq4y186-Tern-0.9.18-linux-x86_64.tar.gz";
-        hash = "sha256-In2LyiXCv8Yc/dSP+XANy9qoaA+d1d9aZ3mGGOYnANs=";
+        storePath = "/nix/store/az03d7r287zhn337lxd54dq26fcik4pg-Tern-0.9.21-linux-x86_64.tar.gz";
+        hash = "sha256-ZVz3+setGqwxU+TQ2f5HcsFHtb+SXVoP0Qu5vusTOt8=";
       };
 
       # DT_NEEDED holds only libc/libm/libdl/libpthread/librt/libutil/ libgcc_s,
@@ -103,105 +103,6 @@
 
       runtimeLibraryPath = lib.makeLibraryPath runtimeLibs;
 
-      # Tern learns the login environment by running a probe through the login
-      # shell in a pty:
-      #
-      #   $SHELL -l -i -c "printf '__stencil_login_env__\n'; /usr/bin/env -0; printf '__stencil_login_env__\n'"
-      #
-      # 0.6.0 used `echo __tern_login_path__` around five `printenv` calls;
-      # 0.6.2 renamed the marker to __tern_login_env__;
-      # 0.7.0 renamed it to __stencil_login_env__;
-      # it reads one NUL-separated `env -0` dump between the two markers (check
-      # by running the binary with SHELL pointed at a logging shim).
-      #
-      # It takes the program from $SHELL (or the passwd database), not from the
-      # settings' `shell`, so the configured nushell is asked to answer a POSIX
-      # probe. Nushell cannot: `printf` is not a nushell builtin and the probe's
-      # scrubbed PATH (env -i PATH=/usr/local/bin:/usr/bin:/bin) holds no printf
-      # on NixOS, so the shell dies before the first marker and the reader times
-      # out. On a timeout Tern falls back to that same scrubbed PATH, which has
-      # no profile directories -- checked on 0.9.8: a pane whose probe failed
-      # carries PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin exactly. The
-      # NixOS paths 0.9.8 does know (/etc/profiles/per-user/<user>/bin,
-      # ~/.nix-profile/bin, /run/current-system/sw/bin) only widen where it
-      # looks for agents, omp and git; they never reach a pane's own PATH.
-      #
-      # Tern claims a command from the `cmdline` payload of the OSC 133;C mark
-      # its shell integration sends; the bare mark claims nothing, so no lens
-      # and no other command surface runs. Its integrations for bash, zsh, etc.
-      # send the payload; nushell sends the mark alone, so the nushell this
-      # shim runs gets a config that sources the user's own (which `--config`
-      # alone replaces) and then appends the payload those integrations send.
-      # 0.9.8 still ships no nushell integration (bash, zsh, fish, pwsh and
-      # xonsh only), and nushell 0.115 still prints its own bare `133;C`, with
-      # ST instead of BEL, right after ours; Tern reads the payload first.
-      #
-      # The payload hangs off this shim rather than the settings' `shell`,
-      # because Tern builds a session's first pane, and every pane it restores,
-      # with the login shell: a payload only in `shell` would leave every
-      # restored pane claiming nothing at all.
-      nuConfig =
-        pkgs.writers.writeText "tern-nu-config.nu" # nu
-          ''
-            source ($nu.default-config-dir | path join "config.nu")
-
-            $env.config.hooks.pre_execution = (
-              $env.config.hooks.pre_execution? | default [] | append [
-                {||
-                  try {
-                    let line = (commandline)
-                    if not ($line | is-empty) {
-                      # POSIX single-quoting: a quote inside the word closes,
-                      # escapes and reopens it, so Tern reads one word per
-                      # argument back. Built from code points, so neither this
-                      # file nor the Nix string carries the backslash literally.
-                      let sq = "\u{27}"
-                      let esc = ($sq + "\u{5c}" + $sq + $sq)
-                      # Tern claims a command from the alias-expanded line when the
-                      # shell reports one (its own integrations send both fields);
-                      # nushell reports the typed words, so expand the first word
-                      # here when it names an alias -- `ll` then reaches Tern's own
-                      # ls family as `eza -la`, which it can read.
-                      let head = ($line | split row " " | first)
-                      let hit = (try { scope aliases | where name == $head | get expansion? } catch { [] })
-                      let rest = ($line | str replace --regex "^[^ ]+" "")
-                      let full = (if ($hit | is-empty) { $line } else { ($hit | first) + $rest })
-                      let typed = ($sq + ($line | str replace --all -- $sq $esc) + $sq)
-                      let expanded = ($sq + ($full | str replace --all -- $sq $esc) + $sq)
-                      print -n $"\u{1b}]133;C;cmdline=($typed);cmdline_expanded=($expanded)\u{7}"
-                    }
-                  } catch { }
-                }
-              ]
-            )
-          '';
-
-      # Give the probe the shell its protocol was written for, and leave every
-      # other use of $SHELL on nushell -- with the payload config, so a pane
-      # Tern starts with this shell reports its command lines too. The probe
-      # keeps the same argument list, because Tern adds no nushell-specific
-      # flags.
-      loginProbe = pkgs.writeShellScript "tern-login-shell-probe" ''
-        case " $* " in
-          *__stencil_login_env__*)
-            exec ${lib.getExe pkgs.bashInteractive} "$@"
-            ;;
-        esac
-        exec ${lib.getExe pkgs.nushell} --config ${nuConfig} "$@"
-      '';
-
-      # Tern links ~/.local/bin/tern to the binary it was started from, so it
-      # can be started by a path the wrapper never touched, where its
-      # environment is missing. The session's SHELL points at this shim (see
-      # modules/env.nix) as well, so the probe works regardless of how Tern was
-      # started.
-      #
-      # Installed as bin/nu so $SHELL keeps the file name of a real shell, and
-      # Tern's shell detection sees the shell it configured.
-      loginShell = pkgs.runCommand "tern-login-shell" { } ''
-        install -Dm755 ${loginProbe} $out/bin/nu
-      '';
-
       # Flake packages build against the flake-level pkgs, not the host's, so a
       # host's `unfree.allowedNames` never reaches this derivation.
       #
@@ -217,8 +118,6 @@
 
     in
     {
-      packages.tern-login-shell = loginShell;
-
       packages.tern =
         let
           fail = msg: throw "tern: ${msg}";
@@ -271,16 +170,9 @@
             patchelf --set-interpreter "${pkgs.stdenv.cc.bintools.dynamicLinker}" "$appDir/tern"
 
             # Runtime programs and WebKit environment.
-            #
-            # SHELL is the login shell the environment capture spawns; the shim
-            # above keeps that probe on bash while everything else stays on
-            # nushell. The session sets the same shim, so the wrapper is not
-            # needed for the probe -- it keeps Tern working in a session that
-            # started before the shim was made.
             makeWrapper "$appDir/tern" "$out/bin/tern" \
               --prefix LD_LIBRARY_PATH : "${runtimeLibraryPath}" \
               --prefix PATH : "${lib.makeBinPath runtimePrograms}" \
-              --set SHELL ${loginShell}/bin/nu \
               ${lib.concatStringsSep " " webkitRuntimeEnv}
 
             runHook postInstall

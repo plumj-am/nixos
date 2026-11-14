@@ -14,21 +14,13 @@
       inherit (lib.attrsets) attrNames optionalAttrs;
       inherit (lib.lists) filter singleton;
       inherit (lib.meta) getExe;
-      inherit (lib.modules) mkBefore mkForce;
+      inherit (lib.modules) mkBefore;
       inherit (lib.strings) concatLines;
       inherit (config) theme;
 
       prefix = "ctrl+g";
 
       flakePackages = self.packages.${pkgs.stdenv.hostPlatform.system};
-
-      # The login shell shim (packages/tern/tern.nix): bash for Tern's login
-      # probe, nushell -- with the OSC 133;C payload Tern claims commands
-      # from -- for everything else. The shim owns that payload, not this
-      # module, because Tern starts a session's first pane and every pane it
-      # restores with the login shell: the same shim serves the `shell`
-      # setting below, so no pane can miss the payload.
-      loginShell = "${flakePackages.tern-login-shell}/bin/nu";
     in
     {
       # Marks this host for every other host's `tern remote` host list.
@@ -42,12 +34,12 @@
       # Tern learns the login environment by probing `$SHELL` (see
       # packages/tern/tern.nix), and it links its own ~/.local/bin/tern and
       # desktop entries to the binary it runs, so launches skip the package
-      # wrapper and the SHELL it sets. Give the shim to the session instead:
-      # niri is a user service and takes its environment from the user
-      # manager, so every process it starts -- Tern included -- answers the
+      # wrapper. Give the session the login shell itself: modules/env.nix
+      # already sets SHELL for PAM sessions, and the user manager needs its
+      # own copy, because niri (a user service) takes its environment from
+      # there, so every process it starts -- Tern included -- answers the
       # probe.
-      environment.variables.SHELL = mkForce loginShell;
-      systemd.user.settings.Manager.DefaultEnvironment = [ "SHELL=${loginShell}" ];
+      systemd.user.settings.Manager.DefaultEnvironment = [ "SHELL=${getExe pkgs.nushell}" ];
 
       # The remote service can only answer before anyone logs in if jam's user
       # manager runs from boot, and that is a host's decision: a server nobody
@@ -61,8 +53,6 @@
       hjemModule =
         { osConfig, config, ... }:
         {
-          environment.sessionVariables.SHELL = mkForce loginShell;
-
           # `tern remote serve` is the network face of the session daemon: a
           # Tern on another machine logs in with a key from
           # ~/.ssh/authorized_keys and attaches to the sessions this machine
@@ -111,24 +101,23 @@
 
           # Tern builds a session's first pane, and every pane it restores,
           # before its login-environment capture is known, and starts them with
-          # the libc default PATH. Put the profile directories back when they
-          # are missing -- before carapace.nu (sourced by
+          # the libc default PATH. Its login probe meets the same PATH.
+          # Nushell answers the probe (`printf` is an external program), and
+          # both the pane and the probe need the profile directories, so put
+          # them back when they are missing -- before carapace.nu (sourced by
           # modules/nushell/completions.nix) reads $env.PATH.
           xdg.config.files."nushell/config.nu".text =
             mkBefore
               # nu
               ''
-                let path = ($env.PATH? | default [])
+                let path = $env.PATH? | default []
                 if ("/run/current-system/sw/bin" not-in $path) {
-                  $env.PATH = ($path | append [
+                  $env.PATH = $path | append [
                     "/run/wrappers/bin"
-                    # $env.USER is not guaranteed, and when it is missing the
-                    # whole config fails to load. $nu.home-dir falls back to
-                    # passwd, so its last component is always the user name.
                     $"/etc/profiles/per-user/($nu.home-dir | path basename)/bin"
                     "/nix/var/nix/profiles/default/bin"
                     "/run/current-system/sw/bin"
-                  ])
+                  ]
                 }
               '';
 
@@ -230,7 +219,7 @@
 
               confirm_close = "running_programs";
 
-              shell = "${loginShell}";
+              shell = "${getExe pkgs.nushell}";
               agent_command = "${getExe flakePackages.omp-wrapped}";
 
               command_lenses = false; # Disable native views for supported commands.
