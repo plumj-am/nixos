@@ -7,7 +7,7 @@
   ideLayout = # luau
     ''
       local IDE_TOP_RATIO = 0.75
-      local IDE_LEFT_RATIO = 0.68
+      local IDE_LEFT_RATIO = 0.625
       -- No IDE_AGENT_COMMAND: the native agent uses
       -- agent_command from tern's settings.
 
