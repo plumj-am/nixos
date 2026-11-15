@@ -128,6 +128,10 @@
       url = "github:different-name/steam-config-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    tarmac = {
+      url = "github:Mic92/nix-tarmac";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     treefmt = {
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
