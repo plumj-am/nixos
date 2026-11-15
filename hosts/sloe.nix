@@ -59,8 +59,8 @@ in
 
       # Very large disk, can hold on to things for longer. The wide margin
       # matters here because garbage is only collected every two weeks.
-      nix.gc = {
-        options = mkForce "--delete-older-than 14d";
+      services.fast-nix-gc = {
+        deleteOlderThan = mkForce "14d";
         dates = mkForce "*-*-01/14 00:00:00"; # Every 2 weeks.
       };
       nix.settings.min-free = "100G";

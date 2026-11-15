@@ -49,11 +49,6 @@ in
 
       # nixpkgs.config.contentAddressedByDefault = true;
 
-      nix.gc = {
-        automatic = true;
-        options = "--delete-older-than 7d";
-      };
-
       nix.registry =
         registryMap // { default = inputs.nixpkgs; } |> mapAttrs (_: flake: { inherit flake; });
 
@@ -131,20 +126,29 @@ in
       nix.extraOptions = ''
         !include ${config.sops.templates."nix-access-tokens".path}
       '';
-
-      nix.optimise.automatic = true;
     };
 
   flake.modules.nixos.default = self.modules.nixos.nix-extra;
   flake.modules.nixos.nix-extra = {
+    imports = [ inputs.fast-nix-gc.nixosModules.default ];
+
+    # Replaces the nix-gc/nix-optimise timers. The nix-daemon's own
+    # min-free emergency GC still runs stock nix-collect-garbage.
+    services.fast-nix-gc = {
+      enable = true;
+      automatic = true;
+      dates = "weekly";
+      deleteOlderThan = "7d";
+    };
+
+    services.fast-nix-optimise = {
+      enable = true;
+      automatic = true;
+    };
+
     nix.nixPath = (registryMap |> mapAttrsToList (name: value: "${name}=${value}")) ++ [
       "nixpkgs=${inputs.nixpkgs}"
     ];
-
-    nix.gc = {
-      dates = "weekly";
-      persistent = true;
-    };
 
     # A full store turns every fsync-heavy step into a multi-second stall, which dominated the VM-test timings. Hosts with a large store raise the floor.
     nix.settings = {
@@ -154,15 +158,8 @@ in
   };
 
   flake.modules.darwin.default = self.modules.darwin.nix-extra;
-  flake.modules.darwin.nix-extra =
-    { lib, ... }:
-    let
-      inherit (lib.modules) mkForce;
-    in
-    {
-      nix.optimise.automatic = mkForce false;
-      nix.gc.automatic = mkForce false;
-      nix.nixPath =
-        registryMap |> mapAttrsToList (name: value: "${name}=${value}") |> concatStringsSep ":";
-    };
+  flake.modules.darwin.nix-extra = {
+    nix.nixPath =
+      registryMap |> mapAttrsToList (name: value: "${name}=${value}") |> concatStringsSep ":";
+  };
 }
