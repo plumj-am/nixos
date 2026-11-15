@@ -465,6 +465,12 @@
           xdg.config.files."tern/plugins/agent-status/init.luau".source =
             "${flakePackages.tern-agent-status-plugin}/init.luau";
 
+          xdg.config.files."tern/plugins/copse-status/plugin.toml".source =
+            "${flakePackages.tern-copse-status-plugin}/plugin.toml";
+
+          xdg.config.files."tern/plugins/copse-status/init.luau".source =
+            "${flakePackages.tern-copse-status-plugin}/init.luau";
+
           xdg.config.files."tern/plugins/custom-rail-style/plugin.toml".source =
             "${flakePackages.tern-custom-rail-style}/plugin.toml";
 
