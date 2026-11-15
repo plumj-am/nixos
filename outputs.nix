@@ -1,10 +1,15 @@
 inputs:
 let
-  inherit (inputs.nixpkgs.lib) filter;
-  inherit (inputs.nixpkgs.lib.attrsets) filterAttrs mapAttrs' nameValuePair;
-  inherit (inputs.nixpkgs.lib.filesystem) readDir;
-  inherit (inputs.nixpkgs.lib.filesystem) listFilesRecursive;
-  inherit (inputs.nixpkgs.lib.strings) hasInfix hasSuffix removeSuffix;
+  inherit (inputs.nixpkgs) lib;
+  inherit (lib.attrsets)
+    filterAttrs
+    mapAttrs'
+    nameValuePair
+    removeAttrs
+    ;
+  inherit (lib.filesystem) listFilesRecursive readDir;
+  inherit (lib.lists) filter;
+  inherit (lib.strings) hasInfix hasSuffix removeSuffix;
 
   importTree = path: {
     imports =
@@ -20,8 +25,9 @@ in
 (import "${inputs.flake-parts}/lib.nix" {
   lib = import ./libs inputs.nixpkgs.lib;
 
-  builtinModules = readFlakeParts "${inputs.flake-parts}/modules";
-  extraModules = readFlakeParts "${inputs.flake-parts}/extras";
+  # We never use `debug` or any other extras.
+  builtinModules = removeAttrs (readFlakeParts "${inputs.flake-parts}/modules") [ "debug" ];
+  extraModules = { };
 }).mkFlake
   { inherit inputs; }
   {
