@@ -20,7 +20,12 @@
         garage = {
           alias = "plumjam-garage";
           bucket = "nix";
-          endpoint = "sloe.${tailnet}:8015";
+
+          # Garage and RustFS run side by side for comparison on distinct
+          # ports. Keep this in sync with `rustfs.apiPort` in
+          # ./rustfs.nix.
+          endpoint = if config.s3.backend == "rustfs" then "sloe.${tailnet}:9015" else "sloe.${tailnet}:8015";
+
           region = "garage";
           pathStyle = "on";
           apiVersion = "s3v4";
@@ -90,6 +95,7 @@
       ...
     }:
     let
+      inherit (lib.lists) optional;
       inherit (lib.meta) getExe;
       inherit (config.s3.caches) garage;
       inherit (config.sops) secrets;
@@ -235,7 +241,8 @@
         after = [
           "network.target"
           "sops.service"
-        ];
+        ]
+        ++ optional (config.s3.backend == "rustfs") "rustfs-bootstrap.service";
         wantedBy = [ "multi-user.target" ];
 
         # mc needs glibc.getent

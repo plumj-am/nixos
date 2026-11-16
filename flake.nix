@@ -120,6 +120,10 @@
       url = "https://pkgs.superlogical.com/rex/nix/snapshot.tar.gz";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    rustfs = {
+      url = "github:rustfs/rustfs/1.0.5";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     sops = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";

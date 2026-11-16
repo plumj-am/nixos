@@ -179,7 +179,7 @@
                 touch "$CACHE_DIRECTORY/repository-initialised"
               elif [ -e "$CACHE_DIRECTORY/repository-initialised" ] \
                 || [ -n "$(find "$CACHE_DIRECTORY" -mindepth 1 -maxdepth 1 -type d -print -quit)" ]; then
-                echo "rustic: the repository is not readable and already holds data; refusing to re-initialise it" >&2
+                echo "rustic: the repository is not readable and already holds data; refusing to re-initialise it. If the endpoint changed, clear $CACHE_DIRECTORY to start a new repository." >&2
                 exit 1
               else
                 ${rusticCmd} init

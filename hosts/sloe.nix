@@ -24,6 +24,7 @@ in
         mealie
         nextcloud
         openssh-grove-systems
+        rustfs
         tend
         tern
         users-grove-systems
