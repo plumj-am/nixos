@@ -145,6 +145,15 @@ in
         ''
           Host git.plumj.am
             IdentityFile ${config.sops.secrets.id.path}
+
+          # Remote builders: nix execs ssh with no -o overrides, so this is the
+          # only place its connection can be bounded. A dead channel then
+          # becomes an error instead of a build that never reports.
+          Host blackwell date sloe plum
+            ConnectTimeout 10
+            ServerAliveInterval 15
+            ServerAliveCountMax 3
+            BatchMode yes
         '';
 
       services.tarssh = {

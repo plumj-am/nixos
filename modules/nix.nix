@@ -93,6 +93,9 @@ in
         max-jobs = "auto";
         cores = 0;
 
+        max-silent-time = 1800;
+        timeout = 21600;
+
         show-trace = true;
         log-lines = 100;
         warn-dirty = false;
