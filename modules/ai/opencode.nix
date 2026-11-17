@@ -25,7 +25,7 @@
       inherit (config.ai) defaultModels;
       inherit (config.sops) secrets;
 
-      providerKey = config.ai.providers.headroomVineProxy.name;
+      providerKey = config.ai.providers.vineProxy.name;
 
       shortId =
         id:

@@ -20,7 +20,7 @@
       inherit (config.ai) defaultModels;
       inherit (config.users.users.jam) home;
 
-      providerKey = config.ai.providers.headroomVineProxy.name;
+      providerKey = config.ai.providers.vineProxy.name;
 
       models = mapAttrs (_: m: "${providerKey}/${m}") defaultModels;
 

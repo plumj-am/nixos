@@ -9,6 +9,7 @@
     }:
     let
       inherit (lib.attrsets) genAttrs;
+      inherit (lib.constants) tailnet;
       inherit (lib.filesystem) baseNameOf;
       inherit (lib.lists) singleton;
       inherit (config) sops;
@@ -17,6 +18,18 @@
       imports = singleton inputs.grove.nixosModules.vine;
 
       ai.secrets = true;
+
+      # Vine is the tailnet-facing endpoint: it binds this host's tailnet
+      # name, so it answers on the tailnet and on no other interface.
+      networking.firewall.extraCommands = ''
+        iptables -A nixos-fw -i ts0 -p tcp --dport 8023 -j nixos-fw-accept
+        ip6tables -A nixos-fw -i ts0 -p tcp --dport 8023 -j nixos-fw-accept
+      '';
+
+      systemd.services.vine = {
+        wants = singleton "tailscaled.service";
+        after = singleton "tailscaled.service";
+      };
 
       sops.templates."vine-env".content = ''
         VINE_UPSTREAMS_COMMANDCODE__API_KEYS=${sops.placeholder."commandcode-1-key"},${
@@ -36,7 +49,7 @@
         environment_file = sops.templates."vine-env".path;
 
         config = {
-          host = "127.0.0.1";
+          host = "${config.networking.hostName}.${tailnet}";
           port = 8023;
           cooldown_secs = 60;
           log_level = "info";

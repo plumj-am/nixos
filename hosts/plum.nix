@@ -20,7 +20,6 @@ in
         freshrss-server
         gerrit
         goatcounter
-        headroom
         hermes-grove
         matrix
         opengist

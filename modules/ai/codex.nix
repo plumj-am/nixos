@@ -25,7 +25,7 @@
       inherit (lib.strings) fromJSON readFile;
       inherit (config.ai) defaultModels;
 
-      provider = config.ai.providers.headroomVineProxy;
+      provider = config.ai.providers.vineProxy;
       providerKey = provider.name;
       modelInfo =
         id:

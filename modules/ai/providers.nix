@@ -7,10 +7,10 @@
       inherit (lib.constants) tailnet;
     in
     {
-      config.ai.providers.headroomVineProxy = {
+      config.ai.providers.vineProxy = {
         name = "vine";
-        baseUrl = "http://plum.${tailnet}:8022/v1";
-        apiKey = "sk-vine-local"; # forwarded by headroom; subs live in vine env
+        baseUrl = "http://plum.${tailnet}:8023/v1";
+        apiKey = "sk-vine-local"; # accepted by vine; subs live in vine env
         type = "openai-compatible";
         auth = "none";
       };

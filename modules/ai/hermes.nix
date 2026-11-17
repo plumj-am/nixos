@@ -48,7 +48,7 @@ let
       jujutsu = inputs.jujutsu.packages.${pkgs.stdenv.hostPlatform.system}.jujutsu;
       jjStack = inputs.jj-stack.packages.${pkgs.stdenv.hostPlatform.system}.jj-stack;
 
-      vineProvider = config.ai.providers.headroomVineProxy;
+      vineProvider = config.ai.providers.vineProxy;
       provider = vineProvider.name;
 
       cfg = config.services.hermes-agent;
@@ -59,9 +59,10 @@ let
         secrets."hermes-${name}-env".path
       ];
 
-      restartHermes =
-        [ "hermes-agent.service" ]
-        ++ optional (cfg.backend.mode != "none") "hermes-backend.service";
+      restartHermes = [
+        "hermes-agent.service"
+      ]
+      ++ optional (cfg.backend.mode != "none") "hermes-backend.service";
 
       needsGitConfig = gitUsername != "" && gitEmail != "" && jjStackUsername != "";
       needsSkills = npmSkills != [ ] || ghSkills != [ ] || localSkills != [ ];
@@ -700,10 +701,11 @@ let
       systemd.services.hermes-agent = {
         # Single place for pull and order: helpers run only when the
         # agent starts, and complete before it.
-        after =
-          [ "sops-install-secrets.service" ]
-          ++ optional needsSkills "hermes-install-skills.service"
-          ++ optional needsGitConfig "hermes-git-config.service";
+        after = [
+          "sops-install-secrets.service"
+        ]
+        ++ optional needsSkills "hermes-install-skills.service"
+        ++ optional needsGitConfig "hermes-git-config.service";
         wants =
           optional needsSkills "hermes-install-skills.service"
           ++ optional needsGitConfig "hermes-git-config.service";
