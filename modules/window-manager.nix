@@ -10,6 +10,7 @@
       ...
     }:
     let
+      inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
       inherit (lib.modules) mkIf;
       inherit (config) theme;
@@ -29,6 +30,8 @@
       # getExe inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.canopy-notify;
     in
     {
+      imports = singleton inputs.nirinit.nixosModules.nirinit;
+
       shellAliases.ns = "niri-session";
 
       unfree.allowedNames = mkIf (gpu.vendor == "nVidia Corporation") [
@@ -106,6 +109,16 @@
           terminal = false;
         })
       ];
+
+      services.nirinit = {
+        enable = true;
+        settings = {
+          # Map app_id to launch command.
+          launch = { };
+          # Apps to skip during restore
+          skip.apps = [ ];
+        };
+      };
 
       hjemModule =
         { config, ... }:

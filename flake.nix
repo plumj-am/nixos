@@ -85,6 +85,10 @@
       url = "github:mitos-editor/mitos?ref=refs/tags/v0.1.3";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nirinit = {
+      url = "github:amaanq/nirinit";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixos-core = {
       url = "github:manic-systems/nixos-core";
       inputs.nixpkgs.follows = "nixpkgs";
