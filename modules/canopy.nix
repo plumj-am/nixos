@@ -14,7 +14,8 @@
       inherit (config) theme;
 
       font = {
-        icons = theme.icons.name;
+        # Widget glyphs need a font family, not the GTK icon theme.
+        icons = "Symbols Nerd Font";
         mono = theme.font.mono.name;
         sans = theme.font.sans.name;
 
