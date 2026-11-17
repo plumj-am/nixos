@@ -172,7 +172,7 @@
               agent = {
                 build = mkAgent {
                   mode = "primary";
-                  effort = "medium";
+                  effort = "high";
                 };
                 plan = mkAgent {
                   mode = "primary";

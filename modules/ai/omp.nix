@@ -241,12 +241,12 @@
               modelRoles = with models; {
                 inherit tiny vision;
                 default = "${small}:high";
-                smol = small;
+                smol = "${small}:low";
                 slow = "${big}:max";
-                advisor = small;
-                plan = "${big}:max";
+                advisor = "${small}:low";
+                plan = "${big}:high";
                 designer = vision;
-                commit = small;
+                commit = "${small}:low";
                 task = tiny;
                 judge = decision;
               };

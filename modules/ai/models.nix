@@ -44,8 +44,8 @@
           id = "deepseek/deepseek-v4.1-flash";
           name = "DeepSeek V4.1 Flash";
           thinking = {
-            minLevel = "high";
-            maxLevel = "xhigh";
+            minLevel = "low";
+            maxLevel = "max";
           };
           inputTypes = singleton "text";
           context = 1000000;
@@ -54,10 +54,17 @@
             supportsDeveloperRole = false;
             supportsReasoningEffort = true;
             maxTokensField = "max_tokens";
+            # low, high, max are the only supported mappings
+            # 50   75    100
+            # NOTE: max isn't very useful, it just burns more tokens for very
+            # little or no gain.
             reasoningEffortMap = {
-              low = "high"; # lowest available for V4 models
+              minimal = "low";
+              low = "low";
+              medium = "high";
               high = "high";
-              xhigh = "max";
+              xhigh = "high";
+              max = "max";
             };
             supportsToolChoice = false;
             requiresReasoningContentForToolCalls = true;
