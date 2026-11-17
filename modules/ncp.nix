@@ -86,7 +86,11 @@
         # Non-HTTP, non-S3 caches stay direct, after the sidecar.
         extraSubstituters = direct;
 
-        config.upstreams = if ordered == [ ] then fallbackUpstreams else upstreams;
+        config = {
+          max_in_flight = 10;
+
+          upstreams = if ordered == [ ] then fallbackUpstreams else upstreams;
+        };
       };
 
       # The `s3` aspect materialises the shared credentials file and makes it
