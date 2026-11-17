@@ -58,6 +58,10 @@
             inherit url;
             order = 10 + index * 10;
             hedge = hasInfix tailnet url;
+            # Realisations exist only where a build ran and pushed them.
+            # Graft's cache and the Garage bucket hold them; the `:5000`
+            # nix-serve hosts reject the path, so they stay off.
+            build_traces = hasInfix "graft-cache" url || isS3 url;
           };
         }) ordered
       );
