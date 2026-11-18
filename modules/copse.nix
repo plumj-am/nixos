@@ -38,8 +38,8 @@
 
             grace_secs = 10; # Between SIGTERM and SIGKILL when a job is cancelled.
 
-            log_tail_bytes = 65536;
-            max_env_bytes = 262144;
+            log_tail_bytes = 128 * 1024; # 128 MB
+            max_env_bytes = 1024 * 1024; # 1 GB
 
             retention_days = 7;
             retention_jobs = 300;
