@@ -31,7 +31,12 @@
         '';
     in
     {
-      environment.systemPackages = singleton hokum;
+      environment.systemPackages = [
+        hokum
+        # Hokum's default sound names (message-new-instant, dialog-warning) come
+        # from here.
+        pkgs.sound-theme-freedesktop
+      ];
       services.dbus.packages = singleton hokum;
 
       systemd.packages = singleton hokum;
@@ -65,7 +70,8 @@
                   appearance "system"
                   clock "auto"
                   check-for-updates #false
-                  sound #false
+                  // Native sounds: freedesktop theme names, played with pw-play.
+                  sound #true
               }
 
               modules {
