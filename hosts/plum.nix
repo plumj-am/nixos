@@ -21,6 +21,7 @@ in
         gerrit
         goatcounter
         hermes-grove
+        keeper
         matrix
         opengist
         postgres
