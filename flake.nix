@@ -73,7 +73,7 @@
       flake = false;
     };
     jj-stack = {
-      url = "github:plumj-am/jj-stack/patch/PlumJam-tuzutqoxxsqu";
+      url = "github:bos/jj-stack?rev=5e7ac3bf753bafeea44d7a91b8fdfffa84e6db6c"; # Track the next release once out (>0.1.8).
       inputs.nixpkgs.follows = "nixpkgs";
     };
     kache = {

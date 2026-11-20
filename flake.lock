@@ -778,17 +778,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1793282930,
-        "narHash": "sha256-B/N/R6XxKT+ibVAJBICYMG76LhRyArUVpbHJEbUJg8M=",
-        "owner": "plumj-am",
+        "lastModified": 1795209087,
+        "narHash": "sha256-HFlRZIQ037mi7tXyrMlU+siLV6Veo3IDAAs1cSCQtf4=",
+        "owner": "bos",
         "repo": "jj-stack",
-        "rev": "ce0c3db2f434f7529b4a507dd642a81880fb211d",
+        "rev": "5e7ac3bf753bafeea44d7a91b8fdfffa84e6db6c",
         "type": "github"
       },
       "original": {
-        "owner": "plumj-am",
-        "ref": "patch/PlumJam-tuzutqoxxsqu",
+        "owner": "bos",
         "repo": "jj-stack",
+        "rev": "5e7ac3bf753bafeea44d7a91b8fdfffa84e6db6c",
         "type": "github"
       }
     },
