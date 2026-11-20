@@ -395,7 +395,8 @@
               // spawn-at-startup "${canopyMedia}" "serve"
               spawn-sh-at-startup "sleep 5; awww-daemon"
               spawn-sh-at-startup "sleep 5; gammastep-indicator"
-              spawn-sh-at-startup "sleep 30; nextcloud" // give time to login to keepassxc
+              // --background: tray only, no main window on launch
+              spawn-sh-at-startup "sleep 30; nextcloud --background" // give time to login to keepassxc
             '';
 
           xdg.config.files."clipcat/clipcatd.toml".text = # toml
