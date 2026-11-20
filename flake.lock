@@ -585,11 +585,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1795119635,
-        "narHash": "sha256-uzce/PxiDgHIpyNum2JKSlljA+BqEVHQEHNKzMwfVfs=",
+        "lastModified": 1795210434,
+        "narHash": "sha256-Ix2aHh2zLiiZQhwHK4jAcfBfHQ9jCl0gfXfaPaSWWwM=",
         "ref": "refs/heads/master",
-        "rev": "658ad1e03c79f9b182e9f6837077af8e79123784",
-        "revCount": 2720,
+        "rev": "7f204e4cbc0a3836f504de5de587e4889f2b335c",
+        "revCount": 2724,
         "type": "git",
         "url": "ssh://git@github.com/grove-systems/grove"
       },

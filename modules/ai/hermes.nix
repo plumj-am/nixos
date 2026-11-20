@@ -44,7 +44,7 @@ let
       inherit (config.helpers) rustic;
       inherit (config.sops) secrets;
 
-      graftctl = inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.graftctl;
+      graft = inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.graft;
       jujutsu = inputs.jujutsu.packages.${pkgs.stdenv.hostPlatform.system}.jujutsu;
       jjStack = inputs.jj-stack.packages.${pkgs.stdenv.hostPlatform.system}.jj-stack;
 
@@ -678,7 +678,7 @@ let
           pkgs.file
           pkgs.gh
           pkgs.gitMinimal
-          graftctl
+          graft
           jjStack
           pkgs.jq
           jujutsu

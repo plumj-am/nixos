@@ -100,7 +100,7 @@
 
       services.graft = {
         enable = true;
-        package = inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.graft;
+        package = inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.graft-server;
 
         state_dir = "/var/lib/graft";
 
@@ -355,7 +355,7 @@
 
       environment.systemPackages =
         singleton
-          inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.graftctl;
+          inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.graft;
 
       hjemModule = {
         xdg.config.files."graft/config.toml".source = secrets."graft/cli/config".path;
