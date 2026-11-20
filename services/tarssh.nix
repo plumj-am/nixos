@@ -11,16 +11,12 @@
       inherit (lib.lists) optional singleton;
       inherit (lib.meta) getExe;
       inherit (lib.modules) mkIf;
-      inherit (lib.options)
-        mkEnableOption
-        mkOptionNullOr
-        mkOptionOf
-        mkPackageOption
-        ;
+      inherit (lib.options) mkEnableOption mkOption mkPackageOption;
       inherit (lib.strings) concatStringsSep replicate;
       inherit (lib.types)
         bool
         int
+        nullOr
         port
         str
         ;
@@ -39,7 +35,8 @@
 
         package = mkPackageOption pkgs "tarssh" { };
 
-        listenAddress = mkOptionOf (addCheck str (s: !(lib.hasInfix ":" s))) {
+        listenAddress = mkOption {
+          type = addCheck str (s: !(lib.hasInfix ":" s));
           default = "0.0.0.0";
           example = "[::]";
           description = ''
@@ -48,7 +45,8 @@
           '';
         };
 
-        listenPort = mkOptionOf port {
+        listenPort = mkOption {
+          type = port;
           default = 2222;
           description = ''
             TCP port to bind. Setting this below 1024 grants the unit
@@ -56,22 +54,27 @@
           '';
         };
 
-        delay = mkOptionOf int {
+        delay = mkOption {
+          type = int;
           default = 10;
           description = "Seconds between responses (`--delay`).";
         };
 
-        timeout = mkOptionOf int {
+        timeout = mkOption {
+          type = int;
           default = 30;
           description = "Socket write timeout in seconds (`--timeout`).";
         };
 
-        maxClients = mkOptionOf int {
+        maxClients = mkOption {
+          type = int;
           default = 4096;
           description = "Best-effort connection limit (`--max-clients`).";
         };
 
-        user = mkOptionNullOr str {
+        user = mkOption {
+          type = nullOr str;
+          default = null;
           description = ''
             Run as this user (`--user`). When set, tarssh also adopts the
             user's primary group; prefer setting `group` explicitly if the
@@ -79,15 +82,20 @@
           '';
         };
 
-        group = mkOptionNullOr str {
+        group = mkOption {
+          type = nullOr str;
+          default = null;
           description = "Run as this group (`--group`).";
         };
 
-        chroot = mkOptionNullOr str {
+        chroot = mkOption {
+          type = nullOr str;
+          default = null;
           description = "Chroot to this directory before serving (`--chroot`).";
         };
 
-        verbose = mkOptionOf int {
+        verbose = mkOption {
+          type = int;
           default = 0;
           description = ''
             Verbosity level. Each unit adds one `-v` flag to tarssh's
@@ -96,22 +104,26 @@
           '';
         };
 
-        disableLogIdent = mkOptionOf bool {
+        disableLogIdent = mkOption {
+          type = bool;
           default = false;
           description = "Strip the `tarssh` module name from log lines (`--disable-log-ident`).";
         };
 
-        disableLogLevel = mkOptionOf bool {
+        disableLogLevel = mkOption {
+          type = bool;
           default = false;
           description = "Strip the log level prefix (`--disable-log-level`).";
         };
 
-        disableLogTimestamps = mkOptionOf bool {
+        disableLogTimestamps = mkOption {
+          type = bool;
           default = false;
           description = "Strip timestamps from log lines (`--disable-log-timestamps`).";
         };
 
-        openFirewall = mkOptionOf bool {
+        openFirewall = mkOption {
+          type = bool;
           default = false;
           description = "Whether to open `listenPort` in the firewall.";
         };

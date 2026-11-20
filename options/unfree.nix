@@ -4,11 +4,12 @@
   flake.modules.nixos.unfree-options =
     { lib, ... }:
     let
-      inherit (lib.options) mkOptionOf;
+      inherit (lib.options) mkOption;
       inherit (lib.types) listOf str;
     in
     {
-      options.unfree.allowedNames = mkOptionOf (listOf str) {
+      options.unfree.allowedNames = mkOption {
+        type = listOf str;
         default = [ ];
         description = "List of unfree package names to allow";
         example = [

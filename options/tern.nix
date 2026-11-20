@@ -4,11 +4,12 @@
   flake.modules.nixos.tern-options =
     { lib, ... }:
     let
-      inherit (lib.options) mkOptionOf;
+      inherit (lib.options) mkOption;
       inherit (lib.types) bool;
     in
     {
-      options.tern.installed = mkOptionOf bool {
+      options.tern.installed = mkOption {
+        type = bool;
         default = false;
         internal = true;
         description = ''
@@ -18,7 +19,8 @@
         '';
       };
 
-      options.tern.remote.linger = mkOptionOf bool {
+      options.tern.remote.linger = mkOption {
+        type = bool;
         default = false;
         description = ''
           Start jam's systemd user manager at boot, so `tern remote serve`

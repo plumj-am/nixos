@@ -4,11 +4,12 @@
   flake.modules.common.nushell-aliases-options =
     { lib, ... }:
     let
-      inherit (lib.options) mkOptionOf;
+      inherit (lib.options) mkOption;
       inherit (lib.types) attrsOf str;
     in
     {
-      options.shellAliases = mkOptionOf (attrsOf str) {
+      options.shellAliases = mkOption {
+        type = attrsOf str;
         default = { };
         description = "Additional shell aliases to be merged with defaults";
       };

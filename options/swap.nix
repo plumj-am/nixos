@@ -4,18 +4,22 @@
   flake.modules.nixos.swapfile-options =
     { lib, ... }:
     let
-      inherit (lib.options) mkOptionNullOr mkOptionOf;
-      inherit (lib.types) int str;
+      inherit (lib.options) mkOption;
+      inherit (lib.types) int nullOr str;
     in
     {
       options.systemInfo.disks = {
         swap = {
           file = {
-            path = mkOptionOf str {
+            path = mkOption {
+              type = str;
               default = "/swapfile";
 
             };
-            size = mkOptionNullOr int;
+            size = mkOption {
+              type = nullOr int;
+              default = null;
+            };
           };
         };
       };
@@ -25,20 +29,23 @@
   flake.modules.nixos.swap-partition-options =
     { lib, ... }:
     let
-      inherit (lib.options) mkOptionOf;
+      inherit (lib.options) mkOption;
       inherit (lib.types) str;
     in
     {
       options.systemInfo.disks = {
         swap.partition = {
-          size = mkOptionOf str {
+          size = mkOption {
+            type = str;
             default = "34G";
           };
-          path = mkOptionOf str {
+          path = mkOption {
+            type = str;
             default = "/dev/disk/by-label/swap";
           };
         };
-        diskDevice = mkOptionOf str {
+        diskDevice = mkOption {
+          type = str;
           default = "/dev/nvme0n1";
         };
       };

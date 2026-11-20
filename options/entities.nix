@@ -4,11 +4,12 @@
   flake.modules.common.entities-options =
     { lib, ... }:
     let
-      inherit (lib.options) mkOptionOf;
+      inherit (lib.options) mkOption;
       inherit (lib.types) anything attrsOf;
     in
     {
-      options.flake.entities = mkOptionOf (attrsOf anything) {
+      options.flake.entities = mkOption {
+        type = attrsOf anything;
         default = { };
         description = ''
           All persistent entities associated with this configuration collection.

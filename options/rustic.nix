@@ -10,7 +10,7 @@
     }:
     let
       inherit (lib.attrsets) mapAttrsToList;
-      inherit (lib.options) mkOptionOf;
+      inherit (lib.options) mkOption;
       inherit (lib.strings) optionalString;
       inherit (lib.types) anything attrsOf;
       inherit (config.networking) hostName;
@@ -18,7 +18,8 @@
       cfg = config.services.rustic;
     in
     {
-      options.helpers.rustic = mkOptionOf (attrsOf anything) {
+      options.helpers.rustic = mkOption {
+        type = attrsOf anything;
         default = { };
         description = "Rustic backup creation helpers";
       };

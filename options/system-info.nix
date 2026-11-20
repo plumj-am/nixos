@@ -5,7 +5,7 @@
     { lib, config, ... }:
     let
       inherit (lib.lists) elemAt;
-      inherit (lib.options) mkOptionOf;
+      inherit (lib.options) mkOption;
       inherit (lib.types)
         bool
         int
@@ -24,24 +24,28 @@
     in
     {
       options.systemInfo = {
-        cores = mkOptionOf int {
+        cores = mkOption {
+          type = int;
           default = cores;
           readOnly = true;
           description = "CPU cores derived from facter report";
 
         };
-        threads = mkOptionOf int {
+        threads = mkOption {
+          type = int;
           default = threads;
           readOnly = true;
           description = "CPU threads derived from facter report";
         };
         gpu = {
-          exists = mkOptionOf bool {
+          exists = mkOption {
+            type = bool;
             default = gpuExists;
             readOnly = true;
             description = "GPU existence derived from facter report";
           };
-          vendor = mkOptionOf (nullOr str) {
+          vendor = mkOption {
+            type = nullOr str;
             default = gpuVendor;
             readOnly = true;
             description = "GPU vendor derived from facter report";

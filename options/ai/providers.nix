@@ -5,37 +5,41 @@
     { lib, ... }:
     let
       inherit (lib.attrsets) filterAttrsRecursive;
-      inherit (lib.options) mkOptionNullOr mkOptionOf;
+      inherit (lib.options) mkOption;
       inherit (lib.types)
         attrsOf
         enum
+        nullOr
         str
         submodule
         ;
     in
     {
-      options.ai.providers =
-        mkOptionOf
-          (
-            attrsOf
-            <| submodule {
-              options = {
-                name = mkOptionOf str;
-                baseUrl = mkOptionOf str;
-                apiKey = mkOptionNullOr str;
-                type = mkOptionOf (enum [ "openai-compatible" ]);
-                auth = mkOptionOf str;
-                discoveryType = mkOptionNullOr str;
+      options.ai.providers = mkOption {
+        type =
+          attrsOf
+          <| submodule {
+            options = {
+              name = mkOption { type = str; };
+              baseUrl = mkOption { type = str; };
+              apiKey = mkOption {
+                type = nullOr str;
+                default = null;
               };
-            }
-          )
-          {
-            default = { };
-            apply = filterAttrsRecursive (_: value: value != null);
-            # Drop optional-null defaults; consumers see only defined keys.
-            description = ''
-              Typed AI provider registry, shared by agent tool configs.
-            '';
+              type = mkOption { type = enum [ "openai-compatible" ]; };
+              auth = mkOption { type = str; };
+              discoveryType = mkOption {
+                type = nullOr str;
+                default = null;
+              };
+            };
           };
+        default = { };
+        apply = filterAttrsRecursive (_: value: value != null);
+        # Drop optional-null defaults; consumers see only defined keys.
+        description = ''
+          Typed AI provider registry, shared by agent tool configs.
+        '';
+      };
     };
 }

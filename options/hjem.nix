@@ -4,8 +4,8 @@
   flake.modules.common.hjem-options =
     { lib, ... }:
     let
-      inherit (lib.options) mkOptionNullOr;
-      inherit (lib.types) deferredModule;
+      inherit (lib.options) mkOption;
+      inherit (lib.types) deferredModule nullOr;
     in
     {
       # Before:
@@ -30,7 +30,9 @@
       #   };
       # }
       # ```
-      options.hjem.extraModule = mkOptionNullOr deferredModule {
+      options.hjem.extraModule = mkOption {
+        type = nullOr deferredModule;
+        default = null;
         description = ''
           Single module to be evaluated as a part of the users module
           inside `config.hjem.users.<username>`. Use this instead of
@@ -38,7 +40,9 @@
         '';
       };
 
-      options.hjemModule = mkOptionNullOr deferredModule {
+      options.hjemModule = mkOption {
+        type = nullOr deferredModule;
+        default = null;
         description = ''
           Single module to be evaluated as a part of the users module
           inside `config.hjem.users.<username>`. Use this instead of

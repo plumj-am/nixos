@@ -209,10 +209,10 @@
 
             volumes = [ cfg.volume ];
             address = ":${toString cfg.apiPort}";
-            consoleEnable = cfg.consoleEnable;
+            inherit (cfg) consoleEnable;
             consoleAddress = "127.0.0.1:${toString cfg.consolePort}";
-            accessKeyFile = cfg.accessKeyFile;
-            secretKeyFile = cfg.secretKeyFile;
+            inherit (cfg) accessKeyFile;
+            inherit (cfg) secretKeyFile;
 
             extraEnvironmentVariables = {
               # Keep the existing client configuration (region, alias, and

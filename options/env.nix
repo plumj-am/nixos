@@ -4,11 +4,12 @@
   flake.modules.common.env-options =
     { lib, ... }:
     let
-      inherit (lib.options) mkOptionOf;
+      inherit (lib.options) mkOption;
       inherit (lib.types) listOf str;
     in
     {
-      options.sessionPath = mkOptionOf (listOf str) {
+      options.sessionPath = mkOption {
+        type = listOf str;
         default = [
           ".local/bin"
           ".cargo/bin"

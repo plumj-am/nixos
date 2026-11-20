@@ -17,7 +17,7 @@
         ;
       inherit (lib.lists) head optional singleton;
       inherit (lib.meta) getExe;
-      inherit (lib.options) mkOptionNullOr mkOptionOf mkPackageOption;
+      inherit (lib.options) mkOption mkPackageOption;
       inherit (lib.strings) concatStringsSep escapeShellArg optionalString;
       inherit (lib.types)
         attrsOf
@@ -33,102 +33,118 @@
     in
     {
       options.services.rustic = {
-        passwordFile = mkOptionNullOr str {
+        passwordFile = mkOption {
+          type = nullOr str;
+          default = null;
           description = "Path to a file containing the rustic repository password.";
         };
 
-        credentialsFile = mkOptionNullOr str {
+        credentialsFile = mkOption {
+          type = nullOr str;
+          default = null;
           description = "Path to an AWS shared credentials file.";
         };
 
-        bucket = mkOptionOf str {
+        bucket = mkOption {
+          type = str;
           default = "backups";
           description = "S3 bucket used for backups.";
         };
 
-        endpoint = mkOptionOf str {
+        endpoint = mkOption {
+          type = str;
           description = "S3 endpoint host (without scheme).";
         };
 
-        region = mkOptionOf str {
+        region = mkOption {
+          type = str;
           description = "S3 region.";
         };
 
-        alias = mkOptionOf str {
+        alias = mkOption {
+          type = str;
           description = "AWS profile alias used to look up credentials.";
         };
 
-        backups =
-          mkOptionOf
-            (
-              attrsOf
-              <| submodule (
-                { config, ... }:
-                {
-                  options = {
-                    package = mkPackageOption pkgs "rustic" { };
+        backups = mkOption {
+          type =
+            attrsOf
+            <| submodule (
+              { config, ... }:
+              {
+                options = {
+                  package = mkPackageOption pkgs "rustic" { };
 
-                    environmentFile = mkOptionNullOr str {
-                      description = "EnvironmentFile providing RUSTIC_REPOSITORY, RUSTIC_PASSWORD_FILE, OPENDAL_* etc.";
-                    };
+                  environmentFile = mkOption {
+                    type = nullOr str;
+                    default = null;
+                    description = "EnvironmentFile providing RUSTIC_REPOSITORY, RUSTIC_PASSWORD_FILE, OPENDAL_* etc.";
+                  };
 
-                    paths = mkOptionOf (listOf str) {
-                      description = "Paths to back up, passed to rustic as positional source args.";
-                    };
+                  paths = mkOption {
+                    type = listOf str;
+                    description = "Paths to back up, passed to rustic as positional source args.";
+                  };
 
-                    exclude = mkOptionOf (listOf str) {
-                      default = [ ];
-                      description = "Glob patterns to exclude (written to an --exclude-file).";
-                    };
+                  exclude = mkOption {
+                    type = listOf str;
+                    default = [ ];
+                    description = "Glob patterns to exclude (written to an --exclude-file).";
+                  };
 
-                    extraBackupArgs = mkOptionOf (listOf str) {
-                      default = [ ];
-                      description = "Extra arguments passed to `rustic backup`.";
-                    };
+                  extraBackupArgs = mkOption {
+                    type = listOf str;
+                    default = [ ];
+                    description = "Extra arguments passed to `rustic backup`.";
+                  };
 
-                    initialize = mkOptionOf bool {
-                      default = false;
-                      description = "Run `rustic init` if the repository doesn't exist yet.";
-                    };
+                  initialize = mkOption {
+                    type = bool;
+                    default = false;
+                    description = "Run `rustic init` if the repository doesn't exist yet.";
+                  };
 
-                    pruneOpts = mkOptionOf (listOf str) {
-                      default = [ ];
-                      description = "Options for `rustic forget --prune`, run after backup.";
-                      example = [
-                        "--keep-daily 8"
-                        "--keep-weekly 5"
-                        "--keep-monthly 3"
-                      ];
-                    };
+                  pruneOpts = mkOption {
+                    type = listOf str;
+                    default = [ ];
+                    description = "Options for `rustic forget --prune`, run after backup.";
+                    example = [
+                      "--keep-daily 8"
+                      "--keep-weekly 5"
+                      "--keep-monthly 3"
+                    ];
+                  };
 
-                    runCheck = mkOptionOf bool {
-                      default = config.checkOpts != [ ];
-                      description = "Whether to run `rustic check` after backup/prune.";
-                    };
+                  runCheck = mkOption {
+                    type = bool;
+                    default = config.checkOpts != [ ];
+                    description = "Whether to run `rustic check` after backup/prune.";
+                  };
 
-                    checkOpts = mkOptionOf (listOf str) {
-                      default = [ ];
-                      description = "Options for `rustic check`.";
-                    };
+                  checkOpts = mkOption {
+                    type = listOf str;
+                    default = [ ];
+                    description = "Options for `rustic check`.";
+                  };
 
-                    user = mkOptionOf str {
-                      default = "root";
-                    };
+                  user = mkOption {
+                    type = str;
+                    default = "root";
+                  };
 
-                    timerConfig = mkOptionOf (nullOr <| attrsOf unitOption) {
-                      default = {
-                        OnCalendar = "daily";
-                        Persistent = true;
-                      };
+                  timerConfig = mkOption {
+                    type = nullOr <| attrsOf unitOption;
+                    default = {
+                      OnCalendar = "daily";
+                      Persistent = true;
                     };
                   };
-                }
-              )
-            )
-            {
-              default = { };
-              description = "Periodic backups to create with rustic.";
-            };
+                };
+              }
+            );
+          default = { };
+          description = "Periodic backups to create with rustic.";
+        };
       };
 
       config = {
