@@ -16,14 +16,14 @@
         pkgs.pwvucontrol # PipeWire volume control.
 
         # pw-play is a symlink; shadow it with a wrapper that pins the stream
-        # volume to 1%. Caller flags still win because pw-cat keeps the last
+        # volume to 5%. Caller flags still win because pw-cat keeps the last
         # `--volume`.
         #
         # Why is this so loud by default lol.
         (
           lib.hiPrio
           <| pkgs.writeShellScriptBin "pw-play" ''
-            exec ${config.services.pipewire.package}/bin/pw-play --volume=0.01 "$@"
+            exec ${config.services.pipewire.package}/bin/pw-play --volume=0.05 "$@"
           ''
         )
       ];
