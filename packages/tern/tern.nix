@@ -10,7 +10,7 @@
 
       # Tern is a closed-beta Stencil Labs product. There is no public source
       # or download URL yet (build.stencil.so is auth-gated).
-      version = "0.9.28";
+      version = "0.9.30";
       filename = "Tern-${version}-linux-x86_64.tar.gz";
 
       # No public download: the tarball lives in the store, added by hand.
@@ -38,8 +38,8 @@
       # - launch Tern fresh
       # - run "Restart session daemon" from a new-version window
       release = {
-        storePath = "/nix/store/izhr8z0hpsgz33zj0y4alrxagb5x30pl-Tern-0.9.28-linux-x86_64.tar.gz";
-        hash = "sha256-gyKjq7/KHYKacoCqbyUyM47o/b+9R3PB9MLk8GPTjdQ=";
+        storePath = "/nix/store/3w2j7myl78zsl5hi712wdag0zx4q0hrr-Tern-0.9.30-linux-x86_64.tar.gz";
+        hash = "sha256-uEAnEuQ7hza0POseMdN3doiOJepChzdtkN+O4hdsHEw=";
       };
 
       # DT_NEEDED holds only libc/libm/libdl/libpthread/librt/libutil/ libgcc_s,
@@ -77,7 +77,8 @@
       # entry:
       #
       # zenity - the file/save/confirmation dialogs; without it tern reports "no dialog tool (install zenity or kdialog)"
-      # glib   - gdbus, for the settings portal (it lives in glib.bin; plain `glib` has no bin/ at all)
+      # glib   - gsettings, for the desktop clock setting (it lives in glib.bin; plain `glib` has no bin/ at all).
+      #          0.9.30 dropped its gdbus call (Reveal in File Manager now asks the file manager over the portal)
       # perf   - drives the `perf since` marks
       runtimePrograms = with pkgs; [
         zenity
