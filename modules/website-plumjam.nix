@@ -12,20 +12,15 @@
       inherit (config.networking) domain;
 
       fqdn = domain;
+      port = 8003;
 
-      normalPort = 8003;
-      nerdPort = 8004;
-
+      scriptSources = "'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain}";
       csp =
-        scriptSources:
         # kdl
         ''
           header -Content-Security-Policy
           header +Content-Security-Policy "script-src ${scriptSources}; script-src-elem ${scriptSources}; img-src 'self' data: https: ghchart.rshah.org;"
         '';
-
-      normalCsp = csp "'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain}";
-      nerdCsp = csp "'self' 'unsafe-inline' 'unsafe-eval' ${domain} *.${domain} kit.fontawesome.com https://kit.fontawesome.com";
 
       proxiedVhost =
         port: cspKdl:
@@ -50,12 +45,9 @@
       services.plumjam-website.sites = {
         normal = {
           enable = true;
-          port = normalPort;
+          inherit port;
         };
-        nerd = {
-          enable = true;
-          port = nerdPort;
-        };
+        nerd.enable = false;
       };
 
       services.ferronVhosts = {
@@ -71,12 +63,8 @@
             '';
         };
 
-        "nerd.${fqdn}" = merge config.services.ferron.sslTemplate {
-          config = proxiedVhost nerdPort nerdCsp;
-        };
-
         ${fqdn} = merge config.services.ferron.sslTemplate {
-          config = proxiedVhost normalPort normalCsp;
+          config = proxiedVhost port csp;
         };
       };
     };
