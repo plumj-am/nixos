@@ -737,22 +737,6 @@
         "type": "github"
       }
     },
-    "jj-mode-el": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1784727515,
-        "narHash": "sha256-yN0uUJ6MbO53GGzGRYtwbkGJYFhvK+tpkINclKVp0hs=",
-        "owner": "bolivier",
-        "repo": "jj-mode.el",
-        "rev": "64a59eda9022080dcd7e86c128bb1bc3c92964df",
-        "type": "github"
-      },
-      "original": {
-        "owner": "bolivier",
-        "repo": "jj-mode.el",
-        "type": "github"
-      }
-    },
     "jj-stack": {
       "inputs": {
         "nixpkgs": [
@@ -1239,7 +1223,6 @@
         "homebrew": "homebrew",
         "homebrew-cask": "homebrew-cask",
         "homebrew-core": "homebrew-core",
-        "jj-mode-el": "jj-mode-el",
         "jj-stack": "jj-stack",
         "jujutsu": "jujutsu",
         "kache": "kache_2",

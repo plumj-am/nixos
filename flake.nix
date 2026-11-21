@@ -68,10 +68,6 @@
       url = "github:jj-vcs/jj?ref=refs/tags/v0.46.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    jj-mode-el = {
-      url = "github:bolivier/jj-mode.el";
-      flake = false;
-    };
     jj-stack = {
       url = "github:bos/jj-stack?rev=5e7ac3bf753bafeea44d7a91b8fdfffa84e6db6c"; # Track the next release once out (>0.1.8).
       inputs.nixpkgs.follows = "nixpkgs";
