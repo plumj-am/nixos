@@ -83,7 +83,7 @@
 
         settings =
           let
-            description = "PlumJam's Git Forge";
+            description = "plumjam's Git Forge";
           in
           {
             default.APP_NAME = description;

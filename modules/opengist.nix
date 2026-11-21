@@ -84,9 +84,9 @@
           gitea.name: ${forgejoUrl}
           gitea.url: https://${forgejoUrl}/
 
-          custom.name: PlumJam's Gist Server
+          custom.name: plumjam's Gist Server
           custom.static-links:
-            - name: <PlumJam's Git Forge>
+            - name: <plumjam's Git Forge>
               path: https://${forgejoUrl}
         '';
     };

@@ -22,7 +22,7 @@
 
           plumjam = fix (plumjam: {
             userName = "jam";
-            fullName = "PlumJam";
+            fullName = "plumjam";
             domain = "plumj.am";
             email = "me@${plumjam.domain}";
             admin = true;

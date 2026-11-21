@@ -155,7 +155,7 @@ in
         settings = {
           web = {
             name = fqdn;
-            description = "PlumJam's public seeding node | Xitter: @plumj_am";
+            description = "plumjam's public seeding node | Xitter: @plumj_am";
             avatarUrl = "https://plumj.am/public/plumjam.png";
             bannerUrl = "https://plumj.am/public/plumjam-banner4.png";
             pinned.repositories = [

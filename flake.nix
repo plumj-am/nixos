@@ -1,5 +1,5 @@
 {
-  description = "PlumJam's NixOS Configuration Collection";
+  description = "plumjam's NixOS Configuration Collection";
 
   outputs = inputs: import ./outputs.nix inputs;
 

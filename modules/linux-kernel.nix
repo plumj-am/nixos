@@ -43,7 +43,7 @@
       # Require CAP_BPF to use bpf.
       "kernel.unprivileged_bpf_disabled" = 1;
 
-      # From PlumJam: Prevent "inotify watch limit reached".
+      # From plumjam: Prevent "inotify watch limit reached".
       "fs.inotify.max_user_watches" = 524288;
       "fs.inotify.max_user_instances" = 524288;
       "fs.inotify.max_queued_events" = 524288;

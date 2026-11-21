@@ -44,7 +44,7 @@
         xdg.config.files."git/config" = {
           generator = lib.generators.toGitINI;
           value = {
-            user.name = "PlumJam";
+            user.name = "plumjam";
             user.email = "git@plumj.am";
 
             init.defaultBranch = "master";
@@ -143,7 +143,7 @@
 
               author = {
                 name = "plumjam";
-                full_name = "PlumJam";
+                full_name = "plumjam";
                 email = "pijul@plumj.am";
                 key_path = "${config.directory}/.ssh/id.pub";
               };
@@ -177,7 +177,7 @@
           xdg.config.files."jj/config.toml" = {
             generator = pkgs.writers.writeTOML "jj-config.toml";
             value = {
-              user.name = "PlumJam";
+              user.name = "plumjam";
               user.email = "git@plumj.am";
 
               signing.key = "${config.directory}/.ssh/id";
@@ -408,7 +408,7 @@
 
               templates.git_push_bookmark = # python
                 ''
-                  "patch/PlumJam-" ++ change_id.short()
+                  "patch/plumjam-" ++ change_id.short()
                 '';
             };
           };
