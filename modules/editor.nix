@@ -154,7 +154,7 @@ in
 
                     "D" = "extend_to_line_end";
 
-                    space."B" = ":blame";
+                    space."B" = ":vcs-blame";
                   };
                 in
                 {
