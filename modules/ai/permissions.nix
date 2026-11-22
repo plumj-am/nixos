@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.default = self.modules.common.ai-permissions;
-  flake.modules.common.ai-permissions =
+  flake.commonModules.default = self.commonModules.ai-permissions;
+  flake.commonModules.ai-permissions =
     {
       lib,
       config,

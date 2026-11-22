@@ -3,8 +3,8 @@
 # nixos-core project: <https://github.com/feel-co/nixos-core>
 #
 {
-  flake.modules.nixos.nuke = self.modules.nixos.nuke-perl;
-  flake.modules.nixos.nuke-perl =
+  flake.nixosModules.nuke = self.nixosModules.nuke-perl;
+  flake.nixosModules.nuke-perl =
     {
       inputs,
       pkgs,

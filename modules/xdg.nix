@@ -1,5 +1,5 @@
 {
-  flake.modules.common.xdg =
+  flake.commonModules.xdg =
     { config, ... }:
     {
       config = {

@@ -8,7 +8,7 @@ in
   imports =
     singleton
     <| lib.systems.nixosSystem "sloe" {
-      imports = with self.modules.nixos; [
+      imports = with self.nixosModules; [
         server
         web-server
 

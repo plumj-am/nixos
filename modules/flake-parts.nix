@@ -8,30 +8,14 @@ let
   inherit (lib.attrsets) mapAttrs;
   inherit (lib.lists) singleton;
   inherit (lib.options) mkOption;
-  inherit (lib.strings) escapeNixIdentifier;
   inherit (lib.types) deferredModule lazyAttrsOf;
-
-  # Extended version of flake-parts' addInfo that treats "common" like "generic"
-  # (classless), so common modules can be imported into any module class.
-  addInfo =
-    class: moduleName:
-    if class == "generic" || class == "common" then
-      module: module
-    else
-      module:
-      { ... }:
-      {
-        _class = class;
-        _file = "${toString moduleLocation}#modules.${escapeNixIdentifier class}.${escapeNixIdentifier moduleName}";
-        imports = singleton module;
-      };
 in
 {
   imports =
     singleton
       # NOTE: We do NOT import inputs.parts.flakeModules.modules.
-      # We define flake.modules ourselves with support for a classless "common"
-      # namespace, plus auto-merge into nixos and darwin.
+      # We define the module outputs ourselves so that one flat set of
+      # `commonModules` can feed both `nixosModules` and `darwinModules`.
       {
         perSystem =
           { inputs', ... }:
@@ -40,35 +24,45 @@ in
           };
       };
 
-  # systems = [
-  #   "x86_64-linux"
-  #   "aarch64-darwin"
-  # ];
-
   options.flake = {
-    modules = mkOption {
-      type = lazyAttrsOf <| lazyAttrsOf deferredModule;
-      apply = mapAttrs (k: mapAttrs (addInfo k));
-
+    # `nixosModules` is declared by flake-parts itself
+    # (`modules/nixosModules.nix`, loaded via `builtinModules` in outputs.nix),
+    # so only the classless `commonModules` set and `darwinModules` need
+    # declarations here. flake-parts has no `darwinModules` module.
+    darwinModules = mkOption {
+      type = lazyAttrsOf deferredModule;
+      default = { };
+      apply = mapAttrs (
+        name: module: {
+          _class = "darwin";
+          _file = "${toString moduleLocation}#darwinModules.${name}";
+          imports = singleton module;
+        }
+      );
       description = ''
-        Groups of modules published by the flake.
-
-        The outer attributes declare the class of the modules within it.
-        The special attributes "generic" and "common" do not declare a class,
-        allowing their modules to be used in any module class.
-        "common" modules are automatically merged into "nixos" and "darwin".
+        Darwin modules published by the flake.
       '';
     };
 
-    services = mkOption {
+    commonModules = mkOption {
       type = lazyAttrsOf deferredModule;
+      default = { };
+      description = ''
+        Modules usable in every module class. They are merged into
+        "nixosModules" and "darwinModules", and stay readable on their own so
+        one module can be aliased from another (e.g. `commonModules.default`).
+      '';
+    };
+
+    serviceModules = mkOption {
+      type = lazyAttrsOf deferredModule;
+      default = { };
       description = ''
         Services published by the flake.
       '';
     };
   };
 
-  # Auto-merge common modules into both namespaces.
-  config.flake.modules.nixos = config.flake.modules.common or { };
-  config.flake.modules.darwin = config.flake.modules.common or { };
+  config.flake.nixosModules = config.flake.commonModules or { };
+  config.flake.darwinModules = config.flake.commonModules or { };
 }

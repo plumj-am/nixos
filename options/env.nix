@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.env = self.modules.common.env-options;
-  flake.modules.common.env-options =
+  flake.commonModules.env = self.commonModules.env-options;
+  flake.commonModules.env-options =
     { lib, ... }:
     let
       inherit (lib.options) mkOption;

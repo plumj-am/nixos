@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.default = self.modules.nixos.rustic;
-  flake.modules.nixos.rustic =
+  flake.nixosModules.default = self.nixosModules.rustic;
+  flake.nixosModules.rustic =
     {
       lib,
       config,
@@ -17,7 +17,7 @@
         ;
     in
     {
-      imports = singleton self.services.rustic;
+      imports = singleton self.serviceModules.rustic;
 
       sops.secrets."rustic/password".sopsFile = ../secrets/services/rustic.yaml;
 

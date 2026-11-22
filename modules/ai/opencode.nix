@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.ai-agents = self.modules.common.opencode;
-  flake.modules.common.opencode =
+  flake.commonModules.ai-agents = self.commonModules.opencode;
+  flake.commonModules.opencode =
     {
       inputs,
       pkgs,
@@ -270,8 +270,8 @@
 
     };
 
-  flake.modules.nixos.default = self.modules.nixos.opencode-reload;
-  flake.modules.nixos.opencode-reload =
+  flake.nixosModules.default = self.nixosModules.opencode-reload;
+  flake.nixosModules.opencode-reload =
     { pkgs, lib, ... }:
     let
       inherit (lib.meta) getExe';

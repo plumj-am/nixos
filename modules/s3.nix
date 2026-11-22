@@ -1,11 +1,11 @@
 { self, ... }:
 {
-  flake.modules.nixos.default.imports = [
-    self.modules.nixos.s3
-    self.modules.nixos.s3-upload
+  flake.nixosModules.default.imports = [
+    self.nixosModules.s3
+    self.nixosModules.s3-upload
   ];
 
-  flake.modules.nixos.s3 =
+  flake.nixosModules.s3 =
     {
       pkgs,
       lib,
@@ -87,7 +87,7 @@
       };
     };
 
-  flake.modules.nixos.s3-upload =
+  flake.nixosModules.s3-upload =
     {
       pkgs,
       lib,

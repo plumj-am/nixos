@@ -1,4 +1,4 @@
 { self, ... }:
 {
-  flake.modules.nixos.default = self.modules.nixos.system-info;
+  flake.nixosModules.default = self.nixosModules.system-info;
 }

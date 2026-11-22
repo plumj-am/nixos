@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.nushell = self.modules.common.nushell-aliases;
-  flake.modules.common.nushell-aliases =
+  flake.commonModules.nushell = self.commonModules.nushell-aliases;
+  flake.commonModules.nushell-aliases =
     {
       pkgs,
       lib,

@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.default = self.modules.common.rebuild;
-  flake.modules.common.rebuild =
+  flake.commonModules.default = self.commonModules.rebuild;
+  flake.commonModules.rebuild =
     {
       pkgs,
       ...

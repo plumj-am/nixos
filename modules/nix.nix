@@ -15,8 +15,8 @@ let
   registryMap = inputs |> filterAttrs (const <| isType "flake");
 in
 {
-  flake.modules.common.default = self.modules.common.nix;
-  flake.modules.common.nix =
+  flake.commonModules.default = self.commonModules.nix;
+  flake.commonModules.nix =
     {
       inputs,
       pkgs,
@@ -131,8 +131,8 @@ in
       '';
     };
 
-  flake.modules.nixos.default = self.modules.nixos.nix-extra;
-  flake.modules.nixos.nix-extra = {
+  flake.nixosModules.default = self.nixosModules.nix-extra;
+  flake.nixosModules.nix-extra = {
     imports = [ inputs.fast-nix-gc.nixosModules.default ];
 
     # Replaces the nix-gc/nix-optimise timers. The nix-daemon's own
@@ -160,8 +160,8 @@ in
     };
   };
 
-  flake.modules.darwin.default = self.modules.darwin.nix-extra;
-  flake.modules.darwin.nix-extra = {
+  flake.darwinModules.default = self.darwinModules.nix-extra;
+  flake.darwinModules.nix-extra = {
     nix.nixPath =
       registryMap |> mapAttrsToList (name: value: "${name}=${value}") |> concatStringsSep ":";
   };

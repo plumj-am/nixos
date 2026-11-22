@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.s3 = self.modules.nixos.s3-options;
-  flake.modules.nixos.s3-options =
+  flake.nixosModules.s3 = self.nixosModules.s3-options;
+  flake.nixosModules.s3-options =
     { lib, ... }:
     let
       inherit (lib.options) mkOption;

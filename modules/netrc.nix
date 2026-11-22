@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.default = self.modules.nixos.netrc;
-  flake.modules.nixos.netrc = {
+  flake.nixosModules.default = self.nixosModules.netrc;
+  flake.nixosModules.netrc = {
     nix.settings.netrc-file = "/etc/.netrc";
 
     sops.secrets = {

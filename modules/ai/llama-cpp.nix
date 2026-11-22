@@ -12,7 +12,7 @@ let
     ) "${program}: no GPU detected or configured - CPU-only inference will be slow" value;
 in
 {
-  flake.modules.nixos.llama-cpp =
+  flake.nixosModules.llama-cpp =
     {
       pkgs,
       lib,

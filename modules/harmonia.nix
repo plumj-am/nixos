@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.default = self.modules.nixos.harmonia;
-  flake.modules.nixos.harmonia =
+  flake.nixosModules.default = self.nixosModules.harmonia;
+  flake.nixosModules.harmonia =
     {
       lib,
       config,

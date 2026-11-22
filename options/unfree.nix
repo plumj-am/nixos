@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.unfree = self.modules.nixos.unfree-options;
-  flake.modules.nixos.unfree-options =
+  flake.nixosModules.unfree = self.nixosModules.unfree-options;
+  flake.nixosModules.unfree-options =
     { lib, ... }:
     let
       inherit (lib.options) mkOption;

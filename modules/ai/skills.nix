@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.default = self.modules.common.ai-skills;
-  flake.modules.common.ai-skills =
+  flake.commonModules.default = self.commonModules.ai-skills;
+  flake.commonModules.ai-skills =
     {
       lib,
       config,

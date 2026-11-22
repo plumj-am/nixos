@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.web-server = self.modules.nixos.ferron;
-  flake.modules.nixos.ferron =
+  flake.nixosModules.web-server = self.nixosModules.ferron;
+  flake.nixosModules.ferron =
     {
       inputs,
       pkgs,

@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.desktop = self.modules.nixos.forgejo-cli;
-  flake.modules.nixos.forgejo-cli =
+  flake.nixosModules.desktop = self.nixosModules.forgejo-cli;
+  flake.nixosModules.forgejo-cli =
     {
       pkgs,
       lib,

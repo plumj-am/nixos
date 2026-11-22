@@ -1,6 +1,6 @@
 { inputs, ... }:
 {
-  flake.modules.nixos.default = inputs.tarmac.nixosModules.default;
+  flake.nixosModules.default = inputs.tarmac.nixosModules.default;
 
-  flake.modules.darwin.default = inputs.tarmac.darwinModules.default;
+  flake.darwinModules.default = inputs.tarmac.darwinModules.default;
 }

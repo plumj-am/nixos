@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.default = self.modules.common.ai-models;
-  flake.modules.common.ai-models =
+  flake.commonModules.default = self.commonModules.ai-models;
+  flake.commonModules.ai-models =
     { lib, ... }:
     let
       inherit (lib.lists) findFirst singleton;

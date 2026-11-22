@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.default = self.modules.nixos.systemd-oomd;
-  flake.modules.nixos.systemd-oomd = {
+  flake.nixosModules.default = self.nixosModules.systemd-oomd;
+  flake.nixosModules.systemd-oomd = {
     systemd.oomd = {
       enable = true;
       enableSystemSlice = true;

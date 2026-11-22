@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.hjem = self.modules.common.hjem-options;
-  flake.modules.common.hjem-options =
+  flake.commonModules.hjem = self.commonModules.hjem-options;
+  flake.commonModules.hjem-options =
     { lib, ... }:
     let
       inherit (lib.options) mkOption;
@@ -11,7 +11,7 @@
       # Before:
       # ```nix
       # {
-      #  flake.modules.common.something =
+      #  flake.commonModules.something =
       #    {lib, ...}:
       #    let
       #      inherit (lib.lists) singleton;
@@ -25,7 +25,7 @@
       # After:
       # ```nix
       # {
-      #   flake.modules.common.something = {
+      #   flake.commonModules.something = {
       #     hjem.extraModule = { };
       #   };
       # }

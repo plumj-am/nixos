@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.ai-providers = self.modules.common.ai-providers-options;
-  flake.modules.common.ai-providers-options =
+  flake.commonModules.ai-providers = self.commonModules.ai-providers-options;
+  flake.commonModules.ai-providers-options =
     { lib, ... }:
     let
       inherit (lib.attrsets) filterAttrsRecursive;

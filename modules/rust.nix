@@ -1,11 +1,11 @@
 { self, ... }:
 {
-  flake.modules.common.default.imports = [
-    self.modules.common.rust
-    self.modules.common.kache
+  flake.commonModules.default.imports = [
+    self.commonModules.rust
+    self.commonModules.kache
   ];
 
-  flake.modules.common.rust =
+  flake.commonModules.rust =
     {
       inputs,
       pkgs,
@@ -67,8 +67,8 @@
       };
     };
 
-  flake.modules.common.desktop = self.modules.common.rust-extra-desktop;
-  flake.modules.common.rust-extra-desktop =
+  flake.commonModules.desktop = self.commonModules.rust-extra-desktop;
+  flake.commonModules.rust-extra-desktop =
     {
       pkgs,
       lib,
@@ -98,7 +98,7 @@
       ];
     };
 
-  flake.modules.common.kache =
+  flake.commonModules.kache =
     {
       inputs,
       pkgs,

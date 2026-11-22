@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.default = self.modules.nixos.dynamic-binaries;
-  flake.modules.nixos.dynamic-binaries = {
+  flake.nixosModules.default = self.nixosModules.dynamic-binaries;
+  flake.nixosModules.dynamic-binaries = {
     programs.nix-ld.enable = true;
   };
 }

@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.default = self.modules.common.ai-providers;
-  flake.modules.common.ai-providers =
+  flake.commonModules.default = self.commonModules.ai-providers;
+  flake.commonModules.ai-providers =
     { lib, ... }:
     let
       inherit (lib.constants) tailnet;

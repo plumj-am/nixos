@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.ai-agents = self.modules.common.codex;
-  flake.modules.common.codex =
+  flake.commonModules.ai-agents = self.commonModules.codex;
+  flake.commonModules.codex =
     {
       pkgs,
       lib,

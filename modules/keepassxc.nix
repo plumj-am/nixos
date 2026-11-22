@@ -33,8 +33,8 @@ let
   };
 in
 {
-  flake.modules.nixos.desktop = self.modules.nixos.keepassxc;
-  flake.modules.nixos.keepassxc =
+  flake.nixosModules.desktop = self.nixosModules.keepassxc;
+  flake.nixosModules.keepassxc =
     {
       pkgs,
       lib,
@@ -80,8 +80,8 @@ in
       };
     };
 
-  flake.modules.darwin.desktop = self.modules.darwin.keepassxc;
-  flake.modules.darwin.keepassxc =
+  flake.darwinModules.desktop = self.darwinModules.keepassxc;
+  flake.darwinModules.keepassxc =
     { lib, ... }:
     let
       inherit (lib.generators) toINI;

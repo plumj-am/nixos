@@ -1,6 +1,6 @@
 { self, ... }:
 {
-  flake.services.headroom =
+  flake.serviceModules.headroom =
     {
       pkgs,
       lib,

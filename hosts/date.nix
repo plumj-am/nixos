@@ -7,7 +7,7 @@ in
   imports =
     singleton
     <| lib.systems.nixosSystem "date" {
-      imports = with self.modules.nixos; [
+      imports = with self.nixosModules; [
         desktop
 
         ai-agents

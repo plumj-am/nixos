@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.default = self.modules.common.entities;
-  flake.modules.common.entities =
+  flake.commonModules.default = self.commonModules.entities;
+  flake.commonModules.entities =
     { lib, ... }:
     let
       inherit (lib.attrsets)

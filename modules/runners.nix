@@ -52,7 +52,7 @@ let
     };
 in
 {
-  flake.modules.nixos.forgejo-runner =
+  flake.nixosModules.forgejo-runner =
     {
       inputs,
       pkgs,
@@ -100,7 +100,7 @@ in
       };
     };
 
-  flake.modules.nixos.github-runner =
+  flake.nixosModules.github-runner =
     {
       inputs,
       pkgs,

@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.goatcounter =
+  flake.nixosModules.goatcounter =
     { lib, config, ... }:
     let
       inherit (lib.modules) merge;

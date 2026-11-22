@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.default = self.modules.common.documentation;
-  flake.modules.common.documentation = {
+  flake.commonModules.default = self.commonModules.documentation;
+  flake.commonModules.documentation = {
     documentation = {
       doc.enable = false;
       info.enable = false;

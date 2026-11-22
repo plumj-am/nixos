@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.swapfile = self.modules.nixos.swapfile-options;
-  flake.modules.nixos.swapfile-options =
+  flake.nixosModules.swapfile = self.nixosModules.swapfile-options;
+  flake.nixosModules.swapfile-options =
     { lib, ... }:
     let
       inherit (lib.options) mkOption;
@@ -25,8 +25,8 @@
       };
     };
 
-  flake.modules.nixos.swap-partition = self.modules.nixos.swap-partition-options;
-  flake.modules.nixos.swap-partition-options =
+  flake.nixosModules.swap-partition = self.nixosModules.swap-partition-options;
+  flake.nixosModules.swap-partition-options =
     { lib, ... }:
     let
       inherit (lib.options) mkOption;

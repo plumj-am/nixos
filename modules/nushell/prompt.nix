@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.nushell = self.modules.common.nushell-prompt;
-  flake.modules.common.nushell-prompt =
+  flake.commonModules.nushell = self.commonModules.nushell-prompt;
+  flake.commonModules.nushell-prompt =
     {
       pkgs,
       lib,

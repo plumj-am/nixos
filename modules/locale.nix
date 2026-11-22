@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.default = self.modules.nixos.locale;
-  flake.modules.nixos.locale =
+  flake.nixosModules.default = self.nixosModules.locale;
+  flake.nixosModules.locale =
     { config, ... }:
     let
       cfg = config.localisation;

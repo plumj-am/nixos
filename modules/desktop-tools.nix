@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.desktop = self.modules.nixos.colour-picker;
-  flake.modules.nixos.colour-picker =
+  flake.nixosModules.desktop = self.nixosModules.colour-picker;
+  flake.nixosModules.colour-picker =
     {
       pkgs,
       lib,

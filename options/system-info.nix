@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.system-info = self.modules.nixos.system-info-options;
-  flake.modules.nixos.system-info-options =
+  flake.nixosModules.system-info = self.nixosModules.system-info-options;
+  flake.nixosModules.system-info-options =
     { lib, config, ... }:
     let
       inherit (lib.lists) elemAt;

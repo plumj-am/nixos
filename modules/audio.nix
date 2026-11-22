@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.desktop = self.modules.nixos.audio;
-  flake.modules.nixos.audio =
+  flake.nixosModules.desktop = self.nixosModules.audio;
+  flake.nixosModules.audio =
     {
       pkgs,
       lib,

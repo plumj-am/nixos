@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.entities = self.modules.common.entities-options;
-  flake.modules.common.entities-options =
+  flake.commonModules.entities = self.commonModules.entities-options;
+  flake.commonModules.entities-options =
     { lib, ... }:
     let
       inherit (lib.options) mkOption;

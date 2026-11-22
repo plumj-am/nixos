@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.locale = self.modules.nixos.locale-options;
-  flake.modules.nixos.locale-options =
+  flake.nixosModules.locale = self.nixosModules.locale-options;
+  flake.nixosModules.locale-options =
     { lib, config, ... }:
     let
       inherit (lib.options) mkOption;

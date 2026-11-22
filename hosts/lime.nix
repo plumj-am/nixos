@@ -7,7 +7,7 @@ in
   imports =
     singleton
     <| lib.systems.darwinSystem "lime" {
-      imports = with self.modules.darwin; [
+      imports = with self.darwinModules; [
         desktop
 
         ai-agents

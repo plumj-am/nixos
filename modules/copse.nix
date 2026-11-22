@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.default = self.modules.common.copse;
-  flake.modules.common.copse =
+  flake.commonModules.default = self.commonModules.copse;
+  flake.commonModules.copse =
     {
       inputs,
       pkgs,

@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.desktop = self.modules.nixos.docker-rootless;
-  flake.modules.nixos.docker-rootless =
+  flake.nixosModules.desktop = self.nixosModules.docker-rootless;
+  flake.nixosModules.docker-rootless =
     { pkgs, lib, ... }:
     let
       inherit (lib.meta) getExe;

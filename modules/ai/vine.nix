@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.vine =
+  flake.nixosModules.vine =
     {
       inputs,
       pkgs,

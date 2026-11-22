@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.desktop = self.modules.nixos.graphics;
-  flake.modules.nixos.graphics =
+  flake.nixosModules.desktop = self.nixosModules.graphics;
+  flake.nixosModules.graphics =
     { config, ... }:
     {
       hardware.graphics = {

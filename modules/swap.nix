@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.server = self.modules.nixos.swapfile;
-  flake.modules.nixos.swapfile =
+  flake.nixosModules.server = self.nixosModules.swapfile;
+  flake.nixosModules.swapfile =
     {
       pkgs,
       lib,
@@ -55,8 +55,8 @@
       ];
     };
 
-  flake.modules.nixos.desktop = self.modules.nixos.swap-partition;
-  flake.modules.nixos.swap-partition =
+  flake.nixosModules.desktop = self.nixosModules.swap-partition;
+  flake.nixosModules.swap-partition =
     { lib, config, ... }:
     let
       inherit (lib.lists) singleton;

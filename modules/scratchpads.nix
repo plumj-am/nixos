@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.desktop = self.modules.nixos.scratchpads;
-  flake.modules.common.scratchpads =
+  flake.nixosModules.desktop = self.nixosModules.scratchpads;
+  flake.commonModules.scratchpads =
     {
       pkgs,
       lib,

@@ -29,8 +29,8 @@ let
   ];
 in
 {
-  flake.modules.common.desktop = self.modules.common.radicle;
-  flake.modules.common.radicle =
+  flake.commonModules.desktop = self.commonModules.radicle;
+  flake.commonModules.radicle =
     {
       pkgs,
       lib,
@@ -120,8 +120,8 @@ in
       };
     };
 
-  flake.modules.common.default = self.modules.common.radicle-node;
-  flake.modules.common.radicle-node =
+  flake.commonModules.default = self.commonModules.radicle-node;
+  flake.commonModules.radicle-node =
     {
       pkgs,
       lib,
@@ -185,7 +185,7 @@ in
       };
     };
 
-  flake.modules.nixos.radicle-explorer =
+  flake.nixosModules.radicle-explorer =
     {
       pkgs,
       lib,

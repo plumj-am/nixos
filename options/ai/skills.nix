@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.ai-skills = self.modules.common.ai-skills-options;
-  flake.modules.common.ai-skills-options =
+  flake.commonModules.ai-skills = self.commonModules.ai-skills-options;
+  flake.commonModules.ai-skills-options =
     { lib, ... }:
     let
       inherit (lib.options) mkOption;

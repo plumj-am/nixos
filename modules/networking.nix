@@ -1,10 +1,10 @@
 { self, ... }:
 {
-  flake.modules.nixos.default.imports = [
-    self.modules.nixos.networking
-    self.modules.nixos.hosts
+  flake.nixosModules.default.imports = [
+    self.nixosModules.networking
+    self.nixosModules.hosts
   ];
-  flake.modules.nixos.networking =
+  flake.nixosModules.networking =
     { lib, ... }:
     let
       inherit (lib.lists) singleton;
@@ -25,7 +25,7 @@
       networking.interfaces = { };
     };
 
-  flake.modules.nixos.dynamic-mac-address = {
+  flake.nixosModules.dynamic-mac-address = {
     networking.networkmanager.settings.connection = {
       "wifi.cloned-mac-address" = "stable";
       "ethernet.cloned-mac-address" = "stable";
@@ -34,7 +34,7 @@
     };
   };
 
-  flake.modules.nixos.hosts =
+  flake.nixosModules.hosts =
     { lib, ... }:
     let
       inherit (lib.constants) tailnet;

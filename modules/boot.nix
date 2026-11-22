@@ -19,8 +19,8 @@ let
   };
 in
 {
-  flake.modules.nixos.desktop = self.modules.nixos.boot-systemd;
-  flake.modules.nixos.boot-systemd = {
+  flake.nixosModules.desktop = self.nixosModules.boot-systemd;
+  flake.nixosModules.boot-systemd = {
     imports = [ bootBase ];
     boot.loader = {
       timeout = 1;
@@ -34,8 +34,8 @@ in
     };
   };
 
-  flake.modules.nixos.server = self.modules.nixos.boot-grub;
-  flake.modules.nixos.boot-grub =
+  flake.nixosModules.server = self.nixosModules.boot-grub;
+  flake.nixosModules.boot-grub =
     { modulesPath, ... }:
     {
       imports = [

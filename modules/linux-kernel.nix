@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.default = self.modules.nixos.linux-kernel;
-  flake.modules.nixos.linux-kernel = {
+  flake.nixosModules.default = self.nixosModules.linux-kernel;
+  flake.nixosModules.linux-kernel = {
     security.lockKernelModules = true;
 
     # Credits from me:

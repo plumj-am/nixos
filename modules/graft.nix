@@ -1,6 +1,6 @@
 { self, ... }:
 {
-  flake.modules.nixos.graft =
+  flake.nixosModules.graft =
     {
       inputs,
       pkgs,
@@ -333,8 +333,8 @@
       };
     };
 
-  flake.modules.common.desktop = self.modules.common.graftctl;
-  flake.modules.common.graftctl =
+  flake.commonModules.desktop = self.commonModules.graftctl;
+  flake.commonModules.graftctl =
     {
       inputs,
       pkgs,

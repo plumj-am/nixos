@@ -7,9 +7,9 @@
   #
   # Only desktop hosts get it: the daemon is a user service, so a server with no
   # interactive config-editing session has nothing to warm.
-  flake.modules.nixos.desktop = self.modules.nixos.evix;
+  flake.nixosModules.desktop = self.nixosModules.evix;
 
-  flake.modules.nixos.evix =
+  flake.nixosModules.evix =
     {
       inputs,
       pkgs,
@@ -45,7 +45,7 @@
       };
     };
 
-  flake.modules.nixos.evix-worker =
+  flake.nixosModules.evix-worker =
     {
       inputs,
       pkgs,

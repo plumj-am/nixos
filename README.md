@@ -21,7 +21,7 @@ Dendritic NixOS configurations for 8 personal machines:
 
 ## Features
 
-- Multiple hosts
+- Multiple [hosts](./hosts)
 - Determinate Nix for all systems
 - Dendritic structure with [flake-parts](https://github.com/hercules-ci/flake-parts)
 - [Hjem](https://github.com/feel-co/hjem) for $HOME management
@@ -37,12 +37,12 @@ Almost everything lives under `modules/`.
 
 Each module (for the most part) is grouped by feature as opposed to individual
 applications/services. Using [flake-parts](https://github.com/hercules-ci/flake-parts), these
-modules live at `flake.modules.{common,darwin,nixos,services}`.
+modules live at `flake.{common,darwin,nixos,service}Modules`.
 
 Modules contain 1 or more of the following:
 
 ```
-flake.modules.<class>.<aspect> = {}
+flake.<class>Modules.<aspect> = {}
 ```
 
 For example, we can configure a shared git config for all platforms then add platform specific
@@ -50,23 +50,22 @@ configs too:
 
 ```nix
 {
-  flake.modules.common.git = { /* ... */ };
+  flake.commonModules.git = { /* ... */ };
   # and/or
-  flake.modules.nixos.git = { /* ... */ };
-  flake.modules.darwin.git = { /* ... */ };
+  flake.nixosModules.git = { /* ... */ };
+  flake.darwinModules.git = { /* ... */ };
 }
 ```
 
-`hjem` modules are included within the `common`, `nixos`, and `darwin` classes via
-`hjem.extraModule` as can be seen below. `hjem.extraModule` is a custom option that lets me use
-`hjem.extraModules = []` as a `singleton` without needing to specify it every time. See
-`modules/hjem.nix` for the implementation but, note that there is no implementation for `common` due
-to how the `common` class works (by auto-merging). See the "Other comments" section below for more
-details.
+`hjem` modules are included within the `{common,darwin,nixos}Modules` via `hjem.extraModule` as can
+be seen below. `hjemModule` is a custom option that lets me use `hjem.extraModules = []` as a
+`singleton` without needing to specify it every time. See [`modules/hjem.nix`](./modules/hjem.nix)
+for the implementation but, note that there is no implementation for `common` due to how the
+`common` class works (by auto-merging). See the "Other comments" section below for more details.
 
 ```nix
 {
-  flake.modules.common.tern =
+  flake.commonModules.tern =
     {
       pkgs,
       config,
@@ -78,7 +77,7 @@ details.
       inherit (config) theme;
     in
     {
-      hjem.extraModule = {
+      hjemModule = {
         # ... hjem specific config
       };
       # ... rest of config
@@ -86,10 +85,8 @@ details.
 }
 ```
 
-The `common`, `darwin`, and `nixos` classes are then used in `modules/aspects.nix` (grouped
-together) or used individually by `hosts/` in their `imports` lists.
-
-Systems are constructed using `libs/systems.nix` helpers in `hosts/`.
+Systems are constructed using [`libs/systems.nix`](./libs/systems.nix) helpers in
+[`hosts/`](./hosts).
 
 ## Flake outputs
 
@@ -101,15 +98,15 @@ There are several packages and service modules exposed in this flake which you c
 
 ### Packages
 
-There are a few programs I have packaged with Nix available in `./packages` which you can consume
-and use in your own configs:
+There are a few programs I have packaged with Nix available in [`packages`](./packages) which you
+can consume and use in your own configs:
 
-- headroom ([source](https://github.com/headroomlabs-ai/headroom))
-- maiao ([source](https://github.com/runetes/maiao))
-- omp-plugins ([source](https://github.com/can1357/oh-my-pi))
-- raddebugger ([source](https://github.com/EpicGames/raddebugger))
-- tern (currently closed beta - bring your own source)
-- tern-plugins
+- [`headroom`](./packages/headroom) ([source](https://github.com/headroomlabs-ai/headroom))
+- [`maiao`](./packages/maiao) ([source](https://github.com/runetes/maiao))
+- [`omp-plugins`](./packages/omp-plugins) ([source](https://github.com/can1357/oh-my-pi))
+- [`raddebugger`](./packages/raddebugger) ([source](https://github.com/EpicGames/raddebugger))
+- [`tern`](./packages/tern) (currently closed beta - bring your own source)
+- [`tern-plugins`](./packages/tern-plugins)
 
 Custom packages for my own use but also part of this flake:
 
@@ -120,12 +117,12 @@ Custom packages for my own use but also part of this flake:
 
 ### Services
 
-I also offer a few services packaged as NixOS modules in `./services` which you can consume and use
-in your own configs:
+I also offer a few services packaged as NixOS modules in [`services/`](./services) which you can
+consume and use in your own configs:
 
-- rustic ([source](https://github.com/rustic-rs/rustic))
-- tarssh ([source](https://github.com/Freaky/tarssh))
-- headroom ([source](https://github.com/headroomlabs-ai/headroom))
+- [`rustic`](./services/rustic) ([source](https://github.com/rustic-rs/rustic))
+- [`tarssh`](./services/tarssh) ([source](https://github.com/Freaky/tarssh))
+- [`headroom`](./services/headroom) ([source](https://github.com/headroomlabs-ai/headroom))
 
 ## Other tools
 
@@ -135,27 +132,29 @@ All secrets are handled by [sops-nix](https://github.com/mic92/sops-nix).
 
 ### Imports
 
-Imports are handled by an `importTree` function in `outputs.nix`. It automatically imports all nix
-files in the specified directories (`./hosts`, `./libs`, `./modules`, `./packages`, and `./services`
-in my case). Directories and files prefixed with `_` are excluded e.g. `_scripts/` or `_private.nix`
-would be excluded.
+Imports are handled by an `importTree` function in [`outputs.nix`](./outputs.nix). It automatically
+imports all nix files in the specified directories ([`hosts/`](./hosts), [`libs/`](./libs),
+[`modules/`](./modules), [`packages/`](./packages), and [`services/`](./services) in my case).
+Directories and files prefixed with `_` are excluded e.g. `_scripts/` or `_private.nix` would be
+excluded.
 
 ### Library
 
-There may be unfamiliar functions/helpers in some files - these come from `libs/*.nix` via nixpkgs'
-`lib.extend`.
+There may be unfamiliar functions/helpers in some files - these come from [`libs/`](./libs) via
+nixpkgs' `lib.extend`.
 
 ### Theming
 
-I have a custom theming setup which can be seen in `modules/theme.nix`. It's a relatively simple
-toggle between light and dark changed by running `nix run .#toggle-theme`. It automatically updates
-colour schemes and refreshes necessary applications to apply changes.
+I have a custom theming setup which can be seen in [`modules/theme.nix`](./modules/theme.nix). It's
+a relatively simple toggle between light and dark changed by running `nix run .#toggle-theme`. It
+automatically updates colour schemes and refreshes necessary applications to apply changes.
 
 Both variants are built as specialisations. The themes use the gruvbox palettes defined in
-`modules/theme.nix` and some base16 colours for applications that can make use of them.
+[`modules/theme.nix`](./modules/theme.nix) and some base16 colours for applications that can make
+use of them.
 
-The active variant survives rebuilds: `rebuild` reads the running theme from `/etc/theme.json` and
-re-applies the matching specialisation.
+The active variant survives rebuilds: [`rebuild`](./packages/rebuild) reads the running theme from
+`/etc/theme.json` and re-applies the matching specialisation.
 
 ## Other comments
 
@@ -176,8 +175,9 @@ already use generators or write config files directly for the most part anyway.
 `osConfig` comes from Hjem and can be used to access the system-level `config` alongside the hjem
 level `config`.
 
-`flake.modules.common` works by merging automatically with `flake.modules.{nixos,darwin}`.
-Basically, all the `common` aspects can be accessed from either `common`, `nixos`, or `darwin`.
+`flake.commonModules` works by merging automatically with `flake.{darwin,nixos}Modules`. Basically,
+all the `commonModules` aspects can be accessed from either `commonModules`, `nixosModules`, or
+`darwinModules`.
 
 If you're interested in learning more about dendritic Nix, feel free to learn from my config and
 consider checking the following links:

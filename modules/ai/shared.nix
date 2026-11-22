@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.ai-agents = self.modules.common.ai-shared;
-  flake.modules.common.ai-shared =
+  flake.commonModules.ai-agents = self.commonModules.ai-shared;
+  flake.commonModules.ai-shared =
     {
       pkgs,
       lib,

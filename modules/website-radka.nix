@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.website-radka =
+  flake.nixosModules.website-radka =
     {
       inputs,
       pkgs,

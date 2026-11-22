@@ -36,8 +36,8 @@ let
   };
 in
 {
-  flake.modules.darwin.default = self.modules.darwin.ssh;
-  flake.modules.darwin.ssh =
+  flake.darwinModules.default = self.darwinModules.ssh;
+  flake.darwinModules.ssh =
     {
       pkgs,
       lib,
@@ -64,8 +64,8 @@ in
       };
     };
 
-  flake.modules.nixos.default = self.modules.nixos.ssh;
-  flake.modules.nixos.ssh =
+  flake.nixosModules.default = self.nixosModules.ssh;
+  flake.nixosModules.ssh =
     {
       pkgs,
       lib,
@@ -79,7 +79,7 @@ in
     {
       imports = [
         sshConfigBase
-        self.services.tarssh
+        self.serviceModules.tarssh
       ];
 
       environment.systemPackages = singleton pkgs.openssh;
@@ -164,7 +164,7 @@ in
       };
     };
 
-  flake.modules.nixos.openssh-grove-systems =
+  flake.nixosModules.openssh-grove-systems =
     { lib, config, ... }:
     let
       inherit (lib.lists) singleton;

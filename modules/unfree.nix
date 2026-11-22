@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.default = self.modules.nixos.unfree;
-  flake.modules.nixos.unfree =
+  flake.nixosModules.default = self.nixosModules.unfree;
+  flake.nixosModules.unfree =
     { lib, config, ... }:
     let
       inherit (lib.lists) elem;
@@ -19,8 +19,7 @@
       ];
     };
 
-  flake.modules.unfree.default = self.modules.unfree.unfree;
-  flake.modules.darwin.unfree = {
+  flake.darwinModules.unfree = {
     config.nixpkgs.config.allowUnfree = true; # Only blanket allow is possible on nix-darwin.
   };
 }

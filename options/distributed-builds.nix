@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.distributed-builds = self.modules.nixos.distributed-builds-options;
-  flake.modules.nixos.distributed-builds-options =
+  flake.nixosModules.distributed-builds = self.nixosModules.distributed-builds-options;
+  flake.nixosModules.distributed-builds-options =
     { lib, ... }:
     let
       inherit (lib.options) mkOption;

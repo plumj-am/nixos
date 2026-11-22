@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.default = self.modules.common.nushell;
-  flake.modules.common.nushell =
+  flake.commonModules.default = self.commonModules.nushell;
+  flake.commonModules.nushell =
     {
       pkgs,
       lib,

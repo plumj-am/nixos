@@ -35,8 +35,8 @@ let
       '';
 in
 {
-  flake.modules.nixos.nuke = self.modules.nixos.nuke-coreutils;
-  flake.modules.nixos.nuke-coreutils =
+  flake.nixosModules.nuke = self.nixosModules.nuke-coreutils;
+  flake.nixosModules.nuke-coreutils =
     {
       pkgs,
       lib,

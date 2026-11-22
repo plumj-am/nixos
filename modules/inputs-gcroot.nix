@@ -1,8 +1,8 @@
 { self, ... }:
 {
   # https://github.com/RGBCube/ncc/blob/d4039a9d6c8d3a0757517532708f5f18a866482d/modules/inputs-gcroot.mod.nix
-  flake.modules.common.default = self.modules.common.inputs-gcroot;
-  flake.modules.common.inputs-gcroot =
+  flake.commonModules.default = self.commonModules.inputs-gcroot;
+  flake.commonModules.inputs-gcroot =
     { lib, ... }:
     let
       inherit (lib.attrsets) attrValues;

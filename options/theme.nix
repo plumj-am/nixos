@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.theme = self.modules.common.theme-options;
-  flake.modules.common.theme-options =
+  flake.commonModules.theme = self.commonModules.theme-options;
+  flake.commonModules.theme-options =
     { lib, ... }:
     let
       inherit (lib.options) mkOption;

@@ -10,7 +10,7 @@
         lib = self;
 
         modules = [
-          inputs.self.modules.darwin.default
+          inputs.self.darwinModules.default
 
           module
 
@@ -31,7 +31,7 @@
         lib = self;
 
         modules = [
-          inputs.self.modules.nixos.default
+          inputs.self.nixosModules.default
 
           module
 

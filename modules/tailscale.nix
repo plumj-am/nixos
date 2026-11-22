@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.default = self.modules.nixos.tailscale;
-  flake.modules.nixos.tailscale =
+  flake.nixosModules.default = self.nixosModules.tailscale;
+  flake.nixosModules.tailscale =
     { lib, config, ... }:
     let
       inherit (lib.constants) tailnet;
@@ -26,8 +26,8 @@
       networking.firewall.trustedInterfaces = singleton interface;
     };
 
-  flake.modules.darwin.default = self.modules.darwin.tailscale;
-  flake.modules.darwin.tailscale = {
+  flake.darwinModules.default = self.darwinModules.tailscale;
+  flake.darwinModules.tailscale = {
     services.tailscale.enable = true;
   };
 }

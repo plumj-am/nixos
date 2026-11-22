@@ -1,18 +1,18 @@
 { self, ... }:
 {
-  flake.modules.common.default.imports = [
-    self.modules.common.git
-    self.modules.common.jujutsu
-    self.modules.common.pijul
+  flake.commonModules.default.imports = [
+    self.commonModules.git
+    self.commonModules.jujutsu
+    self.commonModules.pijul
 
-    self.modules.common.diff-formatter
-    self.modules.common.jj-stack
-    self.modules.common.jjui
-    self.modules.common.mergiraf
-    self.modules.common.watchman
+    self.commonModules.diff-formatter
+    self.commonModules.jj-stack
+    self.commonModules.jjui
+    self.commonModules.mergiraf
+    self.commonModules.watchman
   ];
 
-  flake.modules.common.git =
+  flake.commonModules.git =
     {
       pkgs,
       lib,
@@ -119,7 +119,7 @@
       };
     };
 
-  flake.modules.common.pijul =
+  flake.commonModules.pijul =
     {
       pkgs,
       lib,
@@ -152,7 +152,7 @@
         };
     };
 
-  flake.modules.common.jujutsu =
+  flake.commonModules.jujutsu =
     {
       inputs,
       pkgs,
@@ -432,7 +432,7 @@
         };
     };
 
-  flake.modules.common.jj-stack =
+  flake.commonModules.jj-stack =
     {
       inputs,
       pkgs,
@@ -477,7 +477,7 @@
       };
     };
 
-  flake.modules.common.jjui =
+  flake.commonModules.jjui =
     {
       pkgs,
       lib,
@@ -568,7 +568,7 @@
       };
     };
 
-  flake.modules.common.diff-formatter =
+  flake.commonModules.diff-formatter =
     {
       pkgs,
       lib,
@@ -621,7 +621,7 @@
       };
     };
 
-  flake.modules.common.mergiraf =
+  flake.commonModules.mergiraf =
     {
       pkgs,
       lib,
@@ -656,7 +656,7 @@
       };
     };
 
-  flake.modules.common.watchman =
+  flake.commonModules.watchman =
     { pkgs, lib, ... }:
     let
       inherit (lib.lists) singleton;

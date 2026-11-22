@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.comfyui =
+  flake.nixosModules.comfyui =
     {
       inputs,
       lib,

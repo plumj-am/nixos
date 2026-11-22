@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.default = self.modules.nixos.ulimit;
-  flake.modules.nixos.ulimit =
+  flake.nixosModules.default = self.nixosModules.ulimit;
+  flake.nixosModules.ulimit =
     { lib, ... }:
     let
       inherit (lib.lists) singleton;

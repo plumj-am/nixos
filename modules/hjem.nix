@@ -1,6 +1,6 @@
 { self, ... }:
 {
-  flake.modules.common.hjem =
+  flake.commonModules.hjem =
     { lib, config, ... }:
     let
       inherit (lib.lists) optional;
@@ -12,9 +12,9 @@
 
     };
 
-  flake.modules.nixos.default = self.modules.nixos.hjem;
-  flake.modules.nixos.hjem = { inputs, ... }: inputs.hjem.nixosModules.default;
+  flake.nixosModules.default = self.nixosModules.hjem;
+  flake.nixosModules.hjem = { inputs, ... }: inputs.hjem.nixosModules.default;
 
-  flake.modules.darwin.default = self.modules.darwin.hjem;
-  flake.modules.darwin.hjem = { inputs, ... }: inputs.hjem.darwinModules.default;
+  flake.darwinModules.default = self.darwinModules.hjem;
+  flake.darwinModules.hjem = { inputs, ... }: inputs.hjem.darwinModules.default;
 }

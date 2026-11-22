@@ -1,5 +1,5 @@
 {
-  flake.services.tarssh =
+  flake.serviceModules.tarssh =
     {
       pkgs,
       lib,

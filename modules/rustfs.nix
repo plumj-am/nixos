@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.rustfs =
+  flake.nixosModules.rustfs =
     {
       inputs,
       pkgs,

@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.gerrit =
+  flake.nixosModules.gerrit =
     {
       inputs,
       pkgs,

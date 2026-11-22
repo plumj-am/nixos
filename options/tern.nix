@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.tern = self.modules.nixos.tern-options;
-  flake.modules.nixos.tern-options =
+  flake.nixosModules.tern = self.nixosModules.tern-options;
+  flake.nixosModules.tern-options =
     { lib, ... }:
     let
       inherit (lib.options) mkOption;

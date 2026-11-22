@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.ai-agents = self.modules.common.omp;
-  flake.modules.common.omp =
+  flake.commonModules.ai-agents = self.commonModules.omp;
+  flake.commonModules.omp =
     {
       pkgs,
       lib,

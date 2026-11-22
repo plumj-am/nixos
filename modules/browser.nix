@@ -418,8 +418,8 @@ let
   };
 in
 {
-  flake.modules.darwin.desktop = self.modules.darwin.helium;
-  flake.modules.darwin.helium =
+  flake.darwinModules.desktop = self.darwinModules.helium;
+  flake.darwinModules.helium =
     {
       pkgs,
       lib,
@@ -492,8 +492,8 @@ in
       };
     };
 
-  flake.modules.nixos.desktop = self.modules.nixos.helium;
-  flake.modules.nixos.helium =
+  flake.nixosModules.desktop = self.nixosModules.helium;
+  flake.nixosModules.helium =
     {
       pkgs,
       lib,
@@ -546,7 +546,7 @@ in
       };
     };
 
-  flake.modules.common.helium =
+  flake.commonModules.helium =
     { pkgs, lib, ... }:
     let
       inherit (lib.lists) singleton;
@@ -569,7 +569,7 @@ in
       ];
     };
 
-  flake.modules.common.brave =
+  flake.commonModules.brave =
     { pkgs, lib, ... }:
     let
       inherit (lib.lists) singleton;

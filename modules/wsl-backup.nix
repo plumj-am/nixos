@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.wsl-backup =
+  flake.nixosModules.wsl-backup =
     { pkgs, lib, ... }:
     let
       inherit (lib.lists) singleton;

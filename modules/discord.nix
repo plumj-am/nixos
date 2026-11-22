@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.desktop = self.modules.common.discord;
-  flake.modules.common.discord =
+  flake.commonModules.desktop = self.commonModules.discord;
+  flake.commonModules.discord =
     # { pkgs, lib, ... }:
     # let
     # inherit (lib.lists) singleton;

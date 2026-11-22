@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.website-plumjam =
+  flake.nixosModules.website-plumjam =
     {
       inputs,
       lib,

@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.desktop = self.modules.nixos.boot-optimise;
-  flake.modules.nixos.boot-optimise =
+  flake.nixosModules.desktop = self.nixosModules.boot-optimise;
+  flake.nixosModules.boot-optimise =
     { lib, config, ... }:
     let
       inherit (lib.attrsets) genAttrs;

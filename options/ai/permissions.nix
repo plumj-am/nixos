@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.ai-permissions = self.modules.common.ai-permissions-options;
-  flake.modules.common.ai-permissions-options =
+  flake.commonModules.ai-permissions = self.commonModules.ai-permissions-options;
+  flake.commonModules.ai-permissions-options =
     { lib, ... }:
     let
       inherit (lib.options) mkEnableOption mkOption;

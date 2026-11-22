@@ -1,6 +1,6 @@
 { self, ... }:
 {
-  flake.modules.nixos.nextcloud =
+  flake.nixosModules.nextcloud =
     {
       pkgs,
       lib,
@@ -99,8 +99,8 @@
 
     };
 
-  flake.modules.nixos.desktop = self.modules.nixos.nextcloud-client;
-  flake.modules.nixos.nextcloud-client =
+  flake.nixosModules.desktop = self.nixosModules.nextcloud-client;
+  flake.nixosModules.nextcloud-client =
     {
       pkgs,
       lib,

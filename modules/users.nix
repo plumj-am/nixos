@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.default = self.modules.nixos.users;
-  flake.modules.nixos.users =
+  flake.nixosModules.default = self.nixosModules.users;
+  flake.nixosModules.users =
     {
       pkgs,
       config,
@@ -47,8 +47,8 @@
       };
     };
 
-  flake.modules.darwin.default = self.modules.darwin.users;
-  flake.modules.darwin.users =
+  flake.darwinModules.default = self.darwinModules.users;
+  flake.darwinModules.users =
     { pkgs, config, ... }:
     let
       inherit (config.flake) entities;
@@ -76,7 +76,7 @@
       };
     };
 
-  flake.modules.nixos.users-grove-systems =
+  flake.nixosModules.users-grove-systems =
     {
       pkgs,
       lib,

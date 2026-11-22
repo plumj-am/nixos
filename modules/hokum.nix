@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.desktop = self.modules.nixos.hokum;
-  flake.modules.nixos.hokum =
+  flake.nixosModules.desktop = self.nixosModules.hokum;
+  flake.nixosModules.hokum =
     {
       inputs,
       pkgs,

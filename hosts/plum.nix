@@ -7,7 +7,7 @@ in
   imports =
     singleton
     <| lib.systems.nixosSystem "plum" {
-      imports = with self.modules.nixos; [
+      imports = with self.nixosModules; [
         server
         web-server
 

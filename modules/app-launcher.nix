@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.darwin.default = self.modules.darwin.app-launcher;
-  flake.modules.darwin.app-launcher =
+  flake.darwinModules.default = self.darwinModules.app-launcher;
+  flake.darwinModules.app-launcher =
     { pkgs, lib, ... }:
     let
       inherit (lib.lists) singleton;

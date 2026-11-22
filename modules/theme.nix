@@ -203,8 +203,8 @@ let
     };
 in
 {
-  flake.modules.common.default = self.modules.common.theme;
-  flake.modules.common.theme =
+  flake.commonModules.default = self.commonModules.theme;
+  flake.commonModules.theme =
     { pkgs, config, ... }:
     let
       theme = mkThemeConfig {
@@ -243,18 +243,18 @@ in
       };
     };
 
-  flake.modules.nixos.desktop.imports = [
-    self.modules.nixos.theme-variants
-    self.modules.nixos.theme-extra-fonts
-    self.modules.nixos.theme-extra-scripts
+  flake.nixosModules.desktop.imports = [
+    self.nixosModules.theme-variants
+    self.nixosModules.theme-extra-fonts
+    self.nixosModules.theme-extra-scripts
   ];
 
-  flake.modules.darwin.desktop = self.modules.darwin.theme-extra-fonts;
+  flake.darwinModules.desktop = self.darwinModules.theme-extra-fonts;
 
   # Builds both variants as a specialisation, so changing the theme switches
   # between already built systems instead of rebuilding. `tt` activates one with
   # `nh os switch --specialisation`.
-  flake.modules.nixos.theme-variants =
+  flake.nixosModules.theme-variants =
     { lib, config, ... }:
     let
       inherit (lib.strings) toJSON;
@@ -273,7 +273,7 @@ in
       };
     };
 
-  flake.modules.nixos.theme-extra-fonts =
+  flake.nixosModules.theme-extra-fonts =
     { pkgs, config, ... }:
     {
       console = {
@@ -295,8 +295,8 @@ in
       ];
     };
 
-  flake.modules.darwin.default = self.modules.darwin.theme-extra-fonts;
-  flake.modules.darwin.theme-extra-fonts =
+  flake.darwinModules.default = self.darwinModules.theme-extra-fonts;
+  flake.darwinModules.theme-extra-fonts =
     { pkgs, config, ... }:
     {
       fonts.packages = [
@@ -309,7 +309,7 @@ in
       ];
     };
 
-  flake.modules.nixos.theme-extra-scripts =
+  flake.nixosModules.theme-extra-scripts =
     { pkgs, ... }:
     {
       environment.systemPackages = [

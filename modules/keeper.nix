@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.keeper =
+  flake.nixosModules.keeper =
     {
       inputs,
       pkgs,

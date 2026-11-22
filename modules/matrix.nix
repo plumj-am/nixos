@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.matrix =
+  flake.nixosModules.matrix =
     { lib, config, ... }:
     let
       inherit (lib.modules) merge;
@@ -169,7 +169,7 @@
       };
     };
 
-  flake.modules.nixos.cinny =
+  flake.nixosModules.cinny =
     {
       pkgs,
       lib,

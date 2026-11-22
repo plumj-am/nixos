@@ -1,6 +1,6 @@
 { self, ... }:
 {
-  flake.modules.nixos.gpu-unlock =
+  flake.nixosModules.gpu-unlock =
     { pkgs, config, ... }:
     let
       package = self.packages.${pkgs.stdenv.hostPlatform.system}.gpu-unlock;

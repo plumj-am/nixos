@@ -1,6 +1,6 @@
 { self, ... }:
 {
-  flake.modules.nixos.uptime-kuma =
+  flake.nixosModules.uptime-kuma =
     {
       pkgs,
       lib,

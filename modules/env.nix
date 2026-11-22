@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.default = self.modules.common.env;
-  flake.modules.common.env =
+  flake.commonModules.default = self.commonModules.env;
+  flake.commonModules.env =
     {
       pkgs,
       lib,

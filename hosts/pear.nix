@@ -7,7 +7,7 @@ in
   imports =
     singleton
     <| lib.systems.nixosSystem "pear" {
-      imports = with self.modules.nixos; [
+      imports = with self.nixosModules; [
         sops
         sudo-desktop
         wsl

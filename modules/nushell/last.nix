@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.nushell = self.modules.common.nushell-last;
-  flake.modules.common.nushell-last =
+  flake.commonModules.nushell = self.commonModules.nushell-last;
+  flake.commonModules.nushell-last =
     {
       pkgs,
       ...

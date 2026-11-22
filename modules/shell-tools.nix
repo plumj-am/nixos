@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.default = self.modules.common.shell-tools;
-  flake.modules.common.shell-tools =
+  flake.commonModules.default = self.commonModules.shell-tools;
+  flake.commonModules.shell-tools =
     {
       inputs,
       pkgs,
@@ -87,7 +87,7 @@
       };
     };
 
-  flake.modules.nixos.shell-tools =
+  flake.nixosModules.shell-tools =
     {
       pkgs,
       lib,
@@ -119,7 +119,7 @@
       ";
     };
 
-  flake.modules.darwin.shell-tools =
+  flake.darwinModules.shell-tools =
     {
       pkgs,
       lib,

@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.default = self.modules.nixos.shed;
-  flake.modules.nixos.shed =
+  flake.nixosModules.default = self.nixosModules.shed;
+  flake.nixosModules.shed =
     {
       inputs,
       pkgs,

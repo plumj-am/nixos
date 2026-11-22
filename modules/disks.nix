@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.server = self.modules.nixos.disks-server;
-  flake.modules.nixos.disks-server =
+  flake.nixosModules.server = self.nixosModules.disks-server;
+  flake.nixosModules.disks-server =
     { inputs, lib, ... }:
     let
       inherit (lib.lists) singleton;
@@ -64,8 +64,8 @@
       };
     };
 
-  flake.modules.nixos.desktop = self.modules.nixos.disks-normal;
-  flake.modules.nixos.disks-normal =
+  flake.nixosModules.desktop = self.nixosModules.disks-normal;
+  flake.nixosModules.disks-normal =
     { lib, ... }:
     let
       inherit (lib.lists) singleton;

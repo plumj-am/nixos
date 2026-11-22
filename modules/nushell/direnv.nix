@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.nushell = self.modules.common.nushell-direnv;
-  flake.modules.common.nushell-direnv =
+  flake.commonModules.nushell = self.commonModules.nushell-direnv;
+  flake.commonModules.nushell-direnv =
     {
       pkgs,
       lib,

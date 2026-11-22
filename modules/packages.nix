@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.default = self.modules.common.packages;
-  flake.modules.common.packages =
+  flake.commonModules.default = self.commonModules.packages;
+  flake.commonModules.packages =
     { pkgs, ... }:
     {
       shellAliases.wrk = "oha";
@@ -25,8 +25,8 @@
       ];
     };
 
-  flake.modules.nixos.default = self.modules.nixos.packages;
-  flake.modules.nixos.packages =
+  flake.nixosModules.default = self.nixosModules.packages;
+  flake.nixosModules.packages =
     { pkgs, ... }:
     {
       environment.systemPackages = [
@@ -36,12 +36,12 @@
       ];
     };
 
-  flake.modules.nixos.desktop.imports = [
-    self.modules.nixos.packages-gui
-    self.modules.nixos.packages-cli
+  flake.nixosModules.desktop.imports = [
+    self.nixosModules.packages-gui
+    self.nixosModules.packages-cli
   ];
 
-  flake.modules.nixos.packages-gui =
+  flake.nixosModules.packages-gui =
     { pkgs, ... }:
     {
       environment.systemPackages = [
@@ -50,7 +50,7 @@
       ];
     };
 
-  flake.modules.nixos.packages-cli =
+  flake.nixosModules.packages-cli =
     { pkgs, ... }:
     {
       environment.systemPackages = [

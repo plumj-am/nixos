@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.desktop = self.modules.nixos.peripherals;
-  flake.modules.nixos.peripherals =
+  flake.nixosModules.desktop = self.nixosModules.peripherals;
+  flake.nixosModules.peripherals =
     { pkgs, lib, ... }:
     let
       inherit (lib.lists) singleton;
@@ -25,8 +25,8 @@
         '';
     };
 
-  flake.modules.darwin.desktop = self.modules.darwin.peripherals;
-  flake.modules.darwin.peripherals =
+  flake.darwinModules.desktop = self.darwinModules.peripherals;
+  flake.darwinModules.peripherals =
     { pkgs, lib, ... }:
     let
       inherit (lib.lists) singleton;

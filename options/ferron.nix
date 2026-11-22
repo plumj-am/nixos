@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.ferron = self.modules.nixos.ferron-options;
-  flake.modules.nixos.ferron-options =
+  flake.nixosModules.ferron = self.nixosModules.ferron-options;
+  flake.nixosModules.ferron-options =
     {
       lib,
       config,

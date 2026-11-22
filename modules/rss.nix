@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.freshrss-server =
+  flake.nixosModules.freshrss-server =
     { lib, config, ... }:
     let
       inherit (lib.constants) tailnet;

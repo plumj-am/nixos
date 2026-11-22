@@ -2,8 +2,8 @@
 {
   # Tern, a closed-beta Stencil Labs multiplexer. Its tarball is x86_64-linux
   # only, so darwin hosts get no build.
-  flake.modules.nixos.desktop = self.modules.nixos.tern;
-  flake.modules.nixos.tern =
+  flake.nixosModules.desktop = self.nixosModules.tern;
+  flake.nixosModules.tern =
     {
       pkgs,
       lib,

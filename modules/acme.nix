@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.web-server = self.modules.nixos.acme;
-  flake.modules.nixos.acme =
+  flake.nixosModules.web-server = self.nixosModules.acme;
+  flake.nixosModules.acme =
     {
       config,
       ...

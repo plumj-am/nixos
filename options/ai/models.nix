@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.ai-models = self.modules.common.ai-models-options;
-  flake.modules.common.ai-models-options =
+  flake.commonModules.ai-models = self.commonModules.ai-models-options;
+  flake.commonModules.ai-models-options =
     { lib, ... }:
     let
       inherit (lib.attrsets) filterAttrsRecursive removeAttrs;

@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.desktop = self.modules.nixos.desktop-gui;
-  flake.modules.nixos.desktop-gui =
+  flake.nixosModules.desktop = self.nixosModules.desktop-gui;
+  flake.nixosModules.desktop-gui =
     {
       pkgs,
       lib,

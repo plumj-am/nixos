@@ -835,7 +835,7 @@ let
     };
 in
 {
-  flake.modules.nixos.hermes-grove =
+  flake.nixosModules.hermes-grove =
     {
       inputs,
       pkgs,
@@ -859,7 +859,7 @@ in
       ];
     };
 
-  flake.modules.nixos.hermes-plumjam =
+  flake.nixosModules.hermes-plumjam =
     {
       inputs,
       pkgs,
@@ -888,7 +888,7 @@ in
       ];
     };
 
-  flake.modules.nixos.hermes-radka =
+  flake.nixosModules.hermes-radka =
     {
       inputs,
       pkgs,

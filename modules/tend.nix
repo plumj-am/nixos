@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.tend =
+  flake.nixosModules.tend =
     {
       inputs,
       pkgs,

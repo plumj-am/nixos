@@ -1,8 +1,8 @@
 # Credit to https://github.com/rgbcube/ncc for most of this.
 { self, ... }:
 {
-  flake.modules.darwin.default = self.modules.darwin.fixes;
-  flake.modules.darwin.fixes = {
+  flake.darwinModules.default = self.darwinModules.fixes;
+  flake.darwinModules.fixes = {
     system.defaults = {
 
       SoftwareUpdate.AutomaticallyInstallMacOSUpdates = true;

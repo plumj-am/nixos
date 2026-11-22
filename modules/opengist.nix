@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.opengist =
+  flake.nixosModules.opengist =
     {
       pkgs,
       lib,

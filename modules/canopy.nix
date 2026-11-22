@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.desktop = self.modules.nixos.canopy;
-  flake.modules.nixos.canopy =
+  flake.nixosModules.desktop = self.nixosModules.canopy;
+  flake.nixosModules.canopy =
     {
       inputs,
       pkgs,

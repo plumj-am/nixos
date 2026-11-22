@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.home-assistant =
+  flake.nixosModules.home-assistant =
     {
       pkgs,
       lib,

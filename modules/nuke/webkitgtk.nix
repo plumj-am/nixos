@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.nuke = self.modules.nixos.nuke-webkitgtk;
-  flake.modules.nixos.nuke-webkitgtk =
+  flake.nixosModules.nuke = self.nixosModules.nuke-webkitgtk;
+  flake.nixosModules.nuke-webkitgtk =
     {
       pkgs,
       lib,

@@ -11,7 +11,7 @@ in
   imports =
     singleton
     <| lib.systems.nixosSystem "blackwell" {
-      imports = with self.modules.nixos; [
+      imports = with self.nixosModules; [
         server
 
         # distributed-builder

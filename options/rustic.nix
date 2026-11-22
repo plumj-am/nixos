@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.rustic = self.modules.nixos.rustic-options;
-  flake.modules.nixos.rustic-options =
+  flake.nixosModules.rustic = self.nixosModules.rustic-options;
+  flake.nixosModules.rustic-options =
     {
       pkgs,
       lib,

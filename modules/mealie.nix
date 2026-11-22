@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.mealie =
+  flake.nixosModules.mealie =
     {
       lib,
       config,

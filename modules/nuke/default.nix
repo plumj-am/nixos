@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.default = self.modules.nixos.nuke;
-  flake.modules.nixos.nuke =
+  flake.nixosModules.default = self.nixosModules.nuke;
+  flake.nixosModules.nuke =
     {
       pkgs,
       lib,

@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.nushell-aliases = self.modules.common.nushell-aliases-options;
-  flake.modules.common.nushell-aliases-options =
+  flake.commonModules.nushell-aliases = self.commonModules.nushell-aliases-options;
+  flake.commonModules.nushell-aliases-options =
     { lib, ... }:
     let
       inherit (lib.options) mkOption;

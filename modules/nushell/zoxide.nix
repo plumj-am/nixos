@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.nushell = self.modules.common.nushell-zoxide;
-  flake.modules.common.nushell-zoxide =
+  flake.commonModules.nushell = self.commonModules.nushell-zoxide;
+  flake.commonModules.nushell-zoxide =
     {
       pkgs,
       lib,

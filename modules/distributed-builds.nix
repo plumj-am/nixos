@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.nixos.default = self.modules.nixos.distributed-builds;
-  flake.modules.nixos.distributed-builds =
+  flake.nixosModules.default = self.nixosModules.distributed-builds;
+  flake.nixosModules.distributed-builds =
     {
       lib,
       config,
@@ -48,7 +48,7 @@
       };
     };
 
-  flake.modules.nixos.distributed-builder =
+  flake.nixosModules.distributed-builder =
     { lib, config, ... }:
     let
       inherit (lib.attrsets) mapAttrsToList;

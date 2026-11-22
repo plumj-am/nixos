@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.nushell = self.modules.common.nushell-completions;
-  flake.modules.common.nushell-completions =
+  flake.commonModules.nushell = self.commonModules.nushell-completions;
+  flake.commonModules.nushell-completions =
     {
       pkgs,
       lib,

@@ -8,8 +8,8 @@ let
     '';
 in
 {
-  flake.modules.nixos.desktop = self.modules.nixos.sudo-desktop;
-  flake.modules.nixos.sudo-desktop =
+  flake.nixosModules.desktop = self.nixosModules.sudo-desktop;
+  flake.nixosModules.sudo-desktop =
     {
       pkgs,
       lib,
@@ -57,8 +57,8 @@ in
       services.dbus.implementation = "broker";
     };
 
-  flake.modules.darwin.desktop = self.modules.darwin.sudo-desktop;
-  flake.modules.darwin.sudo-desktop = {
+  flake.darwinModules.desktop = self.darwinModules.sudo-desktop;
+  flake.darwinModules.sudo-desktop = {
     security.sudo.extraConfig = sudoExtraConfig;
 
     security.pam.services.sudo_local = {
@@ -67,8 +67,8 @@ in
     };
   };
 
-  flake.modules.nixos.server = self.modules.nixos.sudo-server;
-  flake.modules.nixos.sudo-server = {
+  flake.nixosModules.server = self.nixosModules.sudo-server;
+  flake.nixosModules.sudo-server = {
     users.users.jam.extraGroups = [ "wheel" ];
 
     security.sudo-rs = {

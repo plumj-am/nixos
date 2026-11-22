@@ -1,7 +1,7 @@
 { self, ... }:
 {
-  flake.modules.common.default = self.modules.common.tuicr;
-  flake.modules.common.tuicr =
+  flake.commonModules.default = self.commonModules.tuicr;
+  flake.commonModules.tuicr =
     {
       pkgs,
       lib,

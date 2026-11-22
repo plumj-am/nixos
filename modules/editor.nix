@@ -8,20 +8,20 @@ let
   };
 in
 {
-  flake.modules.common.default.imports = [
-    self.modules.common.mitos
+  flake.commonModules.default.imports = [
+    self.commonModules.mitos
   ];
 
-  flake.modules.nixos.default.imports = [
-    self.modules.nixos.disable-nano
-    self.modules.nixos.mitos-reload
+  flake.nixosModules.default.imports = [
+    self.nixosModules.disable-nano
+    self.nixosModules.mitos-reload
   ];
 
-  flake.modules.nixos.disable-nano = {
+  flake.nixosModules.disable-nano = {
     programs.nano.enable = false;
   };
 
-  flake.modules.common.mitos =
+  flake.commonModules.mitos =
     {
       inputs,
       pkgs,
@@ -471,8 +471,8 @@ in
       };
     };
 
-  flake.modules.common.desktop = self.modules.common.editor-extra;
-  flake.modules.common.editor-extra =
+  flake.commonModules.desktop = self.commonModules.editor-extra;
+  flake.commonModules.editor-extra =
     {
       inputs,
       pkgs,
@@ -481,7 +481,7 @@ in
     {
       environment.systemPackages = [
         # Rust
-        # rust-analyzer is in modules/common/rust.nix
+        # rust-analyzer is in commonModules/rust.nix
         pkgs.lldb
         pkgs.leptosfmt
 
@@ -529,7 +529,7 @@ in
       ];
     };
 
-  flake.modules.nixos.mitos-reload =
+  flake.nixosModules.mitos-reload =
     { pkgs, lib, ... }:
     let
       inherit (lib.meta) getExe';

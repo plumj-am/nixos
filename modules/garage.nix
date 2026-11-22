@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.garage =
+  flake.nixosModules.garage =
     {
       pkgs,
       lib,

@@ -1,5 +1,5 @@
 {
-  flake.services.rustic =
+  flake.serviceModules.rustic =
     {
       pkgs,
       lib,
