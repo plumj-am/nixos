@@ -14,7 +14,7 @@
             vision = false;
           };
           freeWeak = {
-            model = "reflection/beam:free";
+            model = null;
             vision = false;
           };
 
