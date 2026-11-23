@@ -15,8 +15,34 @@
       inherit (config) theme;
 
       fallbackColors = concatStringsSep "\n" (
-        mapAttrsToList (name: value: "      ${name}: \"${value}\"") theme.withHash
+        mapAttrsToList (name: value: ''${name}: "${value}"'') theme.withHash
       );
+
+      jjTemplate = # python
+        ''
+          separate(
+            " ",
+            bookmarks.join(", "),
+            if(empty, label("empty", "(empty)")),
+            coalesce(
+              surround("\"", "\"",
+                if(
+                  description.first_line().substr(0, 26).starts_with(description.first_line()),
+                  description.first_line().substr(0, 26),
+                  description.first_line().substr(0, 25) ++ "…"
+                )
+              ),
+              label(if(empty, "empty"), "")
+            ),
+            change_id.shortest(),
+            commit_id.shortest(),
+            if(self.contained_in("private()"), label("private", "(private)")),
+            if(conflict, label("conflict", "(conflict)")),
+            if(divergent, label("divergent prefix", "(divergent)")),
+            if(hidden, label("hidden prefix", "(hidden)")),
+            if(immutable, label("immutable", "(immutable)")),
+          )
+        '';
     in
     {
       hjemModule =
@@ -40,8 +66,16 @@
                 const THEME_FALLBACK = {
                   mode: "${theme.variant}"
                   colors: {
-                ${fallbackColors}
+                    ${fallbackColors}
                   }
+                }
+
+                def paint [color: string, text: string]: nothing -> string {
+                  $"(ansi $color)($text)(ansi reset)"
+                }
+
+                def bar [color: string]: nothing -> string {
+                  $"(ansi $color)(ansi attr_bold)━━(ansi reset)"
                 }
 
                 def theme-state []: nothing -> record {
@@ -76,37 +110,96 @@
 
                 $env.config.hooks.pre_prompt = ($env.config.hooks.pre_prompt? | default []) ++ [{||
                   if (theme-state) != ($env.THEME_APPLIED? | default { }) { apply-theme }
+                  jj-refresh
                 }]
 
+                def jj-root []: nothing -> string {
+                  mut dir = $env.PWD
+                  mut root = ""
+                  loop {
+                    if ($dir | path join ".jj" | path exists) {
+                      $root = $dir
+                      break
+                    }
+                    let parent = ($dir | path dirname)
+                    if $parent == $dir { break }
+                    $dir = $parent
+                  }
+                  $root
+                }
+
+                # `--ignore-working-copy` output only changes with the operation
+                # store, so one spawn per new operation is enough; typing and
+                # plain shell commands reuse the cached right prompt.
+                def jj-log []: nothing -> string {
+                  try {
+                    jj --quiet --color always --ignore-working-copy log --no-graph --revisions @ --template r###'${jjTemplate}'### err> /dev/null | str trim
+                  } catch {
+                    ""
+                  }
+                }
+
+                def --env jj-refresh []: nothing -> nothing {
+                  let root = (jj-root)
+                  let key = if ($root | is-empty) {
+                    ""
+                  } else {
+                    let heads = ($root | path join ".jj/repo/op_heads/heads")
+                    if ($heads | path exists) {
+                      try { ls $heads | get name | sort | str join "," } catch { "" }
+                    } else {
+                      ""
+                    }
+                  }
+                  let cached = $env.JJ_PROMPT? | default { root: "", key: "", output: "" }
+
+                  if ($root == $cached.root) and ($key | is-not-empty) and ($key == $cached.key) {
+                    return
+                  }
+
+                  $env.JJ_PROMPT = {
+                    root: $root
+                    key: $key
+                    output: (if ($root | is-empty) { "" } else { jj-log })
+                  }
+                }
+
                 def prompt [--transient --right]: nothing -> string {
+                  let state = if ($env.JJ_PROMPT? | is-empty) {
+                    { root: (jj-root), key: "", output: (jj-log) }
+                  } else {
+                    $env.JJ_PROMPT
+                  }
+
                   let colors = $env.THEME_COLORS
+                  let bar = bar $colors.base0D
 
-                  let bar = $"(ansi $colors.base0D)(ansi attr_bold)━(ansi rst)"
+                  if $right {
+                    if ($state.output | is-empty) { return "" }
+                    return ([$bar (char sp) (ansi rst) $state.output (char sp) $bar] | str join)
+                  }
 
-                  let exit_code = $env.LAST_EXIT_CODE
+                  let exit_code = $ans | get --optional exit_code | default 0
 
                   let status = if not ($exit_code == 0) or $transient {
-                    $"(ansi $colors.base0D)┫(ansi rst)(if $exit_code == 0 { ansi $colors.base0D } else { ansi $colors.base08 })($exit_code)(ansi rst)(ansi $colors.base0D)┣(ansi rst)"
+                    let status_color = if $exit_code == 0 { $colors.base0D } else { $colors.base08 }
+                    $"(paint $colors.base0D "┫")(paint $status_color $"($exit_code)")(paint $colors.base0D "┣")"
                   } else {
-                    ($bar)($bar)
+                    $bar
                   }
 
                   let host = if ($env.SSH_CONNECTION? | is-not-empty) {
-                    $" (ansi $colors.base0B)(hostname)(ansi rst)"
+                    $" (paint $colors.base0B (sys host | get hostname))"
                   } else { "" }
 
-                  let jj_root = try {
-                    jj workspace root err> /dev/null
-                  } catch { "" }
+                  let pwd = $env.PWD
 
-                  let pwd = pwd | path expand
-
-                  let directory = if ($jj_root | is-not-empty) {
-                    let subpath = $pwd | path relative-to $jj_root
+                  let directory = if ($state.root | is-not-empty) {
+                    let subpath = $pwd | path relative-to $state.root
                     let subpath = if ($subpath | is-not-empty) {
-                      $"(ansi $colors.base0E) ⟶ (ansi rst)(ansi $colors.base0B)($subpath)(ansi rst)"
+                      $"(paint $colors.base0E "⟶") (paint $colors.base0B $subpath)"
                     }
-                      $"($jj_root | path basename)($subpath)"
+                      $"($state.root | path basename)($subpath)"
                     } else {
                       let pwd = if ($pwd | str starts-with ${config.directory}) {
                         "~" | path join ($pwd | path relative-to ${config.directory})
@@ -114,67 +207,15 @@
                     $pwd
                   }
 
-                  let in_bwrap = $env | try { get IN_BWRAP; " (bwrap)" } catch { "" }
+                  let directory = paint $colors.base0A $directory
 
-                  let directory = $"(ansi $colors.base0A)($directory)(ansi rst)(ansi $colors.base0B)($in_bwrap)(ansi rst)"
-
-                  let jj_output = try {
-                      jj --quiet --color always --ignore-working-copy log --no-graph --revisions @ --template '
-                        separate(
-                  " ",
-                  bookmarks.join(", "),
-                  if(empty, label("empty", "(empty)")),
-                  coalesce(
-                  surround("\"", "\"",
-                  if(
-                  description.first_line().substr(0, 26).starts_with(description.first_line()),
-                  description.first_line().substr(0, 26),
-                  description.first_line().substr(0, 25) ++ "…"
-                      )
-                    ),
-                  label(if(empty, "empty"), "")
-                  ),
-                  change_id.shortest(),
-                  commit_id.shortest(),
-                  if(self.contained_in("private()"), label("private", "(private)")),
-                  if(conflict, label("conflict", "(conflict)")),
-                  if(divergent, label("divergent prefix", "(divergent)")),
-                  if(hidden, label("hidden prefix", "(hidden)")),
-                  if(immutable, label("immutable", "(immutable)")),
-                  )
-                  ' err> /dev/null | str trim
-                  } catch {
-                    ""
-                  }
-
-                  let left_prompt = [
+                  [
                     $status
                     $host
                     (char sp)
                     $directory
                     (char nl)
                   ] | str join
-
-                  let right_prompt = [
-                    (if ($jj_output | is-not-empty) {
-                      [
-                        $bar
-                        $bar
-                        (char sp)
-                        (ansi rst)
-                        $jj_output
-                        (char sp)
-                        $bar
-                        $bar
-                      ] | str join
-                    })
-                  ] | str join
-
-                  if $right {
-                    $right_prompt
-                  } else {
-                    $left_prompt
-                  }
                 }
 
                 $env.PROMPT_COMMAND                 = {|| prompt }
