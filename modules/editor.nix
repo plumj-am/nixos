@@ -144,8 +144,8 @@ in
                 let
                   shared = {
                     # Move lines up and down. Use `z` register to avoid clobbering system or primary clipboard.
-                    "C-j" = "@X\"zd\"zp";
-                    "C-k" = "@X\"zdk\"zP";
+                    "C-j" = ''@X"zd"zp'';
+                    "C-k" = ''@X"zdk"zP'';
 
                     "q" = "record_macro";
                     "@" = "replay_macro";
@@ -154,7 +154,13 @@ in
 
                     "D" = "extend_to_line_end";
 
-                    space."B" = ":vcs-blame";
+                    space."B" = "vcs_blame_line";
+
+                    space."f" = "file_picker_in_current_working_directory";
+                    space."F" = "file_picker";
+
+                    space."e" = "file_explorer_in_current_working_directory";
+                    space."E" = "file_explorer";
                   };
                 in
                 {
