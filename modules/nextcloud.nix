@@ -36,12 +36,7 @@
         configureRedis = true;
         database.createLocally = true;
 
-        config = {
-          adminuser = "plumjam";
-          adminpassFile = secrets."nextcloud/plumjam-password".path;
-
-          dbtype = "pgsql";
-        };
+        config.dbtype = "pgsql";
 
         settings = {
           default_phone_region = "PL";

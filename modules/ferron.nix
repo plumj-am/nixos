@@ -321,8 +321,16 @@
         services.ferron = {
           enable = true;
           # `ferron-bin` package downloads an upstream release binary instead of
-          # building the pinned revision, so use `ferron` package.
-          package = inputs.ferron.packages.${pkgs.stdenv.hostPlatform.system}.ferron;
+          # building the pinned revision, so use `ferron` package. The nixpkgs
+          # cargo setup hook forces `AWS_LC_SYS_USE_SYSTEM=1`, so the vendored
+          # aws-lc-sys build needs a system AWS-LC in its build inputs.
+          package = inputs.ferron.packages.${pkgs.stdenv.hostPlatform.system}.ferron.overrideAttrs (old: {
+            buildInputs = (old.buildInputs or [ ]) ++ [
+              pkgs.aws-lc
+              (pkgs.rust-jemalloc-sys.override { unprefixed = true; })
+              pkgs.zstd
+            ];
+          });
           openFirewall = false;
 
           # Access and application logs go to stdout, which systemd

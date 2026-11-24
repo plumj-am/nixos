@@ -57,7 +57,7 @@ in
         };
       };
 
-      environment.systemPackages = singleton <| pkgs.keepassxc.override { withKeePassYubiKey = true; };
+      environment.systemPackages = singleton pkgs.keepassxc;
 
       hjemModule = {
         xdg.mime-apps.default-applications = flip genAttrs (const "org.keepassxc.KeePassXC.desktop") [

@@ -22,9 +22,6 @@
       # Disable bpf() JIT (to eliminate spray attacks).
       "net.core.bpf_jit_enable" = false;
 
-      # Disable ftrace debugging.
-      "kernel.ftrace_enabled" = false;
-
       # Avoid kernel memory address exposures via dmesg (this value can also be set by CONFIG_SECURITY_DMESG_RESTRICT).
       "kernel.dmesg_restrict" = 1;
 
@@ -60,11 +57,19 @@
       # Reduce most of the exposure of a heap attack to a single cache.
       "slab_nomerge"
 
-      # Only allow signed modules.
-      "module.sig_enforce=1"
-
-      # Blocks access to all kernel memory, even preventing administrators from being able to inspect and probe the kernel.
-      "lockdown=confidentiality"
+      # Kernel module signature enforcement and integrity/confidentiality
+      # lockdown are deliberately absent. nixpkgs builds the `linux-zen` >= 7.3
+      # modules in a separate derivation (`linux-zen-*-modules.drv`) whose kbuild
+      # auto-generates its own signing key (the kernel config pins
+      # `CONFIG_MODULE_SIG_KEY=""`), so module signatures never verify against
+      # the key embedded in the booted bzImage. With `module.sig_enforce=1` or
+      # `lockdown=confidentiality` every module load is then rejected, the initrd
+      # cannot load nvme/ext4, root never mounts and the machine drops into the
+      # emergency shell (emergency, then systemd-boot's boot counting marks the
+      # generation bad and falls back to an older one). Verified 2026-11-25 by
+      # booting the 27.05 initrd in QEMU with and without each parameter: only
+      # with both off does `systemd-modules-load` succeed. Restore both once
+      # modules are signed with the kernel's key again.
 
       # Enable buddy allocator free poisoning.
       "page_poison=1"
@@ -78,7 +83,11 @@
       # Ignore access time (atime) updates on files, except when they coincide with updates to the ctime or mtime.
       "rootflags=noatime"
 
-      # Linux security modules.
+      # Linux security modules. This list is inert: nixpkgs' `security.lsm`
+      # option emits its own `lsm=` later in the command line and the kernel
+      # honours the last one (`/sys/kernel/security/lsm` shows
+      # capability,landlock,yama,bpf,ima). When lockdown is re-enabled, add
+      # `lockdown` to `security.lsm` instead of relying on this string.
       "lsm=landlock,lockdown,yama,integrity,apparmor,bpf,tomoyo,selinux"
 
       # Prevent the kernel from blanking plymouth out of the fb.

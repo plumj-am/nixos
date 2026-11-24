@@ -65,23 +65,14 @@
     };
 
   flake.nixosModules.desktop = self.nixosModules.disks-normal;
-  flake.nixosModules.disks-normal =
-    { lib, ... }:
-    let
-      inherit (lib.lists) singleton;
-    in
-    {
-      services.fstrim.enable = true;
+  flake.nixosModules.disks-normal = {
+    services.fstrim.enable = true;
 
-      fileSystems = {
-        "/" = {
-          device = "/dev/disk/by-label/root";
-          fsType = "ext4";
-        };
-      };
-
-      swapDevices = singleton {
-        device = "/dev/disk/by-label/swap";
+    fileSystems = {
+      "/" = {
+        device = "/dev/disk/by-label/root";
+        fsType = "ext4";
       };
     };
+  };
 }

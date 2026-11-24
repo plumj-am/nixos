@@ -14,7 +14,7 @@ in
         comfyui
         dynamic-mac-address
         games
-        gpu-unlock
+        # gpu-unlock # WARN: Fails on boot, need to fix.
         llama-cpp
       ];
 

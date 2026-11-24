@@ -65,16 +65,10 @@
 
         # CI runner is not needed before login. Its docker jobs socket-activate
         # dockerd on first CLI use, so boot autostart is dropped.
-        (mkIf
-          (
-            config.services.gitea-actions-runner.instances ? hostName
-            && config.services.gitea-actions-runner.hostName ? enable
-          )
-          {
-            systemd.services."gitea-runner-${hostName}".wantedBy = mkForce <| singleton "lazy-start.target";
-            virtualisation.docker.enableOnBoot = false;
-          }
-        )
+        (mkIf (config.services.forgejo-runner.instances.${hostName}.enable or false) {
+          systemd.services."forgejo-runner-${hostName}".wantedBy = mkForce <| singleton "lazy-start.target";
+          virtualisation.docker.enableOnBoot = false;
+        })
       ];
     };
 }

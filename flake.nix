@@ -42,8 +42,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hermes-agent = {
+      # Not following our nixpkgs: its `pm-packages.nix` patches patchelf for
+      # the 0.19.2 header-overlap bug, and the patch cannot apply to the older
+      # patchelf our channel pins.
       url = "github:NousResearch/hermes-agent";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
     hjem = {
       url = "github:feel-co/hjem";

@@ -49,6 +49,16 @@ in
 
       # nixpkgs.config.contentAddressedByDefault = true;
 
+      # Abandoned upstream tools that only talk to tailnet-internal services.
+      # A predicate exempts every version, so a nixpkgs bump does not break
+      # evaluation when the version suffix changes.
+      nixpkgs.config.allowInsecurePredicate =
+        pkg:
+        builtins.elem (lib.getName pkg) [
+          "minio-client" # Garage/S3 cache admin; upstream abandoned.
+          "radicle-node" # private repos are not encrypted etc.
+        ];
+
       nix.registry =
         registryMap // { default = inputs.nixpkgs; } |> mapAttrs (_: flake: { inherit flake; });
 
@@ -107,7 +117,7 @@ in
           "root"
           "@wheel"
           "build"
-          "gitea-runner"
+          "forgejo-runner-${config.networking.hostName}"
         ];
 
         use-xdg-base-directories = true;

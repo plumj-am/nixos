@@ -50,12 +50,11 @@ in
         mode = "600";
       };
 
-      nixpkgs.config.permittedInsecurePackages = singleton "radicle-node-1.10.3"; # private repos are not encrypted etc.
-
       environment.systemPackages = [
         # inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.rsh-rsh
         pkgs.radicle-node
-        pkgs.radicle-tui
+        # radicle-tui is broken in nixpkgs: its release tags cannot be
+        # fetched and upstream is unmaintained.
       ];
 
       hjemModule = {
@@ -133,8 +132,6 @@ in
       inherit (config.networking) hostName;
     in
     {
-      nixpkgs.config.permittedInsecurePackages = singleton "radicle-node-1.10.3"; # private repos are not encrypted etc.
-
       environment.systemPackages = singleton pkgs.radicle-node;
 
       networking.firewall.allowedTCPPorts = singleton systemNodePort;
@@ -195,10 +192,8 @@ in
     let
       inherit (lib.modules) merge;
 
-      toJSON = lib.generators.toJSON { };
-
       # <https://app.radicle.xyz/nodes/seed.radicle.xyz/rad:z4V1sjrXqjvFdnCUbxPFqd5p4DtH5/tree/config/default.json>
-      radicalExplorerConfig = toJSON {
+      radicalExplorerConfig = {
         nodes = {
           fallbackPublicExplorer = "https://app.radicle.xyz/nodes/$host/$rid$path";
           requiredApiVersion = "~0.18.0";
@@ -217,13 +212,7 @@ in
         ];
       };
 
-      root = pkgs.radicle-explorer.overrideAttrs (old: {
-        postPatch = (old.postPatch or "") + ''
-          cat > ./config/local.json << 'EOF'
-          ${radicalExplorerConfig}
-          EOF
-        '';
-      });
+      root = pkgs.radicle-explorer.withConfig radicalExplorerConfig;
     in
     {
       services.ferronVhosts."${fqdn}, radicle.${domain}, seed.${domain}" =

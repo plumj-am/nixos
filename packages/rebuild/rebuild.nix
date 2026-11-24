@@ -1,18 +1,13 @@
-{ self, inputs, ... }:
+{ self, ... }:
 {
   perSystem =
     { pkgs, lib, ... }:
     let
       inherit (lib.meta) getExe;
 
-      # pkgs.nh bakes its nom PATH prefix from the `nix-output-monitor`
-      # argument, so the swap must go through `override`; `overrideAttrs`
-      # cannot reach it.
-      nh =
-        getExe
-        <| pkgs.nh.override {
-          nix-output-monitor = inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.nom-rs;
-        };
+      # nh 4.5 renders builds with its built-in `rom`; there is no external
+      # `nix-output-monitor` argument to swap.
+      nh = getExe pkgs.nh;
     in
     {
       packages.rebuild =
@@ -57,7 +52,6 @@
                 --hostname $target
                 --accept-flake-config
                 --bypass-root-check
-                --show-activation-logs
                 --builders
                 ""
                 ...$target_host

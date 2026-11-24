@@ -109,11 +109,20 @@
       inherit (lib.lists) singleton;
       inherit (lib.meta) getExe;
       inherit (lib.modules) mkBefore mkDefault;
+
+      # The subprocess fixture re-execs the test binary, which does not print
+      # its version line under nixpkgs' cargo test harness.
+      kachePackage =
+        inputs.kache.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs
+          (old: {
+            checkFlags = (old.checkFlags or [ ]) ++ [
+              "--skip=shim_diagnostics::tests::probes_accept_real_or_forwarding_tools_and_stop_bad_chains"
+              "--skip=shim_diagnostics::tests::probes_release_descendants_on_success_and_timeout"
+            ];
+          });
     in
     {
-      environment.systemPackages =
-        singleton
-          inputs.kache.packages.${pkgs.stdenv.hostPlatform.system}.default;
+      environment.systemPackages = singleton kachePackage;
 
       hjemModule = {
         files.".cargo/config.toml" = {

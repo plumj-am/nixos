@@ -51,13 +51,20 @@ in
         "--config"
         "${oxfmtConfigFile}"
       ];
+
+      # nixpkgs' Rust build hook sets AWS_LC_SYS_USE_SYSTEM=1, but upstream's
+      # derivation does not list the AWS-LC system library.
+      mitosPackage = inputs.mitos.packages.${pkgs.stdenv.hostPlatform.system}.mitos.overrideAttrs (old: {
+        buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.aws-lc ];
+        # aws-lc-sys finds the system library through pkg-config, which
+        # upstream's derivation does not include.
+        nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.pkg-config ];
+      });
     in
     {
       shellAliases.hx = "ms";
 
-      environment.systemPackages =
-        singleton
-          inputs.mitos.packages.${pkgs.stdenv.hostPlatform.system}.mitos;
+      environment.systemPackages = singleton mitosPackage;
 
       hjemModule = { config, ... }: {
         xdg.config.files = {

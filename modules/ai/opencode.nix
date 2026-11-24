@@ -36,6 +36,19 @@
 
       modelRefs = mapAttrs (_: id: "${providerKey}/${shortId id}") defaultModels;
 
+      # Upstream's pinned node_modules hash was produced with an older bun;
+      # nixpkgs' bun 1.4.4 installs a different tree. Rebuild the fixed-output
+      # derivation from the input source with the hash observed here.
+      opencodePackage =
+        let
+          source = inputs.opencode.outPath;
+          node_modules = pkgs.callPackage "${source}/nix/node_modules.nix" {
+            rev = inputs.opencode.shortRev or "dirty";
+            hash = "sha256-LhAICCt8oDBwcwwxDf11PBxJPgKx9gz0TcLcWEoSxp4=";
+          };
+        in
+        pkgs.callPackage "${source}/nix/opencode.nix" { inherit node_modules; };
+
       mkAgent =
         {
           mode ? "subagent",
@@ -54,7 +67,7 @@
       ai.secrets = true;
 
       environment.systemPackages = [
-        inputs.opencode.packages.${pkgs.stdenv.hostPlatform.system}.opencode
+        opencodePackage
 
         pkgs.python3
         pkgs.uv

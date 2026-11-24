@@ -135,7 +135,9 @@
             runHook preBuild
 
             make -C ${kernel.dev}/lib/modules/${kernel.modDirVersion}/build \
-              M="$PWD/kernel/gpu_unlock" modules
+              M="$PWD/kernel/gpu_unlock" \
+              ${lib.escapeShellArgs kernel.commonMakeFlags} \
+              modules
 
             runHook postBuild
           '';
@@ -143,8 +145,15 @@
           installPhase = ''
             runHook preInstall
 
-            mkdir -p "$out/lib/modules/${kernel.modDirVersion}/extra"
-            cp kernel/gpu_unlock/gpu_unlock.ko "$out/lib/modules/${kernel.modDirVersion}/extra/"
+            # Use kbuild's modules_install: it also signs the module with
+            # kmodigest and writes the `gpu_unlock.ko.cer` certificate that
+            # `aggregateModules` concatenates into `modules.cer`.
+            make -C ${kernel.dev}/lib/modules/${kernel.modDirVersion}/build \
+              M="$PWD/kernel/gpu_unlock" \
+              ${lib.escapeShellArgs kernel.commonMakeFlags} \
+              INSTALL_MOD_PATH="$out" \
+              INSTALL_MOD_DIR=extra \
+              modules_install
 
             runHook postInstall
           '';

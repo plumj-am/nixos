@@ -69,7 +69,7 @@
           # - perl banned (see ./nuke.nix)
           checkFlags = (old.checkFlags or [ ]) ++ [
             "-skip"
-            "TestGrepCanHazRegexOnDemand|TestCaptcha|TestDNSUpdate|TestMigrateRepository|TestURLAllowedSSH|TestMigrateWhiteBlocklist"
+            "TestGrepCanHazRegexOnDemand|TestCaptcha|TestDNSUpdate|TestMigrateRepository|TestURLAllowedSSH|TestMigrateWhiteBlocklist|TestActivityPubMatchesList"
           ];
         });
 

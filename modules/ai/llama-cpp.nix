@@ -1,16 +1,3 @@
-{ lib, ... }:
-let
-  inherit (lib.trivial) warnIf;
-
-  isGpu = config: config.systemInfo.gpu.exists;
-  isNvidiaGpu = config: config.systemInfo.gpu.vendor == "nVidia Corporation";
-
-  noGpuWarning =
-    program: config: value:
-    warnIf (
-      !isGpu config
-    ) "${program}: no GPU detected or configured - CPU-only inference will be slow" value;
-in
 {
   flake.nixosModules.llama-cpp =
     {
@@ -21,6 +8,14 @@ in
     }:
     let
       inherit (lib.modules) mkIf;
+      inherit (lib.trivial) warnIf;
+
+      isGpu = config.systemInfo.gpu.exists;
+      isNvidiaGpu = config.systemInfo.gpu.vendor == "nVidia Corporation";
+
+      noGpuWarning =
+        program: value:
+        warnIf (!isGpu) "${program}: no GPU detected or configured - CPU-only inference will be slow" value;
 
       mkUnslothQwen =
         rest:
@@ -87,11 +82,13 @@ in
       );
     in
     {
-      unfree.allowedNames = mkIf (isNvidiaGpu config) [
-        "cuda_cccl"
+      unfree.allowedNames = mkIf isNvidiaGpu [
+        "cccl"
+        "cuda_crt"
         "cuda_cudart"
         "cuda_nvcc"
         "libcublas"
+        "libnvvm"
         "cuda_nvrtc"
       ];
 
@@ -107,8 +104,8 @@ in
       };
 
       services.llama-cpp = {
-        enable = noGpuWarning "llama-cpp" config true;
-        package = pkgs.llama-cpp.override { cudaSupport = if (isNvidiaGpu config) then true else false; };
+        enable = noGpuWarning "llama-cpp" true;
+        package = pkgs.llama-cpp.override { cudaSupport = if isNvidiaGpu then true else false; };
 
         settings = {
           host = "127.0.0.1";

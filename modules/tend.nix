@@ -35,8 +35,6 @@
 
         state_dir = "/var/lib/tend";
 
-        postHookPath = [ ];
-
         # TEND_FORGEJO__TOKEN and GITHUB_TOKEN (for nix pins).
         environment_file = secrets."tend/token".path;
 
@@ -64,32 +62,16 @@
             }
           ];
 
-          git = {
-            author_name = "Tend [bot]";
-            author_email = "tend-bot@plumj.am";
-          };
-
           managers = {
             cargo = true;
             npm = true;
             nix = true;
           };
 
-          pr = {
-            branch_prefix = "tend/";
-            labels = singleton "deps";
-            title_prefix = "deps: ";
-          };
-
           updates = {
             minimum_age_days = 7;
             ignore = [ ];
             dry_run = false;
-            force_update = false;
-            post_hook = # bash
-              ''
-
-              '';
           };
         };
       };

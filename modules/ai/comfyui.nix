@@ -16,10 +16,12 @@
       imports = singleton inputs.comfyui.nixosModules.default;
 
       unfree.allowedNames = mkIf isNvidiaGpu [
-        "cuda_cccl"
+        "cccl"
+        "cuda_crt"
         "cuda_cudart"
         "cuda_nvcc"
         "libcublas"
+        "libnvvm"
         "cuda_nvrtc"
       ];
 
