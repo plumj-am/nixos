@@ -86,9 +86,10 @@
 
         config = {
           listen = "127.0.0.1:${toString port}";
+          log_level = "info";
+
           repos = singleton "grove-systems/grove";
           bot_login = "grove-keeper";
-          log_level = "info";
 
           # PAT mode uses KEEPER_GITHUB_TOKEN from the environment file.
           github_app_id = null;
@@ -100,7 +101,7 @@
           git_author_email = "grove-keeper@plumj.am";
 
           worker_concurrency = 2;
-          task_timeout_seconds = 1800;
+          task_timeout_seconds = 3600;
           question_autoclose_hours = 4;
           index_sync_seconds = 900;
 
