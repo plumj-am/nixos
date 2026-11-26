@@ -1,6 +1,6 @@
 { self, ... }:
 {
-  flake.nixosModules.default = self.nixosModules.yubikey;
+  flake.nixosModules.desktop = self.nixosModules.yubikey;
   flake.nixosModules.yubikey =
     { pkgs, ... }:
     {
