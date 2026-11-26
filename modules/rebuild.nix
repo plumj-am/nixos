@@ -3,13 +3,17 @@
   flake.commonModules.default = self.commonModules.rebuild;
   flake.commonModules.rebuild =
     {
+      inputs,
       pkgs,
       ...
     }:
     {
       environment.systemPackages = [
-        self.packages.${pkgs.stdenv.hostPlatform.system}.default # nh
-        self.packages.${pkgs.stdenv.hostPlatform.system}.rebuild
+        pkgs.dix
+        pkgs.nh
+
+        inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.nom-rs
+        self.packages.${pkgs.stdenv.hostPlatform.system}.default # rebuild etc.
       ];
     };
 }

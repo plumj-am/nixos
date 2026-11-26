@@ -55,7 +55,7 @@
 
                 mkdir $"($nu.cache-dir)"
 
-                # `toggle-theme` switches to a specialisation, so a running shell
+                # `theme` switches to a specialisation, so a running shell
                 # only learns about the new variant through `/etc/theme.json`
                 # (see modules/theme.nix). Re-applying it before every prompt
                 # keeps already open sessions in sync, without `exec nu`.

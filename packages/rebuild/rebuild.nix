@@ -1,94 +1,261 @@
-{ self, ... }:
+{ self, inputs, ... }:
 {
   perSystem =
     { pkgs, lib, ... }:
     let
+      inherit (lib.attrsets) getAttr mapAttrs unionOfDisjoint;
       inherit (lib.meta) getExe;
+      inherit (lib.strings) toJSON;
+      inherit (lib.trivial) const;
 
-      # nh 4.5 renders builds with its built-in `rom`; there is no external
-      # `nix-output-monitor` argument to swap.
-      nh = getExe pkgs.nh;
+      nom = getExe inputs.grove.packages.${pkgs.stdenv.hostPlatform.system}.nom-rs;
     in
     {
-      packages.rebuild =
+      # Credit for structure and some code: <https://github.com/RGBCube/ncc>
+      #
+      # Builds always run on the current machine. Remote targets only receive a
+      # copy of the already built toplevel and the activation commands.
+      packages.default =
         pkgs.writers.writeNuBin "rebuild" # nu
           ''
-            def --wrapped main [
-               --remote: string # The host to build (defaults to current)
-               --help (-h)      # Show this help message
-               ...rest: string  # Extra arguments to pass to nh
-            ] {
-              if $help { help main; exit 0 }
+            const PROFILE = "/nix/var/nix/profiles/system"
 
-              if "NH_FLAKE" not-in $env { $env.NH_FLAKE = "${self}" }
+            def class-of [host: string] {
+              let known = r###'${
+                self.nixosConfigurations or { }
+                |> unionOfDisjoint self.darwinConfigurations or { }
+                |> mapAttrs (const <| getAttr "class")
+                |> toJSON
+              }'### | from json
 
-              let sys = sys host
-              let is_nixos = $sys.long_os_version | str lowercase | str contains "linux"
-              let hostname = $sys.hostname
-              let target = $remote | default $hostname
-              let is_remote = $target != $hostname
-
-              # Carry the active theme into plain rebuilds: `os switch` without
-              # --specialisation activates the base config, which defaults to
-              # light mode and stomps the selected theme.
-              let active_theme = if $is_remote { "" } else { get-active-theme }
-              let specialisation_args = if ($active_theme == "") {
-                []
-              } else if ($rest | any {|a| $a | str starts-with "--specialisation"}) {
-                []
-              } else {
-                ["--specialisation" $active_theme]
+              if ($host not-in ($known | columns)) {
+                error make $"unknown host ($host); known hosts: ($known | columns | str join ', ')"
               }
 
-              let subcommand = if $is_nixos { "os" } else { "darwin" }
-              let prefix = if $is_nixos { "nixos" } else { "darwin" }
-              let target_host = if $is_remote { ["--target-host" $"root@($target)"] } else { [] }
+              $known | get $host
+            }
+
+            def is-local [host: string] {
+              (sys host | get hostname) == $host
+            }
+
+            def resolve-target [target: string] {
+              match ($target | is-empty) {
+                true  => { sys host | get hostname }
+                false => $target
+              }
+            }
+
+            # Command prefix needed to run something as root on the target.
+            def escalate [target: string, local: bool, tty: bool] {
+              match [$local $tty] {
+                [true _     ] if (^id --user | str trim) == "0" => [ ]
+                [true _     ] => [ "sudo" ]
+                [false true ] => [ "ssh" "-tt" $"root@($target)" ]
+                [false false] => [ "ssh"       $"root@($target)" ]
+                _             => { error make $"escalate: unhandled case local=($local) tty=($tty)" }
+              }
+            }
+
+            # Runs a command as root on the target (locally via sudo, remotely
+            # via ssh). Use --no-tty when capturing output.
+            def --wrapped as-root [target: string --no-tty ...cmd: string] {
+              let local = is-local $target
+
+              let full = (escalate $target $local (not $no_tty)) ++ $cmd
+              ^($full | first) ...($full | skip 1)
+            }
+
+            def get-active-theme [target: string] {
+              let local = is-local $target
+
+              match $local {
+                true  => { open --raw /etc/theme.json }
+                false => { ^ssh $"root@($target)" open --raw /etc/theme.json err> /dev/null }
+              }
+              | try {
+                from json
+                | get --optional mode
+              }
+              | default ""
+            }
+
+            def build [target: string, class: string, extra: list<string>] {
 
               let command = [
-                ${nh}
-                $subcommand
-                switch
-                $"($env.NH_FLAKE)#($prefix)Configurations.($target)"
-                --hostname $target
-                --accept-flake-config
-                --bypass-root-check
-                --builders
-                ""
-                ...$target_host
-                ...$specialisation_args
-                ...$rest
+                "nix"
+                "build"
+                $"${self}#($class)Configurations.($target).config.system.build.toplevel"
+                "--accept-flake-config"
+                "--keep-going"
+                "--no-link"
+                "--print-out-paths"
+                "--log-format" "internal-json"
+                "-v"
+                ...$extra
+                "--builders" ""
               ]
 
-              let is_root = (id -u | str trim) == "0"
-              let command = if (not $is_remote) and (not $is_root) {
-                $command | prepend ["sudo"]
-              } else { $command }
+              let out_file = mktemp --suffix ".toplevel"
 
-              print $"rebuilding ($target)..."
               try {
-                print $"running: ($command)"
-                ^($command | first) ...($command | skip 1)
-              } catch {
-                error make $"rebuilding ($target) failed"
+                print $"building ($target) on (sys host | get hostname)..."
+
+                ^($command | first) ...($command | skip 1) out> $out_file err>| ^${nom}
+              } catch {|e|
+                error make $"building ($target) failed: ($e.msg)"
               }
+
+              let paths = open $out_file | lines
+              rm $out_file
+
+              if ($paths | is-empty) {
+                error make $"nix build for ($target) returned no output path"
+              }
+
+              $paths | last
+            }
+
+            def copy [target: string, toplevel: string] {
+              print $"copying ($toplevel) to ($target)..."
+              nix copy --substitute-on-destination --no-check-sigs --to $"ssh-ng://root@($target)" $toplevel
+            }
+
+            # Resolves the specialisation path inside a built toplevel, mirroring
+            # `nixos-rebuild --specialisation`.
+            def resolve-theme [target: string, toplevel: string, specialisation: string] {
+              let local = is-local $target
+
+              if ($specialisation | is-empty) { return $toplevel }
+
+              let candidate = $toplevel | path join "specialisation" $specialisation
+              let exists = match $local {
+                true  => { $candidate | path exists }
+                false => { (^ssh $"root@($target)" "test" "-e" $candidate | complete | get exit_code) == 0 }
+              }
+
+              if not $exists {
+                error make $"specialisation ($specialisation) not found in ($toplevel)"
+              }
+
+              $candidate
+            }
+
+            def show-diff [target: string, toplevel: string] {
+              try { as-root $target ${getExe pkgs.dix} diff --min-size-delta 1 /run/current-system $toplevel }
+            }
+
+            def set-profile [target: string, toplevel: string] {
+              as-root $target nix build --no-link --profile $PROFILE $toplevel
+            }
+
+            def activate [target: string, class: string, toplevel: string] {
+              match $class {
+                "darwin" => { as-root $target $"($toplevel)/activate" }
+                "nixos"  => { as-root $target $"($toplevel)/bin/switch-to-configuration" switch }
+                _        => { error make $"unsupported class ($class)" }
+              }
+            }
+
+            def deploy [target: string, specialisation: string, extra: list<string>] {
+              let class = class-of $target
+              let local = is-local $target
+
+              let theme = match ($specialisation | is-not-empty) {
+                true  => $specialisation
+                false => { get-active-theme $target }
+              }
+
+              let toplevel = build $target $class $extra
+
+              if not $local {
+                copy $target $toplevel
+              }
+
+              let activate_path = resolve-theme $target $toplevel $theme
+
+              show-diff $target $toplevel
+              set-profile $target $toplevel
+              activate $target $class $activate_path
 
               print $"rebuild for ($target) succeeded."
             }
 
-            # Reads the active theme mode from /etc/theme.json, a build output
-            # that always matches the config that is currently running.
-            def get-active-theme []: nothing -> string {
-              let theme_state = "/etc/theme.json"
+            def rollback [target: string, specialisation: string] {
+              let class = class-of $target
+              let local = is-local $target
 
-              if (not ($theme_state | path exists)) {
-                ""
-              } else {
-                try {
-                  open $theme_state | get mode? | default ""
-                } catch {|_|
-                  ""
+              let current = as-root $target --no-tty readlink $PROFILE
+              | str trim
+              | split row "-"
+              | get 1
+              | into int
+
+              let choices = $target
+              | match $local {
+                true => {
+                  ls /nix/var/nix/profiles
+                  | get name
+                  | path basename
+                }
+                false => {
+                  as-root $target --no-tty ^ls "-1" /nix/var/nix/profiles
+                  | lines
                 }
               }
+              | where {(str starts-with "system-") and (str ends-with "-link") }
+              | each {
+                {
+                  name: $in
+                  generation: ($in | split row "-" | get 1 | into int)
+                }
+              }
+              | sort-by generation --reverse
+              | where generation != $current
+              | each { $"system-($in.generation)-link" }
+
+              if ($choices | is-empty) {
+                error make $"no generation before system-($current)-link on ($target)"
+              }
+
+              let chosen = $choices | input list "Roll back to:"
+              if ($chosen | is-empty) {
+                error make "rollback cancelled"
+              }
+
+              let generation = $chosen
+              | split row "-"
+              | get 1
+
+              let theme = match ($specialisation | is-not-empty) {
+                true  => $specialisation
+                false => { get-active-theme $target }
+              }
+
+              # Resolve first so a bad specialisation fails before anything changes.
+              let activate_path = resolve-theme $target $"/nix/var/nix/profiles/($chosen)" $theme
+
+              as-root $target nix-env --profile $PROFILE --switch-generation $generation
+              activate $target $class $activate_path
+
+              print $"($target) rolled back to generation ($generation)."
+            }
+
+            def main [] { help main }
+
+            def --wrapped "main deploy" [
+              target: string = ""                # Host to deploy (defaults to the current machine)
+              --specialisation (-s): string = "" # Activate this specialisation instead of the base config
+              ...rest: string                    # Extra arguments to pass to nix build
+            ] {
+              deploy (resolve-target $target) $specialisation $rest
+            }
+
+            def "main rollback" [
+              target: string = ""                # Host to roll back (defaults to the current machine)
+              --specialisation (-s): string = "" # Activate this specialisation instead of the base config
+            ] {
+              rollback (resolve-target $target) $specialisation
             }
           '';
     };

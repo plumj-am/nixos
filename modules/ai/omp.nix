@@ -32,13 +32,14 @@
         no-system-switch = ''
           ---
           description: Do not switch the running system
-          condition: '(?:nh\s+os\s+(?:switch|boot)|nixos-rebuild\s+(?:switch|boot|test)|nix\s+run\s+\.#rebuild)'
+          condition: '(?:nh\s+os\s+(?:switch|boot)|nixos-rebuild\s+(?:switch|boot|test)|rebuild\s+(?:deploy|rollback)|nix\s+run\s+\.(?:#)?(?:$|\s))'
           scope: 'tool:bash'
           ---
 
           Do not activate or switch the system. Build and smoke-test only; the user
-          runs `nh os switch` or `nixos-rebuild switch` themselves and reports back.
-          If a switch is required to finish the task, say so and stop.
+          runs `nh os switch`, `nixos-rebuild switch`, or `rebuild deploy`/`rollback`
+          themselves and reports back. If a switch is required to finish the task,
+          say so and stop.
         '';
 
         no-secret-decrypt = ''

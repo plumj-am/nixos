@@ -111,7 +111,7 @@ can consume and use in your own configs:
 Custom packages for my own use but also part of this flake:
 
 - rebuild
-- toggle-theme
+- theme
 - pick-wallpaper
 - nu-helpers
 
@@ -146,7 +146,7 @@ nixpkgs' `lib.extend`.
 ### Theming
 
 I have a custom theming setup which can be seen in [`modules/theme.nix`](./modules/theme.nix). It's
-a relatively simple toggle between light and dark changed by running `nix run .#toggle-theme`. It
+a relatively simple toggle between light and dark changed by running `nix run .#theme`. It
 automatically updates colour schemes and refreshes necessary applications to apply changes.
 
 Both variants are built as specialisations. The themes use the gruvbox palettes defined in
@@ -155,6 +155,10 @@ use of them.
 
 The active variant survives rebuilds: [`rebuild`](./packages/rebuild) reads the running theme from
 `/etc/theme.json` and re-applies the matching specialisation.
+
+`rebuild` always builds on the current machine. `rebuild deploy <host>` copies the built closure to
+the target and activates it; `rebuild rollback <host>` lists the target's system generations and
+activates the one you pick.
 
 ## Other comments
 

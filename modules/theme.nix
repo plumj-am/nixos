@@ -252,15 +252,15 @@ in
   flake.darwinModules.desktop = self.darwinModules.theme-extra-fonts;
 
   # Builds both variants as a specialisation, so changing the theme switches
-  # between already built systems instead of rebuilding. `tt` activates one with
-  # `nh os switch --specialisation`.
+  # between already built systems instead of rebuilding. `tt` activates one
+  # with `rebuild --specialisation <mode>`.
   flake.nixosModules.theme-variants =
     { lib, config, ... }:
     let
       inherit (lib.strings) toJSON;
     in
     {
-      # Runtime mirror of the active variant. Read by `toggle-theme`; being a
+      # Runtime mirror of the active variant. Read by `theme`; being a
       # build output it always matches the running system.
       environment.etc."theme.json".text = toJSON {
         mode = config.themeMode;
@@ -314,7 +314,7 @@ in
     {
       environment.systemPackages = [
         pkgs.awww
-        self.packages.${pkgs.stdenv.hostPlatform.system}.toggle-theme
+        self.packages.${pkgs.stdenv.hostPlatform.system}.theme
         self.packages.${pkgs.stdenv.hostPlatform.system}.pick-wallpaper
       ];
     };
