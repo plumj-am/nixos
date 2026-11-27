@@ -7,26 +7,35 @@
     }:
     let
       inherit (pkgs.stdenv.hostPlatform) system;
+      inherit (lib.attrsets) attrNames getLib;
+      inherit (lib.strings) concatStringsSep getName makeLibraryPath;
 
       # Tern is a closed-beta Stencil Labs product. There is no public source
       # or download URL yet (build.stencil.so is auth-gated).
       version = "0.9.36";
-      filename = "Tern-${version}-linux-x86_64.tar.gz";
 
-      # No public download: the tarball lives in the store, added by hand.
+      # The platforms do not ship the same thing:
       #
-      # fetchurl copies the content without referencing the path, so the
+      # - x86_64-linux: a tar.gz holding `tern/tern`, the TUI binary. Most of
+      #   its dependencies are dlopen()'d, so the derivation fixes the rpath.
+      # - aarch64-darwin: a zip holding `Tern.app`, the signed app bundle
+      #   (daemon, LaunchAgents/Daemons, nested tray app). There is no separate
+      #   macOS CLI archive.
+      #
+      # No public download: the archives live in the store, added by hand.
+      #
+      # fetchurl copies the content without referencing the path, so each
       # path needs a GC root or `nix store gc` deletes it and the build fails.
       #
       # For a new release (flat mode is required: plain `nix store add-file`
       # NAR-hashes the file, so fetchurl finds no store path for it and the
       # sandboxed build fails with `curl: (37) Could not open file`):
       /*
-         nix-store --add-fixed sha256 ~/Downloads/Tern-<version>-linux-x86_64.tar.gz
+         nix-store --add-fixed sha256 ~/Downloads/Tern-<version>-<platform>.{tar.gz,zip}
 
-         sudo ln -sfn <PATH> /nix/var/nix/gcroots/per-user/$(id -u)/tern
+         sudo ln -sfn <PATH> /nix/var/nix/gcroots/per-user/$(id -u)/tern-<platform>
 
-         nix hash file --type sha256 --base64 ~/Downloads/Tern-<version>-linux-x86_64.tar.gz
+         nix hash file --type sha256 --base64 ~/Downloads/Tern-<version>-<platform>.{tar.gz,zip}
       */
       #
       # then update version, storePath and hash below.
@@ -37,9 +46,17 @@
       #   daemon from the old store path)
       # - launch Tern fresh
       # - run "Restart session daemon" from a new-version window
-      release = {
-        storePath = "/nix/store/fzp90g9agw8adqc2zbsbmfxrhscn1qb3-Tern-0.9.36-linux-x86_64.tar.gz";
-        hash = "sha256-XEJvGCxnK0GotYbhDrCNXwUG6ZDEMfpHYZYcgt7/zzI=";
+      releases = {
+        x86_64-linux = {
+          file = "Tern-${version}-linux-x86_64.tar.gz";
+          storePath = "/nix/store/fzp90g9agw8adqc2zbsbmfxrhscn1qb3-Tern-0.9.36-linux-x86_64.tar.gz";
+          hash = "sha256-XEJvGCxnK0GotYbhDrCNXwUG6ZDEMfpHYZYcgt7/zzI=";
+        };
+        aarch64-darwin = {
+          file = "Tern-${version}-macos-arm64.zip";
+          storePath = "/nix/store/d8ig70igbdgb2n9jh2khnlpfq7dq49b8-Tern-0.9.36-macos-arm64.zip";
+          hash = "sha256-9v0V3PB5z3C+bPfShRvgeagysF0/31LU74Opl0xr560=";
+        };
       };
 
       # DT_NEEDED holds only libc/libm/libdl/libpthread/librt/libutil/ libgcc_s,
@@ -99,10 +116,60 @@
       webkitRuntimeEnv = with pkgs; [
         "--prefix GIO_EXTRA_MODULES : ${glib-networking}/lib/gio/modules"
         "--prefix XDG_DATA_DIRS : ${gsettings-desktop-schemas}/share/gsettings-schemas/${gsettings-desktop-schemas.name}"
-        "--prefix GST_PLUGIN_SYSTEM_PATH_1_0 : ${lib.getLib gst_all_1.gst-plugins-base}/lib/gstreamer-1.0"
+        "--prefix GST_PLUGIN_SYSTEM_PATH_1_0 : ${getLib gst_all_1.gst-plugins-base}/lib/gstreamer-1.0"
       ];
 
-      runtimeLibraryPath = lib.makeLibraryPath runtimeLibs;
+      runtimeLibraryPath = makeLibraryPath runtimeLibs;
+
+      # Linux: the tarball holds `tern/tern`. Fix the interpreter and rpath
+      # before wrapping, then expose the runtime programs and the WebKit
+      # environment the TUI needs.
+      linuxInstallPhase = ''
+        runHook preInstall
+
+        # unpackPhase sets sourceRoot=tern, so cwd is already the tarball's
+        # tern/ directory and the only file in it is ./tern.
+        appDir="$out/opt/tern"
+        mkdir -p "$appDir" "$out/bin"
+        cp -a . "$appDir/"
+        chmod -R u+w "$appDir"
+
+        # Before the wrapper, so strip sees a real file.
+        strip --strip-unneeded "$appDir/tern" || true
+
+        rpath="${runtimeLibraryPath}:\''$ORIGIN/../lib:\''$ORIGIN"
+        patchelf --set-rpath "$rpath" "$appDir/tern"
+        patchelf --set-interpreter "${pkgs.stdenv.cc.bintools.dynamicLinker}" "$appDir/tern"
+
+        # Runtime programs and WebKit environment.
+        makeWrapper "$appDir/tern" "$out/bin/tern" \
+          --prefix LD_LIBRARY_PATH : "${runtimeLibraryPath}" \
+          --prefix PATH : "${lib.makeBinPath runtimePrograms}" \
+          ${concatStringsSep " " webkitRuntimeEnv}
+
+        runHook postInstall
+      '';
+
+      # Darwin: the zip holds a signed `Tern.app`; nothing to link or patch.
+      # The bundle carries its own daemon and tray helper, and macOS finds
+      # them relative to the executable, so only the location matters.
+      darwinInstallPhase = ''
+        runHook preInstall
+
+        # stdenv opens tar and the compressors, but has no zip unpack hook.
+        unzip -q "$src"
+
+        mkdir -p "$out/Applications" "$out/bin"
+        cp -a "Tern.app" "$out/Applications/"
+        chmod -R u+w "$out/Applications/Tern.app"
+
+        # Contents/MacOS/tern is the bundle executable and also answers the
+        # CLI-style arguments (`tern ctl`, `--version`). A symlink leaves the
+        # signed file alone, unlike copying it into bin/.
+        ln -s "$out/Applications/Tern.app/Contents/MacOS/tern" "$out/bin/tern"
+
+        runHook postInstall
+      '';
 
       # Flake packages build against the flake-level pkgs, not the host's, so a
       # host's `unfree.allowedNames` never reaches this derivation.
@@ -113,7 +180,7 @@
         hostPlatform = pkgs.stdenv.hostPlatform;
         inherit system;
         config = pkgs.config // {
-          allowUnfreePredicate = name: lib.getName name == "tern";
+          allowUnfreePredicate = name: getName name == "tern";
         };
       };
 
@@ -122,26 +189,31 @@
       packages.tern =
         let
           fail = msg: throw "tern: ${msg}";
+          release = releases.${system} or { };
         in
         unfreePkgs.stdenvNoCC.mkDerivation {
           pname = "tern";
           inherit version;
 
           src =
-            if system == "x86_64-linux" then
+            if releases ? "${system}" then
               unfreePkgs.fetchurl {
-                name = filename;
+                name = release.file;
                 url = "file://${release.storePath}";
                 inherit (release) hash;
               }
             else
-              fail "only x86_64-linux builds are packaged (got ${system})";
+              fail "no archive for ${system} (packaged: ${concatStringsSep ", " (attrNames releases)})";
 
-          nativeBuildInputs = [
-            pkgs.makeWrapper
-            pkgs.patchelf
-            pkgs.binutils
-          ];
+          nativeBuildInputs =
+            if pkgs.stdenv.hostPlatform.isDarwin then
+              [ pkgs.unzip ]
+            else
+              [
+                pkgs.makeWrapper
+                pkgs.patchelf
+                pkgs.binutils
+              ];
 
           dontConfigure = true;
           dontBuild = true;
@@ -153,38 +225,26 @@
           # outside libc/libstdc++ is dlopen()'d at runtime.
           dontPatchELF = true;
 
-          installPhase = ''
-            runHook preInstall
+          # Darwin: the bundle arrives signed, and fixupPhase has nothing to
+          # normalize here (no shebangs, man pages or desktop files). Its
+          # default stripDebugList covers Applications/, and llvm-strip rewrites
+          # the Mach-O, which invalidates the code signature shipped in the
+          # bundle -- on arm64 an unsigned binary is killed at launch. Skip all
+          # of fixup so the app reaches $out byte-for-byte. `dontFixup` skips
+          # the whole phase, strip included: do not add `dontStrip` here.
+          dontFixup = pkgs.stdenv.hostPlatform.isDarwin;
 
-            # unpackPhase sets sourceRoot=tern, so cwd is already the tarball's
-            # tern/ directory and the only file in it is ./tern.
-            appDir="$out/opt/tern"
-            mkdir -p "$appDir" "$out/bin"
-            cp -a . "$appDir/"
-            chmod -R u+w "$appDir"
+          # stdenv cannot open zips; the darwin installPhase does it.
+          dontUnpack = pkgs.stdenv.hostPlatform.isDarwin;
 
-            # Before the wrapper, so strip sees a real file.
-            strip --strip-unneeded "$appDir/tern" || true
-
-            rpath="${runtimeLibraryPath}:\''$ORIGIN/../lib:\''$ORIGIN"
-            patchelf --set-rpath "$rpath" "$appDir/tern"
-            patchelf --set-interpreter "${pkgs.stdenv.cc.bintools.dynamicLinker}" "$appDir/tern"
-
-            # Runtime programs and WebKit environment.
-            makeWrapper "$appDir/tern" "$out/bin/tern" \
-              --prefix LD_LIBRARY_PATH : "${runtimeLibraryPath}" \
-              --prefix PATH : "${lib.makeBinPath runtimePrograms}" \
-              ${lib.concatStringsSep " " webkitRuntimeEnv}
-
-            runHook postInstall
-          '';
+          installPhase = if pkgs.stdenv.hostPlatform.isDarwin then darwinInstallPhase else linuxInstallPhase;
 
           meta = {
             description = "Rust-native, Kitty-compatible terminal multiplexer";
             homepage = "https://stencil.so/tern";
             license = lib.licenses.unfree;
             mainProgram = "tern";
-            platforms = [ "x86_64-linux" ];
+            platforms = attrNames releases;
             sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
           };
         };
