@@ -11,7 +11,6 @@
       inherit (lib.constants) tailnet;
       inherit (lib.lists) singleton;
       inherit (config.networking) hostName;
-      inherit (config.sops) secrets;
 
       tailnetFqdn = "${hostName}.${tailnet}";
     in
