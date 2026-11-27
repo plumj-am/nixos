@@ -257,6 +257,23 @@
             ] {
               rollback (resolve-target $target) $specialisation
             }
+
+            def "main theme" [
+              mode: string # Theme mode to activate <light|dark>
+            ] {
+              let valid_modes = ["light" "dark"]
+              if $mode not-in $valid_modes {
+                error make $"Invalid mode: '($mode)'. Valid modes: ($valid_modes | str join ", ")"
+              }
+
+              print $"Switching to the ($mode) theme."
+
+              try {
+                main deploy --specialisation $mode
+              } catch {|e|
+                error make $"Switching to the ($mode) theme failed: ($e)"
+              }
+            }
           '';
     };
 }

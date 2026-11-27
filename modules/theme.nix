@@ -314,7 +314,6 @@ in
     {
       environment.systemPackages = [
         pkgs.awww
-        self.packages.${pkgs.stdenv.hostPlatform.system}.theme
         self.packages.${pkgs.stdenv.hostPlatform.system}.pick-wallpaper
       ];
     };

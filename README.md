@@ -146,19 +146,25 @@ nixpkgs' `lib.extend`.
 ### Theming
 
 I have a custom theming setup which can be seen in [`modules/theme.nix`](./modules/theme.nix). It's
-a relatively simple toggle between light and dark changed by running `nix run .#theme`. It
+a relatively simple toggle between light and dark changed by running the default package:
+`nix run -- theme <light|dark>` or via the installed package: `rebuild theme <light|dark>`. It
 automatically updates colour schemes and refreshes necessary applications to apply changes.
 
 Both variants are built as specialisations. The themes use the gruvbox palettes defined in
 [`modules/theme.nix`](./modules/theme.nix) and some base16 colours for applications that can make
 use of them.
 
-The active variant survives rebuilds: [`rebuild`](./packages/rebuild) reads the running theme from
-`/etc/theme.json` and re-applies the matching specialisation.
+### Deploying
+
+[`packages/rebuild`](./packages/rebuild) is where rebuilds, rollbacks, and theme switches take
+place.
 
 `rebuild` always builds on the current machine. `rebuild deploy <host>` copies the built closure to
 the target and activates it; `rebuild rollback <host>` lists the target's system generations and
 activates the one you pick.
+
+The active theme specialisation survives rebuilds: [`rebuild`](./packages/rebuild) reads the running
+theme from `/etc/theme.json` and re-applies the matching specialisation.
 
 ## Other comments
 
@@ -210,12 +216,12 @@ The structure of the repository and a few key files are highlighted below:
 
 ```sh
 .
-├── hosts/             # All hosts
+├── hosts/             # Host outputs
 │   └── facter/        # Facter system reports
-├── libs/              # All nixpkgs lib extensions
-├── packages/          # Custom packages
-├── services/          # Custom service modules
-├── modules/           # All modules
+├── libs/              # nixpkgs library extensions
+├── packages/          # Package outputs
+├── services/          # Service module outputs
+├── modules/           # Module outputs
 │   ├── theme.nix      # System-wide theming
 │   ├── ...
 │   ├── ai/            # AI tools
