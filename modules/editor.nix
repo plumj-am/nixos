@@ -171,8 +171,16 @@ in
                   };
                 in
                 {
-                  select = shared;
+                  select = shared // {
+                    "A-w" = "extend_next_sub_word_start";
+                    "A-b" = "extend_previous_sub_word_start";
+                    "A-e" = "extend_next_sub_word_end";
+                  };
                   normal = shared // {
+                    "A-w" = "move_next_sub_word_start";
+                    "A-b" = "move_previous_sub_word_start";
+                    "A-e" = "move_next_sub_word_end";
+
                     "'" = {
                       label = "File Management";
                       t = {
@@ -198,7 +206,6 @@ in
                     };
                   };
 
-                  # TODO: Check later after version bump. It doesn't work for some reason.
                   picker = {
                     "C-d" = "preview_scroll_down";
                     "C-u" = "preview_scroll_up";
