@@ -38,7 +38,7 @@
       # assigned; the rex module uses it for its Serve unit for the same reason.
       # The `+` prefix runs it as root regardless of the service user, and the
       # timeout keeps a detached tailnet from stalling activation forever.
-      systemd.services.rex.serviceConfig.ExecStartPre = singleton
-        "+${lib.getExe config.services.tailscale.package} wait --timeout=90s";
+      systemd.services.rex.serviceConfig.ExecStartPre =
+        singleton "+${lib.getExe config.services.tailscale.package} wait --timeout=90s";
     };
 }
