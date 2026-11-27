@@ -2,6 +2,13 @@
   perSystem =
     { pkgs, lib, ... }:
     let
+      inherit (lib.lists) elem;
+      inherit (lib.strings) makeBinPath;
+
+      # X11/GL desktop app: upstream's build script and the linked libs are
+      # x86_64-linux only.
+      platforms = [ "x86_64-linux" ];
+
       raddebugger =
         {
           clangStdenv ? pkgs.clangStdenv,
@@ -74,7 +81,7 @@
             for prog in "$out/bin/"*; do
               wrapProgram "$prog" \
                 --prefix PATH : "${
-                  lib.makeBinPath [
+                  makeBinPath [
                     pkgs.zenity
                     pkgs.libllvm
                   ]
@@ -110,12 +117,26 @@
             homepage = "https://github.com/EpicGames/raddebugger";
             description = "A native, user-mode, multi-process, graphical debugger.";
             license = lib.licenses.mit;
-            platforms = [ "x86_64-linux" ];
+            inherit platforms;
             mainProgram = "raddbg";
           };
         });
     in
     {
-      packages.raddebugger = raddebugger { };
+      # Gate the attribute, do not only restrict meta.platforms: outputs.nix
+      # declares aarch64-darwin, so any flake-wide eval there reaches this
+      # derivation, and check-meta then throws "Refusing to evaluate package
+      # ... not available on the requested hostPlatform" before the gate.
+      #
+      # The gate is an `if` on purpose: organix (the repo's nix formatter)
+      # rewrites `f cond { ... }` into a pipe, which turns the value into a
+      # partial application and trips the option type check.
+      packages =
+        if elem pkgs.stdenv.hostPlatform.system platforms then
+          {
+            raddebugger = raddebugger { };
+          }
+        else
+          { };
     };
 }
