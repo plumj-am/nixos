@@ -1,16 +1,6 @@
 { self, ... }:
-let
-  oxfmtJsTsLanguages = {
-    JavaScript = "js";
-    JSX = "jsx";
-    TSX = "tsx";
-    TypeScript = "ts";
-  };
-in
 {
-  flake.commonModules.default.imports = [
-    self.commonModules.mitos
-  ];
+  flake.commonModules.default = self.commonModules.mitos;
 
   flake.nixosModules.default.imports = [
     self.nixosModules.disable-nano
@@ -37,6 +27,13 @@ in
         ;
       inherit (lib.lists) elem singleton;
       inherit (config) theme;
+
+      oxfmtJsTsLanguages = {
+        JavaScript = "js";
+        JSX = "jsx";
+        TSX = "tsx";
+        TypeScript = "ts";
+      };
 
       oxfmtConfigFile = pkgs.writers.writeJSON ".oxfmtrc.json" {
         bracketSameLine = true;
