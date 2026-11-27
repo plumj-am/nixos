@@ -261,9 +261,18 @@
             def "main theme" [
               mode: string # Theme mode to activate <light|dark>
             ] {
+              let target = sys host | get hostname
               let valid_modes = ["light" "dark"]
+
               if $mode not-in $valid_modes {
                 error make $"Invalid mode: '($mode)'. Valid modes: ($valid_modes | str join ", ")"
+              }
+
+              if (get-active-theme $target) == $mode {
+                if (input --default "yes" $"($mode) mode already active; proceed anyway? \(anything != 'yes' cancels\)") != "yes" {
+                  print "Theme switch cancelled."
+                  exit 0
+                }
               }
 
               print $"Switching to the ($mode) theme."
